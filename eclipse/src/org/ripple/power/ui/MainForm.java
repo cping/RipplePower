@@ -124,7 +124,7 @@ public class MainForm extends JFrame implements ActionListener{
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
-
+		
 		menuItem = new JMenuItem("Exit");
 		menuItem.setActionCommand("exit");
 		menuItem.addActionListener(this);
@@ -241,18 +241,6 @@ public class MainForm extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		//
-		// "about" - Display information about this program
-		// "exit" - Exit the program
-		// "export keys" - Export private keys
-		// "import keys" - Import private keys
-		// "rescan" - Rescan the block chain
-		// "send coins" - Send coins to a bitcoin address
-		// "sign message" - Sign message
-		// "view receive" - Display the receive addresses
-		// "view send" - Display the send address
-		// "verify message" - Verify message
-		//
 		try {
 			String action = ae.getActionCommand();
 			switch (action) {

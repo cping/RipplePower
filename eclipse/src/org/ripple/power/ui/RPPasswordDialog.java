@@ -26,14 +26,14 @@ public class RPPasswordDialog extends JDialog implements ActionListener {
 	public RPPasswordDialog(JFrame owner) {
 		super(owner, "请输入钱包文件密码", true);
 		setLayout(new FlowLayout());
-		setSize(400, 66);
+		setSize(490, 66);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		initUI();
 	}
 
 	private void initUI() {
-		passwordField = new JPasswordField(40);
+		passwordField = new JPasswordField(30);
 
 		add(passwordField, BorderLayout.CENTER);
 		passwordField.addActionListener(this);
