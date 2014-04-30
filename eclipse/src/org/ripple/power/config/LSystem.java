@@ -38,6 +38,8 @@ public final class LSystem {
 	final static public long MONTH = 31 * DAY;
 	final static public long YEAR = 365 * DAY;
 
+	public static final int DEFAULT_MAX_CACHE_SIZE = 20;
+	
 	public static final String applicationName = "RipplePower";
 
 	public static final String applicationVersion = "0.1";

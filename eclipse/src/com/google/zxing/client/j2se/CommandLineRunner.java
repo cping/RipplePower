@@ -186,7 +186,6 @@ public final class CommandLineRunner {
         possibleFormats.add(BarcodeFormat.QR_CODE);
         possibleFormats.add(BarcodeFormat.DATA_MATRIX);
         possibleFormats.add(BarcodeFormat.AZTEC);
-        possibleFormats.add(BarcodeFormat.PDF_417);
         possibleFormats.add(BarcodeFormat.CODABAR);
         possibleFormats.add(BarcodeFormat.MAXICODE);
       }

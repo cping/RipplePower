@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JFrame;
@@ -39,7 +38,6 @@ import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
-
 
 public class MainPanel extends JPanel implements ActionListener {
 
@@ -125,19 +123,21 @@ public class MainPanel extends JPanel implements ActionListener {
 				"none"));
 		statusPane.add(walletLabel);
 
-		FontStyleIcon iconStar =  new FontStyleIcon(FontStyle.Icon.STAR, 24, LSystem.background);
-		FontStyleIcon iconMale =  new FontStyleIcon(FontStyle.Icon.MALE, 24, LSystem.background);
+		FontStyleIcon iconStar = new FontStyleIcon(FontStyle.Icon.STAR, 24,
+				LSystem.background);
+		FontStyleIcon iconMale = new FontStyleIcon(FontStyle.Icon.MALE, 24,
+				LSystem.background);
 
-		RPButton btn = new RPButton("捐助",iconStar);
+		RPButton btn = new RPButton("捐助", iconStar);
 		btn.setActionCommand("捐助");
 		btn.setFont(font);
 		btn.addActionListener(this);
-		
-		RPButton btn2 = new RPButton("P2P通讯",iconMale);
-			btn2.setActionCommand("P2P通讯");
-			btn2.setFont(font);
-			btn2.addActionListener(this);
-			
+
+		RPButton btn2 = new RPButton("P2P通讯", iconMale);
+		btn2.setActionCommand("P2P通讯");
+		btn2.setFont(font);
+		btn2.addActionListener(this);
+
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(statusPane);
 		statusPane.setLayout(layout);
 		layout.setHorizontalGroup(layout
@@ -148,10 +148,11 @@ public class MainPanel extends JPanel implements ActionListener {
 								.addComponent(walletLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										100, Short.MAX_VALUE).addComponent(btn)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								                .addComponent(btn2)
-								.addGap(40, 40, 40)));
+										100, Short.MAX_VALUE)
+								.addComponent(btn)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(btn2).addGap(40, 40, 40)));
 		layout.setVerticalGroup(layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(
@@ -163,15 +164,15 @@ public class MainPanel extends JPanel implements ActionListener {
 												.addComponent(walletLabel)
 												.addComponent(btn)
 												.addComponent(btn2)
-												
-												)
-								.addGap(8, 8, 8)));
+
+								).addGap(8, 8, 8)));
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(LSystem.background);
 
-		FontStyleIcon iconLeaf =  new FontStyleIcon(FontStyle.Icon.LEAF, 24, LSystem.background);
-		RPButton button = new RPButton("增加地址",iconLeaf);
+		FontStyleIcon iconLeaf = new FontStyleIcon(FontStyle.Icon.LEAF, 24,
+				LSystem.background);
+		RPButton button = new RPButton("增加地址", iconLeaf);
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -184,28 +185,28 @@ public class MainPanel extends JPanel implements ActionListener {
 		button.addActionListener(this);
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(15));
-		
-		
 
-		FontStyleIcon iconEye =  new FontStyleIcon(FontStyle.Icon.EYE, 24, LSystem.background);
-		button = new RPButton("网关操作",iconEye);
+		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
+				LSystem.background);
+		button = new RPButton("网关操作", iconEye);
 		button.setActionCommand("网关操作");
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(15));
 
-		FontStyleIcon iconRoad =  new FontStyleIcon(FontStyle.Icon.ROAD, 24, LSystem.background);
-		button = new RPButton("发送货币",iconRoad);
+		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
+				LSystem.background);
+		button = new RPButton("发送货币", iconRoad);
 		button.setActionCommand("sendcoin");
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(15));
 
-
-		FontStyleIcon iconTag =  new FontStyleIcon(FontStyle.Icon.TAG, 24, LSystem.background);
-		button = new RPButton("参与交易",iconTag);
+		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
+				LSystem.background);
+		button = new RPButton("参与交易", iconTag);
 		button.setActionCommand("参与交易");
 		button.setFont(font);
 		button.addActionListener(this);
@@ -213,8 +214,9 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		buttonPane.add(Box.createHorizontalStrut(15));
 
-		FontStyleIcon iconTable =  new FontStyleIcon(FontStyle.Icon.TABLE, 24, LSystem.background);
-		button = new RPButton("地址明细",iconTable);
+		FontStyleIcon iconTable = new FontStyleIcon(FontStyle.Icon.TABLE, 24,
+				LSystem.background);
+		button = new RPButton("地址明细", iconTable);
 		button.setFont(font);
 		button.setActionCommand("地址明细");
 		button.addActionListener(this);
@@ -222,8 +224,9 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		buttonPane.add(Box.createHorizontalStrut(15));
 
-		FontStyleIcon iconUser =  new FontStyleIcon(FontStyle.Icon.USER, 24, LSystem.background);
-		button = new RPButton("显示私钥",iconUser);
+		FontStyleIcon iconUser = new FontStyleIcon(FontStyle.Icon.USER, 24,
+				LSystem.background);
+		button = new RPButton("显示私钥", iconUser);
 		button.setActionCommand("显示私钥");
 		button.setFont(font);
 		button.addActionListener(this);
@@ -234,12 +237,11 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(buttonPane, BorderLayout.SOUTH);
 
 	}
-	
-	private void sendXRP(String srcAddress){
-		
+
+	private void sendXRP(String srcAddress) {
+
 	}
 
-	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		try {
@@ -270,8 +272,6 @@ public class MainPanel extends JPanel implements ActionListener {
 							RPMessage.showWarningMessage(this, "交易失败",
 									"非常抱歉,该地址目前能查询到的XRP总量为0,暂时无法发送XRP.");
 						} else {
-							
-							
 
 						}
 						break;
@@ -299,7 +299,6 @@ public class MainPanel extends JPanel implements ActionListener {
 						tableModel.fireTableRowsUpdated(row, row);
 						walletLabel.setText(getWalletText(WalletCache.get()
 								.getAmounts(), "none"));
-						// safeLabel.setText(getSafeText());
 					}
 					break;
 				case "显示私钥":
@@ -307,28 +306,43 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, "显示私钥",
 							"是否显示当前地址私钥?(如果有第三人在场，或者电脑中存在木马，可能会暴露私钥信息)", "显示",
 							"放弃");
+
 					if (index == 0) {
-						RPInput input = new RPInput();
-						input.getBigTextInput(
-								new RPInput.TextInputListener() {
 
-									@Override
-									public void input(String text) {
-										if (text.length() > 0) {
-											RHClipboard clipboard = new RHClipboard();
-											clipboard
-													.setClipboardContents(text);
+						index = RPMessage.showConfirmMessage(
+								LSystem.applicationMain, "显示私钥", "请选择私钥的显示类型",
+								"文本模式", "纸钱包模式");
+
+						if (index == 0) {
+							RPInput input = new RPInput();
+							input.getBigTextInput(
+									new RPInput.TextInputListener() {
+
+										@Override
+										public void input(String text) {
+											if (text.length() > 0) {
+												RHClipboard clipboard = new RHClipboard();
+												clipboard
+														.setClipboardContents(text);
+											}
 										}
-									}
 
-									@Override
-									public void canceled() {
+										@Override
+										public void canceled() {
 
-									}
-								}, String.format("%s", WalletCache.get()
-										.readRow(row).getPublicKey()),
-								WalletCache.get().readRow(row).getPrivateKey(),
-								new Object[] { "COPY" });
+										}
+									}, String.format("%s", WalletCache.get()
+											.readRow(row).getPublicKey()),
+									WalletCache.get().readRow(row)
+											.getPrivateKey(),
+									new Object[] { "COPY" });
+						} else {
+							RPPaperDialog dialog = new RPPaperDialog(
+									LSystem.applicationMain, 0, WalletCache
+											.get().readRow(row).getPrivateKey());
+							dialog.setModal(true);
+							dialog.setVisible(true);
+						}
 					}
 					break;
 				}

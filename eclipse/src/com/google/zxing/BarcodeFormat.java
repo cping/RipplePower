@@ -53,9 +53,6 @@ public enum BarcodeFormat {
   /** MaxiCode 2D barcode format. */
   MAXICODE,
 
-  /** PDF417 format. */
-  PDF_417,
-
   /** QR Code 2D barcode format. */
   QR_CODE,
 

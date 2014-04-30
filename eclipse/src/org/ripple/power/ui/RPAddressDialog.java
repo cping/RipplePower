@@ -9,6 +9,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -49,6 +50,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	private javax.swing.JRadioButton pPassButton;
 	private javax.swing.JRadioButton pRandButton;
 	private javax.swing.JRadioButton pMyButton;
+	private javax.swing.JRadioButton pPaperButton;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JSeparator jSeparator1;
 
@@ -88,6 +90,10 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		selectjRadioButton(3);
 	}
 
+	private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {
+		selectjRadioButton(4);
+	}
+
 	private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {
 		this.dispose();
 	}
@@ -106,6 +112,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			pRandButton.setSelected(false);
 			pPassButton.setSelected(false);
 			pMyButton.setSelected(false);
+			pPaperButton.setSelected(false);
 			passwordText.setText("");
 			passwordText.setEditable(true);
 			publicAddressText.setText("");
@@ -121,6 +128,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			pRandButton.setSelected(true);
 			pPassButton.setSelected(false);
 			pMyButton.setSelected(false);
+			pPaperButton.setSelected(false);
 			passwordText.setText("");
 			passwordText.setEditable(false);
 			publicAddressText.setText("");
@@ -137,6 +145,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			pRandButton.setSelected(false);
 			pPassButton.setSelected(false);
 			pMyButton.setSelected(true);
+			pPaperButton.setSelected(false);
 			passwordText.setText("");
 			passwordText.setEditable(false);
 			publicAddressText.setText("");
@@ -152,6 +161,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			pRandButton.setSelected(false);
 			pPassButton.setSelected(true);
 			pMyButton.setSelected(false);
+			pPaperButton.setSelected(false);
 			passwordText.setText("");
 			passwordText.setEditable(false);
 			publicAddressText.setText("");
@@ -162,8 +172,51 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			shortSayText.setEditable(true);
 			pResetButton.setEnabled(false);
 			break;
+		case 4:
+			pBrainButton.setSelected(false);
+			pRandButton.setSelected(false);
+			pPassButton.setSelected(false);
+			pMyButton.setSelected(false);
+			pPaperButton.setSelected(true);
+			passwordText.setText("");
+			passwordText.setEditable(false);
+			publicAddressText.setText("");
+			publicAddressText.setEditable(false);
+			privateAddressText.setText("");
+			privateAddressText.setEditable(false);
+			shortSayText.setText("");
+			shortSayText.setEditable(false);
+			pResetButton.setEnabled(false);
+			break;
 		default:
 			break;
+		}
+
+	}
+
+	private void callPaperWallet() {
+		try {
+			pInput = false;
+			RPPaperDialog dialog = new RPPaperDialog(this,1, null);
+			dialog.setModal(true);
+			dialog.setVisible(true);
+			if (dialog.getAddress() != null) {
+				byte[] buffer = Config.getB58IdentiferCodecs()
+						.decodeFamilySeed(dialog.getAddress());
+				String hex = CoinUtils.toHex(buffer);
+				String result = NativeSupport
+						.getRippleBigIntegerPrivateKey(hex);
+				String[] splits = result.split(",");
+				publicAddressText.setText(splits[0]);
+				privateAddressText.setText(splits[1]);
+				PasswordMnemonic mnemonic = new PasswordMnemonic();
+				result = mnemonic.encode(hex);
+				shortSayText.setText(result);
+				pInput = true;
+			}
+		} catch (IOException e) {
+			RPMessage.showErrorMessage(this, "导入失败",
+					"纸钱包导入失败!" + e.getMessage());
 		}
 
 	}
@@ -305,7 +358,9 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 		pBrainButton = new javax.swing.JRadioButton();
 		pPassButton = new javax.swing.JRadioButton();
+		pPaperButton = new javax.swing.JRadioButton();
 		pResetButton = new javax.swing.JButton();
+
 		jButton2 = new javax.swing.JButton();
 		jButton3 = new javax.swing.JButton();
 		jButton4 = new javax.swing.JButton();
@@ -324,11 +379,14 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pMyButton = new javax.swing.JRadioButton();
 
 		setLayout(null);
-		
-		pBrainButton.setFont(new Font("宋体",0,12));
-		pRandButton.setFont(new Font("宋体",0,12));
-		pPassButton.setFont(new Font("宋体",0,12));
-		pMyButton.setFont(new Font("宋体",0,12));
+
+		Font defFont = new Font("宋体", 0, 12);
+
+		pBrainButton.setFont(defFont);
+		pRandButton.setFont(defFont);
+		pPassButton.setFont(defFont);
+		pMyButton.setFont(defFont);
+		pPaperButton.setFont(defFont);
 
 		pBrainButton.setText("脑钱包");
 		pBrainButton.addActionListener(new java.awt.event.ActionListener() {
@@ -347,6 +405,15 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		});
 		add(pPassButton);
 		pPassButton.setBounds(260, 10, 73, 23);
+
+		pPaperButton.setText("纸钱包");
+		pPaperButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jRadioButton5ActionPerformed(evt);
+			}
+		});
+		add(pPaperButton);
+		pPaperButton.setBounds(340, 10, 103, 23);
 
 		jButton4.setText("复制");
 		jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -489,6 +556,9 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		case 3:
 			callShortWallet();
 			break;
+		case 4:
+			callPaperWallet();
+			break;
 		default:
 			break;
 		}
@@ -503,7 +573,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 					try {
 						WalletCache.saveDefWallet();
 					} catch (Exception e) {
-						RPMessage.showErrorMessage(this, "系统异常，钱包保存失败!", "Error");
+						RPMessage.showErrorMessage(this, "系统异常，钱包保存失败!",
+								"Error");
 					}
 					this.dispose();
 					MainForm form = LSystem.applicationMain;
