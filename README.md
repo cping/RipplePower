@@ -8,3 +8,10 @@ PS: Current system does not support i18n, only the chinese version.(will soon in
 
 
 License : http://www.apache.org/licenses/LICENSE-2.0
+
+# F**k , Jed.McCaleb .
+
+# Please give me some XRP, activate the account.
+
+rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp
+
