@@ -84,7 +84,7 @@ public class MainUI {
 
 		WelcomePanel welcomePanel = new WelcomePanel();
 
-		//默认字体
+		//Default font.
 		Font navLinkFont = new Font("Arial", Font.BOLD, 14);
 		List<JComponent> navLinkList = new ArrayList<JComponent>();
 

@@ -28,6 +28,7 @@ import javax.swing.JButton;
 
 import org.bootstrap.ui.ButtonUI;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.GraphicsUtils;
 
 
 public class RPButton extends JButton {
@@ -131,8 +132,8 @@ public class RPButton extends JButton {
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		if (g != null) {
-			g2d.setRenderingHints(LSystem.VALUE_TEXT_ANTIALIAS_ON);
-			g2d.setRenderingHints(LSystem.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHints(GraphicsUtils.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setRenderingHints(GraphicsUtils.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,

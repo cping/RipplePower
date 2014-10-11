@@ -34,6 +34,7 @@ import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.BigDecimalUtil;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -75,7 +76,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
-		SwingUtils.importFont(UIRes.getStream("fonts/SquareFont.ttf"));
+		SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
 		setOpaque(true);
 		setBackground(LSystem.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
@@ -95,11 +96,12 @@ public class MainPanel extends JPanel implements ActionListener {
 			table.setPreferredScrollableViewportSize(new Dimension(
 					frameWidth - 120, frameHeight - 300));
 		} else {
-			int frameWidth = 860;
-			int frameHeight = 860;
+			int frameWidth = (int) parentFrame.getWidth();
+			int frameHeight = (int) parentFrame.getHeight();
 			table.setPreferredScrollableViewportSize(new Dimension(
 					frameWidth - 120, frameHeight - 300));
 		}
+
 		//
 		// Create the table scroll pane
 		//
@@ -268,7 +270,7 @@ public class MainPanel extends JPanel implements ActionListener {
 					switch (result) {
 					case 0:
 						BigDecimal number = new BigDecimal(item.getAmount());
-						if (number.intValue() <= 0) {
+						if (number.compareTo(BigDecimal.ZERO) < 1) {
 							RPMessage.showWarningMessage(this, "交易失败",
 									"非常抱歉,该地址目前能查询到的XRP总量为0,暂时无法发送XRP.");
 						} else {

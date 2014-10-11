@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.print.PrintImageOutput;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
@@ -71,7 +72,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 		}
 	}
 
-	public RPPaperDialog(Window win,int flag, String address) throws IOException {
+	public RPPaperDialog(Window win, int flag, String address)
+			throws IOException {
 		super(win);
 		if (address != null && !address.startsWith("s")) {
 			throw new IOException("Bad address name !");
@@ -169,10 +171,22 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 	}
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+		if (modelFlag == 0) {
+			int select = RPMessage.showConfirmMessage(this, "导出纸钱包",
+					"请选择您的导出方式", "导出图像文件", "直接导出到打印机");
+			if (select == -1) {
+				return;
+			}
+			if (select != 0) {
+				PrintImageOutput.out(this.pImage);
+				return;
+			}
+		}
 		JFileChooser jFileChooser = new JFileChooser(LSystem.getDirectory());
 		jFileChooser.setFileFilter(new MyFileFilter());
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		if (modelFlag == 0) {
+
 			jFileChooser.setDialogTitle("导出纸钱包");
 			int ret = jFileChooser.showSaveDialog(this);
 			if (ret != JFileChooser.APPROVE_OPTION) {

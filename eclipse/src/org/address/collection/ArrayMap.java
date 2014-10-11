@@ -2,7 +2,7 @@ package org.address.collection;
 
 import java.util.ArrayList;
 
-import org.address.database.CollectionUtils;
+import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
 
 public class ArrayMap {

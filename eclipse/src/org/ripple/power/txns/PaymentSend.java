@@ -58,9 +58,9 @@ public class PaymentSend {
 		TransactionManager tm = account.transactionManager();
 		Payment payment = new Payment();
 		ManagedTxn tx = tm.manage(payment);
-		payment.put(AccountID.Destination, destination);
+		payment.putTranslated(AccountID.Destination, destination);
 		if ("XRP".equals(_currencyName)) {
-			payment.put(Amount.Amount, amt);
+			payment.putTranslated(Amount.Amount, amt);
 		} else {
 			if (_issuer != null) {
 				Amount amount = new Amount(new BigDecimal(amt), _currency,

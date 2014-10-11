@@ -68,7 +68,7 @@ public class RPClient {
 		ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
-			pClinet.setProxy(LSystem.applicationProxy);
+			//pClinet.setProxy(LSystem.applicationProxy);
 		}
 		if (!testing) {
 			pClinet.connect(LSystem.applicationRippled);
