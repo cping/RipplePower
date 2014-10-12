@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -37,10 +36,10 @@ import com.ripple.config.Config;
 
 public class RPAddressDialog extends JDialog implements ActionListener {
 
-	private javax.swing.JButton pResetButton;
-	private javax.swing.JButton jButton2;
-	private javax.swing.JButton jButton3;
-	private javax.swing.JButton jButton4;
+	private RPCButton pResetButton;
+	private RPCButton jButton2;
+	private RPCButton jButton3;
+	private RPCButton jButton4;
 
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel2;
@@ -54,10 +53,10 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JSeparator jSeparator1;
 
-	private javax.swing.JTextArea shortSayText;
-	private javax.swing.JTextField passwordText;
-	private javax.swing.JTextField publicAddressText;
-	private javax.swing.JTextField privateAddressText;
+	private RPTextArea shortSayText;
+	private RPTextBox passwordText;
+	private RPTextBox publicAddressText;
+	private RPTextBox privateAddressText;
 
 	private boolean pInput = false;
 	/**
@@ -359,21 +358,21 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pBrainButton = new javax.swing.JRadioButton();
 		pPassButton = new javax.swing.JRadioButton();
 		pPaperButton = new javax.swing.JRadioButton();
-		pResetButton = new javax.swing.JButton();
+		pResetButton = new RPCButton();
 
-		jButton2 = new javax.swing.JButton();
-		jButton3 = new javax.swing.JButton();
-		jButton4 = new javax.swing.JButton();
+		jButton2 = new RPCButton();
+		jButton3 = new RPCButton();
+		jButton4 = new RPCButton();
 		jSeparator1 = new javax.swing.JSeparator();
 
 		jLabel1 = new javax.swing.JLabel();
-		passwordText = new javax.swing.JTextField();
+		passwordText = new RPTextBox();
 		jLabel2 = new javax.swing.JLabel();
-		publicAddressText = new javax.swing.JTextField();
+		publicAddressText = new RPTextBox();
 		jLabel3 = new javax.swing.JLabel();
-		privateAddressText = new javax.swing.JTextField();
+		privateAddressText = new RPTextBox();
 		jScrollPane1 = new javax.swing.JScrollPane();
-		shortSayText = new javax.swing.JTextArea();
+		shortSayText = new RPTextArea();
 		jLabel4 = new javax.swing.JLabel();
 		pRandButton = new javax.swing.JRadioButton();
 		pMyButton = new javax.swing.JRadioButton();

@@ -129,7 +129,9 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		FontStyleIcon iconMale = new FontStyleIcon(FontStyle.Icon.MALE, 24,
 				LSystem.background);
-
+		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24,
+				LSystem.background);
+		
 		RPButton btn = new RPButton("捐助", iconStar);
 		btn.setActionCommand("捐助");
 		btn.setFont(font);
@@ -139,7 +141,12 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn2.setActionCommand("P2P通讯");
 		btn2.setFont(font);
 		btn2.addActionListener(this);
-
+		
+		RPButton btn3 = new RPButton("查看汇率", iconSearch);
+		btn3.setActionCommand("查看汇率");
+		btn3.setFont(font);
+		btn3.addActionListener(this);
+		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(statusPane);
 		statusPane.setLayout(layout);
 		layout.setHorizontalGroup(layout
@@ -154,7 +161,7 @@ public class MainPanel extends JPanel implements ActionListener {
 								.addComponent(btn)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(btn2).addGap(40, 40, 40)));
+								.addComponent(btn2).addGap(40, 40, 40).addComponent(btn3).addGap(40, 40, 40)));
 		layout.setVerticalGroup(layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(
@@ -166,7 +173,7 @@ public class MainPanel extends JPanel implements ActionListener {
 												.addComponent(walletLabel)
 												.addComponent(btn)
 												.addComponent(btn2)
-
+                                                .addComponent(btn3)
 								).addGap(8, 8, 8)));
 
 		JPanel buttonPane = new JPanel();

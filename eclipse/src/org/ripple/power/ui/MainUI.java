@@ -16,6 +16,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.MaidSystem;
+import org.ripple.power.helper.Paramaters;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -32,11 +34,11 @@ public class MainUI {
 			System.setProperty("jsse.enableSNIExtension", "false");
 		} catch (SecurityException se) {
 		}
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JFrame.setDefaultLookAndFeelDecorated(true);
+				//	JFrame.setDefaultLookAndFeelDecorated(true);
 					MainUI window = new MainUI();
 					window.form.setVisible(true);
 				} catch (Exception e) {
@@ -54,6 +56,7 @@ public class MainUI {
 		UIConfig.loadConfig();
 
 		form = new MainForm();
+        Paramaters.format(form);
 		form.pack();
 		SwingUtils.centerOnScreen(form);
 
@@ -64,27 +67,23 @@ public class MainUI {
 		scrollPane.setBorder(null);
 		form.getContentPane().add(scrollPane, "cell 0 0");
 
-		// Create the main panel and put to scroll pane.
 		JPanel mainPanel = new JPanel();
 		scrollPane.setViewportView(mainPanel);
 		mainPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]",
 				"[70][fill]"));
 
-		// Create the navigation panel.
 		JPanel navigationPanel = new JPanel();
 		navigationPanel.setBackground(Color.WHITE);
 		navigationPanel.setLayout(new MigLayout("gap 0, insets 0",
 				"[10%][80%][]", "[100%]"));
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
 
-		// Create the content panel.
 		JPanel emptyPanel = new JPanel();
 		emptyPanel.setLayout(new MigLayout("gap 0, ins 0", "[100%]", "[fill]"));
 		mainPanel.add(emptyPanel, "cell 0 1 1 1, grow");
 
 		WelcomePanel welcomePanel = new WelcomePanel();
 
-		//Default font.
 		Font navLinkFont = new Font("Arial", Font.BOLD, 14);
 		List<JComponent> navLinkList = new ArrayList<JComponent>();
 
@@ -96,8 +95,6 @@ public class MainUI {
 		navbar.setFont(new Font("Arial", Font.BOLD, 16));
 		navbar.setBackground(Color.WHITE);
 
-	
-		//hello world
 		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel, welcomePanel);
 		welcomeLink.setForeground(UIConfig.getBrandColor());
 		welcomeLink.setFont(navLinkFont);
@@ -144,6 +141,8 @@ public class MainUI {
 		});
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
+		
+		new MaidSystem();
 	}
 
 }
