@@ -15,7 +15,7 @@ import com.ripple.core.coretypes.AccountID;
 public class RPClient {
 
 	//测试状态不实际联网
-	public static boolean testing = true;
+	public static boolean testing = false;
 
 	private static RPClient RippleClient = null;
 
@@ -109,37 +109,6 @@ public class RPClient {
 
 	public Client getClinet() {
 		return pClinet;
-	}
-
-	public static void main(String[] args) {
-		final RPClient client = new RPClient();
-		Request req = client.getClinet().newRequest(Command.account_info);
-		req.json("account", "rP1coskQzayaQ9geMdJgAV5f3tNZcHghzt");
-
-		req.once(Request.OnSuccess.class, new Request.OnSuccess() {
-
-			@Override
-			public void called(Response response) {
-				JSONObject arrays = response.result;
-
-				System.out.println(response.status);
-				JSONObject result = (JSONObject) arrays.get("account_data");
-
-				System.out.println(result.get("Account") + ","
-						+ (double) (result.getDouble("Balance") / 1000000));
-			}
-
-		});
-		req.once(Request.OnError.class, new Request.OnError() {
-
-			@Override
-			public void called(Response response) {
-				System.out.println(response.status);
-
-			}
-
-		});
-		req.request();
 	}
 
 }

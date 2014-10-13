@@ -33,6 +33,8 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
+import org.ripple.power.helper.Paramaters;
+import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.BigDecimalUtil;
 import org.ripple.power.utils.MathUtils;
@@ -131,9 +133,9 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24,
 				LSystem.background);
-		
+
 		RPButton btn = new RPButton("捐助", iconStar);
-		btn.setActionCommand("捐助");
+		btn.setActionCommand(CommandFlag.Donation);
 		btn.setFont(font);
 		btn.addActionListener(this);
 
@@ -141,12 +143,12 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn2.setActionCommand("P2P通讯");
 		btn2.setFont(font);
 		btn2.addActionListener(this);
-		
+
 		RPButton btn3 = new RPButton("查看汇率", iconSearch);
 		btn3.setActionCommand("查看汇率");
 		btn3.setFont(font);
 		btn3.addActionListener(this);
-		
+
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(statusPane);
 		statusPane.setLayout(layout);
 		layout.setHorizontalGroup(layout
@@ -161,7 +163,8 @@ public class MainPanel extends JPanel implements ActionListener {
 								.addComponent(btn)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(btn2).addGap(40, 40, 40).addComponent(btn3).addGap(40, 40, 40)));
+								.addComponent(btn2).addGap(40, 40, 40)
+								.addComponent(btn3).addGap(40, 40, 40)));
 		layout.setVerticalGroup(layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(
@@ -173,8 +176,8 @@ public class MainPanel extends JPanel implements ActionListener {
 												.addComponent(walletLabel)
 												.addComponent(btn)
 												.addComponent(btn2)
-                                                .addComponent(btn3)
-								).addGap(8, 8, 8)));
+												.addComponent(btn3))
+								.addGap(8, 8, 8)));
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(LSystem.background);
@@ -189,7 +192,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				callAddAddress();
 			}
 		});
-		button.setActionCommand("增加地址");
+		button.setActionCommand(CommandFlag.AddAddress);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -255,11 +258,28 @@ public class MainPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		try {
 			int row = table.getSelectedRow();
-			if (row < 0 && !ae.getActionCommand().equals("增加地址")) {
-				JOptionPane.showMessageDialog(this, "您没有选择任何地址,所以当前命令无法操作.",
-						"无法执行", JOptionPane.WARNING_MESSAGE);
-			} else if (ae.getActionCommand().equals("增加地址")) {
-
+			if (row < 0
+					&& !ae.getActionCommand().equals(CommandFlag.AddAddress)) {
+				if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
+							"cping", "Thank you donate to LGame", 100);
+				} else {
+					JOptionPane.showMessageDialog(this,
+							"您没有选择任何地址,所以当前命令无法操作.", "无法执行",
+							JOptionPane.WARNING_MESSAGE);
+				}
+			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+				row = table.convertRowIndexToModel(row);
+				WalletItem item = WalletCache.get().readRow(row);
+				BigDecimal number = new BigDecimal(item.getAmount());
+				if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
+					RPMessage.showWarningMessage(this, "交易失败",
+							"非常抱歉,该地址金额较少,暂时不适合向他人捐款-_-");
+				} else {
+				RPXRPSendDialog.showDialog(item.getPublicKey()
+						+ " XRP Send", LSystem.applicationMain,item,"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp","10",
+						"0.01");
+				}
 			} else {
 				row = table.convertRowIndexToModel(row);
 
@@ -281,7 +301,9 @@ public class MainPanel extends JPanel implements ActionListener {
 							RPMessage.showWarningMessage(this, "交易失败",
 									"非常抱歉,该地址目前能查询到的XRP总量为0,暂时无法发送XRP.");
 						} else {
-
+							RPXRPSendDialog.showDialog(item.getPublicKey()
+									+ " XRP Send", LSystem.applicationMain,
+									item);
 						}
 						break;
 

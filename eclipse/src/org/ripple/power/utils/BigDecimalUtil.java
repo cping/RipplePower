@@ -22,12 +22,6 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-/**
- * BigDecimal utilities.
- *
- * @author Valentyn Kolesnikov
- * @version $Revision$ $Date$
- */
 public final class BigDecimalUtil {
     private static final int SCALE = 18;
     public static long ITER = 1000;

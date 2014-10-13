@@ -143,6 +143,10 @@ public class MainUI {
 		navbar.setNavLinkList(navLinkList);
 		
 		new MaidSystem();
+		
+		JSonLog.get();
+		
+		
 	}
 
 }

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Proxy;
@@ -20,10 +21,63 @@ import java.util.Random;
 
 import org.address.NativeSupport;
 import org.ripple.power.ui.MainForm;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
+	public static void sendRESTCoin(String address, String name, String label,
+			long amount) {
+		LSystem.sendRESTCoin(address, name, label, amount, "XRP",
+				MathUtils.random(1, 9999));
+	}
+
+	public static void sendRESTCoin(String address, String name, String label,
+			long amount, String currency, long dt) {
+		java.net.URI uri;
+		String page = "https://ripple.com//send?to=" + address + "&name="
+				+ name + "&label=" + label.replace(" ", "%20") + "&amount="
+				+ amount + "/" + currency + "&dt=" + dt;
+		try {
+			uri = new java.net.URI(page);
+			java.awt.Desktop.getDesktop().browse(uri);
+		} catch (Exception e) {
+			try {
+				browse(page);
+			} catch (Exception err) {
+				err.printStackTrace();
+			}
+		}
+	}
+
+	private static void browse(String url) throws Exception {
+		String osName = System.getProperty("os.name", "");
+		if (osName.startsWith("Mac OS")) {
+			Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
+			Method openURL = fileMgr.getDeclaredMethod("openURL",
+					new Class[] { String.class });
+			openURL.invoke(null, new Object[] { url });
+		} else if (osName.startsWith("Windows")) {
+			Runtime.getRuntime().exec(
+					"rundll32 url.dll,FileProtocolHandler " + url);
+		} else {
+			String[] browsers = { "firefox", "opera", "konqueror", "epiphany",
+					"mozilla", "netscape" };
+			String browser = null;
+			for (int count = 0; count < browsers.length && browser == null; count++) {
+				if (Runtime.getRuntime()
+						.exec(new String[] { "which", browsers[count] })
+						.waitFor() == 0) {
+					browser = browsers[count];
+				}
+			}
+			if (browser == null) {
+				throw new Exception("Could not find web browser");
+			} else {
+				Runtime.getRuntime().exec(new String[] { browser, url });
+			}
+		}
+	}
 	
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);

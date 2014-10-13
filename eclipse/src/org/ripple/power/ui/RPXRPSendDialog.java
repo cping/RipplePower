@@ -4,192 +4,195 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.util.Dictionary;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.PaymentSend;
+import org.ripple.power.txns.Rollback;
+import org.ripple.power.utils.BigDecimalUtil;
+import org.ripple.power.utils.MathUtils;
+import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPXRPSendDialog  extends JDialog implements ActionListener {
+public class RPXRPSendDialog extends JDialog implements ActionListener {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	// Variables declaration - do not modify
+	private RPCButton jButton1;
+	private RPCButton jButton2;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JLabel jLabel2;
+	private javax.swing.JLabel jLabel3;
+	private javax.swing.JSeparator jSeparator1;
+	private RPTextBox jTextField1;
+	private RPTextBox jTextField2;
+	private RPTextBox jTextField3;
 
-	private final JComboBox<Object> addressField;
+	// End of variables declaration
 
-    private final JTextField amountField;
+	public static void showDialog(String name, JFrame parent, WalletItem item) {
+		try {
+			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
+					"", "1", "0.01");
+			dialog.pack();
+			dialog.setLocationRelativeTo(parent);
+			dialog.setVisible(true);
+		} catch (Exception exc) {
+			exc.printStackTrace();
 
-    private final JTextField feeField;
+		}
+	}
 
-    public RPXRPSendDialog(JFrame parent,WalletItem item) {
-        super(parent, "Send Coins", Dialog.ModalityType.DOCUMENT_MODAL);
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        if (LSystem.send_addresses.isEmpty()) {
-            addressField = new JComboBox<>();
-        } else {
-            String[] addrList = new String[LSystem.send_addresses.size()];
-            int index = 0;
-            for (String addr : LSystem.send_addresses){
-                addrList[index++] = addr;
-            }
-            addressField = new JComboBox<Object>(addrList);
-        }
-        addressField.setEditable(true);
-        addressField.setSelectedIndex(-1);
-        addressField.setPreferredSize(new Dimension(340, 25));
-        JPanel addressPane = new JPanel();
-        addressPane.add(new JLabel("Address  ", JLabel.RIGHT));
-        addressPane.add(addressField);
+	public static void showDialog(String name, JFrame parent, WalletItem item,
+			String address, String amount, String fee) {
+		try {
+			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
+					address, amount, fee);
+			dialog.pack();
+			dialog.setLocationRelativeTo(parent);
+			dialog.setVisible(true);
+		} catch (Exception exc) {
+			exc.printStackTrace();
 
-        amountField = new JTextField("", 15);
-        JPanel amountPane = new JPanel();
-        amountPane.add(new JLabel("Amount  ", JLabel.RIGHT));
-        amountPane.add(amountField);
+		}
+	}
 
-        feeField = new JTextField("0.0001", 10);
-        JPanel feePane = new JPanel();
-        feePane.add(new JLabel("Fee  ", JLabel.RIGHT));
-        feePane.add(feeField);
-   
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
+	public RPXRPSendDialog(String text, JFrame parent, final WalletItem item,
+			String address, String amount, String fee) {
+		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 
-        JButton button = new JButton("Send");
-        button.setActionCommand("send");
-        button.addActionListener(this);
-        buttonPane.add(button);
+		jLabel1 = new javax.swing.JLabel();
+		jLabel2 = new javax.swing.JLabel();
+		jLabel3 = new javax.swing.JLabel();
+		jTextField1 = new RPTextBox();
+		jTextField2 = new RPTextBox();
+		jTextField3 = new RPTextBox();
+		jSeparator1 = new javax.swing.JSeparator();
+		jButton1 = new RPCButton();
+		jButton2 = new RPCButton();
 
-        buttonPane.add(Box.createHorizontalStrut(10));
+		setResizable(false);
+		Dimension dim = new Dimension(395, 230);
+		setPreferredSize(dim);
+		setSize(dim);
 
-        button = new JButton("Done");
-        button.setActionCommand("done");
-        button.addActionListener(this);
-        buttonPane.add(button);
+		getContentPane().setLayout(null);
 
-        JPanel contentPane = new JPanel();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        contentPane.setOpaque(true);
-        contentPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        contentPane.add(addressPane);
-        contentPane.add(Box.createVerticalStrut(15));
-        contentPane.add(amountPane);
-        contentPane.add(Box.createVerticalStrut(15));
-        contentPane.add(feePane);
-        contentPane.add(Box.createVerticalStrut(15));
-        contentPane.add(buttonPane);
-        setContentPane(contentPane);
-    }
+		jLabel1.setText("Fee");
+		getContentPane().add(jLabel1);
+		jLabel1.setBounds(10, 93, 54, 24);
 
-    public static void showDialog(JFrame parent,WalletItem item) {
-        try {
-            JDialog dialog = new RPXRPSendDialog(parent,item);
-            dialog.pack();
-            dialog.setLocationRelativeTo(parent);
-            dialog.setVisible(true);
-        } catch (Exception exc) {
-           // Main.logException("Exception while displaying dialog", exc);
-        }
-    }
+		jLabel2.setText("Address");
+		getContentPane().add(jLabel2);
+		jLabel2.setBounds(10, 22, 54, 15);
 
+		jLabel3.setText("Amount");
+		getContentPane().add(jLabel3);
+		jLabel3.setBounds(10, 55, 54, 24);
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        try {
-            String action = ae.getActionCommand();
-            switch (action) {
-                case "send":
-                    if (checkFields()) {
-                        String confirmText = String.format("Do you want to send %s BTC?",
-                                                         "");
-                        if (JOptionPane.showConfirmDialog(this, confirmText, "Send Coins", JOptionPane.YES_NO_OPTION,
-                                                          JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                            sendCoins();
-                    }
-                    break;
-                case "done":
-                    setVisible(false);
-                    dispose();
-                    break;
-            }
-        } catch (Exception exc) {
-            JOptionPane.showMessageDialog(this, "Invalid numeric value entered", "Error",
-                                          JOptionPane.ERROR_MESSAGE);
-        } 
-    }
+		jTextField1.setText(address);
+		getContentPane().add(jTextField1);
+		jTextField1.setBounds(82, 19, 297, 21);
 
-    /**
-     * Verify the fields
-     *
-     * @return                                  TRUE if the fields are valid
-     * @throws      AddressFormatException      Send address is not valid
-     * @throws      NumberFormatException       Invalid numeric value entered
-     */
-    private boolean checkFields() {
-        //
-        // Get the send address
-        //
-        String sendString = (String)addressField.getSelectedItem();
-        if (sendString == null) {
-            JOptionPane.showMessageDialog(this, "You must enter a send address", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        int index = addressField.getSelectedIndex();
-        if (index < 0){
-       //     sendAddress = new Address(sendString);
-        }
-        else{
-       //     sendAddress = Parameters.addresses.get(index);
-        }
-        //
-        // Get the send amount
-        //
-        String amountString = amountField.getText();
-        if (amountString.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter the amount to send", "Error",
-                                          JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        /*sendAmount = Main.stringToSatoshi(amountString);
-        if (sendAmount.compareTo(Parameters.DUST_TRANSACTION) < 0) {
-            JOptionPane.showMessageDialog(this, String.format("The minimum amount you can send is %s BTC",
-                                                              Main.satoshiToString(Parameters.DUST_TRANSACTION)),
-                                                              "ERROR", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }*/
-        //
-        // Get the fee amount
-        //
-        String feeString = feeField.getText();
-        if (feeString.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter a transaction fee", "Enter",
-                                          JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    /*    sendFee = Main.stringToSatoshi(feeString);
-        if (sendFee.compareTo(Parameters.MIN_TX_FEE) < 0) {
-            JOptionPane.showMessageDialog(this, String.format("The minimun transaction fee is %s BTC",
-                                                              Main.satoshiToString(Parameters.MIN_TX_FEE)),
-                                                              "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }*/
-        return true;
-    }
+		jTextField2.setText(amount);
+		getContentPane().add(jTextField2);
+		jTextField2.setBounds(82, 57, 152, 21);
 
-    private void sendCoins()  {
-    	
-    }
+		jTextField3.setText(fee);
+		getContentPane().add(jTextField3);
+		jTextField3.setBounds(82, 95, 99, 21);
+		getContentPane().add(jSeparator1);
+		jSeparator1.setBounds(0, 135, 389, 18);
+
+		jButton1.setText("Send");
+		jButton1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+				try {
+					String address = jTextField1.getText().trim();
+					String amountValue = jTextField2.getText().trim();
+
+					String feeValue = jTextField3.getText().trim();
+
+					if (!address.startsWith("r") || address.length() < 31) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", "无效的Ripple地址!");
+						return;
+					}
+					if (!MathUtils.isNan(amountValue)) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", "无效的发币数量!");
+						return;
+					}
+					if (!MathUtils.isNan(feeValue)) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", "无效的手续费数量!");
+						return;
+					}
+
+					BigDecimal number = new BigDecimal(amountValue);
+
+					BigDecimal maxSend = new BigDecimal(item.getAmount());
+
+					if (number.longValue() >= (maxSend.longValue() - 20)) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", "资金不足,无法发送.");
+						return;
+					}
+
+					PaymentSend send = new PaymentSend();
+
+					send.makePayment(item.getPublicKey(), item.getPrivateKey(),
+							address, amountValue, feeValue, new Rollback() {
+
+								@Override
+								public void success(JSONObject res) {
+									JSonLog.get().println(res.toString());
+									WalletCache.get().reset();
+									RPMessage.showInfoMessage(LSystem.applicationMain,
+											"Info", "发送完毕.");
+								}
+
+								@Override
+								public void error(JSONObject res) {
+									JSonLog.get().println(res.toString());
+
+								}
+							});
+
+				
+				} catch (Throwable ex) {
+					ex.printStackTrace();
+				}
+
+			}
+		});
+		getContentPane().add(jButton1);
+		jButton1.setBounds(187, 159, 100, 23);
+
+		jButton2.setText("Exit");
+		jButton2.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+			}
+		});
+		getContentPane().add(jButton2);
+		jButton2.setBounds(312, 159, 57, 23);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
+	}
 
 }
