@@ -280,11 +280,12 @@ public class MainPanel extends JPanel implements ActionListener {
 						+ " XRP Send", LSystem.applicationMain,item,"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp","10",
 						"0.01");
 				}
-			} else {
+			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {}else {
+				
 				row = table.convertRowIndexToModel(row);
 
 				WalletItem item = WalletCache.get().readRow(row);
-
+				
 				String action = ae.getActionCommand();
 				switch (action) {
 				case "sendcoin":

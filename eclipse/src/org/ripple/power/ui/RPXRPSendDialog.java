@@ -116,6 +116,9 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		jButton1.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
+				final WaitDialog dialog = WaitDialog
+						.showDialog(RPXRPSendDialog.this);
+
 				try {
 					String address = jTextField1.getText().trim();
 					String amountValue = jTextField2.getText().trim();
@@ -157,18 +160,19 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 								public void success(JSONObject res) {
 									JSonLog.get().println(res.toString());
 									WalletCache.get().reset();
-									RPMessage.showInfoMessage(LSystem.applicationMain,
-											"Info", "发送完毕.");
+									RPMessage.showInfoMessage(
+											LSystem.applicationMain, "Info",
+											"发送完毕.");
+									dialog.closeDialog();
 								}
 
 								@Override
 								public void error(JSONObject res) {
 									JSonLog.get().println(res.toString());
-
+									dialog.closeDialog();
 								}
 							});
 
-				
 				} catch (Throwable ex) {
 					ex.printStackTrace();
 				}
@@ -191,8 +195,8 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
+		setVisible(false);
+		dispose();
 	}
 
 }

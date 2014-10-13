@@ -1,10 +1,8 @@
 package org.ripple.power.helper;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.ripple.power.utils.GraphicsUtils;
 
@@ -82,6 +80,7 @@ public class MaidSystem extends JDialog {
 		}
 		g.setColor(Color.white);
 		g.setFont(deffont);
+		GraphicsUtils.setAntialiasAll(g, true);
 		String MessageArray[] = changeArray(NowSerif.Message, 23, fwidth);
 		for (int i = 0; i < MessageArray.length; i++) {
 			g.drawString(
@@ -91,6 +90,7 @@ public class MaidSystem extends JDialog {
 					(int) Math.round((double) fy + 0.29999999999999999D
 							* (double) (i + 1) * (double) fheight));
 		}
+		GraphicsUtils.setAntialiasAll(g, false);
 	}
 
 	private String[] changeArray(String str, int f, int w) {
