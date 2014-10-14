@@ -210,7 +210,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
 				LSystem.background);
 		button = new RPButton("发送货币", iconRoad);
-		button.setActionCommand("sendcoin");
+		button.setActionCommand(CommandFlag.SendCoin);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -230,7 +230,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		button = new RPButton("地址明细", iconTable);
 		button.setFont(font);
-		button.setActionCommand("地址明细");
+		button.setActionCommand(CommandFlag.DetailsAddress);
 		button.addActionListener(this);
 		buttonPane.add(button);
 
@@ -250,10 +250,6 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	}
 
-	private void sendXRP(String srcAddress) {
-
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		try {
@@ -263,9 +259,12 @@ public class MainPanel extends JPanel implements ActionListener {
 				if (ae.getActionCommand().equals(CommandFlag.Donation)) {
 					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
 							"cping", "Thank you donate to LGame", 100);
-				} else {
+				}if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
+					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
+							"地址明细查询", "");
+				}else {
 					JOptionPane.showMessageDialog(this,
-							"您没有选择任何地址,所以当前命令无法操作.", "无法执行",
+							"您没有选择任何地址,所以当前命令无法操作.", "Warning",
 							JOptionPane.WARNING_MESSAGE);
 				}
 			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
@@ -276,19 +275,21 @@ public class MainPanel extends JPanel implements ActionListener {
 					RPMessage.showWarningMessage(this, "交易失败",
 							"非常抱歉,该地址金额较少,暂时不适合向他人捐款-_-");
 				} else {
-				RPXRPSendDialog.showDialog(item.getPublicKey()
-						+ " XRP Send", LSystem.applicationMain,item,"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp","10",
-						"0.01");
+					RPXRPSendDialog.showDialog(item.getPublicKey()
+							+ " XRP Send", LSystem.applicationMain, item,
+							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10", "0.01");
 				}
-			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {}else {
-				
+			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {
+
+			}  else {
+
 				row = table.convertRowIndexToModel(row);
 
 				WalletItem item = WalletCache.get().readRow(row);
-				
+
 				String action = ae.getActionCommand();
 				switch (action) {
-				case "sendcoin":
+				case CommandFlag.SendCoin:
 					int result = JOptionPane.showOptionDialog(this,
 							"请选择要发送的货币种类.", "币种选择",
 							JOptionPane.YES_NO_CANCEL_OPTION,
@@ -376,6 +377,10 @@ public class MainPanel extends JPanel implements ActionListener {
 							dialog.setVisible(true);
 						}
 					}
+					break;
+				case CommandFlag.DetailsAddress:
+					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
+							"地址明细查询", item.getPublicKey());
 					break;
 				}
 			}

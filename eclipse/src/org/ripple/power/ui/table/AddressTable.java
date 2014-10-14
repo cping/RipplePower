@@ -29,6 +29,7 @@ public final class AddressTable extends JTable {
 
 	public static final int ADDRESS = 6;
 
+	public static final int CUR = 7;
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
@@ -81,7 +82,10 @@ public final class AddressTable extends JTable {
 			case ADDRESS: // 地址长度(max length 34)
 				value = "0123456789AbCdEfGhIjKlMnOpQrStUvWx";
 				break;
-
+			case CUR: // 地址长度(max length 34)
+				column.setCellRenderer(new StringRenderer(JLabel.CENTER));
+				value = "XRP";
+				break;
 			default:
 				throw new IllegalArgumentException("Unsupported column type "
 						+ columnTypes[i]);

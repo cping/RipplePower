@@ -14,6 +14,7 @@ public class JConsole extends JScrollPane {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	private OutputStream fromConsoleStream;
 	private InputStream in;
 	private PrintStream out, err;
@@ -34,7 +35,7 @@ public class JConsole extends JScrollPane {
 
 	private String currentCommand;
 
-	private JTextPane text;
+	private MyJTextPane text;
 
 	private JPopupMenu contextMenu;
 	private final static String CMD_CUT = "Cut";
@@ -95,24 +96,13 @@ public class JConsole extends JScrollPane {
 		requestFocus();
 	}
 
-	public void setInAttributes(AttributeSet aAttribs) {
-		setStyle(aAttribs, true);
-	}
-
 	public void setOutAttributes(AttributeSet aAttribs) {
 		attrOut = aAttribs;
 		if (outPump != null) {
 			outPump.setAttr(aAttribs);
 		}
 	}
-
-	/**
-	 * Set the attributes that will be used for the error stream to the console,
-	 * the error output.
-	 * 
-	 * @param aAttribs
-	 *            Text attributes.
-	 */
+	
 	public void setErrAttributes(AttributeSet aAttribs) {
 		attrError = aAttribs;
 		if (errPump != null) {
@@ -120,11 +110,6 @@ public class JConsole extends JScrollPane {
 		}
 	}
 
-	/**
-	 * Get the input stream containing the text the user enters in the console.
-	 * 
-	 * @return An input stream from which the user commands can be read.
-	 */
 	public InputStream getInputStream() {
 		return in;
 	}
@@ -328,24 +313,14 @@ public class JConsole extends JScrollPane {
 	public void print(final Object aContent, final AttributeSet aAttribs) {
 		invokeAndWait(new Runnable() {
 			public void run() {
-				final AttributeSet lOldAttribs = getStyle();
-				setStyle(aAttribs, true);
+				
 
 				appendConsoleText(String.valueOf(aContent));
 				initCommandPos();
 				text.setCaretPosition(commandPos);
 
-				setStyle(lOldAttribs, true);
 			}
 		});
-	}
-
-	private void setStyle(AttributeSet lAttribs, boolean lOverWrite) {
-		text.setCharacterAttributes(lAttribs, lOverWrite);
-	}
-
-	private AttributeSet getStyle() {
-		return text.getCharacterAttributes();
 	}
 
 	public void setFont(Font aFont) {
@@ -525,7 +500,7 @@ public class JConsole extends JScrollPane {
 		}
 	}
 
-	private class MyJTextPane extends JTextPane {
+	private class MyJTextPane extends RPTextArea {
 		/**
 		 * 
 		 */
@@ -536,19 +511,11 @@ public class JConsole extends JScrollPane {
 			setCaretColor(Color.WHITE);
 			setBackground(new Color(0, 0, 0));
 			setForeground(Color.WHITE);
+			setLineWrap(true);
+			setColumns(20);
+			setRows(5);
 		}
 
-		public boolean getScrollableTracksViewportWidth() {
-			return false;
-		}
-
-		public void setSize(Dimension d) {
-			if (d.width < getParent().getSize().width) {
-				d.width = getParent().getSize().width;
-			}
-			d.width += 100;
-			super.setSize(d);
-		}
 
 		public void cut() {
 			if (text.getCaretPosition() < commandPos)

@@ -47,14 +47,18 @@ public class PaymentSend {
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 				@Override
 				public void called(Response response) {
-					back.success(response.message);
+					if (back != null) {
+						back.success(response.message);
+					}
 				}
 
 			});
 			req.once(Request.OnError.class, new Request.OnError() {
 				@Override
 				public void called(Response response) {
-					back.error(response.message);
+					if (back != null) {
+						back.error(response.message);
+					}
 				}
 
 			});
