@@ -37,6 +37,16 @@ public class Gateway {
 		return list;
 	}
 
+	public static Gateway getAddress(String name) {
+		ArrayList<Gateway> temps = get();
+		for (Gateway g : temps) {
+			if (g.name.equals(name)) {
+				return g;
+			}
+		}
+		return null;
+	}
+
 	public static Gateway getGateway(String address) {
 		ArrayList<Gateway> temps = get();
 		for (Gateway g : temps) {

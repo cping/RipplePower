@@ -106,20 +106,17 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 		jTextField2.setText(amount);
 		getContentPane().add(jTextField2);
-		jTextField2.setBounds(82, 57, 152, 21);
+		jTextField2.setBounds(82, 57, 297, 21);
 
 		jTextField3.setText(fee);
 		getContentPane().add(jTextField3);
-		jTextField3.setBounds(82, 95, 99, 21);
+		jTextField3.setBounds(82, 95, 152, 21);
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 135, 389, 18);
 
 		jButton1.setText("Send");
 		jButton1.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-				final WaitDialog dialog = WaitDialog
-						.showDialog(RPXRPSendDialog.this);
 
 				try {
 					String address = jTextField1.getText().trim();
@@ -152,6 +149,9 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 								"Error", "资金不足,无法发送.");
 						return;
 					}
+
+					final WaitDialog dialog = WaitDialog
+							.showDialog(RPXRPSendDialog.this);
 
 					PaymentSend send = new PaymentSend();
 
