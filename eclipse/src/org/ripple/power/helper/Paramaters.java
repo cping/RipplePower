@@ -1,8 +1,8 @@
 
 package org.ripple.power.helper;
 
-import java.awt.Container;
 import java.awt.Frame;
+import java.awt.Image;
 
 import org.ripple.power.utils.GraphicsUtils;
 
@@ -10,7 +10,7 @@ import org.ripple.power.utils.GraphicsUtils;
 public class Paramaters
 {
 
-    public static final int Width_MaidSystem = 890;
+    public static final int Width_MaidSystem = 886;
     public static final int Height_MaidSystem = 180;
     public static final int defaultFrameSize = 0;
     public static int frameTop = 0;
@@ -30,7 +30,9 @@ public class Paramaters
     {
     	_container = f;
         Image_BOX = new ImageSet();
-        Image_BOX.SplitWindow(GraphicsUtils.loadBufferedImage("icons/win.png"));
+        Image image =  GraphicsUtils.loadImage("icons/win.png");
+        image = GraphicsUtils.transparencyBlackColor(image);
+        Image_BOX.SplitWindow(GraphicsUtils.getBufferImage(image));
      
     }
 

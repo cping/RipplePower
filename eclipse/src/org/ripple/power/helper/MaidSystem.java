@@ -1,9 +1,11 @@
 package org.ripple.power.helper;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JDialog;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class MaidSystem extends JDialog {
@@ -14,25 +16,38 @@ public class MaidSystem extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private Image offscreenImg;
-	private GraphicTool Tools;
 
 	Image[] faceImage;
 	private Message NowSerif;
+	int fx = 126;
+	int fy = 25;
+	int fwidth = 756;
+	int fheight = 150;
+	BufferedImage _backimage;
+	BufferedImage _faceimage;
 
 	public MaidSystem() {
 		super(Paramaters.getContainer(), "Ripple助手", false);
 		faceImage = GraphicsUtils.getSplitImages("icons/face.png", 96, 96);
+		GraphicTool tools = new GraphicTool();
+		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
+				LSystem.background, true);
+		_faceimage = tools.getTable(faceImage[0].getWidth(null),
+				faceImage[0].getHeight(null));
 		NowSerif = new Message(0, 0, "Hello,Ripple World!");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		setLocation((screenSize.width-Paramaters.Width_MaidSystem)/2, (int)screenSize.getHeight() - Paramaters.Height_MaidSystem - 100);
-		setPreferredSize(new Dimension(Paramaters.Width_MaidSystem, Paramaters.Height_MaidSystem));
+		setLocation((screenSize.width - Paramaters.Width_MaidSystem) / 2,
+				(int) screenSize.getHeight() - Paramaters.Height_MaidSystem
+						- 100);
+		setPreferredSize(new Dimension(Paramaters.Width_MaidSystem,
+				Paramaters.Height_MaidSystem));
 		setResizable(false);
-		Tools = new GraphicTool();
+
 		setBackground(Color.black);
 		pack();
 		setVisible(true);
-	
+
 	}
 
 	public void update(Graphics g) {
@@ -54,11 +69,8 @@ public class MaidSystem extends JDialog {
 
 	public void drawFace(Graphics g, int x, int y) {
 		if (faceImage[0] != null) {
-			g.drawImage(faceImage[0], x, y, null);
-			if (Tools != null) {
-				Tools.drawFrame(g, null, x, y, faceImage[0].getWidth(null),
-						faceImage[0].getHeight(null));
-			}
+			g.drawImage(faceImage[0], x, y, this);
+			g.drawImage(_faceimage, x, y, this);
 		}
 	}
 
@@ -68,16 +80,9 @@ public class MaidSystem extends JDialog {
 		if (NowSerif == null) {
 			return;
 		}
+		drawFace(g, 18, 50);
 
-		int fx = (int) Math.round(126.00000000000001D);
-		int fy = (int) Math.round(25D);
-		int fwidth = (int) Math.round(756D);
-		int fheight = (int) Math.round(150D);
-
-		drawFace(g, (int) Math.round(18D), (int) Math.round(50D));
-		if(Tools!=null){
-		Tools.drawFrame(g, this, fx, fy, fwidth, fheight);
-		}
+		g.drawImage(_backimage, fx, fy, this);
 		g.setColor(Color.white);
 		g.setFont(deffont);
 		GraphicsUtils.setAntialiasAll(g, true);

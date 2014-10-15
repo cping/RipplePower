@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -116,6 +117,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		tablePane.add(Box.createGlue());
 		tablePane.add(scrollPane);
 		tablePane.add(Box.createGlue());
+
 		//
 		// Create the status pane containing the Wallet balance and Safe balance
 		//
@@ -201,7 +203,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
 				LSystem.background);
 		button = new RPButton("网关操作", iconEye);
-		button.setActionCommand("网关操作");
+		button.setActionCommand(CommandFlag.Gateway);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -219,7 +221,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
 				LSystem.background);
 		button = new RPButton("参与交易", iconTag);
-		button.setActionCommand("参与交易");
+		button.setActionCommand(CommandFlag.Exchange);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -258,14 +260,28 @@ public class MainPanel extends JPanel implements ActionListener {
 					&& !ae.getActionCommand().equals(CommandFlag.AddAddress)) {
 				if (ae.getActionCommand().equals(CommandFlag.Donation)) {
 					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
-							"cping", "Thank you donate to LGame", 100);
-				}if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
+							"cping", "Thank you donate to RipplePower", 100);
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
 							"地址明细查询", "");
-				}else {
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.Gateway)) {
+					RPGatewayDialog.showDialog("网关操作(work in progress)",
+							LSystem.applicationMain, null);
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.Exchange)) {
+					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+							LSystem.applicationMain, null);
+					return;
+				} else {
 					JOptionPane.showMessageDialog(this,
 							"您没有选择任何地址,所以当前命令无法操作.", "Warning",
 							JOptionPane.WARNING_MESSAGE);
+					return;
 				}
 			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
 				row = table.convertRowIndexToModel(row);
@@ -281,7 +297,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				}
 			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {
 
-			}  else {
+			} else {
 
 				row = table.convertRowIndexToModel(row);
 
@@ -333,6 +349,14 @@ public class MainPanel extends JPanel implements ActionListener {
 						walletLabel.setText(getWalletText(WalletCache.get()
 								.getAmounts(), "none"));
 					}
+					break;
+				case CommandFlag.Exchange:
+					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+							LSystem.applicationMain, null);
+					break;
+				case CommandFlag.Gateway:
+					RPGatewayDialog.showDialog("网关操作(work in progress)",
+							LSystem.applicationMain, null);
 					break;
 				case "显示私钥":
 					int index = RPMessage.showConfirmMessage(

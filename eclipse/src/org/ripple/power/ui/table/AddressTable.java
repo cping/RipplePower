@@ -1,16 +1,18 @@
 package org.ripple.power.ui.table;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-public final class AddressTable extends JTable {
+public final class AddressTable extends ColorTable {
 
 	/**
 		 * 
@@ -33,6 +35,11 @@ public final class AddressTable extends JTable {
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
+
+			JTableHeader header = getTableHeader();
+			
+			header.setBackground(new Color(70, 70, 70));
+			header.setForeground(Color.WHITE);
 
 		Component component;
 		TableCellRenderer renderer;

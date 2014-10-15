@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +25,7 @@ public class RPPasswordDialog extends JDialog implements ActionListener {
 	private boolean passwordEntered = false;
 
 	public RPPasswordDialog(JFrame owner) {
-		super(owner, "请输入钱包文件密码", true);
+		super(owner, "Please enter the wallet file password", true);
 		setLayout(new FlowLayout());
 		setSize(490, 66);
 		setResizable(false);
@@ -34,15 +35,17 @@ public class RPPasswordDialog extends JDialog implements ActionListener {
 
 	private void initUI() {
 		passwordField = new JPasswordField(30);
-
+		passwordField.setCaretColor(Color.WHITE);
+		passwordField.setBackground(new Color(70, 70, 70));
+		passwordField.setForeground(Color.WHITE);
 		add(passwordField, BorderLayout.CENTER);
 		passwordField.addActionListener(this);
 
-		okButton = new JButton("确定");
+		okButton = new JButton("OK");
 		okButton.addActionListener(this);
 		add(okButton, BorderLayout.CENTER);
 
-		cancelButton = new JButton("取消");
+		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(this);
 		add(cancelButton, BorderLayout.CENTER);
 	}

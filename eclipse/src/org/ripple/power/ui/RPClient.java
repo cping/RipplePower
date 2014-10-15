@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.client.Client;
@@ -117,7 +118,8 @@ public class RPClient {
 			// pClinet.setProxy(LSystem.applicationProxy);
 		}
 		if (!testing) {
-			pClinet.connect(LSystem.applicationRippled);
+			pClinet.connect(LSystem.applicationRipples[MathUtils.random(0,
+					LSystem.applicationRipples.length - 1)]);
 		}
 	}
 

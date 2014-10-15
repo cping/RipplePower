@@ -1755,7 +1755,7 @@ final public class GraphicsUtils {
 		int pixels[] = (int[]) pg.getPixels();
 		int length = pixels.length;
 		for (int i = 0; i < length; i++) {
-			if (pixels[i] <= -11500000) {
+			if (pixels[i] == 0) {
 				pixels[i] = 0xffffff;
 			}
 		}

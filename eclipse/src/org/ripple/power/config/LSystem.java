@@ -78,7 +78,7 @@ public final class LSystem {
 			}
 		}
 	}
-	
+
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
 
@@ -111,7 +111,9 @@ public final class LSystem {
 
 	public static Proxy applicationProxy = null;
 
-	public static String applicationRippled = "wss://s1.ripple.com";
+	public static String[] applicationRipples = new String[] {
+			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
+			"wss://s-east.ripple.com:443" };
 
 	public static MainForm applicationMain = null;
 

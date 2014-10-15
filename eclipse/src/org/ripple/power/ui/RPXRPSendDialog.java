@@ -1,5 +1,6 @@
 package org.ripple.power.ui;
 
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -28,9 +29,9 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	// Variables declaration - do not modify
 	private RPCButton jButton1;
 	private RPCButton jButton2;
-	private javax.swing.JLabel jLabel1;
-	private javax.swing.JLabel jLabel2;
-	private javax.swing.JLabel jLabel3;
+	private RPLabel jLabel1;
+	private RPLabel jLabel2;
+	private RPLabel jLabel3;
 	private javax.swing.JSeparator jSeparator1;
 	private RPTextBox jTextField1;
 	private RPTextBox jTextField2;
@@ -69,9 +70,10 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 			String address, String amount, String fee) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 
-		jLabel1 = new javax.swing.JLabel();
-		jLabel2 = new javax.swing.JLabel();
-		jLabel3 = new javax.swing.JLabel();
+		getContentPane().setBackground(new Color(36, 36, 36));
+		jLabel1 = new RPLabel();
+		jLabel2 = new RPLabel();
+		jLabel3 = new RPLabel();
 		jTextField1 = new RPTextBox();
 		jTextField2 = new RPTextBox();
 		jTextField3 = new RPTextBox();

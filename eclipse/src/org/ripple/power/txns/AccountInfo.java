@@ -5,8 +5,10 @@ import java.util.HashMap;
 
 public class AccountInfo {
 
-	public int count;
-	
+	public long marker = 0;
+
+	public int count = 0;
+
 	public boolean error;
 
 	public String address;
@@ -23,8 +25,12 @@ public class AccountInfo {
 
 	public int txPreLgrSeq = 0;
 
-	public ArrayList<AccountLine> lines = new ArrayList<AccountLine>(100);
-	
+	public ArrayList<AccountInfo> accountlinks = new ArrayList<AccountInfo>(10);
+
+	public ArrayList<AccountLine> lines = new ArrayList<AccountLine>(10);
+
+	public ArrayList<TransactionTx> transactions = new ArrayList<TransactionTx>(
+			100);
 	public ArrayList<BookOffer> bookOffers = new ArrayList<BookOffer>(100);
 	public int cntTrust = 0;
 

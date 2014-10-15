@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -41,15 +42,15 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	private RPCButton jButton3;
 	private RPCButton jButton4;
 
-	private javax.swing.JLabel jLabel1;
-	private javax.swing.JLabel jLabel2;
-	private javax.swing.JLabel jLabel3;
-	private javax.swing.JLabel jLabel4;
-	private javax.swing.JRadioButton pBrainButton;
-	private javax.swing.JRadioButton pPassButton;
-	private javax.swing.JRadioButton pRandButton;
-	private javax.swing.JRadioButton pMyButton;
-	private javax.swing.JRadioButton pPaperButton;
+	private RPLabel jLabel1;
+	private RPLabel jLabel2;
+	private RPLabel jLabel3;
+	private RPLabel jLabel4;
+	private RPRadioButton pBrainButton;
+	private RPRadioButton pPassButton;
+	private RPRadioButton pRandButton;
+	private RPRadioButton pMyButton;
+	private RPRadioButton pPaperButton;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JSeparator jSeparator1;
 
@@ -354,10 +355,10 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	}
 
 	private void initUI() {
-
-		pBrainButton = new javax.swing.JRadioButton();
-		pPassButton = new javax.swing.JRadioButton();
-		pPaperButton = new javax.swing.JRadioButton();
+		getContentPane().setBackground(new Color(36, 36, 36));
+		pBrainButton = new RPRadioButton();
+		pPassButton = new RPRadioButton();
+		pPaperButton = new RPRadioButton();
 		pResetButton = new RPCButton();
 
 		jButton2 = new RPCButton();
@@ -365,17 +366,17 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		jButton4 = new RPCButton();
 		jSeparator1 = new javax.swing.JSeparator();
 
-		jLabel1 = new javax.swing.JLabel();
+		jLabel1 = new RPLabel();
 		passwordText = new RPTextBox();
-		jLabel2 = new javax.swing.JLabel();
+		jLabel2 = new RPLabel();
 		publicAddressText = new RPTextBox();
-		jLabel3 = new javax.swing.JLabel();
+		jLabel3 = new RPLabel();
 		privateAddressText = new RPTextBox();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		shortSayText = new RPTextArea();
-		jLabel4 = new javax.swing.JLabel();
-		pRandButton = new javax.swing.JRadioButton();
-		pMyButton = new javax.swing.JRadioButton();
+		jLabel4 = new RPLabel();
+		pRandButton = new RPRadioButton();
+		pMyButton = new RPRadioButton();
 
 		setLayout(null);
 

@@ -57,6 +57,21 @@ public class IssuedCurrency {
 		return amount.signum() == -1;
 	}
 
+	public String toGatewayString() {
+		if (issuer == null || currency == null) {
+			return amount.movePointLeft(6).stripTrailingZeros().toPlainString()
+					+ " XRP";
+		}
+		Gateway gateway = Gateway.getGateway(issuer.toString());
+		if (gateway == null) {
+			return amount.stripTrailingZeros().toPlainString() + "/" + currency
+					+ "/" + issuer.toString();
+		} else {
+			return amount.stripTrailingZeros().toPlainString() + "/" + currency
+					+ "/" + gateway.name + "(" + issuer.toString() + ")";
+		}
+	}
+
 	@Override
 	public String toString() {
 		if (issuer == null || currency == null) {
