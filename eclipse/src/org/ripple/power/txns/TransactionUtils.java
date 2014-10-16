@@ -1,11 +1,14 @@
 package org.ripple.power.txns;
 
+import java.util.Random;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.address.ripple.RippleObject;
 import org.address.ripple.RippleSeedAddress;
 import org.address.ripple.RippleSerializer;
 import org.address.ripple.RippleSigner;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.ripple.power.ui.RPClient;
 
@@ -16,8 +19,12 @@ import com.ripple.client.responses.Response;
 public class TransactionUtils {
 
 	public final static long getSequence(JSONObject res) {
-		JSONObject obj = res.getJSONObject("result");
-		return obj.getJSONObject("account_data").getLong("Sequence");
+		try {
+			JSONObject obj = res.getJSONObject("result");
+			return obj.getJSONObject("account_data").getLong("Sequence");
+		} catch (JSONException e) {
+			return new Random().nextLong();
+		}
 	}
 	
 	public final static void submitBlob(final RippleSeedAddress seed,

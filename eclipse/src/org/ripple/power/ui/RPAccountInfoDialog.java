@@ -4,29 +4,22 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneLayout;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.address.collection.ArrayMap;
+import org.joda.time.DateTime;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.table.AddressTable;
-import org.ripple.power.wallet.WalletCache;
-import org.ripple.power.wallet.WalletItem;
 
 public class RPAccountInfoDialog extends JDialog {
 	/**
@@ -468,9 +461,10 @@ public class RPAccountInfoDialog extends JDialog {
 						_accountLineItems3.clear();
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
-								_accountLineItems3.add(
-										tx.date.getTime() + ",Mode:"
-										+ tx.mode +" "+tx.counterparty+ ",Currency:" + tx.currency.toGatewayString()
+
+								_accountLineItems3.add("Date:"
+										+ getTime(tx.date) + ",Mode:"
+										+ tx.mode + ",Currency:" + tx.currency.toGatewayString()
 										+ ",Fee:" + tx.fee);
 							}
 						}
@@ -479,6 +473,19 @@ public class RPAccountInfoDialog extends JDialog {
 					dialog.closeDialog();
 				}
 			}
+
+			public String getTime(DateTime dt) {
+				int year = dt.getYear();
+				int month = dt.getMonthOfYear();
+				int day = dt.getDayOfMonth();
+				int hour = dt.getHourOfDay();
+				int min = dt.getMinuteOfHour();
+				return year + "/" + (month < 10 ? "0" + month : month) + "/"
+						+ (day < 10 ? "0" + day : day) + " "
+						+ (hour < 10 ? "0" + hour : hour) + ":"
+						+ (min < 10 ? "0" + min : min);
+			}
+
 		};
 
 		find.processInfo(address, info, update_info);

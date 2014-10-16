@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
@@ -9,7 +10,6 @@ import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.client.Client;
-import com.ripple.client.ClientLogger;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
@@ -112,7 +112,6 @@ public class RPClient {
 	private final Client pClinet;
 
 	public RPClient() {
-		ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
 			// pClinet.setProxy(LSystem.applicationProxy);
@@ -139,8 +138,11 @@ public class RPClient {
 			@Override
 			public void called(Response response) {
 				JSONObject arrays = response.result;
-				JSONObject result = arrays.getJSONObject("account_data");
-				item.setAmount(String.valueOf((result.getDouble("Balance") / 1000000)));
+				try {
+					JSONObject result = (JSONObject) arrays.get("account_data");
+					item.setAmount(String.valueOf((result.getDouble("Balance") / 1000000)));
+				} catch (JSONException e) {
+				}
 				item.setStatus("full");
 			}
 

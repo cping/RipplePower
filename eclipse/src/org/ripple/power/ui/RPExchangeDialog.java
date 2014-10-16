@@ -3,16 +3,11 @@ package org.ripple.power.ui;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.wallet.WalletItem;
-
-import com.other.calc.Calc;
 
 public class RPExchangeDialog extends JDialog{
 
@@ -309,13 +304,6 @@ public class RPExchangeDialog extends JDialog{
         jButton6.setBounds(740, 540, 100, 40);
 
         jButton7.setText("计算器");
-        jButton7.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Calc.showDialog(RPExchangeDialog.this);	
-			}
-		});
         getContentPane().add(jButton7);
         jButton7.setBounds(630, 540, 100, 40);
 

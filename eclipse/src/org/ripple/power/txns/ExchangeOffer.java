@@ -2,6 +2,7 @@ package org.ripple.power.txns;
 
 import java.math.BigDecimal;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ExchangeOffer {
@@ -11,9 +12,12 @@ public class ExchangeOffer {
 	public IssuedCurrency takerPays;
 
 	public void copyFrom(JSONObject jsonOffer) {
-		sequenceNumber =  jsonOffer.getLong("seq");
-		takerGets = jsonToDenominatedAmount(jsonOffer.get("taker_gets"));
-		takerPays = jsonToDenominatedAmount(jsonOffer.get("taker_pays"));
+		try {
+			sequenceNumber =  jsonOffer.getLong("seq");
+			takerGets = jsonToDenominatedAmount(jsonOffer.get("taker_gets"));
+			takerPays = jsonToDenominatedAmount(jsonOffer.get("taker_pays"));
+		} catch (JSONException e) {
+		}
 	}
 
 	private IssuedCurrency jsonToDenominatedAmount(Object jsonDenominatedAmount) {

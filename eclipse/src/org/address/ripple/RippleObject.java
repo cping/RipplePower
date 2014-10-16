@@ -10,12 +10,13 @@ import org.address.ripple.RippleSchemas.BinaryFormatField;
 import org.address.ripple.RippleSchemas.PrimitiveTypes;
 import org.address.ripple.RippleSchemas.TransactionTypes;
 import org.address.utils.Helper;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RippleObject {
-	
+
 	HashMap<BinaryFormatField, Object> fields = new HashMap<BinaryFormatField, Object>();
-	
+
 	private static RippleSerializer binSer = new RippleSerializer();
 
 	public RippleObject() {
@@ -38,8 +39,7 @@ public class RippleObject {
 		prefixedBytesToHash[1] = (byte) 'T';
 		prefixedBytesToHash[2] = (byte) 'X';
 		prefixedBytesToHash[3] = (byte) 0;
-		System.arraycopy(bytesToSign, 0, prefixedBytesToHash, 4,
-				bytesToSign.length);
+		System.arraycopy(bytesToSign, 0, prefixedBytesToHash, 4, bytesToSign.length);
 		byte[] hashOfBytes = Helper.halfSHA512(prefixedBytesToHash);
 		return hashOfBytes;
 	}
@@ -51,8 +51,7 @@ public class RippleObject {
 		prefixedSignedBytes[1] = (byte) 'X';
 		prefixedSignedBytes[2] = (byte) 'N';
 		prefixedSignedBytes[3] = (byte) 0;
-		System.arraycopy(signedBytes, 0, prefixedSignedBytes, 4,
-				signedBytes.length);
+		System.arraycopy(signedBytes, 0, prefixedSignedBytes, 4, signedBytes.length);
 
 		byte[] hashOfTransaction = Helper.halfSHA512(prefixedSignedBytes);
 		return hashOfTransaction;
@@ -82,21 +81,20 @@ public class RippleObject {
 		JSONObject root = new JSONObject();
 		for (Entry<BinaryFormatField, Object> field : fields.entrySet()) {
 			PrimitiveTypes primitive = field.getKey().primitive;
-			if (primitive == PrimitiveTypes.UINT8
-					|| primitive == PrimitiveTypes.UINT16
-					|| primitive == PrimitiveTypes.UINT32
-					|| primitive == PrimitiveTypes.UINT64) {
-				root.put(field.getKey().toString(), field.getValue());
-			} else {
-				root.put(field.getKey().toString(), field.getValue().toString());
+			try {
+				if (primitive == PrimitiveTypes.UINT8 || primitive == PrimitiveTypes.UINT16 || primitive == PrimitiveTypes.UINT32 || primitive == PrimitiveTypes.UINT64) {
+					root.put(field.getKey().toString(), field.getValue());
+				} else {
+					root.put(field.getKey().toString(), field.getValue().toString());
+				}
+			} catch (JSONException e) {
 			}
 		}
 		return root.toString();
 	}
 
 	public List<BinaryFormatField> getSortedField() {
-		ArrayList<BinaryFormatField> sortedFields = new ArrayList<BinaryFormatField>(
-				fields.keySet());
+		ArrayList<BinaryFormatField> sortedFields = new ArrayList<BinaryFormatField>(fields.keySet());
 		Collections.sort(sortedFields);
 		return sortedFields;
 	}

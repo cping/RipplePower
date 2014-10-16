@@ -1,8 +1,10 @@
 package org.ripple.power.txns;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.ripple.power.ui.UIRes;
@@ -25,8 +27,7 @@ public class Gateway {
 
 	public int level = 0;
 
-	private final static ArrayList<Gateway> gateways = new ArrayList<Gateway>(
-			100);
+	private final static ArrayList<Gateway> gateways = new ArrayList<Gateway>(100);
 
 	public static String[] gatewayList() {
 		ArrayList<Gateway> temps = get();
@@ -66,38 +67,39 @@ public class Gateway {
 
 	public synchronized static ArrayList<Gateway> get() {
 		if (gateways.size() == 0) {
-			JSONTokener jsonTokener = new JSONTokener(
-					UIRes.getStream("config/gateways.json"));
-			JSONArray array = new JSONArray(jsonTokener);
+			JSONTokener jsonTokener = new JSONTokener(new InputStreamReader(UIRes.getStream("config/gateways.json")));
+			try {
+				JSONArray array = new JSONArray(jsonTokener);
 
-			for (int i = 0; i < array.length(); i++) {
-				Gateway gateway = new Gateway();
-				JSONObject o = array.getJSONObject(i);
-				String name = o.getString("name");
-				gateway.name = name;
-				JSONArray hotwallets = o.getJSONArray("hotwallets");
-				for (int n = 0; n < hotwallets.length(); n++) {
-					gateway.hotwallets.add(hotwallets.getString(n));
-				}
-				JSONArray accounts = o.getJSONArray("accounts");
-				for (int n = 0; n < accounts.length(); n++) {
-					JSONObject obj = accounts.getJSONObject(n);
-					String address = obj.getString("address");
-					Item item = new Item();
-					item.address = address;
-					JSONArray currencies = obj.getJSONArray("currencies");
-					for (int m = 0; m < currencies.length(); m++) {
-						Object value = currencies.get(m);
-						if (value instanceof String) {
-							item.currencies.add((String) value);
-						} else if (value instanceof JSONObject) {
-							item.currencies.add(((JSONObject) value)
-									.getString("label"));
-						}
+				for (int i = 0; i < array.length(); i++) {
+					Gateway gateway = new Gateway();
+					JSONObject o = array.getJSONObject(i);
+					String name = o.getString("name");
+					gateway.name = name;
+					JSONArray hotwallets = o.getJSONArray("hotwallets");
+					for (int n = 0; n < hotwallets.length(); n++) {
+						gateway.hotwallets.add(hotwallets.getString(n));
 					}
-					gateway.accounts.add(item);
+					JSONArray accounts = o.getJSONArray("accounts");
+					for (int n = 0; n < accounts.length(); n++) {
+						JSONObject obj = accounts.getJSONObject(n);
+						String address = obj.getString("address");
+						Item item = new Item();
+						item.address = address;
+						JSONArray currencies = obj.getJSONArray("currencies");
+						for (int m = 0; m < currencies.length(); m++) {
+							Object value = currencies.get(m);
+							if (value instanceof String) {
+								item.currencies.add((String) value);
+							} else if (value instanceof JSONObject) {
+								item.currencies.add(((JSONObject) value).getString("label"));
+							}
+						}
+						gateway.accounts.add(item);
+					}
+					gateways.add(gateway);
 				}
-				gateways.add(gateway);
+			} catch (JSONException e) {
 			}
 		}
 		return gateways;

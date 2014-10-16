@@ -3,6 +3,7 @@ package org.ripple.power.txns;
 import java.math.BigDecimal;
 
 import org.address.ripple.RippleAddress;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class IssuedCurrency {
@@ -83,12 +84,15 @@ public class IssuedCurrency {
 	}
 
 	public void copyFrom(JSONObject jsonDenomination) {
-		issuer = new RippleAddress(((String) jsonDenomination.get("issuer")));
-		String currencyStr = ((String) jsonDenomination.get("currency"));
-		currency = currencyStr;
+		try {
+			issuer = new RippleAddress(((String) jsonDenomination.get("issuer")));
+			String currencyStr = ((String) jsonDenomination.get("currency"));
+			currency = currencyStr;
 
-		String amountStr = (String) jsonDenomination.get("value");
-		amount = new BigDecimal(amountStr);
+			String amountStr = (String) jsonDenomination.get("value");
+			amount = new BigDecimal(amountStr);
+		} catch (JSONException e) {
+		}
 	}
 
 	public void copyFrom(Object jsonObject) {
@@ -104,9 +108,12 @@ public class IssuedCurrency {
 			return amount.toString();
 		} else {
 			JSONObject jsonThis = new JSONObject();
-			jsonThis.put("value", amount.toString());
-			jsonThis.put("issuer", issuer.toString());
-			jsonThis.put("currency", currency);
+			try {
+				jsonThis.put("value", amount.toString());
+				jsonThis.put("issuer", issuer.toString());
+				jsonThis.put("currency", currency);
+			} catch (JSONException e) {
+			}
 			return jsonThis;
 		}
 	}
