@@ -6,16 +6,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.util.Dictionary;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.txns.PaymentSend;
+import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
-import org.ripple.power.utils.BigDecimalUtil;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
@@ -153,9 +151,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					final WaitDialog dialog = WaitDialog
 							.showDialog(RPXRPSendDialog.this);
 
-					PaymentSend send = new PaymentSend();
-
-					send.makePayment(item.getPublicKey(), item.getPrivateKey(),
+					Payment.sendXRP(item.getSeed(),
 							address, amountValue, feeValue, new Rollback() {
 
 								@Override

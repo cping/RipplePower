@@ -22,6 +22,6 @@ public class RipplePublicKey extends RippleIdentifier {
 	}
 	
 	public ECPoint getPublicPoint(){
-		return RippleDeterministicKeyGenerator.SECP256K1_PARAMS.getCurve().decodePoint(payloadBytes);
+		return RippleGenerator.SECP256K1_PARAMS.getCurve().decodePoint(payloadBytes);
 	}
 }

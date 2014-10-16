@@ -1,5 +1,7 @@
 package org.ripple.power.wallet;
 
+import org.address.ripple.RippleSeedAddress;
+
 public class WalletItem {
 
 	private String pDate;
@@ -19,6 +21,10 @@ public class WalletItem {
 		this.pPrivateKey = priKey;
 		this.pAmount = amount;
 		this.pStatus = status;
+	}
+
+	public RippleSeedAddress getSeed() {
+		return new RippleSeedAddress(pPrivateKey);
 	}
 
 	public String toString() {

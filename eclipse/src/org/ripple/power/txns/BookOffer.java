@@ -14,4 +14,20 @@ public class BookOffer {
 		return buy + " swap " + sell;
 	}
 
+	public IssuedCurrency getBuy() {
+		return buy;
+	}
+
+	public void setBuy(IssuedCurrency buy) {
+		this.buy = buy;
+	}
+
+	public IssuedCurrency getSell() {
+		return sell;
+	}
+
+	public void setSell(IssuedCurrency sell) {
+		this.sell = sell;
+	}
+
 }
