@@ -139,7 +139,7 @@ public class RPClient {
 			@Override
 			public void called(Response response) {
 				JSONObject arrays = response.result;
-				JSONObject result = (JSONObject) arrays.get("account_data");
+				JSONObject result = arrays.getJSONObject("account_data");
 				item.setAmount(String.valueOf((result.getDouble("Balance") / 1000000)));
 				item.setStatus("full");
 			}
