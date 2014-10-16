@@ -1,24 +1,26 @@
 package com.ripple.core.coretypes.hash;
 
-import com.ripple.core.coretypes.AccountID;
-import com.ripple.core.coretypes.hash.prefixes.LedgerSpace;
 import com.ripple.core.coretypes.hash.prefixes.HashPrefix;
 import com.ripple.core.coretypes.hash.prefixes.Prefix;
 import com.ripple.core.fields.Field;
 import com.ripple.core.fields.TypedFields;
 import com.ripple.core.serialized.BytesSink;
 
-import java.security.MessageDigest;
+import java.math.BigInteger;
 import java.util.TreeMap;
 
 public class Hash256 extends Hash<Hash256> {
 
+    public static final BigInteger bookBaseSize = new BigInteger("10000000000000000", 16);
+    public static class Hash256Map<Value> extends TreeMap<Hash256, Value> {
+        public Hash256Map(Hash256Map<Value> cache) {
+            super(cache);
+        }
+        public Hash256Map() {
 
-    public static HalfSha512 prefixed256(HashPrefix bytes) {
-        HalfSha512 halfSha512 = new HalfSha512();
-        halfSha512.update(bytes);
-        return halfSha512;
+        }
     }
+    public static final Hash256 ZERO_256 = new Hash256(new byte[32]);
 
     @Override
     public Object toJSON() {
@@ -40,72 +42,28 @@ public class Hash256 extends Hash<Hash256> {
         translate.toBytesSink(this, to);
     }
 
-    public static class Hash256Map<Value> extends TreeMap<Hash256, Value> {}
+    public boolean isZero() {
+        return equals(Hash256.ZERO_256);
+    }
+
+    public boolean isNonZero() {
+        return !isZero();
+    }
+
+    public static Hash256 fromHex(String s) {
+        return translate.fromHex(s);
+    }
 
     public Hash256(byte[] bytes) {
         super(bytes, 32);
     }
 
     public static Hash256 signingHash(byte[] blob) {
-        return prefixedHalfSha512(HashPrefix.txSign.bytes, blob);
-    }
-
-    public static class HalfSha512 implements BytesSink {
-        MessageDigest messageDigest;
-
-        public HalfSha512() {
-            try {
-                messageDigest = MessageDigest.getInstance("SHA-512", "RBC");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void update(byte[] bytes) {
-            messageDigest.update(bytes);
-        }
-
-        public void update(Hash256 hash) {
-            messageDigest.update(hash.bytes());
-        }
-
-        public MessageDigest digest() {
-            return messageDigest;
-        }
-
-        public Hash256 finish() {
-            byte[] digest = messageDigest.digest();
-            byte[] half = new byte[32];
-            System.arraycopy(digest, 0, half, 0, 32);
-
-            return new Hash256(half);
-        }
-
-        @Override
-        public void add(byte aByte) {
-            messageDigest.update(aByte);
-        }
-
-        @Override
-        public void add(byte[] bytes) {
-            messageDigest.update(bytes);
-        }
-
-        public void update(Prefix prefix) {
-            messageDigest.update(prefix.bytes());
-        }
-    }
-
-    public static Hash256 prefixedHalfSha512(byte[] prefix, byte[] blob) {
-        HalfSha512 messageDigest = new HalfSha512();
-        messageDigest.update(prefix);
-        messageDigest.update(blob);
-        return messageDigest.finish();
+        return prefixedHalfSha512(HashPrefix.txSign, blob);
     }
 
     public static Hash256 prefixedHalfSha512(Prefix prefix, byte[] blob) {
-        HalfSha512 messageDigest = new HalfSha512();
-        messageDigest.update(prefix);
+        HalfSha512 messageDigest = HalfSha512.prefixed256(prefix);
         messageDigest.update(blob);
         return messageDigest.finish();
     }
@@ -119,14 +77,6 @@ public class Hash256 extends Hash<Hash256> {
             b = b & 0x0F;
         }
         return b;
-    }
-
-    public static Hash256 transactionID(byte[] blob) {
-        return prefixedHalfSha512(HashPrefix.transactionID, blob);
-    }
-
-    public static Hash256 accountIDLedgerIndex(AccountID accountID) {
-        return prefixedHalfSha512(LedgerSpace.account, accountID.bytes());
     }
 
     public static class Translator extends HashTranslator<Hash256> {
@@ -158,7 +108,8 @@ public class Hash256 extends Hash<Hash256> {
     static public TypedFields.Hash256Field BookDirectory = hash256Field(Field.BookDirectory);
     static public TypedFields.Hash256Field InvoiceID = hash256Field(Field.InvoiceID);
     static public TypedFields.Hash256Field Nickname = hash256Field(Field.Nickname);
-    static public TypedFields.Hash256Field Feature = hash256Field(Field.Feature);
+    static public TypedFields.Hash256Field Amendment = hash256Field(Field.Amendment);
+    static public TypedFields.Hash256Field TicketID = hash256Field(Field.TicketID);
 
     static public TypedFields.Hash256Field hash = hash256Field(Field.hash);
     static public TypedFields.Hash256Field index = hash256Field(Field.index);

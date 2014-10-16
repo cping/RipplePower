@@ -50,15 +50,15 @@ public class RipplePrivateKey extends RippleIdentifier {
 			return publicKey;
 		}
 		BigInteger privateBI=new BigInteger(1, this.payloadBytes);
-		ECPoint uncompressed= RippleDeterministicKeyGenerator.SECP256K1_PARAMS.getG().multiply(privateBI);
-		ECPoint publicPoint = new ECPoint.Fp(RippleDeterministicKeyGenerator.SECP256K1_PARAMS.getCurve(), uncompressed.getX(), uncompressed.getY(), true);
+		ECPoint uncompressed= RippleGenerator.SECP256K1_PARAMS.getG().multiply(privateBI);
+		ECPoint publicPoint = new ECPoint.Fp(RippleGenerator.SECP256K1_PARAMS.getCurve(), uncompressed.getX(), uncompressed.getY(), true);
 		publicKey = new RipplePublicKey(publicPoint.getEncoded());
 		return publicKey;
 	}
 
 	public ECPrivateKeyParameters getECPrivateKey(){
 		BigInteger privateBI=new BigInteger(1, this.payloadBytes);
-		ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateBI, RippleDeterministicKeyGenerator.SECP256K1_PARAMS);
+		ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateBI, RippleGenerator.SECP256K1_PARAMS);
 		return privKey;
 	}
 }

@@ -13,11 +13,8 @@ public class RippleSeedAddress extends RippleIdentifier {
 	}
 
 	public RipplePrivateKey getPrivateKey(int accountNumber) {
-		RippleDeterministicKeyGenerator generator = new RippleDeterministicKeyGenerator(payloadBytes);
+		RippleGenerator generator = new RippleGenerator(payloadBytes);
 		RipplePrivateKey signingPrivateKey = generator.getAccountPrivateKey(accountNumber);
-//		ECPoint publicSigningKey = generator.getAccountPublicPoint(accountNumber);
-//		String pubKeyStr=DatatypeConverter.printHexBinary(publicSigningKey.getEncoded());
-//		System.out.println("pubkey "+pubKeyStr);
 		return signingPrivateKey;
 	}
 

@@ -21,9 +21,11 @@ import java.awt.Window;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+import org.ripple.power.ui.RPAccountInfoDialog;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.BigDecimalUtil;
 
@@ -1602,9 +1604,9 @@ public class Calc extends javax.swing.JDialog {
                     java.awt.datatransfer.DataFlavor.stringFlavor));
             savedValue = new BigDecimal(getText().replace(",", "."));
         } catch (UnsupportedFlavorException ex) {
-            Logger.getLogger(Calc.class.getName()).log(Level.SEVERE, null, ex);
+            
         } catch (IOException ex) {
-            Logger.getLogger(Calc.class.getName()).log(Level.SEVERE, null, ex);
+           
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
@@ -1828,5 +1830,14 @@ public class Calc extends javax.swing.JDialog {
         }
         return result;
     }
+    
+
+	public static Calc showDialog(JDialog parent) {
+		Calc dialog = new Calc(parent);
+		dialog.pack();
+		dialog.setLocationRelativeTo(parent);
+		dialog.setVisible(true);
+		return dialog;
+	}
     
 }

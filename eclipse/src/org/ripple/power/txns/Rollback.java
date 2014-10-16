@@ -1,12 +1,11 @@
 package org.ripple.power.txns;
 
+import org.json.JSONObject;
+
 public interface Rollback {
 	
-	 void success(String res);
+	 void success(JSONObject res);
 
-	 void failure(String res);
+	 void error(JSONObject res);
 
-	 void error(String res);
-
-	 void validated(String res);
 }

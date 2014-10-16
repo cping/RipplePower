@@ -186,8 +186,16 @@ abstract public class UInt<Subclass extends UInt> extends Number implements Seri
         return compareTo(sequence) < 1;
     }
 
-    static public abstract class UINTTranslator<T extends UInt> extends TypeTranslator<T> {
+    public boolean testBit(int f) {
+        // TODO, optimized ;) // move to Uint32
+        return value.testBit(f);
+    }
 
+    public boolean isZero() {
+        return value.signum() == 0;
+    }
+
+    static public abstract class UINTTranslator<T extends UInt> extends TypeTranslator<T> {
         public abstract T newInstance(BigInteger i);
         public abstract int byteWidth();
 
@@ -199,7 +207,7 @@ abstract public class UInt<Subclass extends UInt> extends Number implements Seri
         @Override
         public Object toJSON(T obj) {
             if (obj.getByteWidth() <= 4) {
-                return obj.intValue();
+                return obj.longValue();
             } else {
                 return toString(obj);
             }
@@ -212,7 +220,8 @@ abstract public class UInt<Subclass extends UInt> extends Number implements Seri
 
         @Override
         public T fromString(String value) {
-            return newInstance(new BigInteger(value, 16));
+            int radix = byteWidth() <= 4 ? 10 : 16;
+            return newInstance(new BigInteger(value, radix));
         }
 
         @Override

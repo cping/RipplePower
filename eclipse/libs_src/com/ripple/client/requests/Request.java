@@ -19,11 +19,24 @@ public class Request extends Publisher<Request.events> {
         }
     }
 
+    public static interface Builder<T> {
+        void beforeRequest(Request request);
+        T buildTypedResponse(Response response);
+    }
+
     // Base events class and aliases
-    public static abstract class events<T>  extends Publisher.Callback<T> {}
-    public abstract static class OnSuccess  extends events<Response> {}
-    public abstract static class OnError    extends events<Response> {}
-    public abstract static class OnResponse extends events<Response> {}
+    public static interface events<T>  extends Publisher.Callback<T> {}
+    public static interface OnSuccess  extends events<Response> {}
+    public static interface OnError    extends events<Response> {}
+    public static interface OnResponse extends events<Response> {}
+
+    public static abstract class Manager<T> {
+        abstract public void cb(Response response, T t) throws JSONException;
+        public boolean retryOnUnsuccessful(Response r) {
+            return false;
+        }
+        public void beforeRequest(Request r) {}
+    }
 
     Client client;
     public Command           cmd;
@@ -56,9 +69,16 @@ public class Request extends Publisher<Request.events> {
     public void request() {
         Client.OnConnected onConnected = new Client.OnConnected() {
             @Override
-            public void called(Client client) {
+            public void called(final Client client) {
                 client.requests.put(id, Request.this);
                 client.sendMessage(toJSON());
+                // TODO: use an LRU map or something
+                client.schedule(60000, new Runnable() {
+                    @Override
+                    public void run() {
+                        client.requests.remove(id);
+                    }
+                });
             }
         };
 
@@ -73,9 +93,6 @@ public class Request extends Publisher<Request.events> {
         return json();
     }
 
-    public static class ResponseError {
-
-    }
 
     public void handleResponse(JSONObject msg) {
         try {
@@ -96,4 +113,5 @@ public class Request extends Publisher<Request.events> {
 
         emit(OnResponse.class, response);
     }
+
 }

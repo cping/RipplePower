@@ -75,8 +75,12 @@ public class NavlinkUI extends BasicButtonUI {
 		}
 
 		if (b.isFocusPainted() && b.isFocusOwner()) {
-
 			paintFocus(g, b, viewRect, textRect, iconRect);
+			if (iconRect != null && iconRect.width > 0 && iconRect.height > 0) {
+				if (b.getIcon() != null) {
+					paintIcon(g, c, iconRect);
+				}
+			}
 		}
 
 		if (text != null && !text.equals("")) {

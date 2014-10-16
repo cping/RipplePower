@@ -1,29 +1,86 @@
 package org.ripple.power.config;
 
 import java.awt.Color;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.JLabel;
-
+import org.address.NativeSupport;
 import org.ripple.power.ui.MainForm;
-import org.ripple.power.ui.MainPanel;
-import org.ripple.power.ui.RPClient;
-import org.ripple.power.utils.FileUtils;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
+
+	public static void sendRESTCoin(String address, String name, String label,
+			long amount) {
+		LSystem.sendRESTCoin(address, name, label, amount, "XRP",
+				MathUtils.random(1, 9999));
+	}
+
+	public static void sendRESTCoin(String address, String name, String label,
+			long amount, String currency, long dt) {
+		java.net.URI uri;
+		String page = "https://ripple.com//send?to=" + address + "&name="
+				+ name + "&label=" + label.replace(" ", "%20") + "&amount="
+				+ amount + "/" + currency + "&dt=" + dt;
+		try {
+			uri = new java.net.URI(page);
+			java.awt.Desktop.getDesktop().browse(uri);
+		} catch (Exception e) {
+			try {
+				browse(page);
+			} catch (Exception err) {
+				err.printStackTrace();
+			}
+		}
+	}
+
+	private static void browse(String url) throws Exception {
+		String osName = System.getProperty("os.name", "");
+		if (osName.startsWith("Mac OS")) {
+			Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
+			Method openURL = fileMgr.getDeclaredMethod("openURL",
+					new Class[] { String.class });
+			openURL.invoke(null, new Object[] { url });
+		} else if (osName.startsWith("Windows")) {
+			Runtime.getRuntime().exec(
+					"rundll32 url.dll,FileProtocolHandler " + url);
+		} else {
+			String[] browsers = { "firefox", "opera", "konqueror", "epiphany",
+					"mozilla", "netscape" };
+			String browser = null;
+			for (int count = 0; count < browsers.length && browser == null; count++) {
+				if (Runtime.getRuntime()
+						.exec(new String[] { "which", browsers[count] })
+						.waitFor() == 0) {
+					browser = browsers[count];
+				}
+			}
+			if (browser == null) {
+				throw new Exception("Could not find web browser");
+			} else {
+				Runtime.getRuntime().exec(new String[] { browser, url });
+			}
+		}
+	}
+
+	final public static ArrayList<String> send_addresses = new ArrayList<String>(
+			1000);
 
 	final static public Color background = Color.decode("#583F7E");
 
@@ -39,11 +96,11 @@ public final class LSystem {
 	final static public long YEAR = 365 * DAY;
 
 	public static final int DEFAULT_MAX_CACHE_SIZE = 20;
-	
+
 	public static final String applicationName = "RipplePower";
 
 	public static final String applicationVersion = "0.1";
-	
+
 	public static final String walletName = "ripple_wallet.dat";
 
 	public static final char[] hex16 = "0123456789abcdef".toCharArray();
@@ -54,14 +111,123 @@ public final class LSystem {
 
 	public static Proxy applicationProxy = null;
 
-	public static String applicationRippled = "wss://s1.ripple.com";
+	public static String[] applicationRipples = new String[] {
+			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
+			"wss://s-east.ripple.com:443" };
 
 	public static MainForm applicationMain = null;
-	
-	public static long applicationSleep =  SECOND * 30;
+
+	public static long applicationSleep = SECOND * 30;
 
 	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
 			100);
+
+	public static String getIPAddress() throws UnknownHostException {
+		InetAddress address = InetAddress.getLocalHost();
+		return address.getHostAddress();
+	}
+
+	public static String getMACAddress() {
+		String macStr = "";
+		try {
+			InetAddress address = InetAddress.getLocalHost();
+			NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+			if (ni != null) {
+				byte[] mac = ni.getHardwareAddress();
+				if (mac != null) {
+					macStr = asMACHex(mac);
+				}
+			}
+		} catch (Exception e) {
+			return getOtherMACAddress();
+		}
+		return macStr;
+	}
+
+	private static String getWinMACAddress() {
+		String address = "Error!";
+		try {
+			String command = "cmd.exe /c ipconfig /all";
+			Process p = Runtime.getRuntime().exec(command);
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					p.getInputStream(), "gbk"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.indexOf("Physical Address") > 0) {
+					int index = line.indexOf(":");
+					index += 2;
+					address = line.substring(index);
+					break;
+				} else if (line.indexOf("物理地址") > 0) {
+					int index = line.indexOf(":");
+					index += 2;
+					address = line.substring(index);
+					break;
+				}
+			}
+			br.close();
+			return address.trim();
+		} catch (IOException e) {
+			return "Error!";
+		}
+	}
+
+	private static String asMACHex(byte buf[]) {
+		StringBuffer sbr = new StringBuffer(buf.length * 2);
+		int i;
+		for (i = 0; i < buf.length; i++) {
+			if (((int) buf[i] & 0xff) < 0x10) {
+				sbr.append("0");
+			}
+			sbr.append(Long.toString((int) buf[i] & 0xff, 16));
+			sbr.append(':');
+		}
+		if (sbr.toString().length() == 0) {
+			return "";
+		} else {
+			sbr.delete(sbr.length() - 1, sbr.length());
+			return sbr.toString().toUpperCase();
+		}
+	}
+
+	private static String getOtherMACAddress() {
+		String str = "", strMAC = "", macAddress = "";
+		try {
+			Process pp = Runtime.getRuntime().exec(
+					"nbtstat -a " + getIPAddress());
+			InputStreamReader ir = new InputStreamReader(pp.getInputStream(),
+					LSystem.encoding);
+			LineNumberReader input = new LineNumberReader(ir);
+			for (int i = 1; i < 100; i++) {
+				str = input.readLine();
+				if (str != null) {
+					if (str.toLowerCase().indexOf("mac") != -1) {
+						strMAC = str.substring(str.indexOf("=") + 1,
+								str.length()).trim();
+						break;
+					}
+				}
+			}
+		} catch (IOException ex) {
+			if (NativeSupport.isWindows) {
+				strMAC = getWinMACAddress();
+			}
+		}
+		if (strMAC.length() < 17) {
+			return "Error!";
+		}
+		macAddress = (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5)
+				+ ":" + strMAC.substring(6, 8) + ":" + strMAC.substring(9, 11)
+				+ ":" + strMAC.substring(12, 14) + ":" + strMAC.substring(15,
+				17)).toUpperCase();
+		return macAddress;
+	}
+
+	public static String getTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("mm:dd:ss");
+		return sdf.format(cal.getTime());
+	}
 
 	// 存储会话数据
 	public static Session session(String name) {
@@ -112,25 +278,7 @@ public final class LSystem {
 		return applicationDataDirectory;
 	}
 
-	// 文字清晰过滤开
-	final static public RenderingHints VALUE_TEXT_ANTIALIAS_ON = new RenderingHints(
-			RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-	// 文字清晰过滤关
-	final static public RenderingHints VALUE_TEXT_ANTIALIAS_OFF = new RenderingHints(
-			RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-	// 清晰过滤开
-	final static public RenderingHints VALUE_ANTIALIAS_ON = new RenderingHints(
-			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-	// 清晰过滤关
-	final static public RenderingHints VALUE_ANTIALIAS_OFF = new RenderingHints(
-			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-
-	public String getLanguage() {
+	public static String getLanguage() {
 		return java.util.Locale.getDefault().getDisplayName();
 	}
 

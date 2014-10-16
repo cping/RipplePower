@@ -26,7 +26,7 @@ public class PasswordCrackerBF {
         for(;index >= 0;) {
             if (currentPass[index] == charSet[charSet.length-1]) { 
                 if (index == 0) {
-                    currentPass = new char[currentPass.length+1]; 
+                    currentPass = new char[currentPass.length]; 
                     Arrays.fill(currentPass, charSet[0]); 
                     break;
                 }

@@ -44,12 +44,25 @@ public class Vector256 extends ArrayList<Hash256> implements SerializedType {
         }
     }
 
+    /**
+     * This method puts the last element in the removed elements slot, and
+     *  pops off the back, thus preserving contiguity but losing ordering.
+     * @param ledgerIndex the ledger entry index to remove
+     */
+    public void removeUnstable(Hash256 ledgerIndex) {
+        int i = indexOf(ledgerIndex);
+        int last = size() - 1;
+        Hash256 lastIndex = get(last);
+        set(i, lastIndex);
+        remove(last);
+    }
+
     public static class Translator extends TypeTranslator<Vector256> {
         @Override
         public Vector256 fromParser(BinaryParser parser, Integer hint) {
             Vector256 vector256 = new Vector256();
             if (hint == null) {
-                hint = parser.getSize();
+                hint = parser.size() - parser.pos();
             }
             for (int i = 0; i < hint / 32; i++) {
                 vector256.add(Hash256.translate.fromParser(parser));

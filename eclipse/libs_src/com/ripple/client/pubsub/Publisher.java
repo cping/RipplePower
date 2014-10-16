@@ -1,24 +1,19 @@
 package com.ripple.client.pubsub;
 
-import com.ripple.client.ClientLogger;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Publisher<EventClass extends Publisher.ICallback> {
-    public static interface ICallback<T> {
-        public void call(Object... args);
+public class Publisher<EventClass extends Publisher.Callback> {
+    static final Logger logger = Logger.getLogger(Publisher.class.getName());
+    private void log(Level level, String message, Object... params) {
+        logger.log(level, message, params);
     }
 
-    public abstract static class Callback<Result> implements ICallback {
-        abstract public void called(Result result);
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void call(Object... args) {
-            called((Result) args[0]);
-        }
+    public static interface Callback<T> {
+        public void called(T args);
     }
 
     public <T extends EventClass> void on(Class<T> key, T cb) {
@@ -37,8 +32,9 @@ public class Publisher<EventClass extends Publisher.ICallback> {
         add(key, executor, cb, true);
     }
 
-    public <T extends EventClass> int emit(Class<T> key, Object... args) {
-        ClientLogger.log("Emitting %s from thread: %s", key.getSimpleName(), Thread.currentThread());
+    public <T extends EventClass> int emit(Class<T> key, Object args) {
+        log(Level.FINE, "Emitting {0} from thread: {1}", key.getSimpleName(), Thread.currentThread());
+
         CallbackList callbacks = cbs.get(key);
         if (callbacks == null) {
             return 0;
@@ -54,7 +50,7 @@ public class Publisher<EventClass extends Publisher.ICallback> {
             ContextedCallback pair = iterator.next();
             CallbackContext context = pair.context;
             if (context == null) {
-                pair.callback.call(args);
+                execute(args, pair);
                 executed++;
             } else {
                 if (context.shouldExecute()) {
@@ -74,12 +70,17 @@ public class Publisher<EventClass extends Publisher.ICallback> {
         return executed;
     }
 
+    @SuppressWarnings("unchecked")
+    public static void execute(Object args, ContextedCallback pair) {
+        pair.callback.called(args);
+    }
+
     private static class ContextedCallback {
         CallbackContext context;
-        ICallback callback;
+        Callback callback;
         boolean oneShot;
 
-        public ContextedCallback(ICallback callback, CallbackContext context, boolean oneShot) {
+        public ContextedCallback(Callback callback, CallbackContext context, boolean oneShot) {
             this.context = context;
             this.callback = callback;
             this.oneShot = oneShot;
@@ -89,13 +90,13 @@ public class Publisher<EventClass extends Publisher.ICallback> {
             return new Runnable() {
                 @Override
                 public void run() {
-                    callback.call(args);
+                    execute(args, ContextedCallback.this);
                 }
             };
         }
     }
     private static class CallbackList extends ArrayList<ContextedCallback> {
-        public boolean remove(ICallback t) {
+        public boolean remove(Callback t) {
             Iterator<ContextedCallback> iter = iterator();
             while (iter.hasNext()) {
                 ContextedCallback next = iter.next();
@@ -107,7 +108,7 @@ public class Publisher<EventClass extends Publisher.ICallback> {
             return false;
         }
 
-        public void add(CallbackContext exec, ICallback cb, boolean oneShot) {
+        public void add(CallbackContext exec, Callback cb, boolean oneShot) {
             add(new ContextedCallback(cb, exec, oneShot));
         }
     }
@@ -131,19 +132,19 @@ public class Publisher<EventClass extends Publisher.ICallback> {
         return cbs.getDefault(key);
     }
 
-    private <T extends EventClass> void add(Class<T> key, ICallback cb) {
+    private <T extends EventClass> void add(Class<T> key, Callback cb) {
         add(key, null, cb, false);
     }
 
-    private <T extends EventClass> void add(Class<T> key, CallbackContext executor, ICallback cb) {
+    private <T extends EventClass> void add(Class<T> key, CallbackContext executor, Callback cb) {
         add(key, executor, cb, false);
     }
 
-    private <T extends EventClass> void add(Class<T> key, CallbackContext executor, ICallback cb, boolean b) {
+    private <T extends EventClass> void add(Class<T> key, CallbackContext executor, Callback cb, boolean b) {
         listFor(key).add(executor, cb, b);
     }
 
-    public <T extends EventClass> boolean removeListener(Class<T> key, ICallback cb) {
+    public <T extends EventClass> boolean removeListener(Class<T> key, Callback cb) {
         return listFor(key).remove(cb);
     }
 }

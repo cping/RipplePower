@@ -703,21 +703,21 @@ final public class GraphicsUtils {
 	}
 
 	// 文字清晰过滤开
-	final static private RenderingHints VALUE_TEXT_ANTIALIAS_ON = new RenderingHints(
+	final static public RenderingHints VALUE_TEXT_ANTIALIAS_ON = new RenderingHints(
 			RenderingHints.KEY_TEXT_ANTIALIASING,
 			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 	// 文字清晰过滤关
-	final static private RenderingHints VALUE_TEXT_ANTIALIAS_OFF = new RenderingHints(
+	final static public RenderingHints VALUE_TEXT_ANTIALIAS_OFF = new RenderingHints(
 			RenderingHints.KEY_TEXT_ANTIALIASING,
 			RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
 	// 清晰过滤开
-	final static private RenderingHints VALUE_ANTIALIAS_ON = new RenderingHints(
+	final static public RenderingHints VALUE_ANTIALIAS_ON = new RenderingHints(
 			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 	// 清晰过滤关
-	final static private RenderingHints VALUE_ANTIALIAS_OFF = new RenderingHints(
+	final static public RenderingHints VALUE_ANTIALIAS_OFF = new RenderingHints(
 			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
 	/**
@@ -1755,7 +1755,7 @@ final public class GraphicsUtils {
 		int pixels[] = (int[]) pg.getPixels();
 		int length = pixels.length;
 		for (int i = 0; i < length; i++) {
-			if (pixels[i] <= -11500000) {
+			if (pixels[i] == 0) {
 				pixels[i] = 0xffffff;
 			}
 		}

@@ -13,6 +13,7 @@ import java.util.zip.CRC32;
 
 import org.address.ripple.RipplePublicKey;
 import org.address.utils.CoinUtils;
+import org.address.utils.Curve25519;
 import org.address.utils.Helper;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
@@ -23,12 +24,14 @@ import com.ripple.utils.Utils;
 
 public class NativeSupport {
 
-	static boolean isWindows = System.getProperty("os.name")
-			.contains("Windows");
-	static boolean isLinux = System.getProperty("os.name").contains("Linux");
-	static boolean isMac = System.getProperty("os.name").contains("Mac");
-	static boolean isAndroid = false;
-	static boolean is64Bit = System.getProperty("os.arch").equals("amd64");
+	public static boolean isWindows = System.getProperty("os.name").contains(
+			"Windows");
+	public static boolean isLinux = System.getProperty("os.name").contains(
+			"Linux");
+	public static boolean isMac = System.getProperty("os.name").contains("Mac");
+	public static boolean isAndroid = false;
+	public static boolean is64Bit = System.getProperty("os.arch").equals(
+			"amd64");
 
 	private static HashSet<String> loadedLibraries = new HashSet<String>();
 
@@ -174,6 +177,8 @@ public class NativeSupport {
 
 	private static native String getHashKeys(byte[] bytes, boolean compressed);
 
+	private static native byte[] getNxtHashKeys(byte[] bytes);
+
 	private static native boolean findByteAddress(byte[] dst, byte[] src);
 
 	private static native String getRippleBase58(byte[] bytes);
@@ -192,6 +197,42 @@ public class NativeSupport {
 		} else {
 			return CoinUtils.sha256ripemd160(dst);
 		}
+	}
+
+	public static byte[] getNxtKey(String secret) {
+		byte[] publicKeyHash = null;
+		try {
+			publicKeyHash = secret.getBytes(LSystem.encoding);
+		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
+	//	if (useLoonNative) {
+     //      return getNxtHashKeys(publicKeyHash);
+	//	} else {
+			byte[] publicKey = new byte[32];
+			Curve25519.keygen(publicKey, Helper.update(publicKeyHash));
+			publicKeyHash = Helper.update(publicKey);
+	//	}
+		
+		return publicKeyHash;
+	}
+
+	public static void main(String[] args) {
+	long st=System.currentTimeMillis();
+	for(int i=0;i<1000;i++){
+		getNxtKey("DSB");
+	}
+	System.out.println(System.currentTimeMillis()-st);
+	st=System.currentTimeMillis();
+	for(int i=0;i<1000;i++){
+		getNxtKey("DSB");
+	}
+	System.out.println(System.currentTimeMillis()-st);
+	st=System.currentTimeMillis();
+	for(int i=0;i<1000;i++){
+		getNxtKey("DSB");
+	}
+	System.out.println(System.currentTimeMillis()-st);
 	}
 
 	public static String getBitcoinPrivateKey(String secret) {
@@ -266,7 +307,7 @@ public class NativeSupport {
 					+ CoinUtils.encodeBase58(addressBytes);
 		}
 	}
-	
+
 	public static String getBitcoinBigIntegerPrivateKey(String hashString,
 			boolean compressed) {
 		byte[] hash = CoinUtils.fromHex(hashString);
@@ -297,13 +338,12 @@ public class NativeSupport {
 					+ CoinUtils.encodeBase58(addressBytes);
 		}
 	}
-	
+
 	private static native String getRippleByteKeys(byte[] seedBytes);
 
 	private static native byte[] getRippleHashKeys(byte[] seedBytes);
 
-	private static native String[] getRippleBatchKeys(byte[] res,
-			int max);
+	private static native String[] getRippleBatchKeys(byte[] res, int max);
 
 	public static byte[] createKeyPair(byte[] seedBytes) {
 		BigInteger secret, pub, privateGen, order = SECP256K1.order();
@@ -396,7 +436,7 @@ public class NativeSupport {
 			}
 		}
 	}
-	
+
 	public static String getRippleBigIntegerPrivateKey(String hashString) {
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
@@ -416,7 +456,7 @@ public class NativeSupport {
 			}
 		}
 	}
-	
+
 	public static String[] getRippleBatch(BigInteger id, int max) {
 		String hashString = MathUtils.addZeros(
 				CoinUtils.toHex(id.toByteArray()), 32);
@@ -432,7 +472,7 @@ public class NativeSupport {
 				String[] lists = new String[max];
 				BigInteger big = new BigInteger(hash);
 				for (int i = 0; i < max; i++) {
-					lists[i]=getRippleBigIntegerPrivateKey(big);
+					lists[i] = getRippleBigIntegerPrivateKey(big);
 					big = big.add(BigInteger.ONE);
 				}
 				return lists;
@@ -503,6 +543,5 @@ public class NativeSupport {
 
 		}
 	}
-
 
 }

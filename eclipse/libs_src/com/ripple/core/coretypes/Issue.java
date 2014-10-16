@@ -8,10 +8,11 @@ import java.math.BigDecimal;
 /**
  * Represents a currency/issuer pair
  */
-public class Issue {
+public class Issue implements Comparable<Issue> {
+
     public static final Issue XRP = fromString("XRP");
-    Currency currency;
-    AccountID issuer;
+    final Currency currency;
+    final AccountID issuer;
 
     public Issue(Currency currency, AccountID issuer) {
         this.currency = currency;
@@ -20,16 +21,15 @@ public class Issue {
 
     public static Issue fromString(String pair) {
         String[] split = pair.split("/");
-        return getIssue(split);
+        return fromStringPair(split);
     }
 
-    private static Issue getIssue(String[] split) {
+    private static Issue fromStringPair(String[] split) {
         if (split.length == 2) {
             return new Issue(Currency.fromString(split[0]), AccountID.fromString(split[1]));
-        }
-        else if (split[0].equals("XRP")) {
-            return new Issue(Currency.XRP, AccountID.ZERO);
-        }  else {
+        } else if (split[0].equals("XRP")) {
+            return new Issue(Currency.XRP, AccountID.XRP_ISSUER);
+        } else {
             throw new RuntimeException("Issue string must be XRP or $currency/$issuer");
         }
     }
@@ -55,7 +55,9 @@ public class Issue {
         JSONObject o = new JSONObject();
         try {
             o.put("currency", currency);
-            o.put("issuer", issuer);
+            if (!isNative()) {
+                o.put("issuer", issuer);
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -71,6 +73,20 @@ public class Issue {
     }
 
     public Amount amount(Number value) {
-        return new Amount(BigDecimal.valueOf(value.longValue()), currency, issuer, isNative());
+        return new Amount(BigDecimal.valueOf(value.doubleValue()), currency, issuer, isNative());
+    }
+
+    @Override
+    public int compareTo(Issue o) {
+        int ret = issuer.compareTo(o.issuer);
+        if (ret != 0) {
+            return ret;
+        }
+        ret = currency.compareTo(o.currency);
+        return ret;
+    }
+
+    public Amount roundedAmount(BigDecimal amount) {
+        return amount(Amount.roundValue(amount, isNative()));
     }
 }

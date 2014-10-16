@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -33,7 +34,10 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
+import org.ripple.power.helper.Paramaters;
+import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.BigDecimalUtil;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -75,7 +79,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
-		SwingUtils.importFont(UIRes.getStream("fonts/SquareFont.ttf"));
+		SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
 		setOpaque(true);
 		setBackground(LSystem.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
@@ -95,11 +99,12 @@ public class MainPanel extends JPanel implements ActionListener {
 			table.setPreferredScrollableViewportSize(new Dimension(
 					frameWidth - 120, frameHeight - 300));
 		} else {
-			int frameWidth = 860;
-			int frameHeight = 860;
+			int frameWidth = (int) parentFrame.getWidth();
+			int frameHeight = (int) parentFrame.getHeight();
 			table.setPreferredScrollableViewportSize(new Dimension(
 					frameWidth - 120, frameHeight - 300));
 		}
+
 		//
 		// Create the table scroll pane
 		//
@@ -112,6 +117,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		tablePane.add(Box.createGlue());
 		tablePane.add(scrollPane);
 		tablePane.add(Box.createGlue());
+
 		//
 		// Create the status pane containing the Wallet balance and Safe balance
 		//
@@ -127,9 +133,11 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		FontStyleIcon iconMale = new FontStyleIcon(FontStyle.Icon.MALE, 24,
 				LSystem.background);
+		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24,
+				LSystem.background);
 
 		RPButton btn = new RPButton("捐助", iconStar);
-		btn.setActionCommand("捐助");
+		btn.setActionCommand(CommandFlag.Donation);
 		btn.setFont(font);
 		btn.addActionListener(this);
 
@@ -137,6 +145,11 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn2.setActionCommand("P2P通讯");
 		btn2.setFont(font);
 		btn2.addActionListener(this);
+
+		RPButton btn3 = new RPButton("查看汇率", iconSearch);
+		btn3.setActionCommand("查看汇率");
+		btn3.setFont(font);
+		btn3.addActionListener(this);
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(statusPane);
 		statusPane.setLayout(layout);
@@ -152,7 +165,8 @@ public class MainPanel extends JPanel implements ActionListener {
 								.addComponent(btn)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(btn2).addGap(40, 40, 40)));
+								.addComponent(btn2).addGap(40, 40, 40)
+								.addComponent(btn3).addGap(40, 40, 40)));
 		layout.setVerticalGroup(layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(
@@ -164,8 +178,8 @@ public class MainPanel extends JPanel implements ActionListener {
 												.addComponent(walletLabel)
 												.addComponent(btn)
 												.addComponent(btn2)
-
-								).addGap(8, 8, 8)));
+												.addComponent(btn3))
+								.addGap(8, 8, 8)));
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(LSystem.background);
@@ -180,7 +194,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				callAddAddress();
 			}
 		});
-		button.setActionCommand("增加地址");
+		button.setActionCommand(CommandFlag.AddAddress);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -189,7 +203,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
 				LSystem.background);
 		button = new RPButton("网关操作", iconEye);
-		button.setActionCommand("网关操作");
+		button.setActionCommand(CommandFlag.Gateway);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -198,7 +212,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
 				LSystem.background);
 		button = new RPButton("发送货币", iconRoad);
-		button.setActionCommand("sendcoin");
+		button.setActionCommand(CommandFlag.SendCoin);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -207,7 +221,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
 				LSystem.background);
 		button = new RPButton("参与交易", iconTag);
-		button.setActionCommand("参与交易");
+		button.setActionCommand(CommandFlag.Exchange);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -218,7 +232,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		button = new RPButton("地址明细", iconTable);
 		button.setFont(font);
-		button.setActionCommand("地址明细");
+		button.setActionCommand(CommandFlag.DetailsAddress);
 		button.addActionListener(this);
 		buttonPane.add(button);
 
@@ -238,27 +252,60 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	}
 
-	private void sendXRP(String srcAddress) {
-
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		try {
 			int row = table.getSelectedRow();
-			if (row < 0 && !ae.getActionCommand().equals("增加地址")) {
-				JOptionPane.showMessageDialog(this, "您没有选择任何地址,所以当前命令无法操作.",
-						"无法执行", JOptionPane.WARNING_MESSAGE);
-			} else if (ae.getActionCommand().equals("增加地址")) {
+			if (row < 0
+					&& !ae.getActionCommand().equals(CommandFlag.AddAddress)) {
+				if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
+							"cping", "Thank you donate to RipplePower", 100);
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
+					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
+							"地址明细查询", "");
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.Gateway)) {
+					RPGatewayDialog.showDialog("网关操作(work in progress)",
+							LSystem.applicationMain, null);
+					return;
+				}
+				if (ae.getActionCommand().equals(CommandFlag.Exchange)) {
+					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+							LSystem.applicationMain, null);
+					return;
+				} else {
+					JOptionPane.showMessageDialog(this,
+							"您没有选择任何地址,所以当前命令无法操作.", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+				row = table.convertRowIndexToModel(row);
+				WalletItem item = WalletCache.get().readRow(row);
+				BigDecimal number = new BigDecimal(item.getAmount());
+				if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
+					RPMessage.showWarningMessage(this, "交易失败",
+							"非常抱歉,该地址金额较少,暂时不适合向他人捐款-_-");
+				} else {
+					RPXRPSendDialog.showDialog(item.getPublicKey()
+							+ " XRP Send", LSystem.applicationMain, item,
+							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10", "0.01");
+				}
+			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {
 
 			} else {
+
 				row = table.convertRowIndexToModel(row);
 
 				WalletItem item = WalletCache.get().readRow(row);
 
 				String action = ae.getActionCommand();
 				switch (action) {
-				case "sendcoin":
+				case CommandFlag.SendCoin:
 					int result = JOptionPane.showOptionDialog(this,
 							"请选择要发送的货币种类.", "币种选择",
 							JOptionPane.YES_NO_CANCEL_OPTION,
@@ -268,11 +315,13 @@ public class MainPanel extends JPanel implements ActionListener {
 					switch (result) {
 					case 0:
 						BigDecimal number = new BigDecimal(item.getAmount());
-						if (number.intValue() <= 0) {
+						if (number.compareTo(BigDecimal.ZERO) < 1) {
 							RPMessage.showWarningMessage(this, "交易失败",
 									"非常抱歉,该地址目前能查询到的XRP总量为0,暂时无法发送XRP.");
 						} else {
-
+							RPXRPSendDialog.showDialog(item.getPublicKey()
+									+ " XRP Send", LSystem.applicationMain,
+									item);
 						}
 						break;
 
@@ -300,6 +349,14 @@ public class MainPanel extends JPanel implements ActionListener {
 						walletLabel.setText(getWalletText(WalletCache.get()
 								.getAmounts(), "none"));
 					}
+					break;
+				case CommandFlag.Exchange:
+					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+							LSystem.applicationMain, null);
+					break;
+				case CommandFlag.Gateway:
+					RPGatewayDialog.showDialog("网关操作(work in progress)",
+							LSystem.applicationMain, null);
 					break;
 				case "显示私钥":
 					int index = RPMessage.showConfirmMessage(
@@ -344,6 +401,10 @@ public class MainPanel extends JPanel implements ActionListener {
 							dialog.setVisible(true);
 						}
 					}
+					break;
+				case CommandFlag.DetailsAddress:
+					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
+							"地址明细查询", item.getPublicKey());
 					break;
 				}
 			}

@@ -1,5 +1,7 @@
 package net.miginfocom.layout;
 
+import org.ripple.power.utils.HttpRequest.Base64;
+
 /*
  * License (BSD):
  * ==============

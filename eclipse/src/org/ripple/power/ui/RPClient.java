@@ -1,7 +1,11 @@
 package org.ripple.power.ui;
 
+import java.util.ArrayList;
+
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.client.Client;
@@ -14,22 +18,64 @@ import com.ripple.core.coretypes.AccountID;
 
 public class RPClient {
 
-	//测试状态不实际联网
-	public static boolean testing = true;
+	// 测试状态不实际联网
+	public static boolean testing = false;
 
-	private static RPClient RippleClient = null;
+	private static RPClient _rippleClient = null;
+
+	ArrayList<Updateable> loads = new ArrayList<Updateable>(10);;
+
+	public void addLoad(Updateable u) {
+		synchronized (loads) {
+			loads.add(u);
+		}
+	}
+
+	public void removeLoad(Updateable u) {
+		synchronized (loads) {
+			loads.remove(u);
+		}
+	}
+
+	public void removeAllLoad() {
+		synchronized (loads) {
+			loads.clear();
+		}
+	}
+
+	public void load() {
+		final int count = loads.size();
+		if (count > 0) {
+			callUpdateable(loads);
+		}
+	}
+
+	private final static void callUpdateable(final ArrayList<Updateable> list) {
+		ArrayList<Updateable> loadCache;
+		synchronized (list) {
+			loadCache = new ArrayList<Updateable>(list);
+			list.clear();
+		}
+		for (int i = 0; i < loadCache.size(); i++) {
+			Updateable running = loadCache.get(i);
+			synchronized (running) {
+				running.action();
+			}
+		}
+		loadCache = null;
+	}
 
 	public static RPClient ripple() {
 		final long sleep = LSystem.applicationSleep;
 		synchronized (RPClient.class) {
-			if (RippleClient == null) {
-				RippleClient = new RPClient();
+			if (_rippleClient == null) {
+				_rippleClient = new RPClient();
 				if (!testing) {
 					Runnable runnable = new Runnable() {
 						@Override
 						public void run() {
 							for (;;) {
-								Client client = RippleClient.getClinet();
+								Client client = _rippleClient.getClinet();
 								if (client != null) {
 									MainForm form = LSystem.applicationMain;
 									if (form != null) {
@@ -43,6 +89,7 @@ public class RPClient {
 										}
 									}
 								}
+								_rippleClient.load();
 								if (sleep > 0) {
 									try {
 										Thread.sleep(sleep);
@@ -58,7 +105,7 @@ public class RPClient {
 					thread.start();
 				}
 			}
-			return RippleClient;
+			return _rippleClient;
 		}
 	}
 
@@ -68,10 +115,11 @@ public class RPClient {
 		ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
-			pClinet.setProxy(LSystem.applicationProxy);
+			// pClinet.setProxy(LSystem.applicationProxy);
 		}
 		if (!testing) {
-			pClinet.connect(LSystem.applicationRippled);
+			pClinet.connect(LSystem.applicationRipples[MathUtils.random(0,
+					LSystem.applicationRipples.length - 1)]);
 		}
 	}
 
@@ -91,7 +139,7 @@ public class RPClient {
 			@Override
 			public void called(Response response) {
 				JSONObject arrays = response.result;
-				JSONObject result = (JSONObject) arrays.get("account_data");
+				JSONObject result = arrays.getJSONObject("account_data");
 				item.setAmount(String.valueOf((result.getDouble("Balance") / 1000000)));
 				item.setStatus("full");
 			}
@@ -109,37 +157,6 @@ public class RPClient {
 
 	public Client getClinet() {
 		return pClinet;
-	}
-
-	public static void main(String[] args) {
-		final RPClient client = new RPClient();
-		Request req = client.getClinet().newRequest(Command.account_info);
-		req.json("account", "rP1coskQzayaQ9geMdJgAV5f3tNZcHghzt");
-
-		req.once(Request.OnSuccess.class, new Request.OnSuccess() {
-
-			@Override
-			public void called(Response response) {
-				JSONObject arrays = response.result;
-
-				System.out.println(response.status);
-				JSONObject result = (JSONObject) arrays.get("account_data");
-
-				System.out.println(result.get("Account") + ","
-						+ (double) (result.getDouble("Balance") / 1000000));
-			}
-
-		});
-		req.once(Request.OnError.class, new Request.OnError() {
-
-			@Override
-			public void called(Response response) {
-				System.out.println(response.status);
-
-			}
-
-		});
-		req.request();
 	}
 
 }

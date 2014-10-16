@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 
 /**
  * In ripple, amounts are either XRP, the native currency, or an IOU of
@@ -18,6 +19,10 @@ import java.math.MathContext;
 public class Amount extends Number implements SerializedType, Comparable<Amount>
 
 {
+
+    private static BigDecimal TAKER_PAYS_FOR_THAT_DAMN_OFFER = new BigDecimal("1000000000000.000100");
+//    public static final Amount NEUTRAL_ZERO = new Amount(Currency.NEUTRAL, AccountID.NEUTRAL);
+
     /**
      * Thrown when an Amount is constructed with an invalid value
      */
@@ -28,7 +33,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     }
 
     // For rounding/multiplying/dividing
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
+    public static final MathContext MATH_CONTEXT = new MathContext(16, RoundingMode.HALF_UP);
     // The maximum amount of digits in mantissa of an IOU amount
     public static final int MAXIMUM_IOU_PRECISION = 16;
     // The smallest quantity of an XRP is a drop, 1 millionth of an XRP
@@ -62,12 +67,12 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     private AccountID issuer;
 
     // While internally the value is stored as a BigDecimal
-    // the mantissa and offset, as per the binary
+    // the mantissa and exponent, as per the binary
     // format can be computed.
     // The mantissa is computed lazily, then cached
     private UInt64 mantissa = null;
-    // The offset is always calculated.
-    private int offset;
+    // The exponent is always calculated.
+    private int exponent;
 
     public Amount(BigDecimal value, Currency currency, AccountID issuer) {
         this(value, currency, issuer, false);
@@ -88,6 +93,10 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
         this.issuer = issuer;
     }
 
+    public Amount(Currency currency, AccountID account) {
+        this(BigDecimal.ZERO, currency, account);
+    }
+
     // Private constructors
     Amount(BigDecimal newValue, Currency currency, AccountID issuer, boolean isNative) {
         this(newValue, currency, issuer, isNative, false);
@@ -100,7 +109,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
         }
     }
 
-    private Amount(BigDecimal value, String currency) {
+    public Amount(BigDecimal value, String currency) {
         isNative = false;
         this.currency = Currency.fromString(currency);
         this.setAndCheckValue(value);
@@ -113,18 +122,18 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
 
     private void initialize() {
         if (isNative()) {
-            issuer = AccountID.ZERO;
+            issuer = AccountID.XRP_ISSUER;
             if (!unbounded) {
                 checkXRPBounds(value);
             }
             // Offset is unused for native amounts
-            offset = -6; // compared to drops.
+            exponent = -6; // compared to drops.
         } else {
             if (value.precision() > MAXIMUM_IOU_PRECISION && !unbounded) {
                 throw new PrecisionError("Overflow Error!");
             }
-            issuer = AccountID.ONE;
-            offset = calculateOffset();
+            issuer = AccountID.NEUTRAL;
+            exponent = calculateExponent();
         }
     }
 
@@ -134,7 +143,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
 
     private Amount newValue(BigDecimal newValue, boolean round, boolean unbounded) {
         if (round) {
-            newValue = roundValue(isNative, newValue);
+            newValue = roundValue(newValue, isNative);
         }
         return new Amount(newValue, currency, issuer, isNative, unbounded);
     }
@@ -169,8 +178,8 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
         return mantissa;
     }
 
-    public int offset() {
-        return offset;
+    public int exponent() {
+        return exponent;
     }
 
     public boolean isNative() {
@@ -201,12 +210,12 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
         }
     }
 
-    protected int calculateOffset() {
+    protected int calculateExponent() {
         return -MAXIMUM_IOU_PRECISION + value.precision() - value.scale();
     }
 
-    private BigInteger bigIntegerIOUMantissa() {
-        return exactBigIntegerScaledByPowerOfTen(-offset).abs();
+    public BigInteger bigIntegerIOUMantissa() {
+        return exactBigIntegerScaledByPowerOfTen(-exponent).abs();
     }
 
     private BigInteger bigIntegerDrops() {
@@ -241,6 +250,8 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
                 currencyString().equals(amt.currencyString());
     }
 
+
+
     public int compareTo(Amount amount) {
         return value.compareTo(amount.value);
     }
@@ -256,13 +267,13 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     // Maybe you want !isNegative()
     // Any amount that !isNegative() isn't necessarily positive
     // Is a zero amount strictly positive? no
-    private boolean isPositive() {
+    public boolean isPositive() {
         return value.signum() == 1;
     }
 
     /**
 
-    Arithimetic Operations
+    Arithmetic Operations
 
     There's no checking if an amount is of a different currency/issuer.
     
@@ -272,19 +283,15 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     eg.
 
         amountOne.add(amountTwo)
-        amountOne.multiply(amountTwo)
-        amountOne.divide(amountTwo)
-        amountOne.subtract(amountTwo)
-        
-        For all of these operations, the currency/issuer of the resultant
-        amount, is that of `amountOne`
+
+        The currency/issuer of the resultant amount, is that of `amountOne`
     
     Divide and multiply are equivalent to the javascript ripple-lib
-    ratio_human and product_huam.
+    ratio_human and product_human.
 
     */
     public Amount add(BigDecimal augend) {
-        return newValue(value.add(augend));
+        return newValue(value.add(augend), true);
     }
 
     public Amount add(Amount augend) {
@@ -296,7 +303,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     }
 
     public Amount subtract(BigDecimal subtrahend) {
-        return newValue(value.subtract(subtrahend));
+        return newValue(value.subtract(subtrahend), true);
     }
 
     public Amount subtract(Amount subtrahend) {
@@ -406,15 +413,15 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
             }
             to.add(man.toByteArray());
         } else {
-            int offset = offset();
+            int exponent = exponent();
             UInt64 packed;
 
             if (isZero()) {
                 packed = BINARY_FLAG_IS_IOU;
             } else if (isNegative()) {
-                packed = man.or(new UInt64(512 + 0 + 97 + offset).shiftLeft(64 - 10));
+                packed = man.or(new UInt64(512 + 0 + 97 + exponent).shiftLeft(64 - 10));
             } else {
-                packed = man.or(new UInt64(512 + 256 + 97 + offset).shiftLeft(64 - 10));
+                packed = man.or(new UInt64(512 + 256 + 97 + exponent).shiftLeft(64 - 10));
             }
 
             to.add(packed.toByteArray());
@@ -443,10 +450,10 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
                 mantissa[0] = 0;
                 Currency curr = Currency.translate.fromParser(parser);
                 AccountID issuer = AccountID.translate.fromParser(parser);
-                int offset = ((b1 & 0x3F) << 2) + ((b2 & 0xff) >> 6) - 97;
+                int exponent = ((b1 & 0x3F) << 2) + ((b2 & 0xff) >> 6) - 97;
                 mantissa[1] &= 0x3F;
 
-                value = new BigDecimal(new BigInteger(sign, mantissa), -offset);
+                value = new BigDecimal(new BigInteger(sign, mantissa), -exponent);
                 return new Amount(value, curr, issuer, false);
             } else {
                 mantissa[0] &= 0x3F;
@@ -506,6 +513,10 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
 
     public BigInteger bigIntegerValue() {
         return value.toBigIntegerExact();
+    }
+
+    public Amount newIssuer(AccountID issuer) {
+        return new Amount(value, currency, issuer);
     }
 
     // Static constructors
@@ -617,6 +628,10 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     }
 
     public static void checkXRPBounds(BigDecimal value) {
+        // This is for that damn offer at index: 6310D78E6AD408892743DD62455694162E758DA283D0E4A2CB3A3C173B7C794A
+        if (value.compareTo(TAKER_PAYS_FOR_THAT_DAMN_OFFER) == 0) {
+            return;
+        }
         value = value.abs();
         checkLowerDropBound(value);
         checkUpperBound(value);
@@ -629,7 +644,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
         }
     }
 
-    public static BigDecimal roundValue(boolean nativeSrc, BigDecimal value) {
+    public static BigDecimal roundValue(BigDecimal value, boolean nativeSrc) {
         int i = value.precision() - value.scale();
         return value.setScale(nativeSrc ? MAXIMUM_NATIVE_SCALE :
                 MAXIMUM_IOU_PRECISION - i,
@@ -661,5 +676,7 @@ public class Amount extends Number implements SerializedType, Comparable<Amount>
     static public TypedFields.AmountField SendMax = amountField(Field.SendMax);
     static public TypedFields.AmountField MinimumOffer = amountField(Field.MinimumOffer);
     static public TypedFields.AmountField RippleEscrow = amountField(Field.RippleEscrow);
+    static public TypedFields.AmountField taker_gets_funded = amountField(Field.taker_gets_funded);
+    static public TypedFields.AmountField taker_pays_funded = amountField(Field.taker_pays_funded);
 
 }

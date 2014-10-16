@@ -22,7 +22,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
 
-public class MainForm extends JFrame implements ActionListener{
+public class MainForm extends JFrame implements ActionListener {
 
 	/**
 	 * 
@@ -49,7 +49,7 @@ public class MainForm extends JFrame implements ActionListener{
 				byte[] buffer = password.getBytes(LSystem.encoding);
 				OpenSSL ssl = new OpenSSL();
 				buffer = ssl.encrypt(buffer, System.getProperty("user.name")
-						+ LSystem.applicationName);
+						+ LSystem.applicationName + LSystem.getMACAddress());
 				LSystem.session("system").set("password",
 						CoinUtils.toHex(buffer));
 				LSystem.session("system").save();
@@ -60,20 +60,19 @@ public class MainForm extends JFrame implements ActionListener{
 			OpenSSL ssl = new OpenSSL();
 			byte[] buffer = CoinUtils.fromHex(password);
 			buffer = ssl.decrypt(buffer, System.getProperty("user.name")
-					+ LSystem.applicationName);
+					+ LSystem.applicationName + LSystem.getMACAddress());
 			password = new String(buffer, LSystem.encoding);
 			LSystem.applicationPassword = password.trim();
 		}
 	}
 
 	public MainForm() {
-
 		super(LSystem.applicationName.concat(" ").concat(
 				LSystem.applicationVersion));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setIconImage(UIConfig.getDefaultAppIcon());
 		getContentPane().setBackground(Color.WHITE);
-		
+
 		LSystem.applicationMain = this;
 		try {
 			checkWalletPassword();
@@ -85,9 +84,9 @@ public class MainForm extends JFrame implements ActionListener{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+
 		int frameX = 0;
 		int frameY = 0;
 		String propValue = LSystem.session("main").get("location");
@@ -108,23 +107,23 @@ public class MainForm extends JFrame implements ActionListener{
 			frameHeight = Math.max(frameHeight,
 					Integer.parseInt(propValue.substring(sep + 1)));
 		}
-		setPreferredSize(new Dimension(frameWidth, frameHeight));
+		Dimension dim = new Dimension(frameWidth, frameHeight);
+		setPreferredSize(dim);
+		setSize(dim);
 		
-
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 		menuBar.setBackground(new Color(230, 230, 230));
-		
 
 		JMenu menu;
 		JMenuItem menuItem;
 		menu = new JMenu("加密");
-	
+
 		menuItem = new JMenuItem("钱包密码");
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
-		
+
 		menuItem = new JMenuItem("Exit");
 		menuItem.setActionCommand("exit");
 		menuItem.addActionListener(this);
@@ -183,23 +182,23 @@ public class MainForm extends JFrame implements ActionListener{
 		menu.add(menuItem);
 
 		menuBar.add(menu);
-		
-	   menu = new JMenu("Rippled设置");
-		
+
+		menu = new JMenu("Rippled设置");
+
 		menuItem = new JMenuItem("服务器设置");
 		menuItem.setActionCommand("服务器设置");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
-		
+
 		menuItem = new JMenuItem("代理设置");
 		menuItem.setActionCommand("代理设置");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
-		
+
 		menuBar.add(menu);
-		
+
 		menu = new JMenu("GAE架设");
-		
+
 		menuItem = new JMenuItem("一键开启");
 		menuItem.setActionCommand("一键开启");
 		menuItem.addActionListener(this);
@@ -211,33 +210,30 @@ public class MainForm extends JFrame implements ActionListener{
 		menu.add(menuItem);
 
 		menuBar.add(menu);
-		
+
 		menu = new JMenu("帮助");
-		
+
 		menuItem = new JMenuItem("捐助作者");
 		menuItem.setActionCommand("about");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
-		
+
 		menuItem = new JMenuItem("About");
 		menuItem.setActionCommand("about");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuBar.add(menu);
-		
-		
 
 		setJMenuBar(menuBar);
 
 		mainPanel = new MainPanel(this);
 
 		addWindowListener(new ApplicationWindowListener(this));
-	
-		RPClient.ripple();
-		
-	}
 
+		RPClient.ripple();
+
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
@@ -317,15 +313,15 @@ public class MainForm extends JFrame implements ActionListener{
 
 	}
 
-    private void exitProgram() throws IOException {
-        if (!windowMinimized) {
-            Point p = getLocation();
-            Dimension d = getSize();
-            LSystem.session("main").set("location", p.x+","+p.y);
-            LSystem.session("main").set("dimension",d.width+","+d.height);
-        }
-        LSystem.shutdown();
-    }
+	private void exitProgram() throws IOException {
+		if (!windowMinimized) {
+			Point p = getLocation();
+			Dimension d = getSize();
+			LSystem.session("main").set("location", p.x + "," + p.y);
+			LSystem.session("main").set("dimension", d.width + "," + d.height);
+		}
+		LSystem.shutdown();
+	}
 
 	private void aboutMyWallet() {
 		StringBuilder info = new StringBuilder(256);
@@ -374,7 +370,6 @@ public class MainForm extends JFrame implements ActionListener{
 	 */
 	private class ApplicationWindowListener extends WindowAdapter {
 
-
 		public ApplicationWindowListener(JFrame window) {
 
 		}
@@ -382,7 +377,7 @@ public class MainForm extends JFrame implements ActionListener{
 		@Override
 		public void windowIconified(WindowEvent we) {
 			windowMinimized = true;
-	
+
 		}
 
 		@Override
@@ -395,7 +390,7 @@ public class MainForm extends JFrame implements ActionListener{
 			try {
 				exitProgram();
 			} catch (Exception ex) {
-		
+
 			}
 		}
 	}

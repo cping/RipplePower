@@ -2,7 +2,7 @@ package org.address.collection;
 
 import java.util.Arrays;
 
-import org.address.database.CollectionUtils;
+import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 

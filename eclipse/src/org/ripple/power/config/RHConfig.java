@@ -236,14 +236,4 @@ public class RHConfig {
 		}
 	}
 	
-	public static void main(String[]args){
-		try {
-			RHConfig config=new RHConfig("default.cfg");
-			System.out.println(config.get("out_dir"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 }

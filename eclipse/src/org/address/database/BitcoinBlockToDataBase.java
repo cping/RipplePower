@@ -61,7 +61,9 @@ public class BitcoinBlockToDataBase {
 			while (stream.available() > 0) {
 				try {
 					int nextChar = stream.read();
+					System.out.println(nextChar & 0xff);
 					while (nextChar != -1) {
+						
 						if (nextChar != ((node.getPacketMagic() >>> 24) & 0xff)) {
 							nextChar = stream.read();
 							continue;
@@ -79,9 +81,11 @@ public class BitcoinBlockToDataBase {
 							break;
 						}
 					}
+					
 				} catch (IOException e) {
 					break;
 				}
+		
 				byte[] bytes = new byte[4];
 				stream.read(bytes, 0, 4);
 				long size = Utils.readUint32BE(Utils.reverseBytes(bytes), 0);
@@ -106,6 +110,7 @@ public class BitcoinBlockToDataBase {
 										mangager.put(key);
 									}
 								} catch (Exception e) {
+									e.printStackTrace();
 
 								}
 								if (caches.size() > 10000) {
@@ -127,6 +132,12 @@ public class BitcoinBlockToDataBase {
 		mangager.submit();
 		return mangager;
 
+	}
+	
+	public static void main(String[]args) throws ProtocolException, VerificationException, IOException{
+		AddressManager base=BitcoinBlockToDataBase.go("C:\\Users\\cping\\AppData\\Roaming\\Primecoin\\blocks", "f:\\primecoin_data", 0);
+		//base.clearRepeatData();
+		System.out.println(0xf9beb4d9L);
 	}
 	
 

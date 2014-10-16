@@ -1,6 +1,6 @@
 package com.ripple.core.formats;
 
-import com.ripple.core.enums.TransactionType;
+import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.fields.Field;
 
 import java.util.EnumMap;
@@ -85,6 +85,15 @@ public class TxFormat extends Format {
             TransactionType.OfferCancel,
             Field.OfferSequence,   Requirement.REQUIRED);
 
+    static public TxFormat TicketCreate = new TxFormat(
+            TransactionType.TicketCreate,
+            Field.Target,     Requirement.OPTIONAL,
+            Field.Expiration, Requirement.OPTIONAL);
+
+    static public TxFormat TicketCancel = new TxFormat(
+            TransactionType.TicketCancel,
+            Field.TicketID,   Requirement.REQUIRED);
+
     static public TxFormat SetRegularKey = new TxFormat(
             TransactionType.SetRegularKey,
             Field.RegularKey,  Requirement.OPTIONAL);
@@ -109,13 +118,9 @@ public class TxFormat extends Format {
             Field.RemoveCode,      Requirement.OPTIONAL,
             Field.ExpireCode,      Requirement.OPTIONAL);
 
-    static public TxFormat RemoveContract = new TxFormat(
-            TransactionType.RemoveContract,
-            Field.Target,          Requirement.REQUIRED);
-
-    static public TxFormat EnableFeature = new TxFormat(
-            TransactionType.EnableFeature,
-            Field.Feature,         Requirement.REQUIRED);
+    static public TxFormat EnableAmendment = new TxFormat(
+            TransactionType.EnableAmendment,
+            Field.Amendment,         Requirement.REQUIRED);
 
     static public TxFormat SetFee = new TxFormat(
             TransactionType.SetFee,

@@ -6,15 +6,19 @@ public enum LedgerSpace implements Prefix {
     account('a'),
     dirNode('d'),
     generator('g'),
-    nickname('n'),
+
     ripple('r'),
     offer('o'),  // Entry for an offer.
     ownerDir('O'),  // Directory of things owned by an account.
     bookDir('B'),  // Directory of order books.
     contract('c'),
     skipList('s'),
-    feature('f'),
-    fee('e');
+    amendment('f'),
+    fee('e'),
+    ticket('T'),
+
+    // no longer used
+    nickname('n'),;
 
     UInt16 uInt16;
     public byte[] bytes;
@@ -24,8 +28,8 @@ public enum LedgerSpace implements Prefix {
         return bytes;
     }
 
-    LedgerSpace(char a) {
-        uInt16 = new UInt16((int) a);
+    LedgerSpace(char c) {
+        uInt16 = new UInt16((int) c);
         bytes = uInt16.toByteArray();
     }
 }

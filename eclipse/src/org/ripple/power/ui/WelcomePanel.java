@@ -56,7 +56,7 @@ public class WelcomePanel extends JPanel{
 		brandPanel.add(versionLabel, "cell 0 4 1 1, grow, gapleft 40%, gapright 40%");
 
 		JLabel designLabel = new JLabel(
-				"<html><center><font color=#484848 size=7>软件声明</font><br><font color=gray size=5>此应用为OC官方Ripple-lib-java包的具体实现，在此桌面应用中直接使用了官方的相关jar，此应用作者实际只提供了桌面操作与官方API的组合，没有自行修改或提供任何实际的发送或接收代码.</font></center></html>");
+				"<html><center><font color=#484848 size=7>软件声明</font><br><font color=gray size=5>此应用为RippleLabs官方Ripple-lib-java包的具体实现，在此桌面应用中直接使用了官方的相关jar，此应用作者实际只提供了桌面操作与官方API的组合，没有自行修改或提供任何实际的发送或接收代码.</font></center></html>");
 		designLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		add(designLabel, "cell 0 1 1 1, grow, gapleft 20%, gapright 20%");
 	}

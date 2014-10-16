@@ -6,9 +6,9 @@ import com.ripple.client.pubsub.CallbackContext;
 import com.ripple.client.pubsub.Publisher;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
-import com.ripple.client.subscriptions.AccountRoot;
+import com.ripple.client.subscriptions.TrackedAccountRoot;
 import com.ripple.client.subscriptions.ServerInfo;
-import com.ripple.core.enums.TransactionEngineResult;
+import com.ripple.core.serialized.enums.EngineResult;
 import com.ripple.core.coretypes.AccountID;
 import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.hash.Hash256;
@@ -21,19 +21,19 @@ import com.ripple.crypto.ecdsa.IKeyPair;
 import java.util.*;
 
 public class TransactionManager extends Publisher<TransactionManager.events> {
-    public static abstract class events<T> extends Publisher.Callback<T> {}
+    public static interface events<T> extends Publisher.Callback<T> {}
     // This event is emitted with the Sequence of the AccountRoot
-    public static abstract class OnValidatedSequence extends events<UInt32> {}
+    public static interface OnValidatedSequence extends events<UInt32> {}
 
     Client client;
-    AccountRoot accountRoot;
+    TrackedAccountRoot accountRoot;
     AccountID accountID;
     IKeyPair keyPair;
     AccountTransactionsRequester txnRequester;
 
     private ArrayList<ManagedTxn> pending = new ArrayList<ManagedTxn>();
 
-    public TransactionManager(Client client, final AccountRoot accountRoot, AccountID accountID, IKeyPair keyPair) {
+    public TransactionManager(Client client, final TrackedAccountRoot accountRoot, AccountID accountID, IKeyPair keyPair) {
         this.client = client;
         this.accountRoot = accountRoot;
         this.accountID = accountID;
@@ -86,9 +86,9 @@ public class TransactionManager extends Publisher<TransactionManager.events> {
         if (accountRoot.primed()) {
             queue(tx, locallyPreemptedSubmissionSequence());
         } else {
-            accountRoot.once(AccountRoot.OnUpdate.class, new AccountRoot.OnUpdate() {
+            accountRoot.once(TrackedAccountRoot.OnUpdate.class, new TrackedAccountRoot.OnUpdate() {
                 @Override
-                public void called(AccountRoot accountRoot) {
+                public void called(TrackedAccountRoot accountRoot) {
                     queue(tx, locallyPreemptedSubmissionSequence());
                 }
             });
@@ -286,7 +286,7 @@ public class TransactionManager extends Publisher<TransactionManager.events> {
         if (txn.finalizedOrResponseIsToPriorSubmission(res)) {
             return;
         }
-        TransactionEngineResult ter = res.engineResult();
+        EngineResult ter = res.engineResult();
         final UInt32 submitSequence = res.getSubmitSequence();
         switch (ter) {
             case tesSUCCESS:
@@ -323,7 +323,7 @@ public class TransactionManager extends Publisher<TransactionManager.events> {
                 break;
             default:
                 switch (ter.resultClass()) {
-                    case tecCLAIMED:
+                    case tecCLAIM:
                         // Sequence was consumed, do nothing
                         finalizeTxnAndRemoveFromQueue(txn);
                         txn.emit(ManagedTxn.OnSubmitFailure.class, res);
@@ -438,7 +438,7 @@ public class TransactionManager extends Publisher<TransactionManager.events> {
 
     public ManagedTxn manage(Transaction tt) {
         ManagedTxn txn = new ManagedTxn(tt);
-        tt.put(AccountID.Account, accountID);
+        tt.account(accountID);
         return txn;
     }
 

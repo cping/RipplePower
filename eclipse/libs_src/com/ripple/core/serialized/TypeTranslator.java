@@ -31,6 +31,8 @@ public abstract class TypeTranslator<T extends SerializedType> {
                 return fromJSONArray((JSONArray) object);
             case JSON_OBJECT:
                 return fromJSONObject((JSONObject) object);
+            case BYTE_ARRAY:
+                return fromBytes((byte[]) object);
             case UNKNOWN:
             default:
                 return (T) object;
@@ -87,8 +89,6 @@ public abstract class TypeTranslator<T extends SerializedType> {
 
     /**
      * @param hint Using a boxed integer, allowing null for no hint
-     *             This generic parameter can be used to hint the amount of
-     *             bytes (VL) (or for any other purpose desired)
      */
     public abstract T fromParser(BinaryParser parser, Integer hint);
 

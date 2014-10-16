@@ -1,8 +1,10 @@
 package com.ripple.core.types.known.tx;
 
 import com.ripple.core.coretypes.AccountID;
+import com.ripple.core.coretypes.hash.HalfSha512;
 import com.ripple.core.coretypes.hash.prefixes.HashPrefix;
-import com.ripple.core.enums.TransactionType;
+import com.ripple.core.enums.TransactionFlag;
+import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.fields.Field;
 import com.ripple.core.formats.TxFormat;
 import com.ripple.core.coretypes.Amount;
@@ -13,12 +15,12 @@ import com.ripple.core.coretypes.uint.UInt16;
 import com.ripple.core.coretypes.uint.UInt32;
 
 public class Transaction extends STObject {
-    public static final boolean CANONICAL_FLAG_DEPLOYED = false;
-    public static final UInt32 CANONICAL_SIGNATURE = new UInt32(0x80000000L);
+    public static final boolean CANONICAL_FLAG_DEPLOYED = true;
+    public static final UInt32 CANONICAL_SIGNATURE = new UInt32(TransactionFlag.FullyCanonicalSig);
 
     public Transaction(TransactionType type) {
         setFormat(TxFormat.formats.get(type));
-        put(UInt16.TransactionType, type.asInteger());
+        put(Field.TransactionType, type);
     }
 
     public TransactionType transactionType() {
@@ -26,7 +28,7 @@ public class Transaction extends STObject {
     }
 
     public Hash256 signingHash() {
-        Hash256.HalfSha512 signing = Hash256.prefixed256(HashPrefix.txSign);
+        HalfSha512 signing = HalfSha512.prefixed256(HashPrefix.txSign);
         toBytesSink(signing, new FieldFilter() {
             @Override
             public boolean evaluate(Field a) {

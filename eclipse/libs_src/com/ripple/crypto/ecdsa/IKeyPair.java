@@ -12,4 +12,6 @@ public interface IKeyPair {
 
     boolean verify(byte[] data, byte[] sigBytes);
     byte[] sign(byte[] bytes);
+
+    byte[] public_key_160_hash();
 }

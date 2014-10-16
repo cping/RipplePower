@@ -2,22 +2,21 @@ package com.ripple.core.types.known.tx.result;
 
 import com.ripple.core.coretypes.STArray;
 import com.ripple.core.coretypes.STObject;
-import com.ripple.core.coretypes.uint.UInt;
 import com.ripple.core.coretypes.uint.UInt32;
 import com.ripple.core.coretypes.uint.UInt8;
-import com.ripple.core.enums.TransactionEngineResult;
-import com.ripple.core.fields.Field;
+import com.ripple.core.serialized.enums.EngineResult;
+import com.ripple.core.types.known.sle.LedgerEntry;
 
 import java.util.Iterator;
 
-public class TransactionMeta extends STObject{
+public class TransactionMeta extends STObject {
     public static boolean isTransactionMeta(STObject source) {
         return source.has(UInt8.TransactionResult) &&
-               source.has(Field.AffectedNodes);
+                source.has(STArray.AffectedNodes);
     }
 
-    public TransactionEngineResult transactionResult() {
-        return transactionResult(this);
+    public EngineResult engineResult() {
+        return engineResult(this);
     }
 
     public Iterable<AffectedNode> affectedNodes() {
@@ -31,7 +30,14 @@ public class TransactionMeta extends STObject{
         };
     }
 
-    private Iterator<AffectedNode> iterateAffectedNodes(final Iterator<STObject> iterator) {
+    public void walkPrevious(LedgerEntry.OnLedgerEntry cb) {
+        for (AffectedNode affectedNode : affectedNodes()) {
+            if (affectedNode.wasPreviousNode()) {
+                cb.onObject(affectedNode.nodeAsPrevious());
+            }
+        }
+    }
+    public static Iterator<AffectedNode> iterateAffectedNodes(final Iterator<STObject> iterator) {
         return new Iterator<AffectedNode>() {
             @Override
             public boolean hasNext() {

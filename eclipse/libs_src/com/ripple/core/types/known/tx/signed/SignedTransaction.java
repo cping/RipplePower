@@ -1,14 +1,13 @@
 package com.ripple.core.types.known.tx.signed;
 
 import com.ripple.core.coretypes.Amount;
-import com.ripple.core.coretypes.STObject;
 import com.ripple.core.coretypes.VariableLength;
+import com.ripple.core.coretypes.hash.HalfSha512;
 import com.ripple.core.coretypes.hash.Hash256;
 import com.ripple.core.coretypes.hash.prefixes.HashPrefix;
 import com.ripple.core.coretypes.uint.UInt32;
-import com.ripple.core.enums.TransactionType;
+import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.serialized.BytesList;
-import com.ripple.core.serialized.BytesSink;
 import com.ripple.core.serialized.MultiSink;
 import com.ripple.core.types.known.tx.Transaction;
 import com.ripple.crypto.ecdsa.IKeyPair;
@@ -21,13 +20,15 @@ public class SignedTransaction {
     public String  tx_blob;
 
     public void prepare(IKeyPair keyPair, Amount fee, UInt32 Sequence, UInt32 lastLedgerSequence) {
+        VariableLength pubKey = new VariableLength(keyPair.pubBytes());
+
         // This won't always be specified
         if (lastLedgerSequence != null) {
             txn.put(UInt32.LastLedgerSequence, lastLedgerSequence);
         }
         txn.put(UInt32.Sequence, Sequence);
         txn.put(Amount.Fee, fee);
-        txn.put(VariableLength.SigningPubKey, keyPair.pubBytes());
+        txn.put(VariableLength.SigningPubKey, pubKey);
 
         if (Transaction.CANONICAL_FLAG_DEPLOYED) {
             txn.setCanonicalSignatureFlag();
@@ -38,11 +39,11 @@ public class SignedTransaction {
             return;
         }
         try {
-            byte[] signature = keyPair.sign(signingHash.bytes());
+            VariableLength signature = new VariableLength(keyPair.sign(signingHash.bytes()));
             txn.put(VariableLength.TxnSignature, signature);
 
             BytesList blob = new BytesList();
-            Hash256.HalfSha512 id = Hash256.prefixed256(HashPrefix.transactionID);
+            HalfSha512 id = HalfSha512.prefixed256(HashPrefix.transactionID);
 
             txn.toBytesSink(new MultiSink(blob, id));
             tx_blob = blob.bytesHex();
