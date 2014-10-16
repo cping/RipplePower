@@ -43,14 +43,14 @@ public final class CoinUtils {
     public static byte[] generatePublicKey(BigInteger privateKey, boolean compressed) {
         synchronized (EC_PARAMS) {
             ECPoint res = EC_PARAMS.getG().multiply(privateKey);
-            return res.getEncoded(compressed);
+            return res.getEncoded();
         }
     }
     
     public static byte[] generateKey(BigInteger privateKey) {
         synchronized (EC_PARAMS) {
             ECPoint res = EC_PARAMS.getG().multiply(privateKey);
-            return res.getEncoded(true);
+            return res.getEncoded();
         }
     }
     

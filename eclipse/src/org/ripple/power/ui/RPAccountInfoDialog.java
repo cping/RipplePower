@@ -468,9 +468,10 @@ public class RPAccountInfoDialog extends JDialog {
 						_accountLineItems3.clear();
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
-								_accountLineItems3.add(
-										tx.date.getTime() + ",Mode:"
-										+ tx.mode +" "+tx.counterparty+ ",Currency:" + tx.currency.toGatewayString()
+
+								_accountLineItems3.add("Date:"
+										+ tx.date.getTime() + ",Mode:"
+										+ tx.mode + ",Currency:" + tx.currency.toGatewayString()
 										+ ",Fee:" + tx.fee);
 							}
 						}

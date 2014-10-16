@@ -22,10 +22,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.ripple.power.ui.RPAccountInfoDialog;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.BigDecimalUtil;
 
@@ -1831,13 +1829,10 @@ public class Calc extends javax.swing.JDialog {
         return result;
     }
     
-
-	public static Calc showDialog(JDialog parent) {
-		Calc dialog = new Calc(parent);
-		dialog.pack();
-		dialog.setLocationRelativeTo(parent);
-		dialog.setVisible(true);
-		return dialog;
-	}
+    public static void main(String[]args){
+    	Calc calc=new Calc(new JFrame(""));
+    	calc.setVisible(true);
+    	
+    }
     
 }
