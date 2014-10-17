@@ -36,7 +36,7 @@ public class Payment {
 					item.putField(BinaryFormatField.TransactionType,
 							(int) TransactionTypes.PAYMENT.byteValue);
 					item.putField(BinaryFormatField.Account,
-							seed.getPublicKey());
+							seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.Amount,
 							CurrencyUtils.getValueToRipple(amount));
 					item.putField(BinaryFormatField.Sequence, sequence);
@@ -82,7 +82,7 @@ public class Payment {
 					item.putField(BinaryFormatField.TransactionType,
 							(int) TransactionTypes.PAYMENT.byteValue);
 					item.putField(BinaryFormatField.Account,
-							seed.getPublicKey());
+							seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.Destination, dstAddress);
 					item.putField(BinaryFormatField.Amount, amount);
 					item.putField(BinaryFormatField.Sequence, sequence);

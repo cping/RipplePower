@@ -1,11 +1,10 @@
 package org.ripple.power.txns;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.address.ripple.RippleObject;
 import org.address.ripple.RippleSeedAddress;
 import org.address.ripple.RippleSerializer;
 import org.address.ripple.RippleSigner;
+import org.address.utils.CoinUtils;
 import org.json.JSONObject;
 import org.ripple.power.ui.RPClient;
 
@@ -24,13 +23,13 @@ public class TransactionUtils {
 			final RippleObject rippleobj, final Rollback back) throws Exception {
 			RippleObject rbo = new RippleSigner(seed.getPrivateKey(0))
 					.sign(rippleobj);
+			
 			byte[] signedTXBytes = new RippleSerializer()
 					.writeBinaryObject(rbo).array();
 			RPClient client = RPClient.ripple();
 			if (client != null) {
 				Request req = client.newRequest(Command.submit);
-				req.json("tx_blob",
-						DatatypeConverter.printHexBinary(signedTXBytes));
+				req.json("tx_blob",CoinUtils.toHex(signedTXBytes));
 				req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 					@Override
 					public void called(Response response) {

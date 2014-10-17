@@ -54,7 +54,7 @@ public class RippleIdentifier implements Serializable {
 	}
 
 	public byte[] getBytes() {
-		return CollectionUtils.copyOf(payloadBytes);
+		return payloadBytes;
 	}
 
 	@Override

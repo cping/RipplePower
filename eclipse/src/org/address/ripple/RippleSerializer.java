@@ -9,8 +9,10 @@ import org.address.ripple.RippleSchemas.BinaryFormatField;
 import org.address.ripple.RippleSchemas.PrimitiveTypes;
 import org.ripple.power.txns.IssuedCurrency;
 
+import com.ripple.core.coretypes.Amount;
+
 public class RippleSerializer {
-	
+
 	protected static final long MIN_VALUE = 1000000000000000l;
 	protected static final long MAX_VALUE = 9999999999999999l;
 
@@ -152,27 +154,27 @@ public class RippleSerializer {
 		RipplePath path = null;
 		while (true) {
 			byte pathElementType = input.get();
-			if (pathElementType == (byte) 0x00) { 
+			if (pathElementType == (byte) 0x00) {
 				break;
 			}
 			if (path == null) {
 				path = new RipplePath();
 				pathSet.add(path);
 			}
-			if (pathElementType == (byte) 0xFF) { 
+			if (pathElementType == (byte) 0xFF) {
 				path = null;
 				continue;
 			}
 
 			RipplePathElement pathElement = new RipplePathElement();
 			path.add(pathElement);
-			if ((pathElementType & 0x01) != 0) { 
+			if ((pathElementType & 0x01) != 0) {
 				pathElement.account = readIssuer(input);
 			}
 			if ((pathElementType & 0x10) != 0) {
 				pathElement.currency = readCurrency(input);
 			}
-			if ((pathElementType & 0x20) != 0) { 
+			if ((pathElementType & 0x20) != 0) {
 				pathElement.issuer = readIssuer(input);
 			}
 		}
@@ -181,7 +183,7 @@ public class RippleSerializer {
 	}
 
 	public ByteBuffer writeBinaryObject(RippleObject serializedObj) {
-		ByteBuffer output = ByteBuffer.allocate(2000); 
+		ByteBuffer output = ByteBuffer.allocate(2000);
 		List<BinaryFormatField> sortedFields = serializedObj.getSortedField();
 		for (BinaryFormatField field : sortedFields) {
 			byte typeHalfByte = 0;
@@ -296,18 +298,18 @@ public class RippleSerializer {
 				if (pathElement.currency != null) {
 					pathElementType |= 0x10;
 				}
-				if (pathElement.issuer != null) { 
+				if (pathElement.issuer != null) {
 					pathElementType |= 0x20;
 				}
 				output.put(pathElementType);
 
-				if (pathElement.account != null) { 
+				if (pathElement.account != null) {
 					writeIssuer(output, pathElement.account);
 				}
 				if (pathElement.currency != null) {
 					writeCurrency(output, pathElement.currency);
 				}
-				if (pathElement.issuer != null) { 
+				if (pathElement.issuer != null) {
 					writeIssuer(output, pathElement.issuer);
 				}
 				if (i + 1 == pathSet.size() && j + 1 == path.size()) {
@@ -317,7 +319,7 @@ public class RippleSerializer {
 
 			output.put((byte) 0xFF);
 		}
-		output.put((byte) 0); 
+		output.put((byte) 0);
 	}
 
 	protected void writeIssuer(ByteBuffer output, RippleAddress value) {
@@ -332,7 +334,7 @@ public class RippleSerializer {
 	protected void writeVariableLength(ByteBuffer output, byte[] value) {
 		if (value.length < 192) {
 			output.put((byte) value.length);
-		} else if (value.length < 12480) { 
+		} else if (value.length < 12480) {
 			int firstByte = (value.length / 256) + 193;
 			output.put((byte) firstByte);
 			int secondByte = value.length - firstByte - 193;
@@ -355,23 +357,13 @@ public class RippleSerializer {
 			offsetNativeSignMagnitudeBytes |= 0x4000000000000000l;
 		}
 		if (denominatedCurrency.currency == null) {
-			long drops = denominatedCurrency.amount.longValue(); 
+			long drops = denominatedCurrency.amount.longValue();
 			offsetNativeSignMagnitudeBytes |= drops;
 			output.putLong(offsetNativeSignMagnitudeBytes);
 		} else {
-			offsetNativeSignMagnitudeBytes |= 0x8000000000000000l;
-			BigInteger unscaledValue = denominatedCurrency.amount
-					.unscaledValue();
-			if (unscaledValue.longValue() != 0) {
-				int scale = denominatedCurrency.amount.scale();
-				long offset = 97 - scale;
-				offsetNativeSignMagnitudeBytes |= (offset << 54);
-				offsetNativeSignMagnitudeBytes |= unscaledValue.abs()
-						.longValue();
-			}
-			output.putLong(offsetNativeSignMagnitudeBytes);
-			writeCurrency(output, denominatedCurrency.currency);
-			writeIssuer(output, denominatedCurrency.issuer);
+			Amount amount = Amount
+					.fromIOUString(denominatedCurrency.toString());
+			output.put(amount.toBytes());
 		}
 	}
 
