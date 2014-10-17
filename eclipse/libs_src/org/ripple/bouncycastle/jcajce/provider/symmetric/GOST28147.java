@@ -21,126 +21,100 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParamet
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public final class GOST28147
-{
-    private GOST28147()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new GOST28147Engine());
-        }
-    }
+public final class GOST28147 {
+	private GOST28147() {
+	}
 
-    public static class CBC
-       extends BaseBlockCipher
-    {
-        public CBC()
-        {
-            super(new CBCBlockCipher(new GOST28147Engine()), 64);
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new GOST28147Engine());
+		}
+	}
 
-    /**
-     * GOST28147
-     */
-    public static class Mac
-        extends BaseMac
-    {
-        public Mac()
-        {
-            super(new GOST28147Mac());
-        }
-    }
+	public static class CBC extends BaseBlockCipher {
+		public CBC() {
+			super(new CBCBlockCipher(new GOST28147Engine()), 64);
+		}
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            this(256);
-        }
+	/**
+	 * GOST28147
+	 */
+	public static class Mac extends BaseMac {
+		public Mac() {
+			super(new GOST28147Mac());
+		}
+	}
 
-        public KeyGen(int keySize)
-        {
-            super("GOST28147", keySize, new CipherKeyGenerator());
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			this(256);
+		}
 
-    public static class AlgParamGen
-        extends BaseAlgorithmParameterGenerator
-    {
-        protected void engineInit(
-            AlgorithmParameterSpec genParamSpec,
-            SecureRandom random)
-            throws InvalidAlgorithmParameterException
-        {
-            throw new InvalidAlgorithmParameterException("No supported AlgorithmParameterSpec for AES parameter generation.");
-        }
+		public KeyGen(int keySize) {
+			super("GOST28147", keySize, new CipherKeyGenerator());
+		}
+	}
 
-        protected AlgorithmParameters engineGenerateParameters()
-        {
-            byte[]  iv = new byte[16];
+	public static class AlgParamGen extends BaseAlgorithmParameterGenerator {
+		protected void engineInit(AlgorithmParameterSpec genParamSpec,
+				SecureRandom random) throws InvalidAlgorithmParameterException {
+			throw new InvalidAlgorithmParameterException(
+					"No supported AlgorithmParameterSpec for AES parameter generation.");
+		}
 
-            if (random == null)
-            {
-                random = new SecureRandom();
-            }
+		protected AlgorithmParameters engineGenerateParameters() {
+			byte[] iv = new byte[16];
 
-            random.nextBytes(iv);
+			if (random == null) {
+				random = new SecureRandom();
+			}
 
-            AlgorithmParameters params;
+			random.nextBytes(iv);
 
-            try
-            {
-                params = AlgorithmParameters.getInstance("GOST28147", BouncyCastleProvider.PROVIDER_NAME);
-                params.init(new IvParameterSpec(iv));
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e.getMessage());
-            }
+			AlgorithmParameters params;
 
-            return params;
-        }
-    }
+			try {
+				params = AlgorithmParameters.getInstance("GOST28147",
+						BouncyCastleProvider.PROVIDER_NAME);
+				params.init(new IvParameterSpec(iv));
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "GOST IV";
-        }
-    }
+			return params;
+		}
+	}
 
-    public static class Mappings
-        extends AlgorithmProvider
-    {
-        private static final String PREFIX = GOST28147.class.getName();
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "GOST IV";
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class Mappings extends AlgorithmProvider {
+		private static final String PREFIX = GOST28147.class.getName();
 
-        public void configure(ConfigurableProvider provider)
-        {
-            provider.addAlgorithm("Cipher.GOST28147", PREFIX + "$ECB");
-            provider.addAlgorithm("Alg.Alias.Cipher.GOST", "GOST28147");
-            provider.addAlgorithm("Alg.Alias.Cipher.GOST-28147", "GOST28147");
-            provider.addAlgorithm("Cipher." + CryptoProObjectIdentifiers.gostR28147_cbc, PREFIX + "$CBC");
+		public Mappings() {
+		}
 
-            provider.addAlgorithm("KeyGenerator.GOST28147", PREFIX + "$KeyGen");
-            provider.addAlgorithm("Alg.Alias.KeyGenerator.GOST", "GOST28147");
-            provider.addAlgorithm("Alg.Alias.KeyGenerator.GOST-28147", "GOST28147");
-            provider.addAlgorithm("Alg.Alias.KeyGenerator." + CryptoProObjectIdentifiers.gostR28147_cbc, "GOST28147");
+		public void configure(ConfigurableProvider provider) {
+			provider.addAlgorithm("Cipher.GOST28147", PREFIX + "$ECB");
+			provider.addAlgorithm("Alg.Alias.Cipher.GOST", "GOST28147");
+			provider.addAlgorithm("Alg.Alias.Cipher.GOST-28147", "GOST28147");
+			provider.addAlgorithm("Cipher."
+					+ CryptoProObjectIdentifiers.gostR28147_cbc, PREFIX
+					+ "$CBC");
 
-            provider.addAlgorithm("Mac.GOST28147MAC", PREFIX + "$Mac");
-            provider.addAlgorithm("Alg.Alias.Mac.GOST28147", "GOST28147MAC");
-        }
-    }
+			provider.addAlgorithm("KeyGenerator.GOST28147", PREFIX + "$KeyGen");
+			provider.addAlgorithm("Alg.Alias.KeyGenerator.GOST", "GOST28147");
+			provider.addAlgorithm("Alg.Alias.KeyGenerator.GOST-28147",
+					"GOST28147");
+			provider.addAlgorithm("Alg.Alias.KeyGenerator."
+					+ CryptoProObjectIdentifiers.gostR28147_cbc, "GOST28147");
+
+			provider.addAlgorithm("Mac.GOST28147MAC", PREFIX + "$Mac");
+			provider.addAlgorithm("Alg.Alias.Mac.GOST28147", "GOST28147MAC");
+		}
+	}
 }

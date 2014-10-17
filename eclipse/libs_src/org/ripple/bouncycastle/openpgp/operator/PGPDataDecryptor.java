@@ -2,11 +2,10 @@ package org.ripple.bouncycastle.openpgp.operator;
 
 import java.io.InputStream;
 
-public interface PGPDataDecryptor
-{
-    InputStream getInputStream(InputStream in);
+public interface PGPDataDecryptor {
+	InputStream getInputStream(InputStream in);
 
-    int getBlockSize();
+	int getBlockSize();
 
-    PGPDigestCalculator getIntegrityCalculator();
+	PGPDigestCalculator getIntegrityCalculator();
 }

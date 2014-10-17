@@ -19,10 +19,11 @@ package com.google.bitcoin.core;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * A general interface which declares the ability to broadcast transactions. This is implemented
- * by {@link com.google.bitcoin.core.PeerGroup}.
+ * A general interface which declares the ability to broadcast transactions.
+ * This is implemented by {@link com.google.bitcoin.core.PeerGroup}.
  */
 public interface TransactionBroadcaster {
-    /** Broadcast the given transaction on the network */
-    public ListenableFuture<Transaction> broadcastTransaction(final Transaction tx);
+	/** Broadcast the given transaction on the network */
+	public ListenableFuture<Transaction> broadcastTransaction(
+			final Transaction tx);
 }

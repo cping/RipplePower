@@ -22,15 +22,15 @@ package com.google.bitcoin.core;
  */
 @SuppressWarnings("serial")
 public class PeerException extends Exception {
-    public PeerException(String msg) {
-        super(msg);
-    }
+	public PeerException(String msg) {
+		super(msg);
+	}
 
-    public PeerException(Exception e) {
-        super(e);
-    }
+	public PeerException(Exception e) {
+		super(e);
+	}
 
-    public PeerException(String msg, Exception e) {
-        super(msg, e);
-    }
+	public PeerException(String msg, Exception e) {
+		super(msg, e);
+	}
 }

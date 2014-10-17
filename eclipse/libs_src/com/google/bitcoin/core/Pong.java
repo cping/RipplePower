@@ -20,38 +20,43 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class Pong extends Message {
-    /** The smallest protocol version that supports the pong response (BIP 31). Anything beyond version 60000. */
-    public static final int MIN_PROTOCOL_VERSION = 60001;
+	/**
+	 * The smallest protocol version that supports the pong response (BIP 31).
+	 * Anything beyond version 60000.
+	 */
+	public static final int MIN_PROTOCOL_VERSION = 60001;
 
-    private long nonce;
+	private long nonce;
 
-    public Pong(NetworkParameters params, byte[] payloadBytes) throws ProtocolException {
-        super(params, payloadBytes, 0);
-    }
-    
-    /**
-     * Create a Pong with a nonce value.
-     * Only use this if the remote node has a protocol version > 60000
-     */
-    public Pong(long nonce) {
-        this.nonce = nonce;
-    }
-    
-    @Override
-    void parse() throws ProtocolException {
-        nonce = readInt64();
-        length = 8;
-    }
-    
-    public void bitcoinSerializeToStream(OutputStream stream) throws IOException {
-        Utils.int64ToByteStreamLE(nonce, stream);
-    }
-    
-    @Override
-    protected void parseLite() {
-    }
-    
-    long getNonce() {
-        return nonce;
-    }
+	public Pong(NetworkParameters params, byte[] payloadBytes)
+			throws ProtocolException {
+		super(params, payloadBytes, 0);
+	}
+
+	/**
+	 * Create a Pong with a nonce value. Only use this if the remote node has a
+	 * protocol version > 60000
+	 */
+	public Pong(long nonce) {
+		this.nonce = nonce;
+	}
+
+	@Override
+	void parse() throws ProtocolException {
+		nonce = readInt64();
+		length = 8;
+	}
+
+	public void bitcoinSerializeToStream(OutputStream stream)
+			throws IOException {
+		Utils.int64ToByteStreamLE(nonce, stream);
+	}
+
+	@Override
+	protected void parseLite() {
+	}
+
+	long getNonce() {
+		return nonce;
+	}
 }

@@ -25,147 +25,114 @@ import org.ripple.bouncycastle.pqc.crypto.mceliece.McElieceKeyParameters;
 import org.ripple.bouncycastle.pqc.crypto.mceliece.McEliecePKCSCipher;
 import org.ripple.bouncycastle.pqc.jcajce.provider.util.AsymmetricBlockCipher;
 
-public class McEliecePKCSCipherSpi
-    extends AsymmetricBlockCipher
-    implements PKCSObjectIdentifiers, X509ObjectIdentifiers
-{
-    // TODO digest needed?
-    private Digest digest;
-    private McEliecePKCSCipher cipher;
+public class McEliecePKCSCipherSpi extends AsymmetricBlockCipher implements
+		PKCSObjectIdentifiers, X509ObjectIdentifiers {
+	// TODO digest needed?
+	private Digest digest;
+	private McEliecePKCSCipher cipher;
 
-    public McEliecePKCSCipherSpi(Digest digest, McEliecePKCSCipher cipher)
-    {
-        this.digest = digest;
-        this.cipher = cipher;
-    }
+	public McEliecePKCSCipherSpi(Digest digest, McEliecePKCSCipher cipher) {
+		this.digest = digest;
+		this.cipher = cipher;
+	}
 
-    protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
-                                     SecureRandom sr)
-        throws InvalidKeyException,
-        InvalidAlgorithmParameterException
-    {
+	protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
+			SecureRandom sr) throws InvalidKeyException,
+			InvalidAlgorithmParameterException {
 
-        CipherParameters param;
-        param = McElieceKeysToParams.generatePublicKeyParameter((PublicKey)key);
+		CipherParameters param;
+		param = McElieceKeysToParams
+				.generatePublicKeyParameter((PublicKey) key);
 
-        param = new ParametersWithRandom(param, sr);
-        digest.reset();
-        cipher.init(true, param);
-        this.maxPlainTextSize = cipher.maxPlainTextSize;
-        this.cipherTextSize = cipher.cipherTextSize;
-    }
+		param = new ParametersWithRandom(param, sr);
+		digest.reset();
+		cipher.init(true, param);
+		this.maxPlainTextSize = cipher.maxPlainTextSize;
+		this.cipherTextSize = cipher.cipherTextSize;
+	}
 
-    protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
-        throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        CipherParameters param;
-        param = McElieceKeysToParams.generatePrivateKeyParameter((PrivateKey)key);
+	protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
+			throws InvalidKeyException, InvalidAlgorithmParameterException {
+		CipherParameters param;
+		param = McElieceKeysToParams
+				.generatePrivateKeyParameter((PrivateKey) key);
 
-        digest.reset();
-        cipher.init(false, param);
-        this.maxPlainTextSize = cipher.maxPlainTextSize;
-        this.cipherTextSize = cipher.cipherTextSize;
-    }
+		digest.reset();
+		cipher.init(false, param);
+		this.maxPlainTextSize = cipher.maxPlainTextSize;
+		this.cipherTextSize = cipher.cipherTextSize;
+	}
 
-    protected byte[] messageEncrypt(byte[] input)
-        throws IllegalBlockSizeException, BadPaddingException
-    {
-        byte[] output = null;
-        try
-        {
-            output = cipher.messageEncrypt(input);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return output;
-    }
+	protected byte[] messageEncrypt(byte[] input)
+			throws IllegalBlockSizeException, BadPaddingException {
+		byte[] output = null;
+		try {
+			output = cipher.messageEncrypt(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 
-    protected byte[] messageDecrypt(byte[] input)
-        throws IllegalBlockSizeException, BadPaddingException
-    {
-        byte[] output = null;
-        try
-        {
-            output = cipher.messageDecrypt(input);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return output;
-    }
+	protected byte[] messageDecrypt(byte[] input)
+			throws IllegalBlockSizeException, BadPaddingException {
+		byte[] output = null;
+		try {
+			output = cipher.messageDecrypt(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 
-    public String getName()
-    {
-        return "McEliecePKCS";
-    }
+	public String getName() {
+		return "McEliecePKCS";
+	}
 
-    public int getKeySize(Key key)
-        throws InvalidKeyException
-    {
-        McElieceKeyParameters mcElieceKeyParameters;
-        if (key instanceof PublicKey)
-        {
-            mcElieceKeyParameters = (McElieceKeyParameters)McElieceKeysToParams.generatePublicKeyParameter((PublicKey)key);
-        }
-        else
-        {
-            mcElieceKeyParameters = (McElieceKeyParameters)McElieceKeysToParams.generatePrivateKeyParameter((PrivateKey)key);
+	public int getKeySize(Key key) throws InvalidKeyException {
+		McElieceKeyParameters mcElieceKeyParameters;
+		if (key instanceof PublicKey) {
+			mcElieceKeyParameters = (McElieceKeyParameters) McElieceKeysToParams
+					.generatePublicKeyParameter((PublicKey) key);
+		} else {
+			mcElieceKeyParameters = (McElieceKeyParameters) McElieceKeysToParams
+					.generatePrivateKeyParameter((PrivateKey) key);
 
-        }
+		}
 
+		return cipher.getKeySize(mcElieceKeyParameters);
+	}
 
-        return cipher.getKeySize(mcElieceKeyParameters);
-    }
+	// ////////////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////////////////////////////////////////////
+	static public class McEliecePKCS extends McEliecePKCSCipherSpi {
+		public McEliecePKCS() {
+			super(new SHA1Digest(), new McEliecePKCSCipher());
+		}
+	}
 
-    static public class McEliecePKCS
-        extends McEliecePKCSCipherSpi
-    {
-        public McEliecePKCS()
-        {
-            super(new SHA1Digest(), new McEliecePKCSCipher());
-        }
-    }
+	static public class McEliecePKCS224 extends McEliecePKCSCipherSpi {
+		public McEliecePKCS224() {
+			super(new SHA224Digest(), new McEliecePKCSCipher());
+		}
+	}
 
-    static public class McEliecePKCS224
-        extends McEliecePKCSCipherSpi
-    {
-        public McEliecePKCS224()
-        {
-            super(new SHA224Digest(), new McEliecePKCSCipher());
-        }
-    }
+	static public class McEliecePKCS256 extends McEliecePKCSCipherSpi {
+		public McEliecePKCS256() {
+			super(new SHA256Digest(), new McEliecePKCSCipher());
+		}
+	}
 
-    static public class McEliecePKCS256
-        extends McEliecePKCSCipherSpi
-    {
-        public McEliecePKCS256()
-        {
-            super(new SHA256Digest(), new McEliecePKCSCipher());
-        }
-    }
+	static public class McEliecePKCS384 extends McEliecePKCSCipherSpi {
+		public McEliecePKCS384() {
+			super(new SHA384Digest(), new McEliecePKCSCipher());
+		}
+	}
 
-    static public class McEliecePKCS384
-        extends McEliecePKCSCipherSpi
-    {
-        public McEliecePKCS384()
-        {
-            super(new SHA384Digest(), new McEliecePKCSCipher());
-        }
-    }
-
-    static public class McEliecePKCS512
-        extends McEliecePKCSCipherSpi
-    {
-        public McEliecePKCS512()
-        {
-            super(new SHA512Digest(), new McEliecePKCSCipher());
-        }
-    }
-
+	static public class McEliecePKCS512 extends McEliecePKCSCipherSpi {
+		public McEliecePKCS512() {
+			super(new SHA512Digest(), new McEliecePKCSCipher());
+		}
+	}
 
 }

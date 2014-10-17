@@ -21,21 +21,27 @@ import com.google.common.util.concurrent.Service;
 import java.net.SocketAddress;
 
 /**
- * <p>A generic interface for an object which keeps track of a set of open client connections, creates new ones and
- * ensures they are serviced properly.</p>
- *
- * <p>When the service is {@link com.google.common.util.concurrent.Service#stop()}ed, all connections will be closed and
- * the appropriate connectionClosed() calls must be made.</p>
+ * <p>
+ * A generic interface for an object which keeps track of a set of open client
+ * connections, creates new ones and ensures they are serviced properly.
+ * </p>
+ * 
+ * <p>
+ * When the service is {@link com.google.common.util.concurrent.Service#stop()}
+ * ed, all connections will be closed and the appropriate connectionClosed()
+ * calls must be made.
+ * </p>
  */
 public interface ClientConnectionManager extends Service {
-    /**
-     * Creates a new connection to the given address, with the given parser used to handle incoming data.
-     */
-    void openConnection(SocketAddress serverAddress, StreamParser parser);
+	/**
+	 * Creates a new connection to the given address, with the given parser used
+	 * to handle incoming data.
+	 */
+	void openConnection(SocketAddress serverAddress, StreamParser parser);
 
-    /** Gets the number of connected peers */
-    int getConnectedClientCount();
+	/** Gets the number of connected peers */
+	int getConnectedClientCount();
 
-    /** Closes n peer connections */
-    void closeConnections(int n);
+	/** Closes n peer connections */
+	void closeConnections(int n);
 }

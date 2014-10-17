@@ -13,99 +13,74 @@ import org.ripple.bouncycastle.asn1.x509.Certificate;
 import org.ripple.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.ripple.bouncycastle.asn1.x509.X509Name;
 
-public class IssuerAndSerialNumber
-    extends ASN1Object
-{
-    private X500Name    name;
-    private ASN1Integer  serialNumber;
+public class IssuerAndSerialNumber extends ASN1Object {
+	private X500Name name;
+	private ASN1Integer serialNumber;
 
-    public static IssuerAndSerialNumber getInstance(
-        Object  obj)
-    {
-        if (obj instanceof IssuerAndSerialNumber)
-        {
-            return (IssuerAndSerialNumber)obj;
-        }
-        else if (obj != null)
-        {
-            return new IssuerAndSerialNumber(ASN1Sequence.getInstance(obj));
-        }
+	public static IssuerAndSerialNumber getInstance(Object obj) {
+		if (obj instanceof IssuerAndSerialNumber) {
+			return (IssuerAndSerialNumber) obj;
+		} else if (obj != null) {
+			return new IssuerAndSerialNumber(ASN1Sequence.getInstance(obj));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @deprecated  use getInstance() method.
-     * @param seq
-     */
-    public IssuerAndSerialNumber(
-        ASN1Sequence    seq)
-    {
-        this.name = X500Name.getInstance(seq.getObjectAt(0));
-        this.serialNumber = (ASN1Integer)seq.getObjectAt(1);
-    }
+	/**
+	 * @deprecated use getInstance() method.
+	 * @param seq
+	 */
+	public IssuerAndSerialNumber(ASN1Sequence seq) {
+		this.name = X500Name.getInstance(seq.getObjectAt(0));
+		this.serialNumber = (ASN1Integer) seq.getObjectAt(1);
+	}
 
-    public IssuerAndSerialNumber(
-        Certificate certificate)
-    {
-        this.name = certificate.getIssuer();
-        this.serialNumber = certificate.getSerialNumber();
-    }
+	public IssuerAndSerialNumber(Certificate certificate) {
+		this.name = certificate.getIssuer();
+		this.serialNumber = certificate.getSerialNumber();
+	}
 
-    public IssuerAndSerialNumber(
-        X509CertificateStructure certificate)
-    {
-        this.name = certificate.getIssuer();
-        this.serialNumber = certificate.getSerialNumber();
-    }
+	public IssuerAndSerialNumber(X509CertificateStructure certificate) {
+		this.name = certificate.getIssuer();
+		this.serialNumber = certificate.getSerialNumber();
+	}
 
-    public IssuerAndSerialNumber(
-        X500Name name,
-        BigInteger  serialNumber)
-    {
-        this.name = name;
-        this.serialNumber = new ASN1Integer(serialNumber);
-    }
+	public IssuerAndSerialNumber(X500Name name, BigInteger serialNumber) {
+		this.name = name;
+		this.serialNumber = new ASN1Integer(serialNumber);
+	}
 
-    /**
-     * @deprecated use X500Name constructor
-     */
-    public IssuerAndSerialNumber(
-        X509Name    name,
-        BigInteger  serialNumber)
-    {
-        this.name = X500Name.getInstance(name);
-        this.serialNumber = new ASN1Integer(serialNumber);
-    }
+	/**
+	 * @deprecated use X500Name constructor
+	 */
+	public IssuerAndSerialNumber(X509Name name, BigInteger serialNumber) {
+		this.name = X500Name.getInstance(name);
+		this.serialNumber = new ASN1Integer(serialNumber);
+	}
 
-    /**
-     * @deprecated use X500Name constructor
-     */
-    public IssuerAndSerialNumber(
-        X509Name    name,
-        ASN1Integer  serialNumber)
-    {
-        this.name = X500Name.getInstance(name);
-        this.serialNumber = serialNumber;
-    }
+	/**
+	 * @deprecated use X500Name constructor
+	 */
+	public IssuerAndSerialNumber(X509Name name, ASN1Integer serialNumber) {
+		this.name = X500Name.getInstance(name);
+		this.serialNumber = serialNumber;
+	}
 
-    public X500Name getName()
-    {
-        return name;
-    }
+	public X500Name getName() {
+		return name;
+	}
 
-    public ASN1Integer getSerialNumber()
-    {
-        return serialNumber;
-    }
+	public ASN1Integer getSerialNumber() {
+		return serialNumber;
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector    v = new ASN1EncodableVector();
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(name);
-        v.add(serialNumber);
+		v.add(name);
+		v.add(serialNumber);
 
-        return new DERSequence(v);
-    }
+		return new DERSequence(v);
+	}
 }

@@ -13,139 +13,127 @@ import org.ripple.bouncycastle.pqc.math.linearalgebra.PolynomialGF2mSmallM;
 import org.ripple.bouncycastle.pqc.math.linearalgebra.PolynomialRingGF2m;
 import org.ripple.bouncycastle.pqc.math.linearalgebra.GoppaCode.MaMaPe;
 
-
 /**
  * This class implements key pair generation of the McEliece Public Key
  * Cryptosystem (McEliecePKC).
  */
-public class McElieceKeyPairGenerator
-    implements AsymmetricCipherKeyPairGenerator
-{
+public class McElieceKeyPairGenerator implements
+		AsymmetricCipherKeyPairGenerator {
 
+	public McElieceKeyPairGenerator() {
 
-    public McElieceKeyPairGenerator()
-    {
+	}
 
-    }
+	/**
+	 * The OID of the algorithm.
+	 */
+	private static final String OID = "1.3.6.1.4.1.8301.3.1.3.4.1";
 
+	private McElieceKeyGenerationParameters mcElieceParams;
 
-    /**
-     * The OID of the algorithm.
-     */
-    private static final String OID = "1.3.6.1.4.1.8301.3.1.3.4.1";
+	// the extension degree of the finite field GF(2^m)
+	private int m;
 
-    private McElieceKeyGenerationParameters mcElieceParams;
+	// the length of the code
+	private int n;
 
-    // the extension degree of the finite field GF(2^m)
-    private int m;
+	// the error correction capability
+	private int t;
 
-    // the length of the code
-    private int n;
+	// the field polynomial
+	private int fieldPoly;
 
-    // the error correction capability
-    private int t;
+	// the source of randomness
+	private SecureRandom random;
 
-    // the field polynomial
-    private int fieldPoly;
+	// flag indicating whether the key pair generator has been initialized
+	private boolean initialized = false;
 
-    // the source of randomness
-    private SecureRandom random;
+	/**
+	 * Default initialization of the key pair generator.
+	 */
+	private void initializeDefault() {
+		McElieceKeyGenerationParameters mcParams = new McElieceKeyGenerationParameters(
+				new SecureRandom(), new McElieceParameters());
+		initialize(mcParams);
+	}
 
-    // flag indicating whether the key pair generator has been initialized
-    private boolean initialized = false;
+	private void initialize(KeyGenerationParameters param) {
+		this.mcElieceParams = (McElieceKeyGenerationParameters) param;
 
+		// set source of randomness
+		this.random = new SecureRandom();
 
-    /**
-     * Default initialization of the key pair generator.
-     */
-    private void initializeDefault()
-    {
-        McElieceKeyGenerationParameters mcParams = new McElieceKeyGenerationParameters(new SecureRandom(), new McElieceParameters());
-        initialize(mcParams);
-    }
+		this.m = this.mcElieceParams.getParameters().getM();
+		this.n = this.mcElieceParams.getParameters().getN();
+		this.t = this.mcElieceParams.getParameters().getT();
+		this.fieldPoly = this.mcElieceParams.getParameters().getFieldPoly();
+		this.initialized = true;
+	}
 
-    private void initialize(
-        KeyGenerationParameters param)
-    {
-        this.mcElieceParams = (McElieceKeyGenerationParameters)param;
+	private AsymmetricCipherKeyPair genKeyPair() {
 
-        // set source of randomness
-        this.random = new SecureRandom();
+		if (!initialized) {
+			initializeDefault();
+		}
 
-        this.m = this.mcElieceParams.getParameters().getM();
-        this.n = this.mcElieceParams.getParameters().getN();
-        this.t = this.mcElieceParams.getParameters().getT();
-        this.fieldPoly = this.mcElieceParams.getParameters().getFieldPoly();
-        this.initialized = true;
-    }
+		// finite field GF(2^m)
+		GF2mField field = new GF2mField(m, fieldPoly);
 
+		// irreducible Goppa polynomial
+		PolynomialGF2mSmallM gp = new PolynomialGF2mSmallM(field, t,
+				PolynomialGF2mSmallM.RANDOM_IRREDUCIBLE_POLYNOMIAL, random);
+		PolynomialRingGF2m ring = new PolynomialRingGF2m(field, gp);
 
-    private AsymmetricCipherKeyPair genKeyPair()
-    {
+		// matrix used to compute square roots in (GF(2^m))^t
+		PolynomialGF2mSmallM[] sqRootMatrix = ring.getSquareRootMatrix();
 
-        if (!initialized)
-        {
-            initializeDefault();
-        }
+		// generate canonical check matrix
+		GF2Matrix h = GoppaCode.createCanonicalCheckMatrix(field, gp);
 
-        // finite field GF(2^m)
-        GF2mField field = new GF2mField(m, fieldPoly);
+		// compute short systematic form of check matrix
+		MaMaPe mmp = GoppaCode.computeSystematicForm(h, random);
+		GF2Matrix shortH = mmp.getSecondMatrix();
+		Permutation p1 = mmp.getPermutation();
 
-        // irreducible Goppa polynomial
-        PolynomialGF2mSmallM gp = new PolynomialGF2mSmallM(field, t,
-            PolynomialGF2mSmallM.RANDOM_IRREDUCIBLE_POLYNOMIAL, random);
-        PolynomialRingGF2m ring = new PolynomialRingGF2m(field, gp);
+		// compute short systematic form of generator matrix
+		GF2Matrix shortG = (GF2Matrix) shortH.computeTranspose();
 
-        // matrix used to compute square roots in (GF(2^m))^t
-        PolynomialGF2mSmallM[] sqRootMatrix = ring.getSquareRootMatrix();
+		// extend to full systematic form
+		GF2Matrix gPrime = shortG.extendLeftCompactForm();
 
-        // generate canonical check matrix
-        GF2Matrix h = GoppaCode.createCanonicalCheckMatrix(field, gp);
+		// obtain number of rows of G (= dimension of the code)
+		int k = shortG.getNumRows();
 
-        // compute short systematic form of check matrix
-        MaMaPe mmp = GoppaCode.computeSystematicForm(h, random);
-        GF2Matrix shortH = mmp.getSecondMatrix();
-        Permutation p1 = mmp.getPermutation();
+		// generate random invertible (k x k)-matrix S and its inverse S^-1
+		GF2Matrix[] matrixSandInverse = GF2Matrix
+				.createRandomRegularMatrixAndItsInverse(k, random);
 
-        // compute short systematic form of generator matrix
-        GF2Matrix shortG = (GF2Matrix)shortH.computeTranspose();
+		// generate random permutation P2
+		Permutation p2 = new Permutation(n, random);
 
-        // extend to full systematic form
-        GF2Matrix gPrime = shortG.extendLeftCompactForm();
+		// compute public matrix G=S*G'*P2
+		GF2Matrix g = (GF2Matrix) matrixSandInverse[0].rightMultiply(gPrime);
+		g = (GF2Matrix) g.rightMultiply(p2);
 
-        // obtain number of rows of G (= dimension of the code)
-        int k = shortG.getNumRows();
+		// generate keys
+		McEliecePublicKeyParameters pubKey = new McEliecePublicKeyParameters(
+				OID, n, t, g, mcElieceParams.getParameters());
+		McEliecePrivateKeyParameters privKey = new McEliecePrivateKeyParameters(
+				OID, n, k, field, gp, matrixSandInverse[1], p1, p2, h,
+				sqRootMatrix, mcElieceParams.getParameters());
 
-        // generate random invertible (k x k)-matrix S and its inverse S^-1
-        GF2Matrix[] matrixSandInverse = GF2Matrix
-            .createRandomRegularMatrixAndItsInverse(k, random);
+		// return key pair
+		return new AsymmetricCipherKeyPair(pubKey, privKey);
+	}
 
-        // generate random permutation P2
-        Permutation p2 = new Permutation(n, random);
+	public void init(KeyGenerationParameters param) {
+		this.initialize(param);
 
-        // compute public matrix G=S*G'*P2
-        GF2Matrix g = (GF2Matrix)matrixSandInverse[0].rightMultiply(gPrime);
-        g = (GF2Matrix)g.rightMultiply(p2);
+	}
 
-
-        // generate keys
-        McEliecePublicKeyParameters pubKey = new McEliecePublicKeyParameters(OID, n, t, g, mcElieceParams.getParameters());
-        McEliecePrivateKeyParameters privKey = new McEliecePrivateKeyParameters(OID, n, k,
-            field, gp, matrixSandInverse[1], p1, p2, h, sqRootMatrix, mcElieceParams.getParameters());
-
-        // return key pair
-        return new AsymmetricCipherKeyPair(pubKey, privKey);
-    }
-
-    public void init(KeyGenerationParameters param)
-    {
-        this.initialize(param);
-
-    }
-
-    public AsymmetricCipherKeyPair generateKeyPair()
-    {
-        return genKeyPair();
-    }
+	public AsymmetricCipherKeyPair generateKeyPair() {
+		return genKeyPair();
+	}
 
 }

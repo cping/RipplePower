@@ -21,10 +21,10 @@ package com.google.bitcoin.core;
  * received from their peer.
  */
 public class VersionAck extends EmptyMessage {
-    public VersionAck() {
-    }
+	public VersionAck() {
+	}
 
-    // this is needed by the BitcoinSerializer
-    public VersionAck(NetworkParameters params, byte[] payload) {
-    }
+	// this is needed by the BitcoinSerializer
+	public VersionAck(NetworkParameters params, byte[] payload) {
+	}
 }

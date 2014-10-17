@@ -17,42 +17,56 @@
 package com.google.bitcoin.core;
 
 /**
- * Represents the "getdata" P2P network message, which requests the contents of blocks or transactions given their
- * hashes.
+ * Represents the "getdata" P2P network message, which requests the contents of
+ * blocks or transactions given their hashes.
  */
 public class GetDataMessage extends ListMessage {
-    private static final long serialVersionUID = 2754681589501709887L;
+	private static final long serialVersionUID = 2754681589501709887L;
 
-    public GetDataMessage(NetworkParameters params, byte[] payloadBytes) throws ProtocolException {
-        super(params, payloadBytes);
-    }
+	public GetDataMessage(NetworkParameters params, byte[] payloadBytes)
+			throws ProtocolException {
+		super(params, payloadBytes);
+	}
 
-    /**
-     * Deserializes a 'getdata' message.
-     * @param params NetworkParameters object.
-     * @param msg Bitcoin protocol formatted byte array containing message content.
-     * @param parseLazy Whether to perform a full parse immediately or delay until a read is requested.
-     * @param parseRetain Whether to retain the backing byte array for quick reserialization.  
-     * If true and the backing byte array is invalidated due to modification of a field then 
-     * the cached bytes may be repopulated and retained if the message is serialized again in the future.
-     * @param length The length of message if known.  Usually this is provided when deserializing of the wire
-     * as the length will be provided as part of the header.  If unknown then set to Message.UNKNOWN_LENGTH
-     * @throws ProtocolException
-     */
-    public GetDataMessage(NetworkParameters params, byte[] msg, boolean parseLazy, boolean parseRetain, int length)
-            throws ProtocolException {
-        super(params, msg, parseLazy, parseRetain, length);
-    }
+	/**
+	 * Deserializes a 'getdata' message.
+	 * 
+	 * @param params
+	 *            NetworkParameters object.
+	 * @param msg
+	 *            Bitcoin protocol formatted byte array containing message
+	 *            content.
+	 * @param parseLazy
+	 *            Whether to perform a full parse immediately or delay until a
+	 *            read is requested.
+	 * @param parseRetain
+	 *            Whether to retain the backing byte array for quick
+	 *            reserialization. If true and the backing byte array is
+	 *            invalidated due to modification of a field then the cached
+	 *            bytes may be repopulated and retained if the message is
+	 *            serialized again in the future.
+	 * @param length
+	 *            The length of message if known. Usually this is provided when
+	 *            deserializing of the wire as the length will be provided as
+	 *            part of the header. If unknown then set to
+	 *            Message.UNKNOWN_LENGTH
+	 * @throws ProtocolException
+	 */
+	public GetDataMessage(NetworkParameters params, byte[] msg,
+			boolean parseLazy, boolean parseRetain, int length)
+			throws ProtocolException {
+		super(params, msg, parseLazy, parseRetain, length);
+	}
 
-    public GetDataMessage(NetworkParameters params) {
-        super(params);
-    }
+	public GetDataMessage(NetworkParameters params) {
+		super(params);
+	}
 
-    public void addTransaction(Sha256Hash hash) {
-        addItem(new InventoryItem(InventoryItem.Type.Transaction, hash));
-    }
+	public void addTransaction(Sha256Hash hash) {
+		addItem(new InventoryItem(InventoryItem.Type.Transaction, hash));
+	}
 
-    public void addBlock(Sha256Hash hash) {
-        addItem(new InventoryItem(InventoryItem.Type.Block, hash));
-    }
+	public void addBlock(Sha256Hash hash) {
+		addItem(new InventoryItem(InventoryItem.Type.Block, hash));
+	}
 }

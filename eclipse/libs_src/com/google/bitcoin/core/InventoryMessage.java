@@ -19,53 +19,70 @@ package com.google.bitcoin.core;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * <p>Represents the "inv" P2P network message. An inv contains a list of hashes of either blocks or transactions. It's
- * a bandwidth optimization - on receiving some data, a (fully validating) peer sends every connected peer an inv
- * containing the hash of what it saw. It'll only transmit the full thing if a peer asks for it with a
- * {@link GetDataMessage}.</p>
+ * <p>
+ * Represents the "inv" P2P network message. An inv contains a list of hashes of
+ * either blocks or transactions. It's a bandwidth optimization - on receiving
+ * some data, a (fully validating) peer sends every connected peer an inv
+ * containing the hash of what it saw. It'll only transmit the full thing if a
+ * peer asks for it with a {@link GetDataMessage}.
+ * </p>
  */
 public class InventoryMessage extends ListMessage {
-    private static final long serialVersionUID = -7050246551646107066L;
+	private static final long serialVersionUID = -7050246551646107066L;
 
-    public InventoryMessage(NetworkParameters params, byte[] bytes) throws ProtocolException {
-        super(params, bytes);
-    }
+	public InventoryMessage(NetworkParameters params, byte[] bytes)
+			throws ProtocolException {
+		super(params, bytes);
+	}
 
-    /**
-     * Deserializes an 'inv' message.
-     * @param params NetworkParameters object.
-     * @param msg Bitcoin protocol formatted byte array containing message content.
-     * @param parseLazy Whether to perform a full parse immediately or delay until a read is requested.
-     * @param parseRetain Whether to retain the backing byte array for quick reserialization.  
-     * If true and the backing byte array is invalidated due to modification of a field then 
-     * the cached bytes may be repopulated and retained if the message is serialized again in the future.
-     * @param length The length of message if known.  Usually this is provided when deserializing of the wire
-     * as the length will be provided as part of the header.  If unknown then set to Message.UNKNOWN_LENGTH
-     * @throws ProtocolException
-     */
-    public InventoryMessage(NetworkParameters params, byte[] msg, boolean parseLazy, boolean parseRetain, int length)
-            throws ProtocolException {
-        super(params, msg, parseLazy, parseRetain, length);
-    }
+	/**
+	 * Deserializes an 'inv' message.
+	 * 
+	 * @param params
+	 *            NetworkParameters object.
+	 * @param msg
+	 *            Bitcoin protocol formatted byte array containing message
+	 *            content.
+	 * @param parseLazy
+	 *            Whether to perform a full parse immediately or delay until a
+	 *            read is requested.
+	 * @param parseRetain
+	 *            Whether to retain the backing byte array for quick
+	 *            reserialization. If true and the backing byte array is
+	 *            invalidated due to modification of a field then the cached
+	 *            bytes may be repopulated and retained if the message is
+	 *            serialized again in the future.
+	 * @param length
+	 *            The length of message if known. Usually this is provided when
+	 *            deserializing of the wire as the length will be provided as
+	 *            part of the header. If unknown then set to
+	 *            Message.UNKNOWN_LENGTH
+	 * @throws ProtocolException
+	 */
+	public InventoryMessage(NetworkParameters params, byte[] msg,
+			boolean parseLazy, boolean parseRetain, int length)
+			throws ProtocolException {
+		super(params, msg, parseLazy, parseRetain, length);
+	}
 
-    public InventoryMessage(NetworkParameters params) {
-        super(params);
-    }
+	public InventoryMessage(NetworkParameters params) {
+		super(params);
+	}
 
-    public void addBlock(Block block) {
-        addItem(new InventoryItem(InventoryItem.Type.Block, block.getHash()));
-    }
+	public void addBlock(Block block) {
+		addItem(new InventoryItem(InventoryItem.Type.Block, block.getHash()));
+	}
 
-    public void addTransaction(Transaction tx) {
-        addItem(new InventoryItem(InventoryItem.Type.Transaction, tx.getHash()));
-    }
+	public void addTransaction(Transaction tx) {
+		addItem(new InventoryItem(InventoryItem.Type.Transaction, tx.getHash()));
+	}
 
-    /** Creates a new inv message for the given transactions. */
-    public static InventoryMessage with(Transaction... txns) {
-        checkArgument(txns.length > 0);
-        InventoryMessage result = new InventoryMessage(txns[0].getParams());
-        for (Transaction tx : txns)
-            result.addTransaction(tx);
-        return result;
-    }
+	/** Creates a new inv message for the given transactions. */
+	public static InventoryMessage with(Transaction... txns) {
+		checkArgument(txns.length > 0);
+		InventoryMessage result = new InventoryMessage(txns[0].getParams());
+		for (Transaction tx : txns)
+			result.addTransaction(tx);
+		return result;
+	}
 }

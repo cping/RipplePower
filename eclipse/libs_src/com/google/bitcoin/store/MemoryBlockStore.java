@@ -22,53 +22,61 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Keeps {@link com.google.bitcoin.core.StoredBlock}s in memory. Used primarily for unit testing.
+ * Keeps {@link com.google.bitcoin.core.StoredBlock}s in memory. Used primarily
+ * for unit testing.
  */
 public class MemoryBlockStore implements BlockStore {
-    private LinkedHashMap<Sha256Hash, StoredBlock> blockMap = new LinkedHashMap<Sha256Hash, StoredBlock>() {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Sha256Hash, StoredBlock> eldest) {
-            return blockMap.size() > 5000;
-        }
-    };
-    private StoredBlock chainHead;
+	private LinkedHashMap<Sha256Hash, StoredBlock> blockMap = new LinkedHashMap<Sha256Hash, StoredBlock>() {
+		@Override
+		protected boolean removeEldestEntry(
+				Map.Entry<Sha256Hash, StoredBlock> eldest) {
+			return blockMap.size() > 5000;
+		}
+	};
+	private StoredBlock chainHead;
 
-    public MemoryBlockStore(NetworkParameters params) {
-        // Insert the genesis block.
-        try {
-            Block genesisHeader = params.getGenesisBlock().cloneAsHeader();
-            StoredBlock storedGenesis = new StoredBlock(genesisHeader, genesisHeader.getWork(), 0);
-            put(storedGenesis);
-            setChainHead(storedGenesis);
-        } catch (BlockStoreException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        } catch (VerificationException e) {
-            throw new RuntimeException(e);  // Cannot happen.
-        }
-    }
+	public MemoryBlockStore(NetworkParameters params) {
+		// Insert the genesis block.
+		try {
+			Block genesisHeader = params.getGenesisBlock().cloneAsHeader();
+			StoredBlock storedGenesis = new StoredBlock(genesisHeader,
+					genesisHeader.getWork(), 0);
+			put(storedGenesis);
+			setChainHead(storedGenesis);
+		} catch (BlockStoreException e) {
+			throw new RuntimeException(e); // Cannot happen.
+		} catch (VerificationException e) {
+			throw new RuntimeException(e); // Cannot happen.
+		}
+	}
 
-    public synchronized void put(StoredBlock block) throws BlockStoreException {
-        if (blockMap == null) throw new BlockStoreException("MemoryBlockStore is closed");
-        Sha256Hash hash = block.getHeader().getHash();
-        blockMap.put(hash, block);
-    }
+	public synchronized void put(StoredBlock block) throws BlockStoreException {
+		if (blockMap == null)
+			throw new BlockStoreException("MemoryBlockStore is closed");
+		Sha256Hash hash = block.getHeader().getHash();
+		blockMap.put(hash, block);
+	}
 
-    public synchronized StoredBlock get(Sha256Hash hash) throws BlockStoreException {
-        if (blockMap == null) throw new BlockStoreException("MemoryBlockStore is closed");
-        return blockMap.get(hash);
-    }
+	public synchronized StoredBlock get(Sha256Hash hash)
+			throws BlockStoreException {
+		if (blockMap == null)
+			throw new BlockStoreException("MemoryBlockStore is closed");
+		return blockMap.get(hash);
+	}
 
-    public StoredBlock getChainHead() throws BlockStoreException {
-        if (blockMap == null) throw new BlockStoreException("MemoryBlockStore is closed");
-        return chainHead;
-    }
+	public StoredBlock getChainHead() throws BlockStoreException {
+		if (blockMap == null)
+			throw new BlockStoreException("MemoryBlockStore is closed");
+		return chainHead;
+	}
 
-    public void setChainHead(StoredBlock chainHead) throws BlockStoreException {
-        if (blockMap == null) throw new BlockStoreException("MemoryBlockStore is closed");
-        this.chainHead = chainHead;
-    }
-    
-    public void close() {
-        blockMap = null;
-    }
+	public void setChainHead(StoredBlock chainHead) throws BlockStoreException {
+		if (blockMap == null)
+			throw new BlockStoreException("MemoryBlockStore is closed");
+		this.chainHead = chainHead;
+	}
+
+	public void close() {
+		blockMap = null;
+	}
 }

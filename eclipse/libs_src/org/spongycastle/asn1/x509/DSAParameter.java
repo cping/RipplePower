@@ -11,82 +11,64 @@ import org.spongycastle.asn1.ASN1Sequence;
 import org.spongycastle.asn1.ASN1TaggedObject;
 import org.spongycastle.asn1.DERSequence;
 
-public class DSAParameter
-    extends ASN1Object
-{
-    ASN1Integer      p, q, g;
+public class DSAParameter extends ASN1Object {
+	ASN1Integer p, q, g;
 
-    public static DSAParameter getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(obj, explicit));
-    }
+	public static DSAParameter getInstance(ASN1TaggedObject obj,
+			boolean explicit) {
+		return getInstance(ASN1Sequence.getInstance(obj, explicit));
+	}
 
-    public static DSAParameter getInstance(
-        Object obj)
-    {
-        if (obj instanceof DSAParameter)
-        {
-            return (DSAParameter)obj;
-        }
-        
-        if(obj != null)
-        {
-            return new DSAParameter(ASN1Sequence.getInstance(obj));
-        }
-        
-        return null;
-    }
+	public static DSAParameter getInstance(Object obj) {
+		if (obj instanceof DSAParameter) {
+			return (DSAParameter) obj;
+		}
 
-    public DSAParameter(
-        BigInteger  p,
-        BigInteger  q,
-        BigInteger  g)
-    {
-        this.p = new ASN1Integer(p);
-        this.q = new ASN1Integer(q);
-        this.g = new ASN1Integer(g);
-    }
+		if (obj != null) {
+			return new DSAParameter(ASN1Sequence.getInstance(obj));
+		}
 
-    private DSAParameter(
-        ASN1Sequence  seq)
-    {
-        if (seq.size() != 3)
-        {
-            throw new IllegalArgumentException("Bad sequence size: " + seq.size());
-        }
-        
-        Enumeration     e = seq.getObjects();
+		return null;
+	}
 
-        p = ASN1Integer.getInstance(e.nextElement());
-        q = ASN1Integer.getInstance(e.nextElement());
-        g = ASN1Integer.getInstance(e.nextElement());
-    }
+	public DSAParameter(BigInteger p, BigInteger q, BigInteger g) {
+		this.p = new ASN1Integer(p);
+		this.q = new ASN1Integer(q);
+		this.g = new ASN1Integer(g);
+	}
 
-    public BigInteger getP()
-    {
-        return p.getPositiveValue();
-    }
+	private DSAParameter(ASN1Sequence seq) {
+		if (seq.size() != 3) {
+			throw new IllegalArgumentException("Bad sequence size: "
+					+ seq.size());
+		}
 
-    public BigInteger getQ()
-    {
-        return q.getPositiveValue();
-    }
+		Enumeration e = seq.getObjects();
 
-    public BigInteger getG()
-    {
-        return g.getPositiveValue();
-    }
+		p = ASN1Integer.getInstance(e.nextElement());
+		q = ASN1Integer.getInstance(e.nextElement());
+		g = ASN1Integer.getInstance(e.nextElement());
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	public BigInteger getP() {
+		return p.getPositiveValue();
+	}
 
-        v.add(p);
-        v.add(q);
-        v.add(g);
+	public BigInteger getQ() {
+		return q.getPositiveValue();
+	}
 
-        return new DERSequence(v);
-    }
+	public BigInteger getG() {
+		return g.getPositiveValue();
+	}
+
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(p);
+		v.add(q);
+		v.add(g);
+
+		return new DERSequence(v);
+	}
 }

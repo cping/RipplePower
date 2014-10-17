@@ -32,129 +32,133 @@ import org.json.Kim;
  * A keep is an associative data structure that maintains usage counts of each
  * of the associations in its keeping. When the keep becomes full, it purges
  * little used associations, and ages the survivors. Each key is assigned an
- * integer value. When the keep is compacted, each key can be given a new
- * value.
+ * integer value. When the keep is compacted, each key can be given a new value.
  */
 class MapKeep extends Keep {
-    private Object[] list;
-    private HashMap map;
+	private Object[] list;
+	private HashMap map;
 
-    /**
-     * Create a new Keep.
-     * @param bits
-     *              The capacity of the keep expressed in the number of bits
-     *              required to hold an integer.
-     */
-    public MapKeep(int bits) {
-        super(bits);
-        this.list = new Object[this.capacity];
-        this.map = new HashMap(this.capacity);
-    }
+	/**
+	 * Create a new Keep.
+	 * 
+	 * @param bits
+	 *            The capacity of the keep expressed in the number of bits
+	 *            required to hold an integer.
+	 */
+	public MapKeep(int bits) {
+		super(bits);
+		this.list = new Object[this.capacity];
+		this.map = new HashMap(this.capacity);
+	}
 
-    /**
-     * Compact the keep. A keep may contain at most this.capacity elements.
-     * The keep contents can be reduced by deleting all elements with low use
-     * counts, and by reducing the use counts of the survivors.
-     */
-    private void compact() {
-        int from = 0;
-        int to = 0;
-        while (from < this.capacity) {
-            Object key = this.list[from];
-            long usage = age(this.uses[from]);
-            if (usage > 0) {
-                this.uses[to] = usage;
-                this.list[to] = key;
-                this.map.put(key, new Integer(to));
-                to += 1;
-            } else {
-                this.map.remove(key);
-            }
-            from += 1;
-        }
-        if (to < this.capacity) {
-            this.length = to;
-        } else {
-            this.map.clear();
-            this.length = 0;
-        }
-        this.power = 0;
-    }
+	/**
+	 * Compact the keep. A keep may contain at most this.capacity elements. The
+	 * keep contents can be reduced by deleting all elements with low use
+	 * counts, and by reducing the use counts of the survivors.
+	 */
+	private void compact() {
+		int from = 0;
+		int to = 0;
+		while (from < this.capacity) {
+			Object key = this.list[from];
+			long usage = age(this.uses[from]);
+			if (usage > 0) {
+				this.uses[to] = usage;
+				this.list[to] = key;
+				this.map.put(key, new Integer(to));
+				to += 1;
+			} else {
+				this.map.remove(key);
+			}
+			from += 1;
+		}
+		if (to < this.capacity) {
+			this.length = to;
+		} else {
+			this.map.clear();
+			this.length = 0;
+		}
+		this.power = 0;
+	}
 
-    /**
-     * Find the integer value associated with this key, or nothing if this key
-     * is not in the keep.
-     *
-     * @param key
-     *            An object.
-     * @return An integer
-     */
-    public int find(Object key) {
-        Object o = this.map.get(key);
-        return o instanceof Integer ? ((Integer) o).intValue() : none;
-    }
+	/**
+	 * Find the integer value associated with this key, or nothing if this key
+	 * is not in the keep.
+	 * 
+	 * @param key
+	 *            An object.
+	 * @return An integer
+	 */
+	public int find(Object key) {
+		Object o = this.map.get(key);
+		return o instanceof Integer ? ((Integer) o).intValue() : none;
+	}
 
-    public boolean postMortem(PostMortem pm) {
-        MapKeep that = (MapKeep) pm;
-        if (this.length != that.length) {
-            JSONzip.log(this.length + " <> " + that.length);
-            return false;
-        }
-        for (int i = 0; i < this.length; i += 1) {
-            boolean b;
-            if (this.list[i] instanceof Kim) {
-                b = ((Kim) this.list[i]).equals(that.list[i]);
-            } else {
-                Object o = this.list[i];
-                Object q = that.list[i];
-                if (o instanceof Number) {
-                    o = o.toString();
-                }
-                if (q instanceof Number) {
-                    q = q.toString();
-                }
-                b = o.equals(q);
-            }
-            if (!b) {
-                JSONzip.log("\n[" + i + "]\n " + this.list[i] + "\n "
-                        + that.list[i] + "\n " + this.uses[i] + "\n "
-                        + that.uses[i]);
-                return false;
-            }
-        }
-        return true;
-    }
+	public boolean postMortem(PostMortem pm) {
+		MapKeep that = (MapKeep) pm;
+		if (this.length != that.length) {
+			JSONzip.log(this.length + " <> " + that.length);
+			return false;
+		}
+		for (int i = 0; i < this.length; i += 1) {
+			boolean b;
+			if (this.list[i] instanceof Kim) {
+				b = ((Kim) this.list[i]).equals(that.list[i]);
+			} else {
+				Object o = this.list[i];
+				Object q = that.list[i];
+				if (o instanceof Number) {
+					o = o.toString();
+				}
+				if (q instanceof Number) {
+					q = q.toString();
+				}
+				b = o.equals(q);
+			}
+			if (!b) {
+				JSONzip.log("\n[" + i + "]\n " + this.list[i] + "\n "
+						+ that.list[i] + "\n " + this.uses[i] + "\n "
+						+ that.uses[i]);
+				return false;
+			}
+		}
+		return true;
+	}
 
-    /**
-     * Register a value in the keep. Compact the keep if it is full. The next
-     * time this value is encountered, its integer can be sent instead.
-     * @param value A value.
-     */
-    public void register(Object value) {
-        if (JSONzip.probe) {
-            int integer = find(value);
-            if (integer >= 0) {
-                JSONzip.log("\nDuplicate key " + value);
-            }
-        }
-        if (this.length >= this.capacity) {
-            compact();
-        }
-        this.list[this.length] = value;
-        this.map.put(value, new Integer(this.length));
-        this.uses[this.length] = 1;
-        if (JSONzip.probe) {
-            JSONzip.log("<" + this.length + " " + value + "> ");
-        }
-        this.length += 1;
-    }
+	/**
+	 * Register a value in the keep. Compact the keep if it is full. The next
+	 * time this value is encountered, its integer can be sent instead.
+	 * 
+	 * @param value
+	 *            A value.
+	 */
+	public void register(Object value) {
+		if (JSONzip.probe) {
+			int integer = find(value);
+			if (integer >= 0) {
+				JSONzip.log("\nDuplicate key " + value);
+			}
+		}
+		if (this.length >= this.capacity) {
+			compact();
+		}
+		this.list[this.length] = value;
+		this.map.put(value, new Integer(this.length));
+		this.uses[this.length] = 1;
+		if (JSONzip.probe) {
+			JSONzip.log("<" + this.length + " " + value + "> ");
+		}
+		this.length += 1;
+	}
 
-    /**
-     * Return the value associated with the integer.
-     * @param integer The number of an item in the keep.
-     * @return The value.
-     */
-    public Object value(int integer) {
-        return this.list[integer];
-    }
+	/**
+	 * Return the value associated with the integer.
+	 * 
+	 * @param integer
+	 *            The number of an item in the keep.
+	 * @return The value.
+	 */
+	public Object value(int integer) {
+		return this.list[integer];
+	}
 }

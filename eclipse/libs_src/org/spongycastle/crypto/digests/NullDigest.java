@@ -4,45 +4,36 @@ import java.io.ByteArrayOutputStream;
 
 import org.spongycastle.crypto.Digest;
 
+public class NullDigest implements Digest {
+	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-public class NullDigest
-    implements Digest
-{
-    private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+	public String getAlgorithmName() {
+		return "NULL";
+	}
 
-    public String getAlgorithmName()
-    {
-        return "NULL";
-    }
+	public int getDigestSize() {
+		return bOut.size();
+	}
 
-    public int getDigestSize()
-    {
-        return bOut.size();
-    }
+	public void update(byte in) {
+		bOut.write(in);
+	}
 
-    public void update(byte in)
-    {
-        bOut.write(in);
-    }
+	public void update(byte[] in, int inOff, int len) {
+		bOut.write(in, inOff, len);
+	}
 
-    public void update(byte[] in, int inOff, int len)
-    {
-        bOut.write(in, inOff, len);
-    }
+	public int doFinal(byte[] out, int outOff) {
+		byte[] res = bOut.toByteArray();
 
-    public int doFinal(byte[] out, int outOff)
-    {
-        byte[] res = bOut.toByteArray();
+		System.arraycopy(res, 0, out, outOff, res.length);
 
-        System.arraycopy(res, 0, out, outOff, res.length);
+		reset();
 
-        reset();
-        
-        return res.length;
-    }
+		return res.length;
+	}
 
-    public void reset()
-    {
-        bOut.reset();
-    }
+	public void reset() {
+		bOut.reset();
+	}
 }

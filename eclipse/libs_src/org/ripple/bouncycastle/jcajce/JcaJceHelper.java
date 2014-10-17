@@ -18,42 +18,42 @@ import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
 
-public interface JcaJceHelper
-{
-    Cipher createCipher(
-        String algorithm)
-        throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException;
+public interface JcaJceHelper {
+	Cipher createCipher(String algorithm) throws NoSuchAlgorithmException,
+			NoSuchPaddingException, NoSuchProviderException;
 
-    Mac createMac(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	Mac createMac(String algorithm) throws NoSuchAlgorithmException,
+			NoSuchProviderException;
 
-    KeyAgreement createKeyAgreement(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	KeyAgreement createKeyAgreement(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    AlgorithmParameterGenerator createAlgorithmParameterGenerator(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	AlgorithmParameterGenerator createAlgorithmParameterGenerator(
+			String algorithm) throws NoSuchAlgorithmException,
+			NoSuchProviderException;
 
-    AlgorithmParameters createAlgorithmParameters(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	AlgorithmParameters createAlgorithmParameters(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    KeyGenerator createKeyGenerator(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	KeyGenerator createKeyGenerator(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    KeyFactory createKeyFactory(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	KeyFactory createKeyFactory(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    SecretKeyFactory createSecretKeyFactory(String algorithm)
-           throws NoSuchAlgorithmException, NoSuchProviderException;
+	SecretKeyFactory createSecretKeyFactory(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    KeyPairGenerator createKeyPairGenerator(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	KeyPairGenerator createKeyPairGenerator(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    MessageDigest createDigest(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	MessageDigest createDigest(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    Signature createSignature(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException;
+	Signature createSignature(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException;
 
-    CertificateFactory createCertificateFactory(String algorithm)
-        throws NoSuchAlgorithmException, NoSuchProviderException, CertificateException;
+	CertificateFactory createCertificateFactory(String algorithm)
+			throws NoSuchAlgorithmException, NoSuchProviderException,
+			CertificateException;
 }

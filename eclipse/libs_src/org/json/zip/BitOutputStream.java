@@ -29,126 +29,125 @@ import java.io.OutputStream;
 
 /**
  * This is a big endian bit writer. It writes its bits to an OutputStream.
- *
+ * 
  * @version 2013-04-18
- *
+ * 
  */
 public class BitOutputStream implements BitWriter {
 
-    /**
-     * The number of bits written.
-     */
-    private long nrBits = 0;
+	/**
+	 * The number of bits written.
+	 */
+	private long nrBits = 0;
 
-    /**
-     * The destination of the bits.
-     */
-    private OutputStream out;
+	/**
+	 * The destination of the bits.
+	 */
+	private OutputStream out;
 
-    /**
-     * Holder of bits not yet written.
-     */
-    private int unwritten;
+	/**
+	 * Holder of bits not yet written.
+	 */
+	private int unwritten;
 
-    /**
-     * The number of unused bits in this.unwritten.
-     */
-    private int vacant = 8;
+	/**
+	 * The number of unused bits in this.unwritten.
+	 */
+	private int vacant = 8;
 
-    /**
-     * Use an OutputStream to produce a BitWriter. The BitWriter will send its
-     * bits to the OutputStream as each byte is filled.
-     *
-     * @param out
-     *            An Output Stream
-     */
-    public BitOutputStream(OutputStream out) {
-        this.out = out;
-    }
+	/**
+	 * Use an OutputStream to produce a BitWriter. The BitWriter will send its
+	 * bits to the OutputStream as each byte is filled.
+	 * 
+	 * @param out
+	 *            An Output Stream
+	 */
+	public BitOutputStream(OutputStream out) {
+		this.out = out;
+	}
 
-    /**
-     * Returns the number of bits that have been written to this
-     * bitOutputStream. This may include bits that have not yet been written
-     * to the underlying outputStream.
-     */
-    public long nrBits() {
-        return this.nrBits;
-    }
+	/**
+	 * Returns the number of bits that have been written to this
+	 * bitOutputStream. This may include bits that have not yet been written to
+	 * the underlying outputStream.
+	 */
+	public long nrBits() {
+		return this.nrBits;
+	}
 
-    /**
-     * Write a 1 bit.
-     *
-     * @throws IOException
-     */
-    public void one() throws IOException {
-        write(1, 1);
-    }
+	/**
+	 * Write a 1 bit.
+	 * 
+	 * @throws IOException
+	 */
+	public void one() throws IOException {
+		write(1, 1);
+	}
 
-    /**
-     * Pad the rest of the block with zeroes and flush. pad(8) flushes the last
-     * unfinished byte. The underlying OutputStream will be flushed.
-     *
-     * @param factor
-     *            The size of the block to pad. This will typically be 8, 16,
-     *            32, 64, 128, 256, etc.
-     * @return this
-     * @throws IOException
-     */
-    public void pad(int factor) throws IOException {
-        int padding = factor - (int) (nrBits % factor);
-        int excess = padding & 7;
-        if (excess > 0) {
-            this.write(0, excess);
-            padding -= excess;
-        }
-        while (padding > 0) {
-            this.write(0, 8);
-            padding -= 8;
-        }
-        this.out.flush();
-    }
+	/**
+	 * Pad the rest of the block with zeroes and flush. pad(8) flushes the last
+	 * unfinished byte. The underlying OutputStream will be flushed.
+	 * 
+	 * @param factor
+	 *            The size of the block to pad. This will typically be 8, 16,
+	 *            32, 64, 128, 256, etc.
+	 * @return this
+	 * @throws IOException
+	 */
+	public void pad(int factor) throws IOException {
+		int padding = factor - (int) (nrBits % factor);
+		int excess = padding & 7;
+		if (excess > 0) {
+			this.write(0, excess);
+			padding -= excess;
+		}
+		while (padding > 0) {
+			this.write(0, 8);
+			padding -= 8;
+		}
+		this.out.flush();
+	}
 
-    /**
-     * Write some bits. Up to 32 bits can be written at a time.
-     *
-     * @param bits
-     *            The bits to be written.
-     * @param width
-     *            The number of bits to write. (0..32)
-     * @throws IOException
-     */
-    public void write(int bits, int width) throws IOException {
-        if (bits == 0 && width == 0) {
-            return;
-        }
-        if (width <= 0 || width > 32) {
-            throw new IOException("Bad write width.");
-        }
-        while (width > 0) {
-            int actual = width;
-            if (actual > this.vacant) {
-                actual = this.vacant;
-            }
-            this.unwritten |= ((bits >>> (width - actual)) &
-                    BitInputStream.mask[actual]) << (this.vacant - actual);
-            width -= actual;
-            nrBits += actual;
-            this.vacant -= actual;
-            if (this.vacant == 0) {
-                this.out.write(this.unwritten);
-                this.unwritten = 0;
-                this.vacant = 8;
-            }
-        }
-    }
+	/**
+	 * Write some bits. Up to 32 bits can be written at a time.
+	 * 
+	 * @param bits
+	 *            The bits to be written.
+	 * @param width
+	 *            The number of bits to write. (0..32)
+	 * @throws IOException
+	 */
+	public void write(int bits, int width) throws IOException {
+		if (bits == 0 && width == 0) {
+			return;
+		}
+		if (width <= 0 || width > 32) {
+			throw new IOException("Bad write width.");
+		}
+		while (width > 0) {
+			int actual = width;
+			if (actual > this.vacant) {
+				actual = this.vacant;
+			}
+			this.unwritten |= ((bits >>> (width - actual)) & BitInputStream.mask[actual]) << (this.vacant - actual);
+			width -= actual;
+			nrBits += actual;
+			this.vacant -= actual;
+			if (this.vacant == 0) {
+				this.out.write(this.unwritten);
+				this.unwritten = 0;
+				this.vacant = 8;
+			}
+		}
+	}
 
-    /**
-     * Write a 0 bit.
-     *
-     * @throws IOException
-     */
-    public void zero() throws IOException {
-        write(0, 1);
+	/**
+	 * Write a 0 bit.
+	 * 
+	 * @throws IOException
+	 */
+	public void zero() throws IOException {
+		write(0, 1);
 
-    }
+	}
 }

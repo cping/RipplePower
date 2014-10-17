@@ -24,7 +24,6 @@ import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
 import com.ripple.client.transport.impl.JavaWebSocketTransportImpl;
-import com.ripple.client.wallet.Wallet;
 import com.ripple.config.Config;
 import com.ripple.core.coretypes.AccountID;
 import com.ripple.core.coretypes.uint.UInt32;

@@ -14,7 +14,7 @@ import javax.annotation.meta.TypeQualifierDefault;
  * <li>An explicit nullness annotation
  * <li>The method overrides a method in a superclass (in which case the
  * annotation of the corresponding parameter in the superclass applies)
- * <li> there is a default parameter annotation applied to a more tightly nested
+ * <li>there is a default parameter annotation applied to a more tightly nested
  * element.
  * </ul>
  * 

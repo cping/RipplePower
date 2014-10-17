@@ -10,99 +10,79 @@ import org.ripple.bouncycastle.asn1.ocsp.Request;
 import org.ripple.bouncycastle.asn1.x509.X509Extension;
 import org.ripple.bouncycastle.asn1.x509.X509Extensions;
 
-public class Req
-    implements java.security.cert.X509Extension
-{
-    private Request req;
+public class Req implements java.security.cert.X509Extension {
+	private Request req;
 
-    public Req(
-        Request req)
-    {
-        this.req = req;
-    }
+	public Req(Request req) {
+		this.req = req;
+	}
 
-    public CertificateID getCertID()
-    {
-        return new CertificateID(req.getReqCert());
-    }
+	public CertificateID getCertID() {
+		return new CertificateID(req.getReqCert());
+	}
 
-    public X509Extensions getSingleRequestExtensions()
-    {
-        return X509Extensions.getInstance(req.getSingleRequestExtensions());
-    }
-    
-    /**
-     * RFC 2650 doesn't specify any critical extensions so we return true
-     * if any are encountered.
-     * 
-     * @return true if any critical extensions are present.
-     */
-    public boolean hasUnsupportedCriticalExtension()
-    {
-        Set extns = getCriticalExtensionOIDs();
-        if (extns != null && !extns.isEmpty())
-        {
-            return true;
-        }
+	public X509Extensions getSingleRequestExtensions() {
+		return X509Extensions.getInstance(req.getSingleRequestExtensions());
+	}
 
-        return false;
-    }
+	/**
+	 * RFC 2650 doesn't specify any critical extensions so we return true if any
+	 * are encountered.
+	 * 
+	 * @return true if any critical extensions are present.
+	 */
+	public boolean hasUnsupportedCriticalExtension() {
+		Set extns = getCriticalExtensionOIDs();
+		if (extns != null && !extns.isEmpty()) {
+			return true;
+		}
 
-    private Set getExtensionOIDs(boolean critical)
-    {
-        Set             set = new HashSet();
-        X509Extensions  extensions = this.getSingleRequestExtensions();
-        
-        if (extensions != null)
-        {
-            Enumeration     e = extensions.oids();
-    
-            while (e.hasMoreElements())
-            {
-                DERObjectIdentifier oid = (DERObjectIdentifier)e.nextElement();
-                X509Extension       ext = extensions.getExtension(oid);
-    
-                if (critical == ext.isCritical())
-                {
-                    set.add(oid.getId());
-                }
-            }
-        }
+		return false;
+	}
 
-        return set;
-    }
+	private Set getExtensionOIDs(boolean critical) {
+		Set set = new HashSet();
+		X509Extensions extensions = this.getSingleRequestExtensions();
 
-    public Set getCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(true);
-    }
+		if (extensions != null) {
+			Enumeration e = extensions.oids();
 
-    public Set getNonCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(false);
-    }
+			while (e.hasMoreElements()) {
+				DERObjectIdentifier oid = (DERObjectIdentifier) e.nextElement();
+				X509Extension ext = extensions.getExtension(oid);
 
-    public byte[] getExtensionValue(String oid)
-    {
-        X509Extensions exts = this.getSingleRequestExtensions();
+				if (critical == ext.isCritical()) {
+					set.add(oid.getId());
+				}
+			}
+		}
 
-        if (exts != null)
-        {
-            X509Extension   ext = exts.getExtension(new DERObjectIdentifier(oid));
+		return set;
+	}
 
-            if (ext != null)
-            {
-                try
-                {
-                    return ext.getValue().getEncoded(ASN1Encoding.DER);
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException("error encoding " + e.toString());
-                }
-            }
-        }
+	public Set getCriticalExtensionOIDs() {
+		return getExtensionOIDs(true);
+	}
 
-        return null;
-    }
+	public Set getNonCriticalExtensionOIDs() {
+		return getExtensionOIDs(false);
+	}
+
+	public byte[] getExtensionValue(String oid) {
+		X509Extensions exts = this.getSingleRequestExtensions();
+
+		if (exts != null) {
+			X509Extension ext = exts.getExtension(new DERObjectIdentifier(oid));
+
+			if (ext != null) {
+				try {
+					return ext.getValue().getEncoded(ASN1Encoding.DER);
+				} catch (Exception e) {
+					throw new RuntimeException("error encoding " + e.toString());
+				}
+			}
+		}
+
+		return null;
+	}
 }

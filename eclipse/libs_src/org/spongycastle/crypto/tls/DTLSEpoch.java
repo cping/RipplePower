@@ -1,53 +1,44 @@
 package org.spongycastle.crypto.tls;
 
-class DTLSEpoch
-{
+class DTLSEpoch {
 
-    private final DTLSReplayWindow replayWindow = new DTLSReplayWindow();
+	private final DTLSReplayWindow replayWindow = new DTLSReplayWindow();
 
-    private final int epoch;
-    private final TlsCipher cipher;
+	private final int epoch;
+	private final TlsCipher cipher;
 
-    private long sequence_number = 0;
+	private long sequence_number = 0;
 
-    DTLSEpoch(int epoch, TlsCipher cipher)
-    {
-        if (epoch < 0)
-        {
-            throw new IllegalArgumentException("'epoch' must be >= 0");
-        }
-        if (cipher == null)
-        {
-            throw new IllegalArgumentException("'cipher' cannot be null");
-        }
+	DTLSEpoch(int epoch, TlsCipher cipher) {
+		if (epoch < 0) {
+			throw new IllegalArgumentException("'epoch' must be >= 0");
+		}
+		if (cipher == null) {
+			throw new IllegalArgumentException("'cipher' cannot be null");
+		}
 
-        this.epoch = epoch;
-        this.cipher = cipher;
-    }
+		this.epoch = epoch;
+		this.cipher = cipher;
+	}
 
-    long allocateSequenceNumber()
-    {
-        // TODO Check for overflow
-        return sequence_number++;
-    }
+	long allocateSequenceNumber() {
+		// TODO Check for overflow
+		return sequence_number++;
+	}
 
-    TlsCipher getCipher()
-    {
-        return cipher;
-    }
+	TlsCipher getCipher() {
+		return cipher;
+	}
 
-    int getEpoch()
-    {
-        return epoch;
-    }
+	int getEpoch() {
+		return epoch;
+	}
 
-    DTLSReplayWindow getReplayWindow()
-    {
-        return replayWindow;
-    }
+	DTLSReplayWindow getReplayWindow() {
+		return replayWindow;
+	}
 
-    long getSequence_number()
-    {
-        return sequence_number;
-    }
+	long getSequence_number() {
+		return sequence_number;
+	}
 }

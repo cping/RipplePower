@@ -22,39 +22,44 @@ import com.google.bitcoin.core.NetworkParameters;
 import java.math.BigInteger;
 
 /**
- * Network parameters used by the bitcoinj unit tests (and potentially your own). This lets you solve a block using
- * {@link com.google.bitcoin.core.Block#solve()} by setting difficulty to the easiest possible.
+ * Network parameters used by the bitcoinj unit tests (and potentially your
+ * own). This lets you solve a block using
+ * {@link com.google.bitcoin.core.Block#solve()} by setting difficulty to the
+ * easiest possible.
  */
 public class UnitTestParams extends NetworkParameters {
-    public UnitTestParams() {
-        super();
-        id = ID_UNITTESTNET;
-        packetMagic = 0x0b110907;
-        addressHeader = 111;
-        p2shHeader = 196;
-        acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        proofOfWorkLimit = new BigInteger("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
-        genesisBlock.setTime(System.currentTimeMillis() / 1000);
-        genesisBlock.setDifficultyTarget(Block.EASIEST_DIFFICULTY_TARGET);
-        genesisBlock.solve();
-        port = 18333;
-        interval = 10;
-        dumpedPrivateKeyHeader = 239;
-        targetTimespan = 200000000;  // 6 years. Just a very big number.
-        spendableCoinbaseDepth = 5;
-        subsidyDecreaseBlockCount = 100;
-        dnsSeeds = null;
-    }
+	public UnitTestParams() {
+		super();
+		id = ID_UNITTESTNET;
+		packetMagic = 0x0b110907;
+		addressHeader = 111;
+		p2shHeader = 196;
+		acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
+		proofOfWorkLimit = new BigInteger(
+				"00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+				16);
+		genesisBlock.setTime(System.currentTimeMillis() / 1000);
+		genesisBlock.setDifficultyTarget(Block.EASIEST_DIFFICULTY_TARGET);
+		genesisBlock.solve();
+		port = 18333;
+		interval = 10;
+		dumpedPrivateKeyHeader = 239;
+		targetTimespan = 200000000; // 6 years. Just a very big number.
+		spendableCoinbaseDepth = 5;
+		subsidyDecreaseBlockCount = 100;
+		dnsSeeds = null;
+	}
 
-    private static UnitTestParams instance;
-    public static synchronized UnitTestParams get() {
-        if (instance == null) {
-            instance = new UnitTestParams();
-        }
-        return instance;
-    }
+	private static UnitTestParams instance;
 
-    public String getPaymentProtocolId() {
-        return null;
-    }
+	public static synchronized UnitTestParams get() {
+		if (instance == null) {
+			instance = new UnitTestParams();
+		}
+		return instance;
+	}
+
+	public String getPaymentProtocolId() {
+		return null;
+	}
 }

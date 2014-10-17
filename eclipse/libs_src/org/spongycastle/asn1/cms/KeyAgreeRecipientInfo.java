@@ -15,6 +15,7 @@ import org.spongycastle.asn1.x509.AlgorithmIdentifier;
  * <a href="http://tools.ietf.org/html/rfc5652#section-6.2.2">RFC 5652</a>:
  * Content encryption key delivery mechanisms.
  * <p>
+ * 
  * <pre>
  * KeyAgreeRecipientInfo ::= SEQUENCE {
  *     version CMSVersion,  -- always set to 3
@@ -23,144 +24,130 @@ import org.spongycastle.asn1.x509.AlgorithmIdentifier;
  *     keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
  *     recipientEncryptedKeys RecipientEncryptedKeys 
  * }
- *
+ * 
  * UserKeyingMaterial ::= OCTET STRING
  * </pre>
  */
-public class KeyAgreeRecipientInfo
-    extends ASN1Object
-{
-    private ASN1Integer                  version;
-    private OriginatorIdentifierOrKey   originator;
-    private ASN1OctetString             ukm;
-    private AlgorithmIdentifier         keyEncryptionAlgorithm;
-    private ASN1Sequence                recipientEncryptedKeys;
-    
-    public KeyAgreeRecipientInfo(
-        OriginatorIdentifierOrKey   originator,
-        ASN1OctetString             ukm,
-        AlgorithmIdentifier         keyEncryptionAlgorithm,
-        ASN1Sequence                recipientEncryptedKeys)
-    {
-        this.version = new ASN1Integer(3);
-        this.originator = originator;
-        this.ukm = ukm;
-        this.keyEncryptionAlgorithm = keyEncryptionAlgorithm;
-        this.recipientEncryptedKeys = recipientEncryptedKeys;
-    }
+public class KeyAgreeRecipientInfo extends ASN1Object {
+	private ASN1Integer version;
+	private OriginatorIdentifierOrKey originator;
+	private ASN1OctetString ukm;
+	private AlgorithmIdentifier keyEncryptionAlgorithm;
+	private ASN1Sequence recipientEncryptedKeys;
 
-    /**
-     * @deprecated use getInstance()
-     */
-    public KeyAgreeRecipientInfo(
-        ASN1Sequence seq)
-    {
-        int index = 0;
-        
-        version = (ASN1Integer)seq.getObjectAt(index++);
-        originator = OriginatorIdentifierOrKey.getInstance(
-                            (ASN1TaggedObject)seq.getObjectAt(index++), true);
+	public KeyAgreeRecipientInfo(OriginatorIdentifierOrKey originator,
+			ASN1OctetString ukm, AlgorithmIdentifier keyEncryptionAlgorithm,
+			ASN1Sequence recipientEncryptedKeys) {
+		this.version = new ASN1Integer(3);
+		this.originator = originator;
+		this.ukm = ukm;
+		this.keyEncryptionAlgorithm = keyEncryptionAlgorithm;
+		this.recipientEncryptedKeys = recipientEncryptedKeys;
+	}
 
-        if (seq.getObjectAt(index) instanceof ASN1TaggedObject)
-        {
-            ukm = ASN1OctetString.getInstance(
-                            (ASN1TaggedObject)seq.getObjectAt(index++), true);
-        }
+	/**
+	 * @deprecated use getInstance()
+	 */
+	public KeyAgreeRecipientInfo(ASN1Sequence seq) {
+		int index = 0;
 
-        keyEncryptionAlgorithm = AlgorithmIdentifier.getInstance(
-                                                seq.getObjectAt(index++));
+		version = (ASN1Integer) seq.getObjectAt(index++);
+		originator = OriginatorIdentifierOrKey.getInstance(
+				(ASN1TaggedObject) seq.getObjectAt(index++), true);
 
-        recipientEncryptedKeys = (ASN1Sequence)seq.getObjectAt(index++);
-    }
-    
-    /**
-     * Return a KeyAgreeRecipientInfo object from a tagged object.
-     *
-     * @param obj the tagged object holding the object we want.
-     * @param explicit true if the object is meant to be explicitly
-     *              tagged false otherwise.
-     * @exception IllegalArgumentException if the object held by the
-     *          tagged object cannot be converted.
-     */
-    public static KeyAgreeRecipientInfo getInstance(
-        ASN1TaggedObject    obj,
-        boolean             explicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(obj, explicit));
-    }
-    
-    /**
-     * Return a KeyAgreeRecipientInfo object from the given object.
-     * <p>
-     * Accepted inputs:
-     * <ul>
-     * <li> null &rarr; null
-     * <li> {@link KeyAgreeRecipientInfo} object
-     * <li> {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object) ASN1Sequence} input formats with KeyAgreeRecipientInfo structure inside
-     * </ul>
-     *
-     * @param obj the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static KeyAgreeRecipientInfo getInstance(
-        Object obj)
-    {
-        if (obj instanceof KeyAgreeRecipientInfo)
-        {
-            return (KeyAgreeRecipientInfo)obj;
-        }
-        
-        if (obj != null)
-        {
-            return new KeyAgreeRecipientInfo(ASN1Sequence.getInstance(obj));
-        }
-        
-        return null;
-    } 
+		if (seq.getObjectAt(index) instanceof ASN1TaggedObject) {
+			ukm = ASN1OctetString.getInstance(
+					(ASN1TaggedObject) seq.getObjectAt(index++), true);
+		}
 
-    public ASN1Integer getVersion()
-    {
-        return version;
-    }
+		keyEncryptionAlgorithm = AlgorithmIdentifier.getInstance(seq
+				.getObjectAt(index++));
 
-    public OriginatorIdentifierOrKey getOriginator()
-    {
-        return originator;
-    }
+		recipientEncryptedKeys = (ASN1Sequence) seq.getObjectAt(index++);
+	}
 
-    public ASN1OctetString getUserKeyingMaterial()
-    {
-        return ukm;
-    }
+	/**
+	 * Return a KeyAgreeRecipientInfo object from a tagged object.
+	 * 
+	 * @param obj
+	 *            the tagged object holding the object we want.
+	 * @param explicit
+	 *            true if the object is meant to be explicitly tagged false
+	 *            otherwise.
+	 * @exception IllegalArgumentException
+	 *                if the object held by the tagged object cannot be
+	 *                converted.
+	 */
+	public static KeyAgreeRecipientInfo getInstance(ASN1TaggedObject obj,
+			boolean explicit) {
+		return getInstance(ASN1Sequence.getInstance(obj, explicit));
+	}
 
-    public AlgorithmIdentifier getKeyEncryptionAlgorithm()
-    {
-        return keyEncryptionAlgorithm;
-    }
+	/**
+	 * Return a KeyAgreeRecipientInfo object from the given object.
+	 * <p>
+	 * Accepted inputs:
+	 * <ul>
+	 * <li>null &rarr; null
+	 * <li> {@link KeyAgreeRecipientInfo} object
+	 * <li>
+	 * {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object)
+	 * ASN1Sequence} input formats with KeyAgreeRecipientInfo structure inside
+	 * </ul>
+	 * 
+	 * @param obj
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static KeyAgreeRecipientInfo getInstance(Object obj) {
+		if (obj instanceof KeyAgreeRecipientInfo) {
+			return (KeyAgreeRecipientInfo) obj;
+		}
 
-    public ASN1Sequence getRecipientEncryptedKeys()
-    {
-        return recipientEncryptedKeys;
-    }
+		if (obj != null) {
+			return new KeyAgreeRecipientInfo(ASN1Sequence.getInstance(obj));
+		}
 
-    /** 
-     * Produce an object suitable for an ASN1OutputStream.
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+		return null;
+	}
 
-        v.add(version);
-        v.add(new DERTaggedObject(true, 0, originator));
-        
-        if (ukm != null)
-        {
-            v.add(new DERTaggedObject(true, 1, ukm));
-        }
-        
-        v.add(keyEncryptionAlgorithm);
-        v.add(recipientEncryptedKeys);
+	public ASN1Integer getVersion() {
+		return version;
+	}
 
-        return new DERSequence(v);
-    }
+	public OriginatorIdentifierOrKey getOriginator() {
+		return originator;
+	}
+
+	public ASN1OctetString getUserKeyingMaterial() {
+		return ukm;
+	}
+
+	public AlgorithmIdentifier getKeyEncryptionAlgorithm() {
+		return keyEncryptionAlgorithm;
+	}
+
+	public ASN1Sequence getRecipientEncryptedKeys() {
+		return recipientEncryptedKeys;
+	}
+
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(version);
+		v.add(new DERTaggedObject(true, 0, originator));
+
+		if (ukm != null) {
+			v.add(new DERTaggedObject(true, 1, ukm));
+		}
+
+		v.add(keyEncryptionAlgorithm);
+		v.add(recipientEncryptedKeys);
+
+		return new DERSequence(v);
+	}
 }

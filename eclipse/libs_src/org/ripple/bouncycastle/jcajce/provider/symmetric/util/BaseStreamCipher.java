@@ -25,338 +25,251 @@ import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public class BaseStreamCipher
-    extends BaseWrapCipher
-    implements PBE
-{
-    //
-    // specs we can handle.
-    //
-    private Class[]                 availableSpecs =
-                                    {
-                                        RC2ParameterSpec.class,
-                                        RC5ParameterSpec.class,
-                                        IvParameterSpec.class,
-                                        PBEParameterSpec.class
-                                    };
+public class BaseStreamCipher extends BaseWrapCipher implements PBE {
+	//
+	// specs we can handle.
+	//
+	private Class[] availableSpecs = { RC2ParameterSpec.class,
+			RC5ParameterSpec.class, IvParameterSpec.class,
+			PBEParameterSpec.class };
 
-    private StreamCipher       cipher;
-    private ParametersWithIV   ivParam;
+	private StreamCipher cipher;
+	private ParametersWithIV ivParam;
 
-    private int                     ivLength = 0;
+	private int ivLength = 0;
 
-    private PBEParameterSpec        pbeSpec = null;
-    private String                  pbeAlgorithm = null;
+	private PBEParameterSpec pbeSpec = null;
+	private String pbeAlgorithm = null;
 
-    protected BaseStreamCipher(
-        StreamCipher engine,
-        int ivLength)
-    {
-        cipher = engine;
-        this.ivLength = ivLength;
-    }
+	protected BaseStreamCipher(StreamCipher engine, int ivLength) {
+		cipher = engine;
+		this.ivLength = ivLength;
+	}
 
-    protected BaseStreamCipher(
-        BlockCipher engine,
-        int ivLength)
-    {
-        this.ivLength = ivLength;
+	protected BaseStreamCipher(BlockCipher engine, int ivLength) {
+		this.ivLength = ivLength;
 
-        cipher = new StreamBlockCipher(engine);
-    }
+		cipher = new StreamBlockCipher(engine);
+	}
 
-    protected int engineGetBlockSize()
-    {
-        return 0;
-    }
+	protected int engineGetBlockSize() {
+		return 0;
+	}
 
-    protected byte[] engineGetIV()
-    {
-        return (ivParam != null) ? ivParam.getIV() : null;
-    }
+	protected byte[] engineGetIV() {
+		return (ivParam != null) ? ivParam.getIV() : null;
+	}
 
-    protected int engineGetKeySize(
-        Key     key)
-    {
-        return key.getEncoded().length * 8;
-    }
+	protected int engineGetKeySize(Key key) {
+		return key.getEncoded().length * 8;
+	}
 
-    protected int engineGetOutputSize(
-        int     inputLen)
-    {
-        return inputLen;
-    }
+	protected int engineGetOutputSize(int inputLen) {
+		return inputLen;
+	}
 
-    protected AlgorithmParameters engineGetParameters()
-    {
-        if (engineParams == null)
-        {
-            if (pbeSpec != null)
-            {
-                try
-                {
-                    AlgorithmParameters engineParams = AlgorithmParameters.getInstance(pbeAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
-                    engineParams.init(pbeSpec);
+	protected AlgorithmParameters engineGetParameters() {
+		if (engineParams == null) {
+			if (pbeSpec != null) {
+				try {
+					AlgorithmParameters engineParams = AlgorithmParameters
+							.getInstance(pbeAlgorithm,
+									BouncyCastleProvider.PROVIDER_NAME);
+					engineParams.init(pbeSpec);
 
-                    return engineParams;
-                }
-                catch (Exception e)
-                {
-                    return null;
-                }
-            }
-        }
+					return engineParams;
+				} catch (Exception e) {
+					return null;
+				}
+			}
+		}
 
-        return engineParams;
-    }
+		return engineParams;
+	}
 
-    /**
-     * should never be called.
-     */
-    protected void engineSetMode(
-        String  mode)
-    {
-        if (!mode.equalsIgnoreCase("ECB"))
-        {
-            throw new IllegalArgumentException("can't support mode " + mode);
-        }
-    }
+	/**
+	 * should never be called.
+	 */
+	protected void engineSetMode(String mode) {
+		if (!mode.equalsIgnoreCase("ECB")) {
+			throw new IllegalArgumentException("can't support mode " + mode);
+		}
+	}
 
-    /**
-     * should never be called.
-     */
-    protected void engineSetPadding(
-        String  padding)
-    throws NoSuchPaddingException
-    {
-        if (!padding.equalsIgnoreCase("NoPadding"))
-        {
-            throw new NoSuchPaddingException("Padding " + padding + " unknown.");
-        }
-    }
+	/**
+	 * should never be called.
+	 */
+	protected void engineSetPadding(String padding)
+			throws NoSuchPaddingException {
+		if (!padding.equalsIgnoreCase("NoPadding")) {
+			throw new NoSuchPaddingException("Padding " + padding + " unknown.");
+		}
+	}
 
-    protected void engineInit(
-        int                     opmode,
-        Key                     key,
-        AlgorithmParameterSpec  params,
-        SecureRandom            random)
-        throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        CipherParameters        param;
+	protected void engineInit(int opmode, Key key,
+			AlgorithmParameterSpec params, SecureRandom random)
+			throws InvalidKeyException, InvalidAlgorithmParameterException {
+		CipherParameters param;
 
-        this.pbeSpec = null;
-        this.pbeAlgorithm = null;
+		this.pbeSpec = null;
+		this.pbeAlgorithm = null;
 
-        this.engineParams = null;
+		this.engineParams = null;
 
-        //
-        // basic key check
-        //
-        if (!(key instanceof SecretKey))
-        {
-            throw new InvalidKeyException("Key for algorithm " + key.getAlgorithm() + " not suitable for symmetric enryption.");
-        }
+		//
+		// basic key check
+		//
+		if (!(key instanceof SecretKey)) {
+			throw new InvalidKeyException("Key for algorithm "
+					+ key.getAlgorithm()
+					+ " not suitable for symmetric enryption.");
+		}
 
-        if (key instanceof BCPBEKey)
-        {
-            BCPBEKey k = (BCPBEKey)key;
+		if (key instanceof BCPBEKey) {
+			BCPBEKey k = (BCPBEKey) key;
 
-            if (k.getOID() != null)
-            {
-                pbeAlgorithm = k.getOID().getId();
-            }
-            else
-            {
-                pbeAlgorithm = k.getAlgorithm();
-            }
+			if (k.getOID() != null) {
+				pbeAlgorithm = k.getOID().getId();
+			} else {
+				pbeAlgorithm = k.getAlgorithm();
+			}
 
-            if (k.getParam() != null)
-            {
-                param = k.getParam();
-                pbeSpec = new PBEParameterSpec(k.getSalt(), k.getIterationCount());
-            }
-            else if (params instanceof PBEParameterSpec)
-            {
-                param = PBE.Util.makePBEParameters(k, params, cipher.getAlgorithmName());
-                pbeSpec = (PBEParameterSpec)params;
-            }
-            else
-            {
-                throw new InvalidAlgorithmParameterException("PBE requires PBE parameters to be set.");
-            }
-            
-            if (k.getIvSize() != 0)
-            {
-                ivParam = (ParametersWithIV)param;
-            }
-        }
-        else if (params == null)
-        {
-            param = new KeyParameter(key.getEncoded());
-        }
-        else if (params instanceof IvParameterSpec)
-        {
-            param = new ParametersWithIV(new KeyParameter(key.getEncoded()), ((IvParameterSpec)params).getIV());
-            ivParam = (ParametersWithIV)param;
-        }
-        else
-        {
-            throw new IllegalArgumentException("unknown parameter type.");
-        }
+			if (k.getParam() != null) {
+				param = k.getParam();
+				pbeSpec = new PBEParameterSpec(k.getSalt(),
+						k.getIterationCount());
+			} else if (params instanceof PBEParameterSpec) {
+				param = PBE.Util.makePBEParameters(k, params,
+						cipher.getAlgorithmName());
+				pbeSpec = (PBEParameterSpec) params;
+			} else {
+				throw new InvalidAlgorithmParameterException(
+						"PBE requires PBE parameters to be set.");
+			}
 
-        if ((ivLength != 0) && !(param instanceof ParametersWithIV))
-        {
-            SecureRandom    ivRandom = random;
+			if (k.getIvSize() != 0) {
+				ivParam = (ParametersWithIV) param;
+			}
+		} else if (params == null) {
+			param = new KeyParameter(key.getEncoded());
+		} else if (params instanceof IvParameterSpec) {
+			param = new ParametersWithIV(new KeyParameter(key.getEncoded()),
+					((IvParameterSpec) params).getIV());
+			ivParam = (ParametersWithIV) param;
+		} else {
+			throw new IllegalArgumentException("unknown parameter type.");
+		}
 
-            if (ivRandom == null)
-            {
-                ivRandom = new SecureRandom();
-            }
+		if ((ivLength != 0) && !(param instanceof ParametersWithIV)) {
+			SecureRandom ivRandom = random;
 
-            if ((opmode == Cipher.ENCRYPT_MODE) || (opmode == Cipher.WRAP_MODE))
-            {
-                byte[]  iv = new byte[ivLength];
+			if (ivRandom == null) {
+				ivRandom = new SecureRandom();
+			}
 
-                ivRandom.nextBytes(iv);
-                param = new ParametersWithIV(param, iv);
-                ivParam = (ParametersWithIV)param;
-            }
-            else
-            {
-                throw new InvalidAlgorithmParameterException("no IV set when one expected");
-            }
-        }
+			if ((opmode == Cipher.ENCRYPT_MODE) || (opmode == Cipher.WRAP_MODE)) {
+				byte[] iv = new byte[ivLength];
 
-        switch (opmode)
-        {
-        case Cipher.ENCRYPT_MODE:
-        case Cipher.WRAP_MODE:
-            cipher.init(true, param);
-            break;
-        case Cipher.DECRYPT_MODE:
-        case Cipher.UNWRAP_MODE:
-            cipher.init(false, param);
-            break;
-        default:
-            System.out.println("eeek!");
-        }
-    }
+				ivRandom.nextBytes(iv);
+				param = new ParametersWithIV(param, iv);
+				ivParam = (ParametersWithIV) param;
+			} else {
+				throw new InvalidAlgorithmParameterException(
+						"no IV set when one expected");
+			}
+		}
 
-    protected void engineInit(
-        int                 opmode,
-        Key                 key,
-        AlgorithmParameters params,
-        SecureRandom        random) 
-        throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        AlgorithmParameterSpec  paramSpec = null;
+		switch (opmode) {
+		case Cipher.ENCRYPT_MODE:
+		case Cipher.WRAP_MODE:
+			cipher.init(true, param);
+			break;
+		case Cipher.DECRYPT_MODE:
+		case Cipher.UNWRAP_MODE:
+			cipher.init(false, param);
+			break;
+		default:
+			System.out.println("eeek!");
+		}
+	}
 
-        if (params != null)
-        {
-            for (int i = 0; i != availableSpecs.length; i++)
-            {
-                try
-                {
-                    paramSpec = params.getParameterSpec(availableSpecs[i]);
-                    break;
-                }
-                catch (Exception e)
-                {
-                    continue;
-                }
-            }
+	protected void engineInit(int opmode, Key key, AlgorithmParameters params,
+			SecureRandom random) throws InvalidKeyException,
+			InvalidAlgorithmParameterException {
+		AlgorithmParameterSpec paramSpec = null;
 
-            if (paramSpec == null)
-            {
-                throw new InvalidAlgorithmParameterException("can't handle parameter " + params.toString());
-            }
-        }
+		if (params != null) {
+			for (int i = 0; i != availableSpecs.length; i++) {
+				try {
+					paramSpec = params.getParameterSpec(availableSpecs[i]);
+					break;
+				} catch (Exception e) {
+					continue;
+				}
+			}
 
-        engineInit(opmode, key, paramSpec, random);
-        engineParams = params;
-    }
+			if (paramSpec == null) {
+				throw new InvalidAlgorithmParameterException(
+						"can't handle parameter " + params.toString());
+			}
+		}
 
-    protected void engineInit(
-        int                 opmode,
-        Key                 key,
-        SecureRandom        random) 
-        throws InvalidKeyException
-    {
-        try
-        {
-            engineInit(opmode, key, (AlgorithmParameterSpec)null, random);
-        }
-        catch (InvalidAlgorithmParameterException e)
-        {
-            throw new InvalidKeyException(e.getMessage());
-        }
-    }
+		engineInit(opmode, key, paramSpec, random);
+		engineParams = params;
+	}
 
-    protected byte[] engineUpdate(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen) 
-    {
-        byte[]  out = new byte[inputLen];
+	protected void engineInit(int opmode, Key key, SecureRandom random)
+			throws InvalidKeyException {
+		try {
+			engineInit(opmode, key, (AlgorithmParameterSpec) null, random);
+		} catch (InvalidAlgorithmParameterException e) {
+			throw new InvalidKeyException(e.getMessage());
+		}
+	}
 
-        cipher.processBytes(input, inputOffset, inputLen, out, 0);
+	protected byte[] engineUpdate(byte[] input, int inputOffset, int inputLen) {
+		byte[] out = new byte[inputLen];
 
-        return out;
-    }
+		cipher.processBytes(input, inputOffset, inputLen, out, 0);
 
-    protected int engineUpdate(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen,
-        byte[]  output,
-        int     outputOffset) 
-        throws ShortBufferException 
-    {
-        try
-        {
-        cipher.processBytes(input, inputOffset, inputLen, output, outputOffset);
+		return out;
+	}
 
-        return inputLen;
-        }
-        catch (DataLengthException e)
-        {
-            throw new ShortBufferException(e.getMessage());
-        }
-    }
+	protected int engineUpdate(byte[] input, int inputOffset, int inputLen,
+			byte[] output, int outputOffset) throws ShortBufferException {
+		try {
+			cipher.processBytes(input, inputOffset, inputLen, output,
+					outputOffset);
 
-    protected byte[] engineDoFinal(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen) 
-    {
-        if (inputLen != 0)
-        {
-            byte[] out = engineUpdate(input, inputOffset, inputLen);
+			return inputLen;
+		} catch (DataLengthException e) {
+			throw new ShortBufferException(e.getMessage());
+		}
+	}
 
-            cipher.reset();
-            
-            return out;
-        }
+	protected byte[] engineDoFinal(byte[] input, int inputOffset, int inputLen) {
+		if (inputLen != 0) {
+			byte[] out = engineUpdate(input, inputOffset, inputLen);
 
-        cipher.reset();
-        
-        return new byte[0];
-    }
+			cipher.reset();
 
-    protected int engineDoFinal(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen,
-        byte[]  output,
-        int     outputOffset) 
-    {
-        if (inputLen != 0)
-        {
-            cipher.processBytes(input, inputOffset, inputLen, output, outputOffset);
-        }
+			return out;
+		}
 
-        cipher.reset();
-        
-        return inputLen;
-    }
+		cipher.reset();
+
+		return new byte[0];
+	}
+
+	protected int engineDoFinal(byte[] input, int inputOffset, int inputLen,
+			byte[] output, int outputOffset) {
+		if (inputLen != 0) {
+			cipher.processBytes(input, inputOffset, inputLen, output,
+					outputOffset);
+		}
+
+		cipher.reset();
+
+		return inputLen;
+	}
 }

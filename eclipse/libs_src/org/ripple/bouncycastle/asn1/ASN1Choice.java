@@ -6,9 +6,8 @@ package org.ripple.bouncycastle.asn1;
  * an explicit one as the encoding rules require.
  * <p>
  * If you use this interface your class should also implement the getInstance
- * pattern which takes a tag object and the tagging mode used. 
+ * pattern which takes a tag object and the tagging mode used.
  */
-public interface ASN1Choice
-{
-    // marker interface
+public interface ASN1Choice {
+	// marker interface
 }

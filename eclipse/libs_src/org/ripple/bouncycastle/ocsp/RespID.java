@@ -15,66 +15,51 @@ import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 /**
  * Carrier for a ResponderID.
  */
-public class RespID
-{
-    ResponderID id;
+public class RespID {
+	ResponderID id;
 
-    public RespID(
-        ResponderID id)
-    {
-        this.id = id;
-    }
+	public RespID(ResponderID id) {
+		this.id = id;
+	}
 
-    public RespID(
-        X500Principal   name)
-    {
-        this.id = new ResponderID(X500Name.getInstance(name.getEncoded()));
-    }
+	public RespID(X500Principal name) {
+		this.id = new ResponderID(X500Name.getInstance(name.getEncoded()));
+	}
 
-    public RespID(
-        PublicKey   key)
-        throws OCSPException
-    {
-        try
-        {
-            // TODO Allow specification of a particular provider
-            MessageDigest digest = OCSPUtil.createDigestInstance("SHA1", null);
+	public RespID(PublicKey key) throws OCSPException {
+		try {
+			// TODO Allow specification of a particular provider
+			MessageDigest digest = OCSPUtil.createDigestInstance("SHA1", null);
 
-            ASN1InputStream aIn = new ASN1InputStream(key.getEncoded());
-            SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(aIn.readObject());
+			ASN1InputStream aIn = new ASN1InputStream(key.getEncoded());
+			SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(aIn
+					.readObject());
 
-            digest.update(info.getPublicKeyData().getBytes());
+			digest.update(info.getPublicKeyData().getBytes());
 
-            ASN1OctetString keyHash = new DEROctetString(digest.digest());
+			ASN1OctetString keyHash = new DEROctetString(digest.digest());
 
-            this.id = new ResponderID(keyHash);
-        }
-        catch (Exception e)
-        {
-            throw new OCSPException("problem creating ID: " + e, e);
-        }
-    }
+			this.id = new ResponderID(keyHash);
+		} catch (Exception e) {
+			throw new OCSPException("problem creating ID: " + e, e);
+		}
+	}
 
-    public ResponderID toASN1Object()
-    {
-        return id;
-    }
+	public ResponderID toASN1Object() {
+		return id;
+	}
 
-    public boolean equals(
-        Object  o)
-    {
-        if (!(o instanceof RespID))
-        {
-            return false;
-        }
+	public boolean equals(Object o) {
+		if (!(o instanceof RespID)) {
+			return false;
+		}
 
-        RespID   obj = (RespID)o;
+		RespID obj = (RespID) o;
 
-        return id.equals(obj.id);
-    }
+		return id.equals(obj.id);
+	}
 
-    public int hashCode()
-    {
-        return id.hashCode();
-    }
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

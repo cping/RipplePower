@@ -8,55 +8,41 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseKeyGenerator;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 
-public final class XTEA
-{
-    private XTEA()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new XTEAEngine());
-        }
-    }
+public final class XTEA {
+	private XTEA() {
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("XTEA", 128, new CipherKeyGenerator());
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new XTEAEngine());
+		}
+	}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "XTEA IV";
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("XTEA", 128, new CipherKeyGenerator());
+		}
+	}
 
-    public static class Mappings
-        extends AlgorithmProvider
-    {
-        private static final String PREFIX = XTEA.class.getName();
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "XTEA IV";
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class Mappings extends AlgorithmProvider {
+		private static final String PREFIX = XTEA.class.getName();
 
-        public void configure(ConfigurableProvider provider)
-        {
+		public Mappings() {
+		}
 
-            provider.addAlgorithm("Cipher.XTEA", PREFIX + "$ECB");
-            provider.addAlgorithm("KeyGenerator.XTEA", PREFIX + "$KeyGen");
-            provider.addAlgorithm("AlgorithmParameters.XTEA", PREFIX + "$AlgParams");
+		public void configure(ConfigurableProvider provider) {
 
-        }
-    }
+			provider.addAlgorithm("Cipher.XTEA", PREFIX + "$ECB");
+			provider.addAlgorithm("KeyGenerator.XTEA", PREFIX + "$KeyGen");
+			provider.addAlgorithm("AlgorithmParameters.XTEA", PREFIX
+					+ "$AlgParams");
+
+		}
+	}
 }

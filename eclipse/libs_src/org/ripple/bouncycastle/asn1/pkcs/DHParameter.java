@@ -10,95 +10,71 @@ import org.ripple.bouncycastle.asn1.ASN1Primitive;
 import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class DHParameter
-    extends ASN1Object
-{
-    ASN1Integer      p, g, l;
+public class DHParameter extends ASN1Object {
+	ASN1Integer p, g, l;
 
-    public DHParameter(
-        BigInteger  p,
-        BigInteger  g,
-        int         l)
-    {
-        this.p = new ASN1Integer(p);
-        this.g = new ASN1Integer(g);
+	public DHParameter(BigInteger p, BigInteger g, int l) {
+		this.p = new ASN1Integer(p);
+		this.g = new ASN1Integer(g);
 
-        if (l != 0)
-        {
-            this.l = new ASN1Integer(l);
-        }
-        else
-        {
-            this.l = null;
-        }
-    }
+		if (l != 0) {
+			this.l = new ASN1Integer(l);
+		} else {
+			this.l = null;
+		}
+	}
 
-    public static DHParameter getInstance(
-        Object  obj)
-    {
-        if (obj instanceof DHParameter)
-        {
-            return (DHParameter)obj;
-        }
+	public static DHParameter getInstance(Object obj) {
+		if (obj instanceof DHParameter) {
+			return (DHParameter) obj;
+		}
 
-        if (obj != null)
-        {
-            return new DHParameter(ASN1Sequence.getInstance(obj));
-        }
+		if (obj != null) {
+			return new DHParameter(ASN1Sequence.getInstance(obj));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private DHParameter(
-        ASN1Sequence  seq)
-    {
-        Enumeration     e = seq.getObjects();
+	private DHParameter(ASN1Sequence seq) {
+		Enumeration e = seq.getObjects();
 
-        p = ASN1Integer.getInstance(e.nextElement());
-        g = ASN1Integer.getInstance(e.nextElement());
+		p = ASN1Integer.getInstance(e.nextElement());
+		g = ASN1Integer.getInstance(e.nextElement());
 
-        if (e.hasMoreElements())
-        {
-            l = (ASN1Integer)e.nextElement();
-        }
-        else
-        {
-            l = null;
-        }
-    }
+		if (e.hasMoreElements()) {
+			l = (ASN1Integer) e.nextElement();
+		} else {
+			l = null;
+		}
+	}
 
-    public BigInteger getP()
-    {
-        return p.getPositiveValue();
-    }
+	public BigInteger getP() {
+		return p.getPositiveValue();
+	}
 
-    public BigInteger getG()
-    {
-        return g.getPositiveValue();
-    }
+	public BigInteger getG() {
+		return g.getPositiveValue();
+	}
 
-    public BigInteger getL()
-    {
-        if (l == null)
-        {
-            return null;
-        }
+	public BigInteger getL() {
+		if (l == null) {
+			return null;
+		}
 
-        return l.getPositiveValue();
-    }
+		return l.getPositiveValue();
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(p);
-        v.add(g);
+		v.add(p);
+		v.add(g);
 
-        if (this.getL() != null)
-        {
-            v.add(l);
-        }
+		if (this.getL() != null) {
+			v.add(l);
+		}
 
-        return new DERSequence(v);
-    }
+		return new DERSequence(v);
+	}
 }

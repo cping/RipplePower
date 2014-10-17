@@ -23,107 +23,130 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>A BlockChain implements the <i>simplified payment verification</i> mode of the Bitcoin protocol. It is the right
- * choice to use for programs that have limited resources as it won't verify transactions signatures or attempt to store
- * all of the block chain. Really, this class should be called SPVBlockChain but for backwards compatibility it is not.
+ * <p>
+ * A BlockChain implements the <i>simplified payment verification</i> mode of
+ * the Bitcoin protocol. It is the right choice to use for programs that have
+ * limited resources as it won't verify transactions signatures or attempt to
+ * store all of the block chain. Really, this class should be called
+ * SPVBlockChain but for backwards compatibility it is not.
  * </p>
  */
 public class BlockChain extends AbstractBlockChain {
-    /** Keeps a map of block hashes to StoredBlocks. */
-    protected final BlockStore blockStore;
+	/** Keeps a map of block hashes to StoredBlocks. */
+	protected final BlockStore blockStore;
 
-    /**
-     * <p>Constructs a BlockChain connected to the given wallet and store. To obtain a {@link Wallet} you can construct
-     * one from scratch, or you can deserialize a saved wallet from disk using {@link Wallet#loadFromFile(java.io.File)}
-     * </p>
-     *
-     * <p>For the store, you should use {@link com.google.bitcoin.store.SPVBlockStore} or you could also try a
-     * {@link com.google.bitcoin.store.MemoryBlockStore} if you want to hold all headers in RAM and don't care about
-     * disk serialization (this is rare).</p>
-     */
-    public BlockChain(NetworkParameters params, Wallet wallet, BlockStore blockStore) throws BlockStoreException {
-        this(params, new ArrayList<BlockChainListener>(), blockStore);
-        if (wallet != null)
-            addWallet(wallet);
-    }
+	/**
+	 * <p>
+	 * Constructs a BlockChain connected to the given wallet and store. To
+	 * obtain a {@link Wallet} you can construct one from scratch, or you can
+	 * deserialize a saved wallet from disk using
+	 * {@link Wallet#loadFromFile(java.io.File)}
+	 * </p>
+	 * 
+	 * <p>
+	 * For the store, you should use
+	 * {@link com.google.bitcoin.store.SPVBlockStore} or you could also try a
+	 * {@link com.google.bitcoin.store.MemoryBlockStore} if you want to hold all
+	 * headers in RAM and don't care about disk serialization (this is rare).
+	 * </p>
+	 */
+	public BlockChain(NetworkParameters params, Wallet wallet,
+			BlockStore blockStore) throws BlockStoreException {
+		this(params, new ArrayList<BlockChainListener>(), blockStore);
+		if (wallet != null)
+			addWallet(wallet);
+	}
 
-    /**
-     * Constructs a BlockChain that has no wallet at all. This is helpful when you don't actually care about sending
-     * and receiving coins but rather, just want to explore the network data structures.
-     */
-    public BlockChain(NetworkParameters params, BlockStore blockStore) throws BlockStoreException {
-        this(params, new ArrayList<BlockChainListener>(), blockStore);
-    }
+	/**
+	 * Constructs a BlockChain that has no wallet at all. This is helpful when
+	 * you don't actually care about sending and receiving coins but rather,
+	 * just want to explore the network data structures.
+	 */
+	public BlockChain(NetworkParameters params, BlockStore blockStore)
+			throws BlockStoreException {
+		this(params, new ArrayList<BlockChainListener>(), blockStore);
+	}
 
-    /**
-     * Constructs a BlockChain connected to the given list of listeners and a store.
-     */
-    public BlockChain(NetworkParameters params, List<BlockChainListener> wallets,
-                      BlockStore blockStore) throws BlockStoreException {
-        super(params, wallets, blockStore);
-        this.blockStore = blockStore;
-    }
+	/**
+	 * Constructs a BlockChain connected to the given list of listeners and a
+	 * store.
+	 */
+	public BlockChain(NetworkParameters params,
+			List<BlockChainListener> wallets, BlockStore blockStore)
+			throws BlockStoreException {
+		super(params, wallets, blockStore);
+		this.blockStore = blockStore;
+	}
 
-    @Override
-    protected StoredBlock addToBlockStore(StoredBlock storedPrev, Block blockHeader, TransactionOutputChanges txOutChanges)
-            throws BlockStoreException, VerificationException {
-        StoredBlock newBlock = storedPrev.build(blockHeader);
-        blockStore.put(newBlock);
-        return newBlock;
-    }
-    
-    @Override
-    protected StoredBlock addToBlockStore(StoredBlock storedPrev, Block blockHeader)
-            throws BlockStoreException, VerificationException {
-        StoredBlock newBlock = storedPrev.build(blockHeader);
-        blockStore.put(newBlock);
-        return newBlock;
-    }
+	@Override
+	protected StoredBlock addToBlockStore(StoredBlock storedPrev,
+			Block blockHeader, TransactionOutputChanges txOutChanges)
+			throws BlockStoreException, VerificationException {
+		StoredBlock newBlock = storedPrev.build(blockHeader);
+		blockStore.put(newBlock);
+		return newBlock;
+	}
 
-    @Override
-    protected boolean shouldVerifyTransactions() {
-        return false;
-    }
+	@Override
+	protected StoredBlock addToBlockStore(StoredBlock storedPrev,
+			Block blockHeader) throws BlockStoreException,
+			VerificationException {
+		StoredBlock newBlock = storedPrev.build(blockHeader);
+		blockStore.put(newBlock);
+		return newBlock;
+	}
 
-    @Override
-    protected TransactionOutputChanges connectTransactions(int height, Block block) {
-        // Don't have to do anything as this is only called if(shouldVerifyTransactions())
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	protected boolean shouldVerifyTransactions() {
+		return false;
+	}
 
-    @Override
-    protected TransactionOutputChanges connectTransactions(StoredBlock newBlock) {
-        // Don't have to do anything as this is only called if(shouldVerifyTransactions())
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	protected TransactionOutputChanges connectTransactions(int height,
+			Block block) {
+		// Don't have to do anything as this is only called
+		// if(shouldVerifyTransactions())
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    protected void disconnectTransactions(StoredBlock block) {
-        // Don't have to do anything as this is only called if(shouldVerifyTransactions())
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	protected TransactionOutputChanges connectTransactions(StoredBlock newBlock) {
+		// Don't have to do anything as this is only called
+		// if(shouldVerifyTransactions())
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    protected void doSetChainHead(StoredBlock chainHead) throws BlockStoreException {
-        blockStore.setChainHead(chainHead);
-    }
+	@Override
+	protected void disconnectTransactions(StoredBlock block) {
+		// Don't have to do anything as this is only called
+		// if(shouldVerifyTransactions())
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    protected void notSettingChainHead() throws BlockStoreException {
-        // We don't use DB transactions here, so we don't need to do anything
-    }
+	@Override
+	protected void doSetChainHead(StoredBlock chainHead)
+			throws BlockStoreException {
+		blockStore.setChainHead(chainHead);
+	}
 
-    @Override
-    protected StoredBlock getStoredBlockInCurrentScope(Sha256Hash hash) throws BlockStoreException {
-        return blockStore.get(hash);
-    }
+	@Override
+	protected void notSettingChainHead() throws BlockStoreException {
+		// We don't use DB transactions here, so we don't need to do anything
+	}
 
-    @Override
-    public boolean add(FilteredBlock block) throws VerificationException, PrunedException {
-        boolean success = super.add(block);
-        if (success) {
-            trackFilteredTransactions(block.getTransactionCount());
-        }
-        return success;
-    }
+	@Override
+	protected StoredBlock getStoredBlockInCurrentScope(Sha256Hash hash)
+			throws BlockStoreException {
+		return blockStore.get(hash);
+	}
+
+	@Override
+	public boolean add(FilteredBlock block) throws VerificationException,
+			PrunedException {
+		boolean success = super.add(block);
+		if (success) {
+			trackFilteredTransactions(block.getTransactionCount());
+		}
+		return success;
+	}
 }

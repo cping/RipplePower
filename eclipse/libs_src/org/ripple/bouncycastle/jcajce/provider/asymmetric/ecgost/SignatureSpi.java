@@ -23,196 +23,151 @@ import org.ripple.bouncycastle.jce.interfaces.ECPublicKey;
 import org.ripple.bouncycastle.jce.interfaces.GOST3410Key;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public class SignatureSpi
-    extends java.security.SignatureSpi
-    implements PKCSObjectIdentifiers, X509ObjectIdentifiers
-{
-    private Digest                  digest;
-    private DSA                     signer;
+public class SignatureSpi extends java.security.SignatureSpi implements
+		PKCSObjectIdentifiers, X509ObjectIdentifiers {
+	private Digest digest;
+	private DSA signer;
 
-    public SignatureSpi()
-    {
-        this.digest = new GOST3411Digest();
-        this.signer = new ECGOST3410Signer();
-    }
+	public SignatureSpi() {
+		this.digest = new GOST3411Digest();
+		this.signer = new ECGOST3410Signer();
+	}
 
-    protected void engineInitVerify(
-        PublicKey   publicKey)
-        throws InvalidKeyException
-    {
-        CipherParameters    param;
+	protected void engineInitVerify(PublicKey publicKey)
+			throws InvalidKeyException {
+		CipherParameters param;
 
-        if (publicKey instanceof ECPublicKey)
-        {
-            param = ECUtil.generatePublicKeyParameter(publicKey);
-        }
-        else if (publicKey instanceof GOST3410Key)
-        {
-            param = GOST3410Util.generatePublicKeyParameter(publicKey);
-        }
-        else
-        {
-            try
-            {
-                byte[]  bytes = publicKey.getEncoded();
+		if (publicKey instanceof ECPublicKey) {
+			param = ECUtil.generatePublicKeyParameter(publicKey);
+		} else if (publicKey instanceof GOST3410Key) {
+			param = GOST3410Util.generatePublicKeyParameter(publicKey);
+		} else {
+			try {
+				byte[] bytes = publicKey.getEncoded();
 
-                publicKey = BouncyCastleProvider.getPublicKey(SubjectPublicKeyInfo.getInstance(bytes));
+				publicKey = BouncyCastleProvider
+						.getPublicKey(SubjectPublicKeyInfo.getInstance(bytes));
 
-                if (publicKey instanceof ECPublicKey)
-                {
-                    param = ECUtil.generatePublicKeyParameter(publicKey);
-                }
-                else
-                {
-                    throw new InvalidKeyException("can't recognise key type in DSA based signer");
-                }
-            }
-            catch (Exception e)
-            {
-                throw new InvalidKeyException("can't recognise key type in DSA based signer");
-            }
-        }
+				if (publicKey instanceof ECPublicKey) {
+					param = ECUtil.generatePublicKeyParameter(publicKey);
+				} else {
+					throw new InvalidKeyException(
+							"can't recognise key type in DSA based signer");
+				}
+			} catch (Exception e) {
+				throw new InvalidKeyException(
+						"can't recognise key type in DSA based signer");
+			}
+		}
 
-        digest.reset();
-        signer.init(false, param);
-    }
+		digest.reset();
+		signer.init(false, param);
+	}
 
-    protected void engineInitSign(
-        PrivateKey  privateKey)
-        throws InvalidKeyException
-    {
-        CipherParameters    param;
+	protected void engineInitSign(PrivateKey privateKey)
+			throws InvalidKeyException {
+		CipherParameters param;
 
-        if (privateKey instanceof ECKey)
-        {
-            param = ECUtil.generatePrivateKeyParameter(privateKey);
-        }
-        else
-        {
-            param = GOST3410Util.generatePrivateKeyParameter(privateKey);
-        }
+		if (privateKey instanceof ECKey) {
+			param = ECUtil.generatePrivateKeyParameter(privateKey);
+		} else {
+			param = GOST3410Util.generatePrivateKeyParameter(privateKey);
+		}
 
-        digest.reset();
+		digest.reset();
 
-        if (appRandom != null)
-        {
-            signer.init(true, new ParametersWithRandom(param, appRandom));
-        }
-        else
-        {
-            signer.init(true, param);
-        }
-    }
+		if (appRandom != null) {
+			signer.init(true, new ParametersWithRandom(param, appRandom));
+		} else {
+			signer.init(true, param);
+		}
+	}
 
-    protected void engineUpdate(
-        byte    b)
-        throws SignatureException
-    {
-        digest.update(b);
-    }
+	protected void engineUpdate(byte b) throws SignatureException {
+		digest.update(b);
+	}
 
-    protected void engineUpdate(
-        byte[]  b,
-        int     off,
-        int     len) 
-        throws SignatureException
-    {
-        digest.update(b, off, len);
-    }
+	protected void engineUpdate(byte[] b, int off, int len)
+			throws SignatureException {
+		digest.update(b, off, len);
+	}
 
-    protected byte[] engineSign()
-        throws SignatureException
-    {
-        byte[]  hash = new byte[digest.getDigestSize()];
+	protected byte[] engineSign() throws SignatureException {
+		byte[] hash = new byte[digest.getDigestSize()];
 
-        digest.doFinal(hash, 0);
+		digest.doFinal(hash, 0);
 
-        try
-        {
-            byte[]          sigBytes = new byte[64];
-            BigInteger[]    sig = signer.generateSignature(hash);
-            byte[]          r = sig[0].toByteArray();
-            byte[]          s = sig[1].toByteArray();
+		try {
+			byte[] sigBytes = new byte[64];
+			BigInteger[] sig = signer.generateSignature(hash);
+			byte[] r = sig[0].toByteArray();
+			byte[] s = sig[1].toByteArray();
 
-            if (s[0] != 0)
-            {
-                System.arraycopy(s, 0, sigBytes, 32 - s.length, s.length);
-            }
-            else
-            {
-                System.arraycopy(s, 1, sigBytes, 32 - (s.length - 1), s.length - 1);
-            }
-            
-            if (r[0] != 0)
-            {
-                System.arraycopy(r, 0, sigBytes, 64 - r.length, r.length);
-            }
-            else
-            {
-                System.arraycopy(r, 1, sigBytes, 64 - (r.length - 1), r.length - 1);
-            }
+			if (s[0] != 0) {
+				System.arraycopy(s, 0, sigBytes, 32 - s.length, s.length);
+			} else {
+				System.arraycopy(s, 1, sigBytes, 32 - (s.length - 1),
+						s.length - 1);
+			}
 
-            return sigBytes;
-        }
-        catch (Exception e)
-        {
-            throw new SignatureException(e.toString());
-        }
-    }
-    
-    protected boolean engineVerify(
-        byte[]  sigBytes) 
-        throws SignatureException
-    {
-        byte[]  hash = new byte[digest.getDigestSize()];
+			if (r[0] != 0) {
+				System.arraycopy(r, 0, sigBytes, 64 - r.length, r.length);
+			} else {
+				System.arraycopy(r, 1, sigBytes, 64 - (r.length - 1),
+						r.length - 1);
+			}
 
-        digest.doFinal(hash, 0);
+			return sigBytes;
+		} catch (Exception e) {
+			throw new SignatureException(e.toString());
+		}
+	}
 
-        BigInteger[]    sig;
+	protected boolean engineVerify(byte[] sigBytes) throws SignatureException {
+		byte[] hash = new byte[digest.getDigestSize()];
 
-        try
-        {
-            byte[] r = new byte[32]; 
-            byte[] s = new byte[32];
+		digest.doFinal(hash, 0);
 
-            System.arraycopy(sigBytes, 0, s, 0, 32);
+		BigInteger[] sig;
 
-            System.arraycopy(sigBytes, 32, r, 0, 32);
-            
-            sig = new BigInteger[2];
-            sig[0] = new BigInteger(1, r);
-            sig[1] = new BigInteger(1, s);
-        }
-        catch (Exception e)
-        {
-            throw new SignatureException("error decoding signature bytes.");
-        }
+		try {
+			byte[] r = new byte[32];
+			byte[] s = new byte[32];
 
-        return signer.verifySignature(hash, sig[0], sig[1]);
-    }
+			System.arraycopy(sigBytes, 0, s, 0, 32);
 
-    protected void engineSetParameter(
-        AlgorithmParameterSpec params)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+			System.arraycopy(sigBytes, 32, r, 0, 32);
 
-    /**
-     * @deprecated replaced with <a href = "#engineSetParameter(java.security.spec.AlgorithmParameterSpec)">
-     */
-    protected void engineSetParameter(
-        String  param,
-        Object  value)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+			sig = new BigInteger[2];
+			sig[0] = new BigInteger(1, r);
+			sig[1] = new BigInteger(1, s);
+		} catch (Exception e) {
+			throw new SignatureException("error decoding signature bytes.");
+		}
 
-    /**
-     * @deprecated
-     */
-    protected Object engineGetParameter(
-        String      param)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+		return signer.verifySignature(hash, sig[0], sig[1]);
+	}
+
+	protected void engineSetParameter(AlgorithmParameterSpec params) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
+
+	/**
+	 * @deprecated replaced with <a href =
+	 *             "#engineSetParameter(java.security.spec.AlgorithmParameterSpec)"
+	 *             >
+	 */
+	protected void engineSetParameter(String param, Object value) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
+
+	/**
+	 * @deprecated
+	 */
+	protected Object engineGetParameter(String param) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
 }

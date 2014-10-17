@@ -5,8 +5,6 @@ import java.io.InputStream;
 
 import org.spongycastle.crypto.params.AsymmetricKeyParameter;
 
-public interface KeyParser
-{
-    AsymmetricKeyParameter readKey(InputStream stream)
-        throws IOException;
+public interface KeyParser {
+	AsymmetricKeyParameter readKey(InputStream stream) throws IOException;
 }

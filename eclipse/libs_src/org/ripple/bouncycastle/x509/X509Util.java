@@ -36,377 +36,351 @@ import org.ripple.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.ripple.bouncycastle.jce.X509Principal;
 import org.ripple.bouncycastle.util.Strings;
 
-class X509Util
-{
-    private static Hashtable algorithms = new Hashtable();
-    private static Hashtable params = new Hashtable();
-    private static Set       noParams = new HashSet();
-    
-    static
-    {   
-        algorithms.put("MD2WITHRSAENCRYPTION", PKCSObjectIdentifiers.md2WithRSAEncryption);
-        algorithms.put("MD2WITHRSA", PKCSObjectIdentifiers.md2WithRSAEncryption);
-        algorithms.put("MD5WITHRSAENCRYPTION", PKCSObjectIdentifiers.md5WithRSAEncryption);
-        algorithms.put("MD5WITHRSA", PKCSObjectIdentifiers.md5WithRSAEncryption);
-        algorithms.put("SHA1WITHRSAENCRYPTION", PKCSObjectIdentifiers.sha1WithRSAEncryption);
-        algorithms.put("SHA1WITHRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption);
-        algorithms.put("SHA224WITHRSAENCRYPTION", PKCSObjectIdentifiers.sha224WithRSAEncryption);
-        algorithms.put("SHA224WITHRSA", PKCSObjectIdentifiers.sha224WithRSAEncryption);
-        algorithms.put("SHA256WITHRSAENCRYPTION", PKCSObjectIdentifiers.sha256WithRSAEncryption);
-        algorithms.put("SHA256WITHRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption);
-        algorithms.put("SHA384WITHRSAENCRYPTION", PKCSObjectIdentifiers.sha384WithRSAEncryption);
-        algorithms.put("SHA384WITHRSA", PKCSObjectIdentifiers.sha384WithRSAEncryption);
-        algorithms.put("SHA512WITHRSAENCRYPTION", PKCSObjectIdentifiers.sha512WithRSAEncryption);
-        algorithms.put("SHA512WITHRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption);
-        algorithms.put("SHA1WITHRSAANDMGF1", PKCSObjectIdentifiers.id_RSASSA_PSS);
-        algorithms.put("SHA224WITHRSAANDMGF1", PKCSObjectIdentifiers.id_RSASSA_PSS);
-        algorithms.put("SHA256WITHRSAANDMGF1", PKCSObjectIdentifiers.id_RSASSA_PSS);
-        algorithms.put("SHA384WITHRSAANDMGF1", PKCSObjectIdentifiers.id_RSASSA_PSS);
-        algorithms.put("SHA512WITHRSAANDMGF1", PKCSObjectIdentifiers.id_RSASSA_PSS);
-        algorithms.put("RIPEMD160WITHRSAENCRYPTION", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160);
-        algorithms.put("RIPEMD160WITHRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160);
-        algorithms.put("RIPEMD128WITHRSAENCRYPTION", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128);
-        algorithms.put("RIPEMD128WITHRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128);
-        algorithms.put("RIPEMD256WITHRSAENCRYPTION", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256);
-        algorithms.put("RIPEMD256WITHRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256);
-        algorithms.put("SHA1WITHDSA", X9ObjectIdentifiers.id_dsa_with_sha1);
-        algorithms.put("DSAWITHSHA1", X9ObjectIdentifiers.id_dsa_with_sha1);
-        algorithms.put("SHA224WITHDSA", NISTObjectIdentifiers.dsa_with_sha224);
-        algorithms.put("SHA256WITHDSA", NISTObjectIdentifiers.dsa_with_sha256);
-        algorithms.put("SHA384WITHDSA", NISTObjectIdentifiers.dsa_with_sha384);
-        algorithms.put("SHA512WITHDSA", NISTObjectIdentifiers.dsa_with_sha512);
-        algorithms.put("SHA1WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA1);
-        algorithms.put("ECDSAWITHSHA1", X9ObjectIdentifiers.ecdsa_with_SHA1);
-        algorithms.put("SHA224WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA224);
-        algorithms.put("SHA256WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA256);
-        algorithms.put("SHA384WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA384);
-        algorithms.put("SHA512WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA512);
-        algorithms.put("GOST3411WITHGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
-        algorithms.put("GOST3411WITHGOST3410-94", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
-        algorithms.put("GOST3411WITHECGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
-        algorithms.put("GOST3411WITHECGOST3410-2001", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
-        algorithms.put("GOST3411WITHGOST3410-2001", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
+class X509Util {
+	private static Hashtable algorithms = new Hashtable();
+	private static Hashtable params = new Hashtable();
+	private static Set noParams = new HashSet();
 
-        //
-        // According to RFC 3279, the ASN.1 encoding SHALL (id-dsa-with-sha1) or MUST (ecdsa-with-SHA*) omit the parameters field. 
-        // The parameters field SHALL be NULL for RSA based signature algorithms.
-        //
-        noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA1);
-        noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA224);
-        noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA256);
-        noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA384);
-        noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA512);
-        noParams.add(X9ObjectIdentifiers.id_dsa_with_sha1);
-        noParams.add(NISTObjectIdentifiers.dsa_with_sha224);
-        noParams.add(NISTObjectIdentifiers.dsa_with_sha256);
-        noParams.add(NISTObjectIdentifiers.dsa_with_sha384);
-        noParams.add(NISTObjectIdentifiers.dsa_with_sha512);
-        
-        //
-        // RFC 4491
-        //
-        noParams.add(CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
-        noParams.add(CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
+	static {
+		algorithms.put("MD2WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.md2WithRSAEncryption);
+		algorithms
+				.put("MD2WITHRSA", PKCSObjectIdentifiers.md2WithRSAEncryption);
+		algorithms.put("MD5WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.md5WithRSAEncryption);
+		algorithms
+				.put("MD5WITHRSA", PKCSObjectIdentifiers.md5WithRSAEncryption);
+		algorithms.put("SHA1WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.sha1WithRSAEncryption);
+		algorithms.put("SHA1WITHRSA",
+				PKCSObjectIdentifiers.sha1WithRSAEncryption);
+		algorithms.put("SHA224WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.sha224WithRSAEncryption);
+		algorithms.put("SHA224WITHRSA",
+				PKCSObjectIdentifiers.sha224WithRSAEncryption);
+		algorithms.put("SHA256WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.sha256WithRSAEncryption);
+		algorithms.put("SHA256WITHRSA",
+				PKCSObjectIdentifiers.sha256WithRSAEncryption);
+		algorithms.put("SHA384WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.sha384WithRSAEncryption);
+		algorithms.put("SHA384WITHRSA",
+				PKCSObjectIdentifiers.sha384WithRSAEncryption);
+		algorithms.put("SHA512WITHRSAENCRYPTION",
+				PKCSObjectIdentifiers.sha512WithRSAEncryption);
+		algorithms.put("SHA512WITHRSA",
+				PKCSObjectIdentifiers.sha512WithRSAEncryption);
+		algorithms.put("SHA1WITHRSAANDMGF1",
+				PKCSObjectIdentifiers.id_RSASSA_PSS);
+		algorithms.put("SHA224WITHRSAANDMGF1",
+				PKCSObjectIdentifiers.id_RSASSA_PSS);
+		algorithms.put("SHA256WITHRSAANDMGF1",
+				PKCSObjectIdentifiers.id_RSASSA_PSS);
+		algorithms.put("SHA384WITHRSAANDMGF1",
+				PKCSObjectIdentifiers.id_RSASSA_PSS);
+		algorithms.put("SHA512WITHRSAANDMGF1",
+				PKCSObjectIdentifiers.id_RSASSA_PSS);
+		algorithms.put("RIPEMD160WITHRSAENCRYPTION",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160);
+		algorithms.put("RIPEMD160WITHRSA",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160);
+		algorithms.put("RIPEMD128WITHRSAENCRYPTION",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128);
+		algorithms.put("RIPEMD128WITHRSA",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128);
+		algorithms.put("RIPEMD256WITHRSAENCRYPTION",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256);
+		algorithms.put("RIPEMD256WITHRSA",
+				TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256);
+		algorithms.put("SHA1WITHDSA", X9ObjectIdentifiers.id_dsa_with_sha1);
+		algorithms.put("DSAWITHSHA1", X9ObjectIdentifiers.id_dsa_with_sha1);
+		algorithms.put("SHA224WITHDSA", NISTObjectIdentifiers.dsa_with_sha224);
+		algorithms.put("SHA256WITHDSA", NISTObjectIdentifiers.dsa_with_sha256);
+		algorithms.put("SHA384WITHDSA", NISTObjectIdentifiers.dsa_with_sha384);
+		algorithms.put("SHA512WITHDSA", NISTObjectIdentifiers.dsa_with_sha512);
+		algorithms.put("SHA1WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA1);
+		algorithms.put("ECDSAWITHSHA1", X9ObjectIdentifiers.ecdsa_with_SHA1);
+		algorithms
+				.put("SHA224WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA224);
+		algorithms
+				.put("SHA256WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA256);
+		algorithms
+				.put("SHA384WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA384);
+		algorithms
+				.put("SHA512WITHECDSA", X9ObjectIdentifiers.ecdsa_with_SHA512);
+		algorithms.put("GOST3411WITHGOST3410",
+				CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
+		algorithms.put("GOST3411WITHGOST3410-94",
+				CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
+		algorithms.put("GOST3411WITHECGOST3410",
+				CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
+		algorithms.put("GOST3411WITHECGOST3410-2001",
+				CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
+		algorithms.put("GOST3411WITHGOST3410-2001",
+				CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
 
-        //
-        // explicit params
-        //
-        AlgorithmIdentifier sha1AlgId = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
-        params.put("SHA1WITHRSAANDMGF1", creatPSSParams(sha1AlgId, 20));
+		//
+		// According to RFC 3279, the ASN.1 encoding SHALL (id-dsa-with-sha1) or
+		// MUST (ecdsa-with-SHA*) omit the parameters field.
+		// The parameters field SHALL be NULL for RSA based signature
+		// algorithms.
+		//
+		noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA1);
+		noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA224);
+		noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA256);
+		noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA384);
+		noParams.add(X9ObjectIdentifiers.ecdsa_with_SHA512);
+		noParams.add(X9ObjectIdentifiers.id_dsa_with_sha1);
+		noParams.add(NISTObjectIdentifiers.dsa_with_sha224);
+		noParams.add(NISTObjectIdentifiers.dsa_with_sha256);
+		noParams.add(NISTObjectIdentifiers.dsa_with_sha384);
+		noParams.add(NISTObjectIdentifiers.dsa_with_sha512);
 
-        AlgorithmIdentifier sha224AlgId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE);
-        params.put("SHA224WITHRSAANDMGF1", creatPSSParams(sha224AlgId, 28));
+		//
+		// RFC 4491
+		//
+		noParams.add(CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94);
+		noParams.add(CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001);
 
-        AlgorithmIdentifier sha256AlgId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
-        params.put("SHA256WITHRSAANDMGF1", creatPSSParams(sha256AlgId, 32));
+		//
+		// explicit params
+		//
+		AlgorithmIdentifier sha1AlgId = new AlgorithmIdentifier(
+				OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
+		params.put("SHA1WITHRSAANDMGF1", creatPSSParams(sha1AlgId, 20));
 
-        AlgorithmIdentifier sha384AlgId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE);
-        params.put("SHA384WITHRSAANDMGF1", creatPSSParams(sha384AlgId, 48));
+		AlgorithmIdentifier sha224AlgId = new AlgorithmIdentifier(
+				NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE);
+		params.put("SHA224WITHRSAANDMGF1", creatPSSParams(sha224AlgId, 28));
 
-        AlgorithmIdentifier sha512AlgId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE);
-        params.put("SHA512WITHRSAANDMGF1", creatPSSParams(sha512AlgId, 64));
-    }
+		AlgorithmIdentifier sha256AlgId = new AlgorithmIdentifier(
+				NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
+		params.put("SHA256WITHRSAANDMGF1", creatPSSParams(sha256AlgId, 32));
 
-    private static RSASSAPSSparams creatPSSParams(AlgorithmIdentifier hashAlgId, int saltSize)
-    {
-        return new RSASSAPSSparams(
-            hashAlgId,
-            new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, hashAlgId),
-            new ASN1Integer(saltSize),
-            new ASN1Integer(1));
-    }
+		AlgorithmIdentifier sha384AlgId = new AlgorithmIdentifier(
+				NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE);
+		params.put("SHA384WITHRSAANDMGF1", creatPSSParams(sha384AlgId, 48));
 
-    static DERObjectIdentifier getAlgorithmOID(
-        String algorithmName)
-    {
-        algorithmName = Strings.toUpperCase(algorithmName);
-        
-        if (algorithms.containsKey(algorithmName))
-        {
-            return (DERObjectIdentifier)algorithms.get(algorithmName);
-        }
-        
-        return new DERObjectIdentifier(algorithmName);
-    }
-    
-    static AlgorithmIdentifier getSigAlgID(
-        DERObjectIdentifier sigOid,
-        String              algorithmName)
-    {
-        if (noParams.contains(sigOid))
-        {
-            return new AlgorithmIdentifier(sigOid);
-        }
+		AlgorithmIdentifier sha512AlgId = new AlgorithmIdentifier(
+				NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE);
+		params.put("SHA512WITHRSAANDMGF1", creatPSSParams(sha512AlgId, 64));
+	}
 
-        algorithmName = Strings.toUpperCase(algorithmName);
+	private static RSASSAPSSparams creatPSSParams(
+			AlgorithmIdentifier hashAlgId, int saltSize) {
+		return new RSASSAPSSparams(hashAlgId, new AlgorithmIdentifier(
+				PKCSObjectIdentifiers.id_mgf1, hashAlgId), new ASN1Integer(
+				saltSize), new ASN1Integer(1));
+	}
 
-        if (params.containsKey(algorithmName))
-        {
-            return new AlgorithmIdentifier(sigOid, (ASN1Encodable)params.get(algorithmName));
-        }
-        else
-        {
-            return new AlgorithmIdentifier(sigOid, DERNull.INSTANCE);
-        }
-    }
-    
-    static Iterator getAlgNames()
-    {
-        Enumeration e = algorithms.keys();
-        List        l = new ArrayList();
-        
-        while (e.hasMoreElements())
-        {
-            l.add(e.nextElement());
-        }
-        
-        return l.iterator();
-    }
+	static DERObjectIdentifier getAlgorithmOID(String algorithmName) {
+		algorithmName = Strings.toUpperCase(algorithmName);
 
-    static Signature getSignatureInstance(
-        String algorithm)
-        throws NoSuchAlgorithmException
-    {
-        return Signature.getInstance(algorithm);
-    }
+		if (algorithms.containsKey(algorithmName)) {
+			return (DERObjectIdentifier) algorithms.get(algorithmName);
+		}
 
-    static Signature getSignatureInstance(
-        String algorithm,
-        String provider)
-        throws NoSuchProviderException, NoSuchAlgorithmException
-    {
-        if (provider != null)
-        {
-            return Signature.getInstance(algorithm, provider);
-        }
-        else
-        {
-            return Signature.getInstance(algorithm);
-        }
-    }
+		return new DERObjectIdentifier(algorithmName);
+	}
 
-    static byte[] calculateSignature(
-        DERObjectIdentifier sigOid,
-        String              sigName,
-        PrivateKey          key,
-        SecureRandom        random,
-        ASN1Encodable       object)
-        throws IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException
-    {
-        Signature sig;
+	static AlgorithmIdentifier getSigAlgID(DERObjectIdentifier sigOid,
+			String algorithmName) {
+		if (noParams.contains(sigOid)) {
+			return new AlgorithmIdentifier(sigOid);
+		}
 
-        if (sigOid == null)
-        {
-            throw new IllegalStateException("no signature algorithm specified");
-        }
+		algorithmName = Strings.toUpperCase(algorithmName);
 
-        sig = X509Util.getSignatureInstance(sigName);
+		if (params.containsKey(algorithmName)) {
+			return new AlgorithmIdentifier(sigOid,
+					(ASN1Encodable) params.get(algorithmName));
+		} else {
+			return new AlgorithmIdentifier(sigOid, DERNull.INSTANCE);
+		}
+	}
 
-        if (random != null)
-        {
-            sig.initSign(key, random);
-        }
-        else
-        {
-            sig.initSign(key);
-        }
+	static Iterator getAlgNames() {
+		Enumeration e = algorithms.keys();
+		List l = new ArrayList();
 
-        sig.update(object.toASN1Primitive().getEncoded(ASN1Encoding.DER));
+		while (e.hasMoreElements()) {
+			l.add(e.nextElement());
+		}
 
-        return sig.sign();
-    }
+		return l.iterator();
+	}
 
-    static byte[] calculateSignature(
-        DERObjectIdentifier sigOid,
-        String              sigName,
-        String              provider,
-        PrivateKey          key,
-        SecureRandom        random,
-        ASN1Encodable       object)
-        throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException
-    {
-        Signature sig;
+	static Signature getSignatureInstance(String algorithm)
+			throws NoSuchAlgorithmException {
+		return Signature.getInstance(algorithm);
+	}
 
-        if (sigOid == null)
-        {
-            throw new IllegalStateException("no signature algorithm specified");
-        }
+	static Signature getSignatureInstance(String algorithm, String provider)
+			throws NoSuchProviderException, NoSuchAlgorithmException {
+		if (provider != null) {
+			return Signature.getInstance(algorithm, provider);
+		} else {
+			return Signature.getInstance(algorithm);
+		}
+	}
 
-        sig = X509Util.getSignatureInstance(sigName, provider);
+	static byte[] calculateSignature(DERObjectIdentifier sigOid,
+			String sigName, PrivateKey key, SecureRandom random,
+			ASN1Encodable object) throws IOException, NoSuchAlgorithmException,
+			InvalidKeyException, SignatureException {
+		Signature sig;
 
-        if (random != null)
-        {
-            sig.initSign(key, random);
-        }
-        else
-        {
-            sig.initSign(key);
-        }
+		if (sigOid == null) {
+			throw new IllegalStateException("no signature algorithm specified");
+		}
 
-        sig.update(object.toASN1Primitive().getEncoded(ASN1Encoding.DER));
+		sig = X509Util.getSignatureInstance(sigName);
 
-        return sig.sign();
-    }
+		if (random != null) {
+			sig.initSign(key, random);
+		} else {
+			sig.initSign(key);
+		}
 
-    static X509Principal convertPrincipal(
-        X500Principal principal)
-    {
-        try
-        {
-            return new X509Principal(principal.getEncoded());
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("cannot convert principal");
-        }
-    }
+		sig.update(object.toASN1Primitive().getEncoded(ASN1Encoding.DER));
 
-    static class Implementation
-    {
-        Object      engine;
-        Provider provider;
+		return sig.sign();
+	}
 
-        Implementation(
-            Object      engine,
-            Provider    provider)
-        {
-            this.engine = engine;
-            this.provider = provider;
-        }
+	static byte[] calculateSignature(DERObjectIdentifier sigOid,
+			String sigName, String provider, PrivateKey key,
+			SecureRandom random, ASN1Encodable object) throws IOException,
+			NoSuchProviderException, NoSuchAlgorithmException,
+			InvalidKeyException, SignatureException {
+		Signature sig;
 
-        Object getEngine()
-        {
-            return engine;
-        }
+		if (sigOid == null) {
+			throw new IllegalStateException("no signature algorithm specified");
+		}
 
-        Provider getProvider()
-        {
-            return provider;
-        }
-    }
+		sig = X509Util.getSignatureInstance(sigName, provider);
 
-    /**
-     * see if we can find an algorithm (or its alias and what it represents) in
-     * the property table for the given provider.
-     */
-    static Implementation getImplementation(
-        String      baseName,
-        String      algorithm,
-        Provider    prov)
-        throws NoSuchAlgorithmException
-    {
-        algorithm = Strings.toUpperCase(algorithm);
+		if (random != null) {
+			sig.initSign(key, random);
+		} else {
+			sig.initSign(key);
+		}
 
-        String      alias;
+		sig.update(object.toASN1Primitive().getEncoded(ASN1Encoding.DER));
 
-        while ((alias = prov.getProperty("Alg.Alias." + baseName + "." + algorithm)) != null)
-        {
-            algorithm = alias;
-        }
+		return sig.sign();
+	}
 
-        String      className = prov.getProperty(baseName + "." + algorithm);
+	static X509Principal convertPrincipal(X500Principal principal) {
+		try {
+			return new X509Principal(principal.getEncoded());
+		} catch (IOException e) {
+			throw new IllegalArgumentException("cannot convert principal");
+		}
+	}
 
-        if (className != null)
-        {
-            try
-            {
-                Class       cls;
-                ClassLoader clsLoader = prov.getClass().getClassLoader();
+	static class Implementation {
+		Object engine;
+		Provider provider;
 
-                if (clsLoader != null)
-                {
-                    cls = clsLoader.loadClass(className);
-                }
-                else
-                {
-                    cls = Class.forName(className);
-                }
+		Implementation(Object engine, Provider provider) {
+			this.engine = engine;
+			this.provider = provider;
+		}
 
-                return new Implementation(cls.newInstance(), prov);
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new IllegalStateException(
-                    "algorithm " + algorithm + " in provider " + prov.getName() + " but no class \"" + className + "\" found!");
-            }
-            catch (Exception e)
-            {
-                throw new IllegalStateException(
-                    "algorithm " + algorithm + " in provider " + prov.getName() + " but class \"" + className + "\" inaccessible!");
-            }
-        }
+		Object getEngine() {
+			return engine;
+		}
 
-        throw new NoSuchAlgorithmException("cannot find implementation " + algorithm + " for provider " + prov.getName());
-    }
+		Provider getProvider() {
+			return provider;
+		}
+	}
 
-    /**
-     * return an implementation for a given algorithm/provider.
-     * If the provider is null, we grab the first avalaible who has the required algorithm.
-     */
-    static Implementation getImplementation(
-        String      baseName,
-        String      algorithm)
-        throws NoSuchAlgorithmException
-    {
-        Provider[] prov = Security.getProviders();
+	/**
+	 * see if we can find an algorithm (or its alias and what it represents) in
+	 * the property table for the given provider.
+	 */
+	static Implementation getImplementation(String baseName, String algorithm,
+			Provider prov) throws NoSuchAlgorithmException {
+		algorithm = Strings.toUpperCase(algorithm);
 
-        //
-        // search every provider looking for the algorithm we want.
-        //
-        for (int i = 0; i != prov.length; i++)
-        {
-            //
-            // try case insensitive
-            //
-            Implementation imp = getImplementation(baseName, Strings.toUpperCase(algorithm), prov[i]);
-            if (imp != null)
-            {
-                return imp;
-            }
+		String alias;
 
-            try
-            {
-                imp = getImplementation(baseName, algorithm, prov[i]);
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                // continue
-            }
-        }
+		while ((alias = prov.getProperty("Alg.Alias." + baseName + "."
+				+ algorithm)) != null) {
+			algorithm = alias;
+		}
 
-        throw new NoSuchAlgorithmException("cannot find implementation " + algorithm);
-    }
+		String className = prov.getProperty(baseName + "." + algorithm);
 
-    static Provider getProvider(String provider)
-        throws NoSuchProviderException
-    {
-        Provider prov = Security.getProvider(provider);
+		if (className != null) {
+			try {
+				Class cls;
+				ClassLoader clsLoader = prov.getClass().getClassLoader();
 
-        if (prov == null)
-        {
-            throw new NoSuchProviderException("Provider " + provider + " not found");
-        }
+				if (clsLoader != null) {
+					cls = clsLoader.loadClass(className);
+				} else {
+					cls = Class.forName(className);
+				}
 
-        return prov;
-    }
+				return new Implementation(cls.newInstance(), prov);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalStateException("algorithm " + algorithm
+						+ " in provider " + prov.getName() + " but no class \""
+						+ className + "\" found!");
+			} catch (Exception e) {
+				throw new IllegalStateException("algorithm " + algorithm
+						+ " in provider " + prov.getName() + " but class \""
+						+ className + "\" inaccessible!");
+			}
+		}
+
+		throw new NoSuchAlgorithmException("cannot find implementation "
+				+ algorithm + " for provider " + prov.getName());
+	}
+
+	/**
+	 * return an implementation for a given algorithm/provider. If the provider
+	 * is null, we grab the first avalaible who has the required algorithm.
+	 */
+	static Implementation getImplementation(String baseName, String algorithm)
+			throws NoSuchAlgorithmException {
+		Provider[] prov = Security.getProviders();
+
+		//
+		// search every provider looking for the algorithm we want.
+		//
+		for (int i = 0; i != prov.length; i++) {
+			//
+			// try case insensitive
+			//
+			Implementation imp = getImplementation(baseName,
+					Strings.toUpperCase(algorithm), prov[i]);
+			if (imp != null) {
+				return imp;
+			}
+
+			try {
+				imp = getImplementation(baseName, algorithm, prov[i]);
+			} catch (NoSuchAlgorithmException e) {
+				// continue
+			}
+		}
+
+		throw new NoSuchAlgorithmException("cannot find implementation "
+				+ algorithm);
+	}
+
+	static Provider getProvider(String provider) throws NoSuchProviderException {
+		Provider prov = Security.getProvider(provider);
+
+		if (prov == null) {
+			throw new NoSuchProviderException("Provider " + provider
+					+ " not found");
+		}
+
+		return prov;
+	}
 }

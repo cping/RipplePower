@@ -11,83 +11,61 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.ripple.bouncycastle.asn1.ASN1ObjectIdentifier;
 
-public class BaseSecretKeyFactory
-    extends SecretKeyFactorySpi
-    implements PBE
-{
-    protected String                algName;
-    protected ASN1ObjectIdentifier   algOid;
+public class BaseSecretKeyFactory extends SecretKeyFactorySpi implements PBE {
+	protected String algName;
+	protected ASN1ObjectIdentifier algOid;
 
-    protected BaseSecretKeyFactory(
-        String algName,
-        ASN1ObjectIdentifier algOid)
-    {
-        this.algName = algName;
-        this.algOid = algOid;
-    }
+	protected BaseSecretKeyFactory(String algName, ASN1ObjectIdentifier algOid) {
+		this.algName = algName;
+		this.algOid = algOid;
+	}
 
-    protected SecretKey engineGenerateSecret(
-        KeySpec keySpec)
-    throws InvalidKeySpecException
-    {
-        if (keySpec instanceof SecretKeySpec)
-        {
-            return (SecretKey)keySpec;
-        }
+	protected SecretKey engineGenerateSecret(KeySpec keySpec)
+			throws InvalidKeySpecException {
+		if (keySpec instanceof SecretKeySpec) {
+			return (SecretKey) keySpec;
+		}
 
-        throw new InvalidKeySpecException("Invalid KeySpec");
-    }
+		throw new InvalidKeySpecException("Invalid KeySpec");
+	}
 
-    protected KeySpec engineGetKeySpec(
-        SecretKey key,
-        Class keySpec)
-    throws InvalidKeySpecException
-    {
-        if (keySpec == null)
-        {
-            throw new InvalidKeySpecException("keySpec parameter is null");
-        }
-        if (key == null)
-        {
-            throw new InvalidKeySpecException("key parameter is null");
-        }
-        
-        if (SecretKeySpec.class.isAssignableFrom(keySpec))
-        {
-            return new SecretKeySpec(key.getEncoded(), algName);
-        }
+	protected KeySpec engineGetKeySpec(SecretKey key, Class keySpec)
+			throws InvalidKeySpecException {
+		if (keySpec == null) {
+			throw new InvalidKeySpecException("keySpec parameter is null");
+		}
+		if (key == null) {
+			throw new InvalidKeySpecException("key parameter is null");
+		}
 
-        try
-        {
-            Class[] parameters = { byte[].class };
+		if (SecretKeySpec.class.isAssignableFrom(keySpec)) {
+			return new SecretKeySpec(key.getEncoded(), algName);
+		}
 
-            Constructor c = keySpec.getConstructor(parameters);
-            Object[]    p = new Object[1];
+		try {
+			Class[] parameters = { byte[].class };
 
-            p[0] = key.getEncoded();
+			Constructor c = keySpec.getConstructor(parameters);
+			Object[] p = new Object[1];
 
-            return (KeySpec)c.newInstance(p);
-        }
-        catch (Exception e)
-        {
-            throw new InvalidKeySpecException(e.toString());
-        }
-    }
+			p[0] = key.getEncoded();
 
-    protected SecretKey engineTranslateKey(
-        SecretKey key)
-    throws InvalidKeyException
-    {
-        if (key == null)
-        {
-            throw new InvalidKeyException("key parameter is null");
-        }
-        
-        if (!key.getAlgorithm().equalsIgnoreCase(algName))
-        {
-            throw new InvalidKeyException("Key not of type " + algName + ".");
-        }
+			return (KeySpec) c.newInstance(p);
+		} catch (Exception e) {
+			throw new InvalidKeySpecException(e.toString());
+		}
+	}
 
-        return new SecretKeySpec(key.getEncoded(), algName);
-    }
+	protected SecretKey engineTranslateKey(SecretKey key)
+			throws InvalidKeyException {
+		if (key == null) {
+			throw new InvalidKeyException("key parameter is null");
+		}
+
+		if (!key.getAlgorithm().equalsIgnoreCase(algName)) {
+			throw new InvalidKeyException("Key not of type " + algName + ".");
+		}
+
+		return new SecretKeySpec(key.getEncoded(), algName);
+	}
 }

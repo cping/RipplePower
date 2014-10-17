@@ -11,63 +11,47 @@ import org.spongycastle.asn1.ASN1Sequence;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERSequence;
 
-public class PBEParameter
-    extends ASN1Object
-{
-    ASN1Integer      iterations;
-    ASN1OctetString salt;
+public class PBEParameter extends ASN1Object {
+	ASN1Integer iterations;
+	ASN1OctetString salt;
 
-    public PBEParameter(
-        byte[]      salt,
-        int         iterations)
-    {
-        if (salt.length != 8)
-        {
-            throw new IllegalArgumentException("salt length must be 8");
-        }
-        this.salt = new DEROctetString(salt);
-        this.iterations = new ASN1Integer(iterations);
-    }
+	public PBEParameter(byte[] salt, int iterations) {
+		if (salt.length != 8) {
+			throw new IllegalArgumentException("salt length must be 8");
+		}
+		this.salt = new DEROctetString(salt);
+		this.iterations = new ASN1Integer(iterations);
+	}
 
-    private PBEParameter(
-        ASN1Sequence  seq)
-    {
-        salt = (ASN1OctetString)seq.getObjectAt(0);
-        iterations = (ASN1Integer)seq.getObjectAt(1);
-    }
+	private PBEParameter(ASN1Sequence seq) {
+		salt = (ASN1OctetString) seq.getObjectAt(0);
+		iterations = (ASN1Integer) seq.getObjectAt(1);
+	}
 
-    public static PBEParameter getInstance(
-        Object  obj)
-    {
-        if (obj instanceof PBEParameter)
-        {
-            return (PBEParameter)obj;
-        }
-        else if (obj != null)
-        {
-            return new PBEParameter(ASN1Sequence.getInstance(obj));
-        }
+	public static PBEParameter getInstance(Object obj) {
+		if (obj instanceof PBEParameter) {
+			return (PBEParameter) obj;
+		} else if (obj != null) {
+			return new PBEParameter(ASN1Sequence.getInstance(obj));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public BigInteger getIterationCount()
-    {
-        return iterations.getValue();
-    }
+	public BigInteger getIterationCount() {
+		return iterations.getValue();
+	}
 
-    public byte[] getSalt()
-    {
-        return salt.getOctets();
-    }
+	public byte[] getSalt() {
+		return salt.getOctets();
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(salt);
-        v.add(iterations);
+		v.add(salt);
+		v.add(iterations);
 
-        return new DERSequence(v);
-    }
+		return new DERSequence(v);
+	}
 }

@@ -7,9 +7,10 @@ import org.spongycastle.asn1.ASN1TaggedObject;
 import org.spongycastle.asn1.DERTaggedObject;
 
 /**
- * <a href="http://tools.ietf.org/html/rfc5544">RFC 5544</a>:
- * Binding Documents with Time-Stamps; Evidence object.
+ * <a href="http://tools.ietf.org/html/rfc5544">RFC 5544</a>: Binding Documents
+ * with Time-Stamps; Evidence object.
  * <p>
+ * 
  * <pre>
  * Evidence ::= CHOICE {
  *     tstEvidence    [0] TimeStampTokenEvidence,   -- see RFC 3161
@@ -18,63 +19,55 @@ import org.spongycastle.asn1.DERTaggedObject;
  * }
  * </pre>
  */
-public class Evidence
-    extends ASN1Object
-    implements ASN1Choice
-{
-    private TimeStampTokenEvidence tstEvidence;
+public class Evidence extends ASN1Object implements ASN1Choice {
+	private TimeStampTokenEvidence tstEvidence;
 
-    public Evidence(TimeStampTokenEvidence tstEvidence)
-    {
-        this.tstEvidence = tstEvidence;
-    }
+	public Evidence(TimeStampTokenEvidence tstEvidence) {
+		this.tstEvidence = tstEvidence;
+	}
 
-    private Evidence(ASN1TaggedObject tagged)
-    {
-        if (tagged.getTagNo() == 0)
-        {
-            this.tstEvidence = TimeStampTokenEvidence.getInstance(tagged, false);
-        }
-    }
+	private Evidence(ASN1TaggedObject tagged) {
+		if (tagged.getTagNo() == 0) {
+			this.tstEvidence = TimeStampTokenEvidence
+					.getInstance(tagged, false);
+		}
+	}
 
-    /**
-     * Return an Evidence object from the given object.
-     * <p>
-     * Accepted inputs:
-     * <ul>
-     * <li> {@link Evidence} object
-     * <li> {@link org.spongycastle.asn1.ASN1TaggedObject#getInstance(java.lang.Object) ASN1TaggedObject} input formats with Evidence data inside
-     * </ul>
-     *
-     * @param obj the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static Evidence getInstance(Object obj)
-    {
-        if (obj == null || obj instanceof Evidence)
-        {
-            return (Evidence)obj;
-        }
-        else if (obj instanceof ASN1TaggedObject)
-        {
-            return new Evidence(ASN1TaggedObject.getInstance(obj));
-        }
+	/**
+	 * Return an Evidence object from the given object.
+	 * <p>
+	 * Accepted inputs:
+	 * <ul>
+	 * <li> {@link Evidence} object
+	 * <li>
+	 * {@link org.spongycastle.asn1.ASN1TaggedObject#getInstance(java.lang.Object)
+	 * ASN1TaggedObject} input formats with Evidence data inside
+	 * </ul>
+	 * 
+	 * @param obj
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static Evidence getInstance(Object obj) {
+		if (obj == null || obj instanceof Evidence) {
+			return (Evidence) obj;
+		} else if (obj instanceof ASN1TaggedObject) {
+			return new Evidence(ASN1TaggedObject.getInstance(obj));
+		}
 
-        throw new IllegalArgumentException("unknown object in getInstance");
-    }
+		throw new IllegalArgumentException("unknown object in getInstance");
+	}
 
-    public TimeStampTokenEvidence getTstEvidence()
-    {
-        return tstEvidence;
-    }
+	public TimeStampTokenEvidence getTstEvidence() {
+		return tstEvidence;
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-       if (tstEvidence != null)
-       {
-           return new DERTaggedObject(false, 0, tstEvidence);
-       }
+	public ASN1Primitive toASN1Primitive() {
+		if (tstEvidence != null) {
+			return new DERTaggedObject(false, 0, tstEvidence);
+		}
 
-       return null;
-    }
+		return null;
+	}
 }

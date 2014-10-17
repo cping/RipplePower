@@ -36,259 +36,204 @@ import org.ripple.bouncycastle.jce.X509Principal;
 /**
  * @deprecated use classes in org.bouncycastle.cert.ocsp.
  */
-public class OCSPReqGenerator
-{
-    private List            list = new ArrayList();
-    private GeneralName     requestorName = null;
-    private X509Extensions  requestExtensions = null;
+public class OCSPReqGenerator {
+	private List list = new ArrayList();
+	private GeneralName requestorName = null;
+	private X509Extensions requestExtensions = null;
 
-    private class RequestObject
-    {
-        CertificateID   certId;
-        X509Extensions  extensions;
+	private class RequestObject {
+		CertificateID certId;
+		X509Extensions extensions;
 
-        public RequestObject(
-            CertificateID   certId,
-            X509Extensions  extensions)
-        {
-            this.certId = certId;
-            this.extensions = extensions;
-        }
+		public RequestObject(CertificateID certId, X509Extensions extensions) {
+			this.certId = certId;
+			this.extensions = extensions;
+		}
 
-        public Request toRequest()
-            throws Exception
-        {
-            return new Request(certId.toASN1Object(), Extensions.getInstance(extensions));
-        }
-    }
+		public Request toRequest() throws Exception {
+			return new Request(certId.toASN1Object(),
+					Extensions.getInstance(extensions));
+		}
+	}
 
-    /**
-     * Add a request for the given CertificateID.
-     * 
-     * @param certId certificate ID of interest
-     */
-    public void addRequest(
-        CertificateID   certId)
-    {
-        list.add(new RequestObject(certId, null));
-    }
+	/**
+	 * Add a request for the given CertificateID.
+	 * 
+	 * @param certId
+	 *            certificate ID of interest
+	 */
+	public void addRequest(CertificateID certId) {
+		list.add(new RequestObject(certId, null));
+	}
 
-    /**
-     * Add a request with extensions
-     * 
-     * @param certId certificate ID of interest
-     * @param singleRequestExtensions the extensions to attach to the request
-     */
-    public void addRequest(
-        CertificateID   certId,
-        X509Extensions  singleRequestExtensions)
-    {
-        list.add(new RequestObject(certId, singleRequestExtensions));
-    }
+	/**
+	 * Add a request with extensions
+	 * 
+	 * @param certId
+	 *            certificate ID of interest
+	 * @param singleRequestExtensions
+	 *            the extensions to attach to the request
+	 */
+	public void addRequest(CertificateID certId,
+			X509Extensions singleRequestExtensions) {
+		list.add(new RequestObject(certId, singleRequestExtensions));
+	}
 
-    /**
-     * Set the requestor name to the passed in X500Principal
-     * 
-     * @param requestorName a X500Principal representing the requestor name.
-     */
-    public void setRequestorName(
-        X500Principal        requestorName)
-    {
-        try
-        {
-            this.requestorName = new GeneralName(GeneralName.directoryName, new X509Principal(requestorName.getEncoded()));
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("cannot encode principal: " + e);
-        }
-    }
+	/**
+	 * Set the requestor name to the passed in X500Principal
+	 * 
+	 * @param requestorName
+	 *            a X500Principal representing the requestor name.
+	 */
+	public void setRequestorName(X500Principal requestorName) {
+		try {
+			this.requestorName = new GeneralName(GeneralName.directoryName,
+					new X509Principal(requestorName.getEncoded()));
+		} catch (IOException e) {
+			throw new IllegalArgumentException("cannot encode principal: " + e);
+		}
+	}
 
-    public void setRequestorName(
-        GeneralName         requestorName)
-    {
-        this.requestorName = requestorName;
-    }
-    
-    public void setRequestExtensions(
-        X509Extensions      requestExtensions)
-    {
-        this.requestExtensions = requestExtensions;
-    }
+	public void setRequestorName(GeneralName requestorName) {
+		this.requestorName = requestorName;
+	}
 
-    private OCSPReq generateRequest(
-        DERObjectIdentifier signingAlgorithm,
-        PrivateKey          key,
-        X509Certificate[]   chain,
-        String              provider,
-        SecureRandom        random)
-        throws OCSPException, NoSuchProviderException
-    {
-        Iterator    it = list.iterator();
+	public void setRequestExtensions(X509Extensions requestExtensions) {
+		this.requestExtensions = requestExtensions;
+	}
 
-        ASN1EncodableVector requests = new ASN1EncodableVector();
+	private OCSPReq generateRequest(DERObjectIdentifier signingAlgorithm,
+			PrivateKey key, X509Certificate[] chain, String provider,
+			SecureRandom random) throws OCSPException, NoSuchProviderException {
+		Iterator it = list.iterator();
 
-        while (it.hasNext())
-        {
-            try
-            {
-                requests.add(((RequestObject)it.next()).toRequest());
-            }
-            catch (Exception e)
-            {
-                throw new OCSPException("exception creating Request", e);
-            }
-        }
+		ASN1EncodableVector requests = new ASN1EncodableVector();
 
-        TBSRequest  tbsReq = new TBSRequest(requestorName, new DERSequence(requests), requestExtensions);
+		while (it.hasNext()) {
+			try {
+				requests.add(((RequestObject) it.next()).toRequest());
+			} catch (Exception e) {
+				throw new OCSPException("exception creating Request", e);
+			}
+		}
 
-        java.security.Signature sig = null;
-        Signature               signature = null;
+		TBSRequest tbsReq = new TBSRequest(requestorName, new DERSequence(
+				requests), requestExtensions);
 
-        if (signingAlgorithm != null)
-        {
-            if (requestorName == null)
-            {
-                throw new OCSPException("requestorName must be specified if request is signed.");
-            }
-            
-            try
-            {
-                sig = OCSPUtil.createSignatureInstance(signingAlgorithm.getId(), provider);
-                if (random != null)
-                {
-                    sig.initSign(key, random);
-                }
-                else
-                {
-                    sig.initSign(key);
-                }
-            }
-            catch (NoSuchProviderException e)
-            {
-                // TODO Why this special case?
-                throw e;
-            }
-            catch (GeneralSecurityException e)
-            {
-                throw new OCSPException("exception creating signature: " + e, e);
-            }
+		java.security.Signature sig = null;
+		Signature signature = null;
 
-            DERBitString    bitSig = null;
+		if (signingAlgorithm != null) {
+			if (requestorName == null) {
+				throw new OCSPException(
+						"requestorName must be specified if request is signed.");
+			}
 
-            try
-            {
-                ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
-                ASN1OutputStream        aOut = new ASN1OutputStream(bOut);
+			try {
+				sig = OCSPUtil.createSignatureInstance(
+						signingAlgorithm.getId(), provider);
+				if (random != null) {
+					sig.initSign(key, random);
+				} else {
+					sig.initSign(key);
+				}
+			} catch (NoSuchProviderException e) {
+				// TODO Why this special case?
+				throw e;
+			} catch (GeneralSecurityException e) {
+				throw new OCSPException("exception creating signature: " + e, e);
+			}
 
-                aOut.writeObject(tbsReq);
+			DERBitString bitSig = null;
 
-                sig.update(bOut.toByteArray());
+			try {
+				ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+				ASN1OutputStream aOut = new ASN1OutputStream(bOut);
 
-                bitSig = new DERBitString(sig.sign());
-            }
-            catch (Exception e)
-            {
-                throw new OCSPException("exception processing TBSRequest: " + e, e);
-            }
+				aOut.writeObject(tbsReq);
 
-            AlgorithmIdentifier sigAlgId = new AlgorithmIdentifier(signingAlgorithm, DERNull.INSTANCE);
+				sig.update(bOut.toByteArray());
 
-            if (chain != null && chain.length > 0)
-            {
-                ASN1EncodableVector v = new ASN1EncodableVector();
-                try
-                {
-                    for (int i = 0; i != chain.length; i++)
-                    {
-                        v.add(new X509CertificateStructure(
-                            (ASN1Sequence)ASN1Primitive.fromByteArray(chain[i].getEncoded())));
-                    }
-                }
-                catch (IOException e)
-                {
-                    throw new OCSPException("error processing certs", e);
-                }
-                catch (CertificateEncodingException e)
-                {
-                    throw new OCSPException("error encoding certs", e);
-                }
+				bitSig = new DERBitString(sig.sign());
+			} catch (Exception e) {
+				throw new OCSPException(
+						"exception processing TBSRequest: " + e, e);
+			}
 
-                signature = new Signature(sigAlgId, bitSig, new DERSequence(v));
-            }
-            else
-            {
-                signature = new Signature(sigAlgId, bitSig);
-            }
-        }
+			AlgorithmIdentifier sigAlgId = new AlgorithmIdentifier(
+					signingAlgorithm, DERNull.INSTANCE);
 
-        return new OCSPReq(new OCSPRequest(tbsReq, signature));
-    }
-    
-    /**
-     * Generate an unsigned request
-     * 
-     * @return the OCSPReq
-     * @throws OCSPException
-     */
-    public OCSPReq generate()
-        throws OCSPException
-    {
-        try
-        {
-            return generateRequest(null, null, null, null, null);
-        }
-        catch (NoSuchProviderException e)
-        {
-            //
-            // this shouldn't happen but...
-            //
-            throw new OCSPException("no provider! - " + e, e);
-        }
-    }
+			if (chain != null && chain.length > 0) {
+				ASN1EncodableVector v = new ASN1EncodableVector();
+				try {
+					for (int i = 0; i != chain.length; i++) {
+						v.add(new X509CertificateStructure(
+								(ASN1Sequence) ASN1Primitive
+										.fromByteArray(chain[i].getEncoded())));
+					}
+				} catch (IOException e) {
+					throw new OCSPException("error processing certs", e);
+				} catch (CertificateEncodingException e) {
+					throw new OCSPException("error encoding certs", e);
+				}
 
-    public OCSPReq generate(
-        String              signingAlgorithm,
-        PrivateKey          key,
-        X509Certificate[]   chain,
-        String              provider)
-        throws OCSPException, NoSuchProviderException, IllegalArgumentException
-    {
-        return generate(signingAlgorithm, key, chain, provider, null);
-    }
+				signature = new Signature(sigAlgId, bitSig, new DERSequence(v));
+			} else {
+				signature = new Signature(sigAlgId, bitSig);
+			}
+		}
 
-    public OCSPReq generate(
-        String              signingAlgorithm,
-        PrivateKey          key,
-        X509Certificate[]   chain,
-        String              provider,
-        SecureRandom        random)
-        throws OCSPException, NoSuchProviderException, IllegalArgumentException
-    {
-        if (signingAlgorithm == null)
-        {
-            throw new IllegalArgumentException("no signing algorithm specified");
-        }
+		return new OCSPReq(new OCSPRequest(tbsReq, signature));
+	}
 
-        try
-        {
-            DERObjectIdentifier oid = OCSPUtil.getAlgorithmOID(signingAlgorithm);
-            
-            return generateRequest(oid, key, chain, provider, random);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new IllegalArgumentException("unknown signing algorithm specified: " + signingAlgorithm);
-        }
-    }
-    
-    /**
-     * Return an iterator of the signature names supported by the generator.
-     * 
-     * @return an iterator containing recognised names.
-     */
-    public Iterator getSignatureAlgNames()
-    {
-        return OCSPUtil.getAlgNames();
-    }
+	/**
+	 * Generate an unsigned request
+	 * 
+	 * @return the OCSPReq
+	 * @throws OCSPException
+	 */
+	public OCSPReq generate() throws OCSPException {
+		try {
+			return generateRequest(null, null, null, null, null);
+		} catch (NoSuchProviderException e) {
+			//
+			// this shouldn't happen but...
+			//
+			throw new OCSPException("no provider! - " + e, e);
+		}
+	}
+
+	public OCSPReq generate(String signingAlgorithm, PrivateKey key,
+			X509Certificate[] chain, String provider) throws OCSPException,
+			NoSuchProviderException, IllegalArgumentException {
+		return generate(signingAlgorithm, key, chain, provider, null);
+	}
+
+	public OCSPReq generate(String signingAlgorithm, PrivateKey key,
+			X509Certificate[] chain, String provider, SecureRandom random)
+			throws OCSPException, NoSuchProviderException,
+			IllegalArgumentException {
+		if (signingAlgorithm == null) {
+			throw new IllegalArgumentException("no signing algorithm specified");
+		}
+
+		try {
+			DERObjectIdentifier oid = OCSPUtil
+					.getAlgorithmOID(signingAlgorithm);
+
+			return generateRequest(oid, key, chain, provider, random);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(
+					"unknown signing algorithm specified: " + signingAlgorithm);
+		}
+	}
+
+	/**
+	 * Return an iterator of the signature names supported by the generator.
+	 * 
+	 * @return an iterator containing recognised names.
+	 */
+	public Iterator getSignatureAlgNames() {
+		return OCSPUtil.getAlgNames();
+	}
 }

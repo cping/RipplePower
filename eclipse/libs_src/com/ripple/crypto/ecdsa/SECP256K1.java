@@ -9,33 +9,33 @@ import org.ripple.bouncycastle.math.ec.ECCurve;
 import org.ripple.bouncycastle.math.ec.ECPoint;
 
 public class SECP256K1 {
-    private static final ECDomainParameters ecParams;
-    private static final X9ECParameters params;
+	private static final ECDomainParameters ecParams;
+	private static final X9ECParameters params;
 
-    static {
+	static {
 
-        params = SECNamedCurves.getByName("secp256k1");
-        ecParams = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(), params.getH());
-    }
+		params = SECNamedCurves.getByName("secp256k1");
+		ecParams = new ECDomainParameters(params.getCurve(), params.getG(),
+				params.getN(), params.getH());
+	}
 
-    public static ECDomainParameters params() {
-        return ecParams;
-    }
+	public static ECDomainParameters params() {
+		return ecParams;
+	}
 
-    public static BigInteger order() {
-        return ecParams.getN();
-    }
+	public static BigInteger order() {
+		return ecParams.getN();
+	}
 
+	public static ECCurve curve() {
+		return ecParams.getCurve();
+	}
 
-    public static ECCurve curve() {
-        return ecParams.getCurve();
-    }
+	public static ECPoint basePoint() {
+		return ecParams.getG();
+	}
 
-    public static ECPoint basePoint() {
-        return ecParams.getG();
-    }
-
-    static byte[] basePointMultipliedBy(BigInteger secret) {
-        return basePoint().multiply(secret).getEncoded(true);
-    }
+	static byte[] basePointMultipliedBy(BigInteger secret) {
+		return basePoint().multiply(secret).getEncoded(true);
+	}
 }

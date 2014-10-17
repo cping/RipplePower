@@ -29,142 +29,130 @@ import org.ripple.bouncycastle.util.Arrays;
  * Jintai Ding, Dieter Schmidt: Rainbow, a New Multivariable Polynomial
  * Signature Scheme. ACNS 2005: 164-175 (http://dx.doi.org/10.1007/11496137_12)
  */
-public class BCRainbowPublicKey
-    implements PublicKey
-{
-    private static final long serialVersionUID = 1L;
+public class BCRainbowPublicKey implements PublicKey {
+	private static final long serialVersionUID = 1L;
 
-    private short[][] coeffquadratic;
-    private short[][] coeffsingular;
-    private short[] coeffscalar;
-    private int docLength; // length of possible document to sign
+	private short[][] coeffquadratic;
+	private short[][] coeffsingular;
+	private short[] coeffscalar;
+	private int docLength; // length of possible document to sign
 
-    private RainbowParameters rainbowParams;
+	private RainbowParameters rainbowParams;
 
-    /**
-     * Constructor
-     *
-     * @param docLength
-     * @param coeffQuadratic
-     * @param coeffSingular
-     * @param coeffScalar
-     */
-    public BCRainbowPublicKey(int docLength,
-                              short[][] coeffQuadratic, short[][] coeffSingular,
-                              short[] coeffScalar)
-    {
-        this.docLength = docLength;
-        this.coeffquadratic = coeffQuadratic;
-        this.coeffsingular = coeffSingular;
-        this.coeffscalar = coeffScalar;
-    }
+	/**
+	 * Constructor
+	 * 
+	 * @param docLength
+	 * @param coeffQuadratic
+	 * @param coeffSingular
+	 * @param coeffScalar
+	 */
+	public BCRainbowPublicKey(int docLength, short[][] coeffQuadratic,
+			short[][] coeffSingular, short[] coeffScalar) {
+		this.docLength = docLength;
+		this.coeffquadratic = coeffQuadratic;
+		this.coeffsingular = coeffSingular;
+		this.coeffscalar = coeffScalar;
+	}
 
-    /**
-     * Constructor (used by the {@link RainbowKeyFactorySpi}).
-     *
-     * @param keySpec a {@link RainbowPublicKeySpec}
-     */
-    public BCRainbowPublicKey(RainbowPublicKeySpec keySpec)
-    {
-        this(keySpec.getDocLength(), keySpec.getCoeffQuadratic(), keySpec
-            .getCoeffSingular(), keySpec.getCoeffScalar());
-    }
+	/**
+	 * Constructor (used by the {@link RainbowKeyFactorySpi}).
+	 * 
+	 * @param keySpec
+	 *            a {@link RainbowPublicKeySpec}
+	 */
+	public BCRainbowPublicKey(RainbowPublicKeySpec keySpec) {
+		this(keySpec.getDocLength(), keySpec.getCoeffQuadratic(), keySpec
+				.getCoeffSingular(), keySpec.getCoeffScalar());
+	}
 
-    public BCRainbowPublicKey(
-        RainbowPublicKeyParameters params)
-    {
-        this(params.getDocLength(), params.getCoeffQuadratic(), params.getCoeffSingular(), params.getCoeffScalar());
-    }
+	public BCRainbowPublicKey(RainbowPublicKeyParameters params) {
+		this(params.getDocLength(), params.getCoeffQuadratic(), params
+				.getCoeffSingular(), params.getCoeffScalar());
+	}
 
-    /**
-     * @return the docLength
-     */
-    public int getDocLength()
-    {
-        return this.docLength;
-    }
+	/**
+	 * @return the docLength
+	 */
+	public int getDocLength() {
+		return this.docLength;
+	}
 
-    /**
-     * @return the coeffQuadratic
-     */
-    public short[][] getCoeffQuadratic()
-    {
-        return coeffquadratic;
-    }
+	/**
+	 * @return the coeffQuadratic
+	 */
+	public short[][] getCoeffQuadratic() {
+		return coeffquadratic;
+	}
 
-    /**
-     * @return the coeffSingular
-     */
-    public short[][] getCoeffSingular()
-    {
-        short[][] copy = new short[coeffsingular.length][];
+	/**
+	 * @return the coeffSingular
+	 */
+	public short[][] getCoeffSingular() {
+		short[][] copy = new short[coeffsingular.length][];
 
-        for (int i = 0; i != coeffsingular.length; i++)
-        {
-            copy[i] = Arrays.clone(coeffsingular[i]);
-        }
+		for (int i = 0; i != coeffsingular.length; i++) {
+			copy[i] = Arrays.clone(coeffsingular[i]);
+		}
 
-        return copy;
-    }
+		return copy;
+	}
 
+	/**
+	 * @return the coeffScalar
+	 */
+	public short[] getCoeffScalar() {
+		return Arrays.clone(coeffscalar);
+	}
 
-    /**
-     * @return the coeffScalar
-     */
-    public short[] getCoeffScalar()
-    {
-        return Arrays.clone(coeffscalar);
-    }
+	/**
+	 * Compare this Rainbow public key with another object.
+	 * 
+	 * @param other
+	 *            the other object
+	 * @return the result of the comparison
+	 */
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof BCRainbowPublicKey)) {
+			return false;
+		}
+		BCRainbowPublicKey otherKey = (BCRainbowPublicKey) other;
 
-    /**
-     * Compare this Rainbow public key with another object.
-     *
-     * @param other the other object
-     * @return the result of the comparison
-     */
-    public boolean equals(Object other)
-    {
-        if (other == null || !(other instanceof BCRainbowPublicKey))
-        {
-            return false;
-        }
-        BCRainbowPublicKey otherKey = (BCRainbowPublicKey)other;
+		return docLength == otherKey.getDocLength()
+				&& RainbowUtil.equals(coeffquadratic,
+						otherKey.getCoeffQuadratic())
+				&& RainbowUtil.equals(coeffsingular,
+						otherKey.getCoeffSingular())
+				&& RainbowUtil.equals(coeffscalar, otherKey.getCoeffScalar());
+	}
 
-        return docLength == otherKey.getDocLength()
-            && RainbowUtil.equals(coeffquadratic, otherKey.getCoeffQuadratic())
-            && RainbowUtil.equals(coeffsingular, otherKey.getCoeffSingular())
-            && RainbowUtil.equals(coeffscalar, otherKey.getCoeffScalar());
-    }
+	public int hashCode() {
+		int hash = docLength;
 
-    public int hashCode()
-    {
-        int hash = docLength;
+		hash = hash * 37 + Arrays.hashCode(coeffquadratic);
+		hash = hash * 37 + Arrays.hashCode(coeffsingular);
+		hash = hash * 37 + Arrays.hashCode(coeffscalar);
 
-        hash = hash * 37 + Arrays.hashCode(coeffquadratic);
-        hash = hash * 37 + Arrays.hashCode(coeffsingular);
-        hash = hash * 37 + Arrays.hashCode(coeffscalar);
+		return hash;
+	}
 
-        return hash;
-    }
+	/**
+	 * @return name of the algorithm - "Rainbow"
+	 */
+	public final String getAlgorithm() {
+		return "Rainbow";
+	}
 
-    /**
-     * @return name of the algorithm - "Rainbow"
-     */
-    public final String getAlgorithm()
-    {
-        return "Rainbow";
-    }
+	public String getFormat() {
+		return "X.509";
+	}
 
-    public String getFormat()
-    {
-        return "X.509";
-    }
+	public byte[] getEncoded() {
+		RainbowPublicKey key = new RainbowPublicKey(docLength, coeffquadratic,
+				coeffsingular, coeffscalar);
+		AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(
+				PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
 
-    public byte[] getEncoded()
-    {
-        RainbowPublicKey key = new RainbowPublicKey(docLength, coeffquadratic, coeffsingular, coeffscalar);
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
-
-        return KeyUtil.getEncodedSubjectPublicKeyInfo(algorithmIdentifier, key);
-    }
+		return KeyUtil.getEncodedSubjectPublicKeyInfo(algorithmIdentifier, key);
+	}
 }

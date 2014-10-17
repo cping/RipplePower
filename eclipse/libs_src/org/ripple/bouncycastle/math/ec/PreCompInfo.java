@@ -5,6 +5,5 @@ package org.ripple.bouncycastle.math.ec;
  * algorithms. Used as a Memento (see GOF patterns) for
  * <code>WNafMultiplier</code>.
  */
-interface PreCompInfo
-{
+interface PreCompInfo {
 }

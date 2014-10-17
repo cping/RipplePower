@@ -16,85 +16,73 @@ import org.ripple.bouncycastle.openpgp.PGPException;
 import org.ripple.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
 import org.ripple.bouncycastle.openpgp.operator.PGPDigestCalculatorProvider;
 
-public class JcePBESecretKeyDecryptorBuilder
-{
-    private OperatorHelper helper = new OperatorHelper(new DefaultJcaJceHelper());
-    private PGPDigestCalculatorProvider calculatorProvider;
+public class JcePBESecretKeyDecryptorBuilder {
+	private OperatorHelper helper = new OperatorHelper(
+			new DefaultJcaJceHelper());
+	private PGPDigestCalculatorProvider calculatorProvider;
 
-    private JcaPGPDigestCalculatorProviderBuilder calculatorProviderBuilder;
+	private JcaPGPDigestCalculatorProviderBuilder calculatorProviderBuilder;
 
-    public JcePBESecretKeyDecryptorBuilder()
-    {
-        this.calculatorProviderBuilder = new JcaPGPDigestCalculatorProviderBuilder();
-    }
+	public JcePBESecretKeyDecryptorBuilder() {
+		this.calculatorProviderBuilder = new JcaPGPDigestCalculatorProviderBuilder();
+	}
 
-    public JcePBESecretKeyDecryptorBuilder(PGPDigestCalculatorProvider calculatorProvider)
-    {
-        this.calculatorProvider = calculatorProvider;
-    }
+	public JcePBESecretKeyDecryptorBuilder(
+			PGPDigestCalculatorProvider calculatorProvider) {
+		this.calculatorProvider = calculatorProvider;
+	}
 
-    public JcePBESecretKeyDecryptorBuilder setProvider(Provider provider)
-    {
-        this.helper = new OperatorHelper(new ProviderJcaJceHelper(provider));
+	public JcePBESecretKeyDecryptorBuilder setProvider(Provider provider) {
+		this.helper = new OperatorHelper(new ProviderJcaJceHelper(provider));
 
-        if (calculatorProviderBuilder != null)
-        {
-            calculatorProviderBuilder.setProvider(provider);
-        }
+		if (calculatorProviderBuilder != null) {
+			calculatorProviderBuilder.setProvider(provider);
+		}
 
-        return this;
-    }
+		return this;
+	}
 
-    public JcePBESecretKeyDecryptorBuilder setProvider(String providerName)
-    {
-        this.helper = new OperatorHelper(new NamedJcaJceHelper(providerName));
+	public JcePBESecretKeyDecryptorBuilder setProvider(String providerName) {
+		this.helper = new OperatorHelper(new NamedJcaJceHelper(providerName));
 
-        if (calculatorProviderBuilder != null)
-        {
-            calculatorProviderBuilder.setProvider(providerName);
-        }
+		if (calculatorProviderBuilder != null) {
+			calculatorProviderBuilder.setProvider(providerName);
+		}
 
-        return this;
-    }
+		return this;
+	}
 
-    public PBESecretKeyDecryptor build(char[] passPhrase)
-        throws PGPException
-    {
-        if (calculatorProvider == null)
-        {
-            calculatorProvider = calculatorProviderBuilder.build();
-        }
+	public PBESecretKeyDecryptor build(char[] passPhrase) throws PGPException {
+		if (calculatorProvider == null) {
+			calculatorProvider = calculatorProviderBuilder.build();
+		}
 
-        return new PBESecretKeyDecryptor(passPhrase, calculatorProvider)
-        {
-            public byte[] recoverKeyData(int encAlgorithm, byte[] key, byte[] iv, byte[] keyData, int keyOff, int keyLen)
-                throws PGPException
-            {
-                try
-                {
-                    Cipher c = helper.createCipher(PGPUtil.getSymmetricCipherName(encAlgorithm) + "/CFB/NoPadding");
+		return new PBESecretKeyDecryptor(passPhrase, calculatorProvider) {
+			public byte[] recoverKeyData(int encAlgorithm, byte[] key,
+					byte[] iv, byte[] keyData, int keyOff, int keyLen)
+					throws PGPException {
+				try {
+					Cipher c = helper.createCipher(PGPUtil
+							.getSymmetricCipherName(encAlgorithm)
+							+ "/CFB/NoPadding");
 
-                    c.init(Cipher.DECRYPT_MODE, PGPUtil.makeSymmetricKey(encAlgorithm, key), new IvParameterSpec(iv));
+					c.init(Cipher.DECRYPT_MODE,
+							PGPUtil.makeSymmetricKey(encAlgorithm, key),
+							new IvParameterSpec(iv));
 
-                    return c.doFinal(keyData, keyOff, keyLen);
-                }
-                catch (IllegalBlockSizeException e)
-                {
-                    throw new PGPException("illegal block size: " + e.getMessage(), e);
-                }
-                catch (BadPaddingException e)
-                {
-                    throw new PGPException("bad padding: " + e.getMessage(), e);
-                }
-                catch (InvalidAlgorithmParameterException e)
-                {
-                    throw new PGPException("invalid parameter: " + e.getMessage(), e);
-                }
-                catch (InvalidKeyException e)
-                {
-                    throw new PGPException("invalid key: " + e.getMessage(), e);
-                }
-            }
-        };
-    }
+					return c.doFinal(keyData, keyOff, keyLen);
+				} catch (IllegalBlockSizeException e) {
+					throw new PGPException("illegal block size: "
+							+ e.getMessage(), e);
+				} catch (BadPaddingException e) {
+					throw new PGPException("bad padding: " + e.getMessage(), e);
+				} catch (InvalidAlgorithmParameterException e) {
+					throw new PGPException("invalid parameter: "
+							+ e.getMessage(), e);
+				} catch (InvalidKeyException e) {
+					throw new PGPException("invalid key: " + e.getMessage(), e);
+				}
+			}
+		};
+	}
 }

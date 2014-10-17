@@ -6,85 +6,69 @@ import java.io.IOException;
 /**
  * Basic type for a symmetric encrypted session key packet
  */
-public class SymmetricKeyEncSessionPacket 
-    extends ContainedPacket
-{
-    private int       version;
-    private int       encAlgorithm;
-    private S2K       s2k;
-    private byte[]    secKeyData;
-    
-    public SymmetricKeyEncSessionPacket(
-        BCPGInputStream  in)
-        throws IOException
-    {
-        version = in.read();
-        encAlgorithm = in.read();
+public class SymmetricKeyEncSessionPacket extends ContainedPacket {
+	private int version;
+	private int encAlgorithm;
+	private S2K s2k;
+	private byte[] secKeyData;
 
-        s2k = new S2K(in);
+	public SymmetricKeyEncSessionPacket(BCPGInputStream in) throws IOException {
+		version = in.read();
+		encAlgorithm = in.read();
 
-        this.secKeyData = in.readAll();
-    }
+		s2k = new S2K(in);
 
-    public SymmetricKeyEncSessionPacket(
-        int       encAlgorithm,
-        S2K       s2k,
-        byte[]    secKeyData)
-    {
-        this.version = 4;
-        this.encAlgorithm = encAlgorithm;
-        this.s2k = s2k;
-        this.secKeyData = secKeyData;
-    }
-    
-    /**
-     * @return int
-     */
-    public int getEncAlgorithm()
-    {
-        return encAlgorithm;
-    }
+		this.secKeyData = in.readAll();
+	}
 
-    /**
-     * @return S2K
-     */
-    public S2K getS2K()
-    {
-        return s2k;
-    }
+	public SymmetricKeyEncSessionPacket(int encAlgorithm, S2K s2k,
+			byte[] secKeyData) {
+		this.version = 4;
+		this.encAlgorithm = encAlgorithm;
+		this.s2k = s2k;
+		this.secKeyData = secKeyData;
+	}
 
-    /**
-     * @return byte[]
-     */
-    public byte[] getSecKeyData()
-    {
-        return secKeyData;
-    }
+	/**
+	 * @return int
+	 */
+	public int getEncAlgorithm() {
+		return encAlgorithm;
+	}
 
-    /**
-     * @return int
-     */
-    public int getVersion()
-    {
-        return version;
-    }
-    
-    public void encode(
-        BCPGOutputStream    out)
-        throws IOException
-    {
-        ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
-        BCPGOutputStream        pOut = new BCPGOutputStream(bOut);
+	/**
+	 * @return S2K
+	 */
+	public S2K getS2K() {
+		return s2k;
+	}
 
-        pOut.write(version);
-        pOut.write(encAlgorithm);
-        pOut.writeObject(s2k);
-        
-        if (secKeyData != null && secKeyData.length > 0)
-        {
-            pOut.write(secKeyData);
-        }
-        
-        out.writePacket(SYMMETRIC_KEY_ENC_SESSION, bOut.toByteArray(), true);
-    }
+	/**
+	 * @return byte[]
+	 */
+	public byte[] getSecKeyData() {
+		return secKeyData;
+	}
+
+	/**
+	 * @return int
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	public void encode(BCPGOutputStream out) throws IOException {
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		BCPGOutputStream pOut = new BCPGOutputStream(bOut);
+
+		pOut.write(version);
+		pOut.write(encAlgorithm);
+		pOut.writeObject(s2k);
+
+		if (secKeyData != null && secKeyData.length > 0) {
+			pOut.write(secKeyData);
+		}
+
+		out.writePacket(SYMMETRIC_KEY_ENC_SESSION, bOut.toByteArray(), true);
+	}
 }

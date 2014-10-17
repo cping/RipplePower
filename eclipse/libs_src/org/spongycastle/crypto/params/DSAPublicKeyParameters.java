@@ -2,22 +2,16 @@ package org.spongycastle.crypto.params;
 
 import java.math.BigInteger;
 
-public class DSAPublicKeyParameters
-    extends DSAKeyParameters
-{
-    private BigInteger      y;
+public class DSAPublicKeyParameters extends DSAKeyParameters {
+	private BigInteger y;
 
-    public DSAPublicKeyParameters(
-        BigInteger      y,
-        DSAParameters   params)
-    {
-        super(false, params);
+	public DSAPublicKeyParameters(BigInteger y, DSAParameters params) {
+		super(false, params);
 
-        this.y = y;
-    }   
+		this.y = y;
+	}
 
-    public BigInteger getY()
-    {
-        return y;
-    }
+	public BigInteger getY() {
+		return y;
+	}
 }

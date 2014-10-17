@@ -1,10 +1,7 @@
 package org.ripple.bouncycastle.jce.provider;
 
-public class PKIXNameConstraintValidatorException
-    extends Exception
-{
-    public PKIXNameConstraintValidatorException(String msg)
-    {
-        super(msg);
-    }
+public class PKIXNameConstraintValidatorException extends Exception {
+	public PKIXNameConstraintValidatorException(String msg) {
+		super(msg);
+	}
 }

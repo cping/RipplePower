@@ -2,17 +2,14 @@ package org.spongycastle.crypto.tls;
 
 import java.security.SecureRandom;
 
-class TlsServerContextImpl
-    extends AbstractTlsContext
-    implements TlsServerContext
-{
-    TlsServerContextImpl(SecureRandom secureRandom, SecurityParameters securityParameters)
-    {
-        super(secureRandom, securityParameters);
-    }
+class TlsServerContextImpl extends AbstractTlsContext implements
+		TlsServerContext {
+	TlsServerContextImpl(SecureRandom secureRandom,
+			SecurityParameters securityParameters) {
+		super(secureRandom, securityParameters);
+	}
 
-    public boolean isServer()
-    {
-        return true;
-    }
+	public boolean isServer() {
+		return true;
+	}
 }

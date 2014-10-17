@@ -15,101 +15,86 @@ import org.spongycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * The EncryptedData object.
+ * 
  * <pre>
  *      EncryptedData ::= SEQUENCE {
  *           version Version,
  *           encryptedContentInfo EncryptedContentInfo
  *      }
- *
- *
+ * 
+ * 
  *      EncryptedContentInfo ::= SEQUENCE {
  *          contentType ContentType,
  *          contentEncryptionAlgorithm  ContentEncryptionAlgorithmIdentifier,
  *          encryptedContent [0] IMPLICIT EncryptedContent OPTIONAL
  *    }
- *
+ * 
  *    EncryptedContent ::= OCTET STRING
  * </pre>
  */
-public class EncryptedData
-    extends ASN1Object
-{
-    ASN1Sequence                data;
-    ASN1ObjectIdentifier bagId;
-    ASN1Primitive bagValue;
+public class EncryptedData extends ASN1Object {
+	ASN1Sequence data;
+	ASN1ObjectIdentifier bagId;
+	ASN1Primitive bagValue;
 
-    public static EncryptedData getInstance(
-         Object  obj)
-    {
-         if (obj instanceof EncryptedData)
-         {
-             return (EncryptedData)obj;
-         }
+	public static EncryptedData getInstance(Object obj) {
+		if (obj instanceof EncryptedData) {
+			return (EncryptedData) obj;
+		}
 
-         if (obj != null)
-         {
-             return new EncryptedData(ASN1Sequence.getInstance(obj));
-         }
+		if (obj != null) {
+			return new EncryptedData(ASN1Sequence.getInstance(obj));
+		}
 
-         return null;
-    }
-     
-    private EncryptedData(
-        ASN1Sequence seq)
-    {
-        int version = ((ASN1Integer)seq.getObjectAt(0)).getValue().intValue();
+		return null;
+	}
 
-        if (version != 0)
-        {
-            throw new IllegalArgumentException("sequence not version 0");
-        }
+	private EncryptedData(ASN1Sequence seq) {
+		int version = ((ASN1Integer) seq.getObjectAt(0)).getValue().intValue();
 
-        this.data = ASN1Sequence.getInstance(seq.getObjectAt(1));
-    }
+		if (version != 0) {
+			throw new IllegalArgumentException("sequence not version 0");
+		}
 
-    public EncryptedData(
-        ASN1ObjectIdentifier contentType,
-        AlgorithmIdentifier     encryptionAlgorithm,
-        ASN1Encodable content)
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+		this.data = ASN1Sequence.getInstance(seq.getObjectAt(1));
+	}
 
-        v.add(contentType);
-        v.add(encryptionAlgorithm.toASN1Primitive());
-        v.add(new BERTaggedObject(false, 0, content));
+	public EncryptedData(ASN1ObjectIdentifier contentType,
+			AlgorithmIdentifier encryptionAlgorithm, ASN1Encodable content) {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        data = new BERSequence(v);
-    }
-        
-    public ASN1ObjectIdentifier getContentType()
-    {
-        return ASN1ObjectIdentifier.getInstance(data.getObjectAt(0));
-    }
+		v.add(contentType);
+		v.add(encryptionAlgorithm.toASN1Primitive());
+		v.add(new BERTaggedObject(false, 0, content));
 
-    public AlgorithmIdentifier getEncryptionAlgorithm()
-    {
-        return AlgorithmIdentifier.getInstance(data.getObjectAt(1));
-    }
+		data = new BERSequence(v);
+	}
 
-    public ASN1OctetString getContent()
-    {
-        if (data.size() == 3)
-        {
-            ASN1TaggedObject o = ASN1TaggedObject.getInstance(data.getObjectAt(2));
+	public ASN1ObjectIdentifier getContentType() {
+		return ASN1ObjectIdentifier.getInstance(data.getObjectAt(0));
+	}
 
-            return ASN1OctetString.getInstance(o, false);
-        }
+	public AlgorithmIdentifier getEncryptionAlgorithm() {
+		return AlgorithmIdentifier.getInstance(data.getObjectAt(1));
+	}
 
-        return null;
-    }
+	public ASN1OctetString getContent() {
+		if (data.size() == 3) {
+			ASN1TaggedObject o = ASN1TaggedObject.getInstance(data
+					.getObjectAt(2));
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+			return ASN1OctetString.getInstance(o, false);
+		}
 
-        v.add(new ASN1Integer(0));
-        v.add(data);
+		return null;
+	}
 
-        return new BERSequence(v);
-    }
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(new ASN1Integer(0));
+		v.add(data);
+
+		return new BERSequence(v);
+	}
 }

@@ -9,87 +9,89 @@ import com.ripple.core.types.known.sle.LedgerHashes;
 import com.ripple.core.types.known.sle.entries.DirectoryNode;
 
 public class AccountState extends ShaMap {
-    public AccountState() {
-        super();
-    }
-    public AccountState(boolean isCopy, int depth) {
-        super(isCopy, depth);
-    }
+	public AccountState() {
+		super();
+	}
 
-    @Override
-    protected ShaMapInner makeInnerOfSameClass(int depth) {
-        return new AccountState(true, depth);
-    }
+	public AccountState(boolean isCopy, int depth) {
+		super(isCopy, depth);
+	}
 
-    private static LedgerHashes newSkipList(Hash256 skipIndex) {
-        LedgerHashes skip;
-        skip = new LedgerHashes();
-        skip.put(UInt32.Flags, new UInt32(0));
-        skip.hashes(new Vector256());
-        skip.index(skipIndex);
-        return skip;
-    }
+	@Override
+	protected ShaMapInner makeInnerOfSameClass(int depth) {
+		return new AccountState(true, depth);
+	}
 
-    public void updateSkipLists(long currentIndex, Hash256 parentHash) {
-        long prev = currentIndex - 1;
+	private static LedgerHashes newSkipList(Hash256 skipIndex) {
+		LedgerHashes skip;
+		skip = new LedgerHashes();
+		skip.put(UInt32.Flags, new UInt32(0));
+		skip.hashes(new Vector256());
+		skip.index(skipIndex);
+		return skip;
+	}
 
-        if ((prev & 0xFF) == 0) {
-            Hash256 skipIndex = Index.ledgerHashes(prev);
-            LedgerHashes skip = createOrUpdateSkipList(skipIndex);
-            Vector256 hashes = skip.hashes();
-            assert hashes.size() <= 256;
-            hashes.add(parentHash);
-            skip.put(UInt32.LastLedgerSequence, new UInt32(prev));
-        }
+	public void updateSkipLists(long currentIndex, Hash256 parentHash) {
+		long prev = currentIndex - 1;
 
-        Hash256 skipIndex = Index.ledgerHashes();
-        LedgerHashes skip = createOrUpdateSkipList(skipIndex);
-        Vector256 hashes = skip.hashes();
+		if ((prev & 0xFF) == 0) {
+			Hash256 skipIndex = Index.ledgerHashes(prev);
+			LedgerHashes skip = createOrUpdateSkipList(skipIndex);
+			Vector256 hashes = skip.hashes();
+			assert hashes.size() <= 256;
+			hashes.add(parentHash);
+			skip.put(UInt32.LastLedgerSequence, new UInt32(prev));
+		}
 
-        if (hashes.size() > 256) throw new AssertionError();
-        if (hashes.size() == 256) {
-            hashes.remove(0);
-        }
+		Hash256 skipIndex = Index.ledgerHashes();
+		LedgerHashes skip = createOrUpdateSkipList(skipIndex);
+		Vector256 hashes = skip.hashes();
 
-        hashes.add(parentHash);
-        skip.put(UInt32.LastLedgerSequence, new UInt32(prev));
-    }
+		if (hashes.size() > 256)
+			throw new AssertionError();
+		if (hashes.size() == 256) {
+			hashes.remove(0);
+		}
 
-    private LedgerHashes createOrUpdateSkipList(Hash256 skipIndex) {
-        PathToIndex path = pathToIndex(skipIndex);
-        ShaMapInner top = path.dirtyOrCopyInners();
-        LedgerEntryItem item;
+		hashes.add(parentHash);
+		skip.put(UInt32.LastLedgerSequence, new UInt32(prev));
+	}
 
-        if (path.hasMatchedLeaf()) {
-            ShaMapLeaf leaf = path.invalidatedPossiblyCopiedLeafForUpdating();
-            item = (LedgerEntryItem) leaf.item;
-        } else {
-            item = new LedgerEntryItem(newSkipList(skipIndex));
-            top.addLeafToTerminalInner(new ShaMapLeaf(skipIndex, item));
-        }
-        return (LedgerHashes) item.entry;
-    }
+	private LedgerHashes createOrUpdateSkipList(Hash256 skipIndex) {
+		PathToIndex path = pathToIndex(skipIndex);
+		ShaMapInner top = path.dirtyOrCopyInners();
+		LedgerEntryItem item;
 
-    public void addLE(LedgerEntry entry) {
-        LedgerEntryItem item = new LedgerEntryItem(entry);
-        addItem(entry.index(), item);
-    }
+		if (path.hasMatchedLeaf()) {
+			ShaMapLeaf leaf = path.invalidatedPossiblyCopiedLeafForUpdating();
+			item = (LedgerEntryItem) leaf.item;
+		} else {
+			item = new LedgerEntryItem(newSkipList(skipIndex));
+			top.addLeafToTerminalInner(new ShaMapLeaf(skipIndex, item));
+		}
+		return (LedgerHashes) item.entry;
+	}
 
-    public LedgerEntry getLE(Hash256 index) {
-        LedgerEntryItem item = (LedgerEntryItem) getItem(index);
-        return item == null ? null : item.entry;
-    }
+	public void addLE(LedgerEntry entry) {
+		LedgerEntryItem item = new LedgerEntryItem(entry);
+		addItem(entry.index(), item);
+	}
 
-    public DirectoryNode getDirectoryNode(Hash256 index) {
-        return (DirectoryNode) getLE(index);
-    }
+	public LedgerEntry getLE(Hash256 index) {
+		LedgerEntryItem item = (LedgerEntryItem) getItem(index);
+		return item == null ? null : item.entry;
+	}
 
-    public Hash256 getNextIndex(Hash256 nextIndex, Hash256 bookEnd) {
-        return null;
-    }
+	public DirectoryNode getDirectoryNode(Hash256 index) {
+		return (DirectoryNode) getLE(index);
+	}
 
-    @Override
-    public AccountState copy() {
-        return (AccountState) super.copy();
-    }
+	public Hash256 getNextIndex(Hash256 nextIndex, Hash256 bookEnd) {
+		return null;
+	}
+
+	@Override
+	public AccountState copy() {
+		return (AccountState) super.copy();
+	}
 }

@@ -2,19 +2,15 @@ package org.ripple.bouncycastle.x509;
 
 import java.security.cert.CertificateEncodingException;
 
-class ExtCertificateEncodingException
-    extends CertificateEncodingException
-{
-    Throwable cause;
+class ExtCertificateEncodingException extends CertificateEncodingException {
+	Throwable cause;
 
-    ExtCertificateEncodingException(String message, Throwable cause)
-    {
-        super(message);
-        this.cause = cause;
-    }
+	ExtCertificateEncodingException(String message, Throwable cause) {
+		super(message);
+		this.cause = cause;
+	}
 
-    public Throwable getCause()
-    {
-        return cause;
-    }
+	public Throwable getCause() {
+		return cause;
+	}
 }

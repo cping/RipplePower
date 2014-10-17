@@ -12,71 +12,53 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseMac;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvider;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 
-public final class Serpent
-{
-    private Serpent()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new BlockCipherProvider()
-            {
-                public BlockCipher get()
-                {
-                    return new SerpentEngine();
-                }
-            });
-        }
-    }
+public final class Serpent {
+	private Serpent() {
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("Serpent", 192, new CipherKeyGenerator());
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new BlockCipherProvider() {
+				public BlockCipher get() {
+					return new SerpentEngine();
+				}
+			});
+		}
+	}
 
-    public static class SerpentGMAC
-        extends BaseMac
-    {
-        public SerpentGMAC()
-        {
-            super(new GMac(new GCMBlockCipher(new SerpentEngine())));
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("Serpent", 192, new CipherKeyGenerator());
+		}
+	}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "Serpent IV";
-        }
-    }
+	public static class SerpentGMAC extends BaseMac {
+		public SerpentGMAC() {
+			super(new GMac(new GCMBlockCipher(new SerpentEngine())));
+		}
+	}
 
-    public static class Mappings
-        extends SymmetricAlgorithmProvider
-    {
-        private static final String PREFIX = Serpent.class.getName();
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "Serpent IV";
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class Mappings extends SymmetricAlgorithmProvider {
+		private static final String PREFIX = Serpent.class.getName();
 
-        public void configure(ConfigurableProvider provider)
-        {
+		public Mappings() {
+		}
 
-            provider.addAlgorithm("Cipher.Serpent", PREFIX + "$ECB");
-            provider.addAlgorithm("KeyGenerator.Serpent", PREFIX + "$KeyGen");
-            provider.addAlgorithm("AlgorithmParameters.Serpent", PREFIX + "$AlgParams");
+		public void configure(ConfigurableProvider provider) {
 
-            addGMacAlgorithm(provider, "SERPENT", PREFIX + "$SerpentGMAC", PREFIX + "$KeyGen");
-        }
-    }
+			provider.addAlgorithm("Cipher.Serpent", PREFIX + "$ECB");
+			provider.addAlgorithm("KeyGenerator.Serpent", PREFIX + "$KeyGen");
+			provider.addAlgorithm("AlgorithmParameters.Serpent", PREFIX
+					+ "$AlgParams");
+
+			addGMacAlgorithm(provider, "SERPENT", PREFIX + "$SerpentGMAC",
+					PREFIX + "$KeyGen");
+		}
+	}
 }

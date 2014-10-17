@@ -10,75 +10,61 @@ import org.spongycastle.asn1.DERSequence;
 import org.spongycastle.asn1.cmp.PKIStatusInfo;
 import org.spongycastle.asn1.cms.ContentInfo;
 
+public class TimeStampResp extends ASN1Object {
+	PKIStatusInfo pkiStatusInfo;
 
-public class TimeStampResp
-    extends ASN1Object
-{
-    PKIStatusInfo pkiStatusInfo;
+	ContentInfo timeStampToken;
 
-    ContentInfo timeStampToken;
+	public static TimeStampResp getInstance(Object o) {
+		if (o instanceof TimeStampResp) {
+			return (TimeStampResp) o;
+		} else if (o != null) {
+			return new TimeStampResp(ASN1Sequence.getInstance(o));
+		}
 
-    public static TimeStampResp getInstance(Object o)
-    {
-        if (o instanceof TimeStampResp)
-        {
-            return (TimeStampResp) o;
-        }
-        else if (o != null)
-        {
-            return new TimeStampResp(ASN1Sequence.getInstance(o));
-        }
+		return null;
+	}
 
-        return null;
-    }
+	private TimeStampResp(ASN1Sequence seq) {
 
-    private TimeStampResp(ASN1Sequence seq)
-    {
+		Enumeration e = seq.getObjects();
 
-        Enumeration e = seq.getObjects();
+		// status
+		pkiStatusInfo = PKIStatusInfo.getInstance(e.nextElement());
 
-        // status
-        pkiStatusInfo = PKIStatusInfo.getInstance(e.nextElement());
+		if (e.hasMoreElements()) {
+			timeStampToken = ContentInfo.getInstance(e.nextElement());
+		}
+	}
 
-        if (e.hasMoreElements())
-        {
-            timeStampToken = ContentInfo.getInstance(e.nextElement());
-        }
-    }
+	public TimeStampResp(PKIStatusInfo pkiStatusInfo, ContentInfo timeStampToken) {
+		this.pkiStatusInfo = pkiStatusInfo;
+		this.timeStampToken = timeStampToken;
+	}
 
-    public TimeStampResp(PKIStatusInfo pkiStatusInfo, ContentInfo timeStampToken)
-    {
-        this.pkiStatusInfo = pkiStatusInfo;
-        this.timeStampToken = timeStampToken;
-    }
+	public PKIStatusInfo getStatus() {
+		return pkiStatusInfo;
+	}
 
-    public PKIStatusInfo getStatus()
-    {
-        return pkiStatusInfo;
-    }
+	public ContentInfo getTimeStampToken() {
+		return timeStampToken;
+	}
 
-    public ContentInfo getTimeStampToken()
-    {
-        return timeStampToken;
-    }
+	/**
+	 * <pre>
+	 * TimeStampResp ::= SEQUENCE  {
+	 *   status                  PKIStatusInfo,
+	 *   timeStampToken          TimeStampToken     OPTIONAL  }
+	 * </pre>
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-    /**
-     * <pre>
-     * TimeStampResp ::= SEQUENCE  {
-     *   status                  PKIStatusInfo,
-     *   timeStampToken          TimeStampToken     OPTIONAL  }
-     * </pre>
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
-        
-        v.add(pkiStatusInfo);
-        if (timeStampToken != null)
-        {
-            v.add(timeStampToken);
-        }
+		v.add(pkiStatusInfo);
+		if (timeStampToken != null) {
+			v.add(timeStampToken);
+		}
 
-        return new DERSequence(v);
-    }
+		return new DERSequence(v);
+	}
 }

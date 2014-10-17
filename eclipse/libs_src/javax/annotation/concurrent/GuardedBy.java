@@ -19,8 +19,8 @@ import java.lang.annotation.Target;
  * when holding a particular lock, which may be a built-in (synchronization)
  * lock, or may be an explicit java.util.concurrent.Lock.
  * 
- * The argument determines which lock guards the annotated field or method: this :
- * The string literal "this" means that this field is guarded by the class in
+ * The argument determines which lock guards the annotated field or method: this
+ * : The string literal "this" means that this field is guarded by the class in
  * which it is defined. class-name.this : For inner classes, it may be necessary
  * to disambiguate 'this'; the class-name.this designation allows you to specify
  * which 'this' reference is intended itself : For reference fields only; the
@@ -31,8 +31,8 @@ import java.lang.annotation.Target;
  * returned by calling the named nil-ary method. class-name.class : The Class
  * object for the specified class should be used as the lock object.
  */
-@Target( { ElementType.FIELD, ElementType.METHOD })
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.CLASS)
 public @interface GuardedBy {
-    String value();
+	String value();
 }

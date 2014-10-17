@@ -19,107 +19,84 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseMac;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public final class Noekeon
-{
-    private Noekeon()
-    {
-    }
+public final class Noekeon {
+	private Noekeon() {
+	}
 
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new NoekeonEngine());
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new NoekeonEngine());
+		}
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("Noekeon", 128, new CipherKeyGenerator());
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("Noekeon", 128, new CipherKeyGenerator());
+		}
+	}
 
-    public static class GMAC
-        extends BaseMac
-    {
-        public GMAC()
-        {
-            super(new GMac(new GCMBlockCipher(new NoekeonEngine())));
-        }
-    }
+	public static class GMAC extends BaseMac {
+		public GMAC() {
+			super(new GMac(new GCMBlockCipher(new NoekeonEngine())));
+		}
+	}
 
-    public static class AlgParamGen
-        extends BaseAlgorithmParameterGenerator
-    {
-        protected void engineInit(
-            AlgorithmParameterSpec genParamSpec,
-            SecureRandom random)
-            throws InvalidAlgorithmParameterException
-        {
-            throw new InvalidAlgorithmParameterException("No supported AlgorithmParameterSpec for Noekeon parameter generation.");
-        }
+	public static class AlgParamGen extends BaseAlgorithmParameterGenerator {
+		protected void engineInit(AlgorithmParameterSpec genParamSpec,
+				SecureRandom random) throws InvalidAlgorithmParameterException {
+			throw new InvalidAlgorithmParameterException(
+					"No supported AlgorithmParameterSpec for Noekeon parameter generation.");
+		}
 
-        protected AlgorithmParameters engineGenerateParameters()
-        {
-            byte[] iv = new byte[16];
+		protected AlgorithmParameters engineGenerateParameters() {
+			byte[] iv = new byte[16];
 
-            if (random == null)
-            {
-                random = new SecureRandom();
-            }
+			if (random == null) {
+				random = new SecureRandom();
+			}
 
-            random.nextBytes(iv);
+			random.nextBytes(iv);
 
-            AlgorithmParameters params;
+			AlgorithmParameters params;
 
-            try
-            {
-                params = AlgorithmParameters.getInstance("Noekeon", BouncyCastleProvider.PROVIDER_NAME);
-                params.init(new IvParameterSpec(iv));
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e.getMessage());
-            }
+			try {
+				params = AlgorithmParameters.getInstance("Noekeon",
+						BouncyCastleProvider.PROVIDER_NAME);
+				params.init(new IvParameterSpec(iv));
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 
-            return params;
-        }
-    }
+			return params;
+		}
+	}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "Noekeon IV";
-        }
-    }
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "Noekeon IV";
+		}
+	}
 
-    public static class Mappings
-        extends SymmetricAlgorithmProvider
-    {
-        private static final String PREFIX = Noekeon.class.getName();
+	public static class Mappings extends SymmetricAlgorithmProvider {
+		private static final String PREFIX = Noekeon.class.getName();
 
-        public Mappings()
-        {
-        }
+		public Mappings() {
+		}
 
-        public void configure(ConfigurableProvider provider)
-        {
+		public void configure(ConfigurableProvider provider) {
 
-            provider.addAlgorithm("AlgorithmParameters.NOEKEON", PREFIX + "$AlgParams");
+			provider.addAlgorithm("AlgorithmParameters.NOEKEON", PREFIX
+					+ "$AlgParams");
 
-            provider.addAlgorithm("AlgorithmParameterGenerator.NOEKEON", PREFIX + "$AlgParamGen");
+			provider.addAlgorithm("AlgorithmParameterGenerator.NOEKEON", PREFIX
+					+ "$AlgParamGen");
 
-            provider.addAlgorithm("Cipher.NOEKEON", PREFIX + "$ECB");
+			provider.addAlgorithm("Cipher.NOEKEON", PREFIX + "$ECB");
 
-            provider.addAlgorithm("KeyGenerator.NOEKEON", PREFIX + "$KeyGen");
+			provider.addAlgorithm("KeyGenerator.NOEKEON", PREFIX + "$KeyGen");
 
-            addGMacAlgorithm(provider, "NOEKEON", PREFIX + "$GMAC", PREFIX + "$KeyGen");
-        }
-    }
+			addGMacAlgorithm(provider, "NOEKEON", PREFIX + "$GMAC", PREFIX
+					+ "$KeyGen");
+		}
+	}
 }

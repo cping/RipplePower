@@ -7,58 +7,60 @@ import com.ripple.core.enums.TransactionType;
 import java.util.EnumMap;
 
 public class FieldSymbolics {
-    static public EnumMap<Field, Enums> lookup = new EnumMap<Field, Enums>(Field.class);
+	static public EnumMap<Field, Enums> lookup = new EnumMap<Field, Enums>(
+			Field.class);
 
-    static public interface Enums {
-        String asString(int i);
+	static public interface Enums {
+		String asString(int i);
 
-        Integer asInteger(String s);
-    }
+		Integer asInteger(String s);
+	}
 
-    static {
-        lookup.put(Field.TransactionType, new Enums() {
-            @Override
-            public String asString(int i) {
-                return TransactionType.fromNumber(i).name();
-            }
+	static {
+		lookup.put(Field.TransactionType, new Enums() {
+			@Override
+			public String asString(int i) {
+				return TransactionType.fromNumber(i).name();
+			}
 
-            @Override
-            public Integer asInteger(String s) {
-                return TransactionType.valueOf(s).asInteger();
-            }
-        });
-        lookup.put(Field.LedgerEntryType, new Enums() {
-            @Override
-            public String asString(int i) {
-                return LedgerEntryType.fromNumber(i).name();
-            }
+			@Override
+			public Integer asInteger(String s) {
+				return TransactionType.valueOf(s).asInteger();
+			}
+		});
+		lookup.put(Field.LedgerEntryType, new Enums() {
+			@Override
+			public String asString(int i) {
+				return LedgerEntryType.fromNumber(i).name();
+			}
 
-            @Override
-            public Integer asInteger(String s) {
-                return LedgerEntryType.valueOf(s).asInteger();
-            }
-        });
-        lookup.put(Field.TransactionResult, new Enums() {
-            @Override
-            public String asString(int i) {
-                return TransactionEngineResult.fromNumber(i).name();
-            }
+			@Override
+			public Integer asInteger(String s) {
+				return LedgerEntryType.valueOf(s).asInteger();
+			}
+		});
+		lookup.put(Field.TransactionResult, new Enums() {
+			@Override
+			public String asString(int i) {
+				return TransactionEngineResult.fromNumber(i).name();
+			}
 
-            @Override
-            public Integer asInteger(String s) {
-                return TransactionEngineResult.valueOf(s).asInteger();
-            }
-        });
-    }
+			@Override
+			public Integer asInteger(String s) {
+				return TransactionEngineResult.valueOf(s).asInteger();
+			}
+		});
+	}
 
-    public static boolean isSymbolicField(Field field) {
-        return lookup.containsKey(field);
-    }
+	public static boolean isSymbolicField(Field field) {
+		return lookup.containsKey(field);
+	}
 
-    public static String asString(Field f, Number i) {
-        return lookup.get(f).asString(i.intValue());
-    }
-    public static Integer asInteger(Field f, String s) {
-        return lookup.get(f).asInteger(s);
-    }
+	public static String asString(Field f, Number i) {
+		return lookup.get(f).asString(i.intValue());
+	}
+
+	public static Integer asInteger(Field f, String s) {
+		return lookup.get(f).asInteger(s);
+	}
 }

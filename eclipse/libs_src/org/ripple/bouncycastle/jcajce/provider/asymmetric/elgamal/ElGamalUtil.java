@@ -15,52 +15,46 @@ import org.ripple.bouncycastle.jce.interfaces.ElGamalPrivateKey;
 import org.ripple.bouncycastle.jce.interfaces.ElGamalPublicKey;
 
 /**
- * utility class for converting jce/jca ElGamal objects
- * objects into their org.bouncycastle.crypto counterparts.
+ * utility class for converting jce/jca ElGamal objects objects into their
+ * org.bouncycastle.crypto counterparts.
  */
-public class ElGamalUtil
-{
-    static public AsymmetricKeyParameter generatePublicKeyParameter(
-        PublicKey    key)
-        throws InvalidKeyException
-    {
-        if (key instanceof ElGamalPublicKey)
-        {
-            ElGamalPublicKey    k = (ElGamalPublicKey)key;
+public class ElGamalUtil {
+	static public AsymmetricKeyParameter generatePublicKeyParameter(
+			PublicKey key) throws InvalidKeyException {
+		if (key instanceof ElGamalPublicKey) {
+			ElGamalPublicKey k = (ElGamalPublicKey) key;
 
-            return new ElGamalPublicKeyParameters(k.getY(),
-                new ElGamalParameters(k.getParameters().getP(), k.getParameters().getG()));
-        }
-        else if (key instanceof DHPublicKey)
-        {
-            DHPublicKey    k = (DHPublicKey)key;
+			return new ElGamalPublicKeyParameters(k.getY(),
+					new ElGamalParameters(k.getParameters().getP(), k
+							.getParameters().getG()));
+		} else if (key instanceof DHPublicKey) {
+			DHPublicKey k = (DHPublicKey) key;
 
-            return new ElGamalPublicKeyParameters(k.getY(),
-                new ElGamalParameters(k.getParams().getP(), k.getParams().getG()));
-        }
+			return new ElGamalPublicKeyParameters(k.getY(),
+					new ElGamalParameters(k.getParams().getP(), k.getParams()
+							.getG()));
+		}
 
-        throw new InvalidKeyException("can't identify public key for El Gamal.");
-    }
+		throw new InvalidKeyException("can't identify public key for El Gamal.");
+	}
 
-    static public AsymmetricKeyParameter generatePrivateKeyParameter(
-        PrivateKey    key)
-        throws InvalidKeyException
-    {
-        if (key instanceof ElGamalPrivateKey)
-        {
-            ElGamalPrivateKey    k = (ElGamalPrivateKey)key;
+	static public AsymmetricKeyParameter generatePrivateKeyParameter(
+			PrivateKey key) throws InvalidKeyException {
+		if (key instanceof ElGamalPrivateKey) {
+			ElGamalPrivateKey k = (ElGamalPrivateKey) key;
 
-            return new ElGamalPrivateKeyParameters(k.getX(),
-                new ElGamalParameters(k.getParameters().getP(), k.getParameters().getG()));
-        }
-        else if (key instanceof DHPrivateKey)
-        {
-            DHPrivateKey    k = (DHPrivateKey)key;
+			return new ElGamalPrivateKeyParameters(k.getX(),
+					new ElGamalParameters(k.getParameters().getP(), k
+							.getParameters().getG()));
+		} else if (key instanceof DHPrivateKey) {
+			DHPrivateKey k = (DHPrivateKey) key;
 
-            return new ElGamalPrivateKeyParameters(k.getX(),
-                new ElGamalParameters(k.getParams().getP(), k.getParams().getG()));
-        }
-                        
-        throw new InvalidKeyException("can't identify private key for El Gamal.");
-    }
+			return new ElGamalPrivateKeyParameters(k.getX(),
+					new ElGamalParameters(k.getParams().getP(), k.getParams()
+							.getG()));
+		}
+
+		throw new InvalidKeyException(
+				"can't identify private key for El Gamal.");
+	}
 }

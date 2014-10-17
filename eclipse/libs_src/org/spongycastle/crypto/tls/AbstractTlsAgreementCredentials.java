@@ -1,7 +1,5 @@
 package org.spongycastle.crypto.tls;
 
-public abstract class AbstractTlsAgreementCredentials
-    extends AbstractTlsCredentials
-    implements TlsAgreementCredentials
-{
+public abstract class AbstractTlsAgreementCredentials extends
+		AbstractTlsCredentials implements TlsAgreementCredentials {
 }

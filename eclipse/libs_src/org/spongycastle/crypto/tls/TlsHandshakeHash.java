@@ -2,20 +2,18 @@ package org.spongycastle.crypto.tls;
 
 import org.spongycastle.crypto.Digest;
 
-interface TlsHandshakeHash
-    extends Digest
-{
-    void init(TlsContext context);
+interface TlsHandshakeHash extends Digest {
+	void init(TlsContext context);
 
-    TlsHandshakeHash notifyPRFDetermined();
+	TlsHandshakeHash notifyPRFDetermined();
 
-    void trackHashAlgorithm(short hashAlgorithm);
+	void trackHashAlgorithm(short hashAlgorithm);
 
-    void sealHashAlgorithms();
+	void sealHashAlgorithms();
 
-    TlsHandshakeHash stopTracking();
+	TlsHandshakeHash stopTracking();
 
-    Digest forkPRFHash();
+	Digest forkPRFHash();
 
-    byte[] getFinalHash(short hashAlgorithm);
+	byte[] getFinalHash(short hashAlgorithm);
 }

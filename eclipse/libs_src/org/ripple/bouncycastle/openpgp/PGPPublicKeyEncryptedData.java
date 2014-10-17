@@ -18,245 +18,226 @@ import org.ripple.bouncycastle.util.io.TeeInputStream;
 /**
  * A public key encrypted data object.
  */
-public class PGPPublicKeyEncryptedData
-    extends PGPEncryptedData
-{    
-    PublicKeyEncSessionPacket        keyData;
-    
-    PGPPublicKeyEncryptedData(
-        PublicKeyEncSessionPacket    keyData,
-        InputStreamPacket            encData)
-    {
-        super(encData);
-        
-        this.keyData = keyData;
-    }
+public class PGPPublicKeyEncryptedData extends PGPEncryptedData {
+	PublicKeyEncSessionPacket keyData;
 
-    private boolean confirmCheckSum(
-        byte[]    sessionInfo)
-    {
-        int    check = 0;
-        
-        for (int i = 1; i != sessionInfo.length - 2; i++)
-        {
-            check += sessionInfo[i] & 0xff;
-        }
-        
-        return (sessionInfo[sessionInfo.length - 2] == (byte)(check >> 8))
-                    && (sessionInfo[sessionInfo.length - 1] == (byte)(check));
-    }
-    
-    /**
-     * Return the keyID for the key used to encrypt the data.
-     * 
-     * @return long
-     */
-    public long getKeyID()
-    {
-        return keyData.getKeyID();
-    }
+	PGPPublicKeyEncryptedData(PublicKeyEncSessionPacket keyData,
+			InputStreamPacket encData) {
+		super(encData);
 
-    /**
-     * Return the algorithm code for the symmetric algorithm used to encrypt the data.
-     *
-     * @return integer algorithm code
-     * @deprecated use the method taking a PublicKeyDataDecryptorFactory
-     */
-    public int getSymmetricAlgorithm(
-        PGPPrivateKey  privKey,
-        String         provider)
-        throws PGPException, NoSuchProviderException
-    {
-        return getSymmetricAlgorithm(privKey, PGPUtil.getProvider(provider));
-    }
+		this.keyData = keyData;
+	}
 
-    /**
-     *
-     * @deprecated use the method taking a PublicKeyDataDecryptorFactory
-     */
-    public int getSymmetricAlgorithm(
-        PGPPrivateKey  privKey,
-        Provider       provider)
-        throws PGPException, NoSuchProviderException
-    {
-        return getSymmetricAlgorithm(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(provider).setContentProvider(provider).build(privKey));
-    }
+	private boolean confirmCheckSum(byte[] sessionInfo) {
+		int check = 0;
 
-    /**
-     * Return the symmetric key algorithm required to decrypt the data protected by this object.
-     *
-     * @param dataDecryptorFactory   decryptor factory to use to recover the session data.
-     * @return  the integer encryption algorithm code.
-     * @throws PGPException if the session data cannot be recovered.
-     */
-    public int getSymmetricAlgorithm(
-        PublicKeyDataDecryptorFactory dataDecryptorFactory)
-        throws PGPException
-    {
-        byte[] plain = dataDecryptorFactory.recoverSessionData(keyData.getAlgorithm(), keyData.getEncSessionKey());
+		for (int i = 1; i != sessionInfo.length - 2; i++) {
+			check += sessionInfo[i] & 0xff;
+		}
 
-        return plain[0];
-    }
+		return (sessionInfo[sessionInfo.length - 2] == (byte) (check >> 8))
+				&& (sessionInfo[sessionInfo.length - 1] == (byte) (check));
+	}
 
-    /**
-     * Return the decrypted data stream for the packet.
-     *
-     * @param privKey private key to use
-     * @param provider provider to use for private key and symmetric key decryption.
-     * @return InputStream
-     * @throws PGPException
-     * @throws NoSuchProviderException
-     * @deprecated use method that takes a PublicKeyDataDecryptorFactory
-     */
-    public InputStream getDataStream(
-        PGPPrivateKey  privKey,
-        String         provider)
-        throws PGPException, NoSuchProviderException
-    {
-        return getDataStream(privKey, provider, provider);
-    }
+	/**
+	 * Return the keyID for the key used to encrypt the data.
+	 * 
+	 * @return long
+	 */
+	public long getKeyID() {
+		return keyData.getKeyID();
+	}
 
-        /**
-     *
-     * @param privKey
-     * @param provider
-     * @return
-     * @throws PGPException
-     *  @deprecated use method that takes a PublicKeyDataDecryptorFactory
-     */
-    public InputStream getDataStream(
-        PGPPrivateKey  privKey,
-        Provider       provider)
-        throws PGPException
-    {
-        return getDataStream(privKey, provider, provider);
-    }
+	/**
+	 * Return the algorithm code for the symmetric algorithm used to encrypt the
+	 * data.
+	 * 
+	 * @return integer algorithm code
+	 * @deprecated use the method taking a PublicKeyDataDecryptorFactory
+	 */
+	public int getSymmetricAlgorithm(PGPPrivateKey privKey, String provider)
+			throws PGPException, NoSuchProviderException {
+		return getSymmetricAlgorithm(privKey, PGPUtil.getProvider(provider));
+	}
 
-    /**
-     * Return the decrypted data stream for the packet.
-     * 
-     * @param privKey private key to use.
-     * @param asymProvider asymetric provider to use with private key.
-     * @param provider provider to use for symmetric algorithm.
-     * @return InputStream
-     * @throws PGPException
-     * @throws NoSuchProviderException
-     *  @deprecated use method that takes a PublicKeyDataDecryptorFactory
-     */
-    public InputStream getDataStream(
-        PGPPrivateKey  privKey,
-        String         asymProvider,
-        String         provider)
-        throws PGPException, NoSuchProviderException
-    {
-        return getDataStream(privKey, PGPUtil.getProvider(asymProvider), PGPUtil.getProvider(provider));
-    }
+	/**
+	 * 
+	 * @deprecated use the method taking a PublicKeyDataDecryptorFactory
+	 */
+	public int getSymmetricAlgorithm(PGPPrivateKey privKey, Provider provider)
+			throws PGPException, NoSuchProviderException {
+		return getSymmetricAlgorithm(new JcePublicKeyDataDecryptorFactoryBuilder()
+				.setProvider(provider).setContentProvider(provider)
+				.build(privKey));
+	}
 
-    /**
-     *  @deprecated use method that takes a PublicKeyDataDecryptorFactory
-     */
-    public InputStream getDataStream(
-        PGPPrivateKey  privKey,
-        Provider       asymProvider,
-        Provider       provider)
-        throws PGPException
-    {
-        return getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(asymProvider).setContentProvider(provider).build(privKey));
-    }
+	/**
+	 * Return the symmetric key algorithm required to decrypt the data protected
+	 * by this object.
+	 * 
+	 * @param dataDecryptorFactory
+	 *            decryptor factory to use to recover the session data.
+	 * @return the integer encryption algorithm code.
+	 * @throws PGPException
+	 *             if the session data cannot be recovered.
+	 */
+	public int getSymmetricAlgorithm(
+			PublicKeyDataDecryptorFactory dataDecryptorFactory)
+			throws PGPException {
+		byte[] plain = dataDecryptorFactory.recoverSessionData(
+				keyData.getAlgorithm(), keyData.getEncSessionKey());
 
-    /**
-     * Open an input stream which will provide the decrypted data protected by this object.
-     *
-     * @param dataDecryptorFactory  decryptor factory to use to recover the session data and provide the stream.
-     * @return  the resulting input stream
-     * @throws PGPException  if the session data cannot be recovered or the stream cannot be created.
-     */
-    public InputStream getDataStream(
-        PublicKeyDataDecryptorFactory dataDecryptorFactory)
-        throws PGPException
-    {
-        byte[] sessionData = dataDecryptorFactory.recoverSessionData(keyData.getAlgorithm(), keyData.getEncSessionKey());
+		return plain[0];
+	}
 
-        if (!confirmCheckSum(sessionData))
-        {
-            throw new PGPKeyValidationException("key checksum failed");
-        }
+	/**
+	 * Return the decrypted data stream for the packet.
+	 * 
+	 * @param privKey
+	 *            private key to use
+	 * @param provider
+	 *            provider to use for private key and symmetric key decryption.
+	 * @return InputStream
+	 * @throws PGPException
+	 * @throws NoSuchProviderException
+	 * @deprecated use method that takes a PublicKeyDataDecryptorFactory
+	 */
+	public InputStream getDataStream(PGPPrivateKey privKey, String provider)
+			throws PGPException, NoSuchProviderException {
+		return getDataStream(privKey, provider, provider);
+	}
 
-        if (sessionData[0] != SymmetricKeyAlgorithmTags.NULL)
-        {
-            try
-            {
-                boolean      withIntegrityPacket = encData instanceof SymmetricEncIntegrityPacket;
-                byte[]       sessionKey = new byte[sessionData.length - 3];
+	/**
+	 * 
+	 * @param privKey
+	 * @param provider
+	 * @return
+	 * @throws PGPException
+	 * @deprecated use method that takes a PublicKeyDataDecryptorFactory
+	 */
+	public InputStream getDataStream(PGPPrivateKey privKey, Provider provider)
+			throws PGPException {
+		return getDataStream(privKey, provider, provider);
+	}
 
-                System.arraycopy(sessionData, 1, sessionKey, 0, sessionKey.length);
+	/**
+	 * Return the decrypted data stream for the packet.
+	 * 
+	 * @param privKey
+	 *            private key to use.
+	 * @param asymProvider
+	 *            asymetric provider to use with private key.
+	 * @param provider
+	 *            provider to use for symmetric algorithm.
+	 * @return InputStream
+	 * @throws PGPException
+	 * @throws NoSuchProviderException
+	 * @deprecated use method that takes a PublicKeyDataDecryptorFactory
+	 */
+	public InputStream getDataStream(PGPPrivateKey privKey,
+			String asymProvider, String provider) throws PGPException,
+			NoSuchProviderException {
+		return getDataStream(privKey, PGPUtil.getProvider(asymProvider),
+				PGPUtil.getProvider(provider));
+	}
 
-                PGPDataDecryptor dataDecryptor = dataDecryptorFactory.createDataDecryptor(withIntegrityPacket, sessionData[0] & 0xff, sessionKey);
+	/**
+	 * @deprecated use method that takes a PublicKeyDataDecryptorFactory
+	 */
+	public InputStream getDataStream(PGPPrivateKey privKey,
+			Provider asymProvider, Provider provider) throws PGPException {
+		return getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder()
+				.setProvider(asymProvider).setContentProvider(provider)
+				.build(privKey));
+	}
 
-                encStream = new BCPGInputStream(dataDecryptor.getInputStream(encData.getInputStream()));
+	/**
+	 * Open an input stream which will provide the decrypted data protected by
+	 * this object.
+	 * 
+	 * @param dataDecryptorFactory
+	 *            decryptor factory to use to recover the session data and
+	 *            provide the stream.
+	 * @return the resulting input stream
+	 * @throws PGPException
+	 *             if the session data cannot be recovered or the stream cannot
+	 *             be created.
+	 */
+	public InputStream getDataStream(
+			PublicKeyDataDecryptorFactory dataDecryptorFactory)
+			throws PGPException {
+		byte[] sessionData = dataDecryptorFactory.recoverSessionData(
+				keyData.getAlgorithm(), keyData.getEncSessionKey());
 
-                if (withIntegrityPacket)
-                {
-                    truncStream = new TruncatedStream(encStream);
+		if (!confirmCheckSum(sessionData)) {
+			throw new PGPKeyValidationException("key checksum failed");
+		}
 
-                    integrityCalculator = dataDecryptor.getIntegrityCalculator();
+		if (sessionData[0] != SymmetricKeyAlgorithmTags.NULL) {
+			try {
+				boolean withIntegrityPacket = encData instanceof SymmetricEncIntegrityPacket;
+				byte[] sessionKey = new byte[sessionData.length - 3];
 
-                    encStream = new TeeInputStream(truncStream, integrityCalculator.getOutputStream());
-                }
+				System.arraycopy(sessionData, 1, sessionKey, 0,
+						sessionKey.length);
 
-                byte[] iv = new byte[dataDecryptor.getBlockSize()];
+				PGPDataDecryptor dataDecryptor = dataDecryptorFactory
+						.createDataDecryptor(withIntegrityPacket,
+								sessionData[0] & 0xff, sessionKey);
 
-                for (int i = 0; i != iv.length; i++)
-                {
-                    int    ch = encStream.read();
+				encStream = new BCPGInputStream(
+						dataDecryptor.getInputStream(encData.getInputStream()));
 
-                    if (ch < 0)
-                    {
-                        throw new EOFException("unexpected end of stream.");
-                    }
+				if (withIntegrityPacket) {
+					truncStream = new TruncatedStream(encStream);
 
-                    iv[i] = (byte)ch;
-                }
+					integrityCalculator = dataDecryptor
+							.getIntegrityCalculator();
 
-                int    v1 = encStream.read();
-                int    v2 = encStream.read();
+					encStream = new TeeInputStream(truncStream,
+							integrityCalculator.getOutputStream());
+				}
 
-                if (v1 < 0 || v2 < 0)
-                {
-                    throw new EOFException("unexpected end of stream.");
-                }
+				byte[] iv = new byte[dataDecryptor.getBlockSize()];
 
-                //
-                // some versions of PGP appear to produce 0 for the extra
-                // bytes rather than repeating the two previous bytes
-                //
-                /*
-                             * Commented out in the light of the oracle attack.
-                            if (iv[iv.length - 2] != (byte)v1 && v1 != 0)
-                            {
-                                throw new PGPDataValidationException("data check failed.");
-                            }
+				for (int i = 0; i != iv.length; i++) {
+					int ch = encStream.read();
 
-                            if (iv[iv.length - 1] != (byte)v2 && v2 != 0)
-                            {
-                                throw new PGPDataValidationException("data check failed.");
-                            }
-                            */
+					if (ch < 0) {
+						throw new EOFException("unexpected end of stream.");
+					}
 
-                return encStream;
-            }
-            catch (PGPException e)
-            {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw new PGPException("Exception starting decryption", e);
-            }
-        }
-        else
-        {
-            return encData.getInputStream();
-        }
-    }
+					iv[i] = (byte) ch;
+				}
+
+				int v1 = encStream.read();
+				int v2 = encStream.read();
+
+				if (v1 < 0 || v2 < 0) {
+					throw new EOFException("unexpected end of stream.");
+				}
+
+				//
+				// some versions of PGP appear to produce 0 for the extra
+				// bytes rather than repeating the two previous bytes
+				//
+				/*
+				 * Commented out in the light of the oracle attack. if
+				 * (iv[iv.length - 2] != (byte)v1 && v1 != 0) { throw new
+				 * PGPDataValidationException("data check failed."); }
+				 * 
+				 * if (iv[iv.length - 1] != (byte)v2 && v2 != 0) { throw new
+				 * PGPDataValidationException("data check failed."); }
+				 */
+
+				return encStream;
+			} catch (PGPException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new PGPException("Exception starting decryption", e);
+			}
+		} else {
+			return encData.getInputStream();
+		}
+	}
 }

@@ -19,144 +19,127 @@ import org.spongycastle.asn1.x500.DirectoryString;
  *       countryName        [0] DirectoryString OPTIONAL,
  *       localityName       [1] DirectoryString OPTIONAL,
  *       postalAddress      [2] PostalAddress OPTIONAL }
- *
+ * 
  *   PostalAddress ::= SEQUENCE SIZE(1..6) OF DirectoryString
  * </pre>
  */
-public class SignerLocation
-    extends ASN1Object
-{
-    private DERUTF8String   countryName;
-    private DERUTF8String   localityName;
-    private ASN1Sequence    postalAddress;
-    
-    private SignerLocation(
-        ASN1Sequence seq)
-    {
-        Enumeration     e = seq.getObjects();
+public class SignerLocation extends ASN1Object {
+	private DERUTF8String countryName;
+	private DERUTF8String localityName;
+	private ASN1Sequence postalAddress;
 
-        while (e.hasMoreElements())
-        {
-            DERTaggedObject o = (DERTaggedObject)e.nextElement();
+	private SignerLocation(ASN1Sequence seq) {
+		Enumeration e = seq.getObjects();
 
-            switch (o.getTagNo())
-            {
-            case 0:
-                DirectoryString countryNameDirectoryString = DirectoryString.getInstance(o, true);
-                this.countryName = new DERUTF8String(countryNameDirectoryString.getString());
-                break;
-            case 1:
-                DirectoryString localityNameDirectoryString = DirectoryString.getInstance(o, true);
-                this.localityName = new DERUTF8String(localityNameDirectoryString.getString());
-                break;
-            case 2:
-                if (o.isExplicit())
-                {
-                    this.postalAddress = ASN1Sequence.getInstance(o, true);
-                }
-                else    // handle erroneous implicitly tagged sequences
-                {
-                    this.postalAddress = ASN1Sequence.getInstance(o, false);
-                }
-                if (postalAddress != null && postalAddress.size() > 6)
-                {
-                    throw new IllegalArgumentException("postal address must contain less than 6 strings");
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("illegal tag");
-            }
-        }
-    }
+		while (e.hasMoreElements()) {
+			DERTaggedObject o = (DERTaggedObject) e.nextElement();
 
-    public SignerLocation(
-        DERUTF8String   countryName,
-        DERUTF8String   localityName,
-        ASN1Sequence    postalAddress)
-    {
-        if (postalAddress != null && postalAddress.size() > 6)
-        {
-            throw new IllegalArgumentException("postal address must contain less than 6 strings");
-        }
+			switch (o.getTagNo()) {
+			case 0:
+				DirectoryString countryNameDirectoryString = DirectoryString
+						.getInstance(o, true);
+				this.countryName = new DERUTF8String(
+						countryNameDirectoryString.getString());
+				break;
+			case 1:
+				DirectoryString localityNameDirectoryString = DirectoryString
+						.getInstance(o, true);
+				this.localityName = new DERUTF8String(
+						localityNameDirectoryString.getString());
+				break;
+			case 2:
+				if (o.isExplicit()) {
+					this.postalAddress = ASN1Sequence.getInstance(o, true);
+				} else // handle erroneous implicitly tagged sequences
+				{
+					this.postalAddress = ASN1Sequence.getInstance(o, false);
+				}
+				if (postalAddress != null && postalAddress.size() > 6) {
+					throw new IllegalArgumentException(
+							"postal address must contain less than 6 strings");
+				}
+				break;
+			default:
+				throw new IllegalArgumentException("illegal tag");
+			}
+		}
+	}
 
-        if (countryName != null)
-        {
-            this.countryName = DERUTF8String.getInstance(countryName.toASN1Primitive());
-        }
+	public SignerLocation(DERUTF8String countryName,
+			DERUTF8String localityName, ASN1Sequence postalAddress) {
+		if (postalAddress != null && postalAddress.size() > 6) {
+			throw new IllegalArgumentException(
+					"postal address must contain less than 6 strings");
+		}
 
-        if (localityName != null)
-        {
-            this.localityName = DERUTF8String.getInstance(localityName.toASN1Primitive());
-        }
+		if (countryName != null) {
+			this.countryName = DERUTF8String.getInstance(countryName
+					.toASN1Primitive());
+		}
 
-        if (postalAddress != null)
-        {
-            this.postalAddress = ASN1Sequence.getInstance(postalAddress.toASN1Primitive());
-        }
-    }
+		if (localityName != null) {
+			this.localityName = DERUTF8String.getInstance(localityName
+					.toASN1Primitive());
+		}
 
-    public static SignerLocation getInstance(
-        Object obj)
-    {
-        if (obj == null || obj instanceof SignerLocation)
-        {
-            return (SignerLocation)obj;
-        }
+		if (postalAddress != null) {
+			this.postalAddress = ASN1Sequence.getInstance(postalAddress
+					.toASN1Primitive());
+		}
+	}
 
-        return new SignerLocation(ASN1Sequence.getInstance(obj));
-    }
+	public static SignerLocation getInstance(Object obj) {
+		if (obj == null || obj instanceof SignerLocation) {
+			return (SignerLocation) obj;
+		}
 
-    public DERUTF8String getCountryName()
-    {
-        return countryName;
-    }
+		return new SignerLocation(ASN1Sequence.getInstance(obj));
+	}
 
-    public DERUTF8String getLocalityName()
-    {
-        return localityName;
-    }
+	public DERUTF8String getCountryName() {
+		return countryName;
+	}
 
-    public ASN1Sequence getPostalAddress()
-    {
-        return postalAddress;
-    }
+	public DERUTF8String getLocalityName() {
+		return localityName;
+	}
 
-    /**
-     * <pre>
-     *   SignerLocation ::= SEQUENCE {
-     *       countryName        [0] DirectoryString OPTIONAL,
-     *       localityName       [1] DirectoryString OPTIONAL,
-     *       postalAddress      [2] PostalAddress OPTIONAL }
-     *
-     *   PostalAddress ::= SEQUENCE SIZE(1..6) OF DirectoryString
-     *   
-     *   DirectoryString ::= CHOICE {
-     *         teletexString           TeletexString (SIZE (1..MAX)),
-     *         printableString         PrintableString (SIZE (1..MAX)),
-     *         universalString         UniversalString (SIZE (1..MAX)),
-     *         utf8String              UTF8String (SIZE (1.. MAX)),
-     *         bmpString               BMPString (SIZE (1..MAX)) }
-     * </pre>
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	public ASN1Sequence getPostalAddress() {
+		return postalAddress;
+	}
 
-        if (countryName != null)
-        {
-            v.add(new DERTaggedObject(true, 0, countryName));
-        }
+	/**
+	 * <pre>
+	 *   SignerLocation ::= SEQUENCE {
+	 *       countryName        [0] DirectoryString OPTIONAL,
+	 *       localityName       [1] DirectoryString OPTIONAL,
+	 *       postalAddress      [2] PostalAddress OPTIONAL }
+	 * 
+	 *   PostalAddress ::= SEQUENCE SIZE(1..6) OF DirectoryString
+	 *   
+	 *   DirectoryString ::= CHOICE {
+	 *         teletexString           TeletexString (SIZE (1..MAX)),
+	 *         printableString         PrintableString (SIZE (1..MAX)),
+	 *         universalString         UniversalString (SIZE (1..MAX)),
+	 *         utf8String              UTF8String (SIZE (1.. MAX)),
+	 *         bmpString               BMPString (SIZE (1..MAX)) }
+	 * </pre>
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        if (localityName != null)
-        {
-            v.add(new DERTaggedObject(true, 1, localityName));
-        }
+		if (countryName != null) {
+			v.add(new DERTaggedObject(true, 0, countryName));
+		}
 
-        if (postalAddress != null)
-        {
-            v.add(new DERTaggedObject(true, 2, postalAddress));
-        }
+		if (localityName != null) {
+			v.add(new DERTaggedObject(true, 1, localityName));
+		}
 
-        return new DERSequence(v);
-    }
+		if (postalAddress != null) {
+			v.add(new DERTaggedObject(true, 2, postalAddress));
+		}
+
+		return new DERSequence(v);
+	}
 }

@@ -10,61 +10,45 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvide
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 
-public final class Rijndael
-{
-    private Rijndael()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new BlockCipherProvider()
-            {
-                public BlockCipher get()
-                {
-                    return new RijndaelEngine();
-                }
-            });
-        }
-    }
+public final class Rijndael {
+	private Rijndael() {
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("Rijndael", 192, new CipherKeyGenerator());
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new BlockCipherProvider() {
+				public BlockCipher get() {
+					return new RijndaelEngine();
+				}
+			});
+		}
+	}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "Rijndael IV";
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("Rijndael", 192, new CipherKeyGenerator());
+		}
+	}
 
-    public static class Mappings
-        extends AlgorithmProvider
-    {
-        private static final String PREFIX = Rijndael.class.getName();
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "Rijndael IV";
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class Mappings extends AlgorithmProvider {
+		private static final String PREFIX = Rijndael.class.getName();
 
-        public void configure(ConfigurableProvider provider)
-        {
+		public Mappings() {
+		}
 
-            provider.addAlgorithm("Cipher.RIJNDAEL", PREFIX + "$ECB");
-            provider.addAlgorithm("KeyGenerator.RIJNDAEL", PREFIX + "$KeyGen");
-            provider.addAlgorithm("AlgorithmParameters.RIJNDAEL", PREFIX + "$AlgParams");
+		public void configure(ConfigurableProvider provider) {
 
-        }
-    }
+			provider.addAlgorithm("Cipher.RIJNDAEL", PREFIX + "$ECB");
+			provider.addAlgorithm("KeyGenerator.RIJNDAEL", PREFIX + "$KeyGen");
+			provider.addAlgorithm("AlgorithmParameters.RIJNDAEL", PREFIX
+					+ "$AlgParams");
+
+		}
+	}
 }

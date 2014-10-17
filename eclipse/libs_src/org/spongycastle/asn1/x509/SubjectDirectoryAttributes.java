@@ -26,119 +26,107 @@ import org.spongycastle.asn1.DERSequence;
  *     AttributeValue ::= ANY DEFINED BY AttributeType
  * </pre>
  * 
- * @see org.spongycastle.asn1.x500.style.BCStyle for AttributeType ObjectIdentifiers.
+ * @see org.spongycastle.asn1.x500.style.BCStyle for AttributeType
+ *      ObjectIdentifiers.
  */
-public class SubjectDirectoryAttributes 
-    extends ASN1Object
-{
-    private Vector attributes = new Vector();
+public class SubjectDirectoryAttributes extends ASN1Object {
+	private Vector attributes = new Vector();
 
-    public static SubjectDirectoryAttributes getInstance(
-        Object obj)
-    {
-        if (obj instanceof SubjectDirectoryAttributes)
-        {
-            return (SubjectDirectoryAttributes)obj;
-        }
+	public static SubjectDirectoryAttributes getInstance(Object obj) {
+		if (obj instanceof SubjectDirectoryAttributes) {
+			return (SubjectDirectoryAttributes) obj;
+		}
 
-        if (obj != null)
-        {
-            return new SubjectDirectoryAttributes(ASN1Sequence.getInstance(obj));
-        }
+		if (obj != null) {
+			return new SubjectDirectoryAttributes(ASN1Sequence.getInstance(obj));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Constructor from ASN1Sequence.
-     * 
-     * The sequence is of type SubjectDirectoryAttributes:
-     * 
-     * <pre>
-     *      SubjectDirectoryAttributes ::= Attributes
-     *      Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
-     *      Attribute ::= SEQUENCE 
-     *      {
-     *        type AttributeType 
-     *        values SET OF AttributeValue 
-     *      }
-     *      
-     *      AttributeType ::= OBJECT IDENTIFIER
-     *      AttributeValue ::= ANY DEFINED BY AttributeType
-     * </pre>
-     * 
-     * @param seq
-     *            The ASN.1 sequence.
-     */
-    private SubjectDirectoryAttributes(ASN1Sequence seq)
-    {
-        Enumeration e = seq.getObjects();
+	/**
+	 * Constructor from ASN1Sequence.
+	 * 
+	 * The sequence is of type SubjectDirectoryAttributes:
+	 * 
+	 * <pre>
+	 *      SubjectDirectoryAttributes ::= Attributes
+	 *      Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
+	 *      Attribute ::= SEQUENCE 
+	 *      {
+	 *        type AttributeType 
+	 *        values SET OF AttributeValue 
+	 *      }
+	 *      
+	 *      AttributeType ::= OBJECT IDENTIFIER
+	 *      AttributeValue ::= ANY DEFINED BY AttributeType
+	 * </pre>
+	 * 
+	 * @param seq
+	 *            The ASN.1 sequence.
+	 */
+	private SubjectDirectoryAttributes(ASN1Sequence seq) {
+		Enumeration e = seq.getObjects();
 
-        while (e.hasMoreElements())
-        {
-            ASN1Sequence s = ASN1Sequence.getInstance(e.nextElement());
-            attributes.addElement(Attribute.getInstance(s));
-        }
-    }
+		while (e.hasMoreElements()) {
+			ASN1Sequence s = ASN1Sequence.getInstance(e.nextElement());
+			attributes.addElement(Attribute.getInstance(s));
+		}
+	}
 
-    /**
-     * Constructor from a vector of attributes.
-     * 
-     * The vector consists of attributes of type {@link Attribute Attribute}
-     * 
-     * @param attributes
-     *            The attributes.
-     * 
-     */
-    public SubjectDirectoryAttributes(Vector attributes)
-    {
-        Enumeration e = attributes.elements();
+	/**
+	 * Constructor from a vector of attributes.
+	 * 
+	 * The vector consists of attributes of type {@link Attribute Attribute}
+	 * 
+	 * @param attributes
+	 *            The attributes.
+	 * 
+	 */
+	public SubjectDirectoryAttributes(Vector attributes) {
+		Enumeration e = attributes.elements();
 
-        while (e.hasMoreElements())
-        {
-            this.attributes.addElement(e.nextElement());
-        }
-    }
+		while (e.hasMoreElements()) {
+			this.attributes.addElement(e.nextElement());
+		}
+	}
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * 
-     * Returns:
-     * 
-     * <pre>
-     *      SubjectDirectoryAttributes ::= Attributes
-     *      Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
-     *      Attribute ::= SEQUENCE 
-     *      {
-     *        type AttributeType 
-     *        values SET OF AttributeValue 
-     *      }
-     *      
-     *      AttributeType ::= OBJECT IDENTIFIER
-     *      AttributeValue ::= ANY DEFINED BY AttributeType
-     * </pre>
-     * 
-     * @return a ASN1Primitive
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector vec = new ASN1EncodableVector();
-        Enumeration e = attributes.elements();
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * 
+	 * Returns:
+	 * 
+	 * <pre>
+	 *      SubjectDirectoryAttributes ::= Attributes
+	 *      Attributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
+	 *      Attribute ::= SEQUENCE 
+	 *      {
+	 *        type AttributeType 
+	 *        values SET OF AttributeValue 
+	 *      }
+	 *      
+	 *      AttributeType ::= OBJECT IDENTIFIER
+	 *      AttributeValue ::= ANY DEFINED BY AttributeType
+	 * </pre>
+	 * 
+	 * @return a ASN1Primitive
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector vec = new ASN1EncodableVector();
+		Enumeration e = attributes.elements();
 
-        while (e.hasMoreElements())
-        {
+		while (e.hasMoreElements()) {
 
-            vec.add((Attribute)e.nextElement());
-        }
+			vec.add((Attribute) e.nextElement());
+		}
 
-        return new DERSequence(vec);
-    }
+		return new DERSequence(vec);
+	}
 
-    /**
-     * @return Returns the attributes.
-     */
-    public Vector getAttributes()
-    {
-        return attributes;
-    }
+	/**
+	 * @return Returns the attributes.
+	 */
+	public Vector getAttributes() {
+		return attributes;
+	}
 }

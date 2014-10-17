@@ -17,16 +17,18 @@
 package com.google.bitcoin.core;
 
 public class UnknownMessage extends EmptyMessage {
-    private static final long serialVersionUID = 3614705938207918775L;
-    private String name;
+	private static final long serialVersionUID = 3614705938207918775L;
+	private String name;
 
-    public UnknownMessage(NetworkParameters params, String name, byte[] payloadBytes) throws ProtocolException {
-        super(params, payloadBytes, 0);
-        this.name = name;
-    }
+	public UnknownMessage(NetworkParameters params, String name,
+			byte[] payloadBytes) throws ProtocolException {
+		super(params, payloadBytes, 0);
+		this.name = name;
+	}
 
-    public String toString() {
-        return "Unknown message [" + name + "]: " + (bytes == null ? "" : Utils.bytesToHexString(bytes));
-    }
+	public String toString() {
+		return "Unknown message [" + name + "]: "
+				+ (bytes == null ? "" : Utils.bytesToHexString(bytes));
+	}
 
 }

@@ -1,7 +1,7 @@
 package org.ripple.bouncycastle.crypto.modes.gcm;
 
-public interface GCMExponentiator
-{
-    void init(byte[] x);
-    void exponentiateX(long pow, byte[] output);
+public interface GCMExponentiator {
+	void init(byte[] x);
+
+	void exponentiateX(long pow, byte[] output);
 }

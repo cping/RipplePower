@@ -14,118 +14,102 @@ import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.crypto.params.RSAKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
-public class JCERSAPublicKey
-    implements RSAPublicKey
-{
-    static final long serialVersionUID = 2675817738516720772L;
-    
-    private BigInteger modulus;
-    private BigInteger publicExponent;
+public class JCERSAPublicKey implements RSAPublicKey {
+	static final long serialVersionUID = 2675817738516720772L;
 
-    JCERSAPublicKey(
-        RSAKeyParameters key)
-    {
-        this.modulus = key.getModulus();
-        this.publicExponent = key.getExponent();
-    }
+	private BigInteger modulus;
+	private BigInteger publicExponent;
 
-    JCERSAPublicKey(
-        RSAPublicKeySpec spec)
-    {
-        this.modulus = spec.getModulus();
-        this.publicExponent = spec.getPublicExponent();
-    }
+	JCERSAPublicKey(RSAKeyParameters key) {
+		this.modulus = key.getModulus();
+		this.publicExponent = key.getExponent();
+	}
 
-    JCERSAPublicKey(
-        RSAPublicKey key)
-    {
-        this.modulus = key.getModulus();
-        this.publicExponent = key.getPublicExponent();
-    }
+	JCERSAPublicKey(RSAPublicKeySpec spec) {
+		this.modulus = spec.getModulus();
+		this.publicExponent = spec.getPublicExponent();
+	}
 
-    JCERSAPublicKey(
-        SubjectPublicKeyInfo    info)
-    {
-        try
-        {
-            RSAPublicKeyStructure   pubKey = new RSAPublicKeyStructure((ASN1Sequence)info.parsePublicKey());
+	JCERSAPublicKey(RSAPublicKey key) {
+		this.modulus = key.getModulus();
+		this.publicExponent = key.getPublicExponent();
+	}
 
-            this.modulus = pubKey.getModulus();
-            this.publicExponent = pubKey.getPublicExponent();
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("invalid info structure in RSA public key");
-        }
-    }
+	JCERSAPublicKey(SubjectPublicKeyInfo info) {
+		try {
+			RSAPublicKeyStructure pubKey = new RSAPublicKeyStructure(
+					(ASN1Sequence) info.parsePublicKey());
 
-    /**
-     * return the modulus.
-     *
-     * @return the modulus.
-     */
-    public BigInteger getModulus()
-    {
-        return modulus;
-    }
+			this.modulus = pubKey.getModulus();
+			this.publicExponent = pubKey.getPublicExponent();
+		} catch (IOException e) {
+			throw new IllegalArgumentException(
+					"invalid info structure in RSA public key");
+		}
+	}
 
-    /**
-     * return the public exponent.
-     *
-     * @return the public exponent.
-     */
-    public BigInteger getPublicExponent()
-    {
-        return publicExponent;
-    }
+	/**
+	 * return the modulus.
+	 * 
+	 * @return the modulus.
+	 */
+	public BigInteger getModulus() {
+		return modulus;
+	}
 
-    public String getAlgorithm()
-    {
-        return "RSA";
-    }
+	/**
+	 * return the public exponent.
+	 * 
+	 * @return the public exponent.
+	 */
+	public BigInteger getPublicExponent() {
+		return publicExponent;
+	}
 
-    public String getFormat()
-    {
-        return "X.509";
-    }
+	public String getAlgorithm() {
+		return "RSA";
+	}
 
-    public byte[] getEncoded()
-    {
-        return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), new RSAPublicKeyStructure(getModulus(), getPublicExponent()));
-    }
+	public String getFormat() {
+		return "X.509";
+	}
 
-    public int hashCode()
-    {
-        return this.getModulus().hashCode() ^ this.getPublicExponent().hashCode();
-    }
+	public byte[] getEncoded() {
+		return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(
+				PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
+				new RSAPublicKeyStructure(getModulus(), getPublicExponent()));
+	}
 
-    public boolean equals(Object o)
-    {
-        if (o == this)
-        {
-            return true;
-        }
+	public int hashCode() {
+		return this.getModulus().hashCode()
+				^ this.getPublicExponent().hashCode();
+	}
 
-        if (!(o instanceof RSAPublicKey))
-        {
-            return false;
-        }
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
 
-        RSAPublicKey key = (RSAPublicKey)o;
+		if (!(o instanceof RSAPublicKey)) {
+			return false;
+		}
 
-        return getModulus().equals(key.getModulus())
-            && getPublicExponent().equals(key.getPublicExponent());
-    }
+		RSAPublicKey key = (RSAPublicKey) o;
 
-    public String toString()
-    {
-        StringBuffer    buf = new StringBuffer();
-        String          nl = System.getProperty("line.separator");
+		return getModulus().equals(key.getModulus())
+				&& getPublicExponent().equals(key.getPublicExponent());
+	}
 
-        buf.append("RSA Public Key").append(nl);
-        buf.append("            modulus: ").append(this.getModulus().toString(16)).append(nl);
-        buf.append("    public exponent: ").append(this.getPublicExponent().toString(16)).append(nl);
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		String nl = System.getProperty("line.separator");
 
-        return buf.toString();
-    }
+		buf.append("RSA Public Key").append(nl);
+		buf.append("            modulus: ")
+				.append(this.getModulus().toString(16)).append(nl);
+		buf.append("    public exponent: ")
+				.append(this.getPublicExponent().toString(16)).append(nl);
+
+		return buf.toString();
+	}
 }

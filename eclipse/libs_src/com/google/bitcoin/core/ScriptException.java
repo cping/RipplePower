@@ -19,11 +19,11 @@ package com.google.bitcoin.core;
 @SuppressWarnings("serial")
 public class ScriptException extends VerificationException {
 
-    public ScriptException(String msg) {
-        super(msg);
-    }
+	public ScriptException(String msg) {
+		super(msg);
+	}
 
-    public ScriptException(String msg, Exception e) {
-        super(msg, e);
-    }
+	public ScriptException(String msg, Exception e) {
+		super(msg, e);
+	}
 }

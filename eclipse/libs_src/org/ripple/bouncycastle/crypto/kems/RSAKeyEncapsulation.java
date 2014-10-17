@@ -14,151 +14,148 @@ import org.ripple.bouncycastle.util.BigIntegers;
 /**
  * The RSA Key Encapsulation Mechanism (RSA-KEM) from ISO 18033-2.
  */
-public class RSAKeyEncapsulation
-    implements KeyEncapsulation
-{
-    private static final BigInteger ZERO = BigInteger.valueOf(0);
-    private static final BigInteger ONE = BigInteger.valueOf(1);
+public class RSAKeyEncapsulation implements KeyEncapsulation {
+	private static final BigInteger ZERO = BigInteger.valueOf(0);
+	private static final BigInteger ONE = BigInteger.valueOf(1);
 
-    private DerivationFunction kdf;
-    private SecureRandom rnd;
-    private RSAKeyParameters key;
+	private DerivationFunction kdf;
+	private SecureRandom rnd;
+	private RSAKeyParameters key;
 
-    /**
-     * Set up the RSA-KEM.
-     *
-     * @param kdf the key derivation function to be used.
-     * @param rnd the random source for the session key.
-     */
-    public RSAKeyEncapsulation(
-        DerivationFunction kdf,
-        SecureRandom rnd)
-    {
-        this.kdf = kdf;
-        this.rnd = rnd;
-    }
+	/**
+	 * Set up the RSA-KEM.
+	 * 
+	 * @param kdf
+	 *            the key derivation function to be used.
+	 * @param rnd
+	 *            the random source for the session key.
+	 */
+	public RSAKeyEncapsulation(DerivationFunction kdf, SecureRandom rnd) {
+		this.kdf = kdf;
+		this.rnd = rnd;
+	}
 
+	/**
+	 * Initialise the RSA-KEM.
+	 * 
+	 * @param key
+	 *            the recipient's public (for encryption) or private (for
+	 *            decryption) key.
+	 */
+	public void init(CipherParameters key) throws IllegalArgumentException {
+		if (!(key instanceof RSAKeyParameters)) {
+			throw new IllegalArgumentException("RSA key required");
+		} else {
+			this.key = (RSAKeyParameters) key;
+		}
+	}
 
-    /**
-     * Initialise the RSA-KEM.
-     *
-     * @param key the recipient's public (for encryption) or private (for decryption) key.
-     */
-    public void init(CipherParameters key)
-        throws IllegalArgumentException
-    {
-        if (!(key instanceof RSAKeyParameters))
-        {
-            throw new IllegalArgumentException("RSA key required");
-        }
-        else
-        {
-            this.key = (RSAKeyParameters)key;
-        }
-    }
+	/**
+	 * Generate and encapsulate a random session key.
+	 * 
+	 * @param out
+	 *            the output buffer for the encapsulated key.
+	 * @param outOff
+	 *            the offset for the output buffer.
+	 * @param keyLen
+	 *            the length of the random session key.
+	 * @return the random session key.
+	 */
+	public CipherParameters encrypt(byte[] out, int outOff, int keyLen)
+			throws IllegalArgumentException {
+		if (key.isPrivate()) {
+			throw new IllegalArgumentException(
+					"Public key required for encryption");
+		}
 
+		BigInteger n = key.getModulus();
+		BigInteger e = key.getExponent();
 
-    /**
-     * Generate and encapsulate a random session key.
-     *
-     * @param out    the output buffer for the encapsulated key.
-     * @param outOff the offset for the output buffer.
-     * @param keyLen the length of the random session key.
-     * @return the random session key.
-     */
-    public CipherParameters encrypt(byte[] out, int outOff, int keyLen)
-        throws IllegalArgumentException
-    {
-        if (key.isPrivate())
-        {
-            throw new IllegalArgumentException("Public key required for encryption");
-        }
+		// Generate the ephemeral random and encode it
+		BigInteger r = BigIntegers.createRandomInRange(ZERO, n.subtract(ONE),
+				rnd);
+		byte[] R = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, r);
 
-        BigInteger n = key.getModulus();
-        BigInteger e = key.getExponent();
+		// Encrypt the random and encode it
+		BigInteger c = r.modPow(e, n);
+		byte[] C = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, c);
+		System.arraycopy(C, 0, out, outOff, C.length);
 
-        // Generate the ephemeral random and encode it    
-        BigInteger r = BigIntegers.createRandomInRange(ZERO, n.subtract(ONE), rnd);
-        byte[] R = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, r);
+		// Initialise the KDF
+		kdf.init(new KDFParameters(R, null));
 
-        // Encrypt the random and encode it     
-        BigInteger c = r.modPow(e, n);
-        byte[] C = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, c);
-        System.arraycopy(C, 0, out, outOff, C.length);
+		// Generate the secret key
+		byte[] K = new byte[keyLen];
+		kdf.generateBytes(K, 0, K.length);
 
+		return new KeyParameter(K);
+	}
 
-        // Initialise the KDF
-        kdf.init(new KDFParameters(R, null));
+	/**
+	 * Generate and encapsulate a random session key.
+	 * 
+	 * @param out
+	 *            the output buffer for the encapsulated key.
+	 * @param keyLen
+	 *            the length of the random session key.
+	 * @return the random session key.
+	 */
+	public CipherParameters encrypt(byte[] out, int keyLen) {
+		return encrypt(out, 0, keyLen);
+	}
 
-        // Generate the secret key
-        byte[] K = new byte[keyLen];
-        kdf.generateBytes(K, 0, K.length);
+	/**
+	 * Decrypt an encapsulated session key.
+	 * 
+	 * @param in
+	 *            the input buffer for the encapsulated key.
+	 * @param inOff
+	 *            the offset for the input buffer.
+	 * @param inLen
+	 *            the length of the encapsulated key.
+	 * @param keyLen
+	 *            the length of the session key.
+	 * @return the session key.
+	 */
+	public CipherParameters decrypt(byte[] in, int inOff, int inLen, int keyLen)
+			throws IllegalArgumentException {
+		if (!key.isPrivate()) {
+			throw new IllegalArgumentException(
+					"Private key required for decryption");
+		}
 
-        return new KeyParameter(K);
-    }
+		BigInteger n = key.getModulus();
+		BigInteger d = key.getExponent();
 
+		// Decode the input
+		byte[] C = new byte[inLen];
+		System.arraycopy(in, inOff, C, 0, C.length);
+		BigInteger c = new BigInteger(1, C);
 
-    /**
-     * Generate and encapsulate a random session key.
-     *
-     * @param out    the output buffer for the encapsulated key.
-     * @param keyLen the length of the random session key.
-     * @return the random session key.
-     */
-    public CipherParameters encrypt(byte[] out, int keyLen)
-    {
-        return encrypt(out, 0, keyLen);
-    }
+		// Decrypt the ephemeral random and encode it
+		BigInteger r = c.modPow(d, n);
+		byte[] R = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, r);
 
+		// Initialise the KDF
+		kdf.init(new KDFParameters(R, null));
 
-    /**
-     * Decrypt an encapsulated session key.
-     *
-     * @param in     the input buffer for the encapsulated key.
-     * @param inOff  the offset for the input buffer.
-     * @param inLen  the length of the encapsulated key.
-     * @param keyLen the length of the session key.
-     * @return the session key.
-     */
-    public CipherParameters decrypt(byte[] in, int inOff, int inLen, int keyLen)
-        throws IllegalArgumentException
-    {
-        if (!key.isPrivate())
-        {
-            throw new IllegalArgumentException("Private key required for decryption");
-        }
+		// Generate the secret key
+		byte[] K = new byte[keyLen];
+		kdf.generateBytes(K, 0, K.length);
 
-        BigInteger n = key.getModulus();
-        BigInteger d = key.getExponent();
+		return new KeyParameter(K);
+	}
 
-        // Decode the input
-        byte[] C = new byte[inLen];
-        System.arraycopy(in, inOff, C, 0, C.length);
-        BigInteger c = new BigInteger(1, C);
-
-        // Decrypt the ephemeral random and encode it
-        BigInteger r = c.modPow(d, n);
-        byte[] R = BigIntegers.asUnsignedByteArray((n.bitLength() + 7) / 8, r);
-
-        // Initialise the KDF
-        kdf.init(new KDFParameters(R, null));
-
-        // Generate the secret key
-        byte[] K = new byte[keyLen];
-        kdf.generateBytes(K, 0, K.length);
-
-        return new KeyParameter(K);
-    }
-
-    /**
-     * Decrypt an encapsulated session key.
-     *
-     * @param in     the input buffer for the encapsulated key.
-     * @param keyLen the length of the session key.
-     * @return the session key.
-     */
-    public CipherParameters decrypt(byte[] in, int keyLen)
-    {
-        return decrypt(in, 0, in.length, keyLen);
-    }
+	/**
+	 * Decrypt an encapsulated session key.
+	 * 
+	 * @param in
+	 *            the input buffer for the encapsulated key.
+	 * @param keyLen
+	 *            the length of the session key.
+	 * @return the session key.
+	 */
+	public CipherParameters decrypt(byte[] in, int keyLen) {
+		return decrypt(in, 0, in.length, keyLen);
+	}
 }

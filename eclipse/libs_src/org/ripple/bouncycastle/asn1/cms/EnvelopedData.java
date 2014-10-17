@@ -12,194 +12,173 @@ import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.BERSequence;
 import org.ripple.bouncycastle.asn1.DERTaggedObject;
 
-public class EnvelopedData
-    extends ASN1Object
-{
-    private ASN1Integer              version;
-    private OriginatorInfo          originatorInfo;
-    private ASN1Set                 recipientInfos;
-    private EncryptedContentInfo    encryptedContentInfo;
-    private ASN1Set                 unprotectedAttrs;
+public class EnvelopedData extends ASN1Object {
+	private ASN1Integer version;
+	private OriginatorInfo originatorInfo;
+	private ASN1Set recipientInfos;
+	private EncryptedContentInfo encryptedContentInfo;
+	private ASN1Set unprotectedAttrs;
 
-    public EnvelopedData(
-        OriginatorInfo          originatorInfo,
-        ASN1Set                 recipientInfos,
-        EncryptedContentInfo    encryptedContentInfo,
-        ASN1Set                 unprotectedAttrs)
-    {
-        version = new ASN1Integer(calculateVersion(originatorInfo, recipientInfos, unprotectedAttrs));
+	public EnvelopedData(OriginatorInfo originatorInfo, ASN1Set recipientInfos,
+			EncryptedContentInfo encryptedContentInfo, ASN1Set unprotectedAttrs) {
+		version = new ASN1Integer(calculateVersion(originatorInfo,
+				recipientInfos, unprotectedAttrs));
 
-        this.originatorInfo = originatorInfo;
-        this.recipientInfos = recipientInfos;
-        this.encryptedContentInfo = encryptedContentInfo;
-        this.unprotectedAttrs = unprotectedAttrs;
-    }
+		this.originatorInfo = originatorInfo;
+		this.recipientInfos = recipientInfos;
+		this.encryptedContentInfo = encryptedContentInfo;
+		this.unprotectedAttrs = unprotectedAttrs;
+	}
 
-    public EnvelopedData(
-        OriginatorInfo          originatorInfo,
-        ASN1Set                 recipientInfos,
-        EncryptedContentInfo    encryptedContentInfo,
-        Attributes              unprotectedAttrs)
-    {
-        version = new ASN1Integer(calculateVersion(originatorInfo, recipientInfos, ASN1Set.getInstance(unprotectedAttrs)));
+	public EnvelopedData(OriginatorInfo originatorInfo, ASN1Set recipientInfos,
+			EncryptedContentInfo encryptedContentInfo,
+			Attributes unprotectedAttrs) {
+		version = new ASN1Integer(calculateVersion(originatorInfo,
+				recipientInfos, ASN1Set.getInstance(unprotectedAttrs)));
 
-        this.originatorInfo = originatorInfo;
-        this.recipientInfos = recipientInfos;
-        this.encryptedContentInfo = encryptedContentInfo;
-        this.unprotectedAttrs = ASN1Set.getInstance(unprotectedAttrs);
-    }
+		this.originatorInfo = originatorInfo;
+		this.recipientInfos = recipientInfos;
+		this.encryptedContentInfo = encryptedContentInfo;
+		this.unprotectedAttrs = ASN1Set.getInstance(unprotectedAttrs);
+	}
 
-    /**
-     * @deprecated use getInstance()
-     */
-    public EnvelopedData(
-        ASN1Sequence seq)
-    {
-        int     index = 0;
-        
-        version = (ASN1Integer)seq.getObjectAt(index++);
-        
-        Object  tmp = seq.getObjectAt(index++);
+	/**
+	 * @deprecated use getInstance()
+	 */
+	public EnvelopedData(ASN1Sequence seq) {
+		int index = 0;
 
-        if (tmp instanceof ASN1TaggedObject)
-        {
-            originatorInfo = OriginatorInfo.getInstance((ASN1TaggedObject)tmp, false);
-            tmp = seq.getObjectAt(index++);
-        }
+		version = (ASN1Integer) seq.getObjectAt(index++);
 
-        recipientInfos = ASN1Set.getInstance(tmp);
-        
-        encryptedContentInfo = EncryptedContentInfo.getInstance(seq.getObjectAt(index++));
-        
-        if(seq.size() > index)
-        {
-            unprotectedAttrs = ASN1Set.getInstance((ASN1TaggedObject)seq.getObjectAt(index), false);
-        }
-    }
-    
-    /**
-     * return an EnvelopedData object from a tagged object.
-     *
-     * @param obj the tagged object holding the object we want.
-     * @param explicit true if the object is meant to be explicitly
-     *              tagged false otherwise.
-     * @exception IllegalArgumentException if the object held by the
-     *          tagged object cannot be converted.
-     */
-    public static EnvelopedData getInstance(
-        ASN1TaggedObject obj,
-        boolean explicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(obj, explicit));
-    }
-    
-    /**
-     * return an EnvelopedData object from the given object.
-     *
-     * @param obj the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static EnvelopedData getInstance(
-        Object obj)
-    {
-        if (obj instanceof EnvelopedData)
-        {
-            return (EnvelopedData)obj;
-        }
-        
-        if (obj != null)
-        {
-            return new EnvelopedData(ASN1Sequence.getInstance(obj));
-        }
-        
-        return null;
-    }
+		Object tmp = seq.getObjectAt(index++);
 
-    public ASN1Integer getVersion()
-    {
-        return version;
-    }
-    
-    public OriginatorInfo getOriginatorInfo()
-    {
-        return originatorInfo;
-    }
+		if (tmp instanceof ASN1TaggedObject) {
+			originatorInfo = OriginatorInfo.getInstance((ASN1TaggedObject) tmp,
+					false);
+			tmp = seq.getObjectAt(index++);
+		}
 
-    public ASN1Set getRecipientInfos()
-    {
-        return recipientInfos;
-    }
+		recipientInfos = ASN1Set.getInstance(tmp);
 
-    public EncryptedContentInfo getEncryptedContentInfo()
-    {
-        return encryptedContentInfo;
-    }
+		encryptedContentInfo = EncryptedContentInfo.getInstance(seq
+				.getObjectAt(index++));
 
-    public ASN1Set getUnprotectedAttrs()
-    {
-        return unprotectedAttrs;
-    }
+		if (seq.size() > index) {
+			unprotectedAttrs = ASN1Set.getInstance(
+					(ASN1TaggedObject) seq.getObjectAt(index), false);
+		}
+	}
 
-    /** 
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     * EnvelopedData ::= SEQUENCE {
-     *     version CMSVersion,
-     *     originatorInfo [0] IMPLICIT OriginatorInfo OPTIONAL,
-     *     recipientInfos RecipientInfos,
-     *     encryptedContentInfo EncryptedContentInfo,
-     *     unprotectedAttrs [1] IMPLICIT UnprotectedAttributes OPTIONAL 
-     * }
-     * </pre>
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
-        
-        v.add(version);
+	/**
+	 * return an EnvelopedData object from a tagged object.
+	 * 
+	 * @param obj
+	 *            the tagged object holding the object we want.
+	 * @param explicit
+	 *            true if the object is meant to be explicitly tagged false
+	 *            otherwise.
+	 * @exception IllegalArgumentException
+	 *                if the object held by the tagged object cannot be
+	 *                converted.
+	 */
+	public static EnvelopedData getInstance(ASN1TaggedObject obj,
+			boolean explicit) {
+		return getInstance(ASN1Sequence.getInstance(obj, explicit));
+	}
 
-        if (originatorInfo != null)
-        {
-            v.add(new DERTaggedObject(false, 0, originatorInfo));
-        }
+	/**
+	 * return an EnvelopedData object from the given object.
+	 * 
+	 * @param obj
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static EnvelopedData getInstance(Object obj) {
+		if (obj instanceof EnvelopedData) {
+			return (EnvelopedData) obj;
+		}
 
-        v.add(recipientInfos);
-        v.add(encryptedContentInfo);
+		if (obj != null) {
+			return new EnvelopedData(ASN1Sequence.getInstance(obj));
+		}
 
-        if (unprotectedAttrs != null)
-        {
-            v.add(new DERTaggedObject(false, 1, unprotectedAttrs));
-        }
-        
-        return new BERSequence(v);
-    }
+		return null;
+	}
 
-    public static int calculateVersion(OriginatorInfo originatorInfo, ASN1Set recipientInfos, ASN1Set unprotectedAttrs)
-    {
-        int version;
+	public ASN1Integer getVersion() {
+		return version;
+	}
 
-        if (originatorInfo != null || unprotectedAttrs != null)
-        {
-            version = 2;
-        }
-        else
-        {
-            version = 0;
+	public OriginatorInfo getOriginatorInfo() {
+		return originatorInfo;
+	}
 
-            Enumeration e = recipientInfos.getObjects();
+	public ASN1Set getRecipientInfos() {
+		return recipientInfos;
+	}
 
-            while (e.hasMoreElements())
-            {
-                RecipientInfo   ri = RecipientInfo.getInstance(e.nextElement());
+	public EncryptedContentInfo getEncryptedContentInfo() {
+		return encryptedContentInfo;
+	}
 
-                if (ri.getVersion().getValue().intValue() != version)
-                {
-                    version = 2;
-                    break;
-                }
-            }
-        }
+	public ASN1Set getUnprotectedAttrs() {
+		return unprotectedAttrs;
+	}
 
-        return version;
-    }
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * 
+	 * <pre>
+	 * EnvelopedData ::= SEQUENCE {
+	 *     version CMSVersion,
+	 *     originatorInfo [0] IMPLICIT OriginatorInfo OPTIONAL,
+	 *     recipientInfos RecipientInfos,
+	 *     encryptedContentInfo EncryptedContentInfo,
+	 *     unprotectedAttrs [1] IMPLICIT UnprotectedAttributes OPTIONAL 
+	 * }
+	 * </pre>
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(version);
+
+		if (originatorInfo != null) {
+			v.add(new DERTaggedObject(false, 0, originatorInfo));
+		}
+
+		v.add(recipientInfos);
+		v.add(encryptedContentInfo);
+
+		if (unprotectedAttrs != null) {
+			v.add(new DERTaggedObject(false, 1, unprotectedAttrs));
+		}
+
+		return new BERSequence(v);
+	}
+
+	public static int calculateVersion(OriginatorInfo originatorInfo,
+			ASN1Set recipientInfos, ASN1Set unprotectedAttrs) {
+		int version;
+
+		if (originatorInfo != null || unprotectedAttrs != null) {
+			version = 2;
+		} else {
+			version = 0;
+
+			Enumeration e = recipientInfos.getObjects();
+
+			while (e.hasMoreElements()) {
+				RecipientInfo ri = RecipientInfo.getInstance(e.nextElement());
+
+				if (ri.getVersion().getValue().intValue() != version) {
+					version = 2;
+					break;
+				}
+			}
+		}
+
+		return version;
+	}
 }

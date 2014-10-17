@@ -14,151 +14,119 @@ import org.ripple.bouncycastle.asn1.ocsp.SingleResponse;
 import org.ripple.bouncycastle.asn1.x509.X509Extension;
 import org.ripple.bouncycastle.asn1.x509.X509Extensions;
 
-public class SingleResp
-    implements java.security.cert.X509Extension
-{
-    SingleResponse  resp;
+public class SingleResp implements java.security.cert.X509Extension {
+	SingleResponse resp;
 
-    public SingleResp(
-        SingleResponse  resp)
-    {
-        this.resp = resp;
-    }
+	public SingleResp(SingleResponse resp) {
+		this.resp = resp;
+	}
 
-    public CertificateID getCertID()
-    {
-        return new CertificateID(resp.getCertID());
-    }
+	public CertificateID getCertID() {
+		return new CertificateID(resp.getCertID());
+	}
 
-    /**
-     * Return the status object for the response - null indicates good.
-     * 
-     * @return the status object for the response, null if it is good.
-     */
-    public Object getCertStatus()
-    {
-        CertStatus  s = resp.getCertStatus();
+	/**
+	 * Return the status object for the response - null indicates good.
+	 * 
+	 * @return the status object for the response, null if it is good.
+	 */
+	public Object getCertStatus() {
+		CertStatus s = resp.getCertStatus();
 
-        if (s.getTagNo() == 0)
-        {
-            return null;            // good
-        }
-        else if (s.getTagNo() == 1)
-        {
-            return new RevokedStatus(RevokedInfo.getInstance(s.getStatus()));
-        }
+		if (s.getTagNo() == 0) {
+			return null; // good
+		} else if (s.getTagNo() == 1) {
+			return new RevokedStatus(RevokedInfo.getInstance(s.getStatus()));
+		}
 
-        return new UnknownStatus();
-    }
+		return new UnknownStatus();
+	}
 
-    public Date getThisUpdate()
-    {
-        try
-        {
-            return resp.getThisUpdate().getDate();
-        }
-        catch (ParseException e)
-        {
-            throw new IllegalStateException("ParseException: " + e.getMessage());
-        }
-    }
+	public Date getThisUpdate() {
+		try {
+			return resp.getThisUpdate().getDate();
+		} catch (ParseException e) {
+			throw new IllegalStateException("ParseException: " + e.getMessage());
+		}
+	}
 
-    /**
-     * return the NextUpdate value - note: this is an optional field so may
-     * be returned as null.
-     *
-     * @return nextUpdate, or null if not present.
-     */
-    public Date getNextUpdate()
-    {
-        if (resp.getNextUpdate() == null)
-        {
-            return null;
-        }
+	/**
+	 * return the NextUpdate value - note: this is an optional field so may be
+	 * returned as null.
+	 * 
+	 * @return nextUpdate, or null if not present.
+	 */
+	public Date getNextUpdate() {
+		if (resp.getNextUpdate() == null) {
+			return null;
+		}
 
-        try
-        {
-            return resp.getNextUpdate().getDate();
-        }
-        catch (ParseException e)
-        {
-            throw new IllegalStateException("ParseException: " + e.getMessage());
-        }
-    }
+		try {
+			return resp.getNextUpdate().getDate();
+		} catch (ParseException e) {
+			throw new IllegalStateException("ParseException: " + e.getMessage());
+		}
+	}
 
-    public X509Extensions getSingleExtensions()
-    {
-        return X509Extensions.getInstance(resp.getSingleExtensions());
-    }
-    
-    /**
-     * RFC 2650 doesn't specify any critical extensions so we return true
-     * if any are encountered.
-     * 
-     * @return true if any critical extensions are present.
-     */
-    public boolean hasUnsupportedCriticalExtension()
-    {
-        Set extns = getCriticalExtensionOIDs();
-        
-        return extns != null && !extns.isEmpty();
-    }
+	public X509Extensions getSingleExtensions() {
+		return X509Extensions.getInstance(resp.getSingleExtensions());
+	}
 
-    private Set getExtensionOIDs(boolean critical)
-    {
-        Set             set = new HashSet();
-        X509Extensions  extensions = this.getSingleExtensions();
-        
-        if (extensions != null)
-        {
-            Enumeration     e = extensions.oids();
-    
-            while (e.hasMoreElements())
-            {
-                DERObjectIdentifier oid = (DERObjectIdentifier)e.nextElement();
-                X509Extension       ext = extensions.getExtension(oid);
-    
-                if (critical == ext.isCritical())
-                {
-                    set.add(oid.getId());
-                }
-            }
-        }
+	/**
+	 * RFC 2650 doesn't specify any critical extensions so we return true if any
+	 * are encountered.
+	 * 
+	 * @return true if any critical extensions are present.
+	 */
+	public boolean hasUnsupportedCriticalExtension() {
+		Set extns = getCriticalExtensionOIDs();
 
-        return set;
-    }
+		return extns != null && !extns.isEmpty();
+	}
 
-    public Set getCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(true);
-    }
+	private Set getExtensionOIDs(boolean critical) {
+		Set set = new HashSet();
+		X509Extensions extensions = this.getSingleExtensions();
 
-    public Set getNonCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(false);
-    }
+		if (extensions != null) {
+			Enumeration e = extensions.oids();
 
-    public byte[] getExtensionValue(String oid)
-    {
-        X509Extensions exts = this.getSingleExtensions();
+			while (e.hasMoreElements()) {
+				DERObjectIdentifier oid = (DERObjectIdentifier) e.nextElement();
+				X509Extension ext = extensions.getExtension(oid);
 
-        if (exts != null)
-        {
-            X509Extension   ext = exts.getExtension(new DERObjectIdentifier(oid));
+				if (critical == ext.isCritical()) {
+					set.add(oid.getId());
+				}
+			}
+		}
 
-            if (ext != null)
-            {
-                try
-                {
-                    return ext.getValue().getEncoded(ASN1Encoding.DER);
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException("error encoding " + e.toString());
-                }
-            }
-        }
+		return set;
+	}
 
-        return null;
-    }
+	public Set getCriticalExtensionOIDs() {
+		return getExtensionOIDs(true);
+	}
+
+	public Set getNonCriticalExtensionOIDs() {
+		return getExtensionOIDs(false);
+	}
+
+	public byte[] getExtensionValue(String oid) {
+		X509Extensions exts = this.getSingleExtensions();
+
+		if (exts != null) {
+			X509Extension ext = exts.getExtension(new DERObjectIdentifier(oid));
+
+			if (ext != null) {
+				try {
+					return ext.getValue().getEncoded(ASN1Encoding.DER);
+				} catch (Exception e) {
+					throw new RuntimeException("error encoding " + e.toString());
+				}
+			}
+		}
+
+		return null;
+	}
 }

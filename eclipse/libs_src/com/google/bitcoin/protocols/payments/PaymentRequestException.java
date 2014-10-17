@@ -17,81 +17,83 @@
 package com.google.bitcoin.protocols.payments;
 
 public class PaymentRequestException extends Exception {
-    public PaymentRequestException(String msg) {
-        super(msg);
-    }
+	public PaymentRequestException(String msg) {
+		super(msg);
+	}
 
-    public PaymentRequestException(Exception e) {
-        super(e);
-    }
+	public PaymentRequestException(Exception e) {
+		super(e);
+	}
 
-    public static class Expired extends PaymentRequestException {
-        public Expired(String msg) {
-            super(msg);
-        }
-    }
+	public static class Expired extends PaymentRequestException {
+		public Expired(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidPaymentRequestURL extends PaymentRequestException {
-        public InvalidPaymentRequestURL(String msg) {
-            super(msg);
-        }
+	public static class InvalidPaymentRequestURL extends
+			PaymentRequestException {
+		public InvalidPaymentRequestURL(String msg) {
+			super(msg);
+		}
 
-        public InvalidPaymentRequestURL(Exception e) {
-            super(e);
-        }
-    }
+		public InvalidPaymentRequestURL(Exception e) {
+			super(e);
+		}
+	}
 
-    public static class InvalidPaymentURL extends PaymentRequestException {
-        public InvalidPaymentURL(Exception e) {
-            super(e);
-        }
+	public static class InvalidPaymentURL extends PaymentRequestException {
+		public InvalidPaymentURL(Exception e) {
+			super(e);
+		}
 
-        public InvalidPaymentURL(String msg) {
-            super(msg);
-        }
-    }
+		public InvalidPaymentURL(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidOutputs extends PaymentRequestException {
-        public InvalidOutputs(String msg) {
-            super(msg);
-        }
-    }
+	public static class InvalidOutputs extends PaymentRequestException {
+		public InvalidOutputs(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidVersion extends PaymentRequestException {
-        public InvalidVersion(String msg) {
-            super(msg);
-        }
-    }
+	public static class InvalidVersion extends PaymentRequestException {
+		public InvalidVersion(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidNetwork extends PaymentRequestException {
-        public InvalidNetwork(String msg) {
-            super(msg);
-        }
-    }
+	public static class InvalidNetwork extends PaymentRequestException {
+		public InvalidNetwork(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidPkiType extends PaymentRequestException {
-        public InvalidPkiType(String msg) {
-            super(msg);
-        }
-    }
+	public static class InvalidPkiType extends PaymentRequestException {
+		public InvalidPkiType(String msg) {
+			super(msg);
+		}
+	}
 
-    public static class InvalidPkiData extends PaymentRequestException {
-        public InvalidPkiData(String msg) {
-            super(msg);
-        }
+	public static class InvalidPkiData extends PaymentRequestException {
+		public InvalidPkiData(String msg) {
+			super(msg);
+		}
 
-        public InvalidPkiData(Exception e) {
-            super(e);
-        }
-    }
+		public InvalidPkiData(Exception e) {
+			super(e);
+		}
+	}
 
-    public static class PkiVerificationException extends PaymentRequestException {
-        public PkiVerificationException(String msg) {
-            super(msg);
-        }
+	public static class PkiVerificationException extends
+			PaymentRequestException {
+		public PkiVerificationException(String msg) {
+			super(msg);
+		}
 
-        public PkiVerificationException(Exception e) {
-            super(e);
-        }
-    }
+		public PkiVerificationException(Exception e) {
+			super(e);
+		}
+	}
 }

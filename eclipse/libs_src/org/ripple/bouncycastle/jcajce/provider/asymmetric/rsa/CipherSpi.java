@@ -36,551 +36,420 @@ import org.ripple.bouncycastle.jcajce.provider.util.DigestFactory;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.util.Strings;
 
-public class CipherSpi
-    extends BaseCipherSpi
-{
-    private AsymmetricBlockCipher cipher;
-    private AlgorithmParameterSpec paramSpec;
-    private AlgorithmParameters engineParams;
-    private boolean                 publicKeyOnly = false;
-    private boolean                 privateKeyOnly = false;
-    private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+public class CipherSpi extends BaseCipherSpi {
+	private AsymmetricBlockCipher cipher;
+	private AlgorithmParameterSpec paramSpec;
+	private AlgorithmParameters engineParams;
+	private boolean publicKeyOnly = false;
+	private boolean privateKeyOnly = false;
+	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-    public CipherSpi(
-        AsymmetricBlockCipher engine)
-    {
-        cipher = engine;
-    }
+	public CipherSpi(AsymmetricBlockCipher engine) {
+		cipher = engine;
+	}
 
-    public CipherSpi(
-        OAEPParameterSpec pSpec)
-    {
-        try
-        {
-            initFromSpec(pSpec);
-        }
-        catch (NoSuchPaddingException e)
-        {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
+	public CipherSpi(OAEPParameterSpec pSpec) {
+		try {
+			initFromSpec(pSpec);
+		} catch (NoSuchPaddingException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
-    public CipherSpi(
-        boolean publicKeyOnly,
-        boolean privateKeyOnly,
-        AsymmetricBlockCipher engine)
-    {
-        this.publicKeyOnly = publicKeyOnly;
-        this.privateKeyOnly = privateKeyOnly;
-        cipher = engine;
-    }
-     
-    private void initFromSpec(
-        OAEPParameterSpec pSpec)
-        throws NoSuchPaddingException
-    {
-        MGF1ParameterSpec mgfParams = (MGF1ParameterSpec)pSpec.getMGFParameters();
-        Digest digest = DigestFactory.getDigest(mgfParams.getDigestAlgorithm());
-        
-        if (digest == null)
-        {
-            throw new NoSuchPaddingException("no match on OAEP constructor for digest algorithm: "+ mgfParams.getDigestAlgorithm());
-        }
+	public CipherSpi(boolean publicKeyOnly, boolean privateKeyOnly,
+			AsymmetricBlockCipher engine) {
+		this.publicKeyOnly = publicKeyOnly;
+		this.privateKeyOnly = privateKeyOnly;
+		cipher = engine;
+	}
 
-        cipher = new OAEPEncoding(new RSABlindedEngine(), digest, ((PSource.PSpecified)pSpec.getPSource()).getValue());
-        paramSpec = pSpec;
-    }
-    
-    protected int engineGetBlockSize() 
-    {
-        try
-        {
-            return cipher.getInputBlockSize();
-        }
-        catch (NullPointerException e)
-        {
-            throw new IllegalStateException("RSA Cipher not initialised");
-        }
-    }
+	private void initFromSpec(OAEPParameterSpec pSpec)
+			throws NoSuchPaddingException {
+		MGF1ParameterSpec mgfParams = (MGF1ParameterSpec) pSpec
+				.getMGFParameters();
+		Digest digest = DigestFactory.getDigest(mgfParams.getDigestAlgorithm());
 
-    protected int engineGetKeySize(
-        Key key)
-    {
-        if (key instanceof RSAPrivateKey)
-        {
-            RSAPrivateKey k = (RSAPrivateKey)key;
+		if (digest == null) {
+			throw new NoSuchPaddingException(
+					"no match on OAEP constructor for digest algorithm: "
+							+ mgfParams.getDigestAlgorithm());
+		}
 
-            return k.getModulus().bitLength();
-        }
-        else if (key instanceof RSAPublicKey)
-        {
-            RSAPublicKey k = (RSAPublicKey)key;
+		cipher = new OAEPEncoding(new RSABlindedEngine(), digest,
+				((PSource.PSpecified) pSpec.getPSource()).getValue());
+		paramSpec = pSpec;
+	}
 
-            return k.getModulus().bitLength();
-        }
+	protected int engineGetBlockSize() {
+		try {
+			return cipher.getInputBlockSize();
+		} catch (NullPointerException e) {
+			throw new IllegalStateException("RSA Cipher not initialised");
+		}
+	}
 
-        throw new IllegalArgumentException("not an RSA key!");
-    }
+	protected int engineGetKeySize(Key key) {
+		if (key instanceof RSAPrivateKey) {
+			RSAPrivateKey k = (RSAPrivateKey) key;
 
-    protected int engineGetOutputSize(
-        int     inputLen) 
-    {
-        try
-        {
-            return cipher.getOutputBlockSize();
-        }
-        catch (NullPointerException e)
-        {
-            throw new IllegalStateException("RSA Cipher not initialised");
-        }
-    }
+			return k.getModulus().bitLength();
+		} else if (key instanceof RSAPublicKey) {
+			RSAPublicKey k = (RSAPublicKey) key;
 
-    protected AlgorithmParameters engineGetParameters()
-    {
-        if (engineParams == null)
-        {
-            if (paramSpec != null)
-            {
-                try
-                {
-                    engineParams = AlgorithmParameters.getInstance("OAEP", BouncyCastleProvider.PROVIDER_NAME);
-                    engineParams.init(paramSpec);
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e.toString());
-                }
-            }
-        }
+			return k.getModulus().bitLength();
+		}
 
-        return engineParams;
-    }
+		throw new IllegalArgumentException("not an RSA key!");
+	}
 
-    protected void engineSetMode(
-        String mode)
-        throws NoSuchAlgorithmException
-    {
-        String md = Strings.toUpperCase(mode);
-        
-        if (md.equals("NONE") || md.equals("ECB"))
-        {
-            return;
-        }
-        
-        if (md.equals("1"))
-        {
-            privateKeyOnly = true;
-            publicKeyOnly = false;
-            return;
-        }
-        else if (md.equals("2"))
-        {
-            privateKeyOnly = false;
-            publicKeyOnly = true;
-            return;
-        }
-        
-        throw new NoSuchAlgorithmException("can't support mode " + mode);
-    }
+	protected int engineGetOutputSize(int inputLen) {
+		try {
+			return cipher.getOutputBlockSize();
+		} catch (NullPointerException e) {
+			throw new IllegalStateException("RSA Cipher not initialised");
+		}
+	}
 
-    protected void engineSetPadding(
-        String padding)
-        throws NoSuchPaddingException
-    {
-        String pad = Strings.toUpperCase(padding);
+	protected AlgorithmParameters engineGetParameters() {
+		if (engineParams == null) {
+			if (paramSpec != null) {
+				try {
+					engineParams = AlgorithmParameters.getInstance("OAEP",
+							BouncyCastleProvider.PROVIDER_NAME);
+					engineParams.init(paramSpec);
+				} catch (Exception e) {
+					throw new RuntimeException(e.toString());
+				}
+			}
+		}
 
-        if (pad.equals("NOPADDING"))
-        {
-            cipher = new RSABlindedEngine();
-        }
-        else if (pad.equals("PKCS1PADDING"))
-        {
-            cipher = new PKCS1Encoding(new RSABlindedEngine());
-        }
-        else if (pad.equals("ISO9796-1PADDING"))
-        {
-            cipher = new ISO9796d1Encoding(new RSABlindedEngine());
-        }
-        else if (pad.equals("OAEPWITHMD5ANDMGF1PADDING"))
-        {
-            initFromSpec(new OAEPParameterSpec("MD5", "MGF1", new MGF1ParameterSpec("MD5"), PSource.PSpecified.DEFAULT));
-        }
-        else if (pad.equals("OAEPPADDING"))
-        {
-            initFromSpec(OAEPParameterSpec.DEFAULT);
-        }
-        else if (pad.equals("OAEPWITHSHA1ANDMGF1PADDING") || pad.equals("OAEPWITHSHA-1ANDMGF1PADDING"))
-        {
-            initFromSpec(OAEPParameterSpec.DEFAULT);
-        }
-        else if (pad.equals("OAEPWITHSHA224ANDMGF1PADDING") || pad.equals("OAEPWITHSHA-224ANDMGF1PADDING"))
-        {
-            initFromSpec(new OAEPParameterSpec("SHA-224", "MGF1", new MGF1ParameterSpec("SHA-224"), PSource.PSpecified.DEFAULT));
-        }
-        else if (pad.equals("OAEPWITHSHA256ANDMGF1PADDING") || pad.equals("OAEPWITHSHA-256ANDMGF1PADDING"))
-        {
-            initFromSpec(new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT));
-        }
-        else if (pad.equals("OAEPWITHSHA384ANDMGF1PADDING") || pad.equals("OAEPWITHSHA-384ANDMGF1PADDING"))
-        {
-            initFromSpec(new OAEPParameterSpec("SHA-384", "MGF1", MGF1ParameterSpec.SHA384, PSource.PSpecified.DEFAULT));
-        }
-        else if (pad.equals("OAEPWITHSHA512ANDMGF1PADDING") || pad.equals("OAEPWITHSHA-512ANDMGF1PADDING"))
-        {
-            initFromSpec(new OAEPParameterSpec("SHA-512", "MGF1", MGF1ParameterSpec.SHA512, PSource.PSpecified.DEFAULT));
-        }
-        else
-        {
-            throw new NoSuchPaddingException(padding + " unavailable with RSA.");
-        }
-    }
+		return engineParams;
+	}
 
-    protected void engineInit(
-        int                     opmode,
-        Key key,
-        AlgorithmParameterSpec params,
-        SecureRandom random)
-    throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        CipherParameters param;
+	protected void engineSetMode(String mode) throws NoSuchAlgorithmException {
+		String md = Strings.toUpperCase(mode);
 
-        if (params == null || params instanceof OAEPParameterSpec)
-        {
-            if (key instanceof RSAPublicKey)
-            {
-                if (privateKeyOnly && opmode == Cipher.ENCRYPT_MODE)
-                {
-                    throw new InvalidKeyException(
-                                "mode 1 requires RSAPrivateKey");
-                }
+		if (md.equals("NONE") || md.equals("ECB")) {
+			return;
+		}
 
-                param = RSAUtil.generatePublicKeyParameter((RSAPublicKey)key);
-            }
-            else if (key instanceof RSAPrivateKey)
-            {
-                if (publicKeyOnly && opmode == Cipher.ENCRYPT_MODE)
-                {
-                    throw new InvalidKeyException(
-                                "mode 2 requires RSAPublicKey");
-                }
+		if (md.equals("1")) {
+			privateKeyOnly = true;
+			publicKeyOnly = false;
+			return;
+		} else if (md.equals("2")) {
+			privateKeyOnly = false;
+			publicKeyOnly = true;
+			return;
+		}
 
-                param = RSAUtil.generatePrivateKeyParameter((RSAPrivateKey)key);
-            }
-            else
-            {
-                throw new InvalidKeyException("unknown key type passed to RSA");
-            }
-            
-            if (params != null)
-            {
-                OAEPParameterSpec spec = (OAEPParameterSpec)params;
-                
-                paramSpec = params;
-                
-                if (!spec.getMGFAlgorithm().equalsIgnoreCase("MGF1") && !spec.getMGFAlgorithm().equals(PKCSObjectIdentifiers.id_mgf1.getId()))
-                {
-                    throw new InvalidAlgorithmParameterException("unknown mask generation function specified");
-                }
-                
-                if (!(spec.getMGFParameters() instanceof MGF1ParameterSpec))
-                {
-                    throw new InvalidAlgorithmParameterException("unkown MGF parameters");
-                }
-    
-                Digest digest = DigestFactory.getDigest(spec.getDigestAlgorithm());
+		throw new NoSuchAlgorithmException("can't support mode " + mode);
+	}
 
-                if (digest == null)
-                {
-                    throw new InvalidAlgorithmParameterException("no match on digest algorithm: "+ spec.getDigestAlgorithm());
-                }
+	protected void engineSetPadding(String padding)
+			throws NoSuchPaddingException {
+		String pad = Strings.toUpperCase(padding);
 
-                MGF1ParameterSpec mgfParams = (MGF1ParameterSpec)spec.getMGFParameters();
-                Digest mgfDigest = DigestFactory.getDigest(mgfParams.getDigestAlgorithm());
-                
-                if (mgfDigest == null)
-                {
-                    throw new InvalidAlgorithmParameterException("no match on MGF digest algorithm: "+ mgfParams.getDigestAlgorithm());
-                }
-                
-                cipher = new OAEPEncoding(new RSABlindedEngine(), digest, mgfDigest, ((PSource.PSpecified)spec.getPSource()).getValue());
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException("unknown parameter type.");
-        }
+		if (pad.equals("NOPADDING")) {
+			cipher = new RSABlindedEngine();
+		} else if (pad.equals("PKCS1PADDING")) {
+			cipher = new PKCS1Encoding(new RSABlindedEngine());
+		} else if (pad.equals("ISO9796-1PADDING")) {
+			cipher = new ISO9796d1Encoding(new RSABlindedEngine());
+		} else if (pad.equals("OAEPWITHMD5ANDMGF1PADDING")) {
+			initFromSpec(new OAEPParameterSpec("MD5", "MGF1",
+					new MGF1ParameterSpec("MD5"), PSource.PSpecified.DEFAULT));
+		} else if (pad.equals("OAEPPADDING")) {
+			initFromSpec(OAEPParameterSpec.DEFAULT);
+		} else if (pad.equals("OAEPWITHSHA1ANDMGF1PADDING")
+				|| pad.equals("OAEPWITHSHA-1ANDMGF1PADDING")) {
+			initFromSpec(OAEPParameterSpec.DEFAULT);
+		} else if (pad.equals("OAEPWITHSHA224ANDMGF1PADDING")
+				|| pad.equals("OAEPWITHSHA-224ANDMGF1PADDING")) {
+			initFromSpec(new OAEPParameterSpec("SHA-224", "MGF1",
+					new MGF1ParameterSpec("SHA-224"),
+					PSource.PSpecified.DEFAULT));
+		} else if (pad.equals("OAEPWITHSHA256ANDMGF1PADDING")
+				|| pad.equals("OAEPWITHSHA-256ANDMGF1PADDING")) {
+			initFromSpec(new OAEPParameterSpec("SHA-256", "MGF1",
+					MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT));
+		} else if (pad.equals("OAEPWITHSHA384ANDMGF1PADDING")
+				|| pad.equals("OAEPWITHSHA-384ANDMGF1PADDING")) {
+			initFromSpec(new OAEPParameterSpec("SHA-384", "MGF1",
+					MGF1ParameterSpec.SHA384, PSource.PSpecified.DEFAULT));
+		} else if (pad.equals("OAEPWITHSHA512ANDMGF1PADDING")
+				|| pad.equals("OAEPWITHSHA-512ANDMGF1PADDING")) {
+			initFromSpec(new OAEPParameterSpec("SHA-512", "MGF1",
+					MGF1ParameterSpec.SHA512, PSource.PSpecified.DEFAULT));
+		} else {
+			throw new NoSuchPaddingException(padding + " unavailable with RSA.");
+		}
+	}
 
-        if (!(cipher instanceof RSABlindedEngine))
-        {
-            if (random != null)
-            {
-                param = new ParametersWithRandom(param, random);
-            }
-            else
-            {
-                param = new ParametersWithRandom(param, new SecureRandom());
-            }
-        }
+	protected void engineInit(int opmode, Key key,
+			AlgorithmParameterSpec params, SecureRandom random)
+			throws InvalidKeyException, InvalidAlgorithmParameterException {
+		CipherParameters param;
 
-        bOut.reset();
+		if (params == null || params instanceof OAEPParameterSpec) {
+			if (key instanceof RSAPublicKey) {
+				if (privateKeyOnly && opmode == Cipher.ENCRYPT_MODE) {
+					throw new InvalidKeyException(
+							"mode 1 requires RSAPrivateKey");
+				}
 
-        switch (opmode)
-        {
-        case Cipher.ENCRYPT_MODE:
-        case Cipher.WRAP_MODE:
-            cipher.init(true, param);
-            break;
-        case Cipher.DECRYPT_MODE:
-        case Cipher.UNWRAP_MODE:
-            cipher.init(false, param);
-            break;
-        default:
-            throw new InvalidParameterException("unknown opmode " + opmode + " passed to RSA");
-        }
-    }
+				param = RSAUtil.generatePublicKeyParameter((RSAPublicKey) key);
+			} else if (key instanceof RSAPrivateKey) {
+				if (publicKeyOnly && opmode == Cipher.ENCRYPT_MODE) {
+					throw new InvalidKeyException(
+							"mode 2 requires RSAPublicKey");
+				}
 
-    protected void engineInit(
-        int                 opmode,
-        Key key,
-        AlgorithmParameters params,
-        SecureRandom random)
-    throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        AlgorithmParameterSpec paramSpec = null;
+				param = RSAUtil
+						.generatePrivateKeyParameter((RSAPrivateKey) key);
+			} else {
+				throw new InvalidKeyException("unknown key type passed to RSA");
+			}
 
-        if (params != null)
-        {
-            try
-            {
-                paramSpec = params.getParameterSpec(OAEPParameterSpec.class);
-            }
-            catch (InvalidParameterSpecException e)
-            {
-                throw new InvalidAlgorithmParameterException("cannot recognise parameters: " + e.toString(), e);
-            }
-        }
+			if (params != null) {
+				OAEPParameterSpec spec = (OAEPParameterSpec) params;
 
-        engineParams = params;
-        engineInit(opmode, key, paramSpec, random);
-    }
+				paramSpec = params;
 
-    protected void engineInit(
-        int                 opmode,
-        Key key,
-        SecureRandom random)
-    throws InvalidKeyException
-    {
-        try
-        {
-            engineInit(opmode, key, (AlgorithmParameterSpec)null, random);
-        }
-        catch (InvalidAlgorithmParameterException e)
-        {
-            // this shouldn't happen
-            throw new InvalidKeyException("Eeeek! " + e.toString(), e);
-        }
-    }
+				if (!spec.getMGFAlgorithm().equalsIgnoreCase("MGF1")
+						&& !spec.getMGFAlgorithm().equals(
+								PKCSObjectIdentifiers.id_mgf1.getId())) {
+					throw new InvalidAlgorithmParameterException(
+							"unknown mask generation function specified");
+				}
 
-    protected byte[] engineUpdate(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen) 
-    {
-        bOut.write(input, inputOffset, inputLen);
+				if (!(spec.getMGFParameters() instanceof MGF1ParameterSpec)) {
+					throw new InvalidAlgorithmParameterException(
+							"unkown MGF parameters");
+				}
 
-        if (cipher instanceof RSABlindedEngine)
-        {
-            if (bOut.size() > cipher.getInputBlockSize() + 1)
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
-        else
-        {
-            if (bOut.size() > cipher.getInputBlockSize())
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
+				Digest digest = DigestFactory.getDigest(spec
+						.getDigestAlgorithm());
 
-        return null;
-    }
+				if (digest == null) {
+					throw new InvalidAlgorithmParameterException(
+							"no match on digest algorithm: "
+									+ spec.getDigestAlgorithm());
+				}
 
-    protected int engineUpdate(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen,
-        byte[]  output,
-        int     outputOffset) 
-    {
-        bOut.write(input, inputOffset, inputLen);
+				MGF1ParameterSpec mgfParams = (MGF1ParameterSpec) spec
+						.getMGFParameters();
+				Digest mgfDigest = DigestFactory.getDigest(mgfParams
+						.getDigestAlgorithm());
 
-        if (cipher instanceof RSABlindedEngine)
-        {
-            if (bOut.size() > cipher.getInputBlockSize() + 1)
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
-        else
-        {
-            if (bOut.size() > cipher.getInputBlockSize())
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
+				if (mgfDigest == null) {
+					throw new InvalidAlgorithmParameterException(
+							"no match on MGF digest algorithm: "
+									+ mgfParams.getDigestAlgorithm());
+				}
 
-        return 0;
-    }
+				cipher = new OAEPEncoding(new RSABlindedEngine(), digest,
+						mgfDigest,
+						((PSource.PSpecified) spec.getPSource()).getValue());
+			}
+		} else {
+			throw new IllegalArgumentException("unknown parameter type.");
+		}
 
-    protected byte[] engineDoFinal(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen) 
-        throws IllegalBlockSizeException, BadPaddingException
-    {
-        if (input != null)
-        {
-            bOut.write(input, inputOffset, inputLen);
-        }
+		if (!(cipher instanceof RSABlindedEngine)) {
+			if (random != null) {
+				param = new ParametersWithRandom(param, random);
+			} else {
+				param = new ParametersWithRandom(param, new SecureRandom());
+			}
+		}
 
-        if (cipher instanceof RSABlindedEngine)
-        {
-            if (bOut.size() > cipher.getInputBlockSize() + 1)
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
-        else
-        {
-            if (bOut.size() > cipher.getInputBlockSize())
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
+		bOut.reset();
 
-        try
-        {
-            byte[]  bytes = bOut.toByteArray();
+		switch (opmode) {
+		case Cipher.ENCRYPT_MODE:
+		case Cipher.WRAP_MODE:
+			cipher.init(true, param);
+			break;
+		case Cipher.DECRYPT_MODE:
+		case Cipher.UNWRAP_MODE:
+			cipher.init(false, param);
+			break;
+		default:
+			throw new InvalidParameterException("unknown opmode " + opmode
+					+ " passed to RSA");
+		}
+	}
 
-            bOut.reset();
+	protected void engineInit(int opmode, Key key, AlgorithmParameters params,
+			SecureRandom random) throws InvalidKeyException,
+			InvalidAlgorithmParameterException {
+		AlgorithmParameterSpec paramSpec = null;
 
-            return cipher.processBlock(bytes, 0, bytes.length);
-        }
-        catch (InvalidCipherTextException e)
-        {
-            throw new BadPaddingException(e.getMessage());
-        }
-    }
+		if (params != null) {
+			try {
+				paramSpec = params.getParameterSpec(OAEPParameterSpec.class);
+			} catch (InvalidParameterSpecException e) {
+				throw new InvalidAlgorithmParameterException(
+						"cannot recognise parameters: " + e.toString(), e);
+			}
+		}
 
-    protected int engineDoFinal(
-        byte[]  input,
-        int     inputOffset,
-        int     inputLen,
-        byte[]  output,
-        int     outputOffset) 
-        throws IllegalBlockSizeException, BadPaddingException
-    {
-        if (input != null)
-        {
-            bOut.write(input, inputOffset, inputLen);
-        }
+		engineParams = params;
+		engineInit(opmode, key, paramSpec, random);
+	}
 
-        if (cipher instanceof RSABlindedEngine)
-        {
-            if (bOut.size() > cipher.getInputBlockSize() + 1)
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
-        else
-        {
-            if (bOut.size() > cipher.getInputBlockSize())
-            {
-                throw new ArrayIndexOutOfBoundsException("too much data for RSA block");
-            }
-        }
+	protected void engineInit(int opmode, Key key, SecureRandom random)
+			throws InvalidKeyException {
+		try {
+			engineInit(opmode, key, (AlgorithmParameterSpec) null, random);
+		} catch (InvalidAlgorithmParameterException e) {
+			// this shouldn't happen
+			throw new InvalidKeyException("Eeeek! " + e.toString(), e);
+		}
+	}
 
-        byte[]  out;
+	protected byte[] engineUpdate(byte[] input, int inputOffset, int inputLen) {
+		bOut.write(input, inputOffset, inputLen);
 
-        try
-        {
-            byte[]  bytes = bOut.toByteArray();
+		if (cipher instanceof RSABlindedEngine) {
+			if (bOut.size() > cipher.getInputBlockSize() + 1) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		} else {
+			if (bOut.size() > cipher.getInputBlockSize()) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		}
 
-            out = cipher.processBlock(bytes, 0, bytes.length);
-        }
-        catch (InvalidCipherTextException e)
-        {
-            throw new BadPaddingException(e.getMessage());
-        }
-        finally
-        {
-            bOut.reset();
-        }
+		return null;
+	}
 
-        for (int i = 0; i != out.length; i++)
-        {
-            output[outputOffset + i] = out[i];
-        }
+	protected int engineUpdate(byte[] input, int inputOffset, int inputLen,
+			byte[] output, int outputOffset) {
+		bOut.write(input, inputOffset, inputLen);
 
-        return out.length;
-    }
+		if (cipher instanceof RSABlindedEngine) {
+			if (bOut.size() > cipher.getInputBlockSize() + 1) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		} else {
+			if (bOut.size() > cipher.getInputBlockSize()) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		}
 
-    /**
-     * classes that inherit from us.
-     */
+		return 0;
+	}
 
-    static public class NoPadding
-        extends CipherSpi
-    {
-        public NoPadding()
-        {
-            super(new RSABlindedEngine());
-        }
-    }
+	protected byte[] engineDoFinal(byte[] input, int inputOffset, int inputLen)
+			throws IllegalBlockSizeException, BadPaddingException {
+		if (input != null) {
+			bOut.write(input, inputOffset, inputLen);
+		}
 
-    static public class PKCS1v1_5Padding
-        extends CipherSpi
-    {
-        public PKCS1v1_5Padding()
-        {
-            super(new PKCS1Encoding(new RSABlindedEngine()));
-        }
-    }
+		if (cipher instanceof RSABlindedEngine) {
+			if (bOut.size() > cipher.getInputBlockSize() + 1) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		} else {
+			if (bOut.size() > cipher.getInputBlockSize()) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		}
 
-    static public class PKCS1v1_5Padding_PrivateOnly
-        extends CipherSpi
-    {
-        public PKCS1v1_5Padding_PrivateOnly()
-        {
-            super(false, true, new PKCS1Encoding(new RSABlindedEngine()));
-        }
-    }
+		try {
+			byte[] bytes = bOut.toByteArray();
 
-    static public class PKCS1v1_5Padding_PublicOnly
-        extends CipherSpi
-    {
-        public PKCS1v1_5Padding_PublicOnly()
-        {
-            super(true, false, new PKCS1Encoding(new RSABlindedEngine()));
-        }
-    }
+			bOut.reset();
 
-    static public class OAEPPadding
-        extends CipherSpi
-    {
-        public OAEPPadding()
-        {
-            super(OAEPParameterSpec.DEFAULT);
-        }
-    }
-    
-    static public class ISO9796d1Padding
-        extends CipherSpi
-    {
-        public ISO9796d1Padding()
-        {
-            super(new ISO9796d1Encoding(new RSABlindedEngine()));
-        }
-    }
+			return cipher.processBlock(bytes, 0, bytes.length);
+		} catch (InvalidCipherTextException e) {
+			throw new BadPaddingException(e.getMessage());
+		}
+	}
+
+	protected int engineDoFinal(byte[] input, int inputOffset, int inputLen,
+			byte[] output, int outputOffset) throws IllegalBlockSizeException,
+			BadPaddingException {
+		if (input != null) {
+			bOut.write(input, inputOffset, inputLen);
+		}
+
+		if (cipher instanceof RSABlindedEngine) {
+			if (bOut.size() > cipher.getInputBlockSize() + 1) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		} else {
+			if (bOut.size() > cipher.getInputBlockSize()) {
+				throw new ArrayIndexOutOfBoundsException(
+						"too much data for RSA block");
+			}
+		}
+
+		byte[] out;
+
+		try {
+			byte[] bytes = bOut.toByteArray();
+
+			out = cipher.processBlock(bytes, 0, bytes.length);
+		} catch (InvalidCipherTextException e) {
+			throw new BadPaddingException(e.getMessage());
+		} finally {
+			bOut.reset();
+		}
+
+		for (int i = 0; i != out.length; i++) {
+			output[outputOffset + i] = out[i];
+		}
+
+		return out.length;
+	}
+
+	/**
+	 * classes that inherit from us.
+	 */
+
+	static public class NoPadding extends CipherSpi {
+		public NoPadding() {
+			super(new RSABlindedEngine());
+		}
+	}
+
+	static public class PKCS1v1_5Padding extends CipherSpi {
+		public PKCS1v1_5Padding() {
+			super(new PKCS1Encoding(new RSABlindedEngine()));
+		}
+	}
+
+	static public class PKCS1v1_5Padding_PrivateOnly extends CipherSpi {
+		public PKCS1v1_5Padding_PrivateOnly() {
+			super(false, true, new PKCS1Encoding(new RSABlindedEngine()));
+		}
+	}
+
+	static public class PKCS1v1_5Padding_PublicOnly extends CipherSpi {
+		public PKCS1v1_5Padding_PublicOnly() {
+			super(true, false, new PKCS1Encoding(new RSABlindedEngine()));
+		}
+	}
+
+	static public class OAEPPadding extends CipherSpi {
+		public OAEPPadding() {
+			super(OAEPParameterSpec.DEFAULT);
+		}
+	}
+
+	static public class ISO9796d1Padding extends CipherSpi {
+		public ISO9796d1Padding() {
+			super(new ISO9796d1Encoding(new RSABlindedEngine()));
+		}
+	}
 }

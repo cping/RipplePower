@@ -15,63 +15,50 @@ import org.ripple.bouncycastle.x509.X509CertificatePair;
 import org.ripple.bouncycastle.x509.X509StreamParserSpi;
 import org.ripple.bouncycastle.x509.util.StreamParsingException;
 
-public class X509CertPairParser
-    extends X509StreamParserSpi
-{
-    private InputStream currentStream = null;
+public class X509CertPairParser extends X509StreamParserSpi {
+	private InputStream currentStream = null;
 
-    private X509CertificatePair readDERCrossCertificatePair(
-        InputStream in)
-        throws IOException, CertificateParsingException
-    {
-        ASN1InputStream dIn = new ASN1InputStream(in);
-        ASN1Sequence seq = (ASN1Sequence)dIn.readObject();
-        CertificatePair pair = CertificatePair.getInstance(seq);
-        return new X509CertificatePair(pair);
-    }
+	private X509CertificatePair readDERCrossCertificatePair(InputStream in)
+			throws IOException, CertificateParsingException {
+		ASN1InputStream dIn = new ASN1InputStream(in);
+		ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
+		CertificatePair pair = CertificatePair.getInstance(seq);
+		return new X509CertificatePair(pair);
+	}
 
-    public void engineInit(InputStream in)
-    {
-        currentStream = in;
+	public void engineInit(InputStream in) {
+		currentStream = in;
 
-        if (!currentStream.markSupported())
-        {
-            currentStream = new BufferedInputStream(currentStream);
-        }
-    }
+		if (!currentStream.markSupported()) {
+			currentStream = new BufferedInputStream(currentStream);
+		}
+	}
 
-    public Object engineRead() throws StreamParsingException
-    {
-        try
-        {
+	public Object engineRead() throws StreamParsingException {
+		try {
 
-            currentStream.mark(10);
-            int tag = currentStream.read();
+			currentStream.mark(10);
+			int tag = currentStream.read();
 
-            if (tag == -1)
-            {
-                return null;
-            }
+			if (tag == -1) {
+				return null;
+			}
 
-            currentStream.reset();
-            return readDERCrossCertificatePair(currentStream);
-        }
-        catch (Exception e)
-        {
-            throw new StreamParsingException(e.toString(), e);
-        }
-    }
+			currentStream.reset();
+			return readDERCrossCertificatePair(currentStream);
+		} catch (Exception e) {
+			throw new StreamParsingException(e.toString(), e);
+		}
+	}
 
-    public Collection engineReadAll() throws StreamParsingException
-    {
-        X509CertificatePair pair;
-        List certs = new ArrayList();
+	public Collection engineReadAll() throws StreamParsingException {
+		X509CertificatePair pair;
+		List certs = new ArrayList();
 
-        while ((pair = (X509CertificatePair)engineRead()) != null)
-        {
-            certs.add(pair);
-        }
+		while ((pair = (X509CertificatePair) engineRead()) != null) {
+			certs.add(pair);
+		}
 
-        return certs;
-    }
+		return certs;
+	}
 }

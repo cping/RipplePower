@@ -40,130 +40,116 @@ import org.ripple.bouncycastle.asn1.DERTaggedObject;
  *       CertificatePair ::= SEQUENCE {
  *         forward        [0]    Certificate OPTIONAL,
  *         reverse        [1]    Certificate OPTIONAL,
- *         -- at least one of the pair shall be present -- } 
+ *         -- at least one of the pair shall be present -- }
  * </pre>
  */
-public class CertificatePair
-    extends ASN1Object
-{
-    private Certificate forward;
+public class CertificatePair extends ASN1Object {
+	private Certificate forward;
 
-    private Certificate reverse;
+	private Certificate reverse;
 
-    public static CertificatePair getInstance(Object obj)
-    {
-        if (obj == null || obj instanceof CertificatePair)
-        {
-            return (CertificatePair)obj;
-        }
+	public static CertificatePair getInstance(Object obj) {
+		if (obj == null || obj instanceof CertificatePair) {
+			return (CertificatePair) obj;
+		}
 
-        if (obj instanceof ASN1Sequence)
-        {
-            return new CertificatePair((ASN1Sequence)obj);
-        }
+		if (obj instanceof ASN1Sequence) {
+			return new CertificatePair((ASN1Sequence) obj);
+		}
 
-        throw new IllegalArgumentException("illegal object in getInstance: "
-            + obj.getClass().getName());
-    }
+		throw new IllegalArgumentException("illegal object in getInstance: "
+				+ obj.getClass().getName());
+	}
 
-    /**
-     * Constructor from ASN1Sequence.
-     * <p/>
-     * The sequence is of type CertificatePair:
-     * <p/>
-     * <pre>
-     *       CertificatePair ::= SEQUENCE {
-     *         forward        [0]    Certificate OPTIONAL,
-     *         reverse        [1]    Certificate OPTIONAL,
-     *         -- at least one of the pair shall be present -- }
-     * </pre>
-     *
-     * @param seq The ASN.1 sequence.
-     */
-    private CertificatePair(ASN1Sequence seq)
-    {
-        if (seq.size() != 1 && seq.size() != 2)
-        {
-            throw new IllegalArgumentException("Bad sequence size: "
-                + seq.size());
-        }
+	/**
+	 * Constructor from ASN1Sequence.
+	 * <p/>
+	 * The sequence is of type CertificatePair:
+	 * <p/>
+	 * 
+	 * <pre>
+	 *       CertificatePair ::= SEQUENCE {
+	 *         forward        [0]    Certificate OPTIONAL,
+	 *         reverse        [1]    Certificate OPTIONAL,
+	 *         -- at least one of the pair shall be present -- }
+	 * </pre>
+	 * 
+	 * @param seq
+	 *            The ASN.1 sequence.
+	 */
+	private CertificatePair(ASN1Sequence seq) {
+		if (seq.size() != 1 && seq.size() != 2) {
+			throw new IllegalArgumentException("Bad sequence size: "
+					+ seq.size());
+		}
 
-        Enumeration e = seq.getObjects();
+		Enumeration e = seq.getObjects();
 
-        while (e.hasMoreElements())
-        {
-            ASN1TaggedObject o = ASN1TaggedObject.getInstance(e.nextElement());
-            if (o.getTagNo() == 0)
-            {
-                forward = Certificate.getInstance(o, true);
-            }
-            else if (o.getTagNo() == 1)
-            {
-                reverse = Certificate.getInstance(o, true);
-            }
-            else
-            {
-                throw new IllegalArgumentException("Bad tag number: "
-                    + o.getTagNo());
-            }
-        }
-    }
+		while (e.hasMoreElements()) {
+			ASN1TaggedObject o = ASN1TaggedObject.getInstance(e.nextElement());
+			if (o.getTagNo() == 0) {
+				forward = Certificate.getInstance(o, true);
+			} else if (o.getTagNo() == 1) {
+				reverse = Certificate.getInstance(o, true);
+			} else {
+				throw new IllegalArgumentException("Bad tag number: "
+						+ o.getTagNo());
+			}
+		}
+	}
 
-    /**
-     * Constructor from a given details.
-     *
-     * @param forward Certificates issued to this CA.
-     * @param reverse Certificates issued by this CA to other CAs.
-     */
-    public CertificatePair(Certificate forward, Certificate reverse)
-    {
-        this.forward = forward;
-        this.reverse = reverse;
-    }
+	/**
+	 * Constructor from a given details.
+	 * 
+	 * @param forward
+	 *            Certificates issued to this CA.
+	 * @param reverse
+	 *            Certificates issued by this CA to other CAs.
+	 */
+	public CertificatePair(Certificate forward, Certificate reverse) {
+		this.forward = forward;
+		this.reverse = reverse;
+	}
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <p/>
-     * Returns:
-     * <p/>
-     * <pre>
-     *       CertificatePair ::= SEQUENCE {
-     *         forward        [0]    Certificate OPTIONAL,
-     *         reverse        [1]    Certificate OPTIONAL,
-     *         -- at least one of the pair shall be present -- }
-     * </pre>
-     *
-     * @return a ASN1Primitive
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector vec = new ASN1EncodableVector();
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * <p/>
+	 * Returns:
+	 * <p/>
+	 * 
+	 * <pre>
+	 *       CertificatePair ::= SEQUENCE {
+	 *         forward        [0]    Certificate OPTIONAL,
+	 *         reverse        [1]    Certificate OPTIONAL,
+	 *         -- at least one of the pair shall be present -- }
+	 * </pre>
+	 * 
+	 * @return a ASN1Primitive
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector vec = new ASN1EncodableVector();
 
-        if (forward != null)
-        {
-            vec.add(new DERTaggedObject(0, forward));
-        }
-        if (reverse != null)
-        {
-            vec.add(new DERTaggedObject(1, reverse));
-        }
+		if (forward != null) {
+			vec.add(new DERTaggedObject(0, forward));
+		}
+		if (reverse != null) {
+			vec.add(new DERTaggedObject(1, reverse));
+		}
 
-        return new DERSequence(vec);
-    }
+		return new DERSequence(vec);
+	}
 
-    /**
-     * @return Returns the forward.
-     */
-    public Certificate getForward()
-    {
-        return forward;
-    }
+	/**
+	 * @return Returns the forward.
+	 */
+	public Certificate getForward() {
+		return forward;
+	}
 
-    /**
-     * @return Returns the reverse.
-     */
-    public Certificate getReverse()
-    {
-        return reverse;
-    }
+	/**
+	 * @return Returns the reverse.
+	 */
+	public Certificate getReverse() {
+		return reverse;
+	}
 }

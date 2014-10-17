@@ -5,34 +5,22 @@ import java.io.OutputStream;
 
 import org.ripple.bouncycastle.crypto.Signer;
 
-public class SignerOutputStream
-    extends OutputStream
-{
-    protected Signer signer;
+public class SignerOutputStream extends OutputStream {
+	protected Signer signer;
 
-    public SignerOutputStream(
-        Signer          Signer)
-    {
-        this.signer = Signer;
-    }
+	public SignerOutputStream(Signer Signer) {
+		this.signer = Signer;
+	}
 
-    public void write(int b)
-        throws IOException
-    {
-        signer.update((byte)b);
-    }
+	public void write(int b) throws IOException {
+		signer.update((byte) b);
+	}
 
-    public void write(
-        byte[] b,
-        int off,
-        int len)
-        throws IOException
-    {
-        signer.update(b, off, len);
-    }
+	public void write(byte[] b, int off, int len) throws IOException {
+		signer.update(b, off, len);
+	}
 
-    public Signer getSigner()
-    {
-        return signer;
-    }
+	public Signer getSigner() {
+		return signer;
+	}
 }

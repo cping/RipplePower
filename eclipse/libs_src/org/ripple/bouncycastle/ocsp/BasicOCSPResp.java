@@ -41,326 +41,265 @@ import org.ripple.bouncycastle.asn1.x509.X509Extensions;
  *    signature            BIT STRING,
  *    certs                [0] EXPLICIT SEQUENCE OF Certificate OPTIONAL }
  * </pre>
- *
+ * 
  * @deprecated use classes in org.bouncycastle.cert.ocsp.
  */
-public class BasicOCSPResp
-    implements java.security.cert.X509Extension
-{
-    BasicOCSPResponse   resp;
-    ResponseData        data;
-    X509Certificate[]   chain = null;
+public class BasicOCSPResp implements java.security.cert.X509Extension {
+	BasicOCSPResponse resp;
+	ResponseData data;
+	X509Certificate[] chain = null;
 
-    public BasicOCSPResp(
-        BasicOCSPResponse   resp)
-    {
-        this.resp = resp;
-        this.data = resp.getTbsResponseData();
-    }
+	public BasicOCSPResp(BasicOCSPResponse resp) {
+		this.resp = resp;
+		this.data = resp.getTbsResponseData();
+	}
 
-    /**
-     * Return the DER encoding of the tbsResponseData field.
-     * @return DER encoding of tbsResponseData
-     * @throws OCSPException in the event of an encoding error.
-     */
-    public byte[] getTBSResponseData()
-        throws OCSPException
-    {
-        try
-        {
-            return resp.getTbsResponseData().getEncoded();
-        }
-        catch (IOException e)
-        {
-            throw new OCSPException("problem encoding tbsResponseData", e);
-        }
-    }
-    
-    public int getVersion()
-    {
-        return data.getVersion().getValue().intValue() + 1;
-    }
+	/**
+	 * Return the DER encoding of the tbsResponseData field.
+	 * 
+	 * @return DER encoding of tbsResponseData
+	 * @throws OCSPException
+	 *             in the event of an encoding error.
+	 */
+	public byte[] getTBSResponseData() throws OCSPException {
+		try {
+			return resp.getTbsResponseData().getEncoded();
+		} catch (IOException e) {
+			throw new OCSPException("problem encoding tbsResponseData", e);
+		}
+	}
 
-    public RespID getResponderId()
-    {
-        return new RespID(data.getResponderID());
-    }
+	public int getVersion() {
+		return data.getVersion().getValue().intValue() + 1;
+	}
 
-    public Date getProducedAt()
-    {
-        try
-        {
-            return data.getProducedAt().getDate();
-        }
-        catch (ParseException e)
-        {
-            throw new IllegalStateException("ParseException:" + e.getMessage());
-        }
-    }
+	public RespID getResponderId() {
+		return new RespID(data.getResponderID());
+	}
 
-    public SingleResp[] getResponses()
-    {
-        ASN1Sequence    s = data.getResponses();
-        SingleResp[]    rs = new SingleResp[s.size()];
+	public Date getProducedAt() {
+		try {
+			return data.getProducedAt().getDate();
+		} catch (ParseException e) {
+			throw new IllegalStateException("ParseException:" + e.getMessage());
+		}
+	}
 
-        for (int i = 0; i != rs.length; i++)
-        {
-            rs[i] = new SingleResp(SingleResponse.getInstance(s.getObjectAt(i)));
-        }
+	public SingleResp[] getResponses() {
+		ASN1Sequence s = data.getResponses();
+		SingleResp[] rs = new SingleResp[s.size()];
 
-        return rs;
-    }
+		for (int i = 0; i != rs.length; i++) {
+			rs[i] = new SingleResp(SingleResponse.getInstance(s.getObjectAt(i)));
+		}
 
-    public X509Extensions getResponseExtensions()
-    {
-        return X509Extensions.getInstance(data.getResponseExtensions());
-    }
-    
-    /**
-     * RFC 2650 doesn't specify any critical extensions so we return true
-     * if any are encountered.
-     * 
-     * @return true if any critical extensions are present.
-     */
-    public boolean hasUnsupportedCriticalExtension()
-    {
-        Set extns = getCriticalExtensionOIDs();
-        if (extns != null && !extns.isEmpty())
-        {
-            return true;
-        }
+		return rs;
+	}
 
-        return false;
-    }
+	public X509Extensions getResponseExtensions() {
+		return X509Extensions.getInstance(data.getResponseExtensions());
+	}
 
-    private Set getExtensionOIDs(boolean critical)
-    {
-        Set             set = new HashSet();
-        X509Extensions  extensions = this.getResponseExtensions();
-        
-        if (extensions != null)
-        {
-            Enumeration     e = extensions.oids();
-    
-            while (e.hasMoreElements())
-            {
-                DERObjectIdentifier oid = (DERObjectIdentifier)e.nextElement();
-                X509Extension       ext = extensions.getExtension(oid);
-    
-                if (critical == ext.isCritical())
-                {
-                    set.add(oid.getId());
-                }
-            }
-        }
+	/**
+	 * RFC 2650 doesn't specify any critical extensions so we return true if any
+	 * are encountered.
+	 * 
+	 * @return true if any critical extensions are present.
+	 */
+	public boolean hasUnsupportedCriticalExtension() {
+		Set extns = getCriticalExtensionOIDs();
+		if (extns != null && !extns.isEmpty()) {
+			return true;
+		}
 
-        return set;
-    }
+		return false;
+	}
 
-    public Set getCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(true);
-    }
+	private Set getExtensionOIDs(boolean critical) {
+		Set set = new HashSet();
+		X509Extensions extensions = this.getResponseExtensions();
 
-    public Set getNonCriticalExtensionOIDs()
-    {
-        return getExtensionOIDs(false);
-    }
+		if (extensions != null) {
+			Enumeration e = extensions.oids();
 
-    public byte[] getExtensionValue(String oid)
-    {
-        X509Extensions exts = this.getResponseExtensions();
+			while (e.hasMoreElements()) {
+				DERObjectIdentifier oid = (DERObjectIdentifier) e.nextElement();
+				X509Extension ext = extensions.getExtension(oid);
 
-        if (exts != null)
-        {
-            X509Extension   ext = exts.getExtension(new DERObjectIdentifier(oid));
+				if (critical == ext.isCritical()) {
+					set.add(oid.getId());
+				}
+			}
+		}
 
-            if (ext != null)
-            {
-                try
-                {
-                    return ext.getValue().getEncoded(ASN1Encoding.DER);
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException("error encoding " + e.toString());
-                }
-            }
-        }
+		return set;
+	}
 
-        return null;
-    }
+	public Set getCriticalExtensionOIDs() {
+		return getExtensionOIDs(true);
+	}
 
-    public String getSignatureAlgName()
-    {
-        return OCSPUtil.getAlgorithmName(resp.getSignatureAlgorithm().getObjectId());
-    }
+	public Set getNonCriticalExtensionOIDs() {
+		return getExtensionOIDs(false);
+	}
 
-    public String getSignatureAlgOID()
-    {
-        return resp.getSignatureAlgorithm().getObjectId().getId();
-    }
+	public byte[] getExtensionValue(String oid) {
+		X509Extensions exts = this.getResponseExtensions();
 
-    /**
-     * @deprecated RespData class is no longer required as all functionality is
-     * available on this class.
-     * @return the RespData object
-     */
-    public RespData getResponseData()
-    {
-        return new RespData(resp.getTbsResponseData());
-    }
+		if (exts != null) {
+			X509Extension ext = exts.getExtension(new DERObjectIdentifier(oid));
 
-    public byte[] getSignature()
-    {
-        return resp.getSignature().getBytes();
-    }
+			if (ext != null) {
+				try {
+					return ext.getValue().getEncoded(ASN1Encoding.DER);
+				} catch (Exception e) {
+					throw new RuntimeException("error encoding " + e.toString());
+				}
+			}
+		}
 
-    private List getCertList(
-        String provider) 
-        throws OCSPException, NoSuchProviderException
-    {
-        List                    certs = new ArrayList();
-        ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
-        ASN1OutputStream        aOut = new ASN1OutputStream(bOut);
-        CertificateFactory      cf;
+		return null;
+	}
 
-        try
-        {
-            cf = OCSPUtil.createX509CertificateFactory(provider);
-        }
-        catch (CertificateException ex)
-        {
-            throw new OCSPException("can't get certificate factory.", ex);
-        }
+	public String getSignatureAlgName() {
+		return OCSPUtil.getAlgorithmName(resp.getSignatureAlgorithm()
+				.getObjectId());
+	}
 
-        //
-        // load the certificates and revocation lists if we have any
-        //
-        ASN1Sequence s = resp.getCerts();
+	public String getSignatureAlgOID() {
+		return resp.getSignatureAlgorithm().getObjectId().getId();
+	}
 
-        if (s != null)
-        {
-            Enumeration e = s.getObjects();
+	/**
+	 * @deprecated RespData class is no longer required as all functionality is
+	 *             available on this class.
+	 * @return the RespData object
+	 */
+	public RespData getResponseData() {
+		return new RespData(resp.getTbsResponseData());
+	}
 
-            while (e.hasMoreElements())
-            {
-                try
-                {
-                    aOut.writeObject((ASN1Encodable)e.nextElement());
+	public byte[] getSignature() {
+		return resp.getSignature().getBytes();
+	}
 
-                    certs.add(cf.generateCertificate(
-                        new ByteArrayInputStream(bOut.toByteArray())));
-                }
-                catch (IOException ex)
-                {
-                    throw new OCSPException(
-                            "can't re-encode certificate!", ex);
-                }
-                catch (CertificateException ex)
-                {
-                    throw new OCSPException(
-                            "can't re-encode certificate!", ex);
-                }
+	private List getCertList(String provider) throws OCSPException,
+			NoSuchProviderException {
+		List certs = new ArrayList();
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		ASN1OutputStream aOut = new ASN1OutputStream(bOut);
+		CertificateFactory cf;
 
-                bOut.reset();
-            }
-        }
-        
-        return certs;
-    }
-    
-    public X509Certificate[] getCerts(
-        String  provider)
-        throws OCSPException, NoSuchProviderException
-    {
-        List                    certs = getCertList(provider);
-            
-        return (X509Certificate[])certs.toArray(new X509Certificate[certs.size()]);
-    }
+		try {
+			cf = OCSPUtil.createX509CertificateFactory(provider);
+		} catch (CertificateException ex) {
+			throw new OCSPException("can't get certificate factory.", ex);
+		}
 
-    /**
-     * Return the certificates, if any associated with the response.
-     * @param type type of CertStore to create
-     * @param provider provider to use
-     * @return a CertStore, possibly empty
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
-     * @throws OCSPException
-     */
-    public CertStore getCertificates(
-        String type,
-        String provider) 
-        throws NoSuchAlgorithmException, NoSuchProviderException, OCSPException
-    {
-        try
-        {
-            CertStoreParameters params = new CollectionCertStoreParameters(this.getCertList(provider));
-            return OCSPUtil.createCertStoreInstance(type, params, provider);
-        }
-        catch (InvalidAlgorithmParameterException e)
-        {
-            throw new OCSPException("can't setup the CertStore", e);
-        }
-    }
-    
-    /**
-     * verify the signature against the tbsResponseData object we contain.
-     */
-    public boolean verify(
-        PublicKey   key,
-        String      sigProvider)
-        throws OCSPException, NoSuchProviderException
-    {
-        try
-        {
-            Signature signature = OCSPUtil.createSignatureInstance(this.getSignatureAlgName(), sigProvider);
+		//
+		// load the certificates and revocation lists if we have any
+		//
+		ASN1Sequence s = resp.getCerts();
 
-            signature.initVerify(key);
+		if (s != null) {
+			Enumeration e = s.getObjects();
 
-            signature.update(resp.getTbsResponseData().getEncoded(ASN1Encoding.DER));
+			while (e.hasMoreElements()) {
+				try {
+					aOut.writeObject((ASN1Encodable) e.nextElement());
 
-            return signature.verify(this.getSignature());
-        }
-        catch (NoSuchProviderException e)
-        {
-            // TODO Why this special case?
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new OCSPException("exception processing sig: " + e, e);
-        }
-    }
+					certs.add(cf.generateCertificate(new ByteArrayInputStream(
+							bOut.toByteArray())));
+				} catch (IOException ex) {
+					throw new OCSPException("can't re-encode certificate!", ex);
+				} catch (CertificateException ex) {
+					throw new OCSPException("can't re-encode certificate!", ex);
+				}
 
-    /**
-     * return the ASN.1 encoded representation of this object.
-     */
-    public byte[] getEncoded()
-        throws IOException
-    {
-        return resp.getEncoded();
-    }
-    
-    public boolean equals(Object o)
-    {
-        if (o == this)
-        {
-            return true;
-        }
-        
-        if (!(o instanceof BasicOCSPResp))
-        {
-            return false;
-        }
-        
-        BasicOCSPResp r = (BasicOCSPResp)o;
-        
-        return resp.equals(r.resp);
-    }
-    
-    public int hashCode()
-    {
-        return resp.hashCode();
-    }
+				bOut.reset();
+			}
+		}
+
+		return certs;
+	}
+
+	public X509Certificate[] getCerts(String provider) throws OCSPException,
+			NoSuchProviderException {
+		List certs = getCertList(provider);
+
+		return (X509Certificate[]) certs.toArray(new X509Certificate[certs
+				.size()]);
+	}
+
+	/**
+	 * Return the certificates, if any associated with the response.
+	 * 
+	 * @param type
+	 *            type of CertStore to create
+	 * @param provider
+	 *            provider to use
+	 * @return a CertStore, possibly empty
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 * @throws OCSPException
+	 */
+	public CertStore getCertificates(String type, String provider)
+			throws NoSuchAlgorithmException, NoSuchProviderException,
+			OCSPException {
+		try {
+			CertStoreParameters params = new CollectionCertStoreParameters(
+					this.getCertList(provider));
+			return OCSPUtil.createCertStoreInstance(type, params, provider);
+		} catch (InvalidAlgorithmParameterException e) {
+			throw new OCSPException("can't setup the CertStore", e);
+		}
+	}
+
+	/**
+	 * verify the signature against the tbsResponseData object we contain.
+	 */
+	public boolean verify(PublicKey key, String sigProvider)
+			throws OCSPException, NoSuchProviderException {
+		try {
+			Signature signature = OCSPUtil.createSignatureInstance(
+					this.getSignatureAlgName(), sigProvider);
+
+			signature.initVerify(key);
+
+			signature.update(resp.getTbsResponseData().getEncoded(
+					ASN1Encoding.DER));
+
+			return signature.verify(this.getSignature());
+		} catch (NoSuchProviderException e) {
+			// TODO Why this special case?
+			throw e;
+		} catch (Exception e) {
+			throw new OCSPException("exception processing sig: " + e, e);
+		}
+	}
+
+	/**
+	 * return the ASN.1 encoded representation of this object.
+	 */
+	public byte[] getEncoded() throws IOException {
+		return resp.getEncoded();
+	}
+
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+
+		if (!(o instanceof BasicOCSPResp)) {
+			return false;
+		}
+
+		BasicOCSPResp r = (BasicOCSPResp) o;
+
+		return resp.equals(r.resp);
+	}
+
+	public int hashCode() {
+		return resp.hashCode();
+	}
 }

@@ -8,75 +8,66 @@ import org.ripple.bouncycastle.asn1.ASN1Primitive;
 import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class OtherKeyAttribute
-    extends ASN1Object
-{
-    private ASN1ObjectIdentifier keyAttrId;
-    private ASN1Encodable        keyAttr;
+public class OtherKeyAttribute extends ASN1Object {
+	private ASN1ObjectIdentifier keyAttrId;
+	private ASN1Encodable keyAttr;
 
-    /**
-     * return an OtherKeyAttribute object from the given object.
-     *
-     * @param o the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static OtherKeyAttribute getInstance(
-        Object o)
-    {
-        if (o == null || o instanceof OtherKeyAttribute)
-        {
-            return (OtherKeyAttribute)o;
-        }
-        
-        if (o instanceof ASN1Sequence)
-        {
-            return new OtherKeyAttribute((ASN1Sequence)o);
-        }
+	/**
+	 * return an OtherKeyAttribute object from the given object.
+	 * 
+	 * @param o
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static OtherKeyAttribute getInstance(Object o) {
+		if (o == null || o instanceof OtherKeyAttribute) {
+			return (OtherKeyAttribute) o;
+		}
 
-        throw new IllegalArgumentException("unknown object in factory: " + o.getClass().getName());
-    }
-    
-    public OtherKeyAttribute(
-        ASN1Sequence seq)
-    {
-        keyAttrId = (ASN1ObjectIdentifier)seq.getObjectAt(0);
-        keyAttr = seq.getObjectAt(1);
-    }
+		if (o instanceof ASN1Sequence) {
+			return new OtherKeyAttribute((ASN1Sequence) o);
+		}
 
-    public OtherKeyAttribute(
-        ASN1ObjectIdentifier keyAttrId,
-        ASN1Encodable        keyAttr)
-    {
-        this.keyAttrId = keyAttrId;
-        this.keyAttr = keyAttr;
-    }
+		throw new IllegalArgumentException("unknown object in factory: "
+				+ o.getClass().getName());
+	}
 
-    public ASN1ObjectIdentifier getKeyAttrId()
-    {
-        return keyAttrId;
-    }
-    
-    public ASN1Encodable getKeyAttr()
-    {
-        return keyAttr;
-    }
+	public OtherKeyAttribute(ASN1Sequence seq) {
+		keyAttrId = (ASN1ObjectIdentifier) seq.getObjectAt(0);
+		keyAttr = seq.getObjectAt(1);
+	}
 
-    /** 
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     * OtherKeyAttribute ::= SEQUENCE {
-     *     keyAttrId OBJECT IDENTIFIER,
-     *     keyAttr ANY DEFINED BY keyAttrId OPTIONAL
-     * }
-     * </pre>
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	public OtherKeyAttribute(ASN1ObjectIdentifier keyAttrId,
+			ASN1Encodable keyAttr) {
+		this.keyAttrId = keyAttrId;
+		this.keyAttr = keyAttr;
+	}
 
-        v.add(keyAttrId);
-        v.add(keyAttr);
+	public ASN1ObjectIdentifier getKeyAttrId() {
+		return keyAttrId;
+	}
 
-        return new DERSequence(v);
-    }
+	public ASN1Encodable getKeyAttr() {
+		return keyAttr;
+	}
+
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * 
+	 * <pre>
+	 * OtherKeyAttribute ::= SEQUENCE {
+	 *     keyAttrId OBJECT IDENTIFIER,
+	 *     keyAttr ANY DEFINED BY keyAttrId OPTIONAL
+	 * }
+	 * </pre>
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(keyAttrId);
+		v.add(keyAttr);
+
+		return new DERSequence(v);
+	}
 }

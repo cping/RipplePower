@@ -4,12 +4,10 @@ import java.security.SecureRandom;
 
 import org.ripple.bouncycastle.openpgp.PGPException;
 
-public interface PGPDataEncryptorBuilder
-{
-    int getAlgorithm();
+public interface PGPDataEncryptorBuilder {
+	int getAlgorithm();
 
-    PGPDataEncryptor build(byte[] keyBytes)
-        throws PGPException;
+	PGPDataEncryptor build(byte[] keyBytes) throws PGPException;
 
-    SecureRandom getSecureRandom();
+	SecureRandom getSecureRandom();
 }

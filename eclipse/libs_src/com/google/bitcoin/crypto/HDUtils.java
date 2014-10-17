@@ -31,50 +31,60 @@ import java.util.Arrays;
  */
 public final class HDUtils {
 
-    private HDUtils() { }
+	private HDUtils() {
+	}
 
-    static HMac createHmacSha512Digest(byte[] key) {
-        SHA512Digest digest = new SHA512Digest();
-        HMac hMac = new HMac(digest);
-        hMac.init(new KeyParameter(key));
-        return hMac;
-    }
+	static HMac createHmacSha512Digest(byte[] key) {
+		SHA512Digest digest = new SHA512Digest();
+		HMac hMac = new HMac(digest);
+		hMac.init(new KeyParameter(key));
+		return hMac;
+	}
 
-    static byte[] hmacSha512(HMac hmacSha512, byte[] input) {
-        hmacSha512.reset();
-        hmacSha512.update(input, 0, input.length);
-        byte[] out = new byte[64];
-        hmacSha512.doFinal(out, 0);
-        return out;
-    }
+	static byte[] hmacSha512(HMac hmacSha512, byte[] input) {
+		hmacSha512.reset();
+		hmacSha512.update(input, 0, input.length);
+		byte[] out = new byte[64];
+		hmacSha512.doFinal(out, 0);
+		return out;
+	}
 
-    public static byte[] hmacSha512(byte[] key, byte[] data) {
-        return hmacSha512(createHmacSha512Digest(key), data);
-    }
+	public static byte[] hmacSha512(byte[] key, byte[] data) {
+		return hmacSha512(createHmacSha512Digest(key), data);
+	}
 
-    static ECPoint compressedCopy(ECPoint pubKPoint) {
-        return ECKey.CURVE.getCurve().createPoint(pubKPoint.getX().toBigInteger(), pubKPoint.getY().toBigInteger(), true);
-    }
+	static ECPoint compressedCopy(ECPoint pubKPoint) {
+		return ECKey.CURVE.getCurve().createPoint(
+				pubKPoint.getX().toBigInteger(),
+				pubKPoint.getY().toBigInteger(), true);
+	}
 
-    static ECPoint toUncompressed(ECPoint pubKPoint) {
-        return ECKey.CURVE.getCurve().createPoint(pubKPoint.getX().toBigInteger(), pubKPoint.getY().toBigInteger(), false);
-    }
+	static ECPoint toUncompressed(ECPoint pubKPoint) {
+		return ECKey.CURVE.getCurve().createPoint(
+				pubKPoint.getX().toBigInteger(),
+				pubKPoint.getY().toBigInteger(), false);
+	}
 
-    static byte[] toCompressed(byte[] uncompressedPoint) {
-        return compressedCopy(ECKey.CURVE.getCurve().decodePoint(uncompressedPoint)).getEncoded();
-    }
+	static byte[] toCompressed(byte[] uncompressedPoint) {
+		return compressedCopy(
+				ECKey.CURVE.getCurve().decodePoint(uncompressedPoint))
+				.getEncoded();
+	}
 
-    static byte[] longTo4ByteArray(long n) {
-        byte[] bytes = Arrays.copyOfRange(ByteBuffer.allocate(8).putLong(n).array(), 4, 8);
-        assert bytes.length == 4 : bytes.length;
-        return bytes;
-    }
+	static byte[] longTo4ByteArray(long n) {
+		byte[] bytes = Arrays.copyOfRange(ByteBuffer.allocate(8).putLong(n)
+				.array(), 4, 8);
+		assert bytes.length == 4 : bytes.length;
+		return bytes;
+	}
 
-    static byte[] getBytes(ECPoint pubKPoint) {
-        return compressedCopy(pubKPoint).getEncoded();
-    }
+	static byte[] getBytes(ECPoint pubKPoint) {
+		return compressedCopy(pubKPoint).getEncoded();
+	}
 
-    static ImmutableList<ChildNumber> append(ImmutableList<ChildNumber> path, ChildNumber childNumber) {
-        return ImmutableList.<ChildNumber>builder().addAll(path).add(childNumber).build();
-    }
+	static ImmutableList<ChildNumber> append(ImmutableList<ChildNumber> path,
+			ChildNumber childNumber) {
+		return ImmutableList.<ChildNumber> builder().addAll(path)
+				.add(childNumber).build();
+	}
 }

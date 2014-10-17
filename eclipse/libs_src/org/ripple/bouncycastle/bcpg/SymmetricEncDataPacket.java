@@ -3,12 +3,8 @@ package org.ripple.bouncycastle.bcpg;
 /**
  * Basic type for a symmetric key encrypted packet
  */
-public class SymmetricEncDataPacket 
-    extends InputStreamPacket
-{
-    public SymmetricEncDataPacket(
-        BCPGInputStream  in)
-    {
-        super(in);
-    }
+public class SymmetricEncDataPacket extends InputStreamPacket {
+	public SymmetricEncDataPacket(BCPGInputStream in) {
+		super(in);
+	}
 }

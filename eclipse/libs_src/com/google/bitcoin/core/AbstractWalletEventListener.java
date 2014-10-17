@@ -24,42 +24,45 @@ import java.util.List;
 /**
  * Convenience implementation of {@link WalletEventListener}.
  */
-public abstract class AbstractWalletEventListener implements WalletEventListener {
-    @Override
-    public void onCoinsReceived(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
-        onChange();
-    }
+public abstract class AbstractWalletEventListener implements
+		WalletEventListener {
+	@Override
+	public void onCoinsReceived(Wallet wallet, Transaction tx,
+			BigInteger prevBalance, BigInteger newBalance) {
+		onChange();
+	}
 
-    @Override
-    public void onCoinsSent(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
-        onChange();
-    }
+	@Override
+	public void onCoinsSent(Wallet wallet, Transaction tx,
+			BigInteger prevBalance, BigInteger newBalance) {
+		onChange();
+	}
 
-    @Override
-    public void onReorganize(Wallet wallet) {
-        onChange();
-    }
+	@Override
+	public void onReorganize(Wallet wallet) {
+		onChange();
+	}
 
-    @Override
-    public void onTransactionConfidenceChanged(Wallet wallet, Transaction tx) {
-        onChange();
-    }
+	@Override
+	public void onTransactionConfidenceChanged(Wallet wallet, Transaction tx) {
+		onChange();
+	}
 
-    @Override
-    public void onKeysAdded(Wallet wallet, List<ECKey> keys) {
-        onChange();
-    }
+	@Override
+	public void onKeysAdded(Wallet wallet, List<ECKey> keys) {
+		onChange();
+	}
 
-    @Override
-    public void onScriptsAdded(Wallet wallet, List<Script> scripts) {
-        onChange();
-    }
+	@Override
+	public void onScriptsAdded(Wallet wallet, List<Script> scripts) {
+		onChange();
+	}
 
-    @Override
-    public void onWalletChanged(Wallet wallet) {
-        onChange();
-    }
+	@Override
+	public void onWalletChanged(Wallet wallet) {
+		onChange();
+	}
 
-    public void onChange() {
-    }
+	public void onChange() {
+	}
 }

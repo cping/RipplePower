@@ -23,49 +23,56 @@ import java.math.BigInteger;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Network parameters for the regression test mode of bitcoind in which all blocks are trivially solvable.
+ * Network parameters for the regression test mode of bitcoind in which all
+ * blocks are trivially solvable.
  */
 public class RegTestParams extends TestNet2Params {
-    private static final BigInteger PROOF_OF_WORK_LIMIT = new BigInteger("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
+	private static final BigInteger PROOF_OF_WORK_LIMIT = new BigInteger(
+			"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+			16);
 
-    public RegTestParams() {
-        super();
-        interval = 10000;
-        proofOfWorkLimit = PROOF_OF_WORK_LIMIT;
-        subsidyDecreaseBlockCount = 150;
-        port = 18444;
-    }
+	public RegTestParams() {
+		super();
+		interval = 10000;
+		proofOfWorkLimit = PROOF_OF_WORK_LIMIT;
+		subsidyDecreaseBlockCount = 150;
+		port = 18444;
+	}
 
-    @Override
-    public boolean allowEmptyPeerChain() {
-        return true;
-    }
+	@Override
+	public boolean allowEmptyPeerChain() {
+		return true;
+	}
 
-    private static Block genesis;
+	private static Block genesis;
 
-    @Override
-    public Block getGenesisBlock() {
-        synchronized (RegTestParams.class) {
-            if (genesis == null) {
-                genesis = super.getGenesisBlock();
-                genesis.setNonce(2);
-                genesis.setDifficultyTarget(0x207fFFFFL);
-                genesis.setTime(1296688602L);
-                checkState(genesis.getHashAsString().toLowerCase().equals("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
-            }
-            return genesis;
-        }
-    }
+	@Override
+	public Block getGenesisBlock() {
+		synchronized (RegTestParams.class) {
+			if (genesis == null) {
+				genesis = super.getGenesisBlock();
+				genesis.setNonce(2);
+				genesis.setDifficultyTarget(0x207fFFFFL);
+				genesis.setTime(1296688602L);
+				checkState(genesis
+						.getHashAsString()
+						.toLowerCase()
+						.equals("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
+			}
+			return genesis;
+		}
+	}
 
-    private static RegTestParams instance;
-    public static synchronized RegTestParams get() {
-        if (instance == null) {
-            instance = new RegTestParams();
-        }
-        return instance;
-    }
+	private static RegTestParams instance;
 
-    public String getPaymentProtocolId() {
-        return null;
-    }
+	public static synchronized RegTestParams get() {
+		if (instance == null) {
+			instance = new RegTestParams();
+		}
+		return instance;
+	}
+
+	public String getPaymentProtocolId() {
+		return null;
+	}
 }

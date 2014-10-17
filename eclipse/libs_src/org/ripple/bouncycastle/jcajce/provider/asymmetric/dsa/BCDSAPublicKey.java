@@ -19,153 +19,133 @@ import org.ripple.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.ripple.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
-public class BCDSAPublicKey
-    implements DSAPublicKey
-{
-    private static final long serialVersionUID = 1752452449903495175L;
+public class BCDSAPublicKey implements DSAPublicKey {
+	private static final long serialVersionUID = 1752452449903495175L;
 
-    private BigInteger      y;
-    private transient DSAParams       dsaSpec;
+	private BigInteger y;
+	private transient DSAParams dsaSpec;
 
-    BCDSAPublicKey(
-        DSAPublicKeySpec spec)
-    {
-        this.y = spec.getY();
-        this.dsaSpec = new DSAParameterSpec(spec.getP(), spec.getQ(), spec.getG());
-    }
+	BCDSAPublicKey(DSAPublicKeySpec spec) {
+		this.y = spec.getY();
+		this.dsaSpec = new DSAParameterSpec(spec.getP(), spec.getQ(),
+				spec.getG());
+	}
 
-    BCDSAPublicKey(
-        DSAPublicKey key)
-    {
-        this.y = key.getY();
-        this.dsaSpec = key.getParams();
-    }
+	BCDSAPublicKey(DSAPublicKey key) {
+		this.y = key.getY();
+		this.dsaSpec = key.getParams();
+	}
 
-    BCDSAPublicKey(
-        DSAPublicKeyParameters params)
-    {
-        this.y = params.getY();
-        this.dsaSpec = new DSAParameterSpec(params.getParameters().getP(), params.getParameters().getQ(), params.getParameters().getG());
-    }
+	BCDSAPublicKey(DSAPublicKeyParameters params) {
+		this.y = params.getY();
+		this.dsaSpec = new DSAParameterSpec(params.getParameters().getP(),
+				params.getParameters().getQ(), params.getParameters().getG());
+	}
 
-    BCDSAPublicKey(
-        BigInteger y,
-        DSAParameterSpec dsaSpec)
-    {
-        this.y = y;
-        this.dsaSpec = dsaSpec;
-    }
+	BCDSAPublicKey(BigInteger y, DSAParameterSpec dsaSpec) {
+		this.y = y;
+		this.dsaSpec = dsaSpec;
+	}
 
-    public BCDSAPublicKey(
-        SubjectPublicKeyInfo info)
-    {
+	public BCDSAPublicKey(SubjectPublicKeyInfo info) {
 
-        ASN1Integer              derY;
+		ASN1Integer derY;
 
-        try
-        {
-            derY = (ASN1Integer)info.parsePublicKey();
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("invalid info structure in DSA public key");
-        }
+		try {
+			derY = (ASN1Integer) info.parsePublicKey();
+		} catch (IOException e) {
+			throw new IllegalArgumentException(
+					"invalid info structure in DSA public key");
+		}
 
-        this.y = derY.getValue();
+		this.y = derY.getValue();
 
-        if (isNotNull(info.getAlgorithm().getParameters()))
-        {
-            DSAParameter params = DSAParameter.getInstance(info.getAlgorithm().getParameters());
-            
-            this.dsaSpec = new DSAParameterSpec(params.getP(), params.getQ(), params.getG());
-        }
-    }
+		if (isNotNull(info.getAlgorithm().getParameters())) {
+			DSAParameter params = DSAParameter.getInstance(info.getAlgorithm()
+					.getParameters());
 
-    private boolean isNotNull(ASN1Encodable parameters)
-    {
-        return parameters != null && !DERNull.INSTANCE.equals(parameters.toASN1Primitive());
-    }
+			this.dsaSpec = new DSAParameterSpec(params.getP(), params.getQ(),
+					params.getG());
+		}
+	}
 
-    public String getAlgorithm()
-    {
-        return "DSA";
-    }
+	private boolean isNotNull(ASN1Encodable parameters) {
+		return parameters != null
+				&& !DERNull.INSTANCE.equals(parameters.toASN1Primitive());
+	}
 
-    public String getFormat()
-    {
-        return "X.509";
-    }
+	public String getAlgorithm() {
+		return "DSA";
+	}
 
-    public byte[] getEncoded()
-    {
-        if (dsaSpec == null)
-        {
-            return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa), new ASN1Integer(y));
-        }
+	public String getFormat() {
+		return "X.509";
+	}
 
-        return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa, new DSAParameter(dsaSpec.getP(), dsaSpec.getQ(), dsaSpec.getG()).toASN1Primitive()), new ASN1Integer(y));
-    }
+	public byte[] getEncoded() {
+		if (dsaSpec == null) {
+			return KeyUtil.getEncodedSubjectPublicKeyInfo(
+					new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa),
+					new ASN1Integer(y));
+		}
 
-    public DSAParams getParams()
-    {
-        return dsaSpec;
-    }
+		return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(
+				X9ObjectIdentifiers.id_dsa, new DSAParameter(dsaSpec.getP(),
+						dsaSpec.getQ(), dsaSpec.getG()).toASN1Primitive()),
+				new ASN1Integer(y));
+	}
 
-    public BigInteger getY()
-    {
-        return y;
-    }
+	public DSAParams getParams() {
+		return dsaSpec;
+	}
 
-    public String toString()
-    {
-        StringBuffer    buf = new StringBuffer();
-        String          nl = System.getProperty("line.separator");
+	public BigInteger getY() {
+		return y;
+	}
 
-        buf.append("DSA Public Key").append(nl);
-        buf.append("            y: ").append(this.getY().toString(16)).append(nl);
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		String nl = System.getProperty("line.separator");
 
-        return buf.toString();
-    }
+		buf.append("DSA Public Key").append(nl);
+		buf.append("            y: ").append(this.getY().toString(16))
+				.append(nl);
 
-    public int hashCode()
-    {
-        return this.getY().hashCode() ^ this.getParams().getG().hashCode() 
-                ^ this.getParams().getP().hashCode() ^ this.getParams().getQ().hashCode();
-    }
+		return buf.toString();
+	}
 
-    public boolean equals(
-        Object o)
-    {
-        if (!(o instanceof DSAPublicKey))
-        {
-            return false;
-        }
-        
-        DSAPublicKey other = (DSAPublicKey)o;
-        
-        return this.getY().equals(other.getY()) 
-            && this.getParams().getG().equals(other.getParams().getG()) 
-            && this.getParams().getP().equals(other.getParams().getP()) 
-            && this.getParams().getQ().equals(other.getParams().getQ());
-    }
+	public int hashCode() {
+		return this.getY().hashCode() ^ this.getParams().getG().hashCode()
+				^ this.getParams().getP().hashCode()
+				^ this.getParams().getQ().hashCode();
+	}
 
-    private void readObject(
-        ObjectInputStream in)
-        throws IOException, ClassNotFoundException
-    {
-        in.defaultReadObject();
+	public boolean equals(Object o) {
+		if (!(o instanceof DSAPublicKey)) {
+			return false;
+		}
 
-        this.dsaSpec = new DSAParameterSpec((BigInteger)in.readObject(), (BigInteger)in.readObject(), (BigInteger)in.readObject());
-    }
+		DSAPublicKey other = (DSAPublicKey) o;
 
-    private void writeObject(
-        ObjectOutputStream out)
-        throws IOException
-    {
-        out.defaultWriteObject();
+		return this.getY().equals(other.getY())
+				&& this.getParams().getG().equals(other.getParams().getG())
+				&& this.getParams().getP().equals(other.getParams().getP())
+				&& this.getParams().getQ().equals(other.getParams().getQ());
+	}
 
-        out.writeObject(dsaSpec.getP());
-        out.writeObject(dsaSpec.getQ());
-        out.writeObject(dsaSpec.getG());
-    }
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+
+		this.dsaSpec = new DSAParameterSpec((BigInteger) in.readObject(),
+				(BigInteger) in.readObject(), (BigInteger) in.readObject());
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+
+		out.writeObject(dsaSpec.getP());
+		out.writeObject(dsaSpec.getQ());
+		out.writeObject(dsaSpec.getG());
+	}
 }

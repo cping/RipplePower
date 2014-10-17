@@ -21,153 +21,125 @@ import org.ripple.bouncycastle.jce.interfaces.ElGamalPublicKey;
 import org.ripple.bouncycastle.jce.spec.ElGamalParameterSpec;
 import org.ripple.bouncycastle.jce.spec.ElGamalPublicKeySpec;
 
-public class BCElGamalPublicKey
-    implements ElGamalPublicKey, DHPublicKey
-{
-    static final long serialVersionUID = 8712728417091216948L;
-        
-    private BigInteger              y;
-    private transient ElGamalParameterSpec    elSpec;
+public class BCElGamalPublicKey implements ElGamalPublicKey, DHPublicKey {
+	static final long serialVersionUID = 8712728417091216948L;
 
-    BCElGamalPublicKey(
-        ElGamalPublicKeySpec spec)
-    {
-        this.y = spec.getY();
-        this.elSpec = new ElGamalParameterSpec(spec.getParams().getP(), spec.getParams().getG());
-    }
+	private BigInteger y;
+	private transient ElGamalParameterSpec elSpec;
 
-    BCElGamalPublicKey(
-        DHPublicKeySpec spec)
-    {
-        this.y = spec.getY();
-        this.elSpec = new ElGamalParameterSpec(spec.getP(), spec.getG());
-    }
-    
-    BCElGamalPublicKey(
-        ElGamalPublicKey key)
-    {
-        this.y = key.getY();
-        this.elSpec = key.getParameters();
-    }
+	BCElGamalPublicKey(ElGamalPublicKeySpec spec) {
+		this.y = spec.getY();
+		this.elSpec = new ElGamalParameterSpec(spec.getParams().getP(), spec
+				.getParams().getG());
+	}
 
-    BCElGamalPublicKey(
-        DHPublicKey key)
-    {
-        this.y = key.getY();
-        this.elSpec = new ElGamalParameterSpec(key.getParams().getP(), key.getParams().getG());
-    }
-    
-    BCElGamalPublicKey(
-        ElGamalPublicKeyParameters params)
-    {
-        this.y = params.getY();
-        this.elSpec = new ElGamalParameterSpec(params.getParameters().getP(), params.getParameters().getG());
-    }
+	BCElGamalPublicKey(DHPublicKeySpec spec) {
+		this.y = spec.getY();
+		this.elSpec = new ElGamalParameterSpec(spec.getP(), spec.getG());
+	}
 
-    BCElGamalPublicKey(
-        BigInteger y,
-        ElGamalParameterSpec elSpec)
-    {
-        this.y = y;
-        this.elSpec = elSpec;
-    }
+	BCElGamalPublicKey(ElGamalPublicKey key) {
+		this.y = key.getY();
+		this.elSpec = key.getParameters();
+	}
 
-    BCElGamalPublicKey(
-        SubjectPublicKeyInfo info)
-    {
-        ElGamalParameter        params = new ElGamalParameter((ASN1Sequence)info.getAlgorithmId().getParameters());
-        DERInteger              derY = null;
+	BCElGamalPublicKey(DHPublicKey key) {
+		this.y = key.getY();
+		this.elSpec = new ElGamalParameterSpec(key.getParams().getP(), key
+				.getParams().getG());
+	}
 
-        try
-        {
-            derY = (DERInteger)info.parsePublicKey();
-        }
-        catch (IOException e)
-        {
-            throw new IllegalArgumentException("invalid info structure in DSA public key");
-        }
+	BCElGamalPublicKey(ElGamalPublicKeyParameters params) {
+		this.y = params.getY();
+		this.elSpec = new ElGamalParameterSpec(params.getParameters().getP(),
+				params.getParameters().getG());
+	}
 
-        this.y = derY.getValue();
-        this.elSpec = new ElGamalParameterSpec(params.getP(), params.getG());
-    }
+	BCElGamalPublicKey(BigInteger y, ElGamalParameterSpec elSpec) {
+		this.y = y;
+		this.elSpec = elSpec;
+	}
 
-    public String getAlgorithm()
-    {
-        return "ElGamal";
-    }
+	BCElGamalPublicKey(SubjectPublicKeyInfo info) {
+		ElGamalParameter params = new ElGamalParameter((ASN1Sequence) info
+				.getAlgorithmId().getParameters());
+		DERInteger derY = null;
 
-    public String getFormat()
-    {
-        return "X.509";
-    }
+		try {
+			derY = (DERInteger) info.parsePublicKey();
+		} catch (IOException e) {
+			throw new IllegalArgumentException(
+					"invalid info structure in DSA public key");
+		}
 
-    public byte[] getEncoded()
-    {
-        try
-        {
-            SubjectPublicKeyInfo    info = new SubjectPublicKeyInfo(new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm, new ElGamalParameter(elSpec.getP(), elSpec.getG())), new DERInteger(y));
+		this.y = derY.getValue();
+		this.elSpec = new ElGamalParameterSpec(params.getP(), params.getG());
+	}
 
-            return info.getEncoded(ASN1Encoding.DER);
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-    }
+	public String getAlgorithm() {
+		return "ElGamal";
+	}
 
-    public ElGamalParameterSpec getParameters()
-    {
-        return elSpec;
-    }
-    
-    public DHParameterSpec getParams()
-    {
-        return new DHParameterSpec(elSpec.getP(), elSpec.getG());
-    }
+	public String getFormat() {
+		return "X.509";
+	}
 
-    public BigInteger getY()
-    {
-        return y;
-    }
+	public byte[] getEncoded() {
+		try {
+			SubjectPublicKeyInfo info = new SubjectPublicKeyInfo(
+					new AlgorithmIdentifier(
+							OIWObjectIdentifiers.elGamalAlgorithm,
+							new ElGamalParameter(elSpec.getP(), elSpec.getG())),
+					new DERInteger(y));
 
-    public int hashCode()
-    {
-        return this.getY().hashCode() ^ this.getParams().getG().hashCode()
-                ^ this.getParams().getP().hashCode() ^ this.getParams().getL();
-    }
+			return info.getEncoded(ASN1Encoding.DER);
+		} catch (IOException e) {
+			return null;
+		}
+	}
 
-    public boolean equals(
-        Object o)
-    {
-        if (!(o instanceof DHPublicKey))
-        {
-            return false;
-        }
+	public ElGamalParameterSpec getParameters() {
+		return elSpec;
+	}
 
-        DHPublicKey other = (DHPublicKey)o;
+	public DHParameterSpec getParams() {
+		return new DHParameterSpec(elSpec.getP(), elSpec.getG());
+	}
 
-        return this.getY().equals(other.getY())
-            && this.getParams().getG().equals(other.getParams().getG())
-            && this.getParams().getP().equals(other.getParams().getP())
-            && this.getParams().getL() == other.getParams().getL();
-    }
+	public BigInteger getY() {
+		return y;
+	}
 
-    private void readObject(
-        ObjectInputStream   in)
-        throws IOException, ClassNotFoundException
-    {
-        in.defaultReadObject();
+	public int hashCode() {
+		return this.getY().hashCode() ^ this.getParams().getG().hashCode()
+				^ this.getParams().getP().hashCode() ^ this.getParams().getL();
+	}
 
-        this.elSpec = new ElGamalParameterSpec((BigInteger)in.readObject(), (BigInteger)in.readObject());
-    }
+	public boolean equals(Object o) {
+		if (!(o instanceof DHPublicKey)) {
+			return false;
+		}
 
-    private void writeObject(
-        ObjectOutputStream  out)
-        throws IOException
-    {
-        out.defaultWriteObject();
+		DHPublicKey other = (DHPublicKey) o;
 
-        out.writeObject(elSpec.getP());
-        out.writeObject(elSpec.getG());
-    }
+		return this.getY().equals(other.getY())
+				&& this.getParams().getG().equals(other.getParams().getG())
+				&& this.getParams().getP().equals(other.getParams().getP())
+				&& this.getParams().getL() == other.getParams().getL();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+
+		this.elSpec = new ElGamalParameterSpec((BigInteger) in.readObject(),
+				(BigInteger) in.readObject());
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+
+		out.writeObject(elSpec.getP());
+		out.writeObject(elSpec.getG());
+	}
 }

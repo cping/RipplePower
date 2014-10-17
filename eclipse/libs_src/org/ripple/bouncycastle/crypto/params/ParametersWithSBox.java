@@ -2,27 +2,20 @@ package org.ripple.bouncycastle.crypto.params;
 
 import org.ripple.bouncycastle.crypto.CipherParameters;
 
-public class ParametersWithSBox
-    implements CipherParameters
-{
-    private CipherParameters  parameters;
-    private byte[]            sBox;
+public class ParametersWithSBox implements CipherParameters {
+	private CipherParameters parameters;
+	private byte[] sBox;
 
-    public ParametersWithSBox(
-        CipherParameters parameters,
-        byte[]           sBox)
-    {
-        this.parameters = parameters;
-        this.sBox = sBox;
-    }
+	public ParametersWithSBox(CipherParameters parameters, byte[] sBox) {
+		this.parameters = parameters;
+		this.sBox = sBox;
+	}
 
-    public byte[] getSBox()
-    {
-        return sBox;
-    }
+	public byte[] getSBox() {
+		return sBox;
+	}
 
-    public CipherParameters getParameters()
-    {
-        return parameters;
-    }
+	public CipherParameters getParameters() {
+		return parameters;
+	}
 }

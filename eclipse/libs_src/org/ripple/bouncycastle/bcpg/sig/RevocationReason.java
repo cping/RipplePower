@@ -7,45 +7,39 @@ import org.ripple.bouncycastle.util.Strings;
 /**
  * Represents revocation reason OpenPGP signature sub packet.
  */
-public class RevocationReason extends SignatureSubpacket
-{
-    public RevocationReason(boolean isCritical, byte[] data)
-    {
-        super(SignatureSubpacketTags.REVOCATION_REASON, isCritical, data);
-    }
+public class RevocationReason extends SignatureSubpacket {
+	public RevocationReason(boolean isCritical, byte[] data) {
+		super(SignatureSubpacketTags.REVOCATION_REASON, isCritical, data);
+	}
 
-    public RevocationReason(boolean isCritical, byte reason, String description)
-    {
-        super(SignatureSubpacketTags.REVOCATION_REASON, isCritical, createData(reason, description));
-    }
+	public RevocationReason(boolean isCritical, byte reason, String description) {
+		super(SignatureSubpacketTags.REVOCATION_REASON, isCritical, createData(
+				reason, description));
+	}
 
-    private static byte[] createData(byte reason, String description)
-    {
-        byte[] descriptionBytes = Strings.toUTF8ByteArray(description);
-        byte[] data = new byte[1 + descriptionBytes.length];
+	private static byte[] createData(byte reason, String description) {
+		byte[] descriptionBytes = Strings.toUTF8ByteArray(description);
+		byte[] data = new byte[1 + descriptionBytes.length];
 
-        data[0] = reason;
-        System.arraycopy(descriptionBytes, 0, data, 1, descriptionBytes.length);
+		data[0] = reason;
+		System.arraycopy(descriptionBytes, 0, data, 1, descriptionBytes.length);
 
-        return data;
-    }
+		return data;
+	}
 
-    public byte getRevocationReason()
-    {
-        return getData()[0];
-    }
+	public byte getRevocationReason() {
+		return getData()[0];
+	}
 
-    public String getRevocationDescription()
-    {
-        byte[] data = getData();
-        if (data.length == 1)
-        {
-            return "";
-        }
+	public String getRevocationDescription() {
+		byte[] data = getData();
+		if (data.length == 1) {
+			return "";
+		}
 
-        byte[] description = new byte[data.length - 1];
-        System.arraycopy(data, 1, description, 0, description.length);
+		byte[] description = new byte[data.length - 1];
+		System.arraycopy(data, 1, description, 0, description.length);
 
-        return Strings.fromUTF8ByteArray(description);
-    }
+		return Strings.fromUTF8ByteArray(description);
+	}
 }

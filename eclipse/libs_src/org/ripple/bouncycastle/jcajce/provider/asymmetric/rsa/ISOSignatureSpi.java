@@ -18,125 +18,92 @@ import org.ripple.bouncycastle.crypto.digests.SHA1Digest;
 import org.ripple.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.ripple.bouncycastle.crypto.signers.ISO9796d2Signer;
 
-public class ISOSignatureSpi
-    extends SignatureSpi
-{
-    private ISO9796d2Signer signer;
+public class ISOSignatureSpi extends SignatureSpi {
+	private ISO9796d2Signer signer;
 
-    protected ISOSignatureSpi(
-        Digest digest,
-        AsymmetricBlockCipher cipher)
-    {
-        signer = new ISO9796d2Signer(cipher, digest, true);
-    }
+	protected ISOSignatureSpi(Digest digest, AsymmetricBlockCipher cipher) {
+		signer = new ISO9796d2Signer(cipher, digest, true);
+	}
 
-    protected void engineInitVerify(
-        PublicKey publicKey)
-        throws InvalidKeyException
-    {
-        CipherParameters param = RSAUtil.generatePublicKeyParameter((RSAPublicKey)publicKey);
+	protected void engineInitVerify(PublicKey publicKey)
+			throws InvalidKeyException {
+		CipherParameters param = RSAUtil
+				.generatePublicKeyParameter((RSAPublicKey) publicKey);
 
-        signer.init(false, param);
-    }
+		signer.init(false, param);
+	}
 
-    protected void engineInitSign(
-        PrivateKey privateKey)
-        throws InvalidKeyException
-    {
-        CipherParameters param = RSAUtil.generatePrivateKeyParameter((RSAPrivateKey)privateKey);
+	protected void engineInitSign(PrivateKey privateKey)
+			throws InvalidKeyException {
+		CipherParameters param = RSAUtil
+				.generatePrivateKeyParameter((RSAPrivateKey) privateKey);
 
-        signer.init(true, param);
-    }
+		signer.init(true, param);
+	}
 
-    protected void engineUpdate(
-        byte    b)
-        throws SignatureException
-    {
-        signer.update(b);
-    }
+	protected void engineUpdate(byte b) throws SignatureException {
+		signer.update(b);
+	}
 
-    protected void engineUpdate(
-        byte[]  b,
-        int     off,
-        int     len) 
-        throws SignatureException
-    {
-        signer.update(b, off, len);
-    }
+	protected void engineUpdate(byte[] b, int off, int len)
+			throws SignatureException {
+		signer.update(b, off, len);
+	}
 
-    protected byte[] engineSign()
-        throws SignatureException
-    {
-        try
-        {
-            byte[]  sig = signer.generateSignature();
+	protected byte[] engineSign() throws SignatureException {
+		try {
+			byte[] sig = signer.generateSignature();
 
-            return sig;
-        }
-        catch (Exception e)
-        {
-            throw new SignatureException(e.toString());
-        }
-    }
+			return sig;
+		} catch (Exception e) {
+			throw new SignatureException(e.toString());
+		}
+	}
 
-    protected boolean engineVerify(
-        byte[]  sigBytes) 
-        throws SignatureException
-    {
-        boolean yes = signer.verifySignature(sigBytes);
+	protected boolean engineVerify(byte[] sigBytes) throws SignatureException {
+		boolean yes = signer.verifySignature(sigBytes);
 
-        return yes;
-    }
+		return yes;
+	}
 
-    protected void engineSetParameter(
-        AlgorithmParameterSpec params)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+	protected void engineSetParameter(AlgorithmParameterSpec params) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
 
-    /**
-     * @deprecated replaced with <a href = "#engineSetParameter(java.security.spec.AlgorithmParameterSpec)">
-     */
-    protected void engineSetParameter(
-        String param,
-        Object value)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+	/**
+	 * @deprecated replaced with <a href =
+	 *             "#engineSetParameter(java.security.spec.AlgorithmParameterSpec)"
+	 *             >
+	 */
+	protected void engineSetParameter(String param, Object value) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
 
-    /**
-     * @deprecated
-     */
-    protected Object engineGetParameter(
-        String param)
-    {
-        throw new UnsupportedOperationException("engineSetParameter unsupported");
-    }
+	/**
+	 * @deprecated
+	 */
+	protected Object engineGetParameter(String param) {
+		throw new UnsupportedOperationException(
+				"engineSetParameter unsupported");
+	}
 
-    static public class SHA1WithRSAEncryption
-        extends ISOSignatureSpi
-    {
-        public SHA1WithRSAEncryption()
-        {
-            super(new SHA1Digest(), new RSABlindedEngine());
-        }
-    }
+	static public class SHA1WithRSAEncryption extends ISOSignatureSpi {
+		public SHA1WithRSAEncryption() {
+			super(new SHA1Digest(), new RSABlindedEngine());
+		}
+	}
 
-    static public class MD5WithRSAEncryption
-        extends ISOSignatureSpi
-    {
-        public MD5WithRSAEncryption()
-        {
-            super(new MD5Digest(), new RSABlindedEngine());
-        }
-    }
+	static public class MD5WithRSAEncryption extends ISOSignatureSpi {
+		public MD5WithRSAEncryption() {
+			super(new MD5Digest(), new RSABlindedEngine());
+		}
+	}
 
-    static public class RIPEMD160WithRSAEncryption
-        extends ISOSignatureSpi
-    {
-        public RIPEMD160WithRSAEncryption()
-        {
-            super(new RIPEMD160Digest(), new RSABlindedEngine());
-        }
-    }
+	static public class RIPEMD160WithRSAEncryption extends ISOSignatureSpi {
+		public RIPEMD160WithRSAEncryption() {
+			super(new RIPEMD160Digest(), new RSABlindedEngine());
+		}
+	}
 }

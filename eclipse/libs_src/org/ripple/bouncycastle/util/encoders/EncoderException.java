@@ -1,19 +1,15 @@
 package org.ripple.bouncycastle.util.encoders;
 
-public class EncoderException
-    extends IllegalStateException
-{
-    private Throwable cause;
+public class EncoderException extends IllegalStateException {
+	private Throwable cause;
 
-    EncoderException(String msg, Throwable cause)
-    {
-        super(msg);
+	EncoderException(String msg, Throwable cause) {
+		super(msg);
 
-        this.cause = cause;
-    }
+		this.cause = cause;
+	}
 
-    public Throwable getCause()
-    {
-        return cause;
-    }
+	public Throwable getCause() {
+		return cause;
+	}
 }

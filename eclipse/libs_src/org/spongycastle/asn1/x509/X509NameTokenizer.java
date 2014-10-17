@@ -2,90 +2,69 @@ package org.spongycastle.asn1.x509;
 
 /**
  * class for breaking up an X500 Name into it's component tokens, ala
- * java.util.StringTokenizer. We need this class as some of the
- * lightweight Java environment don't support classes like
- * StringTokenizer.
+ * java.util.StringTokenizer. We need this class as some of the lightweight Java
+ * environment don't support classes like StringTokenizer.
+ * 
  * @deprecated use X500NameTokenizer
  */
-public class X509NameTokenizer
-{
-    private String          value;
-    private int             index;
-    private char separator;
-    private StringBuffer    buf = new StringBuffer();
+public class X509NameTokenizer {
+	private String value;
+	private int index;
+	private char separator;
+	private StringBuffer buf = new StringBuffer();
 
-    public X509NameTokenizer(
-        String  oid)
-    {
-        this(oid, ',');
-    }
-    
-    public X509NameTokenizer(
-        String  oid,
-        char separator)
-    {
-        this.value = oid;
-        this.index = -1;
-        this.separator = separator;
-    }
+	public X509NameTokenizer(String oid) {
+		this(oid, ',');
+	}
 
-    public boolean hasMoreTokens()
-    {
-        return (index != value.length());
-    }
+	public X509NameTokenizer(String oid, char separator) {
+		this.value = oid;
+		this.index = -1;
+		this.separator = separator;
+	}
 
-    public String nextToken()
-    {
-        if (index == value.length())
-        {
-            return null;
-        }
+	public boolean hasMoreTokens() {
+		return (index != value.length());
+	}
 
-        int     end = index + 1;
-        boolean quoted = false;
-        boolean escaped = false;
+	public String nextToken() {
+		if (index == value.length()) {
+			return null;
+		}
 
-        buf.setLength(0);
+		int end = index + 1;
+		boolean quoted = false;
+		boolean escaped = false;
 
-        while (end != value.length())
-        {
-            char    c = value.charAt(end);
+		buf.setLength(0);
 
-            if (c == '"')
-            {
-                if (!escaped)
-                {
-                    quoted = !quoted;
-                }
-                buf.append(c);
-                escaped = false;
-            }
-            else
-            {
-                if (escaped || quoted)
-                {
-                    buf.append(c);
-                    escaped = false;
-                }
-                else if (c == '\\')
-                {
-                    buf.append(c);
-                    escaped = true;
-                }
-                else if (c == separator)
-                {
-                    break;
-                }
-                else
-                {
-                    buf.append(c);
-                }
-            }
-            end++;
-        }
+		while (end != value.length()) {
+			char c = value.charAt(end);
 
-        index = end;
+			if (c == '"') {
+				if (!escaped) {
+					quoted = !quoted;
+				}
+				buf.append(c);
+				escaped = false;
+			} else {
+				if (escaped || quoted) {
+					buf.append(c);
+					escaped = false;
+				} else if (c == '\\') {
+					buf.append(c);
+					escaped = true;
+				} else if (c == separator) {
+					break;
+				} else {
+					buf.append(c);
+				}
+			}
+			end++;
+		}
 
-        return buf.toString();
-    }
+		index = end;
+
+		return buf.toString();
+	}
 }

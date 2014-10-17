@@ -8,44 +8,36 @@ import java.security.KeyStore.ProtectionParameter;
 /**
  * @deprecated use org.bouncycastle.jcajce.config.PKCS12StoreParameter
  */
-public class JDKPKCS12StoreParameter implements LoadStoreParameter
-{
-    private OutputStream outputStream;
-    private ProtectionParameter protectionParameter;
-    private boolean useDEREncoding;
+public class JDKPKCS12StoreParameter implements LoadStoreParameter {
+	private OutputStream outputStream;
+	private ProtectionParameter protectionParameter;
+	private boolean useDEREncoding;
 
-    public OutputStream getOutputStream()
-    {
-        return outputStream;
-    }
+	public OutputStream getOutputStream() {
+		return outputStream;
+	}
 
-    public ProtectionParameter getProtectionParameter()
-    {
-        return protectionParameter;
-    }
+	public ProtectionParameter getProtectionParameter() {
+		return protectionParameter;
+	}
 
-    public boolean isUseDEREncoding()
-    {
-        return useDEREncoding;
-    }
+	public boolean isUseDEREncoding() {
+		return useDEREncoding;
+	}
 
-    public void setOutputStream(OutputStream outputStream)
-    {
-        this.outputStream = outputStream;
-    }
+	public void setOutputStream(OutputStream outputStream) {
+		this.outputStream = outputStream;
+	}
 
-    public void setPassword(char[] password)
-    {
-        this.protectionParameter = new KeyStore.PasswordProtection(password);
-    }
+	public void setPassword(char[] password) {
+		this.protectionParameter = new KeyStore.PasswordProtection(password);
+	}
 
-    public void setProtectionParameter(ProtectionParameter protectionParameter)
-    {
-        this.protectionParameter = protectionParameter;
-    }
+	public void setProtectionParameter(ProtectionParameter protectionParameter) {
+		this.protectionParameter = protectionParameter;
+	}
 
-    public void setUseDEREncoding(boolean useDEREncoding)
-    {
-        this.useDEREncoding = useDEREncoding;
-    }
+	public void setUseDEREncoding(boolean useDEREncoding) {
+		this.useDEREncoding = useDEREncoding;
+	}
 }

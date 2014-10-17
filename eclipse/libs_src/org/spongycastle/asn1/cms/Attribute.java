@@ -11,9 +11,10 @@ import org.spongycastle.asn1.DERObjectIdentifier;
 import org.spongycastle.asn1.DERSequence;
 
 /**
- * <a href="http://tools.ietf.org/html/rfc5652#page-14">RFC 5652</a>:
- * Attribute is a pair of OID (as type identifier) + set of values.
+ * <a href="http://tools.ietf.org/html/rfc5652#page-14">RFC 5652</a>: Attribute
+ * is a pair of OID (as type identifier) + set of values.
  * <p>
+ * 
  * <pre>
  * Attribute ::= SEQUENCE {
  *     attrType OBJECT IDENTIFIER,
@@ -24,99 +25,85 @@ import org.spongycastle.asn1.DERSequence;
  * </pre>
  * <p>
  * General rule on values is that same AttributeValue must not be included
- * multiple times into the set. That is, if the value is a SET OF INTEGERs,
- * then having same value repeated is wrong: (1, 1), but different values is OK: (1, 2).
- * Normally the AttributeValue syntaxes are more complicated than that.
+ * multiple times into the set. That is, if the value is a SET OF INTEGERs, then
+ * having same value repeated is wrong: (1, 1), but different values is OK: (1,
+ * 2). Normally the AttributeValue syntaxes are more complicated than that.
  * <p>
  * General rule of Attribute usage is that the {@link Attributes} containers
  * must not have multiple Attribute:s with same attrType (OID) there.
  */
-public class Attribute
-    extends ASN1Object
-{
-    private ASN1ObjectIdentifier attrType;
-    private ASN1Set             attrValues;
+public class Attribute extends ASN1Object {
+	private ASN1ObjectIdentifier attrType;
+	private ASN1Set attrValues;
 
-    /**
-     * Return an Attribute object from the given object.
-     * <p>
-     * Accepted inputs:
-     * <ul>
-     * <li> null &rarr; null
-     * <li> {@link Attribute} object
-     * <li> {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object) ASN1Sequence} input formats with Attribute structure inside
-     * </ul>
-     *
-     * @param o the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static Attribute getInstance(
-        Object o)
-    {
-        if (o instanceof Attribute)
-        {
-            return (Attribute)o;
-        }
-        
-        if (o != null)
-        {
-            return new Attribute(ASN1Sequence.getInstance(o));
-        }
+	/**
+	 * Return an Attribute object from the given object.
+	 * <p>
+	 * Accepted inputs:
+	 * <ul>
+	 * <li>null &rarr; null
+	 * <li> {@link Attribute} object
+	 * <li>
+	 * {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object)
+	 * ASN1Sequence} input formats with Attribute structure inside
+	 * </ul>
+	 * 
+	 * @param o
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static Attribute getInstance(Object o) {
+		if (o instanceof Attribute) {
+			return (Attribute) o;
+		}
 
-        return null;
-    }
-    
-    private Attribute(
-        ASN1Sequence seq)
-    {
-        attrType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
-        attrValues = (ASN1Set)seq.getObjectAt(1);
-    }
+		if (o != null) {
+			return new Attribute(ASN1Sequence.getInstance(o));
+		}
 
-    /**
-     * @deprecated use ASN1ObjectIdentifier
-     */
-    public Attribute(
-        DERObjectIdentifier attrType,
-        ASN1Set             attrValues)
-    {
-        this.attrType = new ASN1ObjectIdentifier(attrType.getId());
-        this.attrValues = attrValues;
-    }
+		return null;
+	}
 
-    public Attribute(
-        ASN1ObjectIdentifier attrType,
-        ASN1Set             attrValues)
-    {
-        this.attrType = attrType;
-        this.attrValues = attrValues;
-    }
+	private Attribute(ASN1Sequence seq) {
+		attrType = (ASN1ObjectIdentifier) seq.getObjectAt(0);
+		attrValues = (ASN1Set) seq.getObjectAt(1);
+	}
 
-    public ASN1ObjectIdentifier getAttrType()
-    {
-        return attrType;
-    }
-    
-    public ASN1Set getAttrValues()
-    {
-        return attrValues;
-    }
+	/**
+	 * @deprecated use ASN1ObjectIdentifier
+	 */
+	public Attribute(DERObjectIdentifier attrType, ASN1Set attrValues) {
+		this.attrType = new ASN1ObjectIdentifier(attrType.getId());
+		this.attrValues = attrValues;
+	}
 
-    public ASN1Encodable[] getAttributeValues()
-    {
-        return attrValues.toArray();
-    }
+	public Attribute(ASN1ObjectIdentifier attrType, ASN1Set attrValues) {
+		this.attrType = attrType;
+		this.attrValues = attrValues;
+	}
 
-    /** 
-     * Produce an object suitable for an ASN1OutputStream.
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	public ASN1ObjectIdentifier getAttrType() {
+		return attrType;
+	}
 
-        v.add(attrType);
-        v.add(attrValues);
+	public ASN1Set getAttrValues() {
+		return attrValues;
+	}
 
-        return new DERSequence(v);
-    }
+	public ASN1Encodable[] getAttributeValues() {
+		return attrValues.toArray();
+	}
+
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(attrType);
+		v.add(attrValues);
+
+		return new DERSequence(v);
+	}
 }

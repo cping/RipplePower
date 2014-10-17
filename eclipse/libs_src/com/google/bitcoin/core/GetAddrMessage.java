@@ -17,14 +17,15 @@
 package com.google.bitcoin.core;
 
 /**
- * Represents the "getaddr" P2P protocol message, which requests network {@link AddressMessage}s from a peer. Not to
- * be confused with {@link Address} which is sort of like an account number.
+ * Represents the "getaddr" P2P protocol message, which requests network
+ * {@link AddressMessage}s from a peer. Not to be confused with {@link Address}
+ * which is sort of like an account number.
  */
 public class GetAddrMessage extends EmptyMessage {
-    private static final long serialVersionUID = 6204437624599661503L;
+	private static final long serialVersionUID = 6204437624599661503L;
 
-    public GetAddrMessage(NetworkParameters params) {
-        super(params);
-    }
+	public GetAddrMessage(NetworkParameters params) {
+		super(params);
+	}
 
 }

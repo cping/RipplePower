@@ -25,132 +25,93 @@ import org.ripple.bouncycastle.jce.interfaces.ElGamalPublicKey;
 import org.ripple.bouncycastle.jce.spec.ElGamalPrivateKeySpec;
 import org.ripple.bouncycastle.jce.spec.ElGamalPublicKeySpec;
 
-public class KeyFactorySpi
-    extends BaseKeyFactorySpi
-{
-    public KeyFactorySpi()
-    {
-    }
+public class KeyFactorySpi extends BaseKeyFactorySpi {
+	public KeyFactorySpi() {
+	}
 
-    protected PrivateKey engineGeneratePrivate(
-        KeySpec keySpec)
-        throws InvalidKeySpecException
-    {
-        if (keySpec instanceof ElGamalPrivateKeySpec)
-        {
-            return new BCElGamalPrivateKey((ElGamalPrivateKeySpec)keySpec);
-        }
-        else if (keySpec instanceof DHPrivateKeySpec)
-        {
-            return new BCElGamalPrivateKey((DHPrivateKeySpec)keySpec);
-        }
+	protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
+			throws InvalidKeySpecException {
+		if (keySpec instanceof ElGamalPrivateKeySpec) {
+			return new BCElGamalPrivateKey((ElGamalPrivateKeySpec) keySpec);
+		} else if (keySpec instanceof DHPrivateKeySpec) {
+			return new BCElGamalPrivateKey((DHPrivateKeySpec) keySpec);
+		}
 
-        return super.engineGeneratePrivate(keySpec);
-    }
+		return super.engineGeneratePrivate(keySpec);
+	}
 
-    protected PublicKey engineGeneratePublic(
-        KeySpec keySpec)
-        throws InvalidKeySpecException
-    {
-        if (keySpec instanceof ElGamalPublicKeySpec)
-        {
-            return new BCElGamalPublicKey((ElGamalPublicKeySpec)keySpec);
-        }
-        else if (keySpec instanceof DHPublicKeySpec)
-        {
-            return new BCElGamalPublicKey((DHPublicKeySpec)keySpec);
-        }
-        return super.engineGeneratePublic(keySpec);
-    }
+	protected PublicKey engineGeneratePublic(KeySpec keySpec)
+			throws InvalidKeySpecException {
+		if (keySpec instanceof ElGamalPublicKeySpec) {
+			return new BCElGamalPublicKey((ElGamalPublicKeySpec) keySpec);
+		} else if (keySpec instanceof DHPublicKeySpec) {
+			return new BCElGamalPublicKey((DHPublicKeySpec) keySpec);
+		}
+		return super.engineGeneratePublic(keySpec);
+	}
 
-    protected KeySpec engineGetKeySpec(
-        Key key,
-        Class spec)
-        throws InvalidKeySpecException
-    {
-        if (spec.isAssignableFrom(DHPrivateKeySpec.class) && key instanceof DHPrivateKey)
-        {
-            DHPrivateKey k = (DHPrivateKey)key;
+	protected KeySpec engineGetKeySpec(Key key, Class spec)
+			throws InvalidKeySpecException {
+		if (spec.isAssignableFrom(DHPrivateKeySpec.class)
+				&& key instanceof DHPrivateKey) {
+			DHPrivateKey k = (DHPrivateKey) key;
 
-            return new DHPrivateKeySpec(k.getX(), k.getParams().getP(), k.getParams().getG());
-        }
-        else if (spec.isAssignableFrom(DHPublicKeySpec.class) && key instanceof DHPublicKey)
-        {
-            DHPublicKey k = (DHPublicKey)key;
+			return new DHPrivateKeySpec(k.getX(), k.getParams().getP(), k
+					.getParams().getG());
+		} else if (spec.isAssignableFrom(DHPublicKeySpec.class)
+				&& key instanceof DHPublicKey) {
+			DHPublicKey k = (DHPublicKey) key;
 
-            return new DHPublicKeySpec(k.getY(), k.getParams().getP(), k.getParams().getG());
-        }
+			return new DHPublicKeySpec(k.getY(), k.getParams().getP(), k
+					.getParams().getG());
+		}
 
-        return super.engineGetKeySpec(key, spec);
-    }
+		return super.engineGetKeySpec(key, spec);
+	}
 
-    protected Key engineTranslateKey(
-        Key key)
-        throws InvalidKeyException
-    {
-        if (key instanceof DHPublicKey)
-        {
-            return new BCElGamalPublicKey((DHPublicKey)key);
-        }
-        else if (key instanceof DHPrivateKey)
-        {
-            return new BCElGamalPrivateKey((DHPrivateKey)key);
-        }
-        else if (key instanceof ElGamalPublicKey)
-        {
-            return new BCElGamalPublicKey((ElGamalPublicKey)key);
-        }
-        else if (key instanceof ElGamalPrivateKey)
-        {
-            return new BCElGamalPrivateKey((ElGamalPrivateKey)key);
-        }
+	protected Key engineTranslateKey(Key key) throws InvalidKeyException {
+		if (key instanceof DHPublicKey) {
+			return new BCElGamalPublicKey((DHPublicKey) key);
+		} else if (key instanceof DHPrivateKey) {
+			return new BCElGamalPrivateKey((DHPrivateKey) key);
+		} else if (key instanceof ElGamalPublicKey) {
+			return new BCElGamalPublicKey((ElGamalPublicKey) key);
+		} else if (key instanceof ElGamalPrivateKey) {
+			return new BCElGamalPrivateKey((ElGamalPrivateKey) key);
+		}
 
-        throw new InvalidKeyException("key type unknown");
-    }
+		throw new InvalidKeyException("key type unknown");
+	}
 
-    public PrivateKey generatePrivate(PrivateKeyInfo info)
-        throws IOException
-    {
-        ASN1ObjectIdentifier algOid = info.getPrivateKeyAlgorithm().getAlgorithm();
+	public PrivateKey generatePrivate(PrivateKeyInfo info) throws IOException {
+		ASN1ObjectIdentifier algOid = info.getPrivateKeyAlgorithm()
+				.getAlgorithm();
 
-        if (algOid.equals(PKCSObjectIdentifiers.dhKeyAgreement))
-        {
-            return new BCElGamalPrivateKey(info);
-        }
-        else if (algOid.equals(X9ObjectIdentifiers.dhpublicnumber))
-        {
-            return new BCElGamalPrivateKey(info);
-        }
-        else if (algOid.equals(OIWObjectIdentifiers.elGamalAlgorithm))
-        {
-            return new BCElGamalPrivateKey(info);
-        }
-        else
-        {
-            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
-        }
-    }
+		if (algOid.equals(PKCSObjectIdentifiers.dhKeyAgreement)) {
+			return new BCElGamalPrivateKey(info);
+		} else if (algOid.equals(X9ObjectIdentifiers.dhpublicnumber)) {
+			return new BCElGamalPrivateKey(info);
+		} else if (algOid.equals(OIWObjectIdentifiers.elGamalAlgorithm)) {
+			return new BCElGamalPrivateKey(info);
+		} else {
+			throw new IOException("algorithm identifier " + algOid
+					+ " in key not recognised");
+		}
+	}
 
-    public PublicKey generatePublic(SubjectPublicKeyInfo info)
-        throws IOException
-    {
-        ASN1ObjectIdentifier algOid = info.getAlgorithm().getAlgorithm();
+	public PublicKey generatePublic(SubjectPublicKeyInfo info)
+			throws IOException {
+		ASN1ObjectIdentifier algOid = info.getAlgorithm().getAlgorithm();
 
-        if (algOid.equals(PKCSObjectIdentifiers.dhKeyAgreement))
-        {
-            return new BCElGamalPublicKey(info);
-        }
-        else if (algOid.equals(X9ObjectIdentifiers.dhpublicnumber))
-        {
-            return new BCElGamalPublicKey(info);
-        }
-        else if (algOid.equals(OIWObjectIdentifiers.elGamalAlgorithm))
-        {
-            return new BCElGamalPublicKey(info);
-        }
-        else
-        {
-            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
-        }
-    }
+		if (algOid.equals(PKCSObjectIdentifiers.dhKeyAgreement)) {
+			return new BCElGamalPublicKey(info);
+		} else if (algOid.equals(X9ObjectIdentifiers.dhpublicnumber)) {
+			return new BCElGamalPublicKey(info);
+		} else if (algOid.equals(OIWObjectIdentifiers.elGamalAlgorithm)) {
+			return new BCElGamalPublicKey(info);
+		} else {
+			throw new IOException("algorithm identifier " + algOid
+					+ " in key not recognised");
+		}
+	}
 }

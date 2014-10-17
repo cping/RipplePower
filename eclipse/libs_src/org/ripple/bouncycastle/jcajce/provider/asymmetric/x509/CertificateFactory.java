@@ -28,368 +28,291 @@ import org.ripple.bouncycastle.asn1.x509.CertificateList;
 /**
  * class for dealing with X509 certificates.
  * <p>
- * At the moment this will deal with "-----BEGIN CERTIFICATE-----" to "-----END CERTIFICATE-----"
- * base 64 encoded certs, as well as the BER binaries of certificates and some classes of PKCS#7
- * objects.
+ * At the moment this will deal with "-----BEGIN CERTIFICATE-----" to
+ * "-----END CERTIFICATE-----" base 64 encoded certs, as well as the BER
+ * binaries of certificates and some classes of PKCS#7 objects.
  */
-public class CertificateFactory
-    extends CertificateFactorySpi
-{
-    private static final PEMUtil PEM_CERT_PARSER = new PEMUtil("CERTIFICATE");
-    private static final PEMUtil PEM_CRL_PARSER = new PEMUtil("CRL");
+public class CertificateFactory extends CertificateFactorySpi {
+	private static final PEMUtil PEM_CERT_PARSER = new PEMUtil("CERTIFICATE");
+	private static final PEMUtil PEM_CRL_PARSER = new PEMUtil("CRL");
 
-    private ASN1Set sData = null;
-    private int                sDataObjectCount = 0;
-    private InputStream currentStream = null;
-    
-    private ASN1Set sCrlData = null;
-    private int                sCrlDataObjectCount = 0;
-    private InputStream currentCrlStream = null;
+	private ASN1Set sData = null;
+	private int sDataObjectCount = 0;
+	private InputStream currentStream = null;
 
-    private java.security.cert.Certificate readDERCertificate(
-        ASN1InputStream dIn)
-        throws IOException, CertificateParsingException
-    {
-        ASN1Sequence seq = (ASN1Sequence)dIn.readObject();
+	private ASN1Set sCrlData = null;
+	private int sCrlDataObjectCount = 0;
+	private InputStream currentCrlStream = null;
 
-        if (seq.size() > 1
-                && seq.getObjectAt(0) instanceof ASN1ObjectIdentifier)
-        {
-            if (seq.getObjectAt(0).equals(PKCSObjectIdentifiers.signedData))
-            {
-                sData = SignedData.getInstance(ASN1Sequence.getInstance(
-                    (ASN1TaggedObject)seq.getObjectAt(1), true)).getCertificates();
+	private java.security.cert.Certificate readDERCertificate(
+			ASN1InputStream dIn) throws IOException,
+			CertificateParsingException {
+		ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
 
-                return getCertificate();
-            }
-        }
+		if (seq.size() > 1
+				&& seq.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
+			if (seq.getObjectAt(0).equals(PKCSObjectIdentifiers.signedData)) {
+				sData = SignedData.getInstance(
+						ASN1Sequence.getInstance(
+								(ASN1TaggedObject) seq.getObjectAt(1), true))
+						.getCertificates();
 
-        return new X509CertificateObject(
-                            Certificate.getInstance(seq));
-    }
+				return getCertificate();
+			}
+		}
 
-    private java.security.cert.Certificate getCertificate()
-        throws CertificateParsingException
-    {
-        if (sData != null)
-        {
-            while (sDataObjectCount < sData.size())
-            {
-                Object obj = sData.getObjectAt(sDataObjectCount++);
+		return new X509CertificateObject(Certificate.getInstance(seq));
+	}
 
-                if (obj instanceof ASN1Sequence)
-                {
-                   return new X509CertificateObject(
-                                    Certificate.getInstance(obj));
-                }
-            }
-        }
+	private java.security.cert.Certificate getCertificate()
+			throws CertificateParsingException {
+		if (sData != null) {
+			while (sDataObjectCount < sData.size()) {
+				Object obj = sData.getObjectAt(sDataObjectCount++);
 
-        return null;
-    }
+				if (obj instanceof ASN1Sequence) {
+					return new X509CertificateObject(
+							Certificate.getInstance(obj));
+				}
+			}
+		}
 
-    private java.security.cert.Certificate readPEMCertificate(
-        InputStream in)
-        throws IOException, CertificateParsingException
-    {
-        ASN1Sequence seq = PEM_CERT_PARSER.readPEMObject(in);
+		return null;
+	}
 
-        if (seq != null)
-        {
-            return new X509CertificateObject(
-                            Certificate.getInstance(seq));
-        }
+	private java.security.cert.Certificate readPEMCertificate(InputStream in)
+			throws IOException, CertificateParsingException {
+		ASN1Sequence seq = PEM_CERT_PARSER.readPEMObject(in);
 
-        return null;
-    }
+		if (seq != null) {
+			return new X509CertificateObject(Certificate.getInstance(seq));
+		}
 
-    protected CRL createCRL(CertificateList c)
-    throws CRLException
-    {
-        return new X509CRLObject(c);
-    }
-    
-    private CRL readPEMCRL(
-        InputStream in)
-        throws IOException, CRLException
-    {
-        ASN1Sequence seq = PEM_CRL_PARSER.readPEMObject(in);
+		return null;
+	}
 
-        if (seq != null)
-        {
-            return createCRL(
-                            CertificateList.getInstance(seq));
-        }
+	protected CRL createCRL(CertificateList c) throws CRLException {
+		return new X509CRLObject(c);
+	}
 
-        return null;
-    }
+	private CRL readPEMCRL(InputStream in) throws IOException, CRLException {
+		ASN1Sequence seq = PEM_CRL_PARSER.readPEMObject(in);
 
-    private CRL readDERCRL(
-        ASN1InputStream aIn)
-        throws IOException, CRLException
-    {
-        ASN1Sequence seq = (ASN1Sequence)aIn.readObject();
+		if (seq != null) {
+			return createCRL(CertificateList.getInstance(seq));
+		}
 
-        if (seq.size() > 1
-                && seq.getObjectAt(0) instanceof ASN1ObjectIdentifier)
-        {
-            if (seq.getObjectAt(0).equals(PKCSObjectIdentifiers.signedData))
-            {
-                sCrlData = SignedData.getInstance(ASN1Sequence.getInstance(
-                    (ASN1TaggedObject)seq.getObjectAt(1), true)).getCRLs();
-    
-                return getCRL();
-            }
-        }
+		return null;
+	}
 
-        return createCRL(
-                     CertificateList.getInstance(seq));
-    }
+	private CRL readDERCRL(ASN1InputStream aIn) throws IOException,
+			CRLException {
+		ASN1Sequence seq = (ASN1Sequence) aIn.readObject();
 
-    private CRL getCRL()
-        throws CRLException
-    {
-        if (sCrlData == null || sCrlDataObjectCount >= sCrlData.size())
-        {
-            return null;
-        }
+		if (seq.size() > 1
+				&& seq.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
+			if (seq.getObjectAt(0).equals(PKCSObjectIdentifiers.signedData)) {
+				sCrlData = SignedData.getInstance(
+						ASN1Sequence.getInstance(
+								(ASN1TaggedObject) seq.getObjectAt(1), true))
+						.getCRLs();
 
-        return createCRL(
-                            CertificateList.getInstance(
-                                sCrlData.getObjectAt(sCrlDataObjectCount++)));
-    }
+				return getCRL();
+			}
+		}
 
-    /**
-     * Generates a certificate object and initializes it with the data
-     * read from the input stream inStream.
-     */
-    public java.security.cert.Certificate engineGenerateCertificate(
-        InputStream in)
-        throws CertificateException
-    {
-        if (currentStream == null)
-        {
-            currentStream = in;
-            sData = null;
-            sDataObjectCount = 0;
-        }
-        else if (currentStream != in) // reset if input stream has changed
-        {
-            currentStream = in;
-            sData = null;
-            sDataObjectCount = 0;
-        }
+		return createCRL(CertificateList.getInstance(seq));
+	}
 
-        try
-        {
-            if (sData != null)
-            {
-                if (sDataObjectCount != sData.size())
-                {
-                    return getCertificate();
-                }
-                else
-                {
-                    sData = null;
-                    sDataObjectCount = 0;
-                    return null;
-                }
-            }
+	private CRL getCRL() throws CRLException {
+		if (sCrlData == null || sCrlDataObjectCount >= sCrlData.size()) {
+			return null;
+		}
 
-            PushbackInputStream pis = new PushbackInputStream(in);
-            int tag = pis.read();
+		return createCRL(CertificateList.getInstance(sCrlData
+				.getObjectAt(sCrlDataObjectCount++)));
+	}
 
-            if (tag == -1)
-            {
-                return null;
-            }
+	/**
+	 * Generates a certificate object and initializes it with the data read from
+	 * the input stream inStream.
+	 */
+	public java.security.cert.Certificate engineGenerateCertificate(
+			InputStream in) throws CertificateException {
+		if (currentStream == null) {
+			currentStream = in;
+			sData = null;
+			sDataObjectCount = 0;
+		} else if (currentStream != in) // reset if input stream has changed
+		{
+			currentStream = in;
+			sData = null;
+			sDataObjectCount = 0;
+		}
 
-            pis.unread(tag);
+		try {
+			if (sData != null) {
+				if (sDataObjectCount != sData.size()) {
+					return getCertificate();
+				} else {
+					sData = null;
+					sDataObjectCount = 0;
+					return null;
+				}
+			}
 
-            if (tag != 0x30)  // assume ascii PEM encoded.
-            {
-                return readPEMCertificate(pis);
-            }
-            else
-            {
-                return readDERCertificate(new ASN1InputStream(pis));
-            }
-        }
-        catch (Exception e)
-        {
-            throw new ExCertificateException(e);
-        }
-    }
+			PushbackInputStream pis = new PushbackInputStream(in);
+			int tag = pis.read();
 
-    /**
-     * Returns a (possibly empty) collection view of the certificates
-     * read from the given input stream inStream.
-     */
-    public Collection engineGenerateCertificates(
-        InputStream inStream)
-        throws CertificateException
-    {
-        java.security.cert.Certificate     cert;
-        List certs = new ArrayList();
+			if (tag == -1) {
+				return null;
+			}
 
-        while ((cert = engineGenerateCertificate(inStream)) != null)
-        {
-            certs.add(cert);
-        }
+			pis.unread(tag);
 
-        return certs;
-    }
+			if (tag != 0x30) // assume ascii PEM encoded.
+			{
+				return readPEMCertificate(pis);
+			} else {
+				return readDERCertificate(new ASN1InputStream(pis));
+			}
+		} catch (Exception e) {
+			throw new ExCertificateException(e);
+		}
+	}
 
-    /**
-     * Generates a certificate revocation list (CRL) object and initializes
-     * it with the data read from the input stream inStream.
-     */
-    public CRL engineGenerateCRL(
-        InputStream inStream)
-        throws CRLException
-    {
-        if (currentCrlStream == null)
-        {
-            currentCrlStream = inStream;
-            sCrlData = null;
-            sCrlDataObjectCount = 0;
-        }
-        else if (currentCrlStream != inStream) // reset if input stream has changed
-        {
-            currentCrlStream = inStream;
-            sCrlData = null;
-            sCrlDataObjectCount = 0;
-        }
+	/**
+	 * Returns a (possibly empty) collection view of the certificates read from
+	 * the given input stream inStream.
+	 */
+	public Collection engineGenerateCertificates(InputStream inStream)
+			throws CertificateException {
+		java.security.cert.Certificate cert;
+		List certs = new ArrayList();
 
-        try
-        {
-            if (sCrlData != null)
-            {
-                if (sCrlDataObjectCount != sCrlData.size())
-                {
-                    return getCRL();
-                }
-                else
-                {
-                    sCrlData = null;
-                    sCrlDataObjectCount = 0;
-                    return null;
-                }
-            }
+		while ((cert = engineGenerateCertificate(inStream)) != null) {
+			certs.add(cert);
+		}
 
-            PushbackInputStream pis = new PushbackInputStream(inStream);
-            int tag = pis.read();
+		return certs;
+	}
 
-            if (tag == -1)
-            {
-                return null;
-            }
+	/**
+	 * Generates a certificate revocation list (CRL) object and initializes it
+	 * with the data read from the input stream inStream.
+	 */
+	public CRL engineGenerateCRL(InputStream inStream) throws CRLException {
+		if (currentCrlStream == null) {
+			currentCrlStream = inStream;
+			sCrlData = null;
+			sCrlDataObjectCount = 0;
+		} else if (currentCrlStream != inStream) // reset if input stream has
+													// changed
+		{
+			currentCrlStream = inStream;
+			sCrlData = null;
+			sCrlDataObjectCount = 0;
+		}
 
-            pis.unread(tag);
+		try {
+			if (sCrlData != null) {
+				if (sCrlDataObjectCount != sCrlData.size()) {
+					return getCRL();
+				} else {
+					sCrlData = null;
+					sCrlDataObjectCount = 0;
+					return null;
+				}
+			}
 
-            if (tag != 0x30)  // assume ascii PEM encoded.
-            {
-                return readPEMCRL(pis);
-            }
-            else
-            {       // lazy evaluate to help processing of large CRLs
-                return readDERCRL(new ASN1InputStream(pis, true));
-            }
-        }
-        catch (CRLException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new CRLException(e.toString());
-        }
-    }
+			PushbackInputStream pis = new PushbackInputStream(inStream);
+			int tag = pis.read();
 
-    /**
-     * Returns a (possibly empty) collection view of the CRLs read from
-     * the given input stream inStream.
-     *
-     * The inStream may contain a sequence of DER-encoded CRLs, or
-     * a PKCS#7 CRL set.  This is a PKCS#7 SignedData object, with the
-     * only signficant field being crls.  In particular the signature
-     * and the contents are ignored.
-     */
-    public Collection engineGenerateCRLs(
-        InputStream inStream)
-        throws CRLException
-    {
-        CRL crl;
-        List crls = new ArrayList();
+			if (tag == -1) {
+				return null;
+			}
 
-        while ((crl = engineGenerateCRL(inStream)) != null)
-        {
-            crls.add(crl);
-        }
+			pis.unread(tag);
 
-        return crls;
-    }
+			if (tag != 0x30) // assume ascii PEM encoded.
+			{
+				return readPEMCRL(pis);
+			} else { // lazy evaluate to help processing of large CRLs
+				return readDERCRL(new ASN1InputStream(pis, true));
+			}
+		} catch (CRLException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new CRLException(e.toString());
+		}
+	}
 
-    public Iterator engineGetCertPathEncodings()
-    {
-        return PKIXCertPath.certPathEncodings.iterator();
-    }
+	/**
+	 * Returns a (possibly empty) collection view of the CRLs read from the
+	 * given input stream inStream.
+	 * 
+	 * The inStream may contain a sequence of DER-encoded CRLs, or a PKCS#7 CRL
+	 * set. This is a PKCS#7 SignedData object, with the only signficant field
+	 * being crls. In particular the signature and the contents are ignored.
+	 */
+	public Collection engineGenerateCRLs(InputStream inStream)
+			throws CRLException {
+		CRL crl;
+		List crls = new ArrayList();
 
-    public CertPath engineGenerateCertPath(
-        InputStream inStream)
-        throws CertificateException
-    {
-        return engineGenerateCertPath(inStream, "PkiPath");
-    }
+		while ((crl = engineGenerateCRL(inStream)) != null) {
+			crls.add(crl);
+		}
 
-    public CertPath engineGenerateCertPath(
-        InputStream inStream,
-        String encoding)
-        throws CertificateException
-    {
-        return new PKIXCertPath(inStream, encoding);
-    }
+		return crls;
+	}
 
-    public CertPath engineGenerateCertPath(
-        List certificates)
-        throws CertificateException
-    {
-        Iterator iter = certificates.iterator();
-        Object obj;
-        while (iter.hasNext())
-        {
-            obj = iter.next();
-            if (obj != null)
-            {
-                if (!(obj instanceof X509Certificate))
-                {
-                    throw new CertificateException("list contains non X509Certificate object while creating CertPath\n" + obj.toString());
-                }
-            }
-        }
-        return new PKIXCertPath(certificates);
-    }
+	public Iterator engineGetCertPathEncodings() {
+		return PKIXCertPath.certPathEncodings.iterator();
+	}
 
-    private class ExCertificateException
-        extends CertificateException
-    {
-        private Throwable cause;
+	public CertPath engineGenerateCertPath(InputStream inStream)
+			throws CertificateException {
+		return engineGenerateCertPath(inStream, "PkiPath");
+	}
 
-        public ExCertificateException(Throwable cause)
-        {
-            this.cause = cause;
-        }
+	public CertPath engineGenerateCertPath(InputStream inStream, String encoding)
+			throws CertificateException {
+		return new PKIXCertPath(inStream, encoding);
+	}
 
-        public ExCertificateException(String msg, Throwable cause)
-        {
-            super(msg);
+	public CertPath engineGenerateCertPath(List certificates)
+			throws CertificateException {
+		Iterator iter = certificates.iterator();
+		Object obj;
+		while (iter.hasNext()) {
+			obj = iter.next();
+			if (obj != null) {
+				if (!(obj instanceof X509Certificate)) {
+					throw new CertificateException(
+							"list contains non X509Certificate object while creating CertPath\n"
+									+ obj.toString());
+				}
+			}
+		}
+		return new PKIXCertPath(certificates);
+	}
 
-            this.cause = cause;
-        }
+	private class ExCertificateException extends CertificateException {
+		private Throwable cause;
 
-        public Throwable getCause()
-        {
-            return cause;
-        }
-    }
+		public ExCertificateException(Throwable cause) {
+			this.cause = cause;
+		}
+
+		public ExCertificateException(String msg, Throwable cause) {
+			super(msg);
+
+			this.cause = cause;
+		}
+
+		public Throwable getCause() {
+			return cause;
+		}
+	}
 }

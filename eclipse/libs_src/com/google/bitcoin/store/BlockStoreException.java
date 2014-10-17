@@ -17,14 +17,15 @@
 package com.google.bitcoin.store;
 
 /**
- * Thrown when something goes wrong with storing a block. Examples: out of disk space.
+ * Thrown when something goes wrong with storing a block. Examples: out of disk
+ * space.
  */
 public class BlockStoreException extends Exception {
-    public BlockStoreException(String message) {
-        super(message);
-    }
+	public BlockStoreException(String message) {
+		super(message);
+	}
 
-    public BlockStoreException(Throwable t) {
-        super(t);
-    }
+	public BlockStoreException(Throwable t) {
+		super(t);
+	}
 }

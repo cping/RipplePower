@@ -6,65 +6,56 @@ import org.ripple.bouncycastle.asn1.ASN1Primitive;
 import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class ProtectedPart
-    extends ASN1Object
-{
-    private PKIHeader header;
-    private PKIBody body;
+public class ProtectedPart extends ASN1Object {
+	private PKIHeader header;
+	private PKIBody body;
 
-    private ProtectedPart(ASN1Sequence seq)
-    {
-        header = PKIHeader.getInstance(seq.getObjectAt(0));
-        body = PKIBody.getInstance(seq.getObjectAt(1));
-    }
+	private ProtectedPart(ASN1Sequence seq) {
+		header = PKIHeader.getInstance(seq.getObjectAt(0));
+		body = PKIBody.getInstance(seq.getObjectAt(1));
+	}
 
-    public static ProtectedPart getInstance(Object o)
-    {
-        if (o instanceof ProtectedPart)
-        {
-            return (ProtectedPart)o;
-        }
+	public static ProtectedPart getInstance(Object o) {
+		if (o instanceof ProtectedPart) {
+			return (ProtectedPart) o;
+		}
 
-        if (o != null)
-        {
-            return new ProtectedPart(ASN1Sequence.getInstance(o));
-        }
+		if (o != null) {
+			return new ProtectedPart(ASN1Sequence.getInstance(o));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public ProtectedPart(PKIHeader header, PKIBody body)
-    {
-        this.header = header;
-        this.body = body;
-    }
+	public ProtectedPart(PKIHeader header, PKIBody body) {
+		this.header = header;
+		this.body = body;
+	}
 
-    public PKIHeader getHeader()
-    {
-        return header;
-    }
+	public PKIHeader getHeader() {
+		return header;
+	}
 
-    public PKIBody getBody()
-    {
-        return body;
-    }
+	public PKIBody getBody() {
+		return body;
+	}
 
-    /**
-     * <pre>
-     * ProtectedPart ::= SEQUENCE {
-     *                    header    PKIHeader,
-     *                    body      PKIBody
-     * }
-     * </pre>
-     * @return a basic ASN.1 object representation.
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	/**
+	 * <pre>
+	 * ProtectedPart ::= SEQUENCE {
+	 *                    header    PKIHeader,
+	 *                    body      PKIBody
+	 * }
+	 * </pre>
+	 * 
+	 * @return a basic ASN.1 object representation.
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(header);
-        v.add(body);
+		v.add(header);
+		v.add(body);
 
-        return new DERSequence(v);
-    }
+		return new DERSequence(v);
+	}
 }

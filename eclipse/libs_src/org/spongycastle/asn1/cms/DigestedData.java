@@ -11,8 +11,10 @@ import org.spongycastle.asn1.BERSequence;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.x509.AlgorithmIdentifier;
 
-/** 
- * <a href="http://tools.ietf.org/html/rfc5652#section-7">RFC 5652</a> DigestedData object.
+/**
+ * <a href="http://tools.ietf.org/html/rfc5652#section-7">RFC 5652</a>
+ * DigestedData object.
+ * 
  * <pre>
  * DigestedData ::= SEQUENCE {
  *       version CMSVersion,
@@ -21,108 +23,98 @@ import org.spongycastle.asn1.x509.AlgorithmIdentifier;
  *       digest Digest }
  * </pre>
  */
-public class DigestedData
-    extends ASN1Object
-{
-    private ASN1Integer           version;
-    private AlgorithmIdentifier  digestAlgorithm;
-    private ContentInfo          encapContentInfo;
-    private ASN1OctetString      digest;
+public class DigestedData extends ASN1Object {
+	private ASN1Integer version;
+	private AlgorithmIdentifier digestAlgorithm;
+	private ContentInfo encapContentInfo;
+	private ASN1OctetString digest;
 
-    public DigestedData(
-        AlgorithmIdentifier digestAlgorithm,
-        ContentInfo encapContentInfo,
-        byte[]      digest)
-    {
-        this.version = new ASN1Integer(0);
-        this.digestAlgorithm = digestAlgorithm;
-        this.encapContentInfo = encapContentInfo;
-        this.digest = new DEROctetString(digest);
-    }
+	public DigestedData(AlgorithmIdentifier digestAlgorithm,
+			ContentInfo encapContentInfo, byte[] digest) {
+		this.version = new ASN1Integer(0);
+		this.digestAlgorithm = digestAlgorithm;
+		this.encapContentInfo = encapContentInfo;
+		this.digest = new DEROctetString(digest);
+	}
 
-    private DigestedData(
-        ASN1Sequence seq)
-    {
-        this.version = (ASN1Integer)seq.getObjectAt(0);
-        this.digestAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(1));
-        this.encapContentInfo = ContentInfo.getInstance(seq.getObjectAt(2));
-        this.digest = ASN1OctetString.getInstance(seq.getObjectAt(3));
-    }
+	private DigestedData(ASN1Sequence seq) {
+		this.version = (ASN1Integer) seq.getObjectAt(0);
+		this.digestAlgorithm = AlgorithmIdentifier.getInstance(seq
+				.getObjectAt(1));
+		this.encapContentInfo = ContentInfo.getInstance(seq.getObjectAt(2));
+		this.digest = ASN1OctetString.getInstance(seq.getObjectAt(3));
+	}
 
-    /**
-     * Return a DigestedData object from a tagged object.
-     *
-     * @param ato the tagged object holding the object we want.
-     * @param isExplicit true if the object is meant to be explicitly
-     *              tagged false otherwise.
-     * @exception IllegalArgumentException if the object held by the
-     *          tagged object cannot be converted.
-     */
-    public static DigestedData getInstance(
-        ASN1TaggedObject ato,
-        boolean isExplicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(ato, isExplicit));
-    }
-    
-    /**
-     * Return a DigestedData object from the given object.
-     * <p>
-     * Accepted inputs:
-     * <ul>
-     * <li> null &rarr; null
-     * <li> {@link DigestedData} object
-     * <li> {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object) ASN1Sequence} input formats
-     * </ul>
-     *
-     * @param obj the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static DigestedData getInstance(
-        Object obj)
-    {
-        if (obj instanceof DigestedData)
-        {
-            return (DigestedData)obj;
-        }
-        
-        if (obj != null)
-        {
-            return new DigestedData(ASN1Sequence.getInstance(obj));
-        }
-        
-        return null;
-    }
+	/**
+	 * Return a DigestedData object from a tagged object.
+	 * 
+	 * @param ato
+	 *            the tagged object holding the object we want.
+	 * @param isExplicit
+	 *            true if the object is meant to be explicitly tagged false
+	 *            otherwise.
+	 * @exception IllegalArgumentException
+	 *                if the object held by the tagged object cannot be
+	 *                converted.
+	 */
+	public static DigestedData getInstance(ASN1TaggedObject ato,
+			boolean isExplicit) {
+		return getInstance(ASN1Sequence.getInstance(ato, isExplicit));
+	}
 
-    public ASN1Integer getVersion()
-    {
-        return version;
-    }
+	/**
+	 * Return a DigestedData object from the given object.
+	 * <p>
+	 * Accepted inputs:
+	 * <ul>
+	 * <li>null &rarr; null
+	 * <li> {@link DigestedData} object
+	 * <li>
+	 * {@link org.spongycastle.asn1.ASN1Sequence#getInstance(java.lang.Object)
+	 * ASN1Sequence} input formats
+	 * </ul>
+	 * 
+	 * @param obj
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static DigestedData getInstance(Object obj) {
+		if (obj instanceof DigestedData) {
+			return (DigestedData) obj;
+		}
 
-    public AlgorithmIdentifier getDigestAlgorithm()
-    {
-        return digestAlgorithm;
-    }
+		if (obj != null) {
+			return new DigestedData(ASN1Sequence.getInstance(obj));
+		}
 
-    public ContentInfo getEncapContentInfo()
-    {
-        return encapContentInfo;
-    }
+		return null;
+	}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	public ASN1Integer getVersion() {
+		return version;
+	}
 
-        v.add(version);
-        v.add(digestAlgorithm);
-        v.add(encapContentInfo);
-        v.add(digest);
+	public AlgorithmIdentifier getDigestAlgorithm() {
+		return digestAlgorithm;
+	}
 
-        return new BERSequence(v);
-    }
+	public ContentInfo getEncapContentInfo() {
+		return encapContentInfo;
+	}
 
-    public byte[] getDigest()
-    {
-        return digest.getOctets();
-    }
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(version);
+		v.add(digestAlgorithm);
+		v.add(encapContentInfo);
+		v.add(digest);
+
+		return new BERSequence(v);
+	}
+
+	public byte[] getDigest() {
+		return digest.getOctets();
+	}
 }

@@ -25,229 +25,200 @@ import org.ripple.bouncycastle.jce.spec.GOST3410ParameterSpec;
 import org.ripple.bouncycastle.jce.spec.GOST3410PrivateKeySpec;
 import org.ripple.bouncycastle.jce.spec.GOST3410PublicKeyParameterSetSpec;
 
-public class BCGOST3410PrivateKey
-    implements GOST3410PrivateKey, PKCS12BagAttributeCarrier
-{
-    static final long serialVersionUID = 8581661527592305464L;
+public class BCGOST3410PrivateKey implements GOST3410PrivateKey,
+		PKCS12BagAttributeCarrier {
+	static final long serialVersionUID = 8581661527592305464L;
 
-    private BigInteger          x;
+	private BigInteger x;
 
-    private transient   GOST3410Params      gost3410Spec;
-    private transient   PKCS12BagAttributeCarrier attrCarrier = new PKCS12BagAttributeCarrierImpl();
+	private transient GOST3410Params gost3410Spec;
+	private transient PKCS12BagAttributeCarrier attrCarrier = new PKCS12BagAttributeCarrierImpl();
 
-    protected BCGOST3410PrivateKey()
-    {
-    }
+	protected BCGOST3410PrivateKey() {
+	}
 
-    BCGOST3410PrivateKey(
-        GOST3410PrivateKey key)
-    {
-        this.x = key.getX();
-        this.gost3410Spec = key.getParameters();
-    }
+	BCGOST3410PrivateKey(GOST3410PrivateKey key) {
+		this.x = key.getX();
+		this.gost3410Spec = key.getParameters();
+	}
 
-    BCGOST3410PrivateKey(
-        GOST3410PrivateKeySpec spec)
-    {
-        this.x = spec.getX();
-        this.gost3410Spec = new GOST3410ParameterSpec(new GOST3410PublicKeyParameterSetSpec(spec.getP(), spec.getQ(), spec.getA()));
-    }
+	BCGOST3410PrivateKey(GOST3410PrivateKeySpec spec) {
+		this.x = spec.getX();
+		this.gost3410Spec = new GOST3410ParameterSpec(
+				new GOST3410PublicKeyParameterSetSpec(spec.getP(), spec.getQ(),
+						spec.getA()));
+	}
 
-    BCGOST3410PrivateKey(
-        PrivateKeyInfo info)
-        throws IOException
-    {
-        GOST3410PublicKeyAlgParameters    params = new GOST3410PublicKeyAlgParameters((ASN1Sequence)info.getAlgorithmId().getParameters());
-        ASN1OctetString      derX = ASN1OctetString.getInstance(info.parsePrivateKey());
-        byte[]              keyEnc = derX.getOctets();
-        byte[]              keyBytes = new byte[keyEnc.length];
-        
-        for (int i = 0; i != keyEnc.length; i++)
-        {
-            keyBytes[i] = keyEnc[keyEnc.length - 1 - i]; // was little endian
-        }
-        
-        this.x = new BigInteger(1, keyBytes);
-        this.gost3410Spec = GOST3410ParameterSpec.fromPublicKeyAlg(params);
-    }
+	BCGOST3410PrivateKey(PrivateKeyInfo info) throws IOException {
+		GOST3410PublicKeyAlgParameters params = new GOST3410PublicKeyAlgParameters(
+				(ASN1Sequence) info.getAlgorithmId().getParameters());
+		ASN1OctetString derX = ASN1OctetString.getInstance(info
+				.parsePrivateKey());
+		byte[] keyEnc = derX.getOctets();
+		byte[] keyBytes = new byte[keyEnc.length];
 
-    BCGOST3410PrivateKey(
-        GOST3410PrivateKeyParameters params,
-        GOST3410ParameterSpec spec)
-    {
-        this.x = params.getX();
-        this.gost3410Spec = spec;
+		for (int i = 0; i != keyEnc.length; i++) {
+			keyBytes[i] = keyEnc[keyEnc.length - 1 - i]; // was little endian
+		}
 
-        if (spec == null) 
-        {
-            throw new IllegalArgumentException("spec is null");
-        }
-    }
+		this.x = new BigInteger(1, keyBytes);
+		this.gost3410Spec = GOST3410ParameterSpec.fromPublicKeyAlg(params);
+	}
 
-    public String getAlgorithm()
-    {
-        return "GOST3410";
-    }
+	BCGOST3410PrivateKey(GOST3410PrivateKeyParameters params,
+			GOST3410ParameterSpec spec) {
+		this.x = params.getX();
+		this.gost3410Spec = spec;
 
-    /**
-     * return the encoding format we produce in getEncoded().
-     *
-     * @return the string "PKCS#8"
-     */
-    public String getFormat()
-    {
-        return "PKCS#8";
-    }
+		if (spec == null) {
+			throw new IllegalArgumentException("spec is null");
+		}
+	}
 
-    /**
-     * Return a PKCS8 representation of the key. The sequence returned
-     * represents a full PrivateKeyInfo object.
-     *
-     * @return a PKCS8 representation of the key.
-     */
-    public byte[] getEncoded()
-    {
-        PrivateKeyInfo          info;
-        byte[]                  keyEnc = this.getX().toByteArray();
-        byte[]                  keyBytes;
+	public String getAlgorithm() {
+		return "GOST3410";
+	}
 
-        if (keyEnc[0] == 0)
-        {
-            keyBytes = new byte[keyEnc.length - 1];
-        }
-        else
-        {
-            keyBytes = new byte[keyEnc.length];
-        }
-        
-        for (int i = 0; i != keyBytes.length; i++)
-        {
-            keyBytes[i] = keyEnc[keyEnc.length - 1 - i]; // must be little endian
-        }
+	/**
+	 * return the encoding format we produce in getEncoded().
+	 * 
+	 * @return the string "PKCS#8"
+	 */
+	public String getFormat() {
+		return "PKCS#8";
+	}
 
-        try
-        {
-            if (gost3410Spec instanceof GOST3410ParameterSpec)
-            {
-                info = new PrivateKeyInfo(new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3410_94, new GOST3410PublicKeyAlgParameters(new ASN1ObjectIdentifier(gost3410Spec.getPublicKeyParamSetOID()), new ASN1ObjectIdentifier(gost3410Spec.getDigestParamSetOID()))), new DEROctetString(keyBytes));
-            }
-            else
-            {
-                info = new PrivateKeyInfo(new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3410_94), new DEROctetString(keyBytes));
-            }
+	/**
+	 * Return a PKCS8 representation of the key. The sequence returned
+	 * represents a full PrivateKeyInfo object.
+	 * 
+	 * @return a PKCS8 representation of the key.
+	 */
+	public byte[] getEncoded() {
+		PrivateKeyInfo info;
+		byte[] keyEnc = this.getX().toByteArray();
+		byte[] keyBytes;
 
-            return info.getEncoded(ASN1Encoding.DER);
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-    }
+		if (keyEnc[0] == 0) {
+			keyBytes = new byte[keyEnc.length - 1];
+		} else {
+			keyBytes = new byte[keyEnc.length];
+		}
 
-    public GOST3410Params getParameters()
-    {
-        return gost3410Spec;
-    }
+		for (int i = 0; i != keyBytes.length; i++) {
+			keyBytes[i] = keyEnc[keyEnc.length - 1 - i]; // must be little
+															// endian
+		}
 
-    public BigInteger getX()
-    {
-        return x;
-    }
+		try {
+			if (gost3410Spec instanceof GOST3410ParameterSpec) {
+				info = new PrivateKeyInfo(new AlgorithmIdentifier(
+						CryptoProObjectIdentifiers.gostR3410_94,
+						new GOST3410PublicKeyAlgParameters(
+								new ASN1ObjectIdentifier(gost3410Spec
+										.getPublicKeyParamSetOID()),
+								new ASN1ObjectIdentifier(gost3410Spec
+										.getDigestParamSetOID()))),
+						new DEROctetString(keyBytes));
+			} else {
+				info = new PrivateKeyInfo(new AlgorithmIdentifier(
+						CryptoProObjectIdentifiers.gostR3410_94),
+						new DEROctetString(keyBytes));
+			}
 
-    public boolean equals(
-        Object o)
-    {
-        if (!(o instanceof GOST3410PrivateKey))
-        {
-            return false;
-        }
+			return info.getEncoded(ASN1Encoding.DER);
+		} catch (IOException e) {
+			return null;
+		}
+	}
 
-        GOST3410PrivateKey other = (GOST3410PrivateKey)o;
+	public GOST3410Params getParameters() {
+		return gost3410Spec;
+	}
 
-        return this.getX().equals(other.getX())
-            && this.getParameters().getPublicKeyParameters().equals(other.getParameters().getPublicKeyParameters())
-            && this.getParameters().getDigestParamSetOID().equals(other.getParameters().getDigestParamSetOID())
-            && compareObj(this.getParameters().getEncryptionParamSetOID(), other.getParameters().getEncryptionParamSetOID());
-    }
+	public BigInteger getX() {
+		return x;
+	}
 
-    private boolean compareObj(Object o1, Object o2)
-    {
-        if (o1 == o2)
-        {
-            return true;
-        }
+	public boolean equals(Object o) {
+		if (!(o instanceof GOST3410PrivateKey)) {
+			return false;
+		}
 
-        if (o1 == null)
-        {
-            return false;
-        }
+		GOST3410PrivateKey other = (GOST3410PrivateKey) o;
 
-        return o1.equals(o2);
-    }
+		return this.getX().equals(other.getX())
+				&& this.getParameters().getPublicKeyParameters()
+						.equals(other.getParameters().getPublicKeyParameters())
+				&& this.getParameters().getDigestParamSetOID()
+						.equals(other.getParameters().getDigestParamSetOID())
+				&& compareObj(this.getParameters().getEncryptionParamSetOID(),
+						other.getParameters().getEncryptionParamSetOID());
+	}
 
-    public int hashCode()
-    {
-        return this.getX().hashCode() ^ gost3410Spec.hashCode();
-    }
+	private boolean compareObj(Object o1, Object o2) {
+		if (o1 == o2) {
+			return true;
+		}
 
-    public void setBagAttribute(
-        ASN1ObjectIdentifier oid,
-        ASN1Encodable        attribute)
-    {
-        attrCarrier.setBagAttribute(oid, attribute);
-    }
+		if (o1 == null) {
+			return false;
+		}
 
-    public ASN1Encodable getBagAttribute(
-        ASN1ObjectIdentifier oid)
-    {
-        return attrCarrier.getBagAttribute(oid);
-    }
+		return o1.equals(o2);
+	}
 
-    public Enumeration getBagAttributeKeys()
-    {
-        return attrCarrier.getBagAttributeKeys();
-    }
+	public int hashCode() {
+		return this.getX().hashCode() ^ gost3410Spec.hashCode();
+	}
 
-    private void readObject(
-        ObjectInputStream in)
-        throws IOException, ClassNotFoundException
-    {
-        in.defaultReadObject();
+	public void setBagAttribute(ASN1ObjectIdentifier oid,
+			ASN1Encodable attribute) {
+		attrCarrier.setBagAttribute(oid, attribute);
+	}
 
-        String publicKeyParamSetOID = (String)in.readObject();
-        if (publicKeyParamSetOID != null)
-        {
-            this.gost3410Spec = new GOST3410ParameterSpec(publicKeyParamSetOID, (String)in.readObject(), (String)in.readObject());
-        }
-        else
-        {
-            this.gost3410Spec = new GOST3410ParameterSpec(new GOST3410PublicKeyParameterSetSpec((BigInteger)in.readObject(), (BigInteger)in.readObject(), (BigInteger)in.readObject()));
-            in.readObject();
-            in.readObject();
-        }
-        this.attrCarrier = new PKCS12BagAttributeCarrierImpl();
-    }
+	public ASN1Encodable getBagAttribute(ASN1ObjectIdentifier oid) {
+		return attrCarrier.getBagAttribute(oid);
+	}
 
-    private void writeObject(
-        ObjectOutputStream out)
-        throws IOException
-    {
-        out.defaultWriteObject();
+	public Enumeration getBagAttributeKeys() {
+		return attrCarrier.getBagAttributeKeys();
+	}
 
-        if (gost3410Spec.getPublicKeyParamSetOID() != null)
-        {
-            out.writeObject(gost3410Spec.getPublicKeyParamSetOID());
-            out.writeObject(gost3410Spec.getDigestParamSetOID());
-            out.writeObject(gost3410Spec.getEncryptionParamSetOID());
-        }
-        else
-        {
-            out.writeObject(null);
-            out.writeObject(gost3410Spec.getPublicKeyParameters().getP());
-            out.writeObject(gost3410Spec.getPublicKeyParameters().getQ());
-            out.writeObject(gost3410Spec.getPublicKeyParameters().getA());
-            out.writeObject(gost3410Spec.getDigestParamSetOID());
-            out.writeObject(gost3410Spec.getEncryptionParamSetOID());
-        }
-    }
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+
+		String publicKeyParamSetOID = (String) in.readObject();
+		if (publicKeyParamSetOID != null) {
+			this.gost3410Spec = new GOST3410ParameterSpec(publicKeyParamSetOID,
+					(String) in.readObject(), (String) in.readObject());
+		} else {
+			this.gost3410Spec = new GOST3410ParameterSpec(
+					new GOST3410PublicKeyParameterSetSpec(
+							(BigInteger) in.readObject(),
+							(BigInteger) in.readObject(),
+							(BigInteger) in.readObject()));
+			in.readObject();
+			in.readObject();
+		}
+		this.attrCarrier = new PKCS12BagAttributeCarrierImpl();
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+
+		if (gost3410Spec.getPublicKeyParamSetOID() != null) {
+			out.writeObject(gost3410Spec.getPublicKeyParamSetOID());
+			out.writeObject(gost3410Spec.getDigestParamSetOID());
+			out.writeObject(gost3410Spec.getEncryptionParamSetOID());
+		} else {
+			out.writeObject(null);
+			out.writeObject(gost3410Spec.getPublicKeyParameters().getP());
+			out.writeObject(gost3410Spec.getPublicKeyParameters().getQ());
+			out.writeObject(gost3410Spec.getPublicKeyParameters().getA());
+			out.writeObject(gost3410Spec.getDigestParamSetOID());
+			out.writeObject(gost3410Spec.getEncryptionParamSetOID());
+		}
+	}
 }

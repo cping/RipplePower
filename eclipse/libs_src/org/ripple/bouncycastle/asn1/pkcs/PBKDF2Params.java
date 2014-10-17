@@ -12,97 +12,73 @@ import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DEROctetString;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class PBKDF2Params
-    extends ASN1Object
-{
-    private ASN1OctetString octStr;
-    private ASN1Integer      iterationCount;
-    private ASN1Integer      keyLength;
+public class PBKDF2Params extends ASN1Object {
+	private ASN1OctetString octStr;
+	private ASN1Integer iterationCount;
+	private ASN1Integer keyLength;
 
-    public static PBKDF2Params getInstance(
-        Object  obj)
-    {
-        if (obj instanceof PBKDF2Params)
-        {
-            return (PBKDF2Params)obj;
-        }
+	public static PBKDF2Params getInstance(Object obj) {
+		if (obj instanceof PBKDF2Params) {
+			return (PBKDF2Params) obj;
+		}
 
-        if (obj != null)
-        {
-            return new PBKDF2Params(ASN1Sequence.getInstance(obj));
-        }
+		if (obj != null) {
+			return new PBKDF2Params(ASN1Sequence.getInstance(obj));
+		}
 
-        return null;
-    }
-    
-    public PBKDF2Params(
-        byte[]  salt,
-        int     iterationCount)
-    {
-        this.octStr = new DEROctetString(salt);
-        this.iterationCount = new ASN1Integer(iterationCount);
-    }
+		return null;
+	}
 
-    public PBKDF2Params(
-        byte[]  salt,
-        int     iterationCount,
-        int     keyLength)
-    {
-        this(salt, iterationCount);
+	public PBKDF2Params(byte[] salt, int iterationCount) {
+		this.octStr = new DEROctetString(salt);
+		this.iterationCount = new ASN1Integer(iterationCount);
+	}
 
-        this.keyLength = new ASN1Integer(keyLength);
-    }
+	public PBKDF2Params(byte[] salt, int iterationCount, int keyLength) {
+		this(salt, iterationCount);
 
-    private PBKDF2Params(
-        ASN1Sequence  seq)
-    {
-        Enumeration e = seq.getObjects();
+		this.keyLength = new ASN1Integer(keyLength);
+	}
 
-        octStr = (ASN1OctetString)e.nextElement();
-        iterationCount = (ASN1Integer)e.nextElement();
+	private PBKDF2Params(ASN1Sequence seq) {
+		Enumeration e = seq.getObjects();
 
-        if (e.hasMoreElements())
-        {
-            keyLength = (ASN1Integer)e.nextElement();
-        }
-        else
-        {
-            keyLength = null;
-        }
-    }
+		octStr = (ASN1OctetString) e.nextElement();
+		iterationCount = (ASN1Integer) e.nextElement();
 
-    public byte[] getSalt()
-    {
-        return octStr.getOctets();
-    }
+		if (e.hasMoreElements()) {
+			keyLength = (ASN1Integer) e.nextElement();
+		} else {
+			keyLength = null;
+		}
+	}
 
-    public BigInteger getIterationCount()
-    {
-        return iterationCount.getValue();
-    }
+	public byte[] getSalt() {
+		return octStr.getOctets();
+	}
 
-    public BigInteger getKeyLength()
-    {
-        if (keyLength != null)
-        {
-            return keyLength.getValue();
-        }
+	public BigInteger getIterationCount() {
+		return iterationCount.getValue();
+	}
 
-        return null;
-    }
+	public BigInteger getKeyLength() {
+		if (keyLength != null) {
+			return keyLength.getValue();
+		}
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+		return null;
+	}
 
-        v.add(octStr);
-        v.add(iterationCount);
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        if (keyLength != null)
-        {
-            v.add(keyLength);
-        }
+		v.add(octStr);
+		v.add(iterationCount);
 
-        return new DERSequence(v);
-    }
+		if (keyLength != null) {
+			v.add(keyLength);
+		}
+
+		return new DERSequence(v);
+	}
 }

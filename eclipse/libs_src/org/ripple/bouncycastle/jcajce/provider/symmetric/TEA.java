@@ -8,55 +8,41 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseKeyGenerator;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 
-public final class TEA
-{
-    private TEA()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new TEAEngine());
-        }
-    }
+public final class TEA {
+	private TEA() {
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("TEA", 128, new CipherKeyGenerator());
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new TEAEngine());
+		}
+	}
 
-    public static class AlgParams
-        extends IvAlgorithmParameters
-    {
-        protected String engineToString()
-        {
-            return "TEA IV";
-        }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("TEA", 128, new CipherKeyGenerator());
+		}
+	}
 
-    public static class Mappings
-        extends AlgorithmProvider
-    {
-        private static final String PREFIX = TEA.class.getName();
+	public static class AlgParams extends IvAlgorithmParameters {
+		protected String engineToString() {
+			return "TEA IV";
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class Mappings extends AlgorithmProvider {
+		private static final String PREFIX = TEA.class.getName();
 
-        public void configure(ConfigurableProvider provider)
-        {
+		public Mappings() {
+		}
 
-            provider.addAlgorithm("Cipher.TEA", PREFIX + "$ECB");
-            provider.addAlgorithm("KeyGenerator.TEA", PREFIX + "$KeyGen");
-            provider.addAlgorithm("AlgorithmParameters.TEA", PREFIX + "$AlgParams");
+		public void configure(ConfigurableProvider provider) {
 
-        }
-    }
+			provider.addAlgorithm("Cipher.TEA", PREFIX + "$ECB");
+			provider.addAlgorithm("KeyGenerator.TEA", PREFIX + "$KeyGen");
+			provider.addAlgorithm("AlgorithmParameters.TEA", PREFIX
+					+ "$AlgParams");
+
+		}
+	}
 }

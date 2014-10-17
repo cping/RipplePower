@@ -3,36 +3,29 @@ package com.ripple.core.enums;
 import java.util.TreeMap;
 
 public enum LedgerEntryType {
-    Invalid (-1),
-    AccountRoot ('a'),
-    DirectoryNode('d'),
-    GeneratorMap ('g'),
-    RippleState ('r'),
-    Nickname ('n'),
-    Offer ('o'),
-    Contract ('c'),
-    LedgerHashes ('h'),
-    EnabledFeatures('f'),
-    FeeSettings ('s');
+	Invalid(-1), AccountRoot('a'), DirectoryNode('d'), GeneratorMap('g'), RippleState(
+			'r'), Nickname('n'), Offer('o'), Contract('c'), LedgerHashes('h'), EnabledFeatures(
+			'f'), FeeSettings('s');
 
-    final int ord;
-    LedgerEntryType(int i) {
-        ord = i;
-    }
+	final int ord;
 
-    static private TreeMap<Integer, LedgerEntryType> byCode = new TreeMap<Integer, LedgerEntryType>();
-    static {
-        for (Object a : LedgerEntryType.values()) {
-            LedgerEntryType f = (LedgerEntryType) a;
-            byCode.put(f.ord, f);
-        }
-    }
+	LedgerEntryType(int i) {
+		ord = i;
+	}
 
-    public static LedgerEntryType fromNumber(Number i) {
-        return byCode.get(i.intValue());
-    }
+	static private TreeMap<Integer, LedgerEntryType> byCode = new TreeMap<Integer, LedgerEntryType>();
+	static {
+		for (Object a : LedgerEntryType.values()) {
+			LedgerEntryType f = (LedgerEntryType) a;
+			byCode.put(f.ord, f);
+		}
+	}
 
-    public Integer asInteger() {
-        return ord;
-    }
+	public static LedgerEntryType fromNumber(Number i) {
+		return byCode.get(i.intValue());
+	}
+
+	public Integer asInteger() {
+		return ord;
+	}
 }

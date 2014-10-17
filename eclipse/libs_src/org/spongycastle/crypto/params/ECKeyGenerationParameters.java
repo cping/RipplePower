@@ -4,22 +4,17 @@ import java.security.SecureRandom;
 
 import org.spongycastle.crypto.KeyGenerationParameters;
 
-public class ECKeyGenerationParameters
-    extends KeyGenerationParameters
-{
-    private ECDomainParameters  domainParams;
+public class ECKeyGenerationParameters extends KeyGenerationParameters {
+	private ECDomainParameters domainParams;
 
-    public ECKeyGenerationParameters(
-        ECDomainParameters      domainParams,
-        SecureRandom            random)
-    {
-        super(random, domainParams.getN().bitLength());
+	public ECKeyGenerationParameters(ECDomainParameters domainParams,
+			SecureRandom random) {
+		super(random, domainParams.getN().bitLength());
 
-        this.domainParams = domainParams;
-    }
+		this.domainParams = domainParams;
+	}
 
-    public ECDomainParameters getDomainParameters()
-    {
-        return domainParams;
-    }
+	public ECDomainParameters getDomainParameters() {
+		return domainParams;
+	}
 }

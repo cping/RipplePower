@@ -4,7 +4,9 @@ import com.ripple.core.coretypes.hash.prefixes.Prefix;
 import com.ripple.core.serialized.BytesSink;
 
 abstract public class ShaMapItem<T> {
-    abstract void toBytesSink(BytesSink sink);
-    public abstract ShaMapItem<T> copy();
-    public abstract Prefix hashPrefix();
+	abstract void toBytesSink(BytesSink sink);
+
+	public abstract ShaMapItem<T> copy();
+
+	public abstract Prefix hashPrefix();
 }

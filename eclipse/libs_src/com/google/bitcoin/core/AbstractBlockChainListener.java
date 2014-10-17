@@ -22,26 +22,30 @@ import java.util.List;
  * Default no-op implementation of {@link BlockChainListener}.
  */
 public class AbstractBlockChainListener implements BlockChainListener {
-    @Override
-    public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
-    }
+	@Override
+	public void notifyNewBestBlock(StoredBlock block)
+			throws VerificationException {
+	}
 
-    @Override
-    public void reorganize(StoredBlock splitPoint, List<StoredBlock> oldBlocks, List<StoredBlock> newBlocks) throws VerificationException {
-    }
+	@Override
+	public void reorganize(StoredBlock splitPoint, List<StoredBlock> oldBlocks,
+			List<StoredBlock> newBlocks) throws VerificationException {
+	}
 
-    @Override
-    public boolean isTransactionRelevant(Transaction tx) throws ScriptException {
-        return false;
-    }
+	@Override
+	public boolean isTransactionRelevant(Transaction tx) throws ScriptException {
+		return false;
+	}
 
-    @Override
-    public void receiveFromBlock(Transaction tx, StoredBlock block, BlockChain.NewBlockType blockType,
-                                 int relativityOffset) throws VerificationException {
-    }
+	@Override
+	public void receiveFromBlock(Transaction tx, StoredBlock block,
+			BlockChain.NewBlockType blockType, int relativityOffset)
+			throws VerificationException {
+	}
 
-    @Override
-    public void notifyTransactionIsInBlock(Sha256Hash txHash, StoredBlock block, BlockChain.NewBlockType blockType,
-                                           int relativityOffset) throws VerificationException {
-    }
+	@Override
+	public void notifyTransactionIsInBlock(Sha256Hash txHash,
+			StoredBlock block, BlockChain.NewBlockType blockType,
+			int relativityOffset) throws VerificationException {
+	}
 }

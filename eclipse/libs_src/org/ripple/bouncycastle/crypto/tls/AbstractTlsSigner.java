@@ -1,13 +1,10 @@
 package org.ripple.bouncycastle.crypto.tls;
 
-public abstract class AbstractTlsSigner
-    implements TlsSigner
-{
+public abstract class AbstractTlsSigner implements TlsSigner {
 
-    protected TlsContext context;
+	protected TlsContext context;
 
-    public void init(TlsContext context)
-    {
-        this.context = context;
-    }
+	public void init(TlsContext context) {
+		this.context = context;
+	}
 }

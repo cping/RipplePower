@@ -11,163 +11,131 @@ import org.ripple.bouncycastle.asn1.DERNull;
 import org.ripple.bouncycastle.asn1.DERObjectIdentifier;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class AlgorithmIdentifier
-    extends ASN1Object
-{
-    private ASN1ObjectIdentifier objectId;
-    private ASN1Encodable       parameters;
-    private boolean             parametersDefined = false;
+public class AlgorithmIdentifier extends ASN1Object {
+	private ASN1ObjectIdentifier objectId;
+	private ASN1Encodable parameters;
+	private boolean parametersDefined = false;
 
-    public static AlgorithmIdentifier getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(obj, explicit));
-    }
-    
-    public static AlgorithmIdentifier getInstance(
-        Object  obj)
-    {
-        if (obj== null || obj instanceof AlgorithmIdentifier)
-        {
-            return (AlgorithmIdentifier)obj;
-        }
+	public static AlgorithmIdentifier getInstance(ASN1TaggedObject obj,
+			boolean explicit) {
+		return getInstance(ASN1Sequence.getInstance(obj, explicit));
+	}
 
-        // TODO: delete
-        if (obj instanceof ASN1ObjectIdentifier)
-        {
-            return new AlgorithmIdentifier((ASN1ObjectIdentifier)obj);
-        }
+	public static AlgorithmIdentifier getInstance(Object obj) {
+		if (obj == null || obj instanceof AlgorithmIdentifier) {
+			return (AlgorithmIdentifier) obj;
+		}
 
-        // TODO: delete
-        if (obj instanceof String)
-        {
-            return new AlgorithmIdentifier((String)obj);
-        }
+		// TODO: delete
+		if (obj instanceof ASN1ObjectIdentifier) {
+			return new AlgorithmIdentifier((ASN1ObjectIdentifier) obj);
+		}
 
-        return new AlgorithmIdentifier(ASN1Sequence.getInstance(obj));
-    }
+		// TODO: delete
+		if (obj instanceof String) {
+			return new AlgorithmIdentifier((String) obj);
+		}
 
-    public AlgorithmIdentifier(
-        ASN1ObjectIdentifier     objectId)
-    {
-        this.objectId = objectId;
-    }
+		return new AlgorithmIdentifier(ASN1Sequence.getInstance(obj));
+	}
 
-    /**
-     * @deprecated use ASN1ObjectIdentifier
-     * @param objectId
-     */
-    public AlgorithmIdentifier(
-        String     objectId)
-    {
-        this.objectId = new ASN1ObjectIdentifier(objectId);
-    }
+	public AlgorithmIdentifier(ASN1ObjectIdentifier objectId) {
+		this.objectId = objectId;
+	}
 
-    /**
-     * @deprecated use ASN1ObjectIdentifier
-     * @param objectId
-     */
-    public AlgorithmIdentifier(
-        DERObjectIdentifier    objectId)
-    {
-        this.objectId = new ASN1ObjectIdentifier(objectId.getId());
-    }
+	/**
+	 * @deprecated use ASN1ObjectIdentifier
+	 * @param objectId
+	 */
+	public AlgorithmIdentifier(String objectId) {
+		this.objectId = new ASN1ObjectIdentifier(objectId);
+	}
 
-    /**
-     * @deprecated use ASN1ObjectIdentifier
-     * @param objectId
-     * @param parameters
-     */
-    public AlgorithmIdentifier(
-        DERObjectIdentifier objectId,
-        ASN1Encodable           parameters)
-    {
-        parametersDefined = true;
-        this.objectId = new ASN1ObjectIdentifier(objectId.getId());
-        this.parameters = parameters;
-    }
+	/**
+	 * @deprecated use ASN1ObjectIdentifier
+	 * @param objectId
+	 */
+	public AlgorithmIdentifier(DERObjectIdentifier objectId) {
+		this.objectId = new ASN1ObjectIdentifier(objectId.getId());
+	}
 
-    public AlgorithmIdentifier(
-        ASN1ObjectIdentifier     objectId,
-        ASN1Encodable           parameters)
-    {
-        parametersDefined = true;
-        this.objectId = objectId;
-        this.parameters = parameters;
-    }
+	/**
+	 * @deprecated use ASN1ObjectIdentifier
+	 * @param objectId
+	 * @param parameters
+	 */
+	public AlgorithmIdentifier(DERObjectIdentifier objectId,
+			ASN1Encodable parameters) {
+		parametersDefined = true;
+		this.objectId = new ASN1ObjectIdentifier(objectId.getId());
+		this.parameters = parameters;
+	}
 
-    /**
-     * @deprecated use AlgorithmIdentifier.getInstance()
-     * @param seq
-     */
-    public AlgorithmIdentifier(
-        ASN1Sequence   seq)
-    {
-        if (seq.size() < 1 || seq.size() > 2)
-        {
-            throw new IllegalArgumentException("Bad sequence size: "
-                    + seq.size());
-        }
-        
-        objectId = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+	public AlgorithmIdentifier(ASN1ObjectIdentifier objectId,
+			ASN1Encodable parameters) {
+		parametersDefined = true;
+		this.objectId = objectId;
+		this.parameters = parameters;
+	}
 
-        if (seq.size() == 2)
-        {
-            parametersDefined = true;
-            parameters = seq.getObjectAt(1);
-        }
-        else
-        {
-            parameters = null;
-        }
-    }
+	/**
+	 * @deprecated use AlgorithmIdentifier.getInstance()
+	 * @param seq
+	 */
+	public AlgorithmIdentifier(ASN1Sequence seq) {
+		if (seq.size() < 1 || seq.size() > 2) {
+			throw new IllegalArgumentException("Bad sequence size: "
+					+ seq.size());
+		}
 
-    public ASN1ObjectIdentifier getAlgorithm()
-    {
-        return new ASN1ObjectIdentifier(objectId.getId());
-    }
+		objectId = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
 
-    /**
-     * @deprecated use getAlgorithm
-     * @return
-     */
-    public ASN1ObjectIdentifier getObjectId()
-    {
-        return objectId;
-    }
+		if (seq.size() == 2) {
+			parametersDefined = true;
+			parameters = seq.getObjectAt(1);
+		} else {
+			parameters = null;
+		}
+	}
 
-    public ASN1Encodable getParameters()
-    {
-        return parameters;
-    }
+	public ASN1ObjectIdentifier getAlgorithm() {
+		return new ASN1ObjectIdentifier(objectId.getId());
+	}
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     *      AlgorithmIdentifier ::= SEQUENCE {
-     *                            algorithm OBJECT IDENTIFIER,
-     *                            parameters ANY DEFINED BY algorithm OPTIONAL }
-     * </pre>
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	/**
+	 * @deprecated use getAlgorithm
+	 * @return
+	 */
+	public ASN1ObjectIdentifier getObjectId() {
+		return objectId;
+	}
 
-        v.add(objectId);
+	public ASN1Encodable getParameters() {
+		return parameters;
+	}
 
-        if (parametersDefined)
-        {
-            if (parameters != null)
-            {
-                v.add(parameters);
-            }
-            else
-            {
-                v.add(DERNull.INSTANCE);
-            }
-        }
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * 
+	 * <pre>
+	 *      AlgorithmIdentifier ::= SEQUENCE {
+	 *                            algorithm OBJECT IDENTIFIER,
+	 *                            parameters ANY DEFINED BY algorithm OPTIONAL }
+	 * </pre>
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        return new DERSequence(v);
-    }
+		v.add(objectId);
+
+		if (parametersDefined) {
+			if (parameters != null) {
+				v.add(parameters);
+			} else {
+				v.add(DERNull.INSTANCE);
+			}
+		}
+
+		return new DERSequence(v);
+	}
 }

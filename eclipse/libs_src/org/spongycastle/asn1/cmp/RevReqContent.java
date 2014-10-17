@@ -6,68 +6,57 @@ import org.spongycastle.asn1.ASN1Primitive;
 import org.spongycastle.asn1.ASN1Sequence;
 import org.spongycastle.asn1.DERSequence;
 
-public class RevReqContent
-    extends ASN1Object
-{
-    private ASN1Sequence content;
+public class RevReqContent extends ASN1Object {
+	private ASN1Sequence content;
 
-    private RevReqContent(ASN1Sequence seq)
-    {
-        content = seq;
-    }
+	private RevReqContent(ASN1Sequence seq) {
+		content = seq;
+	}
 
-    public static RevReqContent getInstance(Object o)
-    {
-        if (o instanceof RevReqContent)
-        {
-            return (RevReqContent)o;
-        }
+	public static RevReqContent getInstance(Object o) {
+		if (o instanceof RevReqContent) {
+			return (RevReqContent) o;
+		}
 
-        if (o != null)
-        {
-            return new RevReqContent(ASN1Sequence.getInstance(o));
-        }
+		if (o != null) {
+			return new RevReqContent(ASN1Sequence.getInstance(o));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public RevReqContent(RevDetails revDetails)
-    {
-        this.content = new DERSequence(revDetails);
-    }
+	public RevReqContent(RevDetails revDetails) {
+		this.content = new DERSequence(revDetails);
+	}
 
-    public RevReqContent(RevDetails[] revDetailsArray)
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	public RevReqContent(RevDetails[] revDetailsArray) {
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-        for (int i = 0; i != revDetailsArray.length; i++)
-        {
-            v.add(revDetailsArray[i]);
-        }
+		for (int i = 0; i != revDetailsArray.length; i++) {
+			v.add(revDetailsArray[i]);
+		}
 
-        this.content = new DERSequence(v);
-    }
+		this.content = new DERSequence(v);
+	}
 
-    public RevDetails[] toRevDetailsArray()
-    {
-        RevDetails[] result = new RevDetails[content.size()];
+	public RevDetails[] toRevDetailsArray() {
+		RevDetails[] result = new RevDetails[content.size()];
 
-        for (int i = 0; i != result.length; i++)
-        {
-            result[i] = RevDetails.getInstance(content.getObjectAt(i));
-        }
+		for (int i = 0; i != result.length; i++) {
+			result[i] = RevDetails.getInstance(content.getObjectAt(i));
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     * <pre>
-     * RevReqContent ::= SEQUENCE OF RevDetails
-     * </pre>
-     * @return a basic ASN.1 object representation.
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        return content;
-    }
+	/**
+	 * <pre>
+	 * RevReqContent ::= SEQUENCE OF RevDetails
+	 * </pre>
+	 * 
+	 * @return a basic ASN.1 object representation.
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		return content;
+	}
 }

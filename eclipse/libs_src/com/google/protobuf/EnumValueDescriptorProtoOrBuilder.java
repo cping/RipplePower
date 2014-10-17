@@ -3,45 +3,49 @@
 
 package com.google.protobuf;
 
-public interface EnumValueDescriptorProtoOrBuilder
-    extends com.google.protobuf.MessageOrBuilder {
+public interface EnumValueDescriptorProtoOrBuilder extends
+		com.google.protobuf.MessageOrBuilder {
 
-  // optional string name = 1;
-  /**
-   * <code>optional string name = 1;</code>
-   */
-  boolean hasName();
-  /**
-   * <code>optional string name = 1;</code>
-   */
-  java.lang.String getName();
-  /**
-   * <code>optional string name = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getNameBytes();
+	// optional string name = 1;
+	/**
+	 * <code>optional string name = 1;</code>
+	 */
+	boolean hasName();
 
-  // optional int32 number = 2;
-  /**
-   * <code>optional int32 number = 2;</code>
-   */
-  boolean hasNumber();
-  /**
-   * <code>optional int32 number = 2;</code>
-   */
-  int getNumber();
+	/**
+	 * <code>optional string name = 1;</code>
+	 */
+	java.lang.String getName();
 
-  // optional .google.protobuf.EnumValueOptions options = 3;
-  /**
-   * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
-   */
-  boolean hasOptions();
-  /**
-   * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
-   */
-  com.google.protobuf.EnumValueOptions getOptions();
-  /**
-   * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
-   */
-  com.google.protobuf.EnumValueOptionsOrBuilder getOptionsOrBuilder();
+	/**
+	 * <code>optional string name = 1;</code>
+	 */
+	com.google.protobuf.ByteString getNameBytes();
+
+	// optional int32 number = 2;
+	/**
+	 * <code>optional int32 number = 2;</code>
+	 */
+	boolean hasNumber();
+
+	/**
+	 * <code>optional int32 number = 2;</code>
+	 */
+	int getNumber();
+
+	// optional .google.protobuf.EnumValueOptions options = 3;
+	/**
+	 * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
+	 */
+	boolean hasOptions();
+
+	/**
+	 * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
+	 */
+	com.google.protobuf.EnumValueOptions getOptions();
+
+	/**
+	 * <code>optional .google.protobuf.EnumValueOptions options = 3;</code>
+	 */
+	com.google.protobuf.EnumValueOptionsOrBuilder getOptionsOrBuilder();
 }

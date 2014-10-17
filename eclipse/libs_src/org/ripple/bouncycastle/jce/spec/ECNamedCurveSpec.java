@@ -9,113 +9,85 @@ import java.security.spec.EllipticCurve;
 import org.ripple.bouncycastle.math.ec.ECCurve;
 
 /**
- * specification signifying that the curve parameters can also be
- * referred to by name.
+ * specification signifying that the curve parameters can also be referred to by
+ * name.
  */
-public class ECNamedCurveSpec
-    extends java.security.spec.ECParameterSpec
-{
-    private String  name;
+public class ECNamedCurveSpec extends java.security.spec.ECParameterSpec {
+	private String name;
 
-    private static EllipticCurve convertCurve(
-        ECCurve  curve,
-        byte[]   seed)
-    {
-        if (curve instanceof ECCurve.Fp)
-        {
-            return new EllipticCurve(new ECFieldFp(((ECCurve.Fp)curve).getQ()), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
-        }
-        else
-        {
-            ECCurve.F2m curveF2m = (ECCurve.F2m)curve;
-            int ks[];
-            
-            if (curveF2m.isTrinomial())
-            {
-                ks = new int[] { curveF2m.getK1() };
-                
-                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
-            }
-            else
-            {
-                ks = new int[] { curveF2m.getK3(), curveF2m.getK2(), curveF2m.getK1() };
+	private static EllipticCurve convertCurve(ECCurve curve, byte[] seed) {
+		if (curve instanceof ECCurve.Fp) {
+			return new EllipticCurve(
+					new ECFieldFp(((ECCurve.Fp) curve).getQ()), curve.getA()
+							.toBigInteger(), curve.getB().toBigInteger(), seed);
+		} else {
+			ECCurve.F2m curveF2m = (ECCurve.F2m) curve;
+			int ks[];
 
-                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
-            } 
-        }
+			if (curveF2m.isTrinomial()) {
+				ks = new int[] { curveF2m.getK1() };
 
-    }
-    
-    private static ECPoint convertPoint(
-        org.ripple.bouncycastle.math.ec.ECPoint  g)
-    {
-        return new ECPoint(g.getX().toBigInteger(), g.getY().toBigInteger());
-    }
-    
-    public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.ripple.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n)
-    {
-        super(convertCurve(curve, null), convertPoint(g), n, 1);
+				return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks),
+						curve.getA().toBigInteger(), curve.getB()
+								.toBigInteger(), seed);
+			} else {
+				ks = new int[] { curveF2m.getK3(), curveF2m.getK2(),
+						curveF2m.getK1() };
 
-        this.name = name;
-    }
+				return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks),
+						curve.getA().toBigInteger(), curve.getB()
+								.toBigInteger(), seed);
+			}
+		}
 
-    public ECNamedCurveSpec(
-        String          name,
-        EllipticCurve   curve,
-        ECPoint         g,
-        BigInteger      n)
-    {
-        super(curve, g, n, 1);
+	}
 
-        this.name = name;
-    }
-    
-    public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.ripple.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n,
-        BigInteger                          h)
-    {
-        super(convertCurve(curve, null), convertPoint(g), n, h.intValue());
+	private static ECPoint convertPoint(
+			org.ripple.bouncycastle.math.ec.ECPoint g) {
+		return new ECPoint(g.getX().toBigInteger(), g.getY().toBigInteger());
+	}
 
-        this.name = name;
-    }
+	public ECNamedCurveSpec(String name, ECCurve curve,
+			org.ripple.bouncycastle.math.ec.ECPoint g, BigInteger n) {
+		super(convertCurve(curve, null), convertPoint(g), n, 1);
 
-    public ECNamedCurveSpec(
-        String          name,
-        EllipticCurve   curve,
-        ECPoint         g,
-        BigInteger      n,
-        BigInteger      h)
-    {
-        super(curve, g, n, h.intValue());
+		this.name = name;
+	}
 
-        this.name = name;
-    }
-    
-    public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.ripple.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n,
-        BigInteger                          h,
-        byte[]                              seed)
-    {
-        super(convertCurve(curve, seed), convertPoint(g), n, h.intValue());
-        
-        this.name = name;
-    }
+	public ECNamedCurveSpec(String name, EllipticCurve curve, ECPoint g,
+			BigInteger n) {
+		super(curve, g, n, 1);
 
-    /**
-     * return the name of the curve the EC domain parameters belong to.
-     */
-    public String getName()
-    {
-        return name;
-    }
+		this.name = name;
+	}
+
+	public ECNamedCurveSpec(String name, ECCurve curve,
+			org.ripple.bouncycastle.math.ec.ECPoint g, BigInteger n,
+			BigInteger h) {
+		super(convertCurve(curve, null), convertPoint(g), n, h.intValue());
+
+		this.name = name;
+	}
+
+	public ECNamedCurveSpec(String name, EllipticCurve curve, ECPoint g,
+			BigInteger n, BigInteger h) {
+		super(curve, g, n, h.intValue());
+
+		this.name = name;
+	}
+
+	public ECNamedCurveSpec(String name, ECCurve curve,
+			org.ripple.bouncycastle.math.ec.ECPoint g, BigInteger n,
+			BigInteger h, byte[] seed) {
+		super(convertCurve(curve, seed), convertPoint(g), n, h.intValue());
+
+		this.name = name;
+	}
+
+	/**
+	 * return the name of the curve the EC domain parameters belong to.
+	 */
+	public String getName() {
+		return name;
+	}
 }

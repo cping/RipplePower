@@ -22,6 +22,7 @@ import org.ripple.bouncycastle.asn1.DERSequence;
  * to act. (This value DOES NOT express a limit on the liability of the
  * certification authority).
  * <p/>
+ * 
  * <pre>
  *    MonetaryLimitSyntax ::= SEQUENCE
  *    {
@@ -35,97 +36,89 @@ import org.ripple.bouncycastle.asn1.DERSequence;
  * <p/>
  * value = amount�10*exponent
  */
-public class MonetaryLimit
-    extends ASN1Object
-{
-    DERPrintableString currency;
-    ASN1Integer amount;
-    ASN1Integer exponent;
+public class MonetaryLimit extends ASN1Object {
+	DERPrintableString currency;
+	ASN1Integer amount;
+	ASN1Integer exponent;
 
-    public static MonetaryLimit getInstance(Object obj)
-    {
-        if (obj == null || obj instanceof MonetaryLimit)
-        {
-            return (MonetaryLimit)obj;
-        }
+	public static MonetaryLimit getInstance(Object obj) {
+		if (obj == null || obj instanceof MonetaryLimit) {
+			return (MonetaryLimit) obj;
+		}
 
-        if (obj instanceof ASN1Sequence)
-        {
-            return new MonetaryLimit(ASN1Sequence.getInstance(obj));
-        }
+		if (obj instanceof ASN1Sequence) {
+			return new MonetaryLimit(ASN1Sequence.getInstance(obj));
+		}
 
-        throw new IllegalArgumentException("unknown object in getInstance");
-    }
+		throw new IllegalArgumentException("unknown object in getInstance");
+	}
 
-    private MonetaryLimit(ASN1Sequence seq)
-    {
-        if (seq.size() != 3)
-        {
-            throw new IllegalArgumentException("Bad sequence size: "
-                + seq.size());
-        }
-        Enumeration e = seq.getObjects();
-        currency = DERPrintableString.getInstance(e.nextElement());
-        amount = ASN1Integer.getInstance(e.nextElement());
-        exponent = ASN1Integer.getInstance(e.nextElement());
-    }
+	private MonetaryLimit(ASN1Sequence seq) {
+		if (seq.size() != 3) {
+			throw new IllegalArgumentException("Bad sequence size: "
+					+ seq.size());
+		}
+		Enumeration e = seq.getObjects();
+		currency = DERPrintableString.getInstance(e.nextElement());
+		amount = ASN1Integer.getInstance(e.nextElement());
+		exponent = ASN1Integer.getInstance(e.nextElement());
+	}
 
-    /**
-     * Constructor from a given details.
-     * <p/>
-     * <p/>
-     * value = amount�10^exponent
-     *
-     * @param currency The currency. Must be the ISO code.
-     * @param amount   The amount
-     * @param exponent The exponent
-     */
-    public MonetaryLimit(String currency, int amount, int exponent)
-    {
-        this.currency = new DERPrintableString(currency, true);
-        this.amount = new ASN1Integer(amount);
-        this.exponent = new ASN1Integer(exponent);
-    }
+	/**
+	 * Constructor from a given details.
+	 * <p/>
+	 * <p/>
+	 * value = amount�10^exponent
+	 * 
+	 * @param currency
+	 *            The currency. Must be the ISO code.
+	 * @param amount
+	 *            The amount
+	 * @param exponent
+	 *            The exponent
+	 */
+	public MonetaryLimit(String currency, int amount, int exponent) {
+		this.currency = new DERPrintableString(currency, true);
+		this.amount = new ASN1Integer(amount);
+		this.exponent = new ASN1Integer(exponent);
+	}
 
-    public String getCurrency()
-    {
-        return currency.getString();
-    }
+	public String getCurrency() {
+		return currency.getString();
+	}
 
-    public BigInteger getAmount()
-    {
-        return amount.getValue();
-    }
+	public BigInteger getAmount() {
+		return amount.getValue();
+	}
 
-    public BigInteger getExponent()
-    {
-        return exponent.getValue();
-    }
+	public BigInteger getExponent() {
+		return exponent.getValue();
+	}
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <p/>
-     * Returns:
-     * <p/>
-     * <pre>
-     *    MonetaryLimitSyntax ::= SEQUENCE
-     *    {
-     *      currency PrintableString (SIZE(3)),
-     *      amount INTEGER,
-     *      exponent INTEGER
-     *    }
-     * </pre>
-     *
-     * @return a DERObject
-     */
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector seq = new ASN1EncodableVector();
-        seq.add(currency);
-        seq.add(amount);
-        seq.add(exponent);
+	/**
+	 * Produce an object suitable for an ASN1OutputStream.
+	 * <p/>
+	 * Returns:
+	 * <p/>
+	 * 
+	 * <pre>
+	 *    MonetaryLimitSyntax ::= SEQUENCE
+	 *    {
+	 *      currency PrintableString (SIZE(3)),
+	 *      amount INTEGER,
+	 *      exponent INTEGER
+	 *    }
+	 * </pre>
+	 * 
+	 * @return a DERObject
+	 */
+	public ASN1Primitive toASN1Primitive() {
+		ASN1EncodableVector seq = new ASN1EncodableVector();
+		seq.add(currency);
+		seq.add(amount);
+		seq.add(exponent);
 
-        return new DERSequence(seq);
-    }
+		return new DERSequence(seq);
+	}
 
 }

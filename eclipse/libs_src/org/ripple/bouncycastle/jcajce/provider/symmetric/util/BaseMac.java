@@ -14,108 +14,77 @@ import org.ripple.bouncycastle.crypto.Mac;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 
-public class BaseMac
-    extends MacSpi implements PBE
-{
-    private Mac macEngine;
+public class BaseMac extends MacSpi implements PBE {
+	private Mac macEngine;
 
-    private int                     pbeType = PKCS12;
-    private int                     pbeHash = SHA1;
-    private int                     keySize = 160;
+	private int pbeType = PKCS12;
+	private int pbeHash = SHA1;
+	private int keySize = 160;
 
-    protected BaseMac(
-        Mac macEngine)
-    {
-        this.macEngine = macEngine;
-    }
+	protected BaseMac(Mac macEngine) {
+		this.macEngine = macEngine;
+	}
 
-    protected BaseMac(
-        Mac macEngine,
-        int pbeType,
-        int pbeHash,
-        int keySize)
-    {
-        this.macEngine = macEngine;
-        this.pbeType = pbeType;
-        this.pbeHash = pbeHash;
-        this.keySize = keySize;
-    }
+	protected BaseMac(Mac macEngine, int pbeType, int pbeHash, int keySize) {
+		this.macEngine = macEngine;
+		this.pbeType = pbeType;
+		this.pbeHash = pbeHash;
+		this.keySize = keySize;
+	}
 
-    protected void engineInit(
-        Key                     key,
-        AlgorithmParameterSpec  params)
-        throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
-        CipherParameters        param;
+	protected void engineInit(Key key, AlgorithmParameterSpec params)
+			throws InvalidKeyException, InvalidAlgorithmParameterException {
+		CipherParameters param;
 
-        if (key == null)
-        {
-            throw new InvalidKeyException("key is null");
-        }
+		if (key == null) {
+			throw new InvalidKeyException("key is null");
+		}
 
-        if (key instanceof BCPBEKey)
-        {
-            BCPBEKey k = (BCPBEKey)key;
+		if (key instanceof BCPBEKey) {
+			BCPBEKey k = (BCPBEKey) key;
 
-            if (k.getParam() != null)
-            {
-                param = k.getParam();
-            }
-            else if (params instanceof PBEParameterSpec)
-            {
-                param = PBE.Util.makePBEMacParameters(k, params);
-            }
-            else
-            {
-                throw new InvalidAlgorithmParameterException("PBE requires PBE parameters to be set.");
-            }
-        }
-        else if (params instanceof IvParameterSpec)
-        {
-            param = new ParametersWithIV(new KeyParameter(key.getEncoded()), ((IvParameterSpec)params).getIV());
-        }
-        else if (params == null)
-        {
-            param = new KeyParameter(key.getEncoded());
-        }
-        else
-        {
-            throw new InvalidAlgorithmParameterException("unknown parameter type.");
-        }
+			if (k.getParam() != null) {
+				param = k.getParam();
+			} else if (params instanceof PBEParameterSpec) {
+				param = PBE.Util.makePBEMacParameters(k, params);
+			} else {
+				throw new InvalidAlgorithmParameterException(
+						"PBE requires PBE parameters to be set.");
+			}
+		} else if (params instanceof IvParameterSpec) {
+			param = new ParametersWithIV(new KeyParameter(key.getEncoded()),
+					((IvParameterSpec) params).getIV());
+		} else if (params == null) {
+			param = new KeyParameter(key.getEncoded());
+		} else {
+			throw new InvalidAlgorithmParameterException(
+					"unknown parameter type.");
+		}
 
-        macEngine.init(param);
-    }
+		macEngine.init(param);
+	}
 
-    protected int engineGetMacLength() 
-    {
-        return macEngine.getMacSize();
-    }
+	protected int engineGetMacLength() {
+		return macEngine.getMacSize();
+	}
 
-    protected void engineReset() 
-    {
-        macEngine.reset();
-    }
+	protected void engineReset() {
+		macEngine.reset();
+	}
 
-    protected void engineUpdate(
-        byte    input) 
-    {
-        macEngine.update(input);
-    }
+	protected void engineUpdate(byte input) {
+		macEngine.update(input);
+	}
 
-    protected void engineUpdate(
-        byte[]  input,
-        int     offset,
-        int     len) 
-    {
-        macEngine.update(input, offset, len);
-    }
+	protected void engineUpdate(byte[] input, int offset, int len) {
+		macEngine.update(input, offset, len);
+	}
 
-    protected byte[] engineDoFinal() 
-    {
-        byte[]  out = new byte[engineGetMacLength()];
+	protected byte[] engineDoFinal() {
+		byte[] out = new byte[engineGetMacLength()];
 
-        macEngine.doFinal(out, 0);
+		macEngine.doFinal(out, 0);
 
-        return out;
-    }
+		return out;
+	}
 }

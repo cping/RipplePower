@@ -1,9 +1,7 @@
 package org.ripple.bouncycastle.util;
 
-public interface Selector
-    extends Cloneable
-{
-    boolean match(Object obj);
+public interface Selector extends Cloneable {
+	boolean match(Object obj);
 
-    Object clone();
+	Object clone();
 }

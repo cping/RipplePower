@@ -1,12 +1,11 @@
 package org.spongycastle.crypto.tls;
 
-public interface TlsSession
-{
-    SessionParameters exportSessionParameters();
+public interface TlsSession {
+	SessionParameters exportSessionParameters();
 
-    byte[] getSessionID();
+	byte[] getSessionID();
 
-    void invalidate();
+	void invalidate();
 
-    boolean isResumable();
+	boolean isResumable();
 }

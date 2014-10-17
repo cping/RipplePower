@@ -12,346 +12,284 @@ import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 /**
  * Optimal Asymmetric Encryption Padding (OAEP) - see PKCS 1 V 2.
  */
-public class OAEPEncoding
-    implements AsymmetricBlockCipher
-{
-    private byte[]                  defHash;
-    private Digest                  mgf1Hash;
+public class OAEPEncoding implements AsymmetricBlockCipher {
+	private byte[] defHash;
+	private Digest mgf1Hash;
 
-    private AsymmetricBlockCipher   engine;
-    private SecureRandom            random;
-    private boolean                 forEncryption;
+	private AsymmetricBlockCipher engine;
+	private SecureRandom random;
+	private boolean forEncryption;
 
-    public OAEPEncoding(
-        AsymmetricBlockCipher   cipher)
-    {
-        this(cipher, new SHA1Digest(), null);
-    }
-    
-    public OAEPEncoding(
-        AsymmetricBlockCipher       cipher,
-        Digest                      hash)
-    {
-        this(cipher, hash, null);
-    }
-    
-    public OAEPEncoding(
-        AsymmetricBlockCipher       cipher,
-        Digest                      hash,
-        byte[]                      encodingParams)
-    {
-        this(cipher, hash, hash, encodingParams);
-    }
+	public OAEPEncoding(AsymmetricBlockCipher cipher) {
+		this(cipher, new SHA1Digest(), null);
+	}
 
-    public OAEPEncoding(
-        AsymmetricBlockCipher       cipher,
-        Digest                      hash,
-        Digest                      mgf1Hash,
-        byte[]                      encodingParams)
-    {
-        this.engine = cipher;
-        this.mgf1Hash = mgf1Hash;
-        this.defHash = new byte[hash.getDigestSize()];
+	public OAEPEncoding(AsymmetricBlockCipher cipher, Digest hash) {
+		this(cipher, hash, null);
+	}
 
-        hash.reset();
+	public OAEPEncoding(AsymmetricBlockCipher cipher, Digest hash,
+			byte[] encodingParams) {
+		this(cipher, hash, hash, encodingParams);
+	}
 
-        if (encodingParams != null)
-        {
-            hash.update(encodingParams, 0, encodingParams.length);
-        }
+	public OAEPEncoding(AsymmetricBlockCipher cipher, Digest hash,
+			Digest mgf1Hash, byte[] encodingParams) {
+		this.engine = cipher;
+		this.mgf1Hash = mgf1Hash;
+		this.defHash = new byte[hash.getDigestSize()];
 
-        hash.doFinal(defHash, 0);
-    }
+		hash.reset();
 
-    public AsymmetricBlockCipher getUnderlyingCipher()
-    {
-        return engine;
-    }
+		if (encodingParams != null) {
+			hash.update(encodingParams, 0, encodingParams.length);
+		}
 
-    public void init(
-        boolean             forEncryption,
-        CipherParameters    param)
-    {
-        if (param instanceof ParametersWithRandom)
-        {
-            ParametersWithRandom  rParam = (ParametersWithRandom)param;
+		hash.doFinal(defHash, 0);
+	}
 
-            this.random = rParam.getRandom();
-        }
-        else
-        {   
-            this.random = new SecureRandom();
-        }
+	public AsymmetricBlockCipher getUnderlyingCipher() {
+		return engine;
+	}
 
-        engine.init(forEncryption, param);
+	public void init(boolean forEncryption, CipherParameters param) {
+		if (param instanceof ParametersWithRandom) {
+			ParametersWithRandom rParam = (ParametersWithRandom) param;
 
-        this.forEncryption = forEncryption;
-    }
+			this.random = rParam.getRandom();
+		} else {
+			this.random = new SecureRandom();
+		}
 
-    public int getInputBlockSize()
-    {
-        int     baseBlockSize = engine.getInputBlockSize();
+		engine.init(forEncryption, param);
 
-        if (forEncryption)
-        {
-            return baseBlockSize - 1 - 2 * defHash.length;
-        }
-        else
-        {
-            return baseBlockSize;
-        }
-    }
+		this.forEncryption = forEncryption;
+	}
 
-    public int getOutputBlockSize()
-    {
-        int     baseBlockSize = engine.getOutputBlockSize();
+	public int getInputBlockSize() {
+		int baseBlockSize = engine.getInputBlockSize();
 
-        if (forEncryption)
-        {
-            return baseBlockSize;
-        }
-        else
-        {
-            return baseBlockSize - 1 - 2 * defHash.length;
-        }
-    }
+		if (forEncryption) {
+			return baseBlockSize - 1 - 2 * defHash.length;
+		} else {
+			return baseBlockSize;
+		}
+	}
 
-    public byte[] processBlock(
-        byte[]  in,
-        int     inOff,
-        int     inLen)
-        throws InvalidCipherTextException
-    {
-        if (forEncryption)
-        {
-            return encodeBlock(in, inOff, inLen);
-        }
-        else
-        {
-            return decodeBlock(in, inOff, inLen);
-        }
-    }
+	public int getOutputBlockSize() {
+		int baseBlockSize = engine.getOutputBlockSize();
 
-    public byte[] encodeBlock(
-        byte[]  in,
-        int     inOff,
-        int     inLen)
-        throws InvalidCipherTextException
-    {
-        byte[]  block = new byte[getInputBlockSize() + 1 + 2 * defHash.length];
+		if (forEncryption) {
+			return baseBlockSize;
+		} else {
+			return baseBlockSize - 1 - 2 * defHash.length;
+		}
+	}
 
-        //
-        // copy in the message
-        //
-        System.arraycopy(in, inOff, block, block.length - inLen, inLen);
+	public byte[] processBlock(byte[] in, int inOff, int inLen)
+			throws InvalidCipherTextException {
+		if (forEncryption) {
+			return encodeBlock(in, inOff, inLen);
+		} else {
+			return decodeBlock(in, inOff, inLen);
+		}
+	}
 
-        //
-        // add sentinel
-        //
-        block[block.length - inLen - 1] = 0x01;
+	public byte[] encodeBlock(byte[] in, int inOff, int inLen)
+			throws InvalidCipherTextException {
+		byte[] block = new byte[getInputBlockSize() + 1 + 2 * defHash.length];
 
-        //
-        // as the block is already zeroed - there's no need to add PS (the >= 0 pad of 0)
-        //
+		//
+		// copy in the message
+		//
+		System.arraycopy(in, inOff, block, block.length - inLen, inLen);
 
-        //
-        // add the hash of the encoding params.
-        //
-        System.arraycopy(defHash, 0, block, defHash.length, defHash.length);
+		//
+		// add sentinel
+		//
+		block[block.length - inLen - 1] = 0x01;
 
-        //
-        // generate the seed.
-        //
-        byte[]  seed = new byte[defHash.length];
+		//
+		// as the block is already zeroed - there's no need to add PS (the >= 0
+		// pad of 0)
+		//
 
-        random.nextBytes(seed);
+		//
+		// add the hash of the encoding params.
+		//
+		System.arraycopy(defHash, 0, block, defHash.length, defHash.length);
 
-        //
-        // mask the message block.
-        //
-        byte[]  mask = maskGeneratorFunction1(seed, 0, seed.length, block.length - defHash.length);
+		//
+		// generate the seed.
+		//
+		byte[] seed = new byte[defHash.length];
 
-        for (int i = defHash.length; i != block.length; i++)
-        {
-            block[i] ^= mask[i - defHash.length];
-        }
+		random.nextBytes(seed);
 
-        //
-        // add in the seed
-        //
-        System.arraycopy(seed, 0, block, 0, defHash.length);
+		//
+		// mask the message block.
+		//
+		byte[] mask = maskGeneratorFunction1(seed, 0, seed.length, block.length
+				- defHash.length);
 
-        //
-        // mask the seed.
-        //
-        mask = maskGeneratorFunction1(
-                        block, defHash.length, block.length - defHash.length, defHash.length);
+		for (int i = defHash.length; i != block.length; i++) {
+			block[i] ^= mask[i - defHash.length];
+		}
 
-        for (int i = 0; i != defHash.length; i++)
-        {
-            block[i] ^= mask[i];
-        }
+		//
+		// add in the seed
+		//
+		System.arraycopy(seed, 0, block, 0, defHash.length);
 
-        return engine.processBlock(block, 0, block.length);
-    }
+		//
+		// mask the seed.
+		//
+		mask = maskGeneratorFunction1(block, defHash.length, block.length
+				- defHash.length, defHash.length);
 
-    /**
-     * @exception InvalidCipherTextException if the decrypted block turns out to
-     * be badly formatted.
-     */
-    public byte[] decodeBlock(
-        byte[]  in,
-        int     inOff,
-        int     inLen)
-        throws InvalidCipherTextException
-    {
-        byte[]  data = engine.processBlock(in, inOff, inLen);
-        byte[]  block;
+		for (int i = 0; i != defHash.length; i++) {
+			block[i] ^= mask[i];
+		}
 
-        //
-        // as we may have zeros in our leading bytes for the block we produced
-        // on encryption, we need to make sure our decrypted block comes back
-        // the same size.
-        //
-        if (data.length < engine.getOutputBlockSize())
-        {
-            block = new byte[engine.getOutputBlockSize()];
+		return engine.processBlock(block, 0, block.length);
+	}
 
-            System.arraycopy(data, 0, block, block.length - data.length, data.length);
-        }
-        else
-        {
-            block = data;
-        }
+	/**
+	 * @exception InvalidCipherTextException
+	 *                if the decrypted block turns out to be badly formatted.
+	 */
+	public byte[] decodeBlock(byte[] in, int inOff, int inLen)
+			throws InvalidCipherTextException {
+		byte[] data = engine.processBlock(in, inOff, inLen);
+		byte[] block;
 
-        if (block.length < (2 * defHash.length) + 1)
-        {
-            throw new InvalidCipherTextException("data too short");
-        }
+		//
+		// as we may have zeros in our leading bytes for the block we produced
+		// on encryption, we need to make sure our decrypted block comes back
+		// the same size.
+		//
+		if (data.length < engine.getOutputBlockSize()) {
+			block = new byte[engine.getOutputBlockSize()];
 
-        //
-        // unmask the seed.
-        //
-        byte[] mask = maskGeneratorFunction1(
-                    block, defHash.length, block.length - defHash.length, defHash.length);
+			System.arraycopy(data, 0, block, block.length - data.length,
+					data.length);
+		} else {
+			block = data;
+		}
 
-        for (int i = 0; i != defHash.length; i++)
-        {
-            block[i] ^= mask[i];
-        }
+		if (block.length < (2 * defHash.length) + 1) {
+			throw new InvalidCipherTextException("data too short");
+		}
 
-        //
-        // unmask the message block.
-        //
-        mask = maskGeneratorFunction1(block, 0, defHash.length, block.length - defHash.length);
+		//
+		// unmask the seed.
+		//
+		byte[] mask = maskGeneratorFunction1(block, defHash.length,
+				block.length - defHash.length, defHash.length);
 
-        for (int i = defHash.length; i != block.length; i++)
-        {
-            block[i] ^= mask[i - defHash.length];
-        }
+		for (int i = 0; i != defHash.length; i++) {
+			block[i] ^= mask[i];
+		}
 
-        //
-        // check the hash of the encoding params.
-        // long check to try to avoid this been a source of a timing attack.
-        //
-        boolean defHashWrong = false;
+		//
+		// unmask the message block.
+		//
+		mask = maskGeneratorFunction1(block, 0, defHash.length, block.length
+				- defHash.length);
 
-        for (int i = 0; i != defHash.length; i++)
-        {
-            if (defHash[i] != block[defHash.length + i])
-            {
-                defHashWrong = true;
-            }
-        }
+		for (int i = defHash.length; i != block.length; i++) {
+			block[i] ^= mask[i - defHash.length];
+		}
 
-        if (defHashWrong)
-        {
-            throw new InvalidCipherTextException("data hash wrong");
-        }
+		//
+		// check the hash of the encoding params.
+		// long check to try to avoid this been a source of a timing attack.
+		//
+		boolean defHashWrong = false;
 
-        //
-        // find the data block
-        //
-        int start;
+		for (int i = 0; i != defHash.length; i++) {
+			if (defHash[i] != block[defHash.length + i]) {
+				defHashWrong = true;
+			}
+		}
 
-        for (start = 2 * defHash.length; start != block.length; start++)
-        {
-            if (block[start] != 0)
-            {
-                break;
-            }
-        }
+		if (defHashWrong) {
+			throw new InvalidCipherTextException("data hash wrong");
+		}
 
-        if (start >= (block.length - 1) || block[start] != 1)
-        {
-            throw new InvalidCipherTextException("data start wrong " + start);
-        }
+		//
+		// find the data block
+		//
+		int start;
 
-        start++;
+		for (start = 2 * defHash.length; start != block.length; start++) {
+			if (block[start] != 0) {
+				break;
+			}
+		}
 
-        //
-        // extract the data block
-        //
-        byte[]  output = new byte[block.length - start];
+		if (start >= (block.length - 1) || block[start] != 1) {
+			throw new InvalidCipherTextException("data start wrong " + start);
+		}
 
-        System.arraycopy(block, start, output, 0, output.length);
+		start++;
 
-        return output;
-    }
+		//
+		// extract the data block
+		//
+		byte[] output = new byte[block.length - start];
 
-    /**
-     * int to octet string.
-     */
-    private void ItoOSP(
-        int     i,
-        byte[]  sp)
-    {
-        sp[0] = (byte)(i >>> 24);
-        sp[1] = (byte)(i >>> 16);
-        sp[2] = (byte)(i >>> 8);
-        sp[3] = (byte)(i >>> 0);
-    }
+		System.arraycopy(block, start, output, 0, output.length);
 
-    /**
-     * mask generator function, as described in PKCS1v2.
-     */
-    private byte[] maskGeneratorFunction1(
-        byte[]  Z,
-        int     zOff,
-        int     zLen,
-        int     length)
-    {
-        byte[]  mask = new byte[length];
-        byte[]  hashBuf = new byte[mgf1Hash.getDigestSize()];
-        byte[]  C = new byte[4];
-        int     counter = 0;
+		return output;
+	}
 
-        mgf1Hash.reset();
+	/**
+	 * int to octet string.
+	 */
+	private void ItoOSP(int i, byte[] sp) {
+		sp[0] = (byte) (i >>> 24);
+		sp[1] = (byte) (i >>> 16);
+		sp[2] = (byte) (i >>> 8);
+		sp[3] = (byte) (i >>> 0);
+	}
 
-        while (counter < (length / hashBuf.length))
-        {
-            ItoOSP(counter, C);
+	/**
+	 * mask generator function, as described in PKCS1v2.
+	 */
+	private byte[] maskGeneratorFunction1(byte[] Z, int zOff, int zLen,
+			int length) {
+		byte[] mask = new byte[length];
+		byte[] hashBuf = new byte[mgf1Hash.getDigestSize()];
+		byte[] C = new byte[4];
+		int counter = 0;
 
-            mgf1Hash.update(Z, zOff, zLen);
-            mgf1Hash.update(C, 0, C.length);
-            mgf1Hash.doFinal(hashBuf, 0);
+		mgf1Hash.reset();
 
-            System.arraycopy(hashBuf, 0, mask, counter * hashBuf.length, hashBuf.length);
+		while (counter < (length / hashBuf.length)) {
+			ItoOSP(counter, C);
 
-            counter++;
-        }
+			mgf1Hash.update(Z, zOff, zLen);
+			mgf1Hash.update(C, 0, C.length);
+			mgf1Hash.doFinal(hashBuf, 0);
 
-        if ((counter * hashBuf.length) < length)
-        {
-            ItoOSP(counter, C);
+			System.arraycopy(hashBuf, 0, mask, counter * hashBuf.length,
+					hashBuf.length);
 
-            mgf1Hash.update(Z, zOff, zLen);
-            mgf1Hash.update(C, 0, C.length);
-            mgf1Hash.doFinal(hashBuf, 0);
+			counter++;
+		}
 
-            System.arraycopy(hashBuf, 0, mask, counter * hashBuf.length, mask.length - (counter * hashBuf.length));
-        }
+		if ((counter * hashBuf.length) < length) {
+			ItoOSP(counter, C);
 
-        return mask;
-    }
+			mgf1Hash.update(Z, zOff, zLen);
+			mgf1Hash.update(C, 0, C.length);
+			mgf1Hash.doFinal(hashBuf, 0);
+
+			System.arraycopy(hashBuf, 0, mask, counter * hashBuf.length,
+					mask.length - (counter * hashBuf.length));
+		}
+
+		return mask;
+	}
 }

@@ -37,174 +37,175 @@ import java.util.Map.Entry;
 /**
  * LazyField encapsulates the logic of lazily parsing message fields. It stores
  * the message in a ByteString initially and then parse it on-demand.
- *
+ * 
  * LazyField is thread-compatible e.g. concurrent read are safe, however,
  * synchronizations are needed under read/write situations.
- *
- * Now LazyField is only used to lazily load MessageSet.
- * TODO(xiangl): Use LazyField to lazily load all messages.
- *
+ * 
+ * Now LazyField is only used to lazily load MessageSet. TODO(xiangl): Use
+ * LazyField to lazily load all messages.
+ * 
  * @author xiangl@google.com (Xiang Li)
  */
 class LazyField {
 
-  final private MessageLite defaultInstance;
-  final private ExtensionRegistryLite extensionRegistry;
+	final private MessageLite defaultInstance;
+	final private ExtensionRegistryLite extensionRegistry;
 
-  // Mutable because it is initialized lazily.
-  private ByteString bytes;
-  private volatile MessageLite value;
-  private volatile boolean isDirty = false;
+	// Mutable because it is initialized lazily.
+	private ByteString bytes;
+	private volatile MessageLite value;
+	private volatile boolean isDirty = false;
 
-  public LazyField(MessageLite defaultInstance,
-      ExtensionRegistryLite extensionRegistry, ByteString bytes) {
-    this.defaultInstance = defaultInstance;
-    this.extensionRegistry = extensionRegistry;
-    this.bytes = bytes;
-  }
+	public LazyField(MessageLite defaultInstance,
+			ExtensionRegistryLite extensionRegistry, ByteString bytes) {
+		this.defaultInstance = defaultInstance;
+		this.extensionRegistry = extensionRegistry;
+		this.bytes = bytes;
+	}
 
-  public MessageLite getValue() {
-    ensureInitialized();
-    return value;
-  }
+	public MessageLite getValue() {
+		ensureInitialized();
+		return value;
+	}
 
-  /**
-   * LazyField is not thread-safe for write access. Synchronizations are needed
-   * under read/write situations.
-   */
-  public MessageLite setValue(MessageLite value) {
-    MessageLite originalValue = this.value;
-    this.value = value;
-    bytes = null;
-    isDirty = true;
-    return originalValue;
-  }
+	/**
+	 * LazyField is not thread-safe for write access. Synchronizations are
+	 * needed under read/write situations.
+	 */
+	public MessageLite setValue(MessageLite value) {
+		MessageLite originalValue = this.value;
+		this.value = value;
+		bytes = null;
+		isDirty = true;
+		return originalValue;
+	}
 
-  /**
-   * Due to the optional field can be duplicated at the end of serialized
-   * bytes, which will make the serialized size changed after LazyField
-   * parsed. Be careful when using this method.
-   */
-  public int getSerializedSize() {
-    if (isDirty) {
-      return value.getSerializedSize();
-    }
-    return bytes.size();
-  }
+	/**
+	 * Due to the optional field can be duplicated at the end of serialized
+	 * bytes, which will make the serialized size changed after LazyField
+	 * parsed. Be careful when using this method.
+	 */
+	public int getSerializedSize() {
+		if (isDirty) {
+			return value.getSerializedSize();
+		}
+		return bytes.size();
+	}
 
-  public ByteString toByteString() {
-    if (!isDirty) {
-      return bytes;
-    }
-    synchronized (this) {
-      if (!isDirty) {
-        return bytes;
-      }
-      bytes = value.toByteString();
-      isDirty = false;
-      return bytes;
-    }
-  }
+	public ByteString toByteString() {
+		if (!isDirty) {
+			return bytes;
+		}
+		synchronized (this) {
+			if (!isDirty) {
+				return bytes;
+			}
+			bytes = value.toByteString();
+			isDirty = false;
+			return bytes;
+		}
+	}
 
-  @Override
-  public int hashCode() {
-    ensureInitialized();
-    return value.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		ensureInitialized();
+		return value.hashCode();
+	}
 
-  @Override
-  public boolean equals(Object obj) {
-    ensureInitialized();
-    return value.equals(obj);
-  }
+	@Override
+	public boolean equals(Object obj) {
+		ensureInitialized();
+		return value.equals(obj);
+	}
 
-  @Override
-  public String toString() {
-    ensureInitialized();
-    return value.toString();
-  }
+	@Override
+	public String toString() {
+		ensureInitialized();
+		return value.toString();
+	}
 
-  private void ensureInitialized() {
-    if (value != null) {
-      return;
-    }
-    synchronized (this) {
-      if (value != null) {
-        return;
-      }
-      try {
-        if (bytes != null) {
-          value = defaultInstance.getParserForType()
-              .parseFrom(bytes, extensionRegistry);
-        }
-      } catch (IOException e) {
-        // TODO(xiangl): Refactory the API to support the exception thrown from
-        // lazily load messages.
-      }
-    }
-  }
+	private void ensureInitialized() {
+		if (value != null) {
+			return;
+		}
+		synchronized (this) {
+			if (value != null) {
+				return;
+			}
+			try {
+				if (bytes != null) {
+					value = defaultInstance.getParserForType().parseFrom(bytes,
+							extensionRegistry);
+				}
+			} catch (IOException e) {
+				// TODO(xiangl): Refactory the API to support the exception
+				// thrown from
+				// lazily load messages.
+			}
+		}
+	}
 
-  // ====================================================
+	// ====================================================
 
-  /**
-   * LazyEntry and LazyIterator are used to encapsulate the LazyField, when
-   * users iterate all fields from FieldSet.
-   */
-  static class LazyEntry<K> implements Entry<K, Object> {
-    private Entry<K, LazyField> entry;
+	/**
+	 * LazyEntry and LazyIterator are used to encapsulate the LazyField, when
+	 * users iterate all fields from FieldSet.
+	 */
+	static class LazyEntry<K> implements Entry<K, Object> {
+		private Entry<K, LazyField> entry;
 
-    private LazyEntry(Entry<K, LazyField> entry) {
-      this.entry = entry;
-    }
+		private LazyEntry(Entry<K, LazyField> entry) {
+			this.entry = entry;
+		}
 
-    public K getKey() {
-      return entry.getKey();
-    }
+		public K getKey() {
+			return entry.getKey();
+		}
 
-    public Object getValue() {
-      LazyField field = entry.getValue();
-      if (field == null) {
-        return null;
-      }
-      return field.getValue();
-    }
+		public Object getValue() {
+			LazyField field = entry.getValue();
+			if (field == null) {
+				return null;
+			}
+			return field.getValue();
+		}
 
-    public LazyField getField() {
-      return entry.getValue();
-    }
+		public LazyField getField() {
+			return entry.getValue();
+		}
 
-    public Object setValue(Object value) {
-      if (!(value instanceof MessageLite)) {
-        throw new IllegalArgumentException(
-            "LazyField now only used for MessageSet, "
-            + "and the value of MessageSet must be an instance of MessageLite");
-      }
-      return entry.getValue().setValue((MessageLite) value);
-    }
-  }
+		public Object setValue(Object value) {
+			if (!(value instanceof MessageLite)) {
+				throw new IllegalArgumentException(
+						"LazyField now only used for MessageSet, "
+								+ "and the value of MessageSet must be an instance of MessageLite");
+			}
+			return entry.getValue().setValue((MessageLite) value);
+		}
+	}
 
-  static class LazyIterator<K> implements Iterator<Entry<K, Object>> {
-    private Iterator<Entry<K, Object>> iterator;
+	static class LazyIterator<K> implements Iterator<Entry<K, Object>> {
+		private Iterator<Entry<K, Object>> iterator;
 
-    public LazyIterator(Iterator<Entry<K, Object>> iterator) {
-      this.iterator = iterator;
-    }
+		public LazyIterator(Iterator<Entry<K, Object>> iterator) {
+			this.iterator = iterator;
+		}
 
-    public boolean hasNext() {
-      return iterator.hasNext();
-    }
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
 
-    @SuppressWarnings("unchecked")
-    public Entry<K, Object> next() {
-      Entry<K, ?> entry = iterator.next();
-      if (entry.getValue() instanceof LazyField) {
-        return new LazyEntry<K>((Entry<K, LazyField>) entry);
-      }
-      return (Entry<K, Object>) entry;
-    }
+		@SuppressWarnings("unchecked")
+		public Entry<K, Object> next() {
+			Entry<K, ?> entry = iterator.next();
+			if (entry.getValue() instanceof LazyField) {
+				return new LazyEntry<K>((Entry<K, LazyField>) entry);
+			}
+			return (Entry<K, Object>) entry;
+		}
 
-    public void remove() {
-      iterator.remove();
-    }
-  }
+		public void remove() {
+			iterator.remove();
+		}
+	}
 }

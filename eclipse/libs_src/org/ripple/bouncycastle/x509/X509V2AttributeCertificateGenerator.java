@@ -31,239 +31,200 @@ import org.ripple.bouncycastle.asn1.x509.X509ExtensionsGenerator;
 
 /**
  * class to produce an X.509 Version 2 AttributeCertificate.
+ * 
  * @deprecated use org.bouncycastle.cert.X509v2AttributeCertificateBuilder
  */
-public class X509V2AttributeCertificateGenerator
-{
-    private V2AttributeCertificateInfoGenerator   acInfoGen;
-    private DERObjectIdentifier         sigOID;
-    private AlgorithmIdentifier         sigAlgId;
-    private String                      signatureAlgorithm;
-    private X509ExtensionsGenerator     extGenerator;
+public class X509V2AttributeCertificateGenerator {
+	private V2AttributeCertificateInfoGenerator acInfoGen;
+	private DERObjectIdentifier sigOID;
+	private AlgorithmIdentifier sigAlgId;
+	private String signatureAlgorithm;
+	private X509ExtensionsGenerator extGenerator;
 
-    public X509V2AttributeCertificateGenerator()
-    {
-        acInfoGen = new V2AttributeCertificateInfoGenerator();
-        extGenerator = new X509ExtensionsGenerator();
-    }
+	public X509V2AttributeCertificateGenerator() {
+		acInfoGen = new V2AttributeCertificateInfoGenerator();
+		extGenerator = new X509ExtensionsGenerator();
+	}
 
-    /**
-     * reset the generator
-     */
-    public void reset()
-    {
-        acInfoGen = new V2AttributeCertificateInfoGenerator();
-        extGenerator.reset();
-    }
+	/**
+	 * reset the generator
+	 */
+	public void reset() {
+		acInfoGen = new V2AttributeCertificateInfoGenerator();
+		extGenerator.reset();
+	}
 
-    /**
-     * Set the Holder of this Attribute Certificate
-     */
-    public void setHolder(
-        AttributeCertificateHolder     holder)
-    {
-        acInfoGen.setHolder(holder.holder);
-    }
+	/**
+	 * Set the Holder of this Attribute Certificate
+	 */
+	public void setHolder(AttributeCertificateHolder holder) {
+		acInfoGen.setHolder(holder.holder);
+	}
 
-    /**
-     * Set the issuer
-     */
-    public void setIssuer(
-        AttributeCertificateIssuer  issuer)
-    {
-        acInfoGen.setIssuer(AttCertIssuer.getInstance(issuer.form));
-    }
+	/**
+	 * Set the issuer
+	 */
+	public void setIssuer(AttributeCertificateIssuer issuer) {
+		acInfoGen.setIssuer(AttCertIssuer.getInstance(issuer.form));
+	}
 
-    /**
-     * set the serial number for the certificate.
-     */
-    public void setSerialNumber(
-        BigInteger      serialNumber)
-    {
-        acInfoGen.setSerialNumber(new ASN1Integer(serialNumber));
-    }
+	/**
+	 * set the serial number for the certificate.
+	 */
+	public void setSerialNumber(BigInteger serialNumber) {
+		acInfoGen.setSerialNumber(new ASN1Integer(serialNumber));
+	}
 
-    public void setNotBefore(
-        Date    date)
-    {
-        acInfoGen.setStartDate(new ASN1GeneralizedTime(date));
-    }
+	public void setNotBefore(Date date) {
+		acInfoGen.setStartDate(new ASN1GeneralizedTime(date));
+	}
 
-    public void setNotAfter(
-        Date    date)
-    {
-        acInfoGen.setEndDate(new ASN1GeneralizedTime(date));
-    }
+	public void setNotAfter(Date date) {
+		acInfoGen.setEndDate(new ASN1GeneralizedTime(date));
+	}
 
-    /**
-     * Set the signature algorithm. This can be either a name or an OID, names
-     * are treated as case insensitive.
-     * 
-     * @param signatureAlgorithm string representation of the algorithm name.
-     */
-    public void setSignatureAlgorithm(
-        String  signatureAlgorithm)
-    {
-        this.signatureAlgorithm = signatureAlgorithm;
+	/**
+	 * Set the signature algorithm. This can be either a name or an OID, names
+	 * are treated as case insensitive.
+	 * 
+	 * @param signatureAlgorithm
+	 *            string representation of the algorithm name.
+	 */
+	public void setSignatureAlgorithm(String signatureAlgorithm) {
+		this.signatureAlgorithm = signatureAlgorithm;
 
-        try
-        {
-            sigOID = X509Util.getAlgorithmOID(signatureAlgorithm);
-        }
-        catch (Exception e)
-        {
-            throw new IllegalArgumentException("Unknown signature type requested");
-        }
+		try {
+			sigOID = X509Util.getAlgorithmOID(signatureAlgorithm);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Unknown signature type requested");
+		}
 
-        sigAlgId = X509Util.getSigAlgID(sigOID, signatureAlgorithm);
+		sigAlgId = X509Util.getSigAlgID(sigOID, signatureAlgorithm);
 
-        acInfoGen.setSignature(sigAlgId);
-    }
-    
-    /**
-     * add an attribute
-     */
-    public void addAttribute(
-        X509Attribute       attribute)
-    {
-        acInfoGen.addAttribute(Attribute.getInstance(attribute.toASN1Object()));
-    }
+		acInfoGen.setSignature(sigAlgId);
+	}
 
-    public void setIssuerUniqueId(
-        boolean[] iui)
-    {
-        // [TODO] convert boolean array to bit string
-        //acInfoGen.setIssuerUniqueID(iui);
-        throw new RuntimeException("not implemented (yet)");
-    }
-     
-    /**
-     * add a given extension field for the standard extensions tag
-     * @throws IOException
-     */
-    public void addExtension(
-        String          oid,
-        boolean         critical,
-        ASN1Encodable   value)
-        throws IOException
-    {
-        extGenerator.addExtension(new ASN1ObjectIdentifier(oid), critical, value);
-    }
+	/**
+	 * add an attribute
+	 */
+	public void addAttribute(X509Attribute attribute) {
+		acInfoGen.addAttribute(Attribute.getInstance(attribute.toASN1Object()));
+	}
 
-    /**
-     * add a given extension field for the standard extensions tag
-     * The value parameter becomes the contents of the octet string associated
-     * with the extension.
-     */
-    public void addExtension(
-        String          oid,
-        boolean         critical,
-        byte[]          value)
-    {
-        extGenerator.addExtension(new ASN1ObjectIdentifier(oid), critical, value);
-    }
+	public void setIssuerUniqueId(boolean[] iui) {
+		// [TODO] convert boolean array to bit string
+		// acInfoGen.setIssuerUniqueID(iui);
+		throw new RuntimeException("not implemented (yet)");
+	}
 
-    /**
-     * generate an X509 certificate, based on the current issuer and subject,
-     * using the passed in provider for the signing.
-     * @deprecated use generate()
-     */
-    public X509AttributeCertificate generateCertificate(
-        PrivateKey      key,
-        String          provider)
-        throws NoSuchProviderException, SecurityException, SignatureException, InvalidKeyException
-    {
-        return generateCertificate(key, provider, null);
-    }
+	/**
+	 * add a given extension field for the standard extensions tag
+	 * 
+	 * @throws IOException
+	 */
+	public void addExtension(String oid, boolean critical, ASN1Encodable value)
+			throws IOException {
+		extGenerator.addExtension(new ASN1ObjectIdentifier(oid), critical,
+				value);
+	}
 
-    /**
-     * generate an X509 certificate, based on the current issuer and subject,
-     * using the passed in provider for the signing and the supplied source
-     * of randomness, if required.
-     * @deprecated use generate()
-     */
-    public X509AttributeCertificate generateCertificate(
-        PrivateKey      key,
-        String          provider,
-        SecureRandom    random)
-        throws NoSuchProviderException, SecurityException, SignatureException, InvalidKeyException
-    {
-        try
-        {
-            return generate(key, provider, random);
-        }
-        catch (NoSuchProviderException e)
-        {
-            throw e;
-        }
-        catch (SignatureException e)
-        {
-            throw e;
-        }
-        catch (InvalidKeyException e)
-        {
-            throw e;
-        }
-        catch (GeneralSecurityException e)
-        {
-            throw new SecurityException("exception creating certificate: " + e);
-        }
-    }
+	/**
+	 * add a given extension field for the standard extensions tag The value
+	 * parameter becomes the contents of the octet string associated with the
+	 * extension.
+	 */
+	public void addExtension(String oid, boolean critical, byte[] value) {
+		extGenerator.addExtension(new ASN1ObjectIdentifier(oid), critical,
+				value);
+	}
 
-   /**
-     * generate an X509 certificate, based on the current issuer and subject,
-     * using the passed in provider for the signing.
-     */
-    public X509AttributeCertificate generate(
-        PrivateKey      key,
-        String          provider)
-       throws CertificateEncodingException, IllegalStateException, NoSuchProviderException, SignatureException, InvalidKeyException, NoSuchAlgorithmException
-   {
-        return generate(key, provider, null);
-    }
+	/**
+	 * generate an X509 certificate, based on the current issuer and subject,
+	 * using the passed in provider for the signing.
+	 * 
+	 * @deprecated use generate()
+	 */
+	public X509AttributeCertificate generateCertificate(PrivateKey key,
+			String provider) throws NoSuchProviderException, SecurityException,
+			SignatureException, InvalidKeyException {
+		return generateCertificate(key, provider, null);
+	}
 
-    /**
-     * generate an X509 certificate, based on the current issuer and subject,
-     * using the passed in provider for the signing and the supplied source
-     * of randomness, if required.
-     */
-    public X509AttributeCertificate generate(
-        PrivateKey      key,
-        String          provider,
-        SecureRandom    random)
-        throws CertificateEncodingException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException, InvalidKeyException
-    {
-        if (!extGenerator.isEmpty())
-        {
-            acInfoGen.setExtensions(extGenerator.generate());
-        }
+	/**
+	 * generate an X509 certificate, based on the current issuer and subject,
+	 * using the passed in provider for the signing and the supplied source of
+	 * randomness, if required.
+	 * 
+	 * @deprecated use generate()
+	 */
+	public X509AttributeCertificate generateCertificate(PrivateKey key,
+			String provider, SecureRandom random)
+			throws NoSuchProviderException, SecurityException,
+			SignatureException, InvalidKeyException {
+		try {
+			return generate(key, provider, random);
+		} catch (NoSuchProviderException e) {
+			throw e;
+		} catch (SignatureException e) {
+			throw e;
+		} catch (InvalidKeyException e) {
+			throw e;
+		} catch (GeneralSecurityException e) {
+			throw new SecurityException("exception creating certificate: " + e);
+		}
+	}
 
-        AttributeCertificateInfo acInfo = acInfoGen.generateAttributeCertificateInfo();
+	/**
+	 * generate an X509 certificate, based on the current issuer and subject,
+	 * using the passed in provider for the signing.
+	 */
+	public X509AttributeCertificate generate(PrivateKey key, String provider)
+			throws CertificateEncodingException, IllegalStateException,
+			NoSuchProviderException, SignatureException, InvalidKeyException,
+			NoSuchAlgorithmException {
+		return generate(key, provider, null);
+	}
 
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+	/**
+	 * generate an X509 certificate, based on the current issuer and subject,
+	 * using the passed in provider for the signing and the supplied source of
+	 * randomness, if required.
+	 */
+	public X509AttributeCertificate generate(PrivateKey key, String provider,
+			SecureRandom random) throws CertificateEncodingException,
+			IllegalStateException, NoSuchProviderException,
+			NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+		if (!extGenerator.isEmpty()) {
+			acInfoGen.setExtensions(extGenerator.generate());
+		}
 
-        v.add(acInfo);
-        v.add(sigAlgId);
+		AttributeCertificateInfo acInfo = acInfoGen
+				.generateAttributeCertificateInfo();
 
-        try
-        {
-            v.add(new DERBitString(X509Util.calculateSignature(sigOID, signatureAlgorithm, provider, key, random, acInfo)));
+		ASN1EncodableVector v = new ASN1EncodableVector();
 
-            return new X509V2AttributeCertificate(new AttributeCertificate(new DERSequence(v)));
-        }
-        catch (IOException e)
-        {
-            throw new ExtCertificateEncodingException("constructed invalid certificate", e);
-        }
-    }
+		v.add(acInfo);
+		v.add(sigAlgId);
 
-    /**
-     * Return an iterator of the signature names supported by the generator.
-     * 
-     * @return an iterator containing recognised names.
-     */
-    public Iterator getSignatureAlgNames()
-    {
-        return X509Util.getAlgNames();
-    }
+		try {
+			v.add(new DERBitString(X509Util.calculateSignature(sigOID,
+					signatureAlgorithm, provider, key, random, acInfo)));
+
+			return new X509V2AttributeCertificate(new AttributeCertificate(
+					new DERSequence(v)));
+		} catch (IOException e) {
+			throw new ExtCertificateEncodingException(
+					"constructed invalid certificate", e);
+		}
+	}
+
+	/**
+	 * Return an iterator of the signature names supported by the generator.
+	 * 
+	 * @return an iterator containing recognised names.
+	 */
+	public Iterator getSignatureAlgNames() {
+		return X509Util.getAlgNames();
+	}
 }

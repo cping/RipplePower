@@ -12,138 +12,155 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class AccountTransactionsRequester {
-    public AccountTransactionsRequester(Client client, AccountID account, OnPage onPage) {
-        this(client, account, onPage, -1, -1);
-    }
-    public AccountTransactionsRequester(Client client, AccountID account, OnPage onPage, long ledgerMin) {
-        this(client, account, onPage, ledgerMin, -1);
-    }
+	public AccountTransactionsRequester(Client client, AccountID account,
+			OnPage onPage) {
+		this(client, account, onPage, -1, -1);
+	}
 
-    public AccountTransactionsRequester(Client client, AccountID account, OnPage onPage, long ledgerMin, long ledgerMax) {
-        this.ledgerMax = ledgerMax;
-        this.ledgerMin = ledgerMin;
-        this.account = account;
-        this.client = client;
-        this.onPage = onPage;
-    }
+	public AccountTransactionsRequester(Client client, AccountID account,
+			OnPage onPage, long ledgerMin) {
+		this(client, account, onPage, ledgerMin, -1);
+	}
 
-    public void request() {
-        walkAccountTx(null);
-    }
+	public AccountTransactionsRequester(Client client, AccountID account,
+			OnPage onPage, long ledgerMin, long ledgerMax) {
+		this.ledgerMax = ledgerMax;
+		this.ledgerMin = ledgerMin;
+		this.account = account;
+		this.client = client;
+		this.onPage = onPage;
+	}
 
-    private long ledgerMax;
-    private long ledgerMin;
+	public void request() {
+		walkAccountTx(null);
+	}
 
-    private boolean aborted = false;
-    private boolean forward = false;
+	private long ledgerMax;
+	private long ledgerMin;
 
-    public void abort() {
-        aborted = true;
-    }
+	private boolean aborted = false;
+	private boolean forward = false;
 
-    public interface Page {
-        boolean hasNext();
-        void requestNext();
-        long ledgerMax();
-        long ledgerMin();
-        ArrayList<TransactionResult> transactionResults();
-        JSONArray transactionsJSON();
-    }
+	public void abort() {
+		aborted = true;
+	}
 
-    public interface OnPage {
-        void onPage(Page page);
-    }
+	public interface Page {
+		boolean hasNext();
 
-    AccountID account;
-    Client client;
-    OnPage onPage;
+		void requestNext();
 
-    public void setForward(boolean fwd) {
-        forward = fwd;
-    }
+		long ledgerMax();
 
-    private void walkAccountTx(final Object marker) {
-        Request request = client.newRequest(Command.account_tx);
-        request.json("binary", true);
-        request.json("account", account);
+		long ledgerMin();
 
-        if (marker != null) {
-            request.json("marker", marker);
-        }
-        request.json("ledger_index_max", ledgerMax);
-        request.json("ledger_index_min", ledgerMin);
-        if (forward) {
-            request.json("forward", true);
-        }
+		ArrayList<TransactionResult> transactionResults();
 
-        request.once(Request.OnSuccess.class, new Request.OnSuccess() {
-            @Override
-            public void called(Response response) {
-                if (aborted) {
-                    return;
-                }
+		JSONArray transactionsJSON();
+	}
 
-                final JSONObject result = response.result;
-                try {
-                    final JSONArray transactions = result.getJSONArray("transactions");
+	public interface OnPage {
+		void onPage(Page page);
+	}
 
-                    Object newMarker = result.opt("marker");
-                    // Fix for ancient servers before Stef's patch
-                    if (marker != null && newMarker != null && marker.toString().equals(newMarker.toString())) {
-                        newMarker = null;
-                    }
+	AccountID account;
+	Client client;
+	OnPage onPage;
 
-                    final int ledger_index_max = result.optInt("ledger_index_max");
-                    final int ledger_index_min = result.optInt("ledger_index_min");
+	public void setForward(boolean fwd) {
+		forward = fwd;
+	}
 
-                    final Object finalNewMarker = newMarker;
-                    onPage.onPage(new Page() {
-                        ArrayList<TransactionResult> txns = null;
+	private void walkAccountTx(final Object marker) {
+		Request request = client.newRequest(Command.account_tx);
+		request.json("binary", true);
+		request.json("account", account);
 
-                        @Override
-                        public boolean hasNext() {
-                            return finalNewMarker != null;
-                        }
+		if (marker != null) {
+			request.json("marker", marker);
+		}
+		request.json("ledger_index_max", ledgerMax);
+		request.json("ledger_index_min", ledgerMin);
+		if (forward) {
+			request.json("forward", true);
+		}
 
-                        @Override
-                        public void requestNext() {
-                            if (hasNext()) {
-                                walkAccountTx(finalNewMarker);
-                            }
-                        }
-                        @Override
-                        public long ledgerMax() {
-                            return ledger_index_max;
-                        }
+		request.once(Request.OnSuccess.class, new Request.OnSuccess() {
+			@Override
+			public void called(Response response) {
+				if (aborted) {
+					return;
+				}
 
-                        @Override
-                        public long ledgerMin() {
-                            return ledger_index_min;
-                        }
-                        @Override
-                        public ArrayList<TransactionResult> transactionResults() {
-                            if (txns == null) {
-                                txns = new ArrayList<TransactionResult>();
-                                for (int i = 0; i < transactions.length(); i++) {
-                                    JSONObject jsonObject = transactions.optJSONObject(i);
-                                    txns.add(new TransactionResult(jsonObject,
-                                            TransactionResult.Source.request_account_tx_binary));
-                                }
-                            }
-                            return txns;
-                        }
+				final JSONObject result = response.result;
+				try {
+					final JSONArray transactions = result
+							.getJSONArray("transactions");
 
-                        @Override
-                        public JSONArray transactionsJSON() {
-                            return transactions;
-                        }
-                    });
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+					Object newMarker = result.opt("marker");
+					// Fix for ancient servers before Stef's patch
+					if (marker != null && newMarker != null
+							&& marker.toString().equals(newMarker.toString())) {
+						newMarker = null;
+					}
 
-            }
-        });
-        request.request();
-    }
+					final int ledger_index_max = result
+							.optInt("ledger_index_max");
+					final int ledger_index_min = result
+							.optInt("ledger_index_min");
+
+					final Object finalNewMarker = newMarker;
+					onPage.onPage(new Page() {
+						ArrayList<TransactionResult> txns = null;
+
+						@Override
+						public boolean hasNext() {
+							return finalNewMarker != null;
+						}
+
+						@Override
+						public void requestNext() {
+							if (hasNext()) {
+								walkAccountTx(finalNewMarker);
+							}
+						}
+
+						@Override
+						public long ledgerMax() {
+							return ledger_index_max;
+						}
+
+						@Override
+						public long ledgerMin() {
+							return ledger_index_min;
+						}
+
+						@Override
+						public ArrayList<TransactionResult> transactionResults() {
+							if (txns == null) {
+								txns = new ArrayList<TransactionResult>();
+								for (int i = 0; i < transactions.length(); i++) {
+									JSONObject jsonObject = transactions
+											.optJSONObject(i);
+									txns.add(new TransactionResult(
+											jsonObject,
+											TransactionResult.Source.request_account_tx_binary));
+								}
+							}
+							return txns;
+						}
+
+						@Override
+						public JSONArray transactionsJSON() {
+							return transactions;
+						}
+					});
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+			}
+		});
+		request.request();
+	}
 }

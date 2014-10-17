@@ -2,19 +2,15 @@ package org.ripple.bouncycastle.jcajce.provider.asymmetric.x509;
 
 import java.security.cert.CRLException;
 
-class ExtCRLException
-    extends CRLException
-{
-    Throwable cause;
+class ExtCRLException extends CRLException {
+	Throwable cause;
 
-    ExtCRLException(String message, Throwable cause)
-    {
-        super(message);
-        this.cause = cause;
-    }
+	ExtCRLException(String message, Throwable cause) {
+		super(message);
+		this.cause = cause;
+	}
 
-    public Throwable getCause()
-    {
-        return cause;
-    }
+	public Throwable getCause() {
+		return cause;
+	}
 }

@@ -17,7 +17,7 @@
 package com.google.bitcoin.crypto;
 
 public class HDDerivationException extends RuntimeException {
-    public HDDerivationException(String message) {
-        super(message);
-    }
+	public HDDerivationException(String message) {
+		super(message);
+	}
 }

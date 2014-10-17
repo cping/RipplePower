@@ -27,232 +27,190 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.PBESecretKeyFactor
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public final class IDEA
-{
-    private IDEA()
-    {
-    }
-    
-    public static class ECB
-        extends BaseBlockCipher
-    {
-        public ECB()
-        {
-            super(new IDEAEngine());
-        }
-    }
+public final class IDEA {
+	private IDEA() {
+	}
 
-    public static class CBC
-       extends BaseBlockCipher
-    {
-        public CBC()
-        {
-            super(new CBCBlockCipher(new IDEAEngine()), 64);
-        }
-    }
+	public static class ECB extends BaseBlockCipher {
+		public ECB() {
+			super(new IDEAEngine());
+		}
+	}
 
-    public static class KeyGen
-        extends BaseKeyGenerator
-    {
-        public KeyGen()
-        {
-            super("IDEA", 128, new CipherKeyGenerator());
-        }
-    }
+	public static class CBC extends BaseBlockCipher {
+		public CBC() {
+			super(new CBCBlockCipher(new IDEAEngine()), 64);
+		}
+	}
 
-    public static class PBEWithSHAAndIDEAKeyGen
-       extends PBESecretKeyFactory
-    {
-       public PBEWithSHAAndIDEAKeyGen()
-       {
-           super("PBEwithSHAandIDEA-CBC", null, true, PKCS12, SHA1, 128, 64);
-       }
-    }
+	public static class KeyGen extends BaseKeyGenerator {
+		public KeyGen() {
+			super("IDEA", 128, new CipherKeyGenerator());
+		}
+	}
 
-    static public class PBEWithSHAAndIDEA
-        extends BaseBlockCipher
-    {
-        public PBEWithSHAAndIDEA()
-        {
-            super(new CBCBlockCipher(new IDEAEngine()));
-        }
-    }
+	public static class PBEWithSHAAndIDEAKeyGen extends PBESecretKeyFactory {
+		public PBEWithSHAAndIDEAKeyGen() {
+			super("PBEwithSHAandIDEA-CBC", null, true, PKCS12, SHA1, 128, 64);
+		}
+	}
 
-    public static class AlgParamGen
-        extends BaseAlgorithmParameterGenerator
-    {
-        protected void engineInit(
-            AlgorithmParameterSpec genParamSpec,
-            SecureRandom random)
-            throws InvalidAlgorithmParameterException
-        {
-            throw new InvalidAlgorithmParameterException("No supported AlgorithmParameterSpec for IDEA parameter generation.");
-        }
+	static public class PBEWithSHAAndIDEA extends BaseBlockCipher {
+		public PBEWithSHAAndIDEA() {
+			super(new CBCBlockCipher(new IDEAEngine()));
+		}
+	}
 
-        protected AlgorithmParameters engineGenerateParameters()
-        {
-            byte[] iv = new byte[8];
+	public static class AlgParamGen extends BaseAlgorithmParameterGenerator {
+		protected void engineInit(AlgorithmParameterSpec genParamSpec,
+				SecureRandom random) throws InvalidAlgorithmParameterException {
+			throw new InvalidAlgorithmParameterException(
+					"No supported AlgorithmParameterSpec for IDEA parameter generation.");
+		}
 
-            if (random == null)
-            {
-                random = new SecureRandom();
-            }
+		protected AlgorithmParameters engineGenerateParameters() {
+			byte[] iv = new byte[8];
 
-            random.nextBytes(iv);
+			if (random == null) {
+				random = new SecureRandom();
+			}
 
-            AlgorithmParameters params;
+			random.nextBytes(iv);
 
-            try
-            {
-                params = AlgorithmParameters.getInstance("IDEA", BouncyCastleProvider.PROVIDER_NAME);
-                params.init(new IvParameterSpec(iv));
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e.getMessage());
-            }
+			AlgorithmParameters params;
 
-            return params;
-        }
-    }
+			try {
+				params = AlgorithmParameters.getInstance("IDEA",
+						BouncyCastleProvider.PROVIDER_NAME);
+				params.init(new IvParameterSpec(iv));
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 
-    public static class AlgParams
-        extends BaseAlgorithmParameters
-    {
-        private byte[]  iv;
+			return params;
+		}
+	}
 
-        protected byte[] engineGetEncoded()
-            throws IOException
-        {
-            return engineGetEncoded("ASN.1");
-        }
+	public static class AlgParams extends BaseAlgorithmParameters {
+		private byte[] iv;
 
-        protected byte[] engineGetEncoded(
-            String format)
-            throws IOException
-        {
-            if (this.isASN1FormatString(format))
-            {
-                return new IDEACBCPar(engineGetEncoded("RAW")).getEncoded();
-            }
+		protected byte[] engineGetEncoded() throws IOException {
+			return engineGetEncoded("ASN.1");
+		}
 
-            if (format.equals("RAW"))
-            {
-                byte[]  tmp = new byte[iv.length];
+		protected byte[] engineGetEncoded(String format) throws IOException {
+			if (this.isASN1FormatString(format)) {
+				return new IDEACBCPar(engineGetEncoded("RAW")).getEncoded();
+			}
 
-                System.arraycopy(iv, 0, tmp, 0, iv.length);
-                return tmp;
-            }
+			if (format.equals("RAW")) {
+				byte[] tmp = new byte[iv.length];
 
-            return null;
-        }
+				System.arraycopy(iv, 0, tmp, 0, iv.length);
+				return tmp;
+			}
 
-        protected AlgorithmParameterSpec localEngineGetParameterSpec(
-            Class paramSpec)
-            throws InvalidParameterSpecException
-        {
-            if (paramSpec == IvParameterSpec.class)
-            {
-                return new IvParameterSpec(iv);
-            }
+			return null;
+		}
 
-            throw new InvalidParameterSpecException("unknown parameter spec passed to IV parameters object.");
-        }
+		protected AlgorithmParameterSpec localEngineGetParameterSpec(
+				Class paramSpec) throws InvalidParameterSpecException {
+			if (paramSpec == IvParameterSpec.class) {
+				return new IvParameterSpec(iv);
+			}
 
-        protected void engineInit(
-            AlgorithmParameterSpec paramSpec)
-            throws InvalidParameterSpecException
-        {
-            if (!(paramSpec instanceof IvParameterSpec))
-            {
-                throw new InvalidParameterSpecException("IvParameterSpec required to initialise a IV parameters algorithm parameters object");
-            }
+			throw new InvalidParameterSpecException(
+					"unknown parameter spec passed to IV parameters object.");
+		}
 
-            this.iv = ((IvParameterSpec)paramSpec).getIV();
-        }
+		protected void engineInit(AlgorithmParameterSpec paramSpec)
+				throws InvalidParameterSpecException {
+			if (!(paramSpec instanceof IvParameterSpec)) {
+				throw new InvalidParameterSpecException(
+						"IvParameterSpec required to initialise a IV parameters algorithm parameters object");
+			}
 
-        protected void engineInit(
-            byte[] params)
-            throws IOException
-        {
-            this.iv = new byte[params.length];
+			this.iv = ((IvParameterSpec) paramSpec).getIV();
+		}
 
-            System.arraycopy(params, 0, iv, 0, iv.length);
-        }
+		protected void engineInit(byte[] params) throws IOException {
+			this.iv = new byte[params.length];
 
-        protected void engineInit(
-            byte[] params,
-            String format)
-            throws IOException
-        {
-            if (format.equals("RAW"))
-            {
-                engineInit(params);
-                return;
-            }
-            if (format.equals("ASN.1"))
-            {
-                ASN1InputStream aIn = new ASN1InputStream(params);
-                IDEACBCPar      oct = new IDEACBCPar((ASN1Sequence)aIn.readObject());
+			System.arraycopy(params, 0, iv, 0, iv.length);
+		}
 
-                engineInit(oct.getIV());
-                return;
-            }
+		protected void engineInit(byte[] params, String format)
+				throws IOException {
+			if (format.equals("RAW")) {
+				engineInit(params);
+				return;
+			}
+			if (format.equals("ASN.1")) {
+				ASN1InputStream aIn = new ASN1InputStream(params);
+				IDEACBCPar oct = new IDEACBCPar((ASN1Sequence) aIn.readObject());
 
-            throw new IOException("Unknown parameters format in IV parameters object");
-        }
+				engineInit(oct.getIV());
+				return;
+			}
 
-        protected String engineToString()
-        {
-            return "IDEA Parameters";
-        }
-    }
-    
-    public static class Mac
-        extends BaseMac
-    {
-        public Mac()
-        {
-            super(new CBCBlockCipherMac(new IDEAEngine()));
-        }
-    }
+			throw new IOException(
+					"Unknown parameters format in IV parameters object");
+		}
 
-    public static class CFB8Mac
-        extends BaseMac
-    {
-        public CFB8Mac()
-        {
-            super(new CFBBlockCipherMac(new IDEAEngine()));
-        }
-    }
+		protected String engineToString() {
+			return "IDEA Parameters";
+		}
+	}
 
-    public static class Mappings
-        extends AlgorithmProvider
-    {
-        private static final String PREFIX = IDEA.class.getName();
+	public static class Mac extends BaseMac {
+		public Mac() {
+			super(new CBCBlockCipherMac(new IDEAEngine()));
+		}
+	}
 
-        public Mappings()
-        {
-        }
+	public static class CFB8Mac extends BaseMac {
+		public CFB8Mac() {
+			super(new CFBBlockCipherMac(new IDEAEngine()));
+		}
+	}
 
-        public void configure(ConfigurableProvider provider)
-        {
-            provider.addAlgorithm("AlgorithmParameterGenerator.IDEA", PREFIX + "$AlgParamGen");
-            provider.addAlgorithm("AlgorithmParameterGenerator.1.3.6.1.4.1.188.7.1.1.2", PREFIX + "$AlgParamGen");
-            provider.addAlgorithm("AlgorithmParameters.IDEA", PREFIX + "$AlgParams");
-            provider.addAlgorithm("AlgorithmParameters.1.3.6.1.4.1.188.7.1.1.2", PREFIX + "$AlgParams");
-            provider.addAlgorithm("Alg.Alias.AlgorithmParameters.PBEWITHSHAANDIDEA", "PKCS12PBE");
-            provider.addAlgorithm("Alg.Alias.AlgorithmParameters.PBEWITHSHAANDIDEA-CBC", "PKCS12PBE");
-            provider.addAlgorithm("Cipher.IDEA", PREFIX + "$ECB");
-            provider.addAlgorithm("Cipher.1.3.6.1.4.1.188.7.1.1.2", PREFIX + "$CBC");
-            provider.addAlgorithm("Cipher.PBEWITHSHAANDIDEA-CBC", PREFIX + "$PBEWithSHAAndIDEA");
-            provider.addAlgorithm("KeyGenerator.IDEA", PREFIX + "$KeyGen");
-            provider.addAlgorithm("KeyGenerator.1.3.6.1.4.1.188.7.1.1.2", PREFIX + "$KeyGen");
-            provider.addAlgorithm("SecretKeyFactory.PBEWITHSHAANDIDEA-CBC", PREFIX + "$PBEWithSHAAndIDEAKeyGen");
-            provider.addAlgorithm("Mac.IDEAMAC", PREFIX + "$Mac");
-            provider.addAlgorithm("Alg.Alias.Mac.IDEA", "IDEAMAC");
-            provider.addAlgorithm("Mac.IDEAMAC/CFB8", PREFIX + "$CFB8Mac");
-            provider.addAlgorithm("Alg.Alias.Mac.IDEA/CFB8", "IDEAMAC/CFB8");
-        }
-    }
+	public static class Mappings extends AlgorithmProvider {
+		private static final String PREFIX = IDEA.class.getName();
+
+		public Mappings() {
+		}
+
+		public void configure(ConfigurableProvider provider) {
+			provider.addAlgorithm("AlgorithmParameterGenerator.IDEA", PREFIX
+					+ "$AlgParamGen");
+			provider.addAlgorithm(
+					"AlgorithmParameterGenerator.1.3.6.1.4.1.188.7.1.1.2",
+					PREFIX + "$AlgParamGen");
+			provider.addAlgorithm("AlgorithmParameters.IDEA", PREFIX
+					+ "$AlgParams");
+			provider.addAlgorithm(
+					"AlgorithmParameters.1.3.6.1.4.1.188.7.1.1.2", PREFIX
+							+ "$AlgParams");
+			provider.addAlgorithm(
+					"Alg.Alias.AlgorithmParameters.PBEWITHSHAANDIDEA",
+					"PKCS12PBE");
+			provider.addAlgorithm(
+					"Alg.Alias.AlgorithmParameters.PBEWITHSHAANDIDEA-CBC",
+					"PKCS12PBE");
+			provider.addAlgorithm("Cipher.IDEA", PREFIX + "$ECB");
+			provider.addAlgorithm("Cipher.1.3.6.1.4.1.188.7.1.1.2", PREFIX
+					+ "$CBC");
+			provider.addAlgorithm("Cipher.PBEWITHSHAANDIDEA-CBC", PREFIX
+					+ "$PBEWithSHAAndIDEA");
+			provider.addAlgorithm("KeyGenerator.IDEA", PREFIX + "$KeyGen");
+			provider.addAlgorithm("KeyGenerator.1.3.6.1.4.1.188.7.1.1.2",
+					PREFIX + "$KeyGen");
+			provider.addAlgorithm("SecretKeyFactory.PBEWITHSHAANDIDEA-CBC",
+					PREFIX + "$PBEWithSHAAndIDEAKeyGen");
+			provider.addAlgorithm("Mac.IDEAMAC", PREFIX + "$Mac");
+			provider.addAlgorithm("Alg.Alias.Mac.IDEA", "IDEAMAC");
+			provider.addAlgorithm("Mac.IDEAMAC/CFB8", PREFIX + "$CFB8Mac");
+			provider.addAlgorithm("Alg.Alias.Mac.IDEA/CFB8", "IDEAMAC/CFB8");
+		}
+	}
 }

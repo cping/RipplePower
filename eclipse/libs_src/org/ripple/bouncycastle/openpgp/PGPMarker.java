@@ -12,23 +12,19 @@ import org.ripple.bouncycastle.bcpg.BCPGInputStream;
 import org.ripple.bouncycastle.bcpg.MarkerPacket;
 
 /**
- * a PGP marker packet - in general these should be ignored other than where
- * the idea is to preserve the original input stream.
+ * a PGP marker packet - in general these should be ignored other than where the
+ * idea is to preserve the original input stream.
  */
-public class PGPMarker
-{
-    private MarkerPacket p;
-    
-    /**
-     * Default constructor.
-     * 
-     * @param in
-     * @throws IOException
-     */
-    public PGPMarker(
-        BCPGInputStream in) 
-        throws IOException
-    {
-        p = (MarkerPacket)in.readPacket();
-    }
+public class PGPMarker {
+	private MarkerPacket p;
+
+	/**
+	 * Default constructor.
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	public PGPMarker(BCPGInputStream in) throws IOException {
+		p = (MarkerPacket) in.readPacket();
+	}
 }

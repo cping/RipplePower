@@ -2,31 +2,24 @@ package org.ripple.bouncycastle.jce.provider;
 
 import org.ripple.bouncycastle.jce.exception.ExtException;
 
-public class AnnotatedException
-    extends Exception
-    implements ExtException
-{
-    private Throwable _underlyingException;
+public class AnnotatedException extends Exception implements ExtException {
+	private Throwable _underlyingException;
 
-    AnnotatedException(String string, Throwable e)
-    {
-        super(string);
+	AnnotatedException(String string, Throwable e) {
+		super(string);
 
-        _underlyingException = e;
-    }
+		_underlyingException = e;
+	}
 
-    AnnotatedException(String string)
-    {
-        this(string, null);
-    }
+	AnnotatedException(String string) {
+		this(string, null);
+	}
 
-    Throwable getUnderlyingException()
-    {
-        return _underlyingException;
-    }
+	Throwable getUnderlyingException() {
+		return _underlyingException;
+	}
 
-    public Throwable getCause()
-    {
-        return _underlyingException;
-    }
+	public Throwable getCause() {
+		return _underlyingException;
+	}
 }

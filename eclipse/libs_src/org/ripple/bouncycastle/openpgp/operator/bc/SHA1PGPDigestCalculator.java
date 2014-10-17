@@ -8,61 +8,46 @@ import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.digests.SHA1Digest;
 import org.ripple.bouncycastle.openpgp.operator.PGPDigestCalculator;
 
-class SHA1PGPDigestCalculator
-    implements PGPDigestCalculator
-{
-    private Digest digest = new SHA1Digest();
+class SHA1PGPDigestCalculator implements PGPDigestCalculator {
+	private Digest digest = new SHA1Digest();
 
-    public int getAlgorithm()
-    {
-        return HashAlgorithmTags.SHA1;
-    }
+	public int getAlgorithm() {
+		return HashAlgorithmTags.SHA1;
+	}
 
-    public OutputStream getOutputStream()
-    {
-        return new DigestOutputStream(digest);
-    }
+	public OutputStream getOutputStream() {
+		return new DigestOutputStream(digest);
+	}
 
-    public byte[] getDigest()
-    {
-        byte[] d = new byte[digest.getDigestSize()];
+	public byte[] getDigest() {
+		byte[] d = new byte[digest.getDigestSize()];
 
-        digest.doFinal(d, 0);
+		digest.doFinal(d, 0);
 
-        return d;
-    }
+		return d;
+	}
 
-    public void reset()
-    {
-        digest.reset();
-    }
+	public void reset() {
+		digest.reset();
+	}
 
-    private class DigestOutputStream
-        extends OutputStream
-    {
-        private Digest dig;
+	private class DigestOutputStream extends OutputStream {
+		private Digest dig;
 
-        DigestOutputStream(Digest dig)
-        {
-            this.dig = dig;
-        }
+		DigestOutputStream(Digest dig) {
+			this.dig = dig;
+		}
 
-        public void write(byte[] bytes, int off, int len)
-            throws IOException
-        {
-            dig.update(bytes, off, len);
-        }
+		public void write(byte[] bytes, int off, int len) throws IOException {
+			dig.update(bytes, off, len);
+		}
 
-        public void write(byte[] bytes)
-            throws IOException
-        {
-            dig.update(bytes, 0, bytes.length);
-        }
+		public void write(byte[] bytes) throws IOException {
+			dig.update(bytes, 0, bytes.length);
+		}
 
-        public void write(int b)
-            throws IOException
-        {
-            dig.update((byte)b);
-        }
-    }
+		public void write(int b) throws IOException {
+			dig.update((byte) b);
+		}
+	}
 }

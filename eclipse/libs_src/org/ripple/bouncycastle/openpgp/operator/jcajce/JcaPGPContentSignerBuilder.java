@@ -18,139 +18,119 @@ import org.ripple.bouncycastle.openpgp.operator.PGPContentSignerBuilder;
 import org.ripple.bouncycastle.openpgp.operator.PGPDigestCalculator;
 import org.ripple.bouncycastle.util.io.TeeOutputStream;
 
-public class JcaPGPContentSignerBuilder
-    implements PGPContentSignerBuilder
-{
-    private OperatorHelper              helper = new OperatorHelper(new DefaultJcaJceHelper());
-    private JcaPGPDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaPGPDigestCalculatorProviderBuilder();
-    private JcaPGPKeyConverter          keyConverter = new JcaPGPKeyConverter();
-    private int                         hashAlgorithm;
-    private SecureRandom                random;
-    private int keyAlgorithm;
+public class JcaPGPContentSignerBuilder implements PGPContentSignerBuilder {
+	private OperatorHelper helper = new OperatorHelper(
+			new DefaultJcaJceHelper());
+	private JcaPGPDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaPGPDigestCalculatorProviderBuilder();
+	private JcaPGPKeyConverter keyConverter = new JcaPGPKeyConverter();
+	private int hashAlgorithm;
+	private SecureRandom random;
+	private int keyAlgorithm;
 
-    public JcaPGPContentSignerBuilder(int keyAlgorithm, int hashAlgorithm)
-    {
-        this.keyAlgorithm = keyAlgorithm;
-        this.hashAlgorithm = hashAlgorithm;
-    }
+	public JcaPGPContentSignerBuilder(int keyAlgorithm, int hashAlgorithm) {
+		this.keyAlgorithm = keyAlgorithm;
+		this.hashAlgorithm = hashAlgorithm;
+	}
 
-    public JcaPGPContentSignerBuilder setSecureRandom(SecureRandom random)
-    {
-        this.random = random;
+	public JcaPGPContentSignerBuilder setSecureRandom(SecureRandom random) {
+		this.random = random;
 
-        return this;
-    }
+		return this;
+	}
 
-    public JcaPGPContentSignerBuilder setProvider(Provider provider)
-    {
-        this.helper = new OperatorHelper(new ProviderJcaJceHelper(provider));
-        keyConverter.setProvider(provider);
-        digestCalculatorProviderBuilder.setProvider(provider);
+	public JcaPGPContentSignerBuilder setProvider(Provider provider) {
+		this.helper = new OperatorHelper(new ProviderJcaJceHelper(provider));
+		keyConverter.setProvider(provider);
+		digestCalculatorProviderBuilder.setProvider(provider);
 
-        return this;
-    }
+		return this;
+	}
 
-    public JcaPGPContentSignerBuilder setProvider(String providerName)
-    {
-        this.helper = new OperatorHelper(new NamedJcaJceHelper(providerName));
-        keyConverter.setProvider(providerName);
-        digestCalculatorProviderBuilder.setProvider(providerName);
+	public JcaPGPContentSignerBuilder setProvider(String providerName) {
+		this.helper = new OperatorHelper(new NamedJcaJceHelper(providerName));
+		keyConverter.setProvider(providerName);
+		digestCalculatorProviderBuilder.setProvider(providerName);
 
-        return this;
-    }
+		return this;
+	}
 
-    public JcaPGPContentSignerBuilder setDigestProvider(Provider provider)
-    {
-        digestCalculatorProviderBuilder.setProvider(provider);
+	public JcaPGPContentSignerBuilder setDigestProvider(Provider provider) {
+		digestCalculatorProviderBuilder.setProvider(provider);
 
-        return this;
-    }
+		return this;
+	}
 
-    public JcaPGPContentSignerBuilder setDigestProvider(String providerName)
-    {
-        digestCalculatorProviderBuilder.setProvider(providerName);
+	public JcaPGPContentSignerBuilder setDigestProvider(String providerName) {
+		digestCalculatorProviderBuilder.setProvider(providerName);
 
-        return this;
-    }
+		return this;
+	}
 
-    public PGPContentSigner build(final int signatureType, PGPPrivateKey privateKey)
-        throws PGPException
-    {
-        if (privateKey instanceof JcaPGPPrivateKey)
-        {
-            return build(signatureType, privateKey.getKeyID(), ((JcaPGPPrivateKey)privateKey).getPrivateKey());
-        }
-        else
-        {
-            return build(signatureType, privateKey.getKeyID(), keyConverter.getPrivateKey(privateKey));
-        }
-    }
+	public PGPContentSigner build(final int signatureType,
+			PGPPrivateKey privateKey) throws PGPException {
+		if (privateKey instanceof JcaPGPPrivateKey) {
+			return build(signatureType, privateKey.getKeyID(),
+					((JcaPGPPrivateKey) privateKey).getPrivateKey());
+		} else {
+			return build(signatureType, privateKey.getKeyID(),
+					keyConverter.getPrivateKey(privateKey));
+		}
+	}
 
-    public PGPContentSigner build(final int signatureType, final long keyID, final PrivateKey privateKey)
-        throws PGPException
-    {
-        final PGPDigestCalculator digestCalculator = digestCalculatorProviderBuilder.build().get(hashAlgorithm);
-        final Signature           signature = helper.createSignature(keyAlgorithm, hashAlgorithm);
+	public PGPContentSigner build(final int signatureType, final long keyID,
+			final PrivateKey privateKey) throws PGPException {
+		final PGPDigestCalculator digestCalculator = digestCalculatorProviderBuilder
+				.build().get(hashAlgorithm);
+		final Signature signature = helper.createSignature(keyAlgorithm,
+				hashAlgorithm);
 
-        try
-        {
-            if (random != null)
-            {
-                signature.initSign(privateKey, random);
-            }
-            else
-            {
-                signature.initSign(privateKey);
-            }
-        }
-        catch (InvalidKeyException e)
-        {
-           throw new PGPException("invalid key.", e);
-        }
+		try {
+			if (random != null) {
+				signature.initSign(privateKey, random);
+			} else {
+				signature.initSign(privateKey);
+			}
+		} catch (InvalidKeyException e) {
+			throw new PGPException("invalid key.", e);
+		}
 
-        return new PGPContentSigner()
-        {
-            public int getType()
-            {
-                return signatureType;
-            }
+		return new PGPContentSigner() {
+			public int getType() {
+				return signatureType;
+			}
 
-            public int getHashAlgorithm()
-            {
-                return hashAlgorithm;
-            }
+			public int getHashAlgorithm() {
+				return hashAlgorithm;
+			}
 
-            public int getKeyAlgorithm()
-            {
-                return keyAlgorithm;
-            }
+			public int getKeyAlgorithm() {
+				return keyAlgorithm;
+			}
 
-            public long getKeyID()
-            {
-                return keyID;
-            }
+			public long getKeyID() {
+				return keyID;
+			}
 
-            public OutputStream getOutputStream()
-            {
-                return new TeeOutputStream(new SignatureOutputStream(signature), digestCalculator.getOutputStream());
-            }
+			public OutputStream getOutputStream() {
+				return new TeeOutputStream(
+						new SignatureOutputStream(signature),
+						digestCalculator.getOutputStream());
+			}
 
-            public byte[] getSignature()
-            {
-                try
-                {
-                    return signature.sign();
-                }
-                catch (SignatureException e)
-                {    // TODO: need a specific runtime exception for PGP operators.
-                    throw new IllegalStateException("unable to create signature");
-                }
-            }
+			public byte[] getSignature() {
+				try {
+					return signature.sign();
+				} catch (SignatureException e) { // TODO: need a specific
+													// runtime exception for PGP
+													// operators.
+					throw new IllegalStateException(
+							"unable to create signature");
+				}
+			}
 
-            public byte[] getDigest()
-            {
-                return digestCalculator.getDigest();
-            }
-        };
-    }
+			public byte[] getDigest() {
+				return digestCalculator.getDigest();
+			}
+		};
+	}
 }

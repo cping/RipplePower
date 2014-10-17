@@ -4,10 +4,8 @@ import java.io.IOException;
 
 import org.spongycastle.crypto.params.AsymmetricKeyParameter;
 
-public interface TlsAgreementCredentials
-    extends TlsCredentials
-{
+public interface TlsAgreementCredentials extends TlsCredentials {
 
-    byte[] generateAgreement(AsymmetricKeyParameter peerPublicKey)
-        throws IOException;
+	byte[] generateAgreement(AsymmetricKeyParameter peerPublicKey)
+			throws IOException;
 }

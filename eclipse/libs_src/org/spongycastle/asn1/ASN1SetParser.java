@@ -2,9 +2,6 @@ package org.spongycastle.asn1;
 
 import java.io.IOException;
 
-public interface ASN1SetParser
-    extends ASN1Encodable, InMemoryRepresentable
-{
-    public ASN1Encodable readObject()
-        throws IOException;
+public interface ASN1SetParser extends ASN1Encodable, InMemoryRepresentable {
+	public ASN1Encodable readObject() throws IOException;
 }

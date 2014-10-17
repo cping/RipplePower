@@ -4,320 +4,265 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
-public abstract class ASN1Sequence
-    extends ASN1Primitive
-{
-    protected Vector seq = new Vector();
+public abstract class ASN1Sequence extends ASN1Primitive {
+	protected Vector seq = new Vector();
 
-    /**
-     * return an ASN1Sequence from the given object.
-     *
-     * @param obj the object we want converted.
-     * @exception IllegalArgumentException if the object cannot be converted.
-     */
-    public static ASN1Sequence getInstance(
-        Object  obj)
-    {
-        if (obj == null || obj instanceof ASN1Sequence)
-        {
-            return (ASN1Sequence)obj;
-        }
-        else if (obj instanceof ASN1SequenceParser)
-        {
-            return ASN1Sequence.getInstance(((ASN1SequenceParser)obj).toASN1Primitive());
-        }
-        else if (obj instanceof byte[])
-        {
-            try
-            {
-                return ASN1Sequence.getInstance(fromByteArray((byte[])obj));
-            }
-            catch (IOException e)
-            {
-                throw new IllegalArgumentException("failed to construct sequence from byte[]: " + e.getMessage());
-            }
-        }
-        else if (obj instanceof ASN1Encodable)
-        {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+	/**
+	 * return an ASN1Sequence from the given object.
+	 * 
+	 * @param obj
+	 *            the object we want converted.
+	 * @exception IllegalArgumentException
+	 *                if the object cannot be converted.
+	 */
+	public static ASN1Sequence getInstance(Object obj) {
+		if (obj == null || obj instanceof ASN1Sequence) {
+			return (ASN1Sequence) obj;
+		} else if (obj instanceof ASN1SequenceParser) {
+			return ASN1Sequence.getInstance(((ASN1SequenceParser) obj)
+					.toASN1Primitive());
+		} else if (obj instanceof byte[]) {
+			try {
+				return ASN1Sequence.getInstance(fromByteArray((byte[]) obj));
+			} catch (IOException e) {
+				throw new IllegalArgumentException(
+						"failed to construct sequence from byte[]: "
+								+ e.getMessage());
+			}
+		} else if (obj instanceof ASN1Encodable) {
+			ASN1Primitive primitive = ((ASN1Encodable) obj).toASN1Primitive();
 
-            if (primitive instanceof ASN1Sequence)
-            {
-                return (ASN1Sequence)primitive;
-            }
-        }
+			if (primitive instanceof ASN1Sequence) {
+				return (ASN1Sequence) primitive;
+			}
+		}
 
-        throw new IllegalArgumentException("unknown object in getInstance: " + obj.getClass().getName());
-    }
+		throw new IllegalArgumentException("unknown object in getInstance: "
+				+ obj.getClass().getName());
+	}
 
-    /**
-     * Return an ASN1 sequence from a tagged object. There is a special
-     * case here, if an object appears to have been explicitly tagged on 
-     * reading but we were expecting it to be implicitly tagged in the 
-     * normal course of events it indicates that we lost the surrounding
-     * sequence - so we need to add it back (this will happen if the tagged
-     * object is a sequence that contains other sequences). If you are
-     * dealing with implicitly tagged sequences you really <b>should</b>
-     * be using this method.
-     *
-     * @param obj the tagged object.
-     * @param explicit true if the object is meant to be explicitly tagged,
-     *          false otherwise.
-     * @exception IllegalArgumentException if the tagged object cannot
-     *          be converted.
-     */
-    public static ASN1Sequence getInstance(
-        ASN1TaggedObject    obj,
-        boolean             explicit)
-    {
-        if (explicit)
-        {
-            if (!obj.isExplicit())
-            {
-                throw new IllegalArgumentException("object implicit - explicit expected.");
-            }
+	/**
+	 * Return an ASN1 sequence from a tagged object. There is a special case
+	 * here, if an object appears to have been explicitly tagged on reading but
+	 * we were expecting it to be implicitly tagged in the normal course of
+	 * events it indicates that we lost the surrounding sequence - so we need to
+	 * add it back (this will happen if the tagged object is a sequence that
+	 * contains other sequences). If you are dealing with implicitly tagged
+	 * sequences you really <b>should</b> be using this method.
+	 * 
+	 * @param obj
+	 *            the tagged object.
+	 * @param explicit
+	 *            true if the object is meant to be explicitly tagged, false
+	 *            otherwise.
+	 * @exception IllegalArgumentException
+	 *                if the tagged object cannot be converted.
+	 */
+	public static ASN1Sequence getInstance(ASN1TaggedObject obj,
+			boolean explicit) {
+		if (explicit) {
+			if (!obj.isExplicit()) {
+				throw new IllegalArgumentException(
+						"object implicit - explicit expected.");
+			}
 
-            return ASN1Sequence.getInstance(obj.getObject().toASN1Primitive());
-        }
-        else
-        {
-            //
-            // constructed object which appears to be explicitly tagged
-            // when it should be implicit means we have to add the
-            // surrounding sequence.
-            //
-            if (obj.isExplicit())
-            {
-                if (obj instanceof BERTaggedObject)
-                {
-                    return new BERSequence(obj.getObject());
-                }
-                else
-                {
-                    return new DLSequence(obj.getObject());
-                }
-            }
-            else
-            {
-                if (obj.getObject() instanceof ASN1Sequence)
-                {
-                    return (ASN1Sequence)obj.getObject();
-                }
-            }
-        }
+			return ASN1Sequence.getInstance(obj.getObject().toASN1Primitive());
+		} else {
+			//
+			// constructed object which appears to be explicitly tagged
+			// when it should be implicit means we have to add the
+			// surrounding sequence.
+			//
+			if (obj.isExplicit()) {
+				if (obj instanceof BERTaggedObject) {
+					return new BERSequence(obj.getObject());
+				} else {
+					return new DLSequence(obj.getObject());
+				}
+			} else {
+				if (obj.getObject() instanceof ASN1Sequence) {
+					return (ASN1Sequence) obj.getObject();
+				}
+			}
+		}
 
-        throw new IllegalArgumentException("unknown object in getInstance: " + obj.getClass().getName());
-    }
+		throw new IllegalArgumentException("unknown object in getInstance: "
+				+ obj.getClass().getName());
+	}
 
-    /**
-     * create an empty sequence
-     */
-    protected ASN1Sequence()
-    {
-    }
+	/**
+	 * create an empty sequence
+	 */
+	protected ASN1Sequence() {
+	}
 
-    /**
-     * create a sequence containing one object
-     */
-    protected ASN1Sequence(
-        ASN1Encodable obj)
-    {
-        seq.addElement(obj);
-    }
+	/**
+	 * create a sequence containing one object
+	 */
+	protected ASN1Sequence(ASN1Encodable obj) {
+		seq.addElement(obj);
+	}
 
-    /**
-     * create a sequence containing a vector of objects.
-     */
-    protected ASN1Sequence(
-        ASN1EncodableVector v)
-    {
-        for (int i = 0; i != v.size(); i++)
-        {
-            seq.addElement(v.get(i));
-        }
-    }
+	/**
+	 * create a sequence containing a vector of objects.
+	 */
+	protected ASN1Sequence(ASN1EncodableVector v) {
+		for (int i = 0; i != v.size(); i++) {
+			seq.addElement(v.get(i));
+		}
+	}
 
-    /**
-     * create a sequence containing a vector of objects.
-     */
-    protected ASN1Sequence(
-        ASN1Encodable[]   array)
-    {
-        for (int i = 0; i != array.length; i++)
-        {
-            seq.addElement(array[i]);
-        }
-    }
+	/**
+	 * create a sequence containing a vector of objects.
+	 */
+	protected ASN1Sequence(ASN1Encodable[] array) {
+		for (int i = 0; i != array.length; i++) {
+			seq.addElement(array[i]);
+		}
+	}
 
-    public ASN1Encodable[] toArray()
-    {
-        ASN1Encodable[] values = new ASN1Encodable[this.size()];
+	public ASN1Encodable[] toArray() {
+		ASN1Encodable[] values = new ASN1Encodable[this.size()];
 
-        for (int i = 0; i != this.size(); i++)
-        {
-            values[i] = this.getObjectAt(i);
-        }
+		for (int i = 0; i != this.size(); i++) {
+			values[i] = this.getObjectAt(i);
+		}
 
-        return values;
-    }
+		return values;
+	}
 
-    public Enumeration getObjects()
-    {
-        return seq.elements();
-    }
+	public Enumeration getObjects() {
+		return seq.elements();
+	}
 
-    public ASN1SequenceParser parser()
-    {
-        final ASN1Sequence outer = this;
+	public ASN1SequenceParser parser() {
+		final ASN1Sequence outer = this;
 
-        return new ASN1SequenceParser()
-        {
-            private final int max = size();
+		return new ASN1SequenceParser() {
+			private final int max = size();
 
-            private int index;
+			private int index;
 
-            public ASN1Encodable readObject() throws IOException
-            {
-                if (index == max)
-                {
-                    return null;
-                }
-                
-                ASN1Encodable obj = getObjectAt(index++);
-                if (obj instanceof ASN1Sequence)
-                {
-                    return ((ASN1Sequence)obj).parser();
-                }
-                if (obj instanceof ASN1Set)
-                {
-                    return ((ASN1Set)obj).parser();
-                }
+			public ASN1Encodable readObject() throws IOException {
+				if (index == max) {
+					return null;
+				}
 
-                return obj;
-            }
+				ASN1Encodable obj = getObjectAt(index++);
+				if (obj instanceof ASN1Sequence) {
+					return ((ASN1Sequence) obj).parser();
+				}
+				if (obj instanceof ASN1Set) {
+					return ((ASN1Set) obj).parser();
+				}
 
-            public ASN1Primitive getLoadedObject()
-            {
-                return outer;
-            }
-            
-            public ASN1Primitive toASN1Primitive()
-            {
-                return outer;
-            }
-        };
-    }
+				return obj;
+			}
 
-    /**
-     * return the object at the sequence position indicated by index.
-     *
-     * @param index the sequence number (starting at zero) of the object
-     * @return the object at the sequence position indicated by index.
-     */
-    public ASN1Encodable getObjectAt(
-        int index)
-    {
-        return (ASN1Encodable)seq.elementAt(index);
-    }
+			public ASN1Primitive getLoadedObject() {
+				return outer;
+			}
 
-    /**
-     * return the number of objects in this sequence.
-     *
-     * @return the number of objects in this sequence.
-     */
-    public int size()
-    {
-        return seq.size();
-    }
+			public ASN1Primitive toASN1Primitive() {
+				return outer;
+			}
+		};
+	}
 
-    public int hashCode()
-    {
-        Enumeration             e = this.getObjects();
-        int                     hashCode = size();
+	/**
+	 * return the object at the sequence position indicated by index.
+	 * 
+	 * @param index
+	 *            the sequence number (starting at zero) of the object
+	 * @return the object at the sequence position indicated by index.
+	 */
+	public ASN1Encodable getObjectAt(int index) {
+		return (ASN1Encodable) seq.elementAt(index);
+	}
 
-        while (e.hasMoreElements())
-        {
-            Object o = getNext(e);
-            hashCode *= 17;
+	/**
+	 * return the number of objects in this sequence.
+	 * 
+	 * @return the number of objects in this sequence.
+	 */
+	public int size() {
+		return seq.size();
+	}
 
-            hashCode ^= o.hashCode();
-        }
+	public int hashCode() {
+		Enumeration e = this.getObjects();
+		int hashCode = size();
 
-        return hashCode;
-    }
+		while (e.hasMoreElements()) {
+			Object o = getNext(e);
+			hashCode *= 17;
 
-    boolean asn1Equals(
-        ASN1Primitive o)
-    {
-        if (!(o instanceof ASN1Sequence))
-        {
-            return false;
-        }
-        
-        ASN1Sequence   other = (ASN1Sequence)o;
+			hashCode ^= o.hashCode();
+		}
 
-        if (this.size() != other.size())
-        {
-            return false;
-        }
+		return hashCode;
+	}
 
-        Enumeration s1 = this.getObjects();
-        Enumeration s2 = other.getObjects();
+	boolean asn1Equals(ASN1Primitive o) {
+		if (!(o instanceof ASN1Sequence)) {
+			return false;
+		}
 
-        while (s1.hasMoreElements())
-        {
-            ASN1Encodable obj1 = getNext(s1);
-            ASN1Encodable obj2 = getNext(s2);
+		ASN1Sequence other = (ASN1Sequence) o;
 
-            ASN1Primitive o1 = obj1.toASN1Primitive();
-            ASN1Primitive o2 = obj2.toASN1Primitive();
+		if (this.size() != other.size()) {
+			return false;
+		}
 
-            if (o1 == o2 || o1.equals(o2))
-            {
-                continue;
-            }
+		Enumeration s1 = this.getObjects();
+		Enumeration s2 = other.getObjects();
 
-            return false;
-        }
+		while (s1.hasMoreElements()) {
+			ASN1Encodable obj1 = getNext(s1);
+			ASN1Encodable obj2 = getNext(s2);
 
-        return true;
-    }
+			ASN1Primitive o1 = obj1.toASN1Primitive();
+			ASN1Primitive o2 = obj2.toASN1Primitive();
 
-    private ASN1Encodable getNext(Enumeration e)
-    {
-        ASN1Encodable encObj = (ASN1Encodable)e.nextElement();
+			if (o1 == o2 || o1.equals(o2)) {
+				continue;
+			}
 
-        return encObj;
-    }
+			return false;
+		}
 
-    ASN1Primitive toDERObject()
-    {
-        ASN1Sequence derSeq = new DERSequence();
+		return true;
+	}
 
-        derSeq.seq = this.seq;
+	private ASN1Encodable getNext(Enumeration e) {
+		ASN1Encodable encObj = (ASN1Encodable) e.nextElement();
 
-        return derSeq;
-    }
+		return encObj;
+	}
 
-    ASN1Primitive toDLObject()
-    {
-        ASN1Sequence dlSeq = new DLSequence();
+	ASN1Primitive toDERObject() {
+		ASN1Sequence derSeq = new DERSequence();
 
-        dlSeq.seq = this.seq;
+		derSeq.seq = this.seq;
 
-        return dlSeq;
-    }
+		return derSeq;
+	}
 
-    boolean isConstructed()
-    {
-        return true;
-    }
+	ASN1Primitive toDLObject() {
+		ASN1Sequence dlSeq = new DLSequence();
 
-    abstract void encode(ASN1OutputStream out)
-        throws IOException;
+		dlSeq.seq = this.seq;
 
-    public String toString() 
-    {
-        return seq.toString();
-    }
+		return dlSeq;
+	}
+
+	boolean isConstructed() {
+		return true;
+	}
+
+	abstract void encode(ASN1OutputStream out) throws IOException;
+
+	public String toString() {
+		return seq.toString();
+	}
 }

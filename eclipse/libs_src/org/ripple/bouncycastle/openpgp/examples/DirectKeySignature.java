@@ -27,109 +27,125 @@ import org.ripple.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilde
 import org.ripple.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
 /**
- * A simple utility class that directly signs a public key and writes the signed key to "SignedKey.asc" in 
- * the current working directory.
+ * A simple utility class that directly signs a public key and writes the signed
+ * key to "SignedKey.asc" in the current working directory.
  * <p>
- * To sign a key: DirectKeySignature secretKeyFile secretKeyPass publicKeyFile(key to be signed) NotationName NotationValue.<br/>
- * </p><p>
- * To display a NotationData packet from a publicKey previously signed: DirectKeySignature signedPublicKeyFile.<br/>
- * </p><p>
- * <b>Note</b>: this example will silently overwrite files, nor does it pay any attention to
- * the specification of "_CONSOLE" in the filename. It also expects that a single pass phrase
- * will have been used.
+ * To sign a key: DirectKeySignature secretKeyFile secretKeyPass
+ * publicKeyFile(key to be signed) NotationName NotationValue.<br/>
+ * </p>
+ * <p>
+ * To display a NotationData packet from a publicKey previously signed:
+ * DirectKeySignature signedPublicKeyFile.<br/>
+ * </p>
+ * <p>
+ * <b>Note</b>: this example will silently overwrite files, nor does it pay any
+ * attention to the specification of "_CONSOLE" in the filename. It also expects
+ * that a single pass phrase will have been used.
  * </p>
  */
-public class DirectKeySignature
-{
-    public static void main(
-        String[] args)
-    throws Exception
-    {
-        Security.addProvider(new BouncyCastleProvider());
+public class DirectKeySignature {
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
 
-        if (args.length == 1)
-        {
-            PGPPublicKeyRing ring = new PGPPublicKeyRing(PGPUtil.getDecoderStream(new FileInputStream(args[0])), new JcaKeyFingerprintCalculator());
-            PGPPublicKey key = ring.getPublicKey();
-            
-            // iterate through all direct key signautures and look for NotationData subpackets
-            Iterator iter = key.getSignaturesOfType(PGPSignature.DIRECT_KEY);
-            while(iter.hasNext())
-            {
-                PGPSignature    sig = (PGPSignature)iter.next();
-                
-                System.out.println("Signature date is: " + sig.getHashedSubPackets().getSignatureCreationTime());
+		if (args.length == 1) {
+			PGPPublicKeyRing ring = new PGPPublicKeyRing(
+					PGPUtil.getDecoderStream(new FileInputStream(args[0])),
+					new JcaKeyFingerprintCalculator());
+			PGPPublicKey key = ring.getPublicKey();
 
-                NotationData[] data = sig.getHashedSubPackets().getNotationDataOccurences();//.getSubpacket(SignatureSubpacketTags.NOTATION_DATA);
-                
-                for (int i = 0; i < data.length; i++)
-                {
-                    System.out.println("Found Notaion named '"+data[i].getNotationName()+"' with content '"+data[i].getNotationValue()+"'.");
-                }
-            }
-        }
-        else if (args.length == 5)
-        {
-            // gather command line arguments
-            PGPSecretKeyRing secRing = new PGPSecretKeyRing(PGPUtil.getDecoderStream(new FileInputStream(args[0])), new JcaKeyFingerprintCalculator());
-            String secretKeyPass = args[1];
-            PGPPublicKeyRing ring = new PGPPublicKeyRing(PGPUtil.getDecoderStream(new FileInputStream(args[2])), new JcaKeyFingerprintCalculator());
-            String notationName = args[3];
-            String notationValue = args[4];
+			// iterate through all direct key signautures and look for
+			// NotationData subpackets
+			Iterator iter = key.getSignaturesOfType(PGPSignature.DIRECT_KEY);
+			while (iter.hasNext()) {
+				PGPSignature sig = (PGPSignature) iter.next();
 
-            // create the signed keyRing
-            PGPPublicKeyRing sRing = new PGPPublicKeyRing(new ByteArrayInputStream(signPublicKey(secRing.getSecretKey(), secretKeyPass, ring.getPublicKey(), notationName, notationValue, true)), new JcaKeyFingerprintCalculator());
-            ring = sRing;
+				System.out.println("Signature date is: "
+						+ sig.getHashedSubPackets().getSignatureCreationTime());
 
-            // write the created keyRing to file
-            ArmoredOutputStream out = new ArmoredOutputStream(new FileOutputStream("SignedKey.asc"));
-            sRing.encode(out);
-            out.flush();
-            out.close();
-        }
-        else
-        {
-            System.err.println("usage: DirectKeySignature secretKeyFile secretKeyPass publicKeyFile(key to be signed) NotationName NotationValue");
-            System.err.println("or: DirectKeySignature signedPublicKeyFile");
+				NotationData[] data = sig.getHashedSubPackets()
+						.getNotationDataOccurences();// .getSubpacket(SignatureSubpacketTags.NOTATION_DATA);
 
-        }
-    }
+				for (int i = 0; i < data.length; i++) {
+					System.out.println("Found Notaion named '"
+							+ data[i].getNotationName() + "' with content '"
+							+ data[i].getNotationValue() + "'.");
+				}
+			}
+		} else if (args.length == 5) {
+			// gather command line arguments
+			PGPSecretKeyRing secRing = new PGPSecretKeyRing(
+					PGPUtil.getDecoderStream(new FileInputStream(args[0])),
+					new JcaKeyFingerprintCalculator());
+			String secretKeyPass = args[1];
+			PGPPublicKeyRing ring = new PGPPublicKeyRing(
+					PGPUtil.getDecoderStream(new FileInputStream(args[2])),
+					new JcaKeyFingerprintCalculator());
+			String notationName = args[3];
+			String notationValue = args[4];
 
-    private static byte[] signPublicKey(PGPSecretKey secretKey, String secretKeyPass, PGPPublicKey keyToBeSigned, String notationName, String notationValue, boolean armor) throws Exception
-    {
-        OutputStream out = new ByteArrayOutputStream();
+			// create the signed keyRing
+			PGPPublicKeyRing sRing = new PGPPublicKeyRing(
+					new ByteArrayInputStream(signPublicKey(
+							secRing.getSecretKey(), secretKeyPass,
+							ring.getPublicKey(), notationName, notationValue,
+							true)), new JcaKeyFingerprintCalculator());
+			ring = sRing;
 
-        if (armor)
-        {
-            out = new ArmoredOutputStream(out);
-        }
+			// write the created keyRing to file
+			ArmoredOutputStream out = new ArmoredOutputStream(
+					new FileOutputStream("SignedKey.asc"));
+			sRing.encode(out);
+			out.flush();
+			out.close();
+		} else {
+			System.err
+					.println("usage: DirectKeySignature secretKeyFile secretKeyPass publicKeyFile(key to be signed) NotationName NotationValue");
+			System.err.println("or: DirectKeySignature signedPublicKeyFile");
 
-        PGPPrivateKey pgpPrivKey = secretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(secretKeyPass.toCharArray()));
+		}
+	}
 
-        PGPSignatureGenerator       sGen = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA1).setProvider("BC"));
+	private static byte[] signPublicKey(PGPSecretKey secretKey,
+			String secretKeyPass, PGPPublicKey keyToBeSigned,
+			String notationName, String notationValue, boolean armor)
+			throws Exception {
+		OutputStream out = new ByteArrayOutputStream();
 
-        sGen.init(PGPSignature.DIRECT_KEY, pgpPrivKey);
+		if (armor) {
+			out = new ArmoredOutputStream(out);
+		}
 
-        BCPGOutputStream            bOut = new BCPGOutputStream(out);
+		PGPPrivateKey pgpPrivKey = secretKey
+				.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder()
+						.setProvider("BC").build(secretKeyPass.toCharArray()));
 
-        sGen.generateOnePassVersion(false).encode(bOut);
+		PGPSignatureGenerator sGen = new PGPSignatureGenerator(
+				new JcaPGPContentSignerBuilder(secretKey.getPublicKey()
+						.getAlgorithm(), PGPUtil.SHA1).setProvider("BC"));
 
-        PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+		sGen.init(PGPSignature.DIRECT_KEY, pgpPrivKey);
 
-        boolean isHumanReadable = true;
+		BCPGOutputStream bOut = new BCPGOutputStream(out);
 
-        spGen.setNotationData(true, isHumanReadable, notationName, notationValue);
+		sGen.generateOnePassVersion(false).encode(bOut);
 
-        PGPSignatureSubpacketVector packetVector = spGen.generate();
-        sGen.setHashedSubpackets(packetVector);
+		PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
 
-        bOut.flush();
+		boolean isHumanReadable = true;
 
-        if (armor)
-        {
-            out.close();
-        }
+		spGen.setNotationData(true, isHumanReadable, notationName,
+				notationValue);
 
-        return PGPPublicKey.addCertification(keyToBeSigned, sGen.generate()).getEncoded();
-    }
+		PGPSignatureSubpacketVector packetVector = spGen.generate();
+		sGen.setHashedSubpackets(packetVector);
+
+		bOut.flush();
+
+		if (armor) {
+			out.close();
+		}
+
+		return PGPPublicKey.addCertification(keyToBeSigned, sGen.generate())
+				.getEncoded();
+	}
 }

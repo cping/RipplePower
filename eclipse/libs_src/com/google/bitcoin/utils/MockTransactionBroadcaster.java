@@ -28,80 +28,84 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * A mock transaction broadcaster can be used in unit tests as a stand-in for a PeerGroup. It catches any transactions
- * broadcast through it and makes them available via the {@link #broadcasts} member. Reading from that
- * {@link LinkedBlockingQueue} will block the thread until a transaction is available.
+ * A mock transaction broadcaster can be used in unit tests as a stand-in for a
+ * PeerGroup. It catches any transactions broadcast through it and makes them
+ * available via the {@link #broadcasts} member. Reading from that
+ * {@link LinkedBlockingQueue} will block the thread until a transaction is
+ * available.
  */
 public class MockTransactionBroadcaster implements TransactionBroadcaster {
-    private final ReentrantLock lock = Threading.lock("mock tx broadcaster");
-    private final Wallet wallet;
+	private final ReentrantLock lock = Threading.lock("mock tx broadcaster");
+	private final Wallet wallet;
 
-    public static class TxFuturePair {
-        public Transaction tx;
-        public SettableFuture<Transaction> future;
+	public static class TxFuturePair {
+		public Transaction tx;
+		public SettableFuture<Transaction> future;
 
-        public TxFuturePair(Transaction tx, SettableFuture<Transaction> future) {
-            this.tx = tx;
-            this.future = future;
-        }
-    }
+		public TxFuturePair(Transaction tx, SettableFuture<Transaction> future) {
+			this.tx = tx;
+			this.future = future;
+		}
+	}
 
-    private final LinkedBlockingQueue<TxFuturePair> broadcasts = new LinkedBlockingQueue<TxFuturePair>();
+	private final LinkedBlockingQueue<TxFuturePair> broadcasts = new LinkedBlockingQueue<TxFuturePair>();
 
-    public MockTransactionBroadcaster(Wallet wallet) {
-        // This code achieves nothing directly, but it sets up the broadcaster/peergroup > wallet lock ordering
-        // so inversions can be caught.
-        lock.lock();
-        try {
-            this.wallet = wallet;
-            wallet.getPendingTransactions();
-        } finally {
-            lock.unlock();
-        }
-    }
+	public MockTransactionBroadcaster(Wallet wallet) {
+		// This code achieves nothing directly, but it sets up the
+		// broadcaster/peergroup > wallet lock ordering
+		// so inversions can be caught.
+		lock.lock();
+		try {
+			this.wallet = wallet;
+			wallet.getPendingTransactions();
+		} finally {
+			lock.unlock();
+		}
+	}
 
-    @Override
-    public SettableFuture<Transaction> broadcastTransaction(Transaction tx) {
-        // Use a lock just to catch lock ordering inversions e.g. wallet->broadcaster.
-        lock.lock();
-        try {
-            SettableFuture<Transaction> result = SettableFuture.create();
-            broadcasts.put(new TxFuturePair(tx, result));
-            Futures.addCallback(result, new FutureCallback<Transaction>() {
-                @Override
-                public void onSuccess(Transaction result) {
-                    try {
-                        wallet.receivePending(result, null);
-                    } catch (VerificationException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+	@Override
+	public SettableFuture<Transaction> broadcastTransaction(Transaction tx) {
+		// Use a lock just to catch lock ordering inversions e.g.
+		// wallet->broadcaster.
+		lock.lock();
+		try {
+			SettableFuture<Transaction> result = SettableFuture.create();
+			broadcasts.put(new TxFuturePair(tx, result));
+			Futures.addCallback(result, new FutureCallback<Transaction>() {
+				@Override
+				public void onSuccess(Transaction result) {
+					try {
+						wallet.receivePending(result, null);
+					} catch (VerificationException e) {
+						throw new RuntimeException(e);
+					}
+				}
 
-                @Override
-                public void onFailure(Throwable t) {
-                }
-            });
-            return result;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
-    }
+				@Override
+				public void onFailure(Throwable t) {
+				}
+			});
+			return result;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} finally {
+			lock.unlock();
+		}
+	}
 
-    public Transaction waitForTransaction() {
-        return waitForTxFuture().tx;
-    }
+	public Transaction waitForTransaction() {
+		return waitForTxFuture().tx;
+	}
 
-    public TxFuturePair waitForTxFuture() {
-        try {
-            return broadcasts.take();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public TxFuturePair waitForTxFuture() {
+		try {
+			return broadcasts.take();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public int size() {
-        return broadcasts.size();
-    }
+	public int size() {
+		return broadcasts.size();
+	}
 }

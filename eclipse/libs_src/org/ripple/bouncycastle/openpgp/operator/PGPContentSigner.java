@@ -2,19 +2,18 @@ package org.ripple.bouncycastle.openpgp.operator;
 
 import java.io.OutputStream;
 
-public interface PGPContentSigner
-{
-    public OutputStream getOutputStream();
+public interface PGPContentSigner {
+	public OutputStream getOutputStream();
 
-    byte[] getSignature();
+	byte[] getSignature();
 
-    byte[] getDigest();
+	byte[] getDigest();
 
-    int getType();
+	int getType();
 
-    int getHashAlgorithm();
+	int getHashAlgorithm();
 
-    int getKeyAlgorithm();
+	int getKeyAlgorithm();
 
-    long getKeyID();
+	long getKeyID();
 }

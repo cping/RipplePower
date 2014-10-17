@@ -26,31 +26,35 @@ import java.math.BigInteger;
 import java.util.List;
 
 /**
- * An event listener that relays events to a native C++ object. A pointer to that object is stored in
- * this class using JNI on the native side, thus several instances of this can point to different actual
- * native implementations.
+ * An event listener that relays events to a native C++ object. A pointer to
+ * that object is stored in this class using JNI on the native side, thus
+ * several instances of this can point to different actual native
+ * implementations.
  */
 public class NativeWalletEventListener implements WalletEventListener {
-    public long ptr;
+	public long ptr;
 
-    @Override
-    public native void onCoinsReceived(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance);
+	@Override
+	public native void onCoinsReceived(Wallet wallet, Transaction tx,
+			BigInteger prevBalance, BigInteger newBalance);
 
-    @Override
-    public native void onCoinsSent(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance);
+	@Override
+	public native void onCoinsSent(Wallet wallet, Transaction tx,
+			BigInteger prevBalance, BigInteger newBalance);
 
-    @Override
-    public native void onReorganize(Wallet wallet);
+	@Override
+	public native void onReorganize(Wallet wallet);
 
-    @Override
-    public native void onTransactionConfidenceChanged(Wallet wallet, Transaction tx);
+	@Override
+	public native void onTransactionConfidenceChanged(Wallet wallet,
+			Transaction tx);
 
-    @Override
-    public native void onWalletChanged(Wallet wallet);
+	@Override
+	public native void onWalletChanged(Wallet wallet);
 
-    @Override
-    public native void onKeysAdded(Wallet wallet, List<ECKey> keys);
+	@Override
+	public native void onKeysAdded(Wallet wallet, List<ECKey> keys);
 
-    @Override
-    public native void onScriptsAdded(Wallet wallet, List<Script> scripts);
+	@Override
+	public native void onScriptsAdded(Wallet wallet, List<Script> scripts);
 }

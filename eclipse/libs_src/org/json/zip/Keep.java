@@ -1,6 +1,5 @@
 package org.json.zip;
 
-
 /*
  Copyright (c) 2013 JSON.org
 
@@ -28,57 +27,59 @@ package org.json.zip;
 /**
  * A keep is a data structure that associates strings (or substrings) with
  * numbers. This allows the sending of small integers instead of strings.
- *
+ * 
  * @author JSON.org
  * @version 2013-04-18
  */
 abstract class Keep implements None, PostMortem {
-    protected int capacity;
-    protected int length;
-    protected int power;
-    protected long[] uses;
+	protected int capacity;
+	protected int length;
+	protected int power;
+	protected long[] uses;
 
-    public Keep(int bits) {
-        this.capacity = JSONzip.twos[bits];
-        this.length = 0;
-        this.power = 0;
-        this.uses = new long[this.capacity];
-    }
+	public Keep(int bits) {
+		this.capacity = JSONzip.twos[bits];
+		this.length = 0;
+		this.power = 0;
+		this.uses = new long[this.capacity];
+	}
 
-    /**
-     * When an item ages, its use count is reduced by at least half.
-     *
-     * @param use
-     *            The current use count of an item.
-     * @return The new use count for that item.
-     */
-    public static long age(long use) {
-        return use >= 32 ? 16 : use / 2;
-    }
+	/**
+	 * When an item ages, its use count is reduced by at least half.
+	 * 
+	 * @param use
+	 *            The current use count of an item.
+	 * @return The new use count for that item.
+	 */
+	public static long age(long use) {
+		return use >= 32 ? 16 : use / 2;
+	}
 
-    /**
-     * Return the number of bits required to contain an integer based on the
-     * current length of the keep. As the keep fills up, the number of bits
-     * required to identify one of its items goes up.
-     */
-    public int bitsize() {
-        while (JSONzip.twos[this.power] < this.length) {
-            this.power += 1;
-        }
-        return this.power;
-    }
+	/**
+	 * Return the number of bits required to contain an integer based on the
+	 * current length of the keep. As the keep fills up, the number of bits
+	 * required to identify one of its items goes up.
+	 */
+	public int bitsize() {
+		while (JSONzip.twos[this.power] < this.length) {
+			this.power += 1;
+		}
+		return this.power;
+	}
 
-    /**
-     * Increase the usage count on an integer value.
-     */
-    public void tick(int integer) {
-        this.uses[integer] += 1;
-    }
+	/**
+	 * Increase the usage count on an integer value.
+	 */
+	public void tick(int integer) {
+		this.uses[integer] += 1;
+	}
 
-    /**
-     * Get the value associated with an integer.
-     * @param integer The number of an item in the keep.
-     * @return The value.
-     */
-    abstract public Object value(int integer);
+	/**
+	 * Get the value associated with an integer.
+	 * 
+	 * @param integer
+	 *            The number of an item in the keep.
+	 * @return The value.
+	 */
+	abstract public Object value(int integer);
 }

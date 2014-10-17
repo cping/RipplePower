@@ -27,227 +27,186 @@ import org.ripple.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyParameters;
 import org.ripple.bouncycastle.pqc.crypto.mceliece.McElieceFujisakiCipher;
 import org.ripple.bouncycastle.pqc.jcajce.provider.util.AsymmetricHybridCipher;
 
-public class McElieceFujisakiCipherSpi
-    extends AsymmetricHybridCipher
-    implements PKCSObjectIdentifiers, X509ObjectIdentifiers
-{
-    // TODO digest needed?
-    private Digest digest;
-    private McElieceFujisakiCipher cipher;
+public class McElieceFujisakiCipherSpi extends AsymmetricHybridCipher implements
+		PKCSObjectIdentifiers, X509ObjectIdentifiers {
+	// TODO digest needed?
+	private Digest digest;
+	private McElieceFujisakiCipher cipher;
 
-    /**
-     * buffer to store the input data
-     */
-    private ByteArrayOutputStream buf;
+	/**
+	 * buffer to store the input data
+	 */
+	private ByteArrayOutputStream buf;
 
+	protected McElieceFujisakiCipherSpi(Digest digest,
+			McElieceFujisakiCipher cipher) {
+		this.digest = digest;
+		this.cipher = cipher;
+		buf = new ByteArrayOutputStream();
 
-    protected McElieceFujisakiCipherSpi(Digest digest, McElieceFujisakiCipher cipher)
-    {
-        this.digest = digest;
-        this.cipher = cipher;
-        buf = new ByteArrayOutputStream();
+	}
 
-    }
+	/**
+	 * Continue a multiple-part encryption or decryption operation.
+	 * 
+	 * @param input
+	 *            byte array containing the next part of the input
+	 * @param inOff
+	 *            index in the array where the input starts
+	 * @param inLen
+	 *            length of the input
+	 * @return the processed byte array.
+	 */
+	public byte[] update(byte[] input, int inOff, int inLen) {
+		buf.write(input, inOff, inLen);
+		return new byte[0];
+	}
 
-    /**
-     * Continue a multiple-part encryption or decryption operation.
-     *
-     * @param input byte array containing the next part of the input
-     * @param inOff index in the array where the input starts
-     * @param inLen length of the input
-     * @return the processed byte array.
-     */
-    public byte[] update(byte[] input, int inOff, int inLen)
-    {
-        buf.write(input, inOff, inLen);
-        return new byte[0];
-    }
+	/**
+	 * Encrypts or decrypts data in a single-part operation, or finishes a
+	 * multiple-part operation. The data is encrypted or decrypted, depending on
+	 * how this cipher was initialized.
+	 * 
+	 * @param input
+	 *            the input buffer
+	 * @param inOff
+	 *            the offset in input where the input starts
+	 * @param inLen
+	 *            the input length
+	 * @return the new buffer with the result
+	 * @throws BadPaddingException
+	 *             on deryption errors.
+	 */
+	public byte[] doFinal(byte[] input, int inOff, int inLen)
+			throws BadPaddingException {
+		update(input, inOff, inLen);
+		byte[] data = buf.toByteArray();
+		buf.reset();
+		if (opMode == ENCRYPT_MODE) {
 
+			try {
+				return cipher.messageEncrypt(data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-    /**
-     * Encrypts or decrypts data in a single-part operation, or finishes a
-     * multiple-part operation. The data is encrypted or decrypted, depending on
-     * how this cipher was initialized.
-     *
-     * @param input the input buffer
-     * @param inOff the offset in input where the input starts
-     * @param inLen the input length
-     * @return the new buffer with the result
-     * @throws BadPaddingException on deryption errors.
-     */
-    public byte[] doFinal(byte[] input, int inOff, int inLen)
-        throws BadPaddingException
-    {
-        update(input, inOff, inLen);
-        byte[] data = buf.toByteArray();
-        buf.reset();
-        if (opMode == ENCRYPT_MODE)
-        {
+		} else if (opMode == DECRYPT_MODE) {
 
-            try
-            {
-                return cipher.messageEncrypt(data);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+			try {
+				return cipher.messageDecrypt(data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-        }
-        else if (opMode == DECRYPT_MODE)
-        {
+		}
+		return null;
+	}
 
-            try
-            {
-                return cipher.messageDecrypt(data);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+	protected int encryptOutputSize(int inLen) {
+		return 0;
+	}
 
-        }
-        return null;
-    }
+	protected int decryptOutputSize(int inLen) {
+		return 0;
+	}
 
+	protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
+			SecureRandom sr) throws InvalidKeyException,
+			InvalidAlgorithmParameterException {
 
-    protected int encryptOutputSize(int inLen)
-    {
-        return 0;
-    }
+		CipherParameters param;
+		param = McElieceCCA2KeysToParams
+				.generatePublicKeyParameter((PublicKey) key);
 
-    protected int decryptOutputSize(int inLen)
-    {
-        return 0;
-    }
+		param = new ParametersWithRandom(param, sr);
+		digest.reset();
+		cipher.init(true, param);
 
-    protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
-                                     SecureRandom sr)
-        throws InvalidKeyException,
-        InvalidAlgorithmParameterException
-    {
+	}
 
-        CipherParameters param;
-        param = McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey)key);
+	protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
+			throws InvalidKeyException, InvalidAlgorithmParameterException {
 
-        param = new ParametersWithRandom(param, sr);
-        digest.reset();
-        cipher.init(true, param);
+		CipherParameters param;
+		param = McElieceCCA2KeysToParams
+				.generatePrivateKeyParameter((PrivateKey) key);
 
-    }
+		digest.reset();
+		cipher.init(false, param);
+	}
 
-    protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
-        throws InvalidKeyException, InvalidAlgorithmParameterException
-    {
+	public String getName() {
+		return "McElieceFujisakiCipher";
+	}
 
-        CipherParameters param;
-        param = McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey)key);
+	public int getKeySize(Key key) throws InvalidKeyException {
+		McElieceCCA2KeyParameters mcElieceCCA2KeyParameters;
+		if (key instanceof PublicKey) {
+			mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters) McElieceCCA2KeysToParams
+					.generatePublicKeyParameter((PublicKey) key);
+		} else {
+			mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters) McElieceCCA2KeysToParams
+					.generatePrivateKeyParameter((PrivateKey) key);
 
-        digest.reset();
-        cipher.init(false, param);
-    }
+		}
 
-    public String getName()
-    {
-        return "McElieceFujisakiCipher";
-    }
+		return cipher.getKeySize(mcElieceCCA2KeyParameters);
+	}
 
-    public int getKeySize(Key key)
-        throws InvalidKeyException
-    {
-        McElieceCCA2KeyParameters mcElieceCCA2KeyParameters;
-        if (key instanceof PublicKey)
-        {
-            mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters)McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey)key);
-        }
-        else
-        {
-            mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters)McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey)key);
+	public byte[] messageEncrypt(byte[] input)
+			throws IllegalBlockSizeException, BadPaddingException,
+			NoSuchAlgorithmException {
+		byte[] output = null;
+		try {
+			output = cipher.messageEncrypt(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 
-        }
+	public byte[] messageDecrypt(byte[] input)
+			throws IllegalBlockSizeException, BadPaddingException,
+			NoSuchAlgorithmException {
+		byte[] output = null;
+		try {
+			output = cipher.messageDecrypt(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 
+	// ////////////////////////////////////////////////////////////////////////////////
 
-        return cipher.getKeySize(mcElieceCCA2KeyParameters);
-    }
+	static public class McElieceFujisaki extends McElieceFujisakiCipherSpi {
+		public McElieceFujisaki() {
+			super(new SHA1Digest(), new McElieceFujisakiCipher());
+		}
+	}
 
-    public byte[] messageEncrypt(byte[] input)
-        throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException
-    {
-        byte[] output = null;
-        try
-        {
-            output = cipher.messageEncrypt(input);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return output;
-    }
+	static public class McElieceFujisaki224 extends McElieceFujisakiCipherSpi {
+		public McElieceFujisaki224() {
+			super(new SHA224Digest(), new McElieceFujisakiCipher());
+		}
+	}
 
+	static public class McElieceFujisaki256 extends McElieceFujisakiCipherSpi {
+		public McElieceFujisaki256() {
+			super(new SHA256Digest(), new McElieceFujisakiCipher());
+		}
+	}
 
-    public byte[] messageDecrypt(byte[] input)
-        throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException
-    {
-        byte[] output = null;
-        try
-        {
-            output = cipher.messageDecrypt(input);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return output;
-    }
+	static public class McElieceFujisaki384 extends McElieceFujisakiCipherSpi {
+		public McElieceFujisaki384() {
+			super(new SHA384Digest(), new McElieceFujisakiCipher());
+		}
+	}
 
-
-    //////////////////////////////////////////////////////////////////////////////////
-
-    static public class McElieceFujisaki
-        extends McElieceFujisakiCipherSpi
-    {
-        public McElieceFujisaki()
-        {
-            super(new SHA1Digest(), new McElieceFujisakiCipher());
-        }
-    }
-
-    static public class McElieceFujisaki224
-        extends McElieceFujisakiCipherSpi
-    {
-        public McElieceFujisaki224()
-        {
-            super(new SHA224Digest(), new McElieceFujisakiCipher());
-        }
-    }
-
-    static public class McElieceFujisaki256
-        extends McElieceFujisakiCipherSpi
-    {
-        public McElieceFujisaki256()
-        {
-            super(new SHA256Digest(), new McElieceFujisakiCipher());
-        }
-    }
-
-    static public class McElieceFujisaki384
-        extends McElieceFujisakiCipherSpi
-    {
-        public McElieceFujisaki384()
-        {
-            super(new SHA384Digest(), new McElieceFujisakiCipher());
-        }
-    }
-
-    static public class McElieceFujisaki512
-        extends McElieceFujisakiCipherSpi
-    {
-        public McElieceFujisaki512()
-        {
-            super(new SHA512Digest(), new McElieceFujisakiCipher());
-        }
-    }
-
+	static public class McElieceFujisaki512 extends McElieceFujisakiCipherSpi {
+		public McElieceFujisaki512() {
+			super(new SHA512Digest(), new McElieceFujisakiCipher());
+		}
+	}
 
 }

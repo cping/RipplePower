@@ -7,40 +7,30 @@ import org.ripple.bouncycastle.util.Arrays;
 /**
  * basic packet for an experimental packet.
  */
-public class ExperimentalPacket 
-    extends ContainedPacket implements PublicKeyAlgorithmTags
-{
-    private int    tag;
-    private byte[] contents;
-    
-    /**
-     * 
-     * @param in
-     * @throws IOException
-     */
-    ExperimentalPacket(
-        int                tag,
-        BCPGInputStream    in)
-        throws IOException
-    {
-        this.tag = tag;
-        this.contents = in.readAll();
-    }
+public class ExperimentalPacket extends ContainedPacket implements
+		PublicKeyAlgorithmTags {
+	private int tag;
+	private byte[] contents;
 
-    public int getTag()
-    {
-        return tag;
-    }
-    
-    public byte[] getContents()
-    {
-        return Arrays.clone(contents);
-    }
+	/**
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	ExperimentalPacket(int tag, BCPGInputStream in) throws IOException {
+		this.tag = tag;
+		this.contents = in.readAll();
+	}
 
-    public void encode(
-        BCPGOutputStream    out)
-        throws IOException
-    {
-        out.writePacket(tag, contents, true);
-    }
+	public int getTag() {
+		return tag;
+	}
+
+	public byte[] getContents() {
+		return Arrays.clone(contents);
+	}
+
+	public void encode(BCPGOutputStream out) throws IOException {
+		out.writePacket(tag, contents, true);
+	}
 }

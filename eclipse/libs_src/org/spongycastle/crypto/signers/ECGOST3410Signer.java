@@ -16,143 +16,119 @@ import java.security.SecureRandom;
 /**
  * GOST R 34.10-2001 Signature Algorithm
  */
-public class ECGOST3410Signer
-    implements DSA
-{
-    ECKeyParameters key;
+public class ECGOST3410Signer implements DSA {
+	ECKeyParameters key;
 
-    SecureRandom    random;
+	SecureRandom random;
 
-    public void init(
-        boolean                 forSigning,
-        CipherParameters        param)
-    {
-        if (forSigning)
-        {
-            if (param instanceof ParametersWithRandom)
-            {
-                ParametersWithRandom    rParam = (ParametersWithRandom)param;
+	public void init(boolean forSigning, CipherParameters param) {
+		if (forSigning) {
+			if (param instanceof ParametersWithRandom) {
+				ParametersWithRandom rParam = (ParametersWithRandom) param;
 
-                this.random = rParam.getRandom();
-                this.key = (ECPrivateKeyParameters)rParam.getParameters();
-            }
-            else
-            {
-                this.random = new SecureRandom();
-                this.key = (ECPrivateKeyParameters)param;
-            }
-        }
-        else
-        {
-            this.key = (ECPublicKeyParameters)param;
-        }
-    }
+				this.random = rParam.getRandom();
+				this.key = (ECPrivateKeyParameters) rParam.getParameters();
+			} else {
+				this.random = new SecureRandom();
+				this.key = (ECPrivateKeyParameters) param;
+			}
+		} else {
+			this.key = (ECPublicKeyParameters) param;
+		}
+	}
 
-    /**
-     * generate a signature for the given message using the key we were
-     * initialised with. For conventional GOST3410 the message should be a GOST3411
-     * hash of the message of interest.
-     *
-     * @param message the message that will be verified later.
-     */
-    public BigInteger[] generateSignature(
-        byte[] message)
-    {
-        byte[] mRev = new byte[message.length]; // conversion is little-endian
-        for (int i = 0; i != mRev.length; i++)
-        {
-            mRev[i] = message[mRev.length - 1 - i];
-        }
-        
-        BigInteger e = new BigInteger(1, mRev);
-        BigInteger n = key.getParameters().getN();
+	/**
+	 * generate a signature for the given message using the key we were
+	 * initialised with. For conventional GOST3410 the message should be a
+	 * GOST3411 hash of the message of interest.
+	 * 
+	 * @param message
+	 *            the message that will be verified later.
+	 */
+	public BigInteger[] generateSignature(byte[] message) {
+		byte[] mRev = new byte[message.length]; // conversion is little-endian
+		for (int i = 0; i != mRev.length; i++) {
+			mRev[i] = message[mRev.length - 1 - i];
+		}
 
-        BigInteger r = null;
-        BigInteger s = null;
+		BigInteger e = new BigInteger(1, mRev);
+		BigInteger n = key.getParameters().getN();
 
-        do // generate s
-        {
-            BigInteger k = null;
+		BigInteger r = null;
+		BigInteger s = null;
 
-            do // generate r
-            {
-                do
-                {
-                    k = new BigInteger(n.bitLength(), random);
-                }
-                while (k.equals(ECConstants.ZERO));
+		do // generate s
+		{
+			BigInteger k = null;
 
-                ECPoint p = key.getParameters().getG().multiply(k).normalize();
+			do // generate r
+			{
+				do {
+					k = new BigInteger(n.bitLength(), random);
+				} while (k.equals(ECConstants.ZERO));
 
-                BigInteger x = p.getAffineXCoord().toBigInteger();
+				ECPoint p = key.getParameters().getG().multiply(k).normalize();
 
-                r = x.mod(n);
-            }
-            while (r.equals(ECConstants.ZERO));
+				BigInteger x = p.getAffineXCoord().toBigInteger();
 
-            BigInteger d = ((ECPrivateKeyParameters)key).getD();
+				r = x.mod(n);
+			} while (r.equals(ECConstants.ZERO));
 
-            s = (k.multiply(e)).add(d.multiply(r)).mod(n);
-        }
-        while (s.equals(ECConstants.ZERO));
+			BigInteger d = ((ECPrivateKeyParameters) key).getD();
 
-        BigInteger[]  res = new BigInteger[2];
+			s = (k.multiply(e)).add(d.multiply(r)).mod(n);
+		} while (s.equals(ECConstants.ZERO));
 
-        res[0] = r;
-        res[1] = s;
+		BigInteger[] res = new BigInteger[2];
 
-        return res;
-    }
+		res[0] = r;
+		res[1] = s;
 
-    /**
-     * return true if the value r and s represent a GOST3410 signature for
-     * the passed in message (for standard GOST3410 the message should be
-     * a GOST3411 hash of the real message to be verified).
-     */
-    public boolean verifySignature(
-        byte[]      message,
-        BigInteger  r,
-        BigInteger  s)
-    {
-        byte[] mRev = new byte[message.length]; // conversion is little-endian
-        for (int i = 0; i != mRev.length; i++)
-        {
-            mRev[i] = message[mRev.length - 1 - i];
-        }
-        
-        BigInteger e = new BigInteger(1, mRev);
-        BigInteger n = key.getParameters().getN();
+		return res;
+	}
 
-        // r in the range [1,n-1]
-        if (r.compareTo(ECConstants.ONE) < 0 || r.compareTo(n) >= 0)
-        {
-            return false;
-        }
+	/**
+	 * return true if the value r and s represent a GOST3410 signature for the
+	 * passed in message (for standard GOST3410 the message should be a GOST3411
+	 * hash of the real message to be verified).
+	 */
+	public boolean verifySignature(byte[] message, BigInteger r, BigInteger s) {
+		byte[] mRev = new byte[message.length]; // conversion is little-endian
+		for (int i = 0; i != mRev.length; i++) {
+			mRev[i] = message[mRev.length - 1 - i];
+		}
 
-        // s in the range [1,n-1]
-        if (s.compareTo(ECConstants.ONE) < 0 || s.compareTo(n) >= 0)
-        {
-            return false;
-        }
+		BigInteger e = new BigInteger(1, mRev);
+		BigInteger n = key.getParameters().getN();
 
-        BigInteger v = e.modInverse(n);
+		// r in the range [1,n-1]
+		if (r.compareTo(ECConstants.ONE) < 0 || r.compareTo(n) >= 0) {
+			return false;
+		}
 
-        BigInteger z1 = s.multiply(v).mod(n);
-        BigInteger z2 = (n.subtract(r)).multiply(v).mod(n);
+		// s in the range [1,n-1]
+		if (s.compareTo(ECConstants.ONE) < 0 || s.compareTo(n) >= 0) {
+			return false;
+		}
 
-        ECPoint G = key.getParameters().getG(); // P
-        ECPoint Q = ((ECPublicKeyParameters)key).getQ();
+		BigInteger v = e.modInverse(n);
 
-        ECPoint point = ECAlgorithms.sumOfTwoMultiplies(G, z1, Q, z2).normalize();
+		BigInteger z1 = s.multiply(v).mod(n);
+		BigInteger z2 = (n.subtract(r)).multiply(v).mod(n);
 
-        // components must be bogus.
-        if (point.isInfinity())
-        {
-            return false;
-        }
+		ECPoint G = key.getParameters().getG(); // P
+		ECPoint Q = ((ECPublicKeyParameters) key).getQ();
 
-        BigInteger R = point.getAffineXCoord().toBigInteger().mod(n);
+		ECPoint point = ECAlgorithms.sumOfTwoMultiplies(G, z1, Q, z2)
+				.normalize();
 
-        return R.equals(r);
-    }
+		// components must be bogus.
+		if (point.isInfinity()) {
+			return false;
+		}
+
+		BigInteger R = point.getAffineXCoord().toBigInteger().mod(n);
+
+		return R.equals(r);
+	}
 }

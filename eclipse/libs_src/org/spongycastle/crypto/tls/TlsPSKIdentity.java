@@ -1,12 +1,11 @@
 package org.spongycastle.crypto.tls;
 
-public interface TlsPSKIdentity
-{
-    void skipIdentityHint();
+public interface TlsPSKIdentity {
+	void skipIdentityHint();
 
-    void notifyIdentityHint(byte[] psk_identity_hint);
+	void notifyIdentityHint(byte[] psk_identity_hint);
 
-    byte[] getPSKIdentity();
+	byte[] getPSKIdentity();
 
-    byte[] getPSK();
+	byte[] getPSK();
 }
