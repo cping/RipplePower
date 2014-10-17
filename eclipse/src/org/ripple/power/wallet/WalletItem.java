@@ -6,31 +6,32 @@ public class WalletItem {
 
 	private String pDate;
 
-	private String pPublicKey;
-
-	private String pPrivateKey;
+	private RippleSeedAddress pSeed;
 
 	private String pAmount;
 
 	private String pStatus;
 
-	public WalletItem(String date, String pubKey, String priKey, String amount,
+	public WalletItem(String date, String seed, String amount, String status) {
+		this(date, new RippleSeedAddress(seed), amount, status);
+	}
+
+	public WalletItem(String date, RippleSeedAddress seed, String amount,
 			String status) {
 		this.pDate = date;
-		this.pPublicKey = pubKey;
-		this.pPrivateKey = priKey;
+		this.pSeed = seed;
 		this.pAmount = amount;
 		this.pStatus = status;
 	}
 
 	public RippleSeedAddress getSeed() {
-		return new RippleSeedAddress(pPrivateKey);
+		return pSeed;
 	}
 
 	public String toString() {
 		return String.format(
 				"date:%s,public:%s,private:%s,amount:%s,status:%s", pDate,
-				pPublicKey, pPrivateKey, pAmount, pStatus);
+				pSeed.getPublicKey(), pSeed.getPrivateKey(), pAmount, pStatus);
 	}
 
 	public String getDate() {
@@ -38,11 +39,11 @@ public class WalletItem {
 	}
 
 	public String getPublicKey() {
-		return pPublicKey;
+		return pSeed.getPublicKey();
 	}
 
 	public String getPrivateKey() {
-		return pPrivateKey;
+		return pSeed.getPrivateKey();
 	}
 
 	public String getAmount() {
@@ -55,14 +56,6 @@ public class WalletItem {
 
 	public void setDate(String date) {
 		this.pDate = date;
-	}
-
-	public void setPublicKey(String pub) {
-		this.pPublicKey = pub;
-	}
-
-	public void setPrivateKey(String pri) {
-		this.pPrivateKey = pri;
 	}
 
 	public void setAmount(String a) {

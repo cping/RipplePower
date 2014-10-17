@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.address.utils.Helper;
+import org.ripple.power.utils.CollectionUtils;
 
 public class RippleIdentifier implements Serializable {
 
@@ -15,8 +16,8 @@ public class RippleIdentifier implements Serializable {
 	byte[] payloadBytes;
 	int identifierType;
 
-	public RippleIdentifier(byte[] payloadBytes, int identifierType) {
-		this.payloadBytes = payloadBytes;
+	public RippleIdentifier(final byte[] payloadBytes, int identifierType) {
+		this.payloadBytes = CollectionUtils.copyOf(payloadBytes);
 		this.identifierType = identifierType;
 	}
 
@@ -53,7 +54,7 @@ public class RippleIdentifier implements Serializable {
 	}
 
 	public byte[] getBytes() {
-		return payloadBytes;
+		return CollectionUtils.copyOf(payloadBytes);
 	}
 
 	@Override

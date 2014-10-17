@@ -324,7 +324,12 @@ public class MainPanel extends JPanel implements ActionListener {
 									item);
 						}
 						break;
-
+					case 1:
+							RPIOUSendDialog.showDialog(item.getPublicKey()
+									+ " IOU Send", LSystem.applicationMain,
+									item);
+						
+						break;
 					default:
 						break;
 					}

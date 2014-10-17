@@ -640,6 +640,10 @@ public class MathUtils {
 		return start + rand.nextInt(end - start + 1);
 	}
 
+	public static final long randomLong(int start, int end) {
+		return start + rand.nextInt(end - start + 1);
+	}
+	
 	public static final boolean randomBoolean() {
 		return rand.nextBoolean();
 	}

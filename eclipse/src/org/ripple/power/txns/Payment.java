@@ -1,6 +1,7 @@
 package org.ripple.power.txns;
 
 import org.ripple.power.ui.RPClient;
+import org.ripple.power.utils.MathUtils;
 
 import org.address.ripple.RippleObject;
 import org.address.ripple.RippleSeedAddress;
@@ -35,11 +36,13 @@ public class Payment {
 					item.putField(BinaryFormatField.TransactionType,
 							(int) TransactionTypes.PAYMENT.byteValue);
 					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
-					item.putField(BinaryFormatField.Destination, dstAddress);
+							seed.getPublicKey());
 					item.putField(BinaryFormatField.Amount,
 							CurrencyUtils.getValueToRipple(amount));
 					item.putField(BinaryFormatField.Sequence, sequence);
+					item.putField(BinaryFormatField.Destination, dstAddress);
+					item.putField(BinaryFormatField.DestinationTag,
+							MathUtils.randomLong(1, 999999999));
 					item.putField(BinaryFormatField.Fee,
 							CurrencyUtils.getValueToRipple(fee) + "0");
 					TransactionUtils.submitBlob(seed, item, back);
@@ -79,10 +82,12 @@ public class Payment {
 					item.putField(BinaryFormatField.TransactionType,
 							(int) TransactionTypes.PAYMENT.byteValue);
 					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
+							seed.getPublicKey());
 					item.putField(BinaryFormatField.Destination, dstAddress);
 					item.putField(BinaryFormatField.Amount, amount);
 					item.putField(BinaryFormatField.Sequence, sequence);
+					item.putField(BinaryFormatField.DestinationTag,
+							MathUtils.randomLong(1, 999999999));
 					item.putField(BinaryFormatField.Fee,
 							CurrencyUtils.getValueToRipple(fee) + "0");
 					TransactionUtils.submitBlob(seed, item, back);

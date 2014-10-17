@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.address.utils.Helper;
 
+import org.ripple.power.utils.CollectionUtils;
 import org.spongycastle.asn1.sec.SECNamedCurves;
 import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.crypto.params.ECDomainParameters;
@@ -28,7 +29,7 @@ public class RippleGenerator {
 		if(bytesSeed.length!=16){
 			throw new RuntimeException("The seed size should be 128 bit, was "+bytesSeed.length*8);
 		}
-		this.seedBytes = bytesSeed;
+		this.seedBytes = CollectionUtils.copyOf(bytesSeed);
 	}
 
 	protected byte[] getPrivateRootKeyBytes() {

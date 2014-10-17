@@ -16,13 +16,43 @@ public class IssuedCurrency {
 	}
 
 	public IssuedCurrency(String amountStr) {
-		amount = new BigDecimal(amountStr).stripTrailingZeros();
+		if (amountStr.indexOf("XRP") != -1) {
+			amountStr = amountStr.replace("XRP", "").trim();
+		}
+		if (amountStr.indexOf('/') == -1) {
+			amount = new BigDecimal(amountStr).stripTrailingZeros();
+		} else {
+			String[] split = org.ripple.power.utils.StringUtils.split(
+					amountStr, "/");
+			amount = new BigDecimal(split[0]).stripTrailingZeros();
+			currency = split[1];
+			issuer = new RippleAddress(split[2]);
+			int oldScale = amount.scale();
+			if (oldScale < MIN_SCALE || oldScale > MAX_SCALE) {
+				int newScale = MAX_SCALE
+						- (amount.precision() - amount.scale());
+				if (newScale < MIN_SCALE || newScale > MAX_SCALE) {
+					throw new RuntimeException("newScale " + newScale
+							+ " is out of range");
+				}
+				amount = amount.setScale(newScale);
+			}
+		}
 	}
 
+	public IssuedCurrency(String amountStr, String issuerStr,
+			String currencyStr){
+		this(amountStr,new RippleAddress(issuerStr),currencyStr);
+	}
+	
 	public IssuedCurrency(String amountStr, RippleAddress issuer,
 			String currencyStr) {
 		this(new BigDecimal(amountStr).stripTrailingZeros(), issuer,
 				currencyStr);
+	}
+
+	public IssuedCurrency(IssuedCurrency cur) {
+		this(cur.toString());
 	}
 
 	public IssuedCurrency(BigDecimal amount, RippleAddress issuer,

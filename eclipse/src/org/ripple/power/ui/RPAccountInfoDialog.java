@@ -104,13 +104,13 @@ public class RPAccountInfoDialog extends JDialog {
 			AccountLine item = (AccountLine) _accountLineItems.get(row);
 			switch (column) {
 			case 0:
-				value = item.currency;
+				value = item.getCurrency();
 				break;
 			case 1:
-				value = item.issuer;
+				value = item.getIssuer();
 				break;
 			case 2:
-				value = item.amount;
+				value = item.getAmount();
 				break;
 			default:
 				throw new IndexOutOfBoundsException("Table column " + column
@@ -175,13 +175,13 @@ public class RPAccountInfoDialog extends JDialog {
 			AccountLine item = (AccountLine) _accountLineItems2.get(row);
 			switch (column) {
 			case 0:
-				value = item.currency;
+				value = item.getCurrency();
 				break;
 			case 1:
-				value = item.issuer;
+				value = item.getIssuer();
 				break;
 			case 2:
-				value = item.amount;
+				value = item.getAmount();
 				break;
 			default:
 				throw new IndexOutOfBoundsException("Table column " + column
@@ -469,8 +469,8 @@ public class RPAccountInfoDialog extends JDialog {
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
 								_accountLineItems3.add(
-										tx.date.getTime() + ",Mode:"
-										+ tx.mode +" "+tx.counterparty+ ",Currency:" + tx.currency.toGatewayString()
+										tx.date.getTime() + " "
+										+ tx.mode +" "+tx.counterparty+ " " + tx.currency.toGatewayString()
 										+ ",Fee:" + tx.fee);
 							}
 						}

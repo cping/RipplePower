@@ -51,8 +51,8 @@ public class WalletCache {
 			String date = String.format("%04d-%02d-%02d",
 					cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
 					cal.get(Calendar.DAY_OF_MONTH));
-			WalletItem walletItem = new WalletItem(date, pubKey, priKey,
-					"0.000000", "none");
+			WalletItem walletItem = new WalletItem(date, priKey, "0.000000",
+					"none");
 			pCaches.put(key, walletItem);
 		}
 	}
@@ -135,7 +135,7 @@ public class WalletCache {
 						String key = pubKey.concat(priKey);
 						if (!pCaches.containsKey(key)) {
 							WalletItem walletItem = new WalletItem(date,
-									pubKey, priKey, amount, status);
+									priKey, amount, status);
 							if (MathUtils.isNan(amount)) {
 								count = count.add(new BigDecimal(amount));
 							}
