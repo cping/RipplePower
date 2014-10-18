@@ -34,11 +34,11 @@ public class MainUI {
 			System.setProperty("jsse.enableSNIExtension", "false");
 		} catch (SecurityException se) {
 		}
-		//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-				//	JFrame.setDefaultLookAndFeelDecorated(true);
+					// JFrame.setDefaultLookAndFeelDecorated(true);
 					MainUI window = new MainUI();
 					window.form.setVisible(true);
 				} catch (Exception e) {
@@ -56,7 +56,7 @@ public class MainUI {
 		UIConfig.loadConfig();
 
 		form = new MainForm();
-        Paramaters.format(form);
+		Paramaters.format(form);
 		form.pack();
 		SwingUtils.centerOnScreen(form);
 
@@ -79,6 +79,7 @@ public class MainUI {
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
 
 		JPanel emptyPanel = new JPanel();
+		mainPanel.setBackground(LSystem.background);
 		emptyPanel.setLayout(new MigLayout("gap 0, ins 0", "[100%]", "[fill]"));
 		mainPanel.add(emptyPanel, "cell 0 1 1 1, grow");
 
@@ -89,45 +90,53 @@ public class MainUI {
 
 		RPNavbar navbar = new RPNavbar("RipplePower");
 		navigationPanel.add(navbar, "cell 1 0 1 1, grow");
-	
+
 		navbar.setBorder(null);
 		navbar.setForeground(UIConfig.getBrandColor());
 		navbar.setFont(new Font("Arial", Font.BOLD, 16));
 		navbar.setBackground(Color.WHITE);
 
-		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel, welcomePanel);
+		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel,
+				welcomePanel);
 		welcomeLink.setForeground(UIConfig.getBrandColor());
 		welcomeLink.setFont(navLinkFont);
-		welcomeLink.route(); 
+		welcomeLink.route();
 		navLinkList.add(welcomeLink);
 
-
-		//xrp
-		Icon iconXRP =  UIRes.getImage("icons/ripple.png");
-		RPNavlink xrpLink = new RPNavlink("XRP", emptyPanel, form.getMainPanel());
+		// xrp
+		Icon iconXRP = UIRes.getImage("icons/ripple.png");
+		RPNavlink xrpLink = new RPNavlink("XRP", emptyPanel,
+				form.getMainPanel());
 		xrpLink.setIcon(iconXRP);
 		xrpLink.setForeground(UIConfig.getBrandColor());
 		xrpLink.setFont(navLinkFont);
 		navLinkList.add(xrpLink);
 
-
-		//btc
-		Icon iconBtc =  UIRes.getImage("icons/btc.png");
-		RPNavlink btcLink = new RPNavlink("BTC", emptyPanel,
-				new NullPanel());
+		// btc
+		Icon iconBtc = UIRes.getImage("icons/btc.png");
+		RPNavlink btcLink = new RPNavlink("BTC", emptyPanel, new NullPanel());
 		btcLink.setIcon(iconBtc);
 		btcLink.setForeground(UIConfig.getBrandColor());
 		btcLink.setFont(navLinkFont);
 		navLinkList.add(btcLink);
 
-		//config
+		// config
 		RPNavlink expoLink = new RPNavlink("Config");
 		expoLink.setForeground(UIConfig.getBrandColor());
 		expoLink.setFont(navLinkFont);
 		expoLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
+		expoLink.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPProxyDialog
+						.showDialog("ProxyConfig", LSystem.applicationMain);
+
+			}
+		});
 		navLinkList.add(expoLink);
 
-		//exit
+		// exit
 		RPNavlink exitLink = new RPNavlink("Exit");
 		exitLink.setForeground(UIConfig.getBrandColor());
 		exitLink.setFont(navLinkFont);
@@ -141,12 +150,11 @@ public class MainUI {
 		});
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
-		
+
 		new MaidSystem();
-		
+
 		JSonLog.get();
-		
-		
+
 	}
 
 }

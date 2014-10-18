@@ -92,7 +92,6 @@ public class RPButton extends JButton {
 
 	public RPButton() {
 		this(null, null);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RPButton(Action a) {

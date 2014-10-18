@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.Proxy;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
@@ -811,5 +812,10 @@ public class Client extends Publisher<Client.events> implements
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void setProxy(Proxy proxy) {
+		ws.setProxy(proxy);
 	}
 }

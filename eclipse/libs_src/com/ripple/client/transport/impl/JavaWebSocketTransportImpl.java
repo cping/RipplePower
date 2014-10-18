@@ -9,6 +9,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Proxy;
 import java.net.URI;
 
 class WS extends WebSocketClient {
@@ -17,6 +18,10 @@ class WS extends WebSocketClient {
 
 	public WS(URI serverURI) {
 		super(serverURI, new Draft_17());
+	}
+
+	public void setProxy(Proxy proxy) {
+		super.setProxy(proxy);
 	}
 
 	public void muteEventHandler() {
@@ -68,6 +73,12 @@ public class JavaWebSocketTransportImpl implements WebSocketTransport {
 
 	WeakReference<TransportEventHandler> handler;
 	WS client = null;
+
+	public void setProxy(Proxy proxy) {
+		if (client != null) {
+			client.setProxy(proxy);
+		}
+	}
 
 	@Override
 	public void setHandler(TransportEventHandler events) {

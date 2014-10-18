@@ -6,6 +6,7 @@ import com.ripple.client.transport.WebSocketTransport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -117,6 +118,11 @@ public class MockPair {
 			public void onConnected() {
 				handler.onConnected();
 			}
+
+			@Override
+			public void setProxy(Proxy proxy) {
+				handler.setProxy(proxy);
+			}
 		}
 
 		MockSocket ws;
@@ -140,6 +146,10 @@ public class MockPair {
 			}
 		}
 
+		public void setProxy(Proxy proxy) {
+			ws.setProxy(proxy);
+		}
+		
 		public void sendMessage(JSONObject json) {
 			ws.onMessage(json);
 		}

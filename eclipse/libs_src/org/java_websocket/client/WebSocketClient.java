@@ -89,6 +89,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		this.headers = httpHeaders;
 		this.connectTimeout = connectTimeout;
 		this.engine = new WebSocketImpl(this, protocolDraft);
+		
 	}
 
 	/**
