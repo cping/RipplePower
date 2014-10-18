@@ -432,6 +432,8 @@ public class RPGatewayDialog extends JDialog {
 		if (_item == null || "0".equals(_item.getAmount())
 				|| "0.000000".equals(_item.getAmount())) {
 			_myGateway.setEnabled(false);
+			_createGatewayButton.setEnabled(false);
+			_manageGatewayButton.setEnabled(false);
 			_addGatewayButton.setEnabled(false);
 			_cancelTrustButton.setEnabled(false);
 			_okTrustButton.setEnabled(false);

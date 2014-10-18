@@ -415,7 +415,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(pPaperButton);
 		pPaperButton.setBounds(340, 10, 103, 23);
 
-		jButton4.setText("复制");
+		jButton4.setText("Copy");
 		jButton4.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButton4ActionPerformed(evt);
@@ -424,7 +424,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jButton4);
 		jButton4.setBounds(100, 300, 81, 23);
 
-		jButton3.setText("导入");
+		jButton3.setText("Load");
 		jButton3.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonOkActionPerformed(evt);
@@ -433,7 +433,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jButton3);
 		jButton3.setBounds(410, 300, 81, 23);
 
-		pResetButton.setText("刷新");
+		pResetButton.setText("Reset");
 		pResetButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonResetActionPerformed(evt);
@@ -442,7 +442,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(pResetButton);
 		pResetButton.setBounds(10, 300, 81, 23);
 
-		jButton2.setText("退出");
+		jButton2.setText("Exit");
 		jButton2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonExitActionPerformed(evt);
