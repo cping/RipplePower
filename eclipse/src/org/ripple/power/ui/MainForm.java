@@ -19,6 +19,7 @@ import javax.swing.WindowConstants;
 
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
 
@@ -117,9 +118,9 @@ public class MainForm extends JFrame implements ActionListener {
 
 		JMenu menu;
 		JMenuItem menuItem;
-		menu = new JMenu("加密");
+		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
 
-		menuItem = new JMenuItem("钱包密码");
+		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password", "Wallet Password"));
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -131,7 +132,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("显示");
+		menu = new JMenu(LangConfig.get(this, "view", "View"));
 
 		menuItem = new JMenuItem("Receive Addresses");
 		menuItem.setActionCommand("view receive");
@@ -145,7 +146,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("交易");
+		menu = new JMenu(LangConfig.get(this, "transaction", "Transaction"));
 
 		menuItem = new JMenuItem("Send Coins");
 		menuItem.setActionCommand("send coins");
@@ -164,7 +165,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("钱包");
+		menu = new JMenu(LangConfig.get(this, "wallet", "Wallet"));
 
 		menuItem = new JMenuItem("Export Keys");
 		menuItem.setActionCommand("export keys");
@@ -183,7 +184,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("Rippled设置");
+		menu = new JMenu(LangConfig.get(this, "rippled_config", "Rippled Config"));
 
 		menuItem = new JMenuItem("服务器设置");
 		menuItem.setActionCommand("服务器设置");
@@ -197,7 +198,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("GAE架设");
+		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
 
 		menuItem = new JMenuItem("一键开启");
 		menuItem.setActionCommand("一键开启");
@@ -211,7 +212,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu("帮助");
+		menu = new JMenu(LangConfig.get(this, "help", "Help"));
 
 		menuItem = new JMenuItem("捐助作者");
 		menuItem.setActionCommand("donation");

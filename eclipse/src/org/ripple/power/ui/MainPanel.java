@@ -35,6 +35,7 @@ import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
 import org.ripple.power.helper.Paramaters;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.BigDecimalUtil;
@@ -53,7 +54,11 @@ public class MainPanel extends JPanel implements ActionListener {
 	private static final Class<?>[] columnClasses = { String.class,
 			String.class, String.class, String.class };
 
-	private static final String[] columnNames = { "创建日期", "地址", "金额", "状态" };
+	private static final String[] columnNames = {
+			LangConfig.get(MainPanel.class, "create_date", "Create Date"),
+			LangConfig.get(MainPanel.class, "address", "Address"),
+			LangConfig.get(MainPanel.class, "amount", "Amount"),
+			LangConfig.get(MainPanel.class, "status", "Status") };
 
 	private static final int[] columnTypes = { AddressTable.DATE,
 			AddressTable.ADDRESS, AddressTable.AMOUNT, AddressTable.STATUS };
@@ -136,7 +141,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24,
 				LSystem.background);
 
-		RPButton btn = new RPButton("捐助", iconStar);
+		RPButton btn = new RPButton(
+				LangConfig.get(this, "donation", "Donation"), iconStar);
 		btn.setActionCommand(CommandFlag.Donation);
 		btn.setFont(font);
 		btn.addActionListener(this);
@@ -146,7 +152,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn2.setFont(font);
 		btn2.addActionListener(this);
 
-		RPButton btn3 = new RPButton("查看汇率", iconSearch);
+		RPButton btn3 = new RPButton(LangConfig.get(this, "exchange_rate", "Exchange Rate"), iconSearch);
 		btn3.setActionCommand("查看汇率");
 		btn3.setFont(font);
 		btn3.addActionListener(this);
@@ -186,7 +192,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconLeaf = new FontStyleIcon(FontStyle.Icon.LEAF, 24,
 				LSystem.background);
-		RPButton button = new RPButton("增加地址", iconLeaf);
+		RPButton button = new RPButton(LangConfig.get(this, "add_address", "Add Address"), iconLeaf);
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -202,7 +208,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
 				LSystem.background);
-		button = new RPButton("网关操作", iconEye);
+		button = new RPButton(LangConfig.get(this, "control_gateway", "Control Gateway"), iconEye);
 		button.setActionCommand(CommandFlag.Gateway);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -211,7 +217,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
 				LSystem.background);
-		button = new RPButton("发送货币", iconRoad);
+		button = new RPButton(LangConfig.get(this, "send_money", "Send Money"), iconRoad);
 		button.setActionCommand(CommandFlag.SendCoin);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -220,7 +226,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
 				LSystem.background);
-		button = new RPButton("参与交易", iconTag);
+		button = new RPButton(LangConfig.get(this, "to_exchange", "To Exchange"), iconTag);
 		button.setActionCommand(CommandFlag.Exchange);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -230,7 +236,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconTable = new FontStyleIcon(FontStyle.Icon.TABLE, 24,
 				LSystem.background);
-		button = new RPButton("地址明细", iconTable);
+		button = new RPButton(LangConfig.get(this, "details_address", "Details Address"), iconTable);
 		button.setFont(font);
 		button.setActionCommand(CommandFlag.DetailsAddress);
 		button.addActionListener(this);
@@ -240,8 +246,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconUser = new FontStyleIcon(FontStyle.Icon.USER, 24,
 				LSystem.background);
-		button = new RPButton("显示私钥", iconUser);
-		button.setActionCommand("显示私钥");
+		button = new RPButton(LangConfig.get(this, "secret_key", "Secret Key"), iconUser);
+		button.setActionCommand(CommandFlag.Secret);
 		button.setFont(font);
 		button.addActionListener(this);
 		buttonPane.add(button);
@@ -362,7 +368,7 @@ public class MainPanel extends JPanel implements ActionListener {
 					RPGatewayDialog.showDialog("网关操作(" + item.getPublicKey()
 							+ ")", LSystem.applicationMain, item);
 					break;
-				case "显示私钥":
+				case CommandFlag.Secret:
 					int index = RPMessage.showConfirmMessage(
 							LSystem.applicationMain, "显示私钥",
 							"是否显示当前地址私钥?(如果有第三人在场，或者电脑中存在木马，可能会暴露私钥信息)", "显示",
@@ -397,7 +403,7 @@ public class MainPanel extends JPanel implements ActionListener {
 									WalletCache.get().readRow(row)
 											.getPrivateKey(),
 									new Object[] { "COPY" });
-						} else {
+						} else if(index == 1){
 							RPPaperDialog dialog = new RPPaperDialog(
 									LSystem.applicationMain, 0, WalletCache
 											.get().readRow(row).getPrivateKey());

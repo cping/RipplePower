@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JDialog;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class MaidSystem extends JDialog {
@@ -27,7 +28,7 @@ public class MaidSystem extends JDialog {
 	BufferedImage _faceimage;
 
 	public MaidSystem() {
-		super(Paramaters.getContainer(), "Ripple助手", false);
+		super(Paramaters.getContainer(), LangConfig.get(MaidSystem.class, "ripple_wizard", "Ripple Wizard"), false);
 		faceImage = GraphicsUtils.getSplitImages("icons/face.png", 96, 96);
 		GraphicTool tools = new GraphicTool();
 		_backimage = tools.getWinTable(fwidth, fheight, Color.white,

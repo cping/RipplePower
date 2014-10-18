@@ -4,7 +4,7 @@ import java.util.Locale;
 
 public enum Language {
 
-	CN(Locale.CHINESE), EN(Locale.ENGLISH), JP(Locale.JAPANESE), DEF();
+	CN(Locale.CHINA), EN(Locale.ENGLISH), JP(Locale.JAPANESE), DEF();
 
 	private Locale locale;
 

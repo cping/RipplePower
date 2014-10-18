@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import org.address.NativeSupport;
+import org.ripple.power.i18n.Language;
 import org.ripple.power.ui.MainForm;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -119,6 +120,8 @@ public final class LSystem {
 
 	public static MainForm applicationMain = null;
 
+	public static Language applicationLang = Language.DEF;
+	
 	public static long applicationSleep = SECOND * 30;
 
 	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
