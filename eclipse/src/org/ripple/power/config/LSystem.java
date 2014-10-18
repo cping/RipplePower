@@ -26,6 +26,8 @@ import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
+	public static String FEE = "0.01";
+	
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
 		LSystem.sendRESTCoin(address, name, label, amount, "XRP",

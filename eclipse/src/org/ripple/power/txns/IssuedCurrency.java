@@ -12,6 +12,8 @@ public class IssuedCurrency {
 	public static final int MIN_SCALE = -96;
 	public static final int MAX_SCALE = 80;
 
+	public Object tag;
+
 	public IssuedCurrency() {
 	}
 
@@ -40,11 +42,10 @@ public class IssuedCurrency {
 		}
 	}
 
-	public IssuedCurrency(String amountStr, String issuerStr,
-			String currencyStr){
-		this(amountStr,new RippleAddress(issuerStr),currencyStr);
+	public IssuedCurrency(String amountStr, String issuerStr, String currencyStr) {
+		this(amountStr, new RippleAddress(issuerStr), currencyStr);
 	}
-	
+
 	public IssuedCurrency(String amountStr, RippleAddress issuer,
 			String currencyStr) {
 		this(new BigDecimal(amountStr).stripTrailingZeros(), issuer,
@@ -98,7 +99,7 @@ public class IssuedCurrency {
 					+ "/" + issuer.toString();
 		} else {
 			return amount.stripTrailingZeros().toPlainString() + "/" + currency
-					+ "/" + gateway.name + "(" + issuer.toString() + ")";
+					+ "/" + gateway.name;
 		}
 	}
 

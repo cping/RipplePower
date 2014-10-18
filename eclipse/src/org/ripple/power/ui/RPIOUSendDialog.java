@@ -50,7 +50,7 @@ public class RPIOUSendDialog extends JDialog {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPIOUSendDialog dialog = new RPIOUSendDialog(name, parent, item,
-					"", "1", "0.01");
+					"", "1", LSystem.FEE);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -220,7 +220,7 @@ public class RPIOUSendDialog extends JDialog {
 		final AccountInfo info = new AccountInfo();
 		Updateable accountline = new Updateable() {
 			@Override
-			public void action() {
+			public void action(Object res) {
 				if (info.lines.size() > 0) {
 					String[] list = new String[info.lines.size()];
 					int index = 0;

@@ -59,7 +59,7 @@ public class RPClient {
 		for (int i = 0; i < loadCache.size(); i++) {
 			Updateable running = loadCache.get(i);
 			synchronized (running) {
-				running.action();
+				running.action(null);
 			}
 		}
 		loadCache = null;

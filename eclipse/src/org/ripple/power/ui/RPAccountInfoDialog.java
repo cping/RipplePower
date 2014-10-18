@@ -416,7 +416,7 @@ public class RPAccountInfoDialog extends JDialog {
 		Updateable update_info = new Updateable() {
 
 			@Override
-			public void action() {
+			public void action(Object res) {
 
 				if (info.count < 2) {
 					if (info.balance != null) {
@@ -435,7 +435,7 @@ public class RPAccountInfoDialog extends JDialog {
 		Updateable update_line = new Updateable() {
 
 			@Override
-			public void action() {
+			public void action(Object res) {
 				if (info.lines.size() > 0) {
 					synchronized (_accountLineItems) {
 						_accountLineItems.clear();
@@ -462,7 +462,7 @@ public class RPAccountInfoDialog extends JDialog {
 		Updateable update_tx = new Updateable() {
 
 			@Override
-			public void action() {
+			public void action(Object res) {
 				if (info.transactions.size() > 0) {
 					synchronized (_accountLineItems3) {
 						_accountLineItems3.clear();

@@ -29,6 +29,7 @@ public class AccountInfo {
 
 	public ArrayList<AccountLine> lines = new ArrayList<AccountLine>(10);
 
+	public ArrayList<AccountLine> zero_lines = new ArrayList<AccountLine>(10);
 	public ArrayList<TransactionTx> transactions = new ArrayList<TransactionTx>(
 			100);
 	public ArrayList<BookOffer> bookOffers = new ArrayList<BookOffer>(100);

@@ -3,9 +3,12 @@ package org.ripple.power.ui;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -16,7 +19,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.json.JSONObject;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.AccountFind;
+import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.IssuedCurrency;
+import org.ripple.power.txns.Rollback;
+import org.ripple.power.txns.TrustSet;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.wallet.WalletItem;
 
 public class RPGatewayDialog extends JDialog {
@@ -26,15 +37,17 @@ public class RPGatewayDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	final private int max_trust = 100000000;
+	private WalletItem _item = null;
+
+	final private int max_trust = 10000000;
 
 	// Variables declaration - do not modify
-	private RPCButton jButton1;
-	private RPCButton jButton2;
-	private RPCButton jButton3;
-	private RPCButton jButton4;
-	private RPCButton jButton5;
-	private RPCButton jButton6;
+	private RPCButton _addGatewayButton;
+	private RPCButton _manageGatewayButton;
+	private RPCButton _exitButton;
+	private RPCButton _cancelTrustButton;
+	private RPCButton _okTrustButton;
+	private RPCButton _createGatewayButton;
 	private RPComboBox _curList;
 	private RPLabel jLabel1;
 	private RPLabel jLabel2;
@@ -70,7 +83,7 @@ public class RPGatewayDialog extends JDialog {
 
 	public RPGatewayDialog(String text, JFrame parent, final WalletItem item) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-
+		this._item = item;
 		setResizable(false);
 		Dimension dim = new Dimension(780, 610);
 		setPreferredSize(dim);
@@ -104,12 +117,12 @@ public class RPGatewayDialog extends JDialog {
 		_addressText = new RPTextBox();
 		_curList = new RPComboBox();
 
-		jButton1 = new RPCButton();
-		jButton2 = new RPCButton();
-		jButton3 = new RPCButton();
-		jButton4 = new RPCButton();
-		jButton5 = new RPCButton();
-		jButton6 = new RPCButton();
+		_addGatewayButton = new RPCButton();
+		_manageGatewayButton = new RPCButton();
+		_exitButton = new RPCButton();
+		_cancelTrustButton = new RPCButton();
+		_okTrustButton = new RPCButton();
+		_createGatewayButton = new RPCButton();
 
 		getContentPane().setLayout(null);
 
@@ -276,7 +289,7 @@ public class RPGatewayDialog extends JDialog {
 				return list.length;
 			}
 
-			public Object getElementAt(int i) {
+			public Object getElementAt(final int i) {
 				return list[0];
 			}
 		});
@@ -285,32 +298,143 @@ public class RPGatewayDialog extends JDialog {
 
 		jPanel1.add(jScrollPane3);
 
-		jScrollPane3.setBounds(90, 220, 460, 200);
+		jScrollPane3.setBounds(90, 220, 480, 200);
 
-		jButton1.setText("添加网关");
-		getContentPane().add(jButton1);
-		jButton1.setBounds(420, 540, 80, 30);
+		_addGatewayButton.setText("添加网关");
+		getContentPane().add(_addGatewayButton);
+		_addGatewayButton.setBounds(420, 540, 80, 30);
 
-		jButton2.setText("管理网关");
-		getContentPane().add(jButton2);
-		jButton2.setBounds(120, 540, 100, 30);
+		_manageGatewayButton.setText("管理网关");
+		getContentPane().add(_manageGatewayButton);
+		_manageGatewayButton.setBounds(120, 540, 100, 30);
 
-		jButton3.setText("Exit");
-		getContentPane().add(jButton3);
-		jButton3.setBounds(690, 540, 80, 30);
+		_exitButton.setText("Exit");
+		getContentPane().add(_exitButton);
+		_exitButton.setBounds(690, 540, 80, 30);
 
-		jButton4.setText("取消信任");
-		getContentPane().add(jButton4);
-		jButton4.setBounds(600, 540, 80, 30);
+		_cancelTrustButton.setText("取消信任");
+		getContentPane().add(_cancelTrustButton);
+		_cancelTrustButton.setBounds(600, 540, 80, 30);
 
-		jButton5.setText("确定信任");
-		getContentPane().add(jButton5);
-		jButton5.setBounds(510, 540, 80, 30);
+		_okTrustButton.setText("确定信任");
+		getContentPane().add(_okTrustButton);
+		_okTrustButton.setBounds(510, 540, 80, 30);
+		_okTrustButton.addActionListener(new ActionListener() {
 
-		jButton6.setText("创建网关");
-		getContentPane().add(jButton6);
-		jButton6.setBounds(10, 540, 100, 30);
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
+				String address = _addressText.getText().trim();
+
+				String curName = (String) _curList.getSelectedItem();
+
+				String trustValue = _trustValueText.getText().trim();
+
+				String message = String.format(
+						"您希望信任网关%s\n的货币%s,并且设置信任额度为%s吗?", address, curName,
+						trustValue);
+
+				int result = RPMessage.showConfirmMessage(
+						LSystem.applicationMain, "信任网关", message, "确认", "放弃");
+				if (result == 0) {
+					final WaitDialog dialog = new WaitDialog(
+							RPGatewayDialog.this);
+					IssuedCurrency cur = new IssuedCurrency(trustValue,
+							address, curName);
+					TrustSet.set(_item.getSeed(), cur, LSystem.FEE,
+							new Rollback() {
+
+								@Override
+								public void success(JSONObject res) {
+									JSonLog.get().println(res.toString());
+									dialog.closeDialog();
+									String result = res.getJSONObject("result")
+											.getString("engine_result_message");
+									if (result != null) {
+										RPMessage.showInfoMessage(
+												LSystem.applicationMain,
+												"Info", "操作被处理,Rippled反馈:"
+														+ result);
+										loadTrust();
+									}
+								}
+
+								@Override
+								public void error(JSONObject res) {
+									JSonLog.get().println(res.toString());
+									dialog.closeDialog();
+									RPMessage.showErrorMessage(
+											LSystem.applicationMain, "Error",
+											"信任失败.");
+								}
+							});
+				}
+			}
+		});
+
+		_createGatewayButton.setText("创建网关");
+		getContentPane().add(_createGatewayButton);
+		_createGatewayButton.setBounds(10, 540, 100, 30);
+
+		emptyAddress();
+		loadTrust();
 		pack();
+
 	}// </editor-fold>
+
+	private void loadTrust() {
+		if (_item != null) {
+			final WaitDialog dialog = WaitDialog
+					.showDialog(RPGatewayDialog.this);
+			AccountFind.getTrusts(_item.getPublicKey(), new Updateable() {
+				@Override
+				public void action(Object o) {
+					if (o != null) {
+						if (o instanceof ArrayList) {
+							final ArrayList<IssuedCurrency> lines = (ArrayList<IssuedCurrency>) o;
+							_myGateway
+									.setModel(new javax.swing.AbstractListModel() {
+
+										public int getSize() {
+											return lines.size();
+										}
+
+										public Object getElementAt(int i) {
+											String mes = null;
+											IssuedCurrency cur = lines.get(i);
+											if (cur == null) {
+												return "Empty";
+											}
+											if (cur.tag != null) {
+												mes = lines.get(i)
+														.toGatewayString()
+														+ " Limit:"
+														+ ((AccountLine) lines
+																.get(i).tag)
+																.getLimit();
+											} else {
+												mes = lines.get(i)
+														.toGatewayString();
+											}
+											return mes;
+										}
+									});
+						}
+
+					}
+					dialog.closeDialog();
+				}
+			});
+		}
+	}
+
+	private void emptyAddress() {
+		if (_item == null || "0".equals(_item.getAmount())
+				|| "0.000000".equals(_item.getAmount())) {
+			_myGateway.setEnabled(false);
+			_addGatewayButton.setEnabled(false);
+			_cancelTrustButton.setEnabled(false);
+			_okTrustButton.setEnabled(false);
+		}
+	}
 }

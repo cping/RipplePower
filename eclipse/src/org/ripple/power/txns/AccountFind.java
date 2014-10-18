@@ -85,6 +85,31 @@ public class AccountFind {
 		return -1;
 	}
 
+	public static ArrayList<IssuedCurrency> getTrusts(final String address,
+			final Updateable update) {
+		final ArrayList<IssuedCurrency> lines = new ArrayList<IssuedCurrency>(
+				10);
+		final AccountInfo info = new AccountInfo();
+		final AccountFind find = new AccountFind();
+		find.processLines(address, info, new Updateable() {
+
+			@Override
+			public void action(Object o) {
+				for (int i = 0; i < info.lines.size(); i++) {
+					lines.add(info.lines.get(i).get());
+				}
+				for (int i = 0; i < info.zero_lines.size(); i++) {
+					lines.add(info.zero_lines.get(i).get());
+				}
+				if (update != null) {
+					update.action(lines);
+				}
+
+			}
+		});
+		return lines;
+	}
+
 	public AccountInfo processTx(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
 		return processTx(address, -1, 50, accountinfo, update);
@@ -97,7 +122,7 @@ public class AccountFind {
 		Updateable updateable = new Updateable() {
 
 			@Override
-			public void action() {
+			public void action(Object res) {
 
 				tx(address, txPreLgrSeq == -1 ? accountinfo.txPreLgrSeq : 0,
 						max, new Rollback() {
@@ -271,7 +296,7 @@ public class AccountFind {
 
 								accountinfo.count++;
 								if (update != null) {
-									update.action();
+									update.action(res);
 								}
 
 							}
@@ -280,7 +305,7 @@ public class AccountFind {
 							public void error(JSONObject res) {
 								accountinfo.error = true;
 								if (update != null) {
-									update.action();
+									update.action(res);
 								}
 							}
 						});
@@ -310,7 +335,9 @@ public class AccountFind {
 
 						for (int i = 0; i < arrays.length(); i++) {
 							JSONObject node = arrays.getJSONObject(i);
-
+							String limit = getStringObject(node, "limit");
+							long quality_out = getLong(node, "quality_out");
+							long quality_in = getLong(node, "quality_in");
 							String account = getStringObject(node, "account");
 							String currency = getStringObject(node, "currency");
 							String amount = getStringObject(node, "balance");
@@ -328,6 +355,9 @@ public class AccountFind {
 								line.issuer = account;
 								line.currency = currency;
 								line.amount = amount;
+								line.limit = limit;
+								line.quality_in = quality_in;
+								line.quality_out = quality_out;
 								line.limit_peer = limit_peer;
 								accountinfo.lines.add(line);
 								// 发出的IOU
@@ -345,6 +375,16 @@ public class AccountFind {
 										debtCount.put(currency, 1l);
 									}
 								}
+								// 单纯信任
+							} else if (number == 0) {
+								AccountLine line = new AccountLine();
+								line.issuer = account;
+								line.currency = currency;
+								line.amount = amount;
+								line.limit = limit;
+								line.quality_in = quality_in;
+								line.quality_out = quality_out;
+								accountinfo.zero_lines.add(line);
 							} else if (limit_peer_number > 0) {
 								if (trustCount.containsKey(currency)) {
 									trustCount.put(currency,
@@ -370,7 +410,7 @@ public class AccountFind {
 				}
 				accountinfo.count++;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 
@@ -379,7 +419,7 @@ public class AccountFind {
 
 				accountinfo.error = true;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 		});
@@ -425,7 +465,7 @@ public class AccountFind {
 				}
 				accountinfo.count++;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 
@@ -434,7 +474,7 @@ public class AccountFind {
 
 				accountinfo.error = true;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 		});
@@ -470,7 +510,7 @@ public class AccountFind {
 				}
 				accountinfo.count++;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 
@@ -479,7 +519,7 @@ public class AccountFind {
 
 				accountinfo.error = true;
 				if (update != null) {
-					update.action();
+					update.action(res);
 				}
 			}
 		});

@@ -110,7 +110,7 @@ public class MainForm extends JFrame implements ActionListener {
 		Dimension dim = new Dimension(frameWidth, frameHeight);
 		setPreferredSize(dim);
 		setSize(dim);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 		menuBar.setBackground(new Color(230, 230, 230));
@@ -214,7 +214,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menu = new JMenu("帮助");
 
 		menuItem = new JMenuItem("捐助作者");
-		menuItem.setActionCommand("about");
+		menuItem.setActionCommand("donation");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
@@ -259,6 +259,10 @@ public class MainForm extends JFrame implements ActionListener {
 				break;
 			case "exit":
 				exitProgram();
+				break;
+			case "donation":
+				LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
+						"cping", "Thank you donate to RipplePower", 100);
 				break;
 			case "about":
 				aboutMyWallet();
@@ -362,7 +366,8 @@ public class MainForm extends JFrame implements ActionListener {
 
 		info.append("</html>");
 		JOptionPane.showMessageDialog(this, info.toString(),
-				"About BitcoinWallet", JOptionPane.INFORMATION_MESSAGE);
+				"About RipplePower(Ripple&Bitcoin) Wallet",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**

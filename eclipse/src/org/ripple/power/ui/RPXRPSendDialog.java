@@ -40,7 +40,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
-					"", "1", "0.01");
+					"", "1", LSystem.FEE);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);

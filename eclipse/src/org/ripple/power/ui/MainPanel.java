@@ -141,8 +141,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn.setFont(font);
 		btn.addActionListener(this);
 
-		RPButton btn2 = new RPButton("P2P通讯", iconMale);
-		btn2.setActionCommand("P2P通讯");
+		RPButton btn2 = new RPButton("Ripple<->Blockchain", iconMale);
+		btn2.setActionCommand("Ripple_Blockchain");
 		btn2.setFont(font);
 		btn2.addActionListener(this);
 
@@ -325,10 +325,9 @@ public class MainPanel extends JPanel implements ActionListener {
 						}
 						break;
 					case 1:
-							RPIOUSendDialog.showDialog(item.getPublicKey()
-									+ " IOU Send", LSystem.applicationMain,
-									item);
-						
+						RPIOUSendDialog.showDialog(item.getPublicKey()
+								+ " IOU Send", LSystem.applicationMain, item);
+
 						break;
 					default:
 						break;
@@ -357,11 +356,11 @@ public class MainPanel extends JPanel implements ActionListener {
 					break;
 				case CommandFlag.Exchange:
 					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
-							LSystem.applicationMain, null);
+							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Gateway:
-					RPGatewayDialog.showDialog("网关操作(work in progress)",
-							LSystem.applicationMain, null);
+					RPGatewayDialog.showDialog("网关操作(" + item.getPublicKey()
+							+ ")", LSystem.applicationMain, item);
 					break;
 				case "显示私钥":
 					int index = RPMessage.showConfirmMessage(
