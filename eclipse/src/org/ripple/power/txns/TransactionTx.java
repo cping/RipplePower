@@ -1,7 +1,5 @@
 package org.ripple.power.txns;
 
-import org.joda.time.DateTime;
-
 public class TransactionTx {
 
     public String account;
@@ -24,7 +22,7 @@ public class TransactionTx {
     
     public long sequence;
     
-    public DateTime date;
+    public String date;
 
     public String hash;
 

@@ -3,8 +3,6 @@ package org.ripple.power.txns;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.ui.RPClient;
@@ -12,13 +10,9 @@ import org.ripple.power.ui.RPClient;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
+import com.ripple.core.coretypes.RippleDate;
 
 public class AccountFind {
-
-	public final static DateTime RIPPLE_EPOC = new DateTime(2000, 1, 1, 8, 0,
-			DateTimeZone.UTC);
-
-	public final static DateTimeZone zone = DateTimeZone.UTC;
 
 	public JSONObject _balanceXRP;
 
@@ -70,8 +64,8 @@ public class AccountFind {
 		return null;
 	}
 
-	public static DateTime getDateTime(int date) {
-		return RIPPLE_EPOC.plusSeconds(date).withZone(zone);
+	public static RippleDate getDateTime(int date) {
+		return RippleDate.fromSecondsSinceRippleEpoch(date);
 	}
 
 	public static int inCredits(ArrayList<IssuedCurrency> issues,
@@ -165,8 +159,7 @@ public class AccountFind {
 
 											int date = getInt(tx, "date");
 
-											DateTime datetime = getDateTime(date);
-											transactionTx.date = datetime;
+											transactionTx.date = getDateTime(date).getTimeString();
 
 											String fee = CurrencyUtils.getRippleToValue(String
 													.valueOf(getLong(tx, "Fee")));

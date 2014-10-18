@@ -4,29 +4,21 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneLayout;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.address.collection.ArrayMap;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.table.AddressTable;
-import org.ripple.power.wallet.WalletCache;
-import org.ripple.power.wallet.WalletItem;
 
 public class RPAccountInfoDialog extends JDialog {
 	/**
@@ -469,7 +461,7 @@ public class RPAccountInfoDialog extends JDialog {
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
 								_accountLineItems3.add(
-										tx.date.getTime() + " "
+										tx.date + " "
 										+ tx.mode +" "+tx.counterparty+ " " + tx.currency.toGatewayString()
 										+ ",Fee:" + tx.fee);
 							}

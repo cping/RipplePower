@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
 public class RHConfig {
 
 	private String FLAG_L_TAG = "//";
@@ -59,8 +58,7 @@ public class RHConfig {
 	public RHConfig(final File file) throws IOException {
 		this(file != null ? (file.exists() ? new FileInputStream(file)
 				: RHConfig.class.getResourceAsStream(file.getPath()))
-				: new FileInputStream(
-						new File("default.cfg")));
+				: new FileInputStream(new File("default.cfg")));
 	}
 
 	public RHConfig(final InputStream in) throws IOException {
@@ -140,7 +138,7 @@ public class RHConfig {
 		if (key != null) {
 			value = sbr.toString();
 			if (save) {
-				pConfigItems.put(key, value);
+				pConfigItems.put(key.trim(), value.trim());
 			}
 		}
 		return value;
@@ -233,5 +231,5 @@ public class RHConfig {
 			pConfigItems.clear();
 		}
 	}
-	
+
 }

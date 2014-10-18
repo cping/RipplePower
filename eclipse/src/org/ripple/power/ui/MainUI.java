@@ -10,9 +10,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.ripple.power.config.LSystem;
@@ -34,11 +32,9 @@ public class MainUI {
 			System.setProperty("jsse.enableSNIExtension", "false");
 		} catch (SecurityException se) {
 		}
-		// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					// JFrame.setDefaultLookAndFeelDecorated(true);
 					MainUI window = new MainUI();
 					window.form.setVisible(true);
 				} catch (Exception e) {
