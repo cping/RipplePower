@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.print.PrintImageOutput;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.utils.FileUtils;
@@ -86,8 +87,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 		// 1导入私钥
 		switch (modelFlag) {
 		case 0:
-			this.setTitle("Ripple纸钱包导出");
-			title = "导出纸钱包";
+			this.setTitle(LangConfig.get(this, "title1", "Export Ripple Paper Wallet"));
+			title = LangConfig.get(this, "export", "Export");
 			try {
 				EncoderDecoder encode = new EncoderDecoder(320, 320);
 				byte[] buffer = WalletCryptos.encrypt(
@@ -100,8 +101,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 			}
 			break;
 		case 1:
-			this.setTitle("Ripple纸钱包导入");
-			title = "导入纸钱包";
+			this.setTitle(LangConfig.get(this, "title2", "Import Ripple Paper Wallet"));
+			title = LangConfig.get(this, "import", "Import");
 			break;
 		default:
 			break;

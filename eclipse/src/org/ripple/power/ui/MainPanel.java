@@ -327,10 +327,10 @@ public class MainPanel extends JPanel implements ActionListener {
 				switch (action) {
 				case CommandFlag.SendCoin:
 					int result = JOptionPane.showOptionDialog(this,
-							"请选择要发送的货币种类.", "币种选择",
+							"Please select the currency you want to send.", "Select Currency",
 							JOptionPane.YES_NO_CANCEL_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, new Object[] {
-									"发送XRP", "发送其它币种", "取消" },
+									"Send XRP", "Send IOU", "Cancel" },
 							JOptionPane.NO_OPTION);
 					switch (result) {
 					case 0:
@@ -388,15 +388,17 @@ public class MainPanel extends JPanel implements ActionListener {
 					break;
 				case CommandFlag.Secret:
 					int index = RPMessage.showConfirmMessage(
-							LSystem.applicationMain, "显示私钥",
-							"是否显示当前地址私钥?(如果有第三人在场，或者电脑中存在木马，可能会暴露私钥信息)", "显示",
-							"放弃");
+							LSystem.applicationMain, LangConfig.get(this, "show", "Show")+
+							LangConfig.get(this, "secret", "Secret"),
+							LangConfig.get(this, "showsecret", "Show the secret key of the current address? (may be exposed to you the secret info)"), LangConfig.get(this, "show", "Show"),
+							LangConfig.get(this, "cancel", "Cancel"));
 
 					if (index == 0) {
 
 						index = RPMessage.showConfirmMessage(
-								LSystem.applicationMain, "显示私钥", "请选择私钥的显示类型",
-								"文本模式", "纸钱包模式");
+								LSystem.applicationMain, LangConfig.get(this, "show", "Show")+
+								LangConfig.get(this, "secret", "Secret"), LangConfig.get(this, "selsecret", "Please select the  show model  of the secret key"),
+								LangConfig.get(this, "text", "Text"),LangConfig.get(this, "image", "Paper Wallet"));
 
 						if (index == 0) {
 							RPInput input = new RPInput();

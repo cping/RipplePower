@@ -30,7 +30,7 @@ public class RPAccountInfoDialog extends JDialog {
 	private javax.swing.JSeparator jSeparator2;
 	private RPCButton jButton1;
 	private RPCButton jButton2;
-	private RPLabel jLabel1;
+	private RPLabel _addressLabel;
 	private RPLabel _assetsLabel;
 	private RPLabel _issuedLabel;
 	private RPLabel _booksLabel;
@@ -277,7 +277,7 @@ public class RPAccountInfoDialog extends JDialog {
 
 	private void initComponents(String address) {
 		getContentPane().setBackground(new Color(36, 36, 36));
-		jLabel1 = new RPLabel();
+		_addressLabel = new RPLabel();
 		jTextField1 = new RPTextBox();
 		jButton1 = new RPCButton();
 		jButton2 = new RPCButton();
@@ -351,9 +351,10 @@ public class RPAccountInfoDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		jLabel1.setText("Address");
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(20, 25, 80, 15);
+		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
+		_addressLabel.setFont(new Font(LangConfig.fontName, 1, 14));
+		getContentPane().add(_addressLabel);
+		_addressLabel.setBounds(20, 25, 80, 15);
 		getContentPane().add(jTextField1);
 		jTextField1.setBounds(108, 22, 343, 21);
 

@@ -7,7 +7,7 @@ import org.ripple.power.ui.UIRes;
 public class LangConfig {
 
 	private static RHConfig _config;
-	
+
 	public static String fontName = "Dialog";
 
 	public static synchronized void init() {
@@ -17,6 +17,10 @@ public class LangConfig {
 						LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
 					_config = new RHConfig(UIRes.getStream("chinese/config"));
+				} else if (Language.JP.getLocale().equals(
+						LSystem.applicationLang.getLocale())) {
+					fontName = "ＭＳ ゴシック";
+					_config = new RHConfig(UIRes.getStream("english/config"));
 				} else {
 					fontName = "Dialog";
 					_config = new RHConfig(UIRes.getStream("english/config"));
@@ -29,6 +33,9 @@ public class LangConfig {
 
 	public static String get(Object obj, String res, String value) {
 		init();
+		if (obj == null) {
+			return _config.getValue(res, value);
+		}
 		String clazz = null;
 		if (obj instanceof String) {
 			clazz = (String) obj;
