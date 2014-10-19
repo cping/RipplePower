@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.Gateway;
@@ -49,13 +50,13 @@ public class RPGatewayDialog extends JDialog {
 	private RPCButton _okTrustButton;
 	private RPCButton _createGatewayButton;
 	private RPComboBox _curList;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
-	private RPLabel jLabel4;
-	private RPLabel jLabel5;
-	private RPLabel jLabel6;
-	private RPLabel jLabel7;
+	private RPLabel _gatewayListLabel;
+	private RPLabel _currencyNameList;
+	private RPLabel _gatewayAddressLabel;
+	private RPLabel _iouSupportLabel;
+	private RPLabel _limitLabel;
+	private RPLabel _amountLabel;
+	private RPLabel _trustLabel;
 	private RPList _ioulistTable;
 	private RPList _listGateway;
 	private RPList _myGateway;
@@ -103,14 +104,14 @@ public class RPGatewayDialog extends JDialog {
 		_myGateway = new RPList();
 
 		jSeparator1 = new javax.swing.JSeparator();
-		jLabel1 = new RPLabel();
+		_gatewayListLabel = new RPLabel();
 		jPanel1 = new javax.swing.JPanel();
-		jLabel2 = new RPLabel();
-		jLabel3 = new RPLabel();
-		jLabel4 = new RPLabel();
-		jLabel5 = new RPLabel();
-		jLabel6 = new RPLabel();
-		jLabel7 = new RPLabel();
+		_currencyNameList = new RPLabel();
+		_gatewayAddressLabel = new RPLabel();
+		_iouSupportLabel = new RPLabel();
+		_limitLabel = new RPLabel();
+		_amountLabel = new RPLabel();
+		_trustLabel = new RPLabel();
 
 		_trustlimits = new javax.swing.JSlider();
 
@@ -129,24 +130,24 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 520, 781, 10);
 
-		jLabel1.setText("网关列表");
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(10, 10, 170, 20);
+		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list", "Gateway List"));
+		getContentPane().add(_gatewayListLabel);
+		_gatewayListLabel.setBounds(10, 10, 170, 20);
 
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
 
-		jLabel2.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel2.setText("币种名称");
-		jPanel1.add(jLabel2);
-		jLabel2.setBounds(10, 70, 80, 16);
+		_currencyNameList.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_currencyNameList.setForeground(new java.awt.Color(255, 255, 255));
+		_currencyNameList.setText(LangConfig.get(this, "currency", "Currency"));
+		jPanel1.add(_currencyNameList);
+		_currencyNameList.setBounds(10, 70, 80, 16);
 
-		jLabel3.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel3.setText("网关地址");
-		jPanel1.add(jLabel3);
-		jLabel3.setBounds(10, 20, 91, 16);
+		_gatewayAddressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_gatewayAddressLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_gatewayAddressLabel.setText(LangConfig.get(this, "address", "Address"));
+		jPanel1.add(_gatewayAddressLabel);
+		_gatewayAddressLabel.setBounds(10, 20, 91, 16);
 
 		_trustlimits.setBackground(new java.awt.Color(51, 51, 51));
 		_trustlimits.setBounds(90, 120, 480, 23);
@@ -176,25 +177,25 @@ public class RPGatewayDialog extends JDialog {
 		_trustValueText.setText(String.valueOf(max_trust));
 		jPanel1.add(_trustValueText);
 
-		jLabel5.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel5.setText("信任额度");
-		jPanel1.add(jLabel5);
-		jLabel5.setBounds(10, 120, 80, 16);
+		_limitLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_limitLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_limitLabel.setText(LangConfig.get(this, "limit", "Trust Limit"));
+		jPanel1.add(_limitLabel);
+		_limitLabel.setBounds(10, 120, 80, 16);
 		jPanel1.add(_addressText);
 		_addressText.setBounds(90, 20, 478, 21);
 
-		jLabel6.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel6.setText("具体金额");
-		jPanel1.add(jLabel6);
-		jLabel6.setBounds(10, 170, 80, 16);
+		_amountLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_amountLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
+		jPanel1.add(_amountLabel);
+		_amountLabel.setBounds(10, 170, 80, 16);
 
-		jLabel7.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel7.setText("我的信任");
-		jPanel1.add(jLabel7);
-		jLabel7.setBounds(10, 220, 80, 16);
+		_trustLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_trustLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_trustLabel.setText(LangConfig.get(this, "trust", "My Trust"));
+		jPanel1.add(_trustLabel);
+		_trustLabel.setBounds(10, 220, 80, 16);
 
 		_curList.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
 				"CNY", "BTC", "USD", "JPY" }));
@@ -204,9 +205,9 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(jPanel1);
 		jPanel1.setBounds(190, 10, 580, 500);
 
-		jLabel4.setText("IOU发行");
-		getContentPane().add(jLabel4);
-		jLabel4.setBounds(10, 280, 130, 15);
+		_iouSupportLabel.setText(LangConfig.get(this, "iou_support", "IOU Support"));
+		getContentPane().add(_iouSupportLabel);
+		_iouSupportLabel.setBounds(10, 280, 130, 15);
 
 		final String[] gatewaystrings = Gateway.gatewayList();
 
@@ -300,11 +301,11 @@ public class RPGatewayDialog extends JDialog {
 
 		jScrollPane3.setBounds(90, 220, 480, 200);
 
-		_addGatewayButton.setText("添加网关");
+		_addGatewayButton.setText(LangConfig.get(this, "add", "Add"));
 		getContentPane().add(_addGatewayButton);
 		_addGatewayButton.setBounds(420, 540, 80, 30);
 
-		_manageGatewayButton.setText("管理网关");
+		_manageGatewayButton.setText(LangConfig.get(this, "manage", "Manage"));
 		getContentPane().add(_manageGatewayButton);
 		_manageGatewayButton.setBounds(120, 540, 100, 30);
 
@@ -312,11 +313,11 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(690, 540, 80, 30);
 
-		_cancelTrustButton.setText("取消信任");
+		_cancelTrustButton.setText(LangConfig.get(this, "cancel", "Cancel"));
 		getContentPane().add(_cancelTrustButton);
 		_cancelTrustButton.setBounds(600, 540, 80, 30);
 
-		_okTrustButton.setText("确定信任");
+		_okTrustButton.setText(LangConfig.get(this, "oktrust", "Ok Trust"));
 		getContentPane().add(_okTrustButton);
 		_okTrustButton.setBounds(510, 540, 80, 30);
 		_okTrustButton.addActionListener(new ActionListener() {
@@ -372,7 +373,7 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-		_createGatewayButton.setText("创建网关");
+		_createGatewayButton.setText(LangConfig.get(this, "create", "Create"));
 		getContentPane().add(_createGatewayButton);
 		_createGatewayButton.setBounds(10, 540, 100, 30);
 

@@ -13,6 +13,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
@@ -30,9 +31,9 @@ public class RPAccountInfoDialog extends JDialog {
 	private RPCButton jButton1;
 	private RPCButton jButton2;
 	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
-	private RPLabel jLabel4;
+	private RPLabel _assetsLabel;
+	private RPLabel _issuedLabel;
+	private RPLabel _booksLabel;
 	private javax.swing.JTextField jTextField1;
 	private AddressTable jTable1;
 	private AddressTable jTable2;
@@ -285,11 +286,13 @@ public class RPAccountInfoDialog extends JDialog {
 		jScrollPane3 = new javax.swing.JScrollPane();
 		jSeparator1 = new javax.swing.JSeparator();
 		jSeparator2 = new javax.swing.JSeparator();
-		jLabel2 = new RPLabel();
-		jLabel3 = new RPLabel();
-		jLabel4 = new RPLabel();
+		_assetsLabel = new RPLabel();
+		_issuedLabel = new RPLabel();
+		_booksLabel = new RPLabel();
 		Class<?>[] columnClasses = { String.class, String.class, String.class };
-		String[] columnNames = { "币种", "网关", "金额" };
+		String[] columnNames = { LangConfig.get(this, "currency", "Currency"),
+				LangConfig.get(this, "gateway", "Gateway"),
+				LangConfig.get(this, "amount", "Amount") };
 
 		int[] columnTypes = { AddressTable.CUR, AddressTable.ADDRESS,
 				AddressTable.AMOUNT };
@@ -297,7 +300,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
 		jTable1 = new AddressTable(tableModel, columnTypes);
-		jTable1.setFont(new Font("Dialog", 0, 14));
+		jTable1.setFont(new Font(LangConfig.fontName, 0, 14));
 		jTable1.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -309,7 +312,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel2 tableModel2 = new AccountTableModel2(
 				columnNames, columnClasses);
 		jTable2 = new AddressTable(tableModel2, columnTypes);
-		jTable2.setFont(new Font("Dialog", 0, 14));
+		jTable2.setFont(new Font(LangConfig.fontName, 0, 14));
 		jTable2.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		jTable2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -321,20 +324,21 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(jSeparator2);
 		jSeparator2.setBounds(0, 540, 670, 10);
 
-		jLabel4.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel4.setText("账簿");
-		getContentPane().add(jLabel4);
-		jLabel4.setBounds(20, 360, 90, 20);
+		_booksLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_booksLabel.setText(LangConfig.get(this, "books", "Books"));
+		getContentPane().add(_booksLabel);
+		_booksLabel.setBounds(20, 360, 90, 20);
 
 		Class<?>[] columnClasses1 = { String.class };
-		String[] columnNames1 = { "交易记录" };
+		String[] columnNames1 = { LangConfig.get(this, "tx",
+				"Transaction Records") };
 
 		int[] columnTypes1 = { AddressTable.NAME };
 
 		final AccountTableModel3 tableModel3 = new AccountTableModel3(
 				columnNames1, columnClasses1);
 		jTable3 = new AddressTable(tableModel3, columnTypes1);
-		jTable3.setFont(new Font("Dialog", 0, 14));
+		jTable3.setFont(new Font(LangConfig.fontName, 0, 14));
 		jTable3.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
 		jTable3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -381,15 +385,15 @@ public class RPAccountInfoDialog extends JDialog {
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 60, 670, 10);
-		jLabel2.setFont(new java.awt.Font("宋体", 0, 14));
-		jLabel2.setText("资产");
-		getContentPane().add(jLabel2);
-		jLabel2.setBounds(20, 65, 90, 20);
+		_assetsLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_assetsLabel.setText(LangConfig.get(this, "assets", "Assets"));
+		getContentPane().add(_assetsLabel);
+		_assetsLabel.setBounds(20, 65, 90, 20);
 
-		jLabel3.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		jLabel3.setText("发行款");
-		getContentPane().add(jLabel3);
-		jLabel3.setBounds(20, 220, 90, 20);
+		_issuedLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_issuedLabel.setText(LangConfig.get(this, "issued", "Currency issued"));
+		getContentPane().add(_issuedLabel);
+		_issuedLabel.setBounds(20, 220, 190, 20);
 
 		pack();
 
@@ -460,9 +464,9 @@ public class RPAccountInfoDialog extends JDialog {
 						_accountLineItems3.clear();
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
-								_accountLineItems3.add(
-										tx.date + " "
-										+ tx.mode +" "+tx.counterparty+ " " + tx.currency.toGatewayString()
+								_accountLineItems3.add(tx.date + " " + tx.mode
+										+ " " + tx.counterparty + " "
+										+ tx.currency.toGatewayString()
 										+ ",Fee:" + tx.fee);
 							}
 						}

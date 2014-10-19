@@ -152,7 +152,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn2.setFont(font);
 		btn2.addActionListener(this);
 
-		RPButton btn3 = new RPButton(LangConfig.get(this, "exchange_rate", "Exchange Rate"), iconSearch);
+		RPButton btn3 = new RPButton(LangConfig.get(this, "exchange_rate",
+				"Exchange Rate"), iconSearch);
 		btn3.setActionCommand("查看汇率");
 		btn3.setFont(font);
 		btn3.addActionListener(this);
@@ -192,7 +193,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconLeaf = new FontStyleIcon(FontStyle.Icon.LEAF, 24,
 				LSystem.background);
-		RPButton button = new RPButton(LangConfig.get(this, "add_address", "Add Address"), iconLeaf);
+		RPButton button = new RPButton(LangConfig.get(this, "add_address",
+				"Add Address"), iconLeaf);
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -208,7 +210,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
 				LSystem.background);
-		button = new RPButton(LangConfig.get(this, "control_gateway", "Control Gateway"), iconEye);
+		button = new RPButton(LangConfig.get(this, "control_gateway",
+				"Control Gateway"), iconEye);
 		button.setActionCommand(CommandFlag.Gateway);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -217,7 +220,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
 				LSystem.background);
-		button = new RPButton(LangConfig.get(this, "send_money", "Send Money"), iconRoad);
+		button = new RPButton(LangConfig.get(this, "send_money", "Send Money"),
+				iconRoad);
 		button.setActionCommand(CommandFlag.SendCoin);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -226,7 +230,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
 				LSystem.background);
-		button = new RPButton(LangConfig.get(this, "to_exchange", "To Exchange"), iconTag);
+		button = new RPButton(
+				LangConfig.get(this, "to_exchange", "To Exchange"), iconTag);
 		button.setActionCommand(CommandFlag.Exchange);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -236,7 +241,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconTable = new FontStyleIcon(FontStyle.Icon.TABLE, 24,
 				LSystem.background);
-		button = new RPButton(LangConfig.get(this, "details_address", "Details Address"), iconTable);
+		button = new RPButton(LangConfig.get(this, "details_address",
+				"Details Address"), iconTable);
 		button.setFont(font);
 		button.setActionCommand(CommandFlag.DetailsAddress);
 		button.addActionListener(this);
@@ -246,7 +252,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		FontStyleIcon iconUser = new FontStyleIcon(FontStyle.Icon.USER, 24,
 				LSystem.background);
-		button = new RPButton(LangConfig.get(this, "secret_key", "Secret Key"), iconUser);
+		button = new RPButton(LangConfig.get(this, "secret_key", "Secret Key"),
+				iconUser);
 		button.setActionCommand(CommandFlag.Secret);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -271,11 +278,14 @@ public class MainPanel extends JPanel implements ActionListener {
 				}
 				if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
-							"地址明细查询", "");
+							LangConfig.get(RPAccountInfoDialog.class,
+									"details", "Address details info"), "");
 					return;
 				}
 				if (ae.getActionCommand().equals(CommandFlag.Gateway)) {
-					RPGatewayDialog.showDialog("网关操作(work in progress)",
+					RPGatewayDialog.showDialog(LangConfig
+							.get(RPGatewayDialog.class, "title",
+									"Gateway Operation"),
 							LSystem.applicationMain, null);
 					return;
 				}
@@ -284,9 +294,13 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, null);
 					return;
 				} else {
-					JOptionPane.showMessageDialog(this,
-							"您没有选择任何地址,所以当前命令无法操作.", "Warning",
-							JOptionPane.WARNING_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									this,
+									LangConfig
+											.get(this, "stop_cmd",
+													"You have not selected any address, so the current command can not operate."),
+									"Warning", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
@@ -365,8 +379,12 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Gateway:
-					RPGatewayDialog.showDialog("网关操作(" + item.getPublicKey()
-							+ ")", LSystem.applicationMain, item);
+					RPGatewayDialog.showDialog(
+							LangConfig.get(RPGatewayDialog.class, "title",
+									"Gateway Operation")
+									+ "("
+									+ item.getPublicKey() + ")",
+							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Secret:
 					int index = RPMessage.showConfirmMessage(
@@ -403,7 +421,7 @@ public class MainPanel extends JPanel implements ActionListener {
 									WalletCache.get().readRow(row)
 											.getPrivateKey(),
 									new Object[] { "COPY" });
-						} else if(index == 1){
+						} else if (index == 1) {
 							RPPaperDialog dialog = new RPPaperDialog(
 									LSystem.applicationMain, 0, WalletCache
 											.get().readRow(row).getPrivateKey());
@@ -414,7 +432,9 @@ public class MainPanel extends JPanel implements ActionListener {
 					break;
 				case CommandFlag.DetailsAddress:
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
-							"地址明细查询", item.getPublicKey());
+							LangConfig.get(RPAccountInfoDialog.class,
+									"details", "Address details info"), item
+									.getPublicKey());
 					break;
 				}
 			}

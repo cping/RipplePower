@@ -16,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.MaidSystem;
 import org.ripple.power.helper.Paramaters;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -50,7 +51,7 @@ public class MainUI {
 
 	private void initialize() {
 		UIConfig.loadConfig();
-
+		LangConfig.init();
 		form = new MainForm();
 		Paramaters.format(form);
 		form.pack();

@@ -15,6 +15,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.wallet.WalletItem;
 
@@ -23,7 +24,7 @@ import com.other.calc.Calc;
 public class RPExchangeDialog extends JDialog {
 
 	// Variables declaration - do not modify
-	private RPCButton jButton1;
+	private RPCButton _okButton;
 	private RPCButton jButton10;
 	private RPCButton jButton11;
 	private RPCButton jButton12;
@@ -90,7 +91,7 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().setBackground(new Color(36, 36, 36));
 		jLabel1 = new RPLabel();
 		_curComboBox = new RPComboBox();
-		jButton1 = new RPCButton();
+		_okButton = new RPCButton();
 		jPanel1 = new javax.swing.JPanel();
 		jLabel2 = new RPLabel();
 		jLabel3 = new RPLabel();
@@ -131,12 +132,12 @@ public class RPExchangeDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		jLabel1.setFont(new java.awt.Font("宋体", 0, 18)); // NOI18N
+		jLabel1.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
 		jLabel1.setText("选择币种");
 		getContentPane().add(jLabel1);
 		jLabel1.setBounds(550, 10, 80, 26);
 
-		_curComboBox.setFont(new java.awt.Font("宋体", 0, 18)); // NOI18N
+		_curComboBox.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
 		_curComboBox.setModel(new javax.swing.DefaultComboBoxModel(
 				new String[] { "EMPTY" }));
 		getContentPane().add(_curComboBox);
@@ -145,14 +146,14 @@ public class RPExchangeDialog extends JDialog {
 		// 此处会列出网关所有可能的币种交易，所以不允许自行修改
 		_curComboBox.setEditable(false);
 
-		jButton1.setText("确定");
-		getContentPane().add(jButton1);
-		jButton1.setBounds(760, 10, 80, 30);
+		_okButton.setText(LangConfig.get(this, "ok", "OK"));
+		getContentPane().add(_okButton);
+		_okButton.setBounds(760, 10, 80, 30);
 
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
 
-		jLabel2.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel2.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel2.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel2.setText("我的挂单");
 		jPanel1.add(jLabel2);
@@ -180,7 +181,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jScrollPane1);
 		jScrollPane1.setBounds(300, 210, 210, 110);
 
-		jLabel5.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel5.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel5.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel5.setText("买方市场");
 		jPanel1.add(jLabel5);
@@ -202,7 +203,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jScrollPane2);
 		jScrollPane2.setBounds(30, 70, 240, 250);
 
-		jLabel6.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel6.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel6.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel6.setText("卖方市场");
 		jPanel1.add(jLabel6);
@@ -224,7 +225,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jScrollPane3);
 		jScrollPane3.setBounds(540, 70, 270, 250);
 
-		jLabel11.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel11.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel11.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel11.setText("场外价格(coinmarketcap)");
 		jPanel1.add(jLabel11);
@@ -249,12 +250,12 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().add(jPanel1);
 		jPanel1.setBounds(10, 50, 830, 340);
 
-		jLabel4.setFont(new java.awt.Font("宋体", 0, 18)); // NOI18N
+		jLabel4.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
 		jLabel4.setText("选择网关");
 		getContentPane().add(jLabel4);
 		jLabel4.setBounds(10, 10, 95, 26);
 
-		_selectGateawyCombobox.setFont(new java.awt.Font("宋体", 0, 18)); // NOI18N
+		_selectGateawyCombobox.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
 
 		_selectGateawyCombobox.setModel(new javax.swing.DefaultComboBoxModel(
 				Gateway.gatewayList()));
@@ -277,7 +278,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel2.setLayout(null);
 
-		jLabel7.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel7.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel7.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel7.setText("可以卖出");
 		jPanel2.add(jLabel7);
@@ -287,7 +288,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(jTextField1);
 		jTextField1.setBounds(580, 50, 230, 21);
 
-		jLabel8.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel8.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel8.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel8.setText("可以买入");
 		jPanel2.add(jLabel8);
@@ -301,7 +302,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(jButton2);
 		jButton2.setBounds(730, 90, 81, 23);
 
-		jLabel9.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel9.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel9.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel9.setText("我要买入");
 		jPanel2.add(jLabel9);
@@ -311,7 +312,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(jTextField3);
 		jTextField3.setBounds(80, 10, 230, 21);
 
-		jLabel10.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
+		jLabel10.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		jLabel10.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel10.setText("我要卖出");
 		jPanel2.add(jLabel10);

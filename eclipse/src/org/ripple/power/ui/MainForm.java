@@ -120,7 +120,8 @@ public class MainForm extends JFrame implements ActionListener {
 		JMenuItem menuItem;
 		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
 
-		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password", "Wallet Password"));
+		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
+				"Wallet Password"));
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -184,14 +185,17 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menuBar.add(menu);
 
-		menu = new JMenu(LangConfig.get(this, "rippled_config", "Rippled Config"));
+		menu = new JMenu(LangConfig.get(this, "rippled_config",
+				"Rippled Config"));
 
-		menuItem = new JMenuItem("服务器设置");
+		menuItem = new JMenuItem(LangConfig.get(this, "server_settings",
+				"Server Settings"));
 		menuItem.setActionCommand("服务器设置");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem("代理设置");
+		menuItem = new JMenuItem(LangConfig.get(this, "proxy_settings",
+				"Proxy Settings"));
 		menuItem.setActionCommand("代理设置");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -199,13 +203,12 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
-
-		menuItem = new JMenuItem("一键开启");
+		menuItem = new JMenuItem(LangConfig.get(this, "automation", "Automation"));
 		menuItem.setActionCommand("一键开启");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem("管理GAE");
+		menuItem = new JMenuItem(LangConfig.get(this, "manage", "Manage"));
 		menuItem.setActionCommand("管理GAE");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -213,8 +216,8 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "help", "Help"));
-
-		menuItem = new JMenuItem("捐助作者");
+		
+		menuItem = new JMenuItem(LangConfig.get(this, "donation", "Donation"));
 		menuItem.setActionCommand("donation");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
