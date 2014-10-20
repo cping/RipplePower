@@ -116,19 +116,27 @@ public class RHConfig {
 		String key = null;
 		String value = null;
 		int idx = 0;
+		int equals = 0;
 		for (int i = 0; i < size; i++) {
 			char flag = chars[i];
 			switch (flag) {
 			case '=':
-				if (idx == 0) {
-					key = sbr.toString();
-					sbr.delete(0, sbr.length());
+				if (equals < 3) {
+					equals++;
+					if (idx == 0) {
+						key = sbr.toString();
+						sbr.delete(0, sbr.length());
+					}
+					idx++;
 				}
-				idx++;
 				break;
 			case '\'':
+				if (equals > 1) {
+					sbr.append(flag);
+				}
 				break;
 			case '\"':
+				equals++;
 				break;
 			default:
 				sbr.append(flag);

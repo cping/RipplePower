@@ -30,10 +30,10 @@ import com.ripple.config.Config;
 
 public class RPAddressDialog extends JDialog implements ActionListener {
 
-	private RPCButton pResetButton;
-	private RPCButton jButton2;
-	private RPCButton jButton3;
-	private RPCButton jButton4;
+	private RPCButton _resetButton;
+	private RPCButton _exitButton;
+	private RPCButton _loadButton;
+	private RPCButton _copyButton;
 
 	private RPLabel _passwordLabel;
 	private RPLabel _addressLabel;
@@ -115,7 +115,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			privateAddressText.setEditable(false);
 			shortSayText.setText("");
 			shortSayText.setEditable(false);
-			pResetButton.setEnabled(false);
+			_resetButton.setEnabled(false);
 			break;
 		case 1:
 			pBrainButton.setSelected(false);
@@ -131,7 +131,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			privateAddressText.setEditable(false);
 			shortSayText.setText("");
 			shortSayText.setEditable(false);
-			pResetButton.setEnabled(true);
+			_resetButton.setEnabled(true);
 			callRandomWallet();
 			break;
 		case 2:
@@ -148,7 +148,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			privateAddressText.setEditable(true);
 			shortSayText.setText("");
 			shortSayText.setEditable(false);
-			pResetButton.setEnabled(false);
+			_resetButton.setEnabled(false);
 			break;
 		case 3:
 			pBrainButton.setSelected(false);
@@ -164,7 +164,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			privateAddressText.setEditable(false);
 			shortSayText.setText("");
 			shortSayText.setEditable(true);
-			pResetButton.setEnabled(false);
+			_resetButton.setEnabled(false);
 			break;
 		case 4:
 			pBrainButton.setSelected(false);
@@ -180,7 +180,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			privateAddressText.setEditable(false);
 			shortSayText.setText("");
 			shortSayText.setEditable(false);
-			pResetButton.setEnabled(false);
+			_resetButton.setEnabled(false);
 			break;
 		default:
 			break;
@@ -353,11 +353,19 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pBrainButton = new RPRadioButton();
 		pPassButton = new RPRadioButton();
 		pPaperButton = new RPRadioButton();
-		pResetButton = new RPCButton();
+		
+		_resetButton = new RPCButton();
+		_exitButton = new RPCButton();
+		_loadButton = new RPCButton();
+		_copyButton = new RPCButton();
+		
 
-		jButton2 = new RPCButton();
-		jButton3 = new RPCButton();
-		jButton4 = new RPCButton();
+		Font font = new Font(LangConfig.fontName, 0, 12);
+		_resetButton.setFont(font);
+		_exitButton.setFont(font);
+		_loadButton.setFont(font);
+		_copyButton.setFont(font);
+		
 		jSeparator1 = new javax.swing.JSeparator();
 
 		_passwordLabel = new RPLabel();
@@ -374,7 +382,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 		setLayout(null);
 
-		Font defFont = new Font("宋体", 0, 12);
+		Font defFont = new Font(LangConfig.fontName, 0, 12);
 
 		pBrainButton.setFont(defFont);
 		pRandButton.setFont(defFont);
@@ -400,7 +408,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pRandButton);
-		pRandButton.setBounds(110, 10, 110, 23);
+		pRandButton.setBounds(110, 10, 115, 23);
 
 		pMyButton.setText(LangConfig.get(this, "use_secret", "Use Secret"));
 		pMyButton.addActionListener(new java.awt.event.ActionListener() {
@@ -409,7 +417,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pMyButton);
-		pMyButton.setBounds(215, 10, 90, 23);
+		pMyButton.setBounds(220, 10, 90, 23);
 
 		pPassButton.setText(LangConfig.get(this, "use_phrase", "Use Phrase"));
 		pPassButton.addActionListener(new java.awt.event.ActionListener() {
@@ -418,7 +426,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pPassButton);
-		pPassButton.setBounds(310, 10, 90, 23);
+		pPassButton.setBounds(310, 10, 100, 23);
 
 		pPaperButton.setText(LangConfig.get(this, "use_paperwallet","Use Paper Wallet"));
 		pPaperButton.addActionListener(new java.awt.event.ActionListener() {
@@ -427,55 +435,55 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pPaperButton);
-		pPaperButton.setBounds(400, 10, 130, 23);
+		pPaperButton.setBounds(405, 10, 130, 23);
 
 		
-		jButton4.setText("Copy");
-		jButton4.addActionListener(new java.awt.event.ActionListener() {
+		_copyButton.setText(LangConfig.get(this, "copy", "Copy"));
+		_copyButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButton4ActionPerformed(evt);
 			}
 		});
-		add(jButton4);
-		jButton4.setBounds(100, 300, 81, 23);
+		add(_copyButton);
+		_copyButton.setBounds(100, 300, 81, 23);
 
-		jButton3.setText("Load");
-		jButton3.addActionListener(new java.awt.event.ActionListener() {
+		_loadButton.setText(LangConfig.get(this, "load", "Load"));
+		_loadButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonOkActionPerformed(evt);
 			}
 		});
-		add(jButton3);
-		jButton3.setBounds(410, 300, 81, 23);
+		add(_loadButton);
+		_loadButton.setBounds(410, 300, 81, 23);
 
-		pResetButton.setText("Reset");
-		pResetButton.addActionListener(new java.awt.event.ActionListener() {
+		_resetButton.setText(LangConfig.get(this, "reset", "Reset"));
+		_resetButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonResetActionPerformed(evt);
 			}
 		});
-		add(pResetButton);
-		pResetButton.setBounds(10, 300, 81, 23);
+		add(_resetButton);
+		_resetButton.setBounds(10, 300, 81, 23);
 
-		jButton2.setText("Exit");
-		jButton2.addActionListener(new java.awt.event.ActionListener() {
+		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButtonExitActionPerformed(evt);
 			}
 		});
-		add(jButton2);
-		jButton2.setBounds(510, 300, 81, 23);
+		add(_exitButton);
+		_exitButton.setBounds(510, 300, 81, 23);
 
 		add(jSeparator1);
 		jSeparator1.setBounds(0, 230, 0, 2);
 
-		_passwordLabel.setFont(new java.awt.Font("宋体", 0, 14));
+		_passwordLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
 		_passwordLabel.setText(LangConfig.get(this, "password", "Password"));
 		add(_passwordLabel);
 		_passwordLabel.setBounds(20, 40, 70, 50);
 
 		passwordText.setText("");
-		passwordText.setFont(new Font("黑体", 1, 15));
+		passwordText.setFont(new Font(LangConfig.fontName, 1, 15));
 		passwordText.addKeyListener(new KeyListener() {
 
 			@Override
@@ -503,7 +511,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(passwordText);
 		passwordText.setBounds(90, 50, 500, 30);
 
-		_addressLabel.setFont(new java.awt.Font("宋体", 0, 14));
+		_addressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
 		add(_addressLabel);
 		_addressLabel.setBounds(20, 80, 70, 50);
@@ -512,7 +520,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(publicAddressText);
 		publicAddressText.setBounds(90, 90, 500, 30);
 
-		_phraseLabel.setFont(new java.awt.Font("宋体", 0, 14));
+		_phraseLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
 		_phraseLabel.setText(LangConfig.get(this, "phrase", "Phrase"));
 		add(_phraseLabel);
 		_phraseLabel.setBounds(20, 160, 70, 50);
@@ -529,7 +537,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jScrollPane1);
 		jScrollPane1.setBounds(90, 170, 500, 90);
 
-		_secretLabel.setFont(new java.awt.Font("宋体", 0, 14));
+		_secretLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
 		_secretLabel.setText(LangConfig.get(this, "secret", "Secret"));
 		add(_secretLabel);
 		_secretLabel.setBounds(20, 120, 70, 50);

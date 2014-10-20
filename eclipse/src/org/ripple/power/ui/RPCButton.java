@@ -18,7 +18,6 @@ class RPCButton extends JButton {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	
 	public RPCButton() {
 		super();
@@ -26,7 +25,6 @@ class RPCButton extends JButton {
 		setBackground(new Color(18, 18, 18));
 		setContentAreaFilled(true);
 		setFocusPainted(false);
-
 		Border line = BorderFactory.createLineBorder(new Color(80, 80, 80));
 		Border empty = new EmptyBorder(4, 4, 4, 4);
 		CompoundBorder border = new CompoundBorder(line, empty);

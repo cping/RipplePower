@@ -89,7 +89,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		setBackground(LSystem.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
 
-		Font font = new Font("黑体", 1, 15);
+		Font font = new Font(
+				"宋体".equals(LangConfig.fontName) ? "黑体" : "Dialog", 1, 15);
 
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
@@ -290,7 +291,8 @@ public class MainPanel extends JPanel implements ActionListener {
 					return;
 				}
 				if (ae.getActionCommand().equals(CommandFlag.Exchange)) {
-					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+					RPExchangeDialog.showDialog(
+							"Ripple Trading Network(work in progress)",
 							LSystem.applicationMain, null);
 					return;
 				} else {
@@ -308,8 +310,11 @@ public class MainPanel extends JPanel implements ActionListener {
 				WalletItem item = WalletCache.get().readRow(row);
 				BigDecimal number = new BigDecimal(item.getAmount());
 				if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
-					RPMessage.showWarningMessage(this, "交易失败",
-							"非常抱歉,该地址金额较少,暂时不适合向他人捐款-_-");
+					RPMessage.showWarningMessage(this, LangConfig.get(this,
+							"txfails", "Transaction fails"), LangConfig.get(
+							this, "stop1",
+							"XRP little amount, not suitable for donation-_-"));
+
 				} else {
 					RPXRPSendDialog.showDialog(item.getPublicKey()
 							+ " XRP Send", LSystem.applicationMain, item,
@@ -326,27 +331,50 @@ public class MainPanel extends JPanel implements ActionListener {
 				String action = ae.getActionCommand();
 				switch (action) {
 				case CommandFlag.SendCoin:
-					int result = JOptionPane.showOptionDialog(this,
-							"Please select the currency you want to send.", "Select Currency",
-							JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, new Object[] {
-									"Send XRP", "Send IOU", "Cancel" },
-							JOptionPane.NO_OPTION);
+					int result = JOptionPane
+							.showOptionDialog(
+									this,
+									LangConfig
+											.get(this, "send",
+													"Please select the currency you want to send"),
+									LangConfig.get(this, "selcur",
+											"Select Currency"),
+									JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.QUESTION_MESSAGE,
+									null,
+									new Object[] {
+											LangConfig.get(this, "send_xrp",
+													"Send XRP"),
+											LangConfig.get(this, "send_iou",
+													"Send IOU"),
+											LangConfig.get(this, "cancel",
+													"Cancel") },
+									JOptionPane.NO_OPTION);
 					switch (result) {
 					case 0:
 						BigDecimal number = new BigDecimal(item.getAmount());
 						if (number.compareTo(BigDecimal.ZERO) < 1) {
-							RPMessage.showWarningMessage(this, "交易失败",
-									"非常抱歉,该地址目前能查询到的XRP总量为0,暂时无法发送XRP.");
+							RPMessage
+									.showWarningMessage(
+											this,
+											LangConfig.get(this, "txfails",
+													"Transaction fails"),
+											LangConfig
+													.get(this, "stop",
+															"Sorry, currently the address  XRP not send XRP"));
 						} else {
-							RPXRPSendDialog.showDialog(item.getPublicKey()
-									+ " XRP Send", LSystem.applicationMain,
-									item);
+							RPXRPSendDialog.showDialog(
+									item.getPublicKey()
+											+ " "
+											+ LangConfig.get(this, "send_xrp",
+													"Send XRP"),
+									LSystem.applicationMain, item);
 						}
 						break;
 					case 1:
-						RPIOUSendDialog.showDialog(item.getPublicKey()
-								+ " IOU Send", LSystem.applicationMain, item);
+						RPIOUSendDialog.showDialog(item.getPublicKey() + " "
+								+ LangConfig.get(this, "send_iou", "Send IOU"),
+								LSystem.applicationMain, item);
 
 						break;
 					default:
@@ -375,7 +403,8 @@ public class MainPanel extends JPanel implements ActionListener {
 					}
 					break;
 				case CommandFlag.Exchange:
-					RPExchangeDialog.showDialog("Ripple交易网络(work in progress)",
+					RPExchangeDialog.showDialog(
+							"Ripple Trading Network(work in progress)",
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Gateway:
@@ -387,18 +416,33 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Secret:
-					int index = RPMessage.showConfirmMessage(
-							LSystem.applicationMain, LangConfig.get(this, "show", "Show")+
-							LangConfig.get(this, "secret", "Secret"),
-							LangConfig.get(this, "showsecret", "Show the secret key of the current address? (may be exposed to you the secret info)"), LangConfig.get(this, "show", "Show"),
-							LangConfig.get(this, "cancel", "Cancel"));
+					int index = RPMessage
+							.showConfirmMessage(
+									LSystem.applicationMain,
+									LangConfig.get(this, "show", "Show")
+											+ LangConfig.get(this, "secret",
+													"Secret"),
+									LangConfig
+											.get(this,
+													"showsecret",
+													"Show the secret key of the current address? (may be exposed to you the secret info)"),
+									LangConfig.get(this, "show", "Show"),
+									LangConfig.get(this, "cancel", "Cancel"));
 
 					if (index == 0) {
 
-						index = RPMessage.showConfirmMessage(
-								LSystem.applicationMain, LangConfig.get(this, "show", "Show")+
-								LangConfig.get(this, "secret", "Secret"), LangConfig.get(this, "selsecret", "Please select the  show model  of the secret key"),
-								LangConfig.get(this, "text", "Text"),LangConfig.get(this, "image", "Paper Wallet"));
+						index = RPMessage
+								.showConfirmMessage(
+										LSystem.applicationMain,
+										LangConfig.get(this, "show", "Show")
+												+ LangConfig.get(this,
+														"secret", "Secret"),
+										LangConfig
+												.get(this, "selsecret",
+														"Please select the  show model  of the secret key"),
+										LangConfig.get(this, "text", "Text"),
+										LangConfig.get(this, "image",
+												"Paper Wallet"));
 
 						if (index == 0) {
 							RPInput input = new RPInput();

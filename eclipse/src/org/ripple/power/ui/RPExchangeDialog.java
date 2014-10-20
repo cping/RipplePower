@@ -39,14 +39,14 @@ public class RPExchangeDialog extends JDialog {
 	private RPCButton jButton13;
 	private RPComboBox _curComboBox;
 	private RPComboBox _selectGateawyCombobox;
-	private RPLabel jLabel1;
+	private RPLabel _currencyLabel;
 	private RPLabel jLabel10;
 	private RPLabel jLabel11;
 	private RPLabel jLabel2;
-	private RPLabel jLabel3;
-	private RPLabel jLabel4;
-	private RPLabel jLabel5;
-	private RPLabel jLabel6;
+	private RPLabel _tip1Label;
+	private RPLabel _gatewayLabel;
+	private RPLabel _buymLabel;
+	private RPLabel _sellmLabel;
 	private RPLabel jLabel7;
 	private RPLabel jLabel8;
 	private RPLabel jLabel9;
@@ -89,24 +89,24 @@ public class RPExchangeDialog extends JDialog {
 
 	private void initComponents() {
 		getContentPane().setBackground(new Color(36, 36, 36));
-		jLabel1 = new RPLabel();
+		_currencyLabel = new RPLabel();
 		_curComboBox = new RPComboBox();
 		_okButton = new RPCButton();
 		jPanel1 = new javax.swing.JPanel();
 		jLabel2 = new RPLabel();
-		jLabel3 = new RPLabel();
+		_tip1Label = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jList1 = new RPList();
-		jLabel5 = new RPLabel();
+		_buymLabel = new RPLabel();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jList2 = new RPList();
-		jLabel6 = new RPLabel();
+		_sellmLabel = new RPLabel();
 		jScrollPane3 = new javax.swing.JScrollPane();
 		jList3 = new RPList();
 		jLabel11 = new RPLabel();
 		jScrollPane4 = new javax.swing.JScrollPane();
 		jList4 = new RPList();
-		jLabel4 = new RPLabel();
+		_gatewayLabel = new RPLabel();
 		_selectGateawyCombobox = new RPComboBox();
 		jPanel2 = new javax.swing.JPanel();
 		jLabel7 = new RPLabel();
@@ -132,10 +132,10 @@ public class RPExchangeDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		jLabel1.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
-		jLabel1.setText("选择币种");
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(550, 10, 80, 26);
+		_currencyLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
+		_currencyLabel.setText(LangConfig.get(this, "selcur", "Currency"));
+		getContentPane().add(_currencyLabel);
+		_currencyLabel.setBounds(550, 10, 80, 26);
 
 		_curComboBox.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
 		_curComboBox.setModel(new javax.swing.DefaultComboBoxModel(
@@ -159,12 +159,17 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jLabel2);
 		jLabel2.setBounds(300, 190, 180, 16);
 
-		jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-		jLabel3.setText("买方最高价,卖方最高价,差额");
-		jPanel1.add(jLabel3);
-		jLabel3.setBounds(160, 10, 450, 15);
-
+		_tip1Label.setForeground(new java.awt.Color(255, 255, 255));
+		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		_tip1Label
+				.setText(String.format(
+						LangConfig
+								.get(this, "tip1",
+										"The highest price the buyer %s, the seller the highest price %s, Spread %s"),
+						0, 0, 0));
+		jPanel1.add(_tip1Label);
+		_tip1Label.setBounds(125, 10, 600, 20);
+		_tip1Label.setForeground(Color.red);
 		jList1.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
 
@@ -181,11 +186,11 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jScrollPane1);
 		jScrollPane1.setBounds(300, 210, 210, 110);
 
-		jLabel5.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
-		jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel5.setText("买方市场");
-		jPanel1.add(jLabel5);
-		jLabel5.setBounds(30, 40, 90, 16);
+		_buymLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_buymLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_buymLabel.setText(LangConfig.get(this, "bm", "Buyer's Market"));
+		jPanel1.add(_buymLabel);
+		_buymLabel.setBounds(30, 40, 120, 16);
 
 		jList2.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
@@ -203,11 +208,11 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(jScrollPane2);
 		jScrollPane2.setBounds(30, 70, 240, 250);
 
-		jLabel6.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
-		jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel6.setText("卖方市场");
-		jPanel1.add(jLabel6);
-		jLabel6.setBounds(540, 40, 90, 16);
+		_sellmLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_sellmLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_sellmLabel.setText(LangConfig.get(this, "sm", "Seller's Market"));
+		jPanel1.add(_sellmLabel);
+		_sellmLabel.setBounds(540, 40, 120, 16);
 
 		jList3.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
@@ -250,12 +255,13 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().add(jPanel1);
 		jPanel1.setBounds(10, 50, 830, 340);
 
-		jLabel4.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
-		jLabel4.setText("选择网关");
-		getContentPane().add(jLabel4);
-		jLabel4.setBounds(10, 10, 95, 26);
+		_gatewayLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
+		_gatewayLabel.setText(LangConfig.get(this, "selgateway", "Gateway"));
+		getContentPane().add(_gatewayLabel);
+		_gatewayLabel.setBounds(10, 10, 95, 26);
 
-		_selectGateawyCombobox.setFont(new java.awt.Font(LangConfig.fontName, 0, 18)); // NOI18N
+		_selectGateawyCombobox.setFont(new java.awt.Font(LangConfig.fontName,
+				0, 18)); // NOI18N
 
 		_selectGateawyCombobox.setModel(new javax.swing.DefaultComboBoxModel(
 				Gateway.gatewayList()));

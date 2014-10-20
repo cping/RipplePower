@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.utils.MathUtils;
@@ -25,15 +27,15 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	// Variables declaration - do not modify
-	private RPCButton jButton1;
-	private RPCButton jButton2;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
+	private RPCButton _sendButton;
+	private RPCButton _exitButton;
+	private RPLabel _feeLabel;
+	private RPLabel _addressLabel;
+	private RPLabel _amountLabel;
 	private javax.swing.JSeparator jSeparator1;
-	private RPTextBox jTextField1;
-	private RPTextBox jTextField2;
-	private RPTextBox jTextField3;
+	private RPTextBox _addressText;
+	private RPTextBox _amountText;
+	private RPTextBox _feeText;
 
 	// End of variables declaration
 
@@ -69,15 +71,15 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		getContentPane().setBackground(new Color(36, 36, 36));
-		jLabel1 = new RPLabel();
-		jLabel2 = new RPLabel();
-		jLabel3 = new RPLabel();
-		jTextField1 = new RPTextBox();
-		jTextField2 = new RPTextBox();
-		jTextField3 = new RPTextBox();
+		_feeLabel = new RPLabel();
+		_addressLabel = new RPLabel();
+		_amountLabel = new RPLabel();
+		_addressText = new RPTextBox();
+		_amountText = new RPTextBox();
+		_feeText = new RPTextBox();
 		jSeparator1 = new javax.swing.JSeparator();
-		jButton1 = new RPCButton();
-		jButton2 = new RPCButton();
+		_sendButton = new RPCButton();
+		_exitButton = new RPCButton();
 
 		setResizable(false);
 		Dimension dim = new Dimension(395, 230);
@@ -85,43 +87,56 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		setSize(dim);
 
 		getContentPane().setLayout(null);
+		
+		java.awt.Font font = new java.awt.Font(LangConfig.fontName, 0, 14);
+		
+		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
+		_addressLabel.setFont(font);
+		getContentPane().add(_addressLabel);
+		_addressLabel.setBounds(10, 22, 54, 15);
 
-		jLabel1.setText("Fee");
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(10, 93, 54, 24);
+		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
+		_amountLabel.setFont(font);
+		getContentPane().add(_amountLabel);
+		_amountLabel.setBounds(10, 55, 54, 24);
 
-		jLabel2.setText("Address");
-		getContentPane().add(jLabel2);
-		jLabel2.setBounds(10, 22, 54, 15);
+		_feeLabel.setText(LangConfig.get(this, "fee", "Fee"));
+		_feeLabel.setFont(font);
+		getContentPane().add(_feeLabel);
+		_feeLabel.setBounds(10, 93, 54, 24);
 
-		jLabel3.setText("Amount");
-		getContentPane().add(jLabel3);
-		jLabel3.setBounds(10, 55, 54, 24);
+		_addressText.setText(address);
+		getContentPane().add(_addressText);
+		_addressText.setBounds(82, 19, 297, 21);
 
-		jTextField1.setText(address);
-		getContentPane().add(jTextField1);
-		jTextField1.setBounds(82, 19, 297, 21);
+		_amountText.setText(amount);
+		getContentPane().add(_amountText);
+		_amountText.setBounds(82, 57, 297, 21);
 
-		jTextField2.setText(amount);
-		getContentPane().add(jTextField2);
-		jTextField2.setBounds(82, 57, 297, 21);
-
-		jTextField3.setText(fee);
-		getContentPane().add(jTextField3);
-		jTextField3.setBounds(82, 95, 152, 21);
+		_feeText.setText(fee);
+		getContentPane().add(_feeText);
+		_feeText.setBounds(82, 95, 152, 21);
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 135, 389, 18);
 
-		jButton1.setText("Send");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		_sendButton.setText(LangConfig.get(this, "send", "Send"));
+		_sendButton.setFont(font);
+		_sendButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
 				try {
-					String address = jTextField1.getText().trim();
-					String amountValue = jTextField2.getText().trim();
+					String address = _addressText.getText().trim();
+					String amountValue = _amountText.getText().trim();
 
-					String feeValue = jTextField3.getText().trim();
-
+					String feeValue = _feeText.getText().trim();
+					if (address.startsWith("~")) {
+						try {
+							address = NameFind.getAddress(address);
+						} catch (Exception e1) {
+							RPMessage.showInfoMessage(LSystem.applicationMain,
+									"Error", "发送失败,无法获得当前Address数据!");
+						}
+					}
 					if (!address.startsWith("r") || address.length() < 31) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
 								"Error", "无效的Ripple地址!");
@@ -177,17 +192,18 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 			}
 		});
-		getContentPane().add(jButton1);
-		jButton1.setBounds(187, 159, 100, 23);
+		getContentPane().add(_sendButton);
+		_sendButton.setBounds(187, 159, 100, 23);
 
-		jButton2.setText("Exit");
-		jButton2.addActionListener(new java.awt.event.ActionListener() {
+		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_exitButton.setFont(font);
+		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
 			}
 		});
-		getContentPane().add(jButton2);
-		jButton2.setBounds(312, 159, 57, 23);
+		getContentPane().add(_exitButton);
+		_exitButton.setBounds(312, 159, 57, 23);
 
 	}
 

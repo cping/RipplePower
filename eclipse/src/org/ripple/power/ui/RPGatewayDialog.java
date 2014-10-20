@@ -3,11 +3,13 @@ package org.ripple.power.ui;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JDialog;
@@ -118,6 +120,8 @@ public class RPGatewayDialog extends JDialog {
 		_addressText = new RPTextBox();
 		_curList = new RPComboBox();
 
+		Font font = new Font(LangConfig.fontName, 0, 14);
+		
 		_addGatewayButton = new RPCButton();
 		_manageGatewayButton = new RPCButton();
 		_exitButton = new RPCButton();
@@ -125,12 +129,21 @@ public class RPGatewayDialog extends JDialog {
 		_okTrustButton = new RPCButton();
 		_createGatewayButton = new RPCButton();
 
+		_createGatewayButton.setFont(font);
+		_addGatewayButton.setFont(font);
+		_manageGatewayButton.setFont(font);
+		_exitButton.setFont(font);
+		_cancelTrustButton.setFont(font);
+		_okTrustButton.setFont(font);
+
+		
 		getContentPane().setLayout(null);
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 520, 781, 10);
 
 		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list", "Gateway List"));
+		_gatewayListLabel.setFont(font);
 		getContentPane().add(_gatewayListLabel);
 		_gatewayListLabel.setBounds(10, 10, 170, 20);
 
@@ -206,6 +219,7 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.setBounds(190, 10, 580, 500);
 
 		_iouSupportLabel.setText(LangConfig.get(this, "iou_support", "IOU Support"));
+		_iouSupportLabel.setFont(font);
 		getContentPane().add(_iouSupportLabel);
 		_iouSupportLabel.setBounds(10, 280, 130, 15);
 
@@ -309,7 +323,7 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(_manageGatewayButton);
 		_manageGatewayButton.setBounds(120, 540, 100, 30);
 
-		_exitButton.setText("Exit");
+		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(690, 540, 80, 30);
 

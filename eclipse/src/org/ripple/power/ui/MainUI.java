@@ -82,7 +82,7 @@ public class MainUI {
 
 		WelcomePanel welcomePanel = new WelcomePanel();
 
-		Font navLinkFont = new Font("Arial", Font.BOLD, 14);
+		Font navLinkFont = new Font(LangConfig.fontName, Font.BOLD, 14);
 		List<JComponent> navLinkList = new ArrayList<JComponent>();
 
 		RPNavbar navbar = new RPNavbar("RipplePower");
@@ -118,7 +118,7 @@ public class MainUI {
 		navLinkList.add(btcLink);
 
 		// config
-		RPNavlink expoLink = new RPNavlink("Config");
+		RPNavlink expoLink = new RPNavlink(LangConfig.get(this, "config", "Config"));
 		expoLink.setForeground(UIConfig.getBrandColor());
 		expoLink.setFont(navLinkFont);
 		expoLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
@@ -134,7 +134,7 @@ public class MainUI {
 		navLinkList.add(expoLink);
 
 		// exit
-		RPNavlink exitLink = new RPNavlink("Exit");
+		RPNavlink exitLink = new RPNavlink(LangConfig.get(this, "exit", "Exit"));
 		exitLink.setForeground(UIConfig.getBrandColor());
 		exitLink.setFont(navLinkFont);
 		exitLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);

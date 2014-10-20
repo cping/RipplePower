@@ -1,5 +1,7 @@
 package org.ripple.power.i18n;
 
+import java.util.Locale;
+
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHConfig;
 import org.ripple.power.ui.UIRes;
@@ -13,17 +15,26 @@ public class LangConfig {
 	public static synchronized void init() {
 		if (_config == null) {
 			try {
-				if (Language.CN.getLocale().equals(
+				//简
+				if (Language.SIMPLECN.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
-					_config = new RHConfig(UIRes.getStream("chinese/config"));
+					_config = new RHConfig(UIRes.getStream("cn_zh/mes"));
+				//繁	
+				} else if (Language.TRADITIONALCN.getLocale().equals(
+						LSystem.applicationLang.getLocale())) {
+					fontName = "Dialog";
+					_config = new RHConfig(UIRes.getStream("cn_tw/mes"));
+				//日	
 				} else if (Language.JP.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
-					fontName = "ＭＳ ゴシック";
-					_config = new RHConfig(UIRes.getStream("english/config"));
+					// ＭＳ ゴシック
+					fontName = "Dialog";
+					_config = new RHConfig(UIRes.getStream("jp/mes"));
+				//其它	
 				} else {
 					fontName = "Dialog";
-					_config = new RHConfig(UIRes.getStream("english/config"));
+					_config = new RHConfig(UIRes.getStream("en/mes"));
 				}
 			} catch (Exception ex) {
 
@@ -51,4 +62,7 @@ public class LangConfig {
 		return result;
 	}
 
+	public static void main(String[] args) {
+		System.out.println(Locale.CHINA);
+	}
 }

@@ -28,13 +28,13 @@ public class RPAccountInfoDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private javax.swing.JSeparator jSeparator1;
 	private javax.swing.JSeparator jSeparator2;
-	private RPCButton jButton1;
-	private RPCButton jButton2;
+	private RPCButton _loadButton;
+	private RPCButton _exitButton;
 	private RPLabel _addressLabel;
 	private RPLabel _assetsLabel;
 	private RPLabel _issuedLabel;
 	private RPLabel _booksLabel;
-	private javax.swing.JTextField jTextField1;
+	private javax.swing.JTextField _addressText;
 	private AddressTable jTable1;
 	private AddressTable jTable2;
 	private AddressTable jTable3;
@@ -278,9 +278,9 @@ public class RPAccountInfoDialog extends JDialog {
 	private void initComponents(String address) {
 		getContentPane().setBackground(new Color(36, 36, 36));
 		_addressLabel = new RPLabel();
-		jTextField1 = new RPTextBox();
-		jButton1 = new RPCButton();
-		jButton2 = new RPCButton();
+		_addressText = new RPTextBox();
+		_loadButton = new RPCButton();
+		_exitButton = new RPCButton();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jScrollPane3 = new javax.swing.JScrollPane();
@@ -289,6 +289,11 @@ public class RPAccountInfoDialog extends JDialog {
 		_assetsLabel = new RPLabel();
 		_issuedLabel = new RPLabel();
 		_booksLabel = new RPLabel();
+		
+		Font font = new Font(LangConfig.fontName, 0, 14);
+		_loadButton.setFont(font);
+		_exitButton.setFont(font);
+		
 		Class<?>[] columnClasses = { String.class, String.class, String.class };
 		String[] columnNames = { LangConfig.get(this, "currency", "Currency"),
 				LangConfig.get(this, "gateway", "Gateway"),
@@ -355,34 +360,34 @@ public class RPAccountInfoDialog extends JDialog {
 		_addressLabel.setFont(new Font(LangConfig.fontName, 1, 14));
 		getContentPane().add(_addressLabel);
 		_addressLabel.setBounds(20, 25, 80, 15);
-		getContentPane().add(jTextField1);
-		jTextField1.setBounds(108, 22, 343, 21);
+		getContentPane().add(_addressText);
+		_addressText.setBounds(108, 22, 343, 21);
 
 		if (address.trim().length() > 0) {
-			jTextField1.setText(address.trim());
+			_addressText.setText(address.trim());
 			call(info, tableModel, tableModel2, tableModel3);
 
 		} else {
-			jTextField1.setText("");
+			_addressText.setText("");
 		}
-		jButton1.setText("Load");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		_loadButton.setText(LangConfig.get(this, "load", "Load"));
+		_loadButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				call(info, tableModel, tableModel2, tableModel3);
 			}
 		});
-		getContentPane().add(jButton1);
-		jButton1.setBounds(513, 21, 125, 23);
+		getContentPane().add(_loadButton);
+		_loadButton.setBounds(513, 21, 125, 23);
 
-		jButton2.setText("Exit");
-		jButton2.addActionListener(new java.awt.event.ActionListener() {
+		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				setVisible(false);
 				dispose();
 			}
 		});
-		getContentPane().add(jButton2);
-		jButton2.setBounds(520, 550, 125, 30);
+		getContentPane().add(_exitButton);
+		_exitButton.setBounds(520, 550, 125, 30);
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 60, 670, 10);
@@ -406,7 +411,7 @@ public class RPAccountInfoDialog extends JDialog {
 			final AccountTableModel3 tableModel3) {
 
 		final WaitDialog dialog = WaitDialog.showDialog(this);
-		final String address = jTextField1.getText().trim();
+		final String address = _addressText.getText().trim();
 
 		AccountFind find = new AccountFind();
 

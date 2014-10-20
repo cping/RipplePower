@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -112,103 +113,72 @@ public class MainForm extends JFrame implements ActionListener {
 		setPreferredSize(dim);
 		setSize(dim);
 
+		Font font = new Font(LangConfig.fontName,0,14);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
-		menuBar.setBackground(new Color(230, 230, 230));
+
 
 		JMenu menu;
 		JMenuItem menuItem;
-		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
+		
 
+		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
+		menu.setFont(font);
+		
 		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
 				"Wallet Password"));
+		
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Exit");
-		menuItem.setActionCommand("exit");
-		menuItem.addActionListener(this);
+		
+		menu.setFont(font);
+		menuItem.setFont(font);
 		menu.add(menuItem);
 
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "view", "View"));
-
-		menuItem = new JMenuItem("Receive Addresses");
-		menuItem.setActionCommand("view receive");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Send Addresses");
-		menuItem.setActionCommand("view send");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
+		menu.setFont(font);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "transaction", "Transaction"));
-
-		menuItem = new JMenuItem("Send Coins");
-		menuItem.setActionCommand("send coins");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Sign Message");
-		menuItem.setActionCommand("sign message");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Verify Message");
-		menuItem.setActionCommand("verify message");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
+		menu.setFont(font);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "wallet", "Wallet"));
-
-		menuItem = new JMenuItem("Export Keys");
-		menuItem.setActionCommand("export keys");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Import Keys");
-		menuItem.setActionCommand("import keys");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Rescan Block Chain");
-		menuItem.setActionCommand("rescan");
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-
+		menu.setFont(font);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "rippled_config",
 				"Rippled Config"));
+		menu.setFont(font);
 
 		menuItem = new JMenuItem(LangConfig.get(this, "server_settings",
 				"Server Settings"));
+		menuItem.setFont(font);
 		menuItem.setActionCommand("服务器设置");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(LangConfig.get(this, "proxy_settings",
 				"Proxy Settings"));
-		menuItem.setActionCommand("代理设置");
+		menuItem.setFont(font);
+		menuItem.setActionCommand("proxy");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
+		menu.setFont(font);
 		menuItem = new JMenuItem(LangConfig.get(this, "automation", "Automation"));
+		menuItem.setFont(font);
 		menuItem.setActionCommand("一键开启");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(LangConfig.get(this, "manage", "Manage"));
+		menuItem.setFont(font);
 		menuItem.setActionCommand("管理GAE");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -216,13 +186,15 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "help", "Help"));
-		
+		menu.setFont(font);
 		menuItem = new JMenuItem(LangConfig.get(this, "donation", "Donation"));
+		menuItem.setFont(font);
 		menuItem.setActionCommand("donation");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem("About");
+		menuItem.setFont(font);
 		menuItem.setActionCommand("about");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -260,6 +232,9 @@ public class MainForm extends JFrame implements ActionListener {
 							CoinUtils.toHex(buffer));
 					LSystem.session("system").save();
 				}
+				break;
+			case "proxy":
+				RPProxyDialog.showDialog("ProxyConfig", this);
 				break;
 			case "exit":
 				exitProgram();
