@@ -3,6 +3,7 @@ package org.ripple.power.ui;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,12 +15,16 @@ import java.util.HashSet;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.OfferPrice;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.other.calc.Calc;
+import com.ripple.core.types.known.sle.entries.Offer;
 
 public class RPExchangeDialog extends JDialog {
 
@@ -50,9 +55,9 @@ public class RPExchangeDialog extends JDialog {
 	private RPLabel jLabel7;
 	private RPLabel jLabel8;
 	private RPLabel jLabel9;
-	private RPList jList1;
-	private RPList jList2;
-	private RPList jList3;
+	private RPList _mytradingList;
+	private RPList _buymList;
+	private RPList _sellmList;
 	private RPList jList4;
 	private javax.swing.JPanel jPanel1;
 	private javax.swing.JPanel jPanel2;
@@ -96,13 +101,13 @@ public class RPExchangeDialog extends JDialog {
 		jLabel2 = new RPLabel();
 		_tip1Label = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
-		jList1 = new RPList();
+		_mytradingList = new RPList();
 		_buymLabel = new RPLabel();
 		jScrollPane2 = new javax.swing.JScrollPane();
-		jList2 = new RPList();
+		_buymList = new RPList();
 		_sellmLabel = new RPLabel();
 		jScrollPane3 = new javax.swing.JScrollPane();
-		jList3 = new RPList();
+		_sellmList = new RPList();
 		jLabel11 = new RPLabel();
 		jScrollPane4 = new javax.swing.JScrollPane();
 		jList4 = new RPList();
@@ -149,6 +154,82 @@ public class RPExchangeDialog extends JDialog {
 		_okButton.setText(LangConfig.get(this, "ok", "OK"));
 		getContentPane().add(_okButton);
 		_okButton.setBounds(760, 10, 80, 30);
+		_okButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final String cur = (String) _curComboBox.getSelectedItem();
+				String[] split = StringUtils.split(cur, "/");
+				if (split.length == 2) {
+					String address = (String) _selectGateawyCombobox
+							.getSelectedItem();
+					final WaitDialog dialog = WaitDialog.showDialog(RPExchangeDialog.this);
+					OfferPrice.load(
+							Gateway.getAddress(address).accounts.get(0).address,
+							split[0], split[1], new OfferPrice() {
+
+								@Override
+								public void sell(Offer offer) {
+
+								}
+
+								@Override
+								public void buy(Offer offer) {
+
+								}
+
+								@Override
+								public void error(JSONObject obj) {
+									RPMessage.showInfoMessage(
+											LSystem.applicationMain, "Error",
+											obj.toString());
+									dialog.closeDialog();
+								}
+
+								@Override
+								public void empty() {
+									RPMessage.showInfoMessage(
+											LSystem.applicationMain, "Info",
+											String.format(
+													"很抱歉，目前没有任何人对%s的交易挂单", cur));
+									dialog.closeDialog();
+								}
+
+								@Override
+								public void complete(
+										final ArrayList<String> buys,
+										final ArrayList<String> sells) {
+									_buymList
+											.setModel(new javax.swing.AbstractListModel() {
+
+												public int getSize() {
+													return buys.size();
+												}
+
+												public Object getElementAt(int i) {
+													return buys.get(i);
+												}
+											});
+									
+									_sellmList.setModel(new javax.swing.AbstractListModel() {
+
+										public int getSize() {
+											return sells.size();
+										}
+
+										public Object getElementAt(int i) {
+											return sells.get(i);
+										}
+									});
+									dialog.closeDialog();
+								}
+
+							});
+
+				}
+
+			}
+		});
 
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
@@ -170,7 +251,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_tip1Label);
 		_tip1Label.setBounds(125, 10, 600, 20);
 		_tip1Label.setForeground(Color.red);
-		jList1.setModel(new javax.swing.AbstractListModel() {
+		_mytradingList.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
 
 			public int getSize() {
@@ -181,7 +262,7 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
-		jScrollPane1.setViewportView(jList1);
+		jScrollPane1.setViewportView(_mytradingList);
 
 		jPanel1.add(jScrollPane1);
 		jScrollPane1.setBounds(300, 210, 210, 110);
@@ -192,7 +273,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_buymLabel);
 		_buymLabel.setBounds(30, 40, 120, 16);
 
-		jList2.setModel(new javax.swing.AbstractListModel() {
+		_buymList.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
 
 			public int getSize() {
@@ -203,7 +284,7 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
-		jScrollPane2.setViewportView(jList2);
+		jScrollPane2.setViewportView(_buymList);
 
 		jPanel1.add(jScrollPane2);
 		jScrollPane2.setBounds(30, 70, 240, 250);
@@ -214,7 +295,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_sellmLabel);
 		_sellmLabel.setBounds(540, 40, 120, 16);
 
-		jList3.setModel(new javax.swing.AbstractListModel() {
+		_sellmList.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "Empty" };
 
 			public int getSize() {
@@ -225,7 +306,7 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
-		jScrollPane3.setViewportView(jList3);
+		jScrollPane3.setViewportView(_sellmList);
 
 		jPanel1.add(jScrollPane3);
 		jScrollPane3.setBounds(540, 70, 270, 250);

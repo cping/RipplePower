@@ -318,7 +318,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				} else {
 					RPXRPSendDialog.showDialog(item.getPublicKey()
 							+ " XRP Send", LSystem.applicationMain, item,
-							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10", "0.01");
+							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10", LSystem.FEE);
 				}
 			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {
 
@@ -466,7 +466,7 @@ public class MainPanel extends JPanel implements ActionListener {
 											.readRow(row).getPublicKey()),
 									WalletCache.get().readRow(row)
 											.getPrivateKey(),
-									new Object[] { "COPY" });
+									new Object[] { LangConfig.get(this, "copy", "Copy") });
 						} else if (index == 1) {
 							RPPaperDialog dialog = new RPPaperDialog(
 									LSystem.applicationMain, 0, WalletCache

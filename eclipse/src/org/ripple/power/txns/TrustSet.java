@@ -1,4 +1,5 @@
 package org.ripple.power.txns;
+
 import org.address.ripple.RippleObject;
 import org.address.ripple.RippleSeedAddress;
 import org.address.ripple.RippleSchemas.BinaryFormatField;
@@ -6,12 +7,36 @@ import org.address.ripple.RippleSchemas.TransactionTypes;
 
 import org.json.JSONObject;
 import org.ripple.power.ui.RPClient;
+import org.ripple.power.utils.StringUtils;
 
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
 
 public class TrustSet {
+
+	public static IssuedCurrency fromString(String res) {
+		String[] split = StringUtils.split(res, "/");
+		int idx = split.length;
+		IssuedCurrency currency;
+		if (idx == 0) {
+			currency = new IssuedCurrency();
+		} else if (idx == 1) {
+			currency = new IssuedCurrency(split[0]);
+		} else if (idx == 3) {
+			String address = split[2].split(" ")[0];
+			if (address.startsWith("r") && address.length() > 30) {
+				currency = new IssuedCurrency(split[0], address, split[1]);
+			} else {
+				currency = new IssuedCurrency(split[0],
+						Gateway.getAddress(address).accounts.get(0).address,
+						split[1]);
+			}
+		} else {
+			throw new RuntimeException(res);
+		}
+		return currency;
+	}
 
 	public static void setTxJson(final String seed,
 			final IssuedCurrency currency, final String fee, final Rollback back) {

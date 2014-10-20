@@ -122,7 +122,7 @@ public class RPGatewayDialog extends JDialog {
 		_curList = new RPComboBox();
 
 		Font font = new Font(LangConfig.fontName, 0, 14);
-		
+
 		_addGatewayButton = new RPCButton();
 		_manageGatewayButton = new RPCButton();
 		_exitButton = new RPCButton();
@@ -137,13 +137,13 @@ public class RPGatewayDialog extends JDialog {
 		_cancelTrustButton.setFont(font);
 		_okTrustButton.setFont(font);
 
-		
 		getContentPane().setLayout(null);
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 520, 781, 10);
 
-		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list", "Gateway List"));
+		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list",
+				"Gateway List"));
 		_gatewayListLabel.setFont(font);
 		getContentPane().add(_gatewayListLabel);
 		_gatewayListLabel.setBounds(10, 10, 170, 20);
@@ -151,15 +151,18 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
 
-		_currencyNameList.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_currencyNameList
+				.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
 		_currencyNameList.setForeground(new java.awt.Color(255, 255, 255));
 		_currencyNameList.setText(LangConfig.get(this, "currency", "Currency"));
 		jPanel1.add(_currencyNameList);
 		_currencyNameList.setBounds(10, 70, 80, 16);
 
-		_gatewayAddressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_gatewayAddressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0,
+				14)); // NOI18N
 		_gatewayAddressLabel.setForeground(new java.awt.Color(255, 255, 255));
-		_gatewayAddressLabel.setText(LangConfig.get(this, "address", "Address"));
+		_gatewayAddressLabel
+				.setText(LangConfig.get(this, "address", "Address"));
 		jPanel1.add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(10, 20, 91, 16);
 
@@ -219,7 +222,8 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(jPanel1);
 		jPanel1.setBounds(190, 10, 580, 500);
 
-		_iouSupportLabel.setText(LangConfig.get(this, "iou_support", "IOU Support"));
+		_iouSupportLabel.setText(LangConfig.get(this, "iou_support",
+				"IOU Support"));
 		_iouSupportLabel.setFont(font);
 		getContentPane().add(_iouSupportLabel);
 		_iouSupportLabel.setBounds(10, 280, 130, 15);
@@ -326,7 +330,7 @@ public class RPGatewayDialog extends JDialog {
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SwingUtils.close(RPGatewayDialog.this);
@@ -336,6 +340,56 @@ public class RPGatewayDialog extends JDialog {
 		_exitButton.setBounds(690, 540, 80, 30);
 
 		_cancelTrustButton.setText(LangConfig.get(this, "cancel", "Cancel"));
+		_cancelTrustButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int idx = _myGateway.getSelectedIndex();
+				if (idx > -1) {
+					IssuedCurrency currency = TrustSet
+							.fromString((String) _myGateway.getSelectedValue());
+					String message = String.format("您希望取消对网关%s的信任吗?",
+							currency.issuer.toString());
+					int result = RPMessage.showConfirmMessage(
+							LSystem.applicationMain, "信任归零", message, LangConfig.get(this, "ok", "OK"),
+							LangConfig.get(this, "cancel", "Cancel"));
+					if (result == 0) {
+						final WaitDialog dialog = new WaitDialog(
+								RPGatewayDialog.this);
+						IssuedCurrency cur = new IssuedCurrency("0",
+								currency.issuer.toString(), currency.currency);
+						TrustSet.set(_item.getSeed(), cur, LSystem.FEE,
+								new Rollback() {
+									@Override
+									public void success(JSONObject res) {
+										JSonLog.get().println(res.toString());
+										dialog.closeDialog();
+										String result = res.getJSONObject(
+												"result").getString(
+												"engine_result_message");
+										if (result != null) {
+											RPMessage.showInfoMessage(
+													LSystem.applicationMain,
+													"Info", "操作被处理,Rippled反馈:"
+															+ result);
+											loadTrust();
+										}
+									}
+
+									@Override
+									public void error(JSONObject res) {
+										JSonLog.get().println(res.toString());
+										dialog.closeDialog();
+										RPMessage.showErrorMessage(
+												LSystem.applicationMain,
+												"Error", "信任归零失败");
+									}
+								});
+					}
+
+				}
+			}
+		});
 		getContentPane().add(_cancelTrustButton);
 		_cancelTrustButton.setBounds(600, 540, 80, 30);
 
@@ -358,7 +412,8 @@ public class RPGatewayDialog extends JDialog {
 						trustValue);
 
 				int result = RPMessage.showConfirmMessage(
-						LSystem.applicationMain, "信任网关", message, "确认", "放弃");
+						LSystem.applicationMain, "信任网关",  message, LangConfig.get(this, "ok", "OK"),
+						LangConfig.get(this, "cancel", "Cancel"));
 				if (result == 0) {
 					final WaitDialog dialog = new WaitDialog(
 							RPGatewayDialog.this);
