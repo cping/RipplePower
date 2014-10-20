@@ -31,6 +31,7 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TrustSet;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 
 public class RPGatewayDialog extends JDialog {
@@ -324,6 +325,13 @@ public class RPGatewayDialog extends JDialog {
 		_manageGatewayButton.setBounds(120, 540, 100, 30);
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_exitButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtils.close(RPGatewayDialog.this);
+			}
+		});
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(690, 540, 80, 30);
 

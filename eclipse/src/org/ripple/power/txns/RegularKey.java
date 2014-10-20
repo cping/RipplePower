@@ -34,7 +34,7 @@ public class RegularKey {
 							seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.LimitAmount, currency);
 					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee) + "0");
+							CurrencyUtils.getValueToRipple(fee));
 					item.putField(BinaryFormatField.Sequence, sequence);
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
@@ -66,7 +66,7 @@ public class RegularKey {
 			obj.put("TransactionType", "SetRegularKey");
 			obj.put("Account", seed.getPublicKey());
 			obj.put("RegularKey", message);
-			obj.put("Fee", CurrencyUtils.getValueToRipple(fee) + "0");
+			obj.put("Fee", CurrencyUtils.getValueToRipple(fee));
 			req.json("tx_json", obj);
 			req.json("secret", seed.getPrivateKey());
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {

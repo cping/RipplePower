@@ -1,7 +1,5 @@
 package org.ripple.power.i18n;
 
-import java.util.Locale;
-
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHConfig;
 import org.ripple.power.ui.UIRes;
@@ -62,7 +60,4 @@ public class LangConfig {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(Locale.CHINA);
-	}
 }

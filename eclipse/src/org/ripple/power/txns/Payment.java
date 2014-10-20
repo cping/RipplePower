@@ -24,8 +24,7 @@ public class Payment {
 	public static void sendXRP(final RippleSeedAddress seed,
 			final String dstAddress, final String amount, final String fee,
 			final Rollback back) {
-
-		final String address = seed.getPublicRippleAddress().toString();
+		final String address = seed.getPublicKey();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
 			@Override
@@ -44,7 +43,7 @@ public class Payment {
 					item.putField(BinaryFormatField.DestinationTag,
 							MathUtils.randomLong(1, 999999999));
 					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee) + "0");
+							CurrencyUtils.getValueToRipple(fee) );
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -89,7 +88,7 @@ public class Payment {
 					item.putField(BinaryFormatField.DestinationTag,
 							MathUtils.randomLong(1, 999999999));
 					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee) + "0");
+							CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -136,7 +135,7 @@ public class Payment {
 			tx.put("Account", srcAddress);
 			tx.put("Amount", CurrencyUtils.getValueToRipple(amount));
 			tx.put("Destination", dstAddress);
-			tx.put("Fee", CurrencyUtils.getValueToRipple(fee) + "0");
+			tx.put("Fee", CurrencyUtils.getValueToRipple(fee));
 			req.json("tx_json", tx);
 			req.json("secret", seed);
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {

@@ -20,6 +20,7 @@ import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.SwingUtils;
 
 public class RPAccountInfoDialog extends JDialog {
 	/**
@@ -382,8 +383,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				setVisible(false);
-				dispose();
+				SwingUtils.close(RPAccountInfoDialog.this);
 			}
 		});
 		getContentPane().add(_exitButton);

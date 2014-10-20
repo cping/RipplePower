@@ -21,9 +21,9 @@ public class CurrencyUtils {
 				MathContext.DECIMAL128).toString();
 		int index = num.indexOf('.');
 		if (index != -1) {
-			num = num.substring(0, index - 1);
+			num = num.substring(0, index);
 		}
 		return num;
 	}
-
+	
 }

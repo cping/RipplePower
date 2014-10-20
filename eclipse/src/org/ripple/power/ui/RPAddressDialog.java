@@ -24,6 +24,7 @@ import org.ripple.power.config.RHClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 
 import com.ripple.config.Config;
@@ -89,7 +90,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	}
 
 	private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {
-		this.dispose();
+		SwingUtils.close(this);
 	}
 
 	private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {

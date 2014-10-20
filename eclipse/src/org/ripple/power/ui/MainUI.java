@@ -148,8 +148,7 @@ public class MainUI {
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
 
-		new MaidSystem();
-
+		MaidSystem.get();
 		JSonLog.get();
 
 	}

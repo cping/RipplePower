@@ -23,6 +23,7 @@ import org.address.NativeSupport;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.ui.MainForm;
 import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
@@ -30,7 +31,7 @@ public final class LSystem {
 	public final static String FEE = "0.01";
 
 	public final static String NativeCurrency = "XRP";
-	
+
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
 		LSystem.sendRESTCoin(address, name, label, amount, "XRP",
@@ -123,7 +124,7 @@ public final class LSystem {
 	public static MainForm applicationMain = null;
 
 	public static Language applicationLang = Language.DEF;
-	
+
 	public static long applicationSleep = SECOND * 30;
 
 	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
@@ -257,6 +258,9 @@ public final class LSystem {
 				if (session != null) {
 					session.save();
 				}
+			}
+			if (LSystem.applicationMain != null) {
+				SwingUtils.close(LSystem.applicationMain);
 			}
 			System.exit(-1);
 		}

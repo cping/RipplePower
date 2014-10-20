@@ -22,6 +22,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
@@ -207,8 +208,7 @@ public class RPIOUSendDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPIOUSendDialog.this.setVisible(false);
-				RPIOUSendDialog.this.dispose();
+				SwingUtils.close(RPIOUSendDialog.this);
 			}
 		});
 		calldisable();

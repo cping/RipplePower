@@ -2,10 +2,8 @@ package org.ripple.power.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.ripple.power.helper.Paramaters;
 
@@ -23,6 +21,9 @@ public class JSonLog extends JDialog {
 	public synchronized static JSonLog get() {
 		if (instance == null) {
 			instance = new JSonLog();
+		}
+		if (!instance.isVisible()) {
+			instance.setVisible(true);
 		}
 		return instance;
 	}

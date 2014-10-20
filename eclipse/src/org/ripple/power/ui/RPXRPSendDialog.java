@@ -17,6 +17,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
@@ -199,7 +200,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		_exitButton.setFont(font);
 		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-
+				SwingUtils.close(RPXRPSendDialog.this);
 			}
 		});
 		getContentPane().add(_exitButton);

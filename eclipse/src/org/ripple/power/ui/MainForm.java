@@ -139,6 +139,17 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menu = new JMenu(LangConfig.get(this, "view", "View"));
 		menu.setFont(font);
+		menuItem = new JMenuItem("RPC");
+		menuItem.setFont(font);
+		menuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSonLog.get();
+				
+			}
+		});
+		menu.add(menuItem);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "transaction", "Transaction"));
@@ -304,6 +315,7 @@ public class MainForm extends JFrame implements ActionListener {
 			LSystem.session("main").set("dimension", d.width + "," + d.height);
 		}
 		LSystem.shutdown();
+		
 	}
 
 	private void aboutMyWallet() {

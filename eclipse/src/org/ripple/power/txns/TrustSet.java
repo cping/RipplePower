@@ -32,7 +32,7 @@ public class TrustSet {
 					String.valueOf(currency.amount.longValue()));
 			limitAmount.put("issuer", currency.issuer.toString());
 			obj.put("LimitAmount", limitAmount);
-			obj.put("Fee", CurrencyUtils.getValueToRipple(fee) + "0");
+			obj.put("Fee", CurrencyUtils.getValueToRipple(fee));
 			req.json("tx_json", obj);
 			req.json("secret", seed.getPrivateKey());
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
@@ -78,7 +78,7 @@ public class TrustSet {
 							seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.LimitAmount, currency);
 					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee) + "0");
+							CurrencyUtils.getValueToRipple(fee));
 					item.putField(BinaryFormatField.Sequence, sequence);
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {

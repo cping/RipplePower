@@ -26,8 +26,20 @@ public class MaidSystem extends JDialog {
 	int fheight = 150;
 	BufferedImage _backimage;
 	BufferedImage _faceimage;
+	
+	private static MaidSystem instance = null;
 
-	public MaidSystem() {
+	public synchronized static MaidSystem get() {
+		if (instance == null) {
+			instance = new MaidSystem();
+		}
+		if (!instance.isVisible()) {
+			instance.setVisible(true);
+		}
+		return instance;
+	}
+
+	 MaidSystem() {
 		super(Paramaters.getContainer(), LangConfig.get(MaidSystem.class, "ripple_wizard", "Ripple Wizard"), false);
 		faceImage = GraphicsUtils.getSplitImages("icons/face.png", 96, 96);
 		GraphicTool tools = new GraphicTool();

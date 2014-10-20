@@ -1,4 +1,5 @@
 package org.ripple.power.utils;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -32,13 +33,20 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-
 public class SwingUtils {
+
+	public static void close(Window win) {
+		if (win != null) {
+			win.setVisible(false);
+			win.dispose();
+		}
+	}
 
 	public static Rectangle getScreenSize(Window win) {
 		Rectangle sb;
 		if (win == null) {
-			sb = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+			sb = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					.getDefaultScreenDevice().getDefaultConfiguration()
 					.getBounds();
 		} else {
 			sb = win.getGraphicsConfiguration().getBounds();
@@ -49,11 +57,14 @@ public class SwingUtils {
 	public static Insets getScreenInsets(Window win) {
 		Insets si;
 		if (win == null) {
-			si = Toolkit.getDefaultToolkit().getScreenInsets(
-					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-							.getDefaultConfiguration());
+			si = Toolkit.getDefaultToolkit()
+					.getScreenInsets(
+							GraphicsEnvironment.getLocalGraphicsEnvironment()
+									.getDefaultScreenDevice()
+									.getDefaultConfiguration());
 		} else {
-			si = win.getToolkit().getScreenInsets(win.getGraphicsConfiguration());
+			si = win.getToolkit().getScreenInsets(
+					win.getGraphicsConfiguration());
 		}
 		return si;
 	}
@@ -66,7 +77,8 @@ public class SwingUtils {
 	public static void centerOnScreen(Window win) {
 		Rectangle screenBounds = SwingUtils.getScreenSize(win);
 		win.setBounds((int) (screenBounds.getWidth() - win.getWidth()) / 2,
-				(int) (screenBounds.getHeight() - win.getHeight()) / 2, win.getWidth(), win.getHeight());
+				(int) (screenBounds.getHeight() - win.getHeight()) / 2,
+				win.getWidth(), win.getHeight());
 	}
 
 	public static void centerOnParent(Window win) {
@@ -74,15 +86,18 @@ public class SwingUtils {
 
 		if (parent != null) {
 			Point parentPosition = parent.getLocationOnScreen();
-			win.setLocation(parentPosition.x + (parent.getWidth() - win.getWidth()) / 2,
-					parentPosition.y + (parent.getHeight() - win.getHeight()) / 2);
+			win.setLocation(
+					parentPosition.x + (parent.getWidth() - win.getWidth()) / 2,
+					parentPosition.y + (parent.getHeight() - win.getHeight())
+							/ 2);
 		} else {
 			centerOnScreen(win);
 		}
 	}
 
 	public static boolean isTranslucentSupported() {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsEnvironment ge = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 
 		boolean isUniformTranslucencySupported = gd
@@ -95,17 +110,18 @@ public class SwingUtils {
 			win.setBackground(new Color(0, 0, 0, 0));
 		}
 	}
-	
+
 	public BufferedImage toCompatibleImage(BufferedImage image) {
-		GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+		GraphicsConfiguration gfx_config = GraphicsEnvironment
+				.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration();
 
-		if (image.getColorModel().equals(gfx_config.getColorModel())){
+		if (image.getColorModel().equals(gfx_config.getColorModel())) {
 			return image;
 		}
 
-		BufferedImage new_image = gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(),
-				image.getTransparency());
+		BufferedImage new_image = gfx_config.createCompatibleImage(
+				image.getWidth(), image.getHeight(), image.getTransparency());
 
 		Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 
@@ -114,15 +130,18 @@ public class SwingUtils {
 
 		return new_image;
 	}
-	
-	public static void addWindowListener(final Component source, final WindowListener listener) {
+
+	public static void addWindowListener(final Component source,
+			final WindowListener listener) {
 		if (source instanceof Window) {
-			((Window)source).addWindowListener(listener);
+			((Window) source).addWindowListener(listener);
 		} else {
 			source.addHierarchyListener(new HierarchyListener() {
-				@Override public void hierarchyChanged(HierarchyEvent e) {
+				@Override
+				public void hierarchyChanged(HierarchyEvent e) {
 					if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
-						SwingUtilities.getWindowAncestor(source).addWindowListener(listener);
+						SwingUtilities.getWindowAncestor(source)
+								.addWindowListener(listener);
 					}
 				}
 			});
@@ -136,7 +155,8 @@ public class SwingUtils {
 	public static void browse(String url, Component msgParent) {
 		boolean error = false;
 
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE)) {
+		if (Desktop.isDesktopSupported()
+				&& Desktop.getDesktop().isSupported(Action.BROWSE)) {
 			try {
 				Desktop.getDesktop().browse(new URI(url));
 			} catch (URISyntaxException ex) {
@@ -154,11 +174,13 @@ public class SwingUtils {
 		}
 	}
 
-	public static void addBrowseBehavior(final Component cmp, final String url){
-		if (url == null) return;
+	public static void addBrowseBehavior(final Component cmp, final String url) {
+		if (url == null)
+			return;
 		cmp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		cmp.addMouseListener(new MouseAdapter() {
-			@Override public void mousePressed(MouseEvent e) {
+			@Override
+			public void mousePressed(MouseEvent e) {
 				JFrame frame = getJFrame(cmp);
 				browse(url, frame);
 			}
@@ -169,7 +191,8 @@ public class SwingUtils {
 		win.pack();
 		win.setLocationRelativeTo(parent);
 		win.addWindowListener(new WindowAdapter() {
-			@Override public void windowOpened(WindowEvent e) {
+			@Override
+			public void windowOpened(WindowEvent e) {
 				win.pack();
 				win.setLocationRelativeTo(parent);
 			}
@@ -179,7 +202,8 @@ public class SwingUtils {
 	public static void importFont(InputStream stream) {
 		try {
 			Font font1 = Font.createFont(Font.TRUETYPE_FONT, stream);
-			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font1);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
+					font1);
 		} catch (FontFormatException ex) {
 			throw new RuntimeException(ex);
 		} catch (IOException ex) {
