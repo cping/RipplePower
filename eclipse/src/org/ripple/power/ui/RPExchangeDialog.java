@@ -13,6 +13,12 @@ import java.util.Collections;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
@@ -301,6 +307,20 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
+		_buymList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_buymList.setBackground(new Color(70, 70, 70));
+		_buymList.setForeground(Color.orange);
+		_buymList.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				RPList list = (RPList) e.getSource();
+				int idx = list.getSelectedIndex();
+				listsetforeground(list, idx);
+				
+
+			}
+		});
 		jScrollPane2.setViewportView(_buymList);
 
 		jPanel1.add(jScrollPane2);
@@ -323,6 +343,20 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
+		_sellmList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_sellmList.setForeground(Color.orange);
+		_sellmList.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				RPList list = (RPList) e.getSource();
+				int idx = list.getSelectedIndex();
+				listsetforeground(list, idx);
+				
+
+			}
+		});
+		jScrollPane2.setViewportView(_buymList);
 		jScrollPane3.setViewportView(_sellmList);
 
 		jPanel1.add(jScrollPane3);
@@ -541,5 +575,17 @@ public class RPExchangeDialog extends JDialog {
 		list = null;
 		temp.clear();
 		temp = null;
+	}
+
+	public void listsetforeground(RPList jlist, int k) {
+		jlist.setSelectedIndex(k);
+		jlist.setSelectionForeground(new Color(53, 104, 195));
+		jlist.setSelectionBackground(new Color(0, 0, 0));
+	}
+
+	public void listgetunsupported(RPList jlist, int k) {
+		jlist.setSelectedIndex(k);
+		jlist.setSelectionForeground(new Color(250, 250, 0));
+		jlist.setSelectionBackground(new Color(128, 128, 128));
 	}
 }

@@ -65,8 +65,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.json.JSONObject;
 
-public class HttpRequest  {
+public class HttpRequest {
 
 	public static final String CHARSET_UTF8 = "UTF-8";
 
@@ -83,7 +84,6 @@ public class HttpRequest  {
 	public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
 
 	public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
-	
 
 	public static final String HEADER_ACCEPT_HOST = "Host";
 
@@ -137,7 +137,8 @@ public class HttpRequest  {
 
 	public static final String PARAM_CHARSET = "charset";
 
-	private static final String BOUNDARY = "00content0boundary00"+System.currentTimeMillis();
+	private static final String BOUNDARY = "00content0boundary00"
+			+ System.currentTimeMillis();
 
 	private static final String CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary="
 			+ BOUNDARY;
@@ -151,10 +152,11 @@ public class HttpRequest  {
 	private static HostnameVerifier TRUSTED_VERIFIER;
 
 	private static String getValidCharset(final String charset) {
-		if (charset != null && charset.length() > 0)
+		if (charset != null && charset.length() > 0) {
 			return charset;
-		else
+		} else {
 			return CHARSET_UTF8;
+		}
 	}
 
 	private static SSLSocketFactory getTrustedFactory()
@@ -168,12 +170,12 @@ public class HttpRequest  {
 
 				public void checkClientTrusted(X509Certificate[] chain,
 						String authType) {
-			
+
 				}
 
 				public void checkServerTrusted(X509Certificate[] chain,
 						String authType) {
-			
+
 				}
 			} };
 			try {
@@ -322,7 +324,6 @@ public class HttpRequest  {
 			return encodeBytes(bytes);
 		}
 
-	
 		public static String encodeBytes(byte[] source) {
 			return encodeBytes(source, 0, source.length);
 		}
@@ -426,7 +427,6 @@ public class HttpRequest  {
 
 		private final boolean ignoreCloseExceptions;
 
-		
 		protected CloseOperation(final Closeable closeable,
 				final boolean ignoreCloseExceptions) {
 			this.closeable = closeable;
@@ -480,8 +480,8 @@ public class HttpRequest  {
 			return this;
 		}
 	}
-	
-	public String host(){
+
+	public String host() {
 		return host;
 	}
 
@@ -659,7 +659,6 @@ public class HttpRequest  {
 		return delete(encode ? encode(url) : url);
 	}
 
-	
 	public static HttpRequest delete(final CharSequence baseUrl,
 			final boolean encode, final Object... params) {
 		String url = append(baseUrl, params);
@@ -801,16 +800,15 @@ public class HttpRequest  {
 	private HttpURLConnection createConnection() {
 		try {
 			final HttpURLConnection connection;
-			if (httpProxyHost != null){
+			if (httpProxyHost != null) {
 				connection = CONNECTION_FACTORY.create(url, createProxy());
-			}
-			else{
+			} else {
 				connection = CONNECTION_FACTORY.create(url);
 			}
 			connection.setRequestMethod(requestMethod);
 			connection.setConnectTimeout(8000);
-		    connection.setReadTimeout(8000);
-		  //  connection.connect();
+			connection.setReadTimeout(8000);
+			// connection.connect();
 			return connection;
 		} catch (IOException e) {
 			throw new HttpRequestException(e);
@@ -858,7 +856,7 @@ public class HttpRequest  {
 		return ignoreCloseExceptions;
 	}
 
-	public int code()  {
+	public int code() {
 		try {
 			closeOutput();
 			return getConnection().getResponseCode();
@@ -894,7 +892,6 @@ public class HttpRequest  {
 		return HTTP_NOT_FOUND == code();
 	}
 
-	
 	public boolean notModified() throws HttpRequestException {
 		return HTTP_NOT_MODIFIED == code();
 	}
@@ -918,7 +915,6 @@ public class HttpRequest  {
 		return this;
 	}
 
-
 	public HttpRequest bufferSize(final int size) {
 		if (size < 1)
 			throw new IllegalArgumentException("Size must be greater than zero");
@@ -929,7 +925,6 @@ public class HttpRequest  {
 	public int bufferSize() {
 		return bufferSize;
 	}
-
 
 	public HttpRequest uncompress(final boolean uncompress) {
 		this.uncompress = uncompress;
@@ -1034,11 +1029,9 @@ public class HttpRequest  {
 		return new BufferedReader(reader(charset), bufferSize);
 	}
 
-
 	public BufferedReader bufferedReader() throws HttpRequestException {
 		return bufferedReader(charset());
 	}
-
 
 	public HttpRequest receive(final File file) throws HttpRequestException {
 		final OutputStream output;
@@ -1102,18 +1095,15 @@ public class HttpRequest  {
 		}.call();
 	}
 
-
 	public HttpRequest readTimeout(final int timeout) {
 		getConnection().setReadTimeout(timeout);
 		return this;
 	}
 
-
 	public HttpRequest connectTimeout(final int timeout) {
 		getConnection().setConnectTimeout(timeout);
 		return this;
 	}
-
 
 	public HttpRequest header(final String name, final String value) {
 		getConnection().setRequestProperty(name, value);
@@ -1124,11 +1114,9 @@ public class HttpRequest  {
 		return header(HEADER_COOKIE, value);
 	}
 
-
 	public HttpRequest header(final String name, final Number value) {
 		return header(name, value != null ? value.toString() : null);
 	}
-
 
 	public HttpRequest headers(final Map<String, String> headers) {
 		if (!headers.isEmpty())
@@ -1146,7 +1134,6 @@ public class HttpRequest  {
 		return getConnection().getHeaderField(name);
 	}
 
-
 	public Map<String, List<String>> headers() throws HttpRequestException {
 		closeOutputQuietly();
 		return getConnection().getHeaderFields();
@@ -1155,7 +1142,6 @@ public class HttpRequest  {
 	public long dateHeader(final String name) throws HttpRequestException {
 		return dateHeader(name, -1L);
 	}
-
 
 	public long dateHeader(final String name, final long defaultValue)
 			throws HttpRequestException {
@@ -1166,7 +1152,6 @@ public class HttpRequest  {
 	public int intHeader(final String name) throws HttpRequestException {
 		return intHeader(name, -1);
 	}
-
 
 	public int intHeader(final String name, final int defaultValue)
 			throws HttpRequestException {
@@ -1189,7 +1174,6 @@ public class HttpRequest  {
 	public String parameter(final String headerName, final String paramName) {
 		return getParam(header(headerName), paramName);
 	}
-
 
 	public Map<String, String> parameters(final String headerName) {
 		return getParams(header(headerName));
@@ -1282,7 +1266,6 @@ public class HttpRequest  {
 		return header(HEADER_REFERER, referer);
 	}
 
-
 	public HttpRequest useCaches(final boolean useCaches) {
 		getConnection().setUseCaches(useCaches);
 		return this;
@@ -1295,6 +1278,7 @@ public class HttpRequest  {
 	public HttpRequest acceptLanguage(final String lang) {
 		return header(HEADER_ACCEPT_LANGUAGE, lang);
 	}
+
 	public HttpRequest acceptHost(final String host) {
 		return header(HEADER_ACCEPT_HOST, host);
 	}
@@ -1303,11 +1287,9 @@ public class HttpRequest  {
 		return acceptEncoding(ENCODING_GZIP);
 	}
 
-
 	public HttpRequest acceptCharset(final String acceptCharset) {
 		return header(HEADER_ACCEPT_CHARSET, acceptCharset);
 	}
-
 
 	public String contentEncoding() {
 		return header(HEADER_CONTENT_ENCODING);
@@ -1333,7 +1315,6 @@ public class HttpRequest  {
 		return dateHeader(HEADER_EXPIRES);
 	}
 
-
 	public long lastModified() {
 		return dateHeader(HEADER_LAST_MODIFIED);
 	}
@@ -1345,7 +1326,6 @@ public class HttpRequest  {
 	public HttpRequest authorization(final String authorization) {
 		return header(HEADER_AUTHORIZATION, authorization);
 	}
-
 
 	public HttpRequest proxyAuthorization(final String proxyAuthorization) {
 		return header(HEADER_PROXY_AUTHORIZATION, proxyAuthorization);
@@ -1365,7 +1345,6 @@ public class HttpRequest  {
 		return this;
 	}
 
-
 	public HttpRequest ifNoneMatch(final String ifNoneMatch) {
 		return header(HEADER_IF_NONE_MATCH, ifNoneMatch);
 	}
@@ -1373,7 +1352,6 @@ public class HttpRequest  {
 	public HttpRequest contentType(final String contentType) {
 		return contentType(contentType, null);
 	}
-
 
 	public HttpRequest contentType(final String contentType,
 			final String charset) {
@@ -1405,7 +1383,6 @@ public class HttpRequest  {
 	public HttpRequest accept(final String accept) {
 		return header(HEADER_ACCEPT, accept);
 	}
-
 
 	public HttpRequest acceptJson() {
 		return accept(CONTENT_TYPE_JSON);
@@ -1450,7 +1427,7 @@ public class HttpRequest  {
 			try {
 				output.close();
 			} catch (IOException ignored) {
-	
+
 			}
 		else
 			output.close();
@@ -1506,7 +1483,6 @@ public class HttpRequest  {
 		return send(CRLF);
 	}
 
-
 	public HttpRequest part(final String name, final String part) {
 		return part(name, null, part);
 	}
@@ -1533,7 +1509,6 @@ public class HttpRequest  {
 			throws HttpRequestException {
 		return part(name, null, part);
 	}
-
 
 	public HttpRequest part(final String name, final String filename,
 			final Number part) throws HttpRequestException {
@@ -1638,6 +1613,49 @@ public class HttpRequest  {
 		return this;
 	}
 
+	public String send(JSONObject obj) {
+		StringBuffer sbr = new StringBuffer();
+		try {
+			HttpURLConnection c = getConnection();
+			String charEncoding = "iso-8859-1";
+			c.setDoOutput(true);
+			c.setUseCaches(false);
+			c.setRequestMethod(this.requestMethod);
+			c.setRequestProperty("Content-type", "application/json; charset="
+					+ "UTF-8");
+			if (this.requestMethod != "GET" && obj != null) {
+				String data = obj.toString();
+				c.setDoInput(true);
+				c.setRequestProperty("Content-Length",
+						Integer.toString(data.length()));
+				c.getOutputStream().write(data.getBytes(charEncoding));
+			}
+			c.connect();
+			int code = c.getResponseCode();
+			if (code != 200) {
+				c.disconnect();
+				return String.valueOf(code);
+			}
+			try {
+				BufferedReader rd = new BufferedReader(new InputStreamReader(
+						c.getInputStream()));
+				String line;
+				while ((line = rd.readLine()) != null) {
+					sbr.append(line);
+				}
+				rd.close();
+			} catch (FileNotFoundException e) {
+			} catch (NullPointerException e) {
+			} finally {
+				c.disconnect();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String result = sbr.toString();
+		return result;
+	}
+
 	public OutputStreamWriter writer() throws HttpRequestException {
 		try {
 			openOutput();
@@ -1651,7 +1669,6 @@ public class HttpRequest  {
 		return form(values, CHARSET_UTF8);
 	}
 
-
 	public HttpRequest form(final Entry<?, ?> entry)
 			throws HttpRequestException {
 		return form(entry, CHARSET_UTF8);
@@ -1661,7 +1678,6 @@ public class HttpRequest  {
 			throws HttpRequestException {
 		return form(entry.getKey(), entry.getValue(), charset);
 	}
-
 
 	public HttpRequest form(final Object name, final Object value)
 			throws HttpRequestException {
@@ -1705,7 +1721,6 @@ public class HttpRequest  {
 					.setSSLSocketFactory(getTrustedFactory());
 		return this;
 	}
-
 
 	public HttpRequest trustAllHosts() {
 		final HttpURLConnection connection = getConnection();
