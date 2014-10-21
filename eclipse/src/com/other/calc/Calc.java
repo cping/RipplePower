@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.RPAccountInfoDialog;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.BigDecimalUtil;
@@ -155,7 +156,7 @@ public class Calc extends javax.swing.JDialog {
         jMenuItem3 = new javax.swing.JMenuItem();
      
 
-        setTitle("计算器");
+        setTitle(LangConfig.get(this, "calc", "Calc"));
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {

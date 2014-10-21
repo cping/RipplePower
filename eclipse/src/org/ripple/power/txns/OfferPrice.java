@@ -18,8 +18,19 @@ import java.util.ArrayList;
 
 public abstract class OfferPrice {
 
+	public static class OfferFruit {
+
+		public String message;
+
+		public Offer offer;
+
+		public String toString() {
+			return message;
+		}
+	}
+
 	public boolean subscribe = false;
-	
+
 	public String highBuy;
 
 	public String hightSell;
@@ -34,8 +45,8 @@ public abstract class OfferPrice {
 
 	public abstract void error(JSONObject obj);
 
-	public abstract void complete(ArrayList<String> buys,
-			ArrayList<String> sells);
+	public abstract void complete(ArrayList<OfferFruit> buys,
+			ArrayList<OfferFruit> sells, OfferPrice price);
 
 	public static void load(String address, String buyCurName,
 			String sellCurName, OfferPrice price) {
@@ -95,7 +106,6 @@ public abstract class OfferPrice {
 							public void called(Response response) {
 								if (response.succeeded) {
 
-									System.out.println("update");
 									JSONArray offersJSON = response.result
 											.optJSONArray("offers");
 									STArray offers = STArray.translate
@@ -138,11 +148,11 @@ public abstract class OfferPrice {
 		new OrderBooks(client, first, second, new OrderBooks.BookEvents() {
 			@Override
 			public void onUpdate(OrderBooks book) {
-				ArrayList<String> buys = new ArrayList<String>(100);
-				ArrayList<String> sells = new ArrayList<String>(100);
+				ArrayList<OfferFruit> buys = new ArrayList<OfferFruit>(100);
+				ArrayList<OfferFruit> sells = new ArrayList<OfferFruit>(100);
 				if (!book.isEmpty()) {
-					price.highBuy = book.ask.toText();
-					price.hightSell = book.bid.toText();
+					price.highBuy = book.bid.toText();
+					price.hightSell = book.ask.toText();
 					price.spread = book.spread.toText();
 					// buy
 					for (STObject offer : book.asks) {
@@ -151,10 +161,13 @@ public abstract class OfferPrice {
 						BigDecimal payForOne = o.askQuality();
 						Amount paysOne = o.paysOne();
 						Amount getsOne = o.getsOne();
-						sells.add(o.takerGets().toText() + " Sell "
+						OfferFruit fruit = new OfferFruit();
+						fruit.offer = o;
+						fruit.message = o.takerGets().toText() + " Sell "
 								+ (o.takerPays().toText()) + " ("
 								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + ")");
+								+ paysOne.multiply(payForOne).toText() + ")";
+						sells.add(fruit);
 					}
 					// sell
 					for (STObject offer : book.bids) {
@@ -163,16 +176,19 @@ public abstract class OfferPrice {
 						BigDecimal payForOne = o.askQuality();
 						Amount paysOne = o.paysOne();
 						Amount getsOne = o.getsOne();
-						buys.add(o.takerGets().toText() + " Buy "
+						OfferFruit fruit = new OfferFruit();
+						fruit.offer = o;
+						fruit.message = o.takerGets().toText() + " Buy "
 								+ (o.takerPays().toText()) + " ("
 								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + ")");
+								+ paysOne.multiply(payForOne).toText() + ")";
+						buys.add(fruit);
 					}
 				} else {
 					// empty
 					price.empty();
 				}
-				price.complete(buys, sells);
+				price.complete(buys, sells, price);
 			}
 		}).requestUpdate(price);
 	}
