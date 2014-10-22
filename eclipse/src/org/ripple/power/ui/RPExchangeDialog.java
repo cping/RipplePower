@@ -25,11 +25,16 @@ import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
+import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
+import org.ripple.power.txns.BookOffer;
+import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.IssuedCurrency;
+import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
+import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.LColor;
@@ -90,6 +95,7 @@ public class RPExchangeDialog extends JDialog {
 	private RPTextBox _mysellText;
 	private RPTextBox _addressText;
 	private WalletItem _item;
+	private final AccountInfo _info = new AccountInfo();
 
 	public static RPExchangeDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
@@ -336,6 +342,10 @@ public class RPExchangeDialog extends JDialog {
 		});
 		jScrollPane1.setViewportView(_mytradingList);
 
+		if (_item != null) {
+			updateMyTrading();
+		}
+
 		jPanel1.add(jScrollPane1);
 		jScrollPane1.setBounds(380, 210, 210, 110);
 
@@ -562,6 +572,38 @@ public class RPExchangeDialog extends JDialog {
 		_canceltradingButton.setFont(font14);
 		jPanel2.add(_canceltradingButton);
 		_canceltradingButton.setBounds(410, 10, 140, 23);
+		_canceltradingButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object o = _mytradingList.getSelectedValue();
+				if (o instanceof BookOffer) {
+
+					int result = RPMessage.showConfirmMessage(
+							RPExchangeDialog.this, "Info", "您是否准备消除交易记录" + o,
+							new Object[] { "确定", "取消" });
+
+					if (result == 0) {
+						BookOffer offer = (BookOffer) o;
+						OfferCancel.set(_item.getSeed(), offer.sequence,
+								LSystem.FEE, new Rollback() {
+
+									@Override
+									public void success(JSONObject res) {
+										JSonLog.get().println(res.toString());
+										updateMyTrading();
+									}
+
+									@Override
+									public void error(JSONObject res) {
+										JSonLog.get().println(res.toString());
+
+									}
+								});
+					}
+				}
+			}
+		});
 
 		_setautoButton.setText(LangConfig
 				.get(this, "setauto", "Set auto trade"));
@@ -679,6 +721,7 @@ public class RPExchangeDialog extends JDialog {
 	private void action_ok(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj instanceof RPCButton) {
+			final String address = _addressText.getText().trim();
 			RPCButton btn = (RPCButton) obj;
 			switch (btn.getActionCommand()) {
 			case "buy":
@@ -691,7 +734,8 @@ public class RPExchangeDialog extends JDialog {
 								public void action(Object o) {
 									String cur = ((String) _curComboBox
 											.getSelectedItem()).trim();
-									String[] split = StringUtils.split(cur, "/");
+									String[] split = StringUtils
+											.split(cur, "/");
 									String srcCurName = split[0];
 									String dstCurName = split[1];
 									String myBuy = _mybuyText.getText();
@@ -700,9 +744,16 @@ public class RPExchangeDialog extends JDialog {
 									myBuy = myBuy.substring(0, idx);
 									idx = canBuy.lastIndexOf("/");
 									canBuy = canBuy.substring(0, idx);
-									RPMessage.showInfoMessage(
-											RPExchangeDialog.this, "Testing", myBuy+dstCurName
-													+ "," + canBuy+srcCurName);
+									int result = RPMessage.showConfirmMessage(
+											RPExchangeDialog.this, "Info",
+											"您准备用" + myBuy + dstCurName + "换取"
+													+ canBuy + srcCurName
+													+ ",是否确认交易?", new Object[] {
+													"确定", "取消" });
+									if (result == 0) {
+										callTrade(address, dstCurName,
+												srcCurName, myBuy, canBuy);
+									}
 								}
 							});
 						}
@@ -730,11 +781,19 @@ public class RPExchangeDialog extends JDialog {
 								mySell = mySell.substring(0, idx);
 								idx = canSell.lastIndexOf("/");
 								canSell = canSell.substring(0, idx);
-								RPMessage.showInfoMessage(
-										RPExchangeDialog.this, "Testing", mySell+srcCurName
-												+ "," + canSell+dstCurName);
+								int result = RPMessage.showConfirmMessage(
+										RPExchangeDialog.this, "Info", "您准备用"
+												+ mySell + dstCurName + "换取"
+												+ canSell + srcCurName
+												+ ",是否确认交易?", new Object[] {
+												"确定", "取消" });
+								if (result == 0) {
+									callTrade(address, dstCurName, srcCurName,
+											mySell, canSell);
+								}
 							}
 						});
+
 					} else {
 						RPMessage.showInfoMessage(this, "Info",
 								"请首先确定您要进行卖出的网关与币种");
@@ -744,6 +803,41 @@ public class RPExchangeDialog extends JDialog {
 			}
 
 		}
+	}
+
+	private void callTrade(String address, String dstCurName,
+			String srcCurName, String pay, String get) {
+
+		IssuedCurrency currencySrc = null;
+		if ("xrp".equals(dstCurName.toLowerCase())) {
+			currencySrc = new IssuedCurrency(
+					CurrencyUtils.getValueToRipple(pay));
+		} else {
+			currencySrc = new IssuedCurrency(pay, address, dstCurName);
+		}
+		IssuedCurrency currencyDst = null;
+		if ("xrp".equals(srcCurName.toLowerCase())) {
+			currencyDst = new IssuedCurrency(
+					CurrencyUtils.getValueToRipple(get));
+		} else {
+			currencyDst = new IssuedCurrency(get, address, srcCurName);
+		}
+
+		OfferCreate.set(_item.getSeed(), currencyDst, currencySrc, LSystem.FEE,
+				new Rollback() {
+
+					@Override
+					public void success(JSONObject res) {
+						JSonLog.get().println(res.toString());
+						updateMyTrading();
+					}
+
+					@Override
+					public void error(JSONObject res) {
+						JSonLog.get().println(res.toString());
+					}
+				});
+
 	}
 
 	private void checkTrade(final RPCButton button, final Updateable update) {
@@ -773,15 +867,14 @@ public class RPExchangeDialog extends JDialog {
 								_flags.put(address, false);
 							} else {
 								_flags.put(address, true);
+								if (update != null) {
+									update.action(RPExchangeDialog.this);
+								}
 							}
 
 						}
-
 					}
 					dialog.closeDialog();
-					if (update != null) {
-						update.action(RPExchangeDialog.this);
-					}
 				}
 			});
 		}
@@ -791,6 +884,27 @@ public class RPExchangeDialog extends JDialog {
 			}
 		}
 
+	}
+
+	private void updateMyTrading() {
+		_info.bookOffers.clear();
+		final AccountFind find = new AccountFind();
+		find.processOfffer(_item.getPublicKey(), _info, new Updateable() {
+
+			@Override
+			public void action(Object o) {
+				_mytradingList.setModel(new javax.swing.AbstractListModel() {
+
+					public int getSize() {
+						return _info.bookOffers.size();
+					}
+
+					public Object getElementAt(int i) {
+						return _info.bookOffers.get(i);
+					}
+				});
+			}
+		});
 	}
 
 	private Thread _tradeThread;

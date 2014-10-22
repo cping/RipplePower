@@ -5,9 +5,12 @@ public class BookOffer {
 	public IssuedCurrency buy;
 	public IssuedCurrency sell;
 
-	public BookOffer(IssuedCurrency buy, IssuedCurrency sell) {
+	public long sequence;
+	
+	public BookOffer(IssuedCurrency buy, IssuedCurrency sell,long seq) {
 		this.buy = buy;
 		this.sell = sell;
+		this.sequence = seq;
 	}
 
 	public String toString() {

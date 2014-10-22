@@ -159,7 +159,8 @@ public class AccountFind {
 
 											int date = getInt(tx, "date");
 
-											transactionTx.date = getDateTime(date).getTimeString();
+											transactionTx.date = getDateTime(
+													date).getTimeString();
 
 											String fee = CurrencyUtils.getRippleToValue(String
 													.valueOf(getLong(tx, "Fee")));
@@ -489,12 +490,14 @@ public class AccountFind {
 						for (int i = 0; i < offers.length(); i++) {
 							JSONObject o = offers.getJSONObject(i);
 
+							long seq = getLong(o, "seq");
+
 							Object taker_gets = getObject(o, "taker_gets");
 							Object taker_pays = getObject(o, "taker_pays");
 
 							BookOffer offer = new BookOffer(
 									getAmount(taker_gets),
-									getAmount(taker_pays));
+									getAmount(taker_pays), seq);
 
 							accountinfo.bookOffers.add(offer);
 
