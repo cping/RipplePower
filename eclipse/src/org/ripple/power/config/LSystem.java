@@ -28,7 +28,7 @@ import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
-	public final static String FEE = "0.01";
+	public final static String FEE = "0.012";
 
 	public final static String NativeCurrency = "XRP";
 
