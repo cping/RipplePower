@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -96,6 +100,44 @@ public class RPExchangeDialog extends JDialog {
 	private RPTextBox _addressText;
 	private WalletItem _item;
 	private final AccountInfo _info = new AccountInfo();
+
+	public class MyKeyListener implements KeyListener {
+
+		int flag;
+
+		public MyKeyListener(int flag) {
+			this.flag = flag;
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			String cur = ((String) _curComboBox.getSelectedItem()).trim();
+			String[] split = StringUtils.split(cur, "/");
+			RPTextBox textBox = (RPTextBox) e.getSource();
+			String text = textBox.getText().trim();
+			String curName = split[0];
+			switch (flag) {
+			case 0:
+				curName = split[0];
+				checkText(text, curName, textBox);
+				break;
+			case 1:
+				curName = split[1];
+				checkText(text, curName, textBox);
+				break;
+			}
+		}
+	}
 
 	public static RPExchangeDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
@@ -298,7 +340,7 @@ public class RPExchangeDialog extends JDialog {
 									}
 
 									_tradeFlag = true;
-									loadStatus();
+									loadList();
 								}
 
 							});
@@ -378,7 +420,7 @@ public class RPExchangeDialog extends JDialog {
 				listsetforeground(list, idx);
 
 				synchronized (_buyerList) {
-					if (_buyerList.size() > 0) {
+					if (_buyerList.size() > 0 && idx < _buyerList.size()) {
 						_mysellText.setText(_buyerList.get(idx).offer
 								.takerPays().toText());
 						_cansellText.setText(_buyerList.get(idx).offer
@@ -420,7 +462,7 @@ public class RPExchangeDialog extends JDialog {
 				listsetforeground(list, idx);
 
 				synchronized (_sellerList) {
-					if (_sellerList.size() > 0) {
+					if (_sellerList.size() > 0 && idx < _sellerList.size()) {
 						_mybuyText.setText(_sellerList.get(idx).offer
 								.takerPays().toText());
 						_canbuyText.setText(_sellerList.get(idx).offer
@@ -497,6 +539,7 @@ public class RPExchangeDialog extends JDialog {
 
 		_cansellText.setText("0");
 		_cansellText.setFont(font12);
+		_cansellText.addKeyListener(new MyKeyListener(1));
 		jPanel2.add(_cansellText);
 		_cansellText.setBounds(670, 50, 170, 20);
 
@@ -508,6 +551,7 @@ public class RPExchangeDialog extends JDialog {
 
 		_canbuyText.setText("0");
 		_canbuyText.setFont(font12);
+		_canbuyText.addKeyListener(new MyKeyListener(0));
 		jPanel2.add(_canbuyText);
 		_canbuyText.setBounds(80, 50, 170, 21);
 
@@ -535,6 +579,7 @@ public class RPExchangeDialog extends JDialog {
 		_mybuyText.setFont(font12);
 		jPanel2.add(_mybuyText);
 		_mybuyText.setBounds(80, 10, 170, 21);
+		_mybuyText.addKeyListener(new MyKeyListener(1));
 
 		_mysellLabel.setFont(font14); // NOI18N
 		_mysellLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -546,6 +591,7 @@ public class RPExchangeDialog extends JDialog {
 		_mysellText.setFont(font12);
 		jPanel2.add(_mysellText);
 		_mysellText.setBounds(670, 10, 170, 21);
+		_mysellText.addKeyListener(new MyKeyListener(0));
 
 		_okbuyButton.setText(LangConfig.get(this, "okbuy", "Confirm Buy"));
 		_okbuyButton.setActionCommand("buy");
@@ -740,9 +786,9 @@ public class RPExchangeDialog extends JDialog {
 									String dstCurName = split[1];
 									String myBuy = _mybuyText.getText();
 									String canBuy = _canbuyText.getText();
-									int idx = myBuy.lastIndexOf("/");
+									int idx = myBuy.indexOf("/");
 									myBuy = myBuy.substring(0, idx);
-									idx = canBuy.lastIndexOf("/");
+									idx = canBuy.indexOf("/");
 									canBuy = canBuy.substring(0, idx);
 									int result = RPMessage.showConfirmMessage(
 											RPExchangeDialog.this, "Info",
@@ -752,7 +798,7 @@ public class RPExchangeDialog extends JDialog {
 													"确定", "取消" });
 									if (result == 0) {
 										callTrade(address, dstCurName,
-												srcCurName, myBuy, canBuy);
+												srcCurName, myBuy, canBuy, true);
 									}
 								}
 							});
@@ -777,19 +823,19 @@ public class RPExchangeDialog extends JDialog {
 								String dstCurName = split[1];
 								String mySell = _mysellText.getText();
 								String canSell = _cansellText.getText();
-								int idx = mySell.lastIndexOf("/");
+								int idx = mySell.indexOf("/");
 								mySell = mySell.substring(0, idx);
-								idx = canSell.lastIndexOf("/");
+								idx = canSell.indexOf("/");
 								canSell = canSell.substring(0, idx);
 								int result = RPMessage.showConfirmMessage(
 										RPExchangeDialog.this, "Info", "您准备用"
-												+ mySell + dstCurName + "换取"
-												+ canSell + srcCurName
+												+ mySell + srcCurName + "换取"
+												+ canSell + dstCurName
 												+ ",是否确认交易?", new Object[] {
 												"确定", "取消" });
 								if (result == 0) {
 									callTrade(address, dstCurName, srcCurName,
-											mySell, canSell);
+											mySell, canSell, false);
 								}
 							}
 						});
@@ -806,25 +852,38 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void callTrade(String address, String dstCurName,
-			String srcCurName, String pay, String get) {
-
+			String srcCurName, String pay, String get, boolean flag) {
 		IssuedCurrency currencySrc = null;
-		if ("xrp".equals(dstCurName.toLowerCase())) {
-			currencySrc = new IssuedCurrency(
-					CurrencyUtils.getValueToRipple(pay));
-		} else {
-			currencySrc = new IssuedCurrency(pay, address, dstCurName);
-		}
 		IssuedCurrency currencyDst = null;
-		if ("xrp".equals(srcCurName.toLowerCase())) {
-			currencyDst = new IssuedCurrency(
-					CurrencyUtils.getValueToRipple(get));
+		if (flag) {
+			if ("xrp".equals(dstCurName.toLowerCase())) {
+				currencySrc = new IssuedCurrency(
+						CurrencyUtils.getValueToRipple(pay));
+			} else {
+				currencySrc = new IssuedCurrency(pay, address, dstCurName);
+			}
+			if ("xrp".equals(srcCurName.toLowerCase())) {
+				currencyDst = new IssuedCurrency(
+						CurrencyUtils.getValueToRipple(get));
+			} else {
+				currencyDst = new IssuedCurrency(get, address, srcCurName);
+			}
 		} else {
-			currencyDst = new IssuedCurrency(get, address, srcCurName);
+			if ("xrp".equals(dstCurName.toLowerCase())) {
+				currencySrc = new IssuedCurrency(
+						CurrencyUtils.getValueToRipple(get));
+			} else {
+				currencySrc = new IssuedCurrency(get, address, dstCurName);
+			}
+			if ("xrp".equals(srcCurName.toLowerCase())) {
+				currencyDst = new IssuedCurrency(
+						CurrencyUtils.getValueToRipple(pay));
+			} else {
+				currencyDst = new IssuedCurrency(pay, address, srcCurName);
+			}
 		}
-
-		OfferCreate.set(_item.getSeed(), currencyDst, currencySrc, LSystem.FEE,
-				new Rollback() {
+		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc,
+				flag ? currencySrc : currencyDst, LSystem.FEE, new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {
@@ -837,7 +896,36 @@ public class RPExchangeDialog extends JDialog {
 						JSonLog.get().println(res.toString());
 					}
 				});
+	}
 
+	private final static void checkText(String text, String curName,
+			RPTextBox textbox) {
+		String result = text;
+		if (text.indexOf(curName) == -1) {
+			int idx = text.indexOf("/");
+			if (idx != -1) {
+				text = text.substring(0, idx);
+				result = text + "/" + curName;
+			} else {
+				char[] chars = text.toCharArray();
+				StringBuffer sbr = new StringBuffer();
+				for (int i = 0; i < chars.length; i++) {
+					char c = chars[i];
+					if ((c >= '0' && c <= '9') || c == '.') {
+						sbr.append(c);
+					}
+				}
+				result = sbr.toString() + "/" + curName;
+			}
+			if (result.startsWith("/")) {
+				result = "0" + result;
+			}
+			if (!result.startsWith("0/")) {
+				result = String.valueOf(new BigDecimal(result.split("/")[0]
+						.trim()).toString()) + "/" + curName;
+			}
+			textbox.setText(result);
+		}
 	}
 
 	private void checkTrade(final RPCButton button, final Updateable update) {
@@ -911,7 +999,7 @@ public class RPExchangeDialog extends JDialog {
 
 	private boolean _tradeFlag;
 
-	private void loadStatus() {
+	private void loadList() {
 		if (!_tradeFlag) {
 			return;
 		}
