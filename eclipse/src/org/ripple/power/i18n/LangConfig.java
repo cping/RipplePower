@@ -10,37 +10,38 @@ public class LangConfig {
 
 	public static String fontName = "Dialog";
 
-	public static synchronized void init() {
+	public static void init() {
 		if (_config == null) {
 			try {
-				//简
+				// 简
 				if (Language.SIMPLECN.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
 					_config = new RHConfig(UIRes.getStream("cn_zh/mes"));
-				//繁	
+					// 繁
 				} else if (Language.TRADITIONALCN.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					fontName = "Dialog";
 					_config = new RHConfig(UIRes.getStream("cn_tw/mes"));
-				//日	
+					// 日
 				} else if (Language.JP.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					// ＭＳ ゴシック
 					fontName = "Dialog";
 					_config = new RHConfig(UIRes.getStream("jp/mes"));
-				//其它	
+					// 其它
 				} else {
 					fontName = "Dialog";
 					_config = new RHConfig(UIRes.getStream("en/mes"));
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 
 			}
 		}
 	}
 
-	public static String get(Object obj, String res, String value) {
+	public synchronized static String get(Object obj, String res, String value) {
 		init();
 		if (obj == null) {
 			return _config.getValue(res, value);

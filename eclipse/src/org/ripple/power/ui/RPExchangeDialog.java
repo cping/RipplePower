@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,8 +24,14 @@ import javax.swing.event.ListSelectionListener;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.AccountFind;
+import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.OfferPrice;
+import org.ripple.power.txns.OfferPrice.OfferFruit;
+import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -38,6 +45,8 @@ public class RPExchangeDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private ArrayList<OfferFruit> _buyerList = new ArrayList<OfferFruit>(100);
+	private ArrayList<OfferFruit> _sellerList = new ArrayList<OfferFruit>(100);
 	private RPCButton _okButton;
 	private RPCButton _setautoButton;
 	private RPCButton _startautobutton;
@@ -67,7 +76,7 @@ public class RPExchangeDialog extends JDialog {
 	private RPList _mytradingList;
 	private RPList _buymList;
 	private RPList _sellmList;
-	private RPList jList4;
+	private RPList _otherMarketList;
 	private javax.swing.JPanel jPanel1;
 	private javax.swing.JPanel jPanel2;
 	private javax.swing.JScrollPane jScrollPane1;
@@ -79,6 +88,7 @@ public class RPExchangeDialog extends JDialog {
 	private RPTextBox _mybuyText;
 	private RPTextBox _mysellText;
 	private RPTextBox _addressText;
+	private WalletItem _item;
 
 	public static RPExchangeDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
@@ -91,13 +101,12 @@ public class RPExchangeDialog extends JDialog {
 
 	public RPExchangeDialog(String text, JFrame parent, final WalletItem item) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-
-		setResizable(false);
+		this._item = item;
+		this.setResizable(false);
 		Dimension dim = new Dimension(992, 620);
-		setPreferredSize(dim);
-		setSize(dim);
-		initComponents();
-
+		this.setPreferredSize(dim);
+		this.setSize(dim);
+		this.initComponents();
 	}
 
 	private void initComponents() {
@@ -118,7 +127,7 @@ public class RPExchangeDialog extends JDialog {
 		_sellmList = new RPList();
 		_coinmarketcapLabel = new RPLabel();
 		jScrollPane4 = new javax.swing.JScrollPane();
-		jList4 = new RPList();
+		_otherMarketList = new RPList();
 		_gatewayLabel = new RPLabel();
 		_selectGateawyCombobox = new RPComboBox();
 		jPanel2 = new javax.swing.JPanel();
@@ -194,9 +203,11 @@ public class RPExchangeDialog extends JDialog {
 
 								@Override
 								public void error(JSONObject obj) {
-									RPMessage.showInfoMessage(
-											LSystem.applicationMain, "Error",
-											obj.toString());
+									if (obj != null) {
+										RPMessage.showInfoMessage(
+												LSystem.applicationMain,
+												"Error", obj.toString());
+									}
 									dialog.closeDialog();
 								}
 
@@ -214,36 +225,65 @@ public class RPExchangeDialog extends JDialog {
 										final ArrayList<OfferFruit> buys,
 										final ArrayList<OfferFruit> sells,
 										final OfferPrice price) {
-									_buymList
-											.setModel(new javax.swing.AbstractListModel() {
 
-												public int getSize() {
-													return buys.size();
-												}
+									synchronized (OfferPrice.class) {
 
-												public Object getElementAt(int i) {
-													return buys.get(i);
-												}
-											});
+										_buymList
+												.setModel(new javax.swing.AbstractListModel() {
 
-									_sellmList
-											.setModel(new javax.swing.AbstractListModel() {
+													public int getSize() {
+														return buys.size();
+													}
 
-												public int getSize() {
-													return sells.size();
-												}
+													public Object getElementAt(
+															int i) {
+														return buys.get(i);
+													}
+												});
 
-												public Object getElementAt(int i) {
-													return sells.get(i);
-												}
-											});
-									String res = LangConfig
-											.get(RPExchangeDialog.this, "tip1",
-													"The highest price buyer %s, the seller highest price %s, Spread %s");
-									_tip1Label.setText(String.format(res,
-											price.highBuy, price.hightSell,
-											price.spread));
-									dialog.closeDialog();
+										_sellmList
+												.setModel(new javax.swing.AbstractListModel() {
+
+													public int getSize() {
+														return sells.size();
+													}
+
+													public Object getElementAt(
+															int i) {
+														return sells.get(i);
+													}
+												});
+										synchronized (_buyerList) {
+											_buyerList.clear();
+											_buyerList.addAll(buys);
+											_mysellText.setText(_buyerList
+													.get(0).offer.takerPays()
+													.toText());
+											_cansellText.setText(_buyerList
+													.get(0).offer.takerGets()
+													.toText());
+
+										}
+										synchronized (_sellerList) {
+											_sellerList.clear();
+											_sellerList.addAll(sells);
+											_mybuyText.setText(_sellerList
+													.get(0).offer.takerPays()
+													.toText());
+											_canbuyText.setText(_sellerList
+													.get(0).offer.takerGets()
+													.toText());
+										}
+										dialog.closeDialog();
+										String res = LangConfig
+												.get(RPExchangeDialog.this,
+														"tip1",
+														"The highest price buyer %s, the seller highest price %s, Spread %s");
+										_tip1Label.setText(String.format(res,
+												price.highBuy, price.hightSell,
+												price.spread));
+
+									}
 								}
 
 							});
@@ -317,8 +357,13 @@ public class RPExchangeDialog extends JDialog {
 				RPList list = (RPList) e.getSource();
 				int idx = list.getSelectedIndex();
 				listsetforeground(list, idx);
-				
 
+				synchronized (_buymList) {
+					_mysellText.setText(_buyerList.get(idx).offer.takerPays()
+							.toText());
+					_cansellText.setText(_buyerList.get(idx).offer.takerGets()
+							.toText());
+				}
 			}
 		});
 		jScrollPane2.setViewportView(_buymList);
@@ -352,8 +397,13 @@ public class RPExchangeDialog extends JDialog {
 				RPList list = (RPList) e.getSource();
 				int idx = list.getSelectedIndex();
 				listsetforeground(list, idx);
-				
 
+				synchronized (_sellmList) {
+					_mybuyText.setText(_sellerList.get(idx).offer.takerPays()
+							.toText());
+					_canbuyText.setText(_sellerList.get(idx).offer.takerGets()
+							.toText());
+				}
 			}
 		});
 		jScrollPane2.setViewportView(_buymList);
@@ -369,7 +419,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
 
-		jList4.setModel(new javax.swing.AbstractListModel() {
+		_otherMarketList.setModel(new javax.swing.AbstractListModel() {
 			String[] strings = { "" };
 
 			public int getSize() {
@@ -380,7 +430,7 @@ public class RPExchangeDialog extends JDialog {
 				return strings[i];
 			}
 		});
-		jScrollPane4.setViewportView(jList4);
+		jScrollPane4.setViewportView(_otherMarketList);
 
 		jPanel1.add(jScrollPane4);
 		jScrollPane4.setBounds(380, 70, 210, 110);
@@ -420,9 +470,12 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(_cansellLabel);
 		_cansellLabel.setBounds(600, 50, 90, 20);
 
+		Font font12 = new Font("Dialog", 0, 12);
+		
 		_cansellText.setText("0");
+		_cansellText.setFont(font12);
 		jPanel2.add(_cansellText);
-		_cansellText.setBounds(670, 50, 160, 20);
+		_cansellText.setBounds(670, 50, 170, 20);
 
 		_canbuyLabel.setFont(font14); // NOI18N
 		_canbuyLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -431,13 +484,23 @@ public class RPExchangeDialog extends JDialog {
 		_canbuyLabel.setBounds(10, 50, 90, 20);
 
 		_canbuyText.setText("0");
+		_canbuyText.setFont(font12);
 		jPanel2.add(_canbuyText);
-		_canbuyText.setBounds(80, 50, 160, 21);
+		_canbuyText.setBounds(80, 50, 170, 21);
 
 		_oksellButton.setText(LangConfig.get(this, "oksell", "Confirm Sell"));
 		_oksellButton.setFont(font14);
+		_oksellButton.setActionCommand("sell");
+		_oksellButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				action_ok(e);
+			}
+		});
+
 		jPanel2.add(_oksellButton);
-		_oksellButton.setBounds(850, 10, 90, 23);
+		_oksellButton.setBounds(860, 10, 90, 23);
 
 		_mybuyLabel.setFont(font14); // NOI18N
 		_mybuyLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -446,8 +509,9 @@ public class RPExchangeDialog extends JDialog {
 		_mybuyLabel.setBounds(10, 10, 90, 20);
 
 		_mybuyText.setText("0");
+		_mybuyText.setFont(font12);
 		jPanel2.add(_mybuyText);
-		_mybuyText.setBounds(80, 10, 160, 21);
+		_mybuyText.setBounds(80, 10, 170, 21);
 
 		_mysellLabel.setFont(font14); // NOI18N
 		_mysellLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -456,13 +520,23 @@ public class RPExchangeDialog extends JDialog {
 		_mysellLabel.setBounds(600, 10, 90, 20);
 
 		_mysellText.setText("0");
+		_mysellText.setFont(font12);
 		jPanel2.add(_mysellText);
-		_mysellText.setBounds(670, 10, 160, 21);
+		_mysellText.setBounds(670, 10, 170, 21);
 
 		_okbuyButton.setText(LangConfig.get(this, "okbuy", "Confirm Buy"));
+		_okbuyButton.setActionCommand("buy");
 		_okbuyButton.setFont(font14);
 		jPanel2.add(_okbuyButton);
-		_okbuyButton.setBounds(260, 10, 90, 23);
+		_okbuyButton.setBounds(270, 10, 90, 23);
+		_okbuyButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				action_ok(e);
+
+			}
+		});
 
 		_stopautonButton.setText(LangConfig.get(this, "stopauto",
 				"Stop auto trading"));
@@ -533,11 +607,21 @@ public class RPExchangeDialog extends JDialog {
 		_autoexButton.setBounds(440, 540, 130, 40);
 		getContentPane().add(_addressText);
 		_addressText.setBounds(360, 10, 330, 30);
+		_addressText.setEnabled(false);
 
 		_historyButton.setText(LangConfig.get(this, "chart", "Price Chart"));
 		_historyButton.setFont(font14);
 		getContentPane().add(_historyButton);
 		_historyButton.setBounds(300, 540, 130, 40);
+
+		if (_item == null) {
+			_setautoButton.setEnabled(false);
+			_startautobutton.setEnabled(false);
+			_stopautonButton.setEnabled(false);
+			_okbuyButton.setEnabled(false);
+			_oksellButton.setEnabled(false);
+			_canceltradingButton.setEnabled(false);
+		}
 
 		pack();
 	}// </editor-fold>
@@ -575,6 +659,91 @@ public class RPExchangeDialog extends JDialog {
 		list = null;
 		temp.clear();
 		temp = null;
+	}
+
+	private HashMap<String, Boolean> _flags = new HashMap<String, Boolean>(10);
+
+	private void action_ok(ActionEvent e) {
+		Object obj = e.getSource();
+		if (obj instanceof RPCButton) {
+			RPCButton btn = (RPCButton) obj;
+			switch (btn.getActionCommand()) {
+			case "buy":
+				synchronized (_buyerList) {
+					if (_buyerList.size() > 0) {
+						if (_item != null) {
+							final String address = _addressText.getText()
+									.trim();
+							Object result = _flags.get(address);
+							if (result == null || (!(boolean) result)) {
+								final WaitDialog dialog = WaitDialog
+										.showDialog(this);
+								AccountFind.getTrusts(_item.getPublicKey(),
+										new Updateable() {
+											@Override
+											public void action(Object o) {
+												if (o != null) {
+													if (o instanceof ArrayList) {
+														@SuppressWarnings("unchecked")
+														final ArrayList<IssuedCurrency> lines = (ArrayList<IssuedCurrency>) o;
+														boolean notfind = true;
+														for (IssuedCurrency s : lines) {
+															if (address
+																	.equals(s.issuer
+																			.toString())) {
+																notfind = false;
+																break;
+															}
+														}
+														if (notfind) {
+															RPMessage
+																	.showInfoMessage(
+																			RPExchangeDialog.this,
+																			"Info",
+																			"您尚未信任网关"
+																					+ address
+																					+ ",请设置信任后再进行交易");
+															_okbuyButton
+																	.setEnabled(false);
+															_flags.put(address,
+																	false);
+														} else {
+															_flags.put(address,
+																	true);
+														}
+
+													}
+
+												}
+												dialog.closeDialog();
+											}
+										});
+							}
+							if (result != null && ((boolean) result)) {
+
+								//
+								
+							}
+						}
+					} else {
+						RPMessage.showInfoMessage(this, "Info",
+								"请首先确定您要进行买入的网关与币种");
+					}
+				}
+				break;
+			case "sell":
+				synchronized (_sellerList) {
+					if (_sellerList.size() > 0) {
+
+					} else {
+						RPMessage.showInfoMessage(this, "Info",
+								"请首先确定您要进行卖出的网关与币种");
+					}
+				}
+				break;
+			}
+
+		}
 	}
 
 	public void listsetforeground(RPList jlist, int k) {

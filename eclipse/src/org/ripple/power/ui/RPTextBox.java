@@ -15,6 +15,8 @@ public class RPTextBox extends JTextField{
 		setCaretColor(Color.WHITE);
 		setBackground(new Color(70, 70, 70));
 		setForeground(Color.WHITE);
+		setHorizontalAlignment(JTextField.LEFT); 
+		setAlignmentX(0);
 	}
 
 }

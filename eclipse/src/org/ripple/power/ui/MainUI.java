@@ -54,9 +54,6 @@ public class MainUI {
 		LangConfig.init();
 		form = new MainForm();
 		Paramaters.format(form);
-		form.pack();
-		SwingUtils.centerOnScreen(form);
-
 		form.getContentPane().setLayout(
 				new MigLayout("fill", "[fill]", "[fill]"));
 
@@ -150,6 +147,10 @@ public class MainUI {
 
 		MaidSystem.get();
 		JSonLog.get();
+		form.pack();
+		SwingUtils.centerOnScreen(form);
+		form.setLocationRelativeTo(null);
+		form.setVisible(true);
 
 	}
 

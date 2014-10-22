@@ -29,7 +29,7 @@ public abstract class OfferPrice {
 		}
 	}
 
-	public boolean subscribe = false;
+	public boolean subscribe = true;
 
 	public String highBuy;
 
@@ -127,6 +127,14 @@ public abstract class OfferPrice {
 								}
 							}
 						});
+				request.once(Request.OnError.class, new Request.OnError() {
+
+					@Override
+					public void called(Response response) {
+						price.error(response.message);
+
+					}
+				});
 				request.request();
 			}
 		}

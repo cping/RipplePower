@@ -48,7 +48,8 @@ public class RippleIdentifier implements Serializable {
 					0, 1 + payloadBytes.length);
 			System.arraycopy(hashBytes, 0, versionPayloadChecksumBytes,
 					1 + payloadBytes.length, 4);
-			humanReadableIdentifier = RippleExt.encodeRipple(versionPayloadChecksumBytes);
+			humanReadableIdentifier = RippleExt
+					.encodeRipple(versionPayloadChecksumBytes);
 		}
 		return humanReadableIdentifier;
 	}
@@ -71,6 +72,8 @@ public class RippleIdentifier implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
+		if (obj instanceof String)
+			return (toString().equals(obj));
 		if (getClass() != obj.getClass())
 			return false;
 		RippleIdentifier other = (RippleIdentifier) obj;
