@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.SwingUtils;
 
 public class WaitDialog extends JDialog {
@@ -32,14 +33,26 @@ public class WaitDialog extends JDialog {
 	}
 
 	public static WaitDialog showDialog(JDialog parent) {
-		WaitDialog dialog = new WaitDialog(parent);
+		final WaitDialog dialog = new WaitDialog(parent);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.setVisible(true);
+		Thread thread = new Thread() {
+			public void run() {
+				for (int i = 0; dialog != null && i < 20 && dialog.isVisible(); i++) {
+					try {
+						Thread.sleep(LSystem.SECOND);
+					} catch (InterruptedException e) {
+					}
+				}
+				dialog.closeDialog();
+			}
+		};
+		thread.start();
 		return dialog;
 	}
 
 	public void closeDialog() {
-			SwingUtils.close(this);
+		SwingUtils.close(this);
 	}
 }

@@ -152,6 +152,7 @@ public class MainUI {
 		form.setLocationRelativeTo(null);
 		form.setVisible(true);
 
+		
 	}
 
 }

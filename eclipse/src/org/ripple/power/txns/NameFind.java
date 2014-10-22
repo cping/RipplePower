@@ -13,10 +13,13 @@ public class NameFind {
 	public static String getAddress(String name) throws Exception {
 		String result = _caches.get(name);
 		if (result == null) {
-			String jsonResult = HttpRequest.get("https://id.ripple.com/v1/user/"
-					+ name).body();
-			JSONObject obj = new JSONObject(jsonResult);
-			result = obj.getString("address");
+			HttpRequest request = HttpRequest
+					.get("https://id.ripple.com/v1/user/" + name);
+			if (request.ok()) {
+				String jsonResult = request.body();
+				JSONObject obj = new JSONObject(jsonResult);
+				result = obj.getString("address");
+			}
 		}
 		return result;
 	}

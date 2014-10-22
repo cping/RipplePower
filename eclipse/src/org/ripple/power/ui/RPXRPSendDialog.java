@@ -5,6 +5,8 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 
 import javax.swing.JDialog;
@@ -13,6 +15,7 @@ import javax.swing.JFrame;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
@@ -20,6 +23,8 @@ import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
+
+import com.google.zxing.common.StringUtils;
 
 public class RPXRPSendDialog extends JDialog implements ActionListener {
 
@@ -88,9 +93,9 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		setSize(dim);
 
 		getContentPane().setLayout(null);
-		
+
 		java.awt.Font font = new java.awt.Font(LangConfig.fontName, 0, 14);
-		
+
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
 		_addressLabel.setFont(font);
 		getContentPane().add(_addressLabel);
@@ -113,6 +118,24 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		_amountText.setText(amount);
 		getContentPane().add(_amountText);
 		_amountText.setBounds(82, 57, 297, 21);
+		_amountText.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String amount = _amountText.getText().trim();
+				_feeText.setText(CurrencyUtils.toFee(amount));
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+			}
+		});
 
 		_feeText.setText(fee);
 		getContentPane().add(_feeText);
@@ -167,8 +190,8 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					final WaitDialog dialog = WaitDialog
 							.showDialog(RPXRPSendDialog.this);
 
-					Payment.sendXRP(item.getSeed(),
-							address, amountValue, feeValue, new Rollback() {
+					Payment.sendXRP(item.getSeed(), address, amountValue,
+							feeValue, new Rollback() {
 
 								@Override
 								public void success(JSONObject res) {
@@ -210,8 +233,15 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		setVisible(false);
-		dispose();
+		SwingUtils.close(this);
+	}
+
+	public static void main(String[] args) {
+		double fee = 0.01f;
+		for (long l = 0; l < 100000; l += 50000) {
+			fee += 0.005f;
+		}
+		System.out.println(fee);
 	}
 
 }

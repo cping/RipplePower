@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -17,6 +19,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
+import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
@@ -199,7 +202,7 @@ public class RPIOUSendDialog extends JDialog {
 		getContentPane().add(_amountText);
 		_amountText.setBounds(80, 90, 300, 22);
 		_amountText.setText(amount);
-
+		
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(font);
 		getContentPane().add(_exitButton);

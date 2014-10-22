@@ -13,7 +13,6 @@ import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.FileUtils;
 
-
 public class WalletSeed {
 
 	private String pPassword;
@@ -81,26 +80,26 @@ public class WalletSeed {
 	}
 
 	public void save(File file, String context) throws Exception {
-		FileUtils.makedirs(file);
-		DataOutputStream out = new DataOutputStream(new FileOutputStream(file,
-				false));
-		String pass = LSystem.applicationPassword.trim();
-		byte[] buffer = context.getBytes(LSystem.encoding);
-		byte[] keyChars = pass.getBytes(
-				LSystem.encoding);
-		for (int i = 0; i < buffer.length; i++) {
-			buffer[i] ^= keyChars[i % keyChars.length];
+		if (context != null && context.length() > 0) {
+			FileUtils.makedirs(file);
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(
+					file, false));
+			String pass = LSystem.applicationPassword.trim();
+			byte[] buffer = context.getBytes(LSystem.encoding);
+			byte[] keyChars = pass.getBytes(LSystem.encoding);
+			for (int i = 0; i < buffer.length; i++) {
+				buffer[i] ^= keyChars[i % keyChars.length];
+			}
+			String text = CoinUtils.toHex(buffer);
+			buffer = text.getBytes(LSystem.encoding);
+			int size = buffer.length;
+			for (int i = 0; i < size; i++) {
+				buffer[i] ^= 0xA1;
+			}
+			buffer = WalletCryptos.encrypt(pass, buffer);
+			out.write(buffer);
+			out.close();
 		}
-		String text = CoinUtils.toHex(buffer);
-		buffer = text.getBytes(LSystem.encoding);
-		int size = buffer.length;
-		for (int i = 0; i < size; i++) {
-			buffer[i] ^= 0xA1;
-		}
-		buffer = WalletCryptos.encrypt(pass,
-				buffer);
-		out.write(buffer);
-		out.close();
 	}
 
 	public String load(File file) throws Exception {
@@ -109,16 +108,14 @@ public class WalletSeed {
 		}
 		String pass = LSystem.applicationPassword.trim();
 		byte[] buffer = FileUtils.readBytesFromFile(file);
-		buffer = WalletCryptos.decrypt(pass,
-				buffer);
+		buffer = WalletCryptos.decrypt(pass, buffer);
 		int size = buffer.length;
 		for (int i = 0; i < size; i++) {
 			buffer[i] ^= 0xA1;
 		}
 		String text = new String(buffer, LSystem.encoding);
 		buffer = CoinUtils.fromHex(text);
-		byte[] keyChars = pass.getBytes(
-				LSystem.encoding);
+		byte[] keyChars = pass.getBytes(LSystem.encoding);
 		for (int i = 0; i < buffer.length; i++) {
 			buffer[i] ^= keyChars[i % keyChars.length];
 		}
