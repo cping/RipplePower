@@ -15,11 +15,13 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
+import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
@@ -118,24 +120,55 @@ public class RPIOUSendDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String address = _addressText.getText().trim();
+				String amount = _amountText.getText().trim();
 				String fee = _feeText.getText().trim();
 				Object o = _curList.getSelectedItem();
+				if (!address.startsWith("r") || address.length() < 31) {
+					RPMessage.showErrorMessage(LSystem.applicationMain,
+							"Error", "无效的Ripple地址!");
+					return;
+				}
+				if (!MathUtils.isNan(amount)) {
+					RPMessage.showErrorMessage(LSystem.applicationMain,
+							"Error", "无效的发币数量!");
+					return;
+				}
+				if (!MathUtils.isNan(fee)) {
+					RPMessage.showErrorMessage(LSystem.applicationMain,
+							"Error", "无效的手续费数量!");
+					return;
+				}
 				IssuedCurrency cur = null;
 				if (o instanceof String) {
 					cur = new IssuedCurrency((String) o);
 				} else if (o instanceof IssuedCurrency) {
 					cur = (IssuedCurrency) o;
+				} else if (o instanceof AccountLine) {
+					AccountLine line = (AccountLine) o;
+					cur = new IssuedCurrency(amount, line.getIssuer(), line
+							.getCurrency());
+					Double a = Double.parseDouble(amount);
+					Double b = Double.parseDouble(line.getAmount());
+					if (a > b) {
+						RPMessage.showWarningMessage(LSystem.applicationMain,
+								"Warning", "发送失败,您的IOU货币量不足以完成本次发送!");
+						return;
+					}
 				} else {
-					RPMessage.showInfoMessage(LSystem.applicationMain, "Error",
-							"发送失败,无法获得当前Address数据!");
+					RPMessage.showWarningMessage(LSystem.applicationMain,
+							"Warning", "发送失败,无法获得当前Address数据!");
 					return;
 				}
 				if (address.startsWith("~")) {
 					try {
 						address = NameFind.getAddress(address);
 					} catch (Exception e1) {
-						RPMessage.showInfoMessage(LSystem.applicationMain,
-								"Error", "发送失败,无法获得当前IOU货币数据!");
+						RPMessage.showWarningMessage(LSystem.applicationMain,
+								"Warning", "发送失败,无法获得当前地址数据!");
+					}
+					if (address == null) {
+						RPMessage.showWarningMessage(LSystem.applicationMain,
+								"Warning", "发送失败,无法获得当前地址数据!");
 					}
 				}
 				final WaitDialog dialog = WaitDialog

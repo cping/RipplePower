@@ -41,7 +41,6 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	private RPTextBox _amountText;
 	private RPTextBox _feeText;
 
-
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
@@ -151,11 +150,19 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 					String feeValue = _feeText.getText().trim();
 					if (address.startsWith("~")) {
-						try {
-							address = NameFind.getAddress(address);
-						} catch (Exception e1) {
-							RPMessage.showInfoMessage(LSystem.applicationMain,
-									"Error", "发送失败,无法获得当前Address数据!");
+						if (address.startsWith("~")) {
+							try {
+								address = NameFind.getAddress(address);
+							} catch (Exception e1) {
+								RPMessage.showWarningMessage(
+										LSystem.applicationMain, "Warning",
+										"发送失败,无法获得当前地址数据!");
+							}
+							if (address == null) {
+								RPMessage.showWarningMessage(
+										LSystem.applicationMain, "Warning",
+										"发送失败,无法获得当前地址数据!");
+							}
 						}
 					}
 					if (!address.startsWith("r") || address.length() < 31) {
