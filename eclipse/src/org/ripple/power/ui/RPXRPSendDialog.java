@@ -149,26 +149,12 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					String amountValue = _amountText.getText().trim();
 
 					String feeValue = _feeText.getText().trim();
-					if (address.startsWith("~")) {
-						if (address.startsWith("~")) {
-							try {
-								address = NameFind.getAddress(address);
-							} catch (Exception e1) {
-								RPMessage.showWarningMessage(
-										LSystem.applicationMain, "Warning",
-										"发送失败,无法获得当前地址数据!");
-							}
-							if (address == null) {
-								RPMessage.showWarningMessage(
-										LSystem.applicationMain, "Warning",
-										"发送失败,无法获得当前地址数据!");
-							}
+					if (!address.startsWith("~")) {
+						if (!address.startsWith("r") || address.length() < 31) {
+							RPMessage.showErrorMessage(LSystem.applicationMain,
+									"Error", "无效的Ripple地址!");
+							return;
 						}
-					}
-					if (!address.startsWith("r") || address.length() < 31) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", "无效的Ripple地址!");
-						return;
 					}
 					if (!MathUtils.isNan(amountValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
@@ -179,6 +165,20 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
 								"Error", "无效的手续费数量!");
 						return;
+					}
+					if (address.startsWith("~")) {
+						try {
+							address = NameFind.getAddress(address);
+						} catch (Exception e1) {
+							RPMessage.showWarningMessage(
+									LSystem.applicationMain, "Warning",
+									"发送失败,无法获得当前地址数据!");
+						}
+						if (address == null) {
+							RPMessage.showWarningMessage(
+									LSystem.applicationMain, "Warning",
+									"发送失败,无法获得当前地址数据!");
+						}
 					}
 
 					BigDecimal number = new BigDecimal(amountValue);

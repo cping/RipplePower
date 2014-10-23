@@ -123,10 +123,12 @@ public class RPIOUSendDialog extends JDialog {
 				String amount = _amountText.getText().trim();
 				String fee = _feeText.getText().trim();
 				Object o = _curList.getSelectedItem();
-				if (!address.startsWith("r") || address.length() < 31) {
-					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", "无效的Ripple地址!");
-					return;
+				if (!address.startsWith("~")) {
+					if (!address.startsWith("r") || address.length() < 31) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", "无效的Ripple地址!");
+						return;
+					}
 				}
 				if (!MathUtils.isNan(amount)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
