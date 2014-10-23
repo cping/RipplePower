@@ -124,8 +124,7 @@ public class RPNavlink extends JButton {
 			}
 
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
+			
 			}
 
 			public void mousePressed(MouseEvent e) {

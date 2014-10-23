@@ -15,10 +15,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -72,7 +70,7 @@ public class MainPanel extends JPanel implements ActionListener {
 						s1, s2);
 	}
 
-	private JPopupMenu popMenu = new JPopupMenu("Menu");
+	private RPPopupMenu popMenu = new RPPopupMenu();
 
 	private class tableMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
@@ -96,7 +94,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	private Font fontBig = new Font(LangConfig.fontName, 0, 18);
 
 	private void addPopMenu(final String name, final String flagName) {
-		JMenuItem tempMenu = new JMenuItem(name);
+		RPPopMenuItem tempMenu = new RPPopMenuItem(name);
 		tempMenu.setFont(fontBig);
 		tempMenu.addActionListener(new ActionListener() {
 

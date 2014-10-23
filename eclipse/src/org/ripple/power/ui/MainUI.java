@@ -145,13 +145,13 @@ public class MainUI {
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
 
-		MaidSystem.get();
-		JSonLog.get();
 		form.pack();
 		SwingUtils.centerOnScreen(form);
 		form.setLocationRelativeTo(null);
 		form.setVisible(true);
 
+		MaidSystem.get();
+		JSonLog.get();
 		
 	}
 
