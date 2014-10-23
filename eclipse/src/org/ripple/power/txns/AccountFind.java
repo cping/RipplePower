@@ -106,7 +106,7 @@ public class AccountFind {
 
 	public AccountInfo processTx(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, -1, 50, accountinfo, update);
+		return processTx(address, -1, 100, accountinfo, update);
 	}
 
 	public AccountInfo processTx(final String address, final long txPreLgrSeq,

@@ -30,11 +30,11 @@ public final class LSystem {
 
 	public final static String FEE = "0.012";
 
-	public final static String NativeCurrency = "XRP";
+	public final static String nativeCurrency = "xrp";
 
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
-		LSystem.sendRESTCoin(address, name, label, amount, "XRP",
+		LSystem.sendRESTCoin(address, name, label, amount, nativeCurrency.toUpperCase(),
 				MathUtils.random(1, 9999));
 	}
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import javax.sound.midi.MidiDevice.Info;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -100,6 +101,50 @@ public class RPExchangeDialog extends JDialog {
 	private RPTextBox _addressText;
 	private WalletItem _item;
 	private final AccountInfo _info = new AccountInfo();
+
+	private void warning_noselect() {
+		RPMessage.showInfoMessage(this, "Info", "请首先确定您要进行卖出的网关与币种");
+	}
+
+	private void warning_xrp() {
+		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning",
+				"XRP数量不足, 交易无法成立");
+	}
+
+	private void warning_iou(String cur) {
+		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning", cur
+				+ "数量不足, 交易无法成立");
+	}
+
+	private void warning_trust(String mes) {
+		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning", mes
+				+ "在您账户中缺少信任,请信任后再使用");
+	}
+
+	private void empty_trading(String mes) {
+		RPMessage.showInfoMessage(LSystem.applicationMain, "Info",
+				String.format("很抱歉，目前没有任何人对%s的交易挂单", mes));
+	}
+
+	private int cancel_trust(String mes) {
+		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
+				"您是否准备消除交易记录" + mes, new Object[] { "确定", "取消" });
+	}
+	
+	private String info_price(){
+		return LangConfig
+				.get(RPExchangeDialog.this, "tip1",
+						"The highest price buyer %s, the seller highest price %s, Spread %s");
+	}
+
+	private int info_swap(String srcAmount, String srcCurrency,
+			String dstAmount, String dstCurrency) {
+		return RPMessage
+				.showConfirmMessage(RPExchangeDialog.this, "Info", "您准备用"
+						+ srcAmount + "/" + srcCurrency + "换取" + dstAmount
+						+ "/" + dstCurrency + ",是否确认交易?", new Object[] { "确定",
+						"取消" });
+	}
 
 	public class MyKeyListener implements KeyListener {
 
@@ -229,124 +274,8 @@ public class RPExchangeDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_tradeFlag = false;
-				if (_tradeThread != null) {
-					_tradeThread.interrupt();
-					_tradeThread = null;
-				}
-				final String cur = (String) _curComboBox.getSelectedItem();
-				String[] split = StringUtils.split(cur, "/");
-				if (split.length == 2) {
-					String address = (String) _selectGateawyCombobox
-							.getSelectedItem();
-					final WaitDialog dialog = WaitDialog
-							.showDialog(RPExchangeDialog.this);
-					OfferPrice.load(
-							Gateway.getAddress(address).accounts.get(0).address,
-							split[0], split[1], new OfferPrice() {
-
-								@Override
-								public void sell(Offer offer) {
-
-								}
-
-								@Override
-								public void buy(Offer offer) {
-
-								}
-
-								@Override
-								public void error(JSONObject obj) {
-									if (obj != null) {
-										RPMessage.showInfoMessage(
-												LSystem.applicationMain,
-												"Error", obj.toString());
-									}
-									dialog.closeDialog();
-								}
-
-								@Override
-								public void empty() {
-									RPMessage.showInfoMessage(
-											LSystem.applicationMain, "Info",
-											String.format(
-													"很抱歉，目前没有任何人对%s的交易挂单", cur));
-									dialog.closeDialog();
-								}
-
-								@Override
-								public void complete(
-										final ArrayList<OfferFruit> buys,
-										final ArrayList<OfferFruit> sells,
-										final OfferPrice price) {
-
-									synchronized (OfferPrice.class) {
-
-										_buymList
-												.setModel(new javax.swing.AbstractListModel() {
-
-													public int getSize() {
-														return buys.size();
-													}
-
-													public Object getElementAt(
-															int i) {
-														return buys.get(i);
-													}
-												});
-
-										_sellmList
-												.setModel(new javax.swing.AbstractListModel() {
-
-													public int getSize() {
-														return sells.size();
-													}
-
-													public Object getElementAt(
-															int i) {
-														return sells.get(i);
-													}
-												});
-										synchronized (_buyerList) {
-											_buyerList.clear();
-											_buyerList.addAll(buys);
-											_mysellText.setText(_buyerList
-													.get(0).offer.takerPays()
-													.toText());
-											_cansellText.setText(_buyerList
-													.get(0).offer.takerGets()
-													.toText());
-
-										}
-										synchronized (_sellerList) {
-											_sellerList.clear();
-											_sellerList.addAll(sells);
-											_mybuyText.setText(_sellerList
-													.get(0).offer.takerPays()
-													.toText());
-											_canbuyText.setText(_sellerList
-													.get(0).offer.takerGets()
-													.toText());
-										}
-										dialog.closeDialog();
-										String res = LangConfig
-												.get(RPExchangeDialog.this,
-														"tip1",
-														"The highest price buyer %s, the seller highest price %s, Spread %s");
-										_tip1Label.setText(String.format(res,
-												price.highBuy, price.hightSell,
-												price.spread));
-
-									}
-
-									_tradeFlag = true;
-									loadList();
-								}
-
-							});
-
-				}
-
+				// call
+				submitOK();
 			}
 		});
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
@@ -364,9 +293,7 @@ public class RPExchangeDialog extends JDialog {
 		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		_tip1Label
 				.setText(String.format(
-						LangConfig
-								.get(this, "tip1",
-										"The highest price buyer %s, the seller highest price %s, Spread %s"),
+						info_price(),
 						0, 0, 0));
 		jPanel1.add(_tip1Label);
 		_tip1Label.setBounds(0, 10, 970, 20);
@@ -398,6 +325,9 @@ public class RPExchangeDialog extends JDialog {
 		_buymLabel.setBounds(10, 45, 360, 16);
 
 		_buymList.setModel(new javax.swing.AbstractListModel() {
+			/**
+			 * 
+			 */
 			String[] strings = { "" };
 
 			public int getSize() {
@@ -625,9 +555,7 @@ public class RPExchangeDialog extends JDialog {
 				Object o = _mytradingList.getSelectedValue();
 				if (o instanceof BookOffer) {
 
-					int result = RPMessage.showConfirmMessage(
-							RPExchangeDialog.this, "Info", "您是否准备消除交易记录" + o,
-							new Object[] { "确定", "取消" });
+					int result = cancel_trust(o.toString());
 
 					if (result == 0) {
 						BookOffer offer = (BookOffer) o;
@@ -638,6 +566,7 @@ public class RPExchangeDialog extends JDialog {
 									public void success(JSONObject res) {
 										JSonLog.get().println(res.toString());
 										updateMyTrading();
+										submitOK();
 									}
 
 									@Override
@@ -734,7 +663,7 @@ public class RPExchangeDialog extends JDialog {
 		for (int i = 0; i < items.size(); i++) {
 			list.addAll(items.get(i).currencies);
 		}
-		list.add(LSystem.NativeCurrency);
+		list.add(LSystem.nativeCurrency.toUpperCase());
 		ArrayList<String> temp = new ArrayList<String>(100);
 		int size = list.size();
 		for (int j = 0; j < size; j++) {
@@ -764,11 +693,120 @@ public class RPExchangeDialog extends JDialog {
 
 	private HashMap<String, Boolean> _flags = new HashMap<String, Boolean>(10);
 
+	private synchronized void submitOK() {
+
+		_tradeFlag = false;
+		if (_tradeThread != null) {
+			_tradeThread.interrupt();
+			_tradeThread = null;
+		}
+		final String cur = (String) _curComboBox.getSelectedItem();
+		String[] split = StringUtils.split(cur, "/");
+		if (split.length == 2) {
+			String address = (String) _selectGateawyCombobox.getSelectedItem();
+			final WaitDialog dialog = WaitDialog
+					.showDialog(RPExchangeDialog.this);
+			OfferPrice.load(
+					Gateway.getAddress(address).accounts.get(0).address,
+					split[0], split[1], new OfferPrice() {
+
+						@Override
+						public void sell(Offer offer) {
+
+						}
+
+						@Override
+						public void buy(Offer offer) {
+
+						}
+
+						@Override
+						public void error(JSONObject obj) {
+							if (obj != null) {
+								RPMessage.showInfoMessage(
+										LSystem.applicationMain, "Error",
+										obj.toString());
+							}
+							dialog.closeDialog();
+						}
+
+						@Override
+						public void empty() {
+							empty_trading(cur);
+							dialog.closeDialog();
+						}
+
+						@Override
+						public void complete(final ArrayList<OfferFruit> buys,
+								final ArrayList<OfferFruit> sells,
+								final OfferPrice price) {
+
+							_buymList
+									.setModel(new javax.swing.AbstractListModel() {
+
+										public int getSize() {
+											return buys.size();
+										}
+
+										public Object getElementAt(int i) {
+											return buys.get(i);
+										}
+									});
+
+							_sellmList
+									.setModel(new javax.swing.AbstractListModel() {
+
+										public int getSize() {
+											return sells.size();
+										}
+
+										public Object getElementAt(int i) {
+											return sells.get(i);
+										}
+									});
+							synchronized (_buyerList) {
+								_buyerList.clear();
+								_buyerList.addAll(buys);
+								_mysellText.setText(_buyerList.get(0).offer
+										.takerPays().toText());
+								_cansellText.setText(_buyerList.get(0).offer
+										.takerGets().toText());
+
+							}
+							synchronized (_sellerList) {
+								_sellerList.clear();
+								_sellerList.addAll(sells);
+								_mybuyText.setText(_sellerList.get(0).offer
+										.takerPays().toText());
+								_canbuyText.setText(_sellerList.get(0).offer
+										.takerGets().toText());
+							}
+							dialog.closeDialog();
+							_tip1Label.setText(String.format( info_price(),
+									price.highBuy, price.hightSell,
+									price.spread));
+
+							_tradeFlag = true;
+							loadTradingList();
+						}
+
+					});
+
+		}
+
+	}
+
 	private void action_ok(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj instanceof RPCButton) {
 			final String address = _addressText.getText().trim();
 			RPCButton btn = (RPCButton) obj;
+			String cur = ((String) _curComboBox.getSelectedItem()).trim();
+			String[] split = StringUtils.split(cur, "/");
+			final String srcCurName = split[0];
+			final String dstCurName = split[1];
+			_info.lines.clear();
+			_info.zero_lines.clear();
 			switch (btn.getActionCommand()) {
 			case "buy":
 				synchronized (_buyerList) {
@@ -778,34 +816,13 @@ public class RPExchangeDialog extends JDialog {
 
 								@Override
 								public void action(Object o) {
-									String cur = ((String) _curComboBox
-											.getSelectedItem()).trim();
-									String[] split = StringUtils
-											.split(cur, "/");
-									String srcCurName = split[0];
-									String dstCurName = split[1];
-									String myBuy = _mybuyText.getText();
-									String canBuy = _canbuyText.getText();
-									int idx = myBuy.indexOf("/");
-									myBuy = myBuy.substring(0, idx);
-									idx = canBuy.indexOf("/");
-									canBuy = canBuy.substring(0, idx);
-									int result = RPMessage.showConfirmMessage(
-											RPExchangeDialog.this, "Info",
-											"您准备用" + myBuy + dstCurName + "换取"
-													+ canBuy + srcCurName
-													+ ",是否确认交易?", new Object[] {
-													"确定", "取消" });
-									if (result == 0) {
-										callTrade(address, dstCurName,
-												srcCurName, myBuy, canBuy, true);
-									}
+									submitBuy(address, srcCurName, dstCurName,
+											true);
 								}
 							});
 						}
 					} else {
-						RPMessage.showInfoMessage(this, "Info",
-								"请首先确定您要进行买入的网关与币种");
+						warning_noselect();
 					}
 				}
 				break;
@@ -816,33 +833,13 @@ public class RPExchangeDialog extends JDialog {
 
 							@Override
 							public void action(Object o) {
-								String cur = ((String) _curComboBox
-										.getSelectedItem()).trim();
-								String[] split = StringUtils.split(cur, "/");
-								String srcCurName = split[0];
-								String dstCurName = split[1];
-								String mySell = _mysellText.getText();
-								String canSell = _cansellText.getText();
-								int idx = mySell.indexOf("/");
-								mySell = mySell.substring(0, idx);
-								idx = canSell.indexOf("/");
-								canSell = canSell.substring(0, idx);
-								int result = RPMessage.showConfirmMessage(
-										RPExchangeDialog.this, "Info", "您准备用"
-												+ mySell + srcCurName + "换取"
-												+ canSell + dstCurName
-												+ ",是否确认交易?", new Object[] {
-												"确定", "取消" });
-								if (result == 0) {
-									callTrade(address, dstCurName, srcCurName,
-											mySell, canSell, false);
-								}
+								submitSell(address, srcCurName, dstCurName,
+										false);
 							}
 						});
 
 					} else {
-						RPMessage.showInfoMessage(this, "Info",
-								"请首先确定您要进行卖出的网关与币种");
+						warning_noselect();
 					}
 				}
 				break;
@@ -851,44 +848,209 @@ public class RPExchangeDialog extends JDialog {
 		}
 	}
 
-	private void callTrade(String address, String dstCurName,
+	private void submitBuy(final String address, final String srcCurName,
+			final String dstCurName, final boolean flag) {
+		String myBuytmp = _mybuyText.getText().trim();
+		String canBuytmp = _canbuyText.getText().trim();
+		int idx = myBuytmp.indexOf("/");
+		myBuytmp = myBuytmp.substring(0, idx);
+		idx = canBuytmp.indexOf("/");
+		canBuytmp = canBuytmp.substring(0, idx);
+		final String myBuy = myBuytmp;
+		final String canBuy = canBuytmp;
+		int result = info_swap(myBuy, dstCurName, canBuy, srcCurName);
+		if (result == 0) {
+
+			final WaitDialog dialog = WaitDialog
+					.showDialog(RPExchangeDialog.this);
+			final String myAddress = _item.getPublicKey();
+			final Updateable updateable = new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					if (dstCurName.toLowerCase().equals(LSystem.nativeCurrency)) {
+						double a = Double.parseDouble(_info.balance);
+						double b = Double.parseDouble(myBuy);
+						if (b > a) {
+							warning_xrp();
+							dialog.closeDialog();
+							return;
+						}
+					} else {
+						boolean dst = false;
+						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(
+								100);
+						lines.addAll(_info.lines);
+						lines.addAll(_info.zero_lines);
+						for (AccountLine line : lines) {
+							if (line.getIssuer().equals(address)) {
+								if (line.getCurrency().equals(dstCurName)) {
+									dst = true;
+									double a = Double.parseDouble(line
+											.getAmount());
+									double b = Double.parseDouble(myBuy);
+									if (b > a) {
+										warning_iou(dstCurName);
+										dialog.closeDialog();
+										return;
+									}
+
+								}
+							}
+						}
+						if (!dst) {
+							warning_trust(dstCurName);
+							dialog.closeDialog();
+							return;
+						}
+
+					}
+					dialog.closeDialog();
+					callTrade(address, dstCurName, srcCurName, myBuy, canBuy,
+							flag);
+				}
+			};
+
+			final AccountFind find = new AccountFind();
+
+			find.processInfo(myAddress, _info, new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					find.processLines(myAddress, _info, updateable);
+				}
+			});
+
+		}
+
+	}
+
+	private void submitSell(final String address, final String srcCurName,
+			final String dstCurName, final boolean flag) {
+		String mySelltmp = _mysellText.getText().trim();
+		String canSelltmp = _cansellText.getText().trim();
+		int idx = mySelltmp.indexOf("/");
+		mySelltmp = mySelltmp.substring(0, idx);
+		idx = canSelltmp.indexOf("/");
+		canSelltmp = canSelltmp.substring(0, idx);
+		final String mySell = mySelltmp;
+		final String canSell = canSelltmp;
+		int result = info_swap(mySell, srcCurName, canSell, dstCurName);
+		if (result == 0) {
+
+			final WaitDialog dialog = WaitDialog
+					.showDialog(RPExchangeDialog.this);
+			final String myAddress = _item.getPublicKey();
+			final Updateable updateable = new Updateable() {
+
+				@Override
+				public void action(Object o) {
+
+					if (srcCurName.toLowerCase().equals(LSystem.nativeCurrency)) {
+						double a = Double.parseDouble(_info.balance);
+						double b = Double.parseDouble(mySell);
+						if (b > a) {
+							warning_xrp();
+							dialog.closeDialog();
+							return;
+						}
+					} else {
+
+						boolean src = false;
+
+						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(
+								100);
+
+						lines.addAll(_info.lines);
+						lines.addAll(_info.zero_lines);
+						for (AccountLine line : lines) {
+							if (line.getIssuer().equals(address)) {
+								if (line.getCurrency().equals(srcCurName)) {
+									src = true;
+									double a = Double.parseDouble(line
+											.getAmount());
+									double b = Double.parseDouble(mySell);
+									if (b > a) {
+										warning_iou(srcCurName);
+										dialog.closeDialog();
+										return;
+									}
+
+								}
+							}
+						}
+						if (!src) {
+							warning_trust(srcCurName);
+							dialog.closeDialog();
+							return;
+						}
+
+					}
+
+					dialog.closeDialog();
+					callTrade(address, dstCurName, srcCurName, mySell, canSell,
+							flag);
+				}
+			};
+
+			final AccountFind find = new AccountFind();
+
+			find.processInfo(myAddress, _info, new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					find.processLines(myAddress, _info, updateable);
+				}
+			});
+
+		}
+
+	}
+
+	private void callTrade(final String address, String dstCurName,
 			String srcCurName, String pay, String get, boolean flag) {
 		IssuedCurrency currencySrc = null;
 		IssuedCurrency currencyDst = null;
+
 		if (flag) {
-			if ("xrp".equals(dstCurName.toLowerCase())) {
+			if (LSystem.nativeCurrency.equals(dstCurName.toLowerCase())) {
 				currencySrc = new IssuedCurrency(
 						CurrencyUtils.getValueToRipple(pay));
 			} else {
 				currencySrc = new IssuedCurrency(pay, address, dstCurName);
 			}
-			if ("xrp".equals(srcCurName.toLowerCase())) {
+			if (LSystem.nativeCurrency.equals(srcCurName.toLowerCase())) {
 				currencyDst = new IssuedCurrency(
 						CurrencyUtils.getValueToRipple(get));
 			} else {
 				currencyDst = new IssuedCurrency(get, address, srcCurName);
 			}
 		} else {
-			if ("xrp".equals(dstCurName.toLowerCase())) {
+			if (LSystem.nativeCurrency.equals(dstCurName.toLowerCase())) {
 				currencySrc = new IssuedCurrency(
 						CurrencyUtils.getValueToRipple(get));
 			} else {
 				currencySrc = new IssuedCurrency(get, address, dstCurName);
 			}
-			if ("xrp".equals(srcCurName.toLowerCase())) {
+			if (LSystem.nativeCurrency.equals(srcCurName.toLowerCase())) {
 				currencyDst = new IssuedCurrency(
 						CurrencyUtils.getValueToRipple(pay));
 			} else {
 				currencyDst = new IssuedCurrency(pay, address, srcCurName);
 			}
 		}
+
 		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc,
 				flag ? currencySrc : currencyDst, LSystem.FEE, new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {
 						JSonLog.get().println(res.toString());
-						updateMyTrading();
+						try {
+							updateMyTrading();
+							submitOK();
+						} catch (Exception ex) {
+						}
 					}
 
 					@Override
@@ -896,6 +1058,7 @@ public class RPExchangeDialog extends JDialog {
 						JSonLog.get().println(res.toString());
 					}
 				});
+
 	}
 
 	private final static void checkText(String text, String curName,
@@ -948,9 +1111,7 @@ public class RPExchangeDialog extends JDialog {
 								}
 							}
 							if (notfind) {
-								RPMessage.showInfoMessage(
-										RPExchangeDialog.this, "Info",
-										"您尚未信任网关" + address + ",请设置信任后再进行交易");
+								warning_trust(address);
 								button.setEnabled(false);
 								_flags.put(address, false);
 							} else {
@@ -999,7 +1160,74 @@ public class RPExchangeDialog extends JDialog {
 
 	private boolean _tradeFlag;
 
-	private void loadList() {
+	private void updateTrading(final String address, final String src,
+			final String dst) {
+
+		OfferPrice.load(address, src, dst, new OfferPrice() {
+
+			@Override
+			public void sell(Offer offer) {
+
+			}
+
+			@Override
+			public void buy(Offer offer) {
+
+			}
+
+			@Override
+			public void error(JSONObject obj) {
+
+			}
+
+			@Override
+			public void empty() {
+
+			}
+
+			@Override
+			public void complete(final ArrayList<OfferFruit> buys,
+					final ArrayList<OfferFruit> sells, final OfferPrice price) {
+				
+				synchronized (_sellerList) {
+					_sellerList.clear();
+					_sellerList.addAll(sells);
+				}
+				synchronized (_buyerList) {
+					_buyerList.clear();
+					_buyerList.addAll(buys);
+
+				}
+				_buymList.setModel(new javax.swing.AbstractListModel() {
+
+					public int getSize() {
+						return buys.size();
+					}
+
+					public Object getElementAt(int i) {
+						return buys.get(i);
+					}
+				});
+				_sellmList.setModel(new javax.swing.AbstractListModel() {
+
+					public int getSize() {
+						return sells.size();
+					}
+
+					public Object getElementAt(int i) {
+						return sells.get(i);
+					}
+				});
+			
+				_tip1Label.setText(String.format( info_price(), price.highBuy,
+						price.hightSell, price.spread));
+
+			}
+
+		});
+	}
+
+	private void loadTradingList() {
 		if (!_tradeFlag) {
 			return;
 		}
@@ -1011,91 +1239,13 @@ public class RPExchangeDialog extends JDialog {
 				public void run() {
 
 					for (; isVisible() && _tradeFlag;) {
-
 						String address = _addressText.getText().trim();
 						String cur = ((String) _curComboBox.getSelectedItem())
 								.trim();
 						String[] split = StringUtils.split(cur, "/");
-						OfferPrice.load(address, split[0], split[1],
-								new OfferPrice() {
-
-									@Override
-									public void sell(Offer offer) {
-
-									}
-
-									@Override
-									public void buy(Offer offer) {
-
-									}
-
-									@Override
-									public void error(JSONObject obj) {
-
-									}
-
-									@Override
-									public void empty() {
-
-									}
-
-									@Override
-									public void complete(
-											final ArrayList<OfferFruit> buys,
-											final ArrayList<OfferFruit> sells,
-											final OfferPrice price) {
-
-										synchronized (OfferPrice.class) {
-
-											_buymList
-													.setModel(new javax.swing.AbstractListModel() {
-
-														public int getSize() {
-															return buys.size();
-														}
-
-														public Object getElementAt(
-																int i) {
-															return buys.get(i);
-														}
-													});
-
-											_sellmList
-													.setModel(new javax.swing.AbstractListModel() {
-
-														public int getSize() {
-															return sells.size();
-														}
-
-														public Object getElementAt(
-																int i) {
-															return sells.get(i);
-														}
-													});
-											synchronized (_buyerList) {
-												_buyerList.clear();
-												_buyerList.addAll(buys);
-
-											}
-											synchronized (_sellerList) {
-												_sellerList.clear();
-												_sellerList.addAll(sells);
-											}
-											String res = LangConfig
-													.get(RPExchangeDialog.this,
-															"tip1",
-															"The highest price buyer %s, the seller highest price %s, Spread %s");
-											_tip1Label.setText(String.format(
-													res, price.highBuy,
-													price.hightSell,
-													price.spread));
-
-										}
-									}
-
-								});
+						updateTrading(address, split[0], split[1]);
 						try {
-							Thread.sleep(LSystem.applicationSleep);
+							Thread.sleep(LSystem.SECOND * 10);
 						} catch (InterruptedException e) {
 						}
 					}
