@@ -219,13 +219,6 @@ public class MainPanel extends JPanel implements ActionListener {
 				LSystem.background);
 		RPButton button = new RPButton(LangConfig.get(this, "add_address",
 				"Add Address"), iconLeaf);
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				callAddAddress();
-			}
-		});
 		button.setActionCommand(CommandFlag.AddAddress);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -306,6 +299,10 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private void submitActionCommand(String actionName) {
 		try {
+			if (actionName.equals(CommandFlag.AddAddress)) {
+				callAddAddress();
+				return;
+			}
 			int row = table.getSelectedRow();
 			if (row < 0 && !actionName.equals(CommandFlag.AddAddress)) {
 				if (actionName.equals(CommandFlag.Donation)) {

@@ -314,6 +314,13 @@ public class RPGatewayDialog extends JDialog {
 		jScrollPane3.setBounds(90, 220, 480, 200);
 
 		_addGatewayButton.setText(LangConfig.get(this, "add", "Add"));
+		_addGatewayButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPAddGatewayDialog.showDialog("添加新网关", RPGatewayDialog.this);
+			}
+		});
 		getContentPane().add(_addGatewayButton);
 		_addGatewayButton.setBounds(420, 540, 80, 30);
 
@@ -511,7 +518,7 @@ public class RPGatewayDialog extends JDialog {
 			_myGateway.setEnabled(false);
 			_createGatewayButton.setEnabled(false);
 			_manageGatewayButton.setEnabled(false);
-			_addGatewayButton.setEnabled(false);
+			//_addGatewayButton.setEnabled(false);
 			_cancelTrustButton.setEnabled(false);
 			_okTrustButton.setEnabled(false);
 		}

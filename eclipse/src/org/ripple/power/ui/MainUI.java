@@ -36,8 +36,8 @@ public class MainUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainUI window = new MainUI();
-					window.form.setVisible(true);
+					new MainUI();
+				
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -144,15 +144,13 @@ public class MainUI {
 		});
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
-
-		form.pack();
 		SwingUtils.centerOnScreen(form);
 		form.setLocationRelativeTo(null);
+		form.pack();
 		form.setVisible(true);
-
+		
 		MaidSystem.get();
 		JSonLog.get();
-		
 	}
 
 }

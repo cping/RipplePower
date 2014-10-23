@@ -117,7 +117,6 @@ public class MainForm extends JFrame implements ActionListener {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 
-
 		JMenu menu;
 		JMenuItem menuItem;
 		

@@ -19,7 +19,7 @@ import com.ripple.core.coretypes.AccountID;
 public class RPClient {
 
 	// 测试状态不实际联网
-	public static boolean testing = false;
+	public static boolean testing = true;
 
 	private static RPClient _rippleClient = null;
 

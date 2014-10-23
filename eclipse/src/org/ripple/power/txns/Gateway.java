@@ -38,9 +38,12 @@ public class Gateway {
 	}
 
 	public static Gateway getAddress(String name) {
+		if (name == null) {
+			return null;
+		}
 		ArrayList<Gateway> temps = get();
 		for (Gateway g : temps) {
-			if (g.name.equals(name)) {
+			if (g.name.toLowerCase().equals(name.toLowerCase())) {
 				return g;
 			}
 		}
@@ -48,6 +51,9 @@ public class Gateway {
 	}
 
 	public static Gateway getGateway(String address) {
+		if (address == null) {
+			return null;
+		}
 		ArrayList<Gateway> temps = get();
 		for (Gateway g : temps) {
 			for (Item item : g.accounts) {
