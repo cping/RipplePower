@@ -11,6 +11,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+
 public final class AddressTable extends ColorTable {
 
 	/**
@@ -31,6 +32,8 @@ public final class AddressTable extends ColorTable {
 	public static final int ADDRESS = 6;
 
 	public static final int CUR = 7;
+
+	
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);

@@ -1,8 +1,10 @@
 package org.ripple.power.ui.table;
 
 import java.awt.Color;
+
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
+
 
 public class ColorTable extends JTable implements RowColorModel {
 	private static final long serialVersionUID = -3541176315715641153L;

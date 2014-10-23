@@ -17,7 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -31,6 +30,7 @@ import org.ripple.power.config.RHClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.wallet.Backup;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
@@ -56,7 +56,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private final JLabel walletLabel;
 
-	private final JScrollPane scrollPane;
+	private final RPCScrollPane scrollPane;
 
 	private final JTable table;
 
@@ -132,7 +132,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		//
 		// Create the table scroll pane
 		//
-		scrollPane = new JScrollPane(table);
+		scrollPane = new RPCScrollPane(table, new LColor(220, 220, 220),
+				LColor.black, 240);
 		scrollPane.addMouseListener(new tableMouseListener());
 		//
 		// Create the table pane
