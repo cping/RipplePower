@@ -387,7 +387,7 @@ public class RPExchangeDialog extends JDialog {
 		_gatewayLabel.setBounds(10, 10, 95, 26);
 
 		_selectGateawyCombobox.setFont(font); // NOI18N
-		_selectGateawyCombobox.setItemModel(Gateway.gatewayList());
+		_selectGateawyCombobox.setItemModel(Gateway.gatewayList().toArray());
 		getContentPane().add(_selectGateawyCombobox);
 		_selectGateawyCombobox.setBounds(90, 10, 250, 30);
 		_selectGateawyCombobox.addItemListener(new ItemListener() {

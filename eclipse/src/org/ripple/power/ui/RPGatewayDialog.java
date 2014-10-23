@@ -209,8 +209,7 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.add(_trustLabel);
 		_trustLabel.setBounds(10, 220, 80, 16);
 
-		_curList.setItemModel(new String[] {
-				"CNY", "BTC", "USD", "JPY" });
+		_curList.setItemModel(new String[] { "CNY", "BTC", "USD", "JPY" });
 		jPanel1.add(_curList);
 		_curList.setBounds(90, 70, 130, 21);
 
@@ -223,7 +222,7 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(_iouSupportLabel);
 		_iouSupportLabel.setBounds(10, 280, 130, 15);
 
-		final String[] gatewaystrings = Gateway.gatewayList();
+		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 
 		_listGateway.setModel(new javax.swing.AbstractListModel<Object>() {
 
@@ -233,11 +232,11 @@ public class RPGatewayDialog extends JDialog {
 			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
-				return gatewaystrings.length;
+				return gatewaystrings.size();
 			}
 
 			public Object getElementAt(int i) {
-				return gatewaystrings[i];
+				return gatewaystrings.get(i);
 			}
 		});
 		_listGateway.addListSelectionListener(new ListSelectionListener() {
@@ -256,8 +255,7 @@ public class RPGatewayDialog extends JDialog {
 
 						}
 						_ioulistTable.updateUI();
-						_curList.setItemModel(
-								_iouList.toArray());
+						_curList.setItemModel(_iouList.toArray());
 						if (Gateway.getAddress(name).accounts.size() > 0) {
 							_addressText.setText(Gateway.getAddress(name).accounts
 									.get(0).address);
@@ -306,7 +304,6 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-
 		jScrollPane3.setViewportView(_myGateway);
 
 		jPanel1.add(jScrollPane3);
@@ -315,10 +312,10 @@ public class RPGatewayDialog extends JDialog {
 
 		_addGatewayButton.setText(LangConfig.get(this, "add", "Add"));
 		_addGatewayButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPAddGatewayDialog.showDialog("添加新网关", RPGatewayDialog.this);
+				RPAddGatewayDialog.showDialog(LangConfig.get(RPAddGatewayDialog.class, "title", "Add Gateway"), RPGatewayDialog.this);
 			}
 		});
 		getContentPane().add(_addGatewayButton);
@@ -351,7 +348,8 @@ public class RPGatewayDialog extends JDialog {
 					String message = String.format("您希望取消对网关%s的信任吗?",
 							currency.issuer.toString());
 					int result = RPMessage.showConfirmMessage(
-							LSystem.applicationMain, "信任归零", message, LangConfig.get(this, "ok", "OK"),
+							LSystem.applicationMain, "信任归零", message,
+							LangConfig.get(this, "ok", "OK"),
 							LangConfig.get(this, "cancel", "Cancel"));
 					if (result == 0) {
 						final WaitDialog dialog = new WaitDialog(
@@ -412,7 +410,8 @@ public class RPGatewayDialog extends JDialog {
 						trustValue);
 
 				int result = RPMessage.showConfirmMessage(
-						LSystem.applicationMain, "信任网关",  message, LangConfig.get(this, "ok", "OK"),
+						LSystem.applicationMain, "信任网关", message,
+						LangConfig.get(this, "ok", "OK"),
 						LangConfig.get(this, "cancel", "Cancel"));
 				if (result == 0) {
 					final WaitDialog dialog = new WaitDialog(
@@ -459,6 +458,26 @@ public class RPGatewayDialog extends JDialog {
 		pack();
 
 	}// </editor-fold>
+
+	void updateGatewayList() {
+		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
+
+		_listGateway.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaystrings.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaystrings.get(i);
+			}
+		});
+	}
 
 	private void loadTrust() {
 		if (_item != null) {
@@ -518,7 +537,7 @@ public class RPGatewayDialog extends JDialog {
 			_myGateway.setEnabled(false);
 			_createGatewayButton.setEnabled(false);
 			_manageGatewayButton.setEnabled(false);
-			//_addGatewayButton.setEnabled(false);
+			// _addGatewayButton.setEnabled(false);
 			_cancelTrustButton.setEnabled(false);
 			_okTrustButton.setEnabled(false);
 		}

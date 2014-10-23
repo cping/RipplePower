@@ -1,6 +1,8 @@
 package org.ripple.power.ui;
 
 import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -59,13 +61,22 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public RPAddressDialog(JFrame owner) {
-		super(owner, LangConfig.get(RPAddressDialog.class, "title",
-				"Import or create a public key and a secret key"), true);
+	public static RPAddressDialog showDialog(JFrame parent) {
+		RPAddressDialog dialog = new RPAddressDialog(parent);
+		dialog.pack();
+		dialog.setLocationRelativeTo(parent);
+		dialog.setVisible(true);
+		return dialog;
+	}
+	
+	public RPAddressDialog(JFrame parent) {
+		super(parent, LangConfig.get(RPAddressDialog.class, "title",
+				"Import or create a public key and a secret key"), Dialog.ModalityType.DOCUMENT_MODAL);
 		setLayout(new FlowLayout());
-		setSize(615, 365);
 		setResizable(false);
-		setLocationRelativeTo(null);
+		Dimension dim = new Dimension(615, 365);
+		setPreferredSize(dim);
+		setSize(dim);
 		initUI();
 	}
 

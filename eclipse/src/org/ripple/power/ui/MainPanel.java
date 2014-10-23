@@ -31,6 +31,7 @@ import org.ripple.power.config.RHClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.wallet.Backup;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
@@ -84,11 +85,6 @@ public class MainPanel extends JPanel implements ActionListener {
 				popMenu.show((Component) e.getSource(), e.getX(), e.getY());
 			}
 		}
-	}
-
-	private void callAddAddress() {
-		RPAddressDialog dialog = new RPAddressDialog(LSystem.applicationMain);
-		dialog.setVisible(true);
 	}
 
 	private Font fontBig = new Font(LangConfig.fontName, 0, 18);
@@ -292,6 +288,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.AddAddress);
 		addPopMenu(LangConfig.get(this, "del_address", "Del Address"),
 				CommandFlag.DelAddress);
+		addPopMenu(LangConfig.get(this, "back_wallet", "Backup Wallet"),
+				CommandFlag.Backup);
 		addPopMenu(LangConfig.get(this, "donation", "Donation"),
 				CommandFlag.Donation);
 
@@ -300,7 +298,22 @@ public class MainPanel extends JPanel implements ActionListener {
 	private void submitActionCommand(String actionName) {
 		try {
 			if (actionName.equals(CommandFlag.AddAddress)) {
-				callAddAddress();
+				RPAddressDialog.showDialog(LSystem.applicationMain);
+				return;
+			}
+			if (actionName.equals(CommandFlag.Backup)) {
+				String path = Backup.create();
+				if (path != null) {
+					RPMessage.showInfoMessage(this, LangConfig.get(this,
+							"info", "Info"), String.format(LangConfig.get(this,
+							"back1",
+							"Successful backup, the backup is saved in %s"),
+							path));
+				} else {
+					RPMessage.showErrorMessage(this, LangConfig.get(this,
+							"error", "Error"), LangConfig.get(this, "back2",
+							"Backup fails, wallet file does not exist"));
+				}
 				return;
 			}
 			int row = table.getSelectedRow();

@@ -10,8 +10,11 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.NameFind;
+import org.ripple.power.utils.SwingUtils;
 
 public class RPAddGatewayDialog extends JDialog {
 
@@ -20,7 +23,9 @@ public class RPAddGatewayDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<Gateway> gateways = new ArrayList<Gateway>(100);
+	private ArrayList<Gateway> _gateways = new ArrayList<Gateway>(100);
+
+	private ArrayList<String> _ious = new ArrayList<String>(100);
 
 	// Variables declaration - do not modify
 	private RPCButton _deliouButton;
@@ -31,18 +36,19 @@ public class RPAddGatewayDialog extends JDialog {
 	private RPLabel _gatewayNameText;
 	private RPLabel _gatewayAddressLabel;
 	private RPLabel _ioulistLabel;
-	private RPList jList1;
+	private RPList _iouList;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JSeparator jSeparator1;
 	private RPTextBox _gatewayAddressText;
 	private RPTextBox _addressNameText;
-	private RPTextBox jTextField3;
+	private RPTextBox _iouNameText;
 
 	// End of variables declaration
-	
+
 	private RPGatewayDialog _superDialog;
 
-	public static RPAddGatewayDialog showDialog(String text, RPGatewayDialog parent) {
+	public static RPAddGatewayDialog showDialog(String text,
+			RPGatewayDialog parent) {
 		RPAddGatewayDialog dialog = new RPAddGatewayDialog(text, parent);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
@@ -64,15 +70,17 @@ public class RPAddGatewayDialog extends JDialog {
 	/**
 	 * Gateway does not allow the same name but the address can
 	 */
-	private void addGateway(ArrayList<String> list) {
+	private void addGateway() {
 		String name = _addressNameText.getText().trim();
+		String address = _gatewayAddressText.getText().trim();
 		if (name == null || name.length() == 0) {
 			RPMessage.showWarningMessage(this, "Warning", "网关名称不能为空");
 			return;
 		}
-		for (Gateway gateway : gateways) {
+		for (Gateway gateway : _gateways) {
 			if (gateway.name.toLowerCase().equals(name.toLowerCase())) {
-				RPMessage.showWarningMessage(this, "Warning", "同名网关已经存在,无法继续添加");
+				RPMessage
+						.showWarningMessage(this, "Warning", "同名网关已经存在,无法继续添加");
 				return;
 			}
 		}
@@ -80,20 +88,73 @@ public class RPAddGatewayDialog extends JDialog {
 			RPMessage.showWarningMessage(this, "Warning", "该网关名称已被占用,无法继续添加");
 			return;
 		}
-
+		if (_ious.size() == 0) {
+			RPMessage.showWarningMessage(this, "Warning", "没有任何IOU数据,无法继续添加");
+			return;
+		}
+		if (address.length() == 0) {
+			RPMessage.showWarningMessage(this, "Warning", "没有输入地址,无法继续添加");
+			return;
+		}
+		if (!address.startsWith("~")) {
+			if (!address.startsWith("r") || address.length() < 31) {
+				RPMessage.showErrorMessage(LSystem.applicationMain, "Error",
+						"无效的Ripple地址!");
+				return;
+			}
+		}
+		if (address.startsWith("~")) {
+			try {
+				address = NameFind.getAddress(address);
+			} catch (Exception e1) {
+				RPMessage.showWarningMessage(LSystem.applicationMain,
+						"Warning", "无法获得当前地址数据!");
+			}
+			if (address == null) {
+				RPMessage.showWarningMessage(LSystem.applicationMain,
+						"Warning", "无法获得当前地址数据!");
+			}
+		}
 		Gateway gateway = new Gateway();
 		gateway.name = _addressNameText.getText().trim();
 		gateway.level = -1;
 		Gateway.Item item = new Gateway.Item();
 		item.address = _gatewayAddressText.getText().trim();
-		if (list != null) {
-			item.currencies.addAll(list);
+		if (_iouList != null) {
+			item.currencies.addAll(_ious);
 		}
 		gateway.accounts.add(item);
-		gateways.add(gateway);
+		_gateways.add(gateway);
+		Gateway.setUserGateway(_gateways);
+		_superDialog.updateGatewayList();
+		SwingUtils.close(this);
+	}
+
+	public int delGateway(String name) {
+		int idx = -1;
+		if (name == null) {
+			return idx;
+		}
+
+		int count = 0;
+		for (Gateway g : _gateways) {
+			if (g.name.equalsIgnoreCase(name)) {
+				idx = count;
+				break;
+			}
+			count++;
+		}
+		if (idx != -1) {
+			_gateways.remove(idx);
+		}
+		return idx;
 	}
 
 	private void initComponents() {
+		ArrayList<Gateway> tmp = Gateway.getUserGateway();
+		if (tmp != null) {
+			_gateways.addAll(tmp);
+		}
 		getContentPane().setBackground(new Color(36, 36, 36));
 		_iouNameLabel = new RPLabel();
 		_gatewayAddressText = new RPTextBox();
@@ -101,9 +162,9 @@ public class RPAddGatewayDialog extends JDialog {
 		_gatewayNameText = new RPLabel();
 		_gatewayAddressLabel = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
-		jList1 = new RPList();
+		_iouList = new RPList();
 		_deliouButton = new RPCButton();
-		jTextField3 = new RPTextBox();
+		_iouNameText = new RPTextBox();
 		_addiouButton = new RPCButton();
 		jSeparator1 = new javax.swing.JSeparator();
 		_delGatewayButton = new RPCButton();
@@ -114,8 +175,10 @@ public class RPAddGatewayDialog extends JDialog {
 
 		Font font = new Font(LangConfig.fontName, 0, 14);
 
+		Font btnfont = new Font(LangConfig.fontName, 0, 12);
+
 		_iouNameLabel.setFont(font); // NOI18N
-		_iouNameLabel.setText("IOU名称");
+		_iouNameLabel.setText(LangConfig.get(this, "ioun", "IOU Name"));
 		getContentPane().add(_iouNameLabel);
 		_iouNameLabel.setBounds(20, 240, 100, 27);
 
@@ -128,50 +191,128 @@ public class RPAddGatewayDialog extends JDialog {
 		_addressNameText.setBounds(120, 10, 350, 30);
 
 		_gatewayNameText.setFont(font); // NOI18N
-		_gatewayNameText.setText("网关名称");
+		_gatewayNameText.setText(LangConfig.get(this, "gateway_name", "Name"));
 		getContentPane().add(_gatewayNameText);
 		_gatewayNameText.setBounds(20, 10, 100, 27);
 
 		_gatewayAddressLabel.setFont(font); // NOI18N
-		_gatewayAddressLabel.setText("网关地址");
+		_gatewayAddressLabel.setText(LangConfig.get(this, "gateway_address", "Address"));
 		getContentPane().add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(20, 60, 100, 27);
 
-		jScrollPane1.setViewportView(jList1);
+		jScrollPane1.setViewportView(_iouList);
 
 		getContentPane().add(jScrollPane1);
 		jScrollPane1.setBounds(120, 110, 350, 110);
 
-		_deliouButton.setText("删除IOU");
+		_deliouButton.setText(LangConfig.get(this, "del", "Del IOU"));
+		_deliouButton.setFont(btnfont);
 		getContentPane().add(_deliouButton);
 		_deliouButton.setBounds(335, 280, 130, 23);
-		getContentPane().add(jTextField3);
-		jTextField3.setBounds(120, 240, 350, 30);
+		_deliouButton.addActionListener(new ActionListener() {
 
-		_addiouButton.setText("增加IOU");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int idx = _iouList.getSelectedIndex();
+				if (idx != -1 && idx < _ious.size()) {
+					_ious.remove(idx);
+					_iouList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+						/**
+					 * 
+					 */
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public int getSize() {
+							return _ious.size();
+						}
+
+						@Override
+						public Object getElementAt(int index) {
+							return _ious.get(index);
+						}
+
+					});
+				}
+			}
+		});
+		getContentPane().add(_iouNameText);
+		_iouNameText.setBounds(120, 240, 350, 30);
+
+		_addiouButton.setText(LangConfig.get(this, "add", "Add IOU"));
+		_addiouButton.setFont(btnfont);
+		_addiouButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String iouName = _iouNameText.getText().trim().toUpperCase();
+				if (iouName.length() != 3) {
+					RPMessage.showWarningMessage(RPAddGatewayDialog.this,
+							"Warning", "不允许三个字符以外的IOU数据出现");
+					return;
+				}
+				if (!_ious.contains(iouName)) {
+					_ious.add(iouName);
+				}
+				_iouList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public int getSize() {
+						return _ious.size();
+					}
+
+					@Override
+					public Object getElementAt(int index) {
+						return _ious.get(index);
+					}
+
+				});
+			}
+		});
 		getContentPane().add(_addiouButton);
 		_addiouButton.setBounds(120, 280, 130, 23);
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 320, 480, 10);
 
-		_delGatewayButton.setText("删除此名称网关");
+		_delGatewayButton.setText(LangConfig.get(this, "delgateway", "Delete The Gateway"));
+		_delGatewayButton.setFont(btnfont);
 		getContentPane().add(_delGatewayButton);
 		_delGatewayButton.setBounds(10, 330, 180, 40);
+		_delGatewayButton.addActionListener(new ActionListener() {
 
-		_ioulistLabel.setFont(new java.awt.Font("宋体", 0, 14)); // NOI18N
-		_ioulistLabel.setText("IOU列表");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = _addressNameText.getText().trim();
+				if (name.length() > 0) {
+					if (delGateway(name) != -1) {
+						RPMessage.showInfoMessage(RPAddGatewayDialog.this,
+								"Info", "数据删除成功");
+					}
+				}
+			}
+		});
+
+		_ioulistLabel.setFont(font); // NOI18N
+		_ioulistLabel.setText(LangConfig.get(this, "ious", "IOU List"));
 		getContentPane().add(_ioulistLabel);
 		_ioulistLabel.setBounds(20, 110, 100, 27);
 
-		_saveGatewayButton.setText("保存");
+		_saveGatewayButton.setText(LangConfig.get(this, "save", "Save"));
+		_saveGatewayButton.setFont(btnfont);
 		getContentPane().add(_saveGatewayButton);
 		_saveGatewayButton.setBounds(387, 330, 80, 40);
 		_saveGatewayButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addGateway(null);
-				
+				addGateway();
+
 			}
 		});
 

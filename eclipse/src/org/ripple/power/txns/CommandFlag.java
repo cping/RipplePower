@@ -14,6 +14,8 @@ public class CommandFlag {
 	
 	public static final String Secret = "Secret";
 	
+	public static final String Backup = "Backup";
+	
 	public static final String Gateway = "Gateway";
 	
 	public static final String Exchange = "Exchange";

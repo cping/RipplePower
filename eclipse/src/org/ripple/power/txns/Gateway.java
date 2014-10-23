@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Session;
 import org.ripple.power.ui.UIRes;
 
 public class Gateway {
@@ -28,11 +30,106 @@ public class Gateway {
 	private final static ArrayList<Gateway> gateways = new ArrayList<Gateway>(
 			100);
 
-	public static String[] gatewayList() {
+	private final static ArrayList<Gateway> user_gateways = new ArrayList<Gateway>(
+			100);
+
+	public static JSONArray setUserGateway(ArrayList<Gateway> gs) {
+		if (gs == null || gs.size() == 0) {
+			return null;
+		}
+		user_gateways.clear();
+		JSONArray result = new JSONArray();
+		for (Gateway g : gs) {
+			JSONObject obj = new JSONObject();
+			obj.put("name", g.name);
+			if (g.accounts.size() > 0) {
+				obj.put("address", g.accounts.get(0).address);
+				JSONArray arrays = new JSONArray();
+				for (String c : g.accounts.get(0).currencies) {
+					arrays.put(c);
+				}
+				obj.put("currencies", arrays);
+			}
+			result.put(obj);
+		}
+		Session session = LSystem.session("user_gateway");
+		session.set("data", result.toString());
+		session.save();
+		return result;
+	}
+
+	public int delUserGateway(String name) {
+		int idx = -1;
+		if (name == null) {
+			return idx;
+		}
+		ArrayList<Gateway> gs = getUserGateway();
+		int count = 0;
+		for (Gateway g : gs) {
+			if (g.name.equalsIgnoreCase(name)) {
+				idx = count;
+				break;
+			}
+			count++;
+		}
+		if (idx != -1) {
+			gs.remove(idx);
+			setUserGateway(gs);
+		}
+		return idx;
+	}
+
+	public static ArrayList<Gateway> getUserGateway() {
+		if (user_gateways.size() == 0) {
+			Session session = LSystem.session("user_gateway");
+			String result = session.get("data");
+			if (result != null) {
+				user_gateways.addAll(getUserGateway(result));
+				return user_gateways;
+			}
+			return null;
+		} else {
+			return user_gateways;
+		}
+	}
+
+	public static ArrayList<Gateway> getUserGateway(String result) {
+		if (result == null || result.length() == 0) {
+			return null;
+		}
+		JSONArray arrays = new JSONArray(result);
+		ArrayList<Gateway> list = new ArrayList<>();
+		for (int i = 0; i < arrays.length(); i++) {
+			JSONObject obj = arrays.getJSONObject(i);
+			Gateway g = new Gateway();
+			g.name = obj.getString("name");
+			if (obj.has("address")) {
+				Item item = new Item();
+				item.address = obj.getString("address");
+				if (obj.has("currencies")) {
+					JSONArray currencies = obj.getJSONArray("currencies");
+					for (int j = 0; j < currencies.length(); j++) {
+						item.currencies.add(currencies.getString(j));
+					}
+				}
+				g.accounts.add(item);
+			}
+			list.add(g);
+		}
+		return list;
+	}
+
+	public static ArrayList<String> gatewayList() {
 		ArrayList<Gateway> temps = get();
-		String[] list = new String[temps.size()];
+		ArrayList<String> list = new ArrayList<>();
 		for (int i = 0; i < temps.size(); i++) {
-			list[i] = temps.get(i).name;
+			list.add(temps.get(i).name);
+		}
+		ArrayList<Gateway> userlist = getUserGateway();
+		if (userlist != null) {
+			for (int i = 0; i < userlist.size(); i++) {
+				list.add(userlist.get(i).name);
+			}
 		}
 		return list;
 	}
@@ -43,7 +140,13 @@ public class Gateway {
 		}
 		ArrayList<Gateway> temps = get();
 		for (Gateway g : temps) {
-			if (g.name.toLowerCase().equals(name.toLowerCase())) {
+			if (g.name.equalsIgnoreCase(name)) {
+				return g;
+			}
+		}
+		temps = getUserGateway();
+		for (Gateway g : temps) {
+			if (g.name.equalsIgnoreCase(name)) {
 				return g;
 			}
 		}
@@ -55,6 +158,19 @@ public class Gateway {
 			return null;
 		}
 		ArrayList<Gateway> temps = get();
+		for (Gateway g : temps) {
+			for (Item item : g.accounts) {
+				if (item.address.equals(address)) {
+					return g;
+				}
+			}
+			for (String hotwallet : g.hotwallets) {
+				if (hotwallet.equals(address)) {
+					return g;
+				}
+			}
+		}
+		temps = getUserGateway();
 		for (Gateway g : temps) {
 			for (Item item : g.accounts) {
 				if (item.address.equals(address)) {
