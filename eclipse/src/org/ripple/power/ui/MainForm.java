@@ -21,6 +21,7 @@ import javax.swing.WindowConstants;
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
 
@@ -88,7 +89,7 @@ public class MainForm extends JFrame implements ActionListener {
 		}
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
+		SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
 		int frameX = 0;
 		int frameY = 0;
 		String propValue = LSystem.session("main").get("location");
@@ -97,7 +98,6 @@ public class MainForm extends JFrame implements ActionListener {
 			frameX = Integer.parseInt(propValue.substring(0, sep));
 			frameY = Integer.parseInt(propValue.substring(sep + 1));
 		}
-		setLocation(frameX, frameY);
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		int frameWidth = (int) screensize.getWidth();
 		int frameHeight = (int) screensize.getHeight();
@@ -112,7 +112,7 @@ public class MainForm extends JFrame implements ActionListener {
 		Dimension dim = new Dimension(frameWidth, frameHeight);
 		setPreferredSize(dim);
 		setSize(dim);
-
+		setLocation(frameX, frameY);
 		Font font = new Font(LangConfig.fontName,0,14);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);

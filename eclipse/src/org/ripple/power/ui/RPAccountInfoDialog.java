@@ -13,6 +13,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -47,6 +48,8 @@ public class RPAccountInfoDialog extends JDialog {
 	private ArrayList<AccountLine> _accountLineItems2 = new ArrayList<AccountLine>();
 
 	private ArrayList<String> _accountLineItems3 = new ArrayList<String>();
+
+	private AccountInfo _accountinfo = new AccountInfo();
 
 	class AccountTableModel extends AbstractTableModel {
 
@@ -290,11 +293,11 @@ public class RPAccountInfoDialog extends JDialog {
 		_assetsLabel = new RPLabel();
 		_issuedLabel = new RPLabel();
 		_booksLabel = new RPLabel();
-		
+
 		Font font = new Font(LangConfig.fontName, 0, 14);
 		_loadButton.setFont(font);
 		_exitButton.setFont(font);
-		
+
 		Class<?>[] columnClasses = { String.class, String.class, String.class };
 		String[] columnNames = { LangConfig.get(this, "currency", "Currency"),
 				LangConfig.get(this, "gateway", "Gateway"),
@@ -353,8 +356,6 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(jScrollPane3);
 		jScrollPane3.setBounds(10, 390, 640, 130);
 
-		final AccountInfo info = new AccountInfo();
-
 		getContentPane().setLayout(null);
 
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
@@ -366,7 +367,7 @@ public class RPAccountInfoDialog extends JDialog {
 
 		if (address.trim().length() > 0) {
 			_addressText.setText(address.trim());
-			call(info, tableModel, tableModel2, tableModel3);
+			_accountinfo = call(tableModel, tableModel2, tableModel3);
 
 		} else {
 			_addressText.setText("");
@@ -374,7 +375,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_loadButton.setText(LangConfig.get(this, "load", "Load"));
 		_loadButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				call(info, tableModel, tableModel2, tableModel3);
+				_accountinfo = call(tableModel, tableModel2, tableModel3);
 			}
 		});
 		getContentPane().add(_loadButton);
@@ -405,11 +406,11 @@ public class RPAccountInfoDialog extends JDialog {
 
 	}// </editor-fold>
 
-	public void call(final AccountInfo info,
-			final AccountTableModel tableModel,
+	public AccountInfo call(final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
 
+		final AccountInfo info = new AccountInfo();
 		final WaitDialog dialog = WaitDialog.showDialog(this);
 		final String address = _addressText.getText().trim();
 
@@ -425,7 +426,8 @@ public class RPAccountInfoDialog extends JDialog {
 						synchronized (_accountLineItems) {
 							_accountLineItems.clear();
 							_accountLineItems.add(new AccountLine(
-									"RippleLabels", "XRP", info.balance));
+									"RippleLabels", LSystem.nativeCurrency
+											.toUpperCase(), info.balance));
 							tableModel.update();
 						}
 					}
@@ -442,7 +444,8 @@ public class RPAccountInfoDialog extends JDialog {
 					synchronized (_accountLineItems) {
 						_accountLineItems.clear();
 						_accountLineItems.add(new AccountLine("RippleLabels",
-								"XRP", info.balance));
+								LSystem.nativeCurrency.toUpperCase(),
+								info.balance));
 						_accountLineItems.addAll(info.lines);
 					}
 					tableModel.update();
@@ -487,5 +490,12 @@ public class RPAccountInfoDialog extends JDialog {
 		find.processLines(address, info, update_line);
 		find.processTx(address, info, update_tx);
 
+		return info;
+
 	}
+
+	public AccountInfo getAccountinfo() {
+		return _accountinfo;
+	}
+
 }

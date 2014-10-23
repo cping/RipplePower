@@ -1,22 +1,24 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -31,7 +33,6 @@ import org.ripple.power.config.RHClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
-import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
@@ -62,10 +63,29 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private final AddressTableModel tableModel;
 
+	private Font font = new Font("宋体".equals(LangConfig.fontName) ? "黑体"
+			: "Dialog", 1, 15);
+
 	protected String getWalletText(String s1, String s2) {
 		return String
 				.format("<html><h3><strong><font color=white>Wallet </font><font color=yellow>%s</font><font color=white> XRP </font><font size=3 color=yellow>(Rippled Status:%s)</font></strong></h3> </html>",
 						s1, s2);
+	}
+
+	private JPopupMenu popMenu = new JPopupMenu("Menu");
+
+	private class tableMouseListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			}
+		}
 	}
 
 	private void callAddAddress() {
@@ -73,18 +93,30 @@ public class MainPanel extends JPanel implements ActionListener {
 		dialog.setVisible(true);
 	}
 
+	private Font fontBig = new Font(LangConfig.fontName, 0, 18);
+
+	private void addPopMenu(final String name, final String flagName) {
+		JMenuItem tempMenu = new JMenuItem(name);
+		tempMenu.setFont(fontBig);
+		tempMenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				submitActionCommand(flagName);
+			}
+		});
+		popMenu.add(tempMenu);
+	}
+
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
-		SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
 		setOpaque(true);
 		setBackground(LSystem.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
 
-		Font font = new Font(
-				"宋体".equals(LangConfig.fontName) ? "黑体" : "Dialog", 1, 15);
-
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
+
 		table.setFont(new Font("Dialog", 0, 14));
 		table.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -102,10 +134,12 @@ public class MainPanel extends JPanel implements ActionListener {
 					frameWidth - 120, frameHeight - 300));
 		}
 
+		table.addMouseListener(new tableMouseListener());
 		//
 		// Create the table scroll pane
 		//
 		scrollPane = new JScrollPane(table);
+		scrollPane.addMouseListener(new tableMouseListener());
 		//
 		// Create the table pane
 		//
@@ -255,35 +289,46 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
+		addPopMenu(LangConfig.get(this, "secret_key", "Secret Key"),
+				CommandFlag.Secret);
+		addPopMenu(LangConfig.get(this, "send_money", "Send Money"),
+				CommandFlag.SendCoin);
+		addPopMenu(LangConfig.get(this, "control_gateway", "Control Gateway"),
+				CommandFlag.Gateway);
+		addPopMenu(LangConfig.get(this, "to_exchange", "To Exchange"),
+				CommandFlag.Exchange);
+		addPopMenu(LangConfig.get(this, "add_address", "Add Address"),
+				CommandFlag.AddAddress);
+		addPopMenu(LangConfig.get(this, "donation", "Donation"),
+				CommandFlag.Donation);
+
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent ae) {
+	private void submitActionCommand(String actionName) {
 		try {
 			int row = table.getSelectedRow();
-			if (row < 0
-					&& !ae.getActionCommand().equals(CommandFlag.AddAddress)) {
-				if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+			if (row < 0 && !actionName.equals(CommandFlag.AddAddress)) {
+				if (actionName.equals(CommandFlag.Donation)) {
 					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
 							"cping", "Thank you donate to RipplePower", 100);
 					return;
 				}
-				if (ae.getActionCommand().equals(CommandFlag.DetailsAddress)) {
+				if (actionName.equals(CommandFlag.DetailsAddress)) {
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
 							LangConfig.get(RPAccountInfoDialog.class,
 									"details", "Address details info"), "");
 					return;
 				}
-				if (ae.getActionCommand().equals(CommandFlag.Gateway)) {
+				if (actionName.equals(CommandFlag.Gateway)) {
 					RPGatewayDialog.showDialog(LangConfig
 							.get(RPGatewayDialog.class, "title",
 									"Gateway Operation"),
 							LSystem.applicationMain, null);
 					return;
 				}
-				if (ae.getActionCommand().equals(CommandFlag.Exchange)) {
-					RPExchangeDialog.showDialog(
-							LangConfig.get(this, "rippletrade", "Ripple Trading Network"),
+				if (actionName.equals(CommandFlag.Exchange)) {
+					RPExchangeDialog.showDialog(LangConfig.get(this,
+							"rippletrade", "Ripple Trading Network"),
 							LSystem.applicationMain, null);
 					return;
 				} else {
@@ -296,7 +341,7 @@ public class MainPanel extends JPanel implements ActionListener {
 									"Warning", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-			} else if (ae.getActionCommand().equals(CommandFlag.Donation)) {
+			} else if (actionName.equals(CommandFlag.Donation)) {
 				row = table.convertRowIndexToModel(row);
 				WalletItem item = WalletCache.get().readRow(row);
 				BigDecimal number = new BigDecimal(item.getAmount());
@@ -312,7 +357,7 @@ public class MainPanel extends JPanel implements ActionListener {
 							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10",
 							LSystem.FEE);
 				}
-			} else if (ae.getActionCommand().equals(CommandFlag.AddAddress)) {
+			} else if (actionName.equals(CommandFlag.AddAddress)) {
 
 			} else {
 
@@ -320,7 +365,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 				WalletItem item = WalletCache.get().readRow(row);
 
-				String action = ae.getActionCommand();
+				String action = actionName;
 				switch (action) {
 				case CommandFlag.SendCoin:
 					int result = JOptionPane
@@ -371,27 +416,6 @@ public class MainPanel extends JPanel implements ActionListener {
 						break;
 					default:
 						break;
-					}
-					break;
-				case "copy txid":
-					String address = (String) tableModel.getValueAt(row, 1);
-					StringSelection sel = new StringSelection(address);
-					Clipboard cb = Toolkit.getDefaultToolkit()
-							.getSystemClipboard();
-					cb.setContents(sel, null);
-					break;
-				case "move to safe":
-					if (moveToSafe(row)) {
-						tableModel.fireTableRowsUpdated(row, row);
-						walletLabel.setText(getWalletText(WalletCache.get()
-								.getAmounts(), "none"));
-					}
-					break;
-				case "move to wallet":
-					if (moveToWallet(row)) {
-						tableModel.fireTableRowsUpdated(row, row);
-						walletLabel.setText(getWalletText(WalletCache.get()
-								.getAmounts(), "none"));
 					}
 					break;
 				case CommandFlag.Exchange:
@@ -481,6 +505,12 @@ public class MainPanel extends JPanel implements ActionListener {
 			ex.printStackTrace();
 
 		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		submitActionCommand(ae.getActionCommand());
 	}
 
 	public void walletChanged(String status) {
@@ -500,14 +530,6 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	public void statusChanged() {
 		tableModel.fireTableDataChanged();
-	}
-
-	private boolean moveToSafe(int row) {
-		return false;
-	}
-
-	private boolean moveToWallet(int row) {
-		return false;
 	}
 
 	private class AddressTableModel extends AbstractTableModel {
