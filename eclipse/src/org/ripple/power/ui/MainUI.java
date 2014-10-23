@@ -97,18 +97,18 @@ public class MainUI {
 		welcomeLink.route();
 		navLinkList.add(welcomeLink);
 
-		// xrp
+		// ripple
 		Icon iconXRP = UIRes.getImage("icons/ripple.png");
-		RPNavlink xrpLink = new RPNavlink("XRP", emptyPanel,
+		RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
 				form.getMainPanel());
 		xrpLink.setIcon(iconXRP);
 		xrpLink.setForeground(UIConfig.getBrandColor());
 		xrpLink.setFont(navLinkFont);
 		navLinkList.add(xrpLink);
 
-		// btc
+		// bitcoin
 		Icon iconBtc = UIRes.getImage("icons/btc.png");
-		RPNavlink btcLink = new RPNavlink("BTC", emptyPanel, new NullPanel());
+		RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, new NullPanel());
 		btcLink.setIcon(iconBtc);
 		btcLink.setForeground(UIConfig.getBrandColor());
 		btcLink.setFont(navLinkFont);
