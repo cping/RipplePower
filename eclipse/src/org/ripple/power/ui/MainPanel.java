@@ -297,6 +297,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Exchange);
 		addPopMenu(LangConfig.get(this, "add_address", "Add Address"),
 				CommandFlag.AddAddress);
+		addPopMenu(LangConfig.get(this, "del_address", "Del Address"),
+				CommandFlag.DelAddress);
 		addPopMenu(LangConfig.get(this, "donation", "Donation"),
 				CommandFlag.Donation);
 
@@ -496,6 +498,27 @@ public class MainPanel extends JPanel implements ActionListener {
 							LangConfig.get(RPAccountInfoDialog.class,
 									"details", "Address details info"), item
 									.getPublicKey());
+					break;
+				case CommandFlag.DelAddress:
+					int delete_address = RPMessage
+							.showConfirmMessage(
+									LSystem.applicationMain,
+									LangConfig.get(this, "del_address",
+											"Del Address"),
+									LangConfig
+											.get(this,
+													"delete",
+													"Delete the address, which means you will never lose this address, whether you want to continue?"),
+									new Object[] {
+											LangConfig.get(this, "ok", "OK"),
+											LangConfig.get(this, "cancel",
+													"Cancel") });
+					if (delete_address == 0) {
+						synchronized (this) {
+							WalletCache.get().deleted(row);
+							walletChanged();
+						}
+					}
 					break;
 				}
 			}

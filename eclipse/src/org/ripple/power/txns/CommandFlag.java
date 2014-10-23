@@ -8,6 +8,8 @@ public class CommandFlag {
 
 	public static final String AddAddress = "Add";
 
+	public static final String DelAddress = "Del";
+	
 	public static final String DetailsAddress = "Details";
 	
 	public static final String Secret = "Secret";

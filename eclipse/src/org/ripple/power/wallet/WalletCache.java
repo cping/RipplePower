@@ -77,6 +77,15 @@ public class WalletCache {
 		}
 	}
 
+	public void deleted(int idx) {
+		synchronized (pCaches) {
+			int size = pCaches.size();
+			if (idx > -1 && idx < size) {
+				pCaches.remove(idx);
+			}
+		}
+	}
+
 	public String getAmounts() {
 		return amounts;
 	}
