@@ -105,6 +105,7 @@ public class RippleSigner {
 			decoder.close();
 		}
 
+		@SuppressWarnings("deprecation")
 		public byte[] encodeToDER() {
 			try {
 				ByteArrayOutputStream bos = new ByteArrayOutputStream(72);

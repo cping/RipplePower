@@ -3,7 +3,7 @@ package org.ripple.power.ui;
 import java.awt.Color;
 
 
-public class RPList extends javax.swing.JList{
+public class RPList extends javax.swing.JList<Object>{
 
 	/**
 	 * 

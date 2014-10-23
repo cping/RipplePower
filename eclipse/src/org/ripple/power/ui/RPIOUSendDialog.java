@@ -6,20 +6,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.address.ripple.RippleAddress;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
-import org.ripple.power.txns.AccountLine;
-import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
@@ -29,15 +24,13 @@ import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-import com.ripple.core.coretypes.AccountID;
-
 public class RPIOUSendDialog extends JDialog {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	// Variables declaration - do not modify
+
 	private RPCButton _sendButton;
 	private RPCButton _exitButton;
 	private RPComboBox _curList;
@@ -49,8 +42,6 @@ public class RPIOUSendDialog extends JDialog {
 	private RPTextBox _feeText;
 	private RPTextBox _addressText;
 	private RPTextBox _amountText;
-
-	// End of variables declaration
 
 	private final WalletItem _walletItem;
 
@@ -114,8 +105,7 @@ public class RPIOUSendDialog extends JDialog {
 		_feeLabel.setBounds(10, 130, 70, 16);
 
 		_curList.setFont(font); // NOI18N
-		_curList.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Empty" }));
+		_curList.setItemModel(new String[] { "Empty" });
 		getContentPane().add(_curList);
 		_curList.setBounds(80, 10, 470, 21);
 
@@ -202,7 +192,7 @@ public class RPIOUSendDialog extends JDialog {
 		getContentPane().add(_amountText);
 		_amountText.setBounds(80, 90, 300, 22);
 		_amountText.setText(amount);
-		
+
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(font);
 		getContentPane().add(_exitButton);
@@ -215,8 +205,10 @@ public class RPIOUSendDialog extends JDialog {
 			}
 		});
 		calldisable();
+		if (_walletItem != null) {
+			loadIOUs(_walletItem.getPublicKey());
+		}
 		pack();
-		loadIOUs(address);
 	}
 
 	public void calldisable() {
@@ -240,13 +232,7 @@ public class RPIOUSendDialog extends JDialog {
 			@Override
 			public void action(Object res) {
 				if (info.lines.size() > 0) {
-					String[] list = new String[info.lines.size()];
-					int index = 0;
-					for (AccountLine line : info.lines) {
-						list[index] = line.get().toString();
-						index++;
-					}
-					_curList.setModel(new javax.swing.DefaultComboBoxModel(list));
+					_curList.setItemModel(info.lines.toArray());
 					callactivity();
 				} else {
 					calldisable();
@@ -257,6 +243,10 @@ public class RPIOUSendDialog extends JDialog {
 		AccountFind find = new AccountFind();
 		find.processLines(address, info, accountline);
 		return info;
+	}
+
+	public WalletItem getWalletItem() {
+		return _walletItem;
 	}
 
 }

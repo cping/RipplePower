@@ -15,14 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.sound.midi.MidiDevice.Info;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -42,7 +37,6 @@ import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -103,26 +97,26 @@ public class RPExchangeDialog extends JDialog {
 	private final AccountInfo _info = new AccountInfo();
 
 	private void warning_noselect() {
-		RPMessage.showInfoMessage(this, "Info", "请首先确定您要进行卖出的网关与币种");
+		RPMessage.showWarningMessage(this, "Info", "请首先确定您要进行卖出的网关与币种");
 	}
 
 	private void warning_xrp() {
-		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning",
+		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
 				"XRP数量不足, 交易无法成立");
 	}
 
 	private void warning_iou(String cur) {
-		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning", cur
+		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", cur
 				+ "数量不足, 交易无法成立");
 	}
 
 	private void warning_trust(String mes) {
-		RPMessage.showInfoMessage(RPExchangeDialog.this, "Warning", mes
+		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", mes
 				+ "在您账户中缺少信任,请信任后再使用");
 	}
 
 	private void empty_trading(String mes) {
-		RPMessage.showInfoMessage(LSystem.applicationMain, "Info",
+		RPMessage.showWarningMessage(LSystem.applicationMain, "Info",
 				String.format("很抱歉，目前没有任何人对%s的交易挂单", mes));
 	}
 
@@ -258,8 +252,7 @@ public class RPExchangeDialog extends JDialog {
 		_currencyLabel.setBounds(700, 10, 80, 26);
 
 		_curComboBox.setFont(font); // NOI18N
-		_curComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "" }));
+	
 		getContentPane().add(_curComboBox);
 		_curComboBox.setBounds(780, 10, 110, 30);
 
@@ -298,17 +291,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_tip1Label);
 		_tip1Label.setBounds(0, 10, 970, 20);
 		_tip1Label.setForeground(Color.red);
-		_mytradingList.setModel(new javax.swing.AbstractListModel() {
-			String[] strings = { "" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
+	
 		jScrollPane1.setViewportView(_mytradingList);
 
 		if (_item != null) {
@@ -324,20 +307,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_buymLabel);
 		_buymLabel.setBounds(10, 45, 360, 16);
 
-		_buymList.setModel(new javax.swing.AbstractListModel() {
-			/**
-			 * 
-			 */
-			String[] strings = { "" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
+	
 		_buymList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_buymList.setBackground(new Color(70, 70, 70));
 		_buymList.setForeground(Color.orange);
@@ -370,17 +340,6 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_sellmLabel);
 		_sellmLabel.setBounds(600, 45, 360, 16);
 
-		_sellmList.setModel(new javax.swing.AbstractListModel() {
-			String[] strings = { "" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
 		_sellmList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_sellmList.setForeground(Color.orange);
 		_sellmList.addListSelectionListener(new ListSelectionListener() {
@@ -414,17 +373,6 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
 
-		_otherMarketList.setModel(new javax.swing.AbstractListModel() {
-			String[] strings = { "" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
 		jScrollPane4.setViewportView(_otherMarketList);
 
 		jPanel1.add(jScrollPane4);
@@ -439,8 +387,7 @@ public class RPExchangeDialog extends JDialog {
 		_gatewayLabel.setBounds(10, 10, 95, 26);
 
 		_selectGateawyCombobox.setFont(font); // NOI18N
-		_selectGateawyCombobox.setModel(new javax.swing.DefaultComboBoxModel(
-				Gateway.gatewayList()));
+		_selectGateawyCombobox.setItemModel(Gateway.gatewayList());
 		getContentPane().add(_selectGateawyCombobox);
 		_selectGateawyCombobox.setBounds(90, 10, 250, 30);
 		_selectGateawyCombobox.addItemListener(new ItemListener() {
@@ -683,8 +630,8 @@ public class RPExchangeDialog extends JDialog {
 			}
 		}
 		Collections.sort(temp);
-		_curComboBox.setModel(new javax.swing.DefaultComboBoxModel(temp
-				.toArray()));
+		_curComboBox.setItemModel(temp
+				.toArray());
 		list.clear();
 		list = null;
 		temp.clear();
@@ -742,7 +689,12 @@ public class RPExchangeDialog extends JDialog {
 								final OfferPrice price) {
 
 							_buymList
-									.setModel(new javax.swing.AbstractListModel() {
+									.setModel(new javax.swing.AbstractListModel<Object>() {
+
+										/**
+										 * 
+										 */
+										private static final long serialVersionUID = 1L;
 
 										public int getSize() {
 											return buys.size();
@@ -754,7 +706,12 @@ public class RPExchangeDialog extends JDialog {
 									});
 
 							_sellmList
-									.setModel(new javax.swing.AbstractListModel() {
+									.setModel(new javax.swing.AbstractListModel<Object>() {
+
+										/**
+										 * 
+										 */
+										private static final long serialVersionUID = 1L;
 
 										public int getSize() {
 											return sells.size();
@@ -1142,7 +1099,12 @@ public class RPExchangeDialog extends JDialog {
 
 			@Override
 			public void action(Object o) {
-				_mytradingList.setModel(new javax.swing.AbstractListModel() {
+				_mytradingList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
 
 					public int getSize() {
 						return _info.bookOffers.size();
@@ -1198,7 +1160,12 @@ public class RPExchangeDialog extends JDialog {
 					_buyerList.addAll(buys);
 
 				}
-				_buymList.setModel(new javax.swing.AbstractListModel() {
+				_buymList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
 
 					public int getSize() {
 						return buys.size();
@@ -1208,7 +1175,12 @@ public class RPExchangeDialog extends JDialog {
 						return buys.get(i);
 					}
 				});
-				_sellmList.setModel(new javax.swing.AbstractListModel() {
+				_sellmList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
 
 					public int getSize() {
 						return sells.size();

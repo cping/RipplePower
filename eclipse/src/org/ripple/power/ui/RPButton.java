@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2014 retailbootstrap.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 package org.ripple.power.ui;
 
 import java.awt.Color;
@@ -27,12 +12,15 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 
 import org.bootstrap.ui.ButtonUI;
-import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.GraphicsUtils;
 
 
 public class RPButton extends JButton {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected Color selectColor = Color.decode("#EBEBEB");
 	protected Color focusColor = Color.decode("#EBEBEB");
 	protected Color disabledTextColor = Color.decode("#878787");

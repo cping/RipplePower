@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -21,25 +20,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
-import net.miginfocom.layout.LC;
 
 import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
-import org.ripple.power.helper.Paramaters;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
-import org.ripple.power.utils.BigDecimalUtil;
-import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;

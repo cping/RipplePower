@@ -6,15 +6,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -214,8 +209,8 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.add(_trustLabel);
 		_trustLabel.setBounds(10, 220, 80, 16);
 
-		_curList.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
-				"CNY", "BTC", "USD", "JPY" }));
+		_curList.setItemModel(new String[] {
+				"CNY", "BTC", "USD", "JPY" });
 		jPanel1.add(_curList);
 		_curList.setBounds(90, 70, 130, 21);
 
@@ -230,7 +225,12 @@ public class RPGatewayDialog extends JDialog {
 
 		final String[] gatewaystrings = Gateway.gatewayList();
 
-		_listGateway.setModel(new javax.swing.AbstractListModel() {
+		_listGateway.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
 				return gatewaystrings.length;
@@ -256,8 +256,8 @@ public class RPGatewayDialog extends JDialog {
 
 						}
 						_ioulistTable.updateUI();
-						_curList.setModel(new javax.swing.DefaultComboBoxModel(
-								_iouList.toArray()));
+						_curList.setItemModel(
+								_iouList.toArray());
 						if (Gateway.getAddress(name).accounts.size() > 0) {
 							_addressText.setText(Gateway.getAddress(name).accounts
 									.get(0).address);
@@ -274,7 +274,12 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(jScrollPane2);
 		jScrollPane2.setBounds(10, 40, 170, 230);
 
-		_ioulistTable.setModel(new javax.swing.AbstractListModel() {
+		_ioulistTable.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
 				return _iouList.size();
@@ -301,18 +306,6 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-		_myGateway.setModel(new javax.swing.AbstractListModel() {
-
-			String[] list = new String[] { "Empty" };
-
-			public int getSize() {
-				return list.length;
-			}
-
-			public Object getElementAt(final int i) {
-				return list[0];
-			}
-		});
 
 		jScrollPane3.setViewportView(_myGateway);
 
@@ -469,9 +462,15 @@ public class RPGatewayDialog extends JDialog {
 				public void action(Object o) {
 					if (o != null) {
 						if (o instanceof ArrayList) {
+							@SuppressWarnings("unchecked")
 							final ArrayList<IssuedCurrency> lines = (ArrayList<IssuedCurrency>) o;
 							_myGateway
-									.setModel(new javax.swing.AbstractListModel() {
+									.setModel(new javax.swing.AbstractListModel<Object>() {
+
+										/**
+										 * 
+										 */
+										private static final long serialVersionUID = 1L;
 
 										public int getSize() {
 											return lines.size();

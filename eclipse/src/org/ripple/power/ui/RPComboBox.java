@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JComboBox;
 
-public class RPComboBox extends JComboBox{
+public class RPComboBox extends JComboBox<Object>{
 
 	/**
 	 * 
@@ -14,5 +14,10 @@ public class RPComboBox extends JComboBox{
 	public RPComboBox(){
 		setBackground(new Color(70, 70, 70));
 		setForeground(Color.WHITE);
+	}
+	
+	public void setItemModel(Object[] args){
+		setModel(new javax.swing.DefaultComboBoxModel<Object>(
+				args));
 	}
 }

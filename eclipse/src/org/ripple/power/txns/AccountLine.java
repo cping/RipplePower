@@ -20,6 +20,10 @@ public class AccountLine {
 		this.currency = currency;
 		this.amount = amount;
 	}
+	
+	public String toString(){
+		return get().toGatewayString();
+	}
 
 	public IssuedCurrency get() {
 		if (_currency == null) {

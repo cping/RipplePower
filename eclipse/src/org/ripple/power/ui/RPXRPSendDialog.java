@@ -24,15 +24,13 @@ import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-import com.google.zxing.common.StringUtils;
-
 public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	// Variables declaration - do not modify
+
 	private RPCButton _sendButton;
 	private RPCButton _exitButton;
 	private RPLabel _feeLabel;
@@ -43,7 +41,6 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	private RPTextBox _amountText;
 	private RPTextBox _feeText;
 
-	// End of variables declaration
 
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
@@ -235,13 +232,4 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		SwingUtils.close(this);
 	}
-
-	public static void main(String[] args) {
-		double fee = 0.01f;
-		for (long l = 0; l < 100000; l += 50000) {
-			fee += 0.005f;
-		}
-		System.out.println(fee);
-	}
-
 }

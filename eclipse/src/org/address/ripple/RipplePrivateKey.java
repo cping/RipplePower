@@ -57,6 +57,7 @@ public class RipplePrivateKey extends RippleIdentifier {
 		BigInteger privateBI = new BigInteger(1, this.payloadBytes);
 		ECPoint uncompressed = RippleGenerator.SECP256K1_PARAMS.getG()
 				.multiply(privateBI);
+		@SuppressWarnings("deprecation")
 		ECPoint publicPoint = new ECPoint.Fp(
 				RippleGenerator.SECP256K1_PARAMS.getCurve(),
 				uncompressed.getX(), uncompressed.getY(), true);

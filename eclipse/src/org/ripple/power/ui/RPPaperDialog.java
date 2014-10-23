@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
@@ -24,12 +23,8 @@ import org.ripple.power.print.PrintImageOutput;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
-import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.SwingUtils;
-import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCryptos;
-import org.ripple.power.wallet.WalletCryptos.EncryptException;
-import org.ripple.power.wallet.WalletSeed;
 
 public class RPPaperDialog extends JDialog implements ActionListener {
 
