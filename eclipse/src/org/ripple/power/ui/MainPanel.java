@@ -281,6 +281,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Secret);
 		addPopMenu(LangConfig.get(this, "send_money", "Send Money"),
 				CommandFlag.SendCoin);
+		addPopMenu(LangConfig.get(this, "details_address", "Details Address"),
+				CommandFlag.DetailsAddress);
 		addPopMenu(LangConfig.get(this, "control_gateway", "Control Gateway"),
 				CommandFlag.Gateway);
 		addPopMenu(LangConfig.get(this, "to_exchange", "To Exchange"),

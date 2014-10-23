@@ -1,12 +1,14 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
 
 import javax.swing.JPopupMenu;
 import javax.swing.border.Border;
+
+import org.ripple.power.helper.Gradation;
+import org.ripple.power.utils.LColor;
 
 public class RPPopupMenu extends JPopupMenu {
 
@@ -17,9 +19,9 @@ public class RPPopupMenu extends JPopupMenu {
 
 	public class RoundedBorder implements Border {
 		private int radius;
-		private Color color;
+		private LColor color;
 
-		public RoundedBorder(int radius, Color color) {
+		public RoundedBorder(int radius, LColor color) {
 			this.radius = radius;
 			this.color = color;
 		}
@@ -37,13 +39,28 @@ public class RPPopupMenu extends JPopupMenu {
 				int width, int height) {
 			g.setColor(color);
 			g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+			g.setColor(LColor.black);
+			g.drawRoundRect(x, y, width - 2, height - 2, radius, radius);
 		}
 	}
 
-	protected Color BORDER_GRAY = new Color(119, 119, 119);
+	private Gradation _gradation;
+
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (_gradation == null) {
+			_gradation = Gradation.getInstance(LColor.WHITE, LColor.BLACK,
+					getWidth(), getHeight(), 255);
+		}
+		_gradation.drawHeight(g, 0, 0);
+
+	}
+
+	protected LColor BORDER_GRAY = new LColor(119, 119, 119);
 
 	public RPPopupMenu() {
 		this.setBorder(new RoundedBorder(10, BORDER_GRAY));
-		this.setBackground(new Color(245, 245, 245));
+		this.setBackground(new LColor(245, 245, 245));
+		this.setOpaque(true);
 	}
 }
