@@ -198,7 +198,6 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		getContentPane().setBackground(new Color(36, 36, 36));
 		_currencyLabel = new RPLabel();
 		_curComboBox = new RPComboBox();
 		_okButton = new RPCButton();
@@ -599,7 +598,7 @@ public class RPExchangeDialog extends JDialog {
 			_oksellButton.setEnabled(false);
 			_canceltradingButton.setEnabled(false);
 		}
-
+		getContentPane().setBackground(LSystem.dialogbackground);
 		pack();
 	}// </editor-fold>
 

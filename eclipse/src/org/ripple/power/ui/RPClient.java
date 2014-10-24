@@ -68,7 +68,7 @@ public class RPClient {
 		Session session = LSystem.session("ripple_node");
 		String result = session.get("data");
 		if (result == null) {
-			if ("宋体".equals(LangConfig.fontName)) {
+			if (LangConfig.isEast()) {
 				return applicationRippleLabes[2];
 			} else {
 				return applicationRippleLabes[MathUtils.random(0,

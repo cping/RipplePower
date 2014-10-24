@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -280,7 +279,7 @@ public class RPAccountInfoDialog extends JDialog {
 	}
 
 	private void initComponents(String address) {
-		getContentPane().setBackground(new Color(36, 36, 36));
+
 		_addressLabel = new RPLabel();
 		_addressText = new RPTextBox();
 		_loadButton = new RPCButton();
@@ -401,7 +400,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_issuedLabel.setText(LangConfig.get(this, "issued", "Currency issued"));
 		getContentPane().add(_issuedLabel);
 		_issuedLabel.setBounds(20, 220, 190, 20);
-
+		getContentPane().setBackground(LSystem.dialogbackground);
 		pack();
 
 	}// </editor-fold>

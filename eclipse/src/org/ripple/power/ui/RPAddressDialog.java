@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -361,7 +360,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	}
 
 	private void initUI() {
-		getContentPane().setBackground(new Color(36, 36, 36));
+		getContentPane().setBackground(LSystem.dialogbackground);
 		pBrainButton = new RPRadioButton();
 		pPassButton = new RPRadioButton();
 		pPaperButton = new RPRadioButton();

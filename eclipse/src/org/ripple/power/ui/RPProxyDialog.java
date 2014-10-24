@@ -6,6 +6,8 @@ import java.awt.Dialog;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.ripple.power.config.LSystem;
+
 public class RPProxyDialog extends JDialog {
 
 	/**
@@ -52,8 +54,7 @@ public class RPProxyDialog extends JDialog {
 	}
 
 	private void initComponents() {
-
-		getContentPane().setBackground(new Color(36, 36, 36));
+		getContentPane().setBackground(LSystem.dialogbackground);
 		jLabel1 = new RPLabel();
 		jLabel2 = new RPLabel();
 		deviceKey = new RPTextBox();

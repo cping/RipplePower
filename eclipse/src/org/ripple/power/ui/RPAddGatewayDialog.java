@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -155,7 +154,7 @@ public class RPAddGatewayDialog extends JDialog {
 		if (tmp != null) {
 			_gateways.addAll(tmp);
 		}
-		getContentPane().setBackground(new Color(36, 36, 36));
+		getContentPane().setBackground(LSystem.dialogbackground);
 		_iouNameLabel = new RPLabel();
 		_gatewayAddressText = new RPTextBox();
 		_addressNameText = new RPTextBox();

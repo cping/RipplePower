@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -72,7 +71,6 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 			String address, String amount, String fee) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 
-		getContentPane().setBackground(new Color(36, 36, 36));
 		_feeLabel = new RPLabel();
 		_addressLabel = new RPLabel();
 		_amountLabel = new RPLabel();
@@ -232,7 +230,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		});
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(312, 159, 57, 23);
-
+		getContentPane().setBackground(LSystem.dialogbackground);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package org.ripple.power.config;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,15 +12,22 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.UnknownHostException;
+import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.SwingUtilities;
 
 import org.address.NativeSupport;
 import org.ripple.power.i18n.Language;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -31,6 +37,336 @@ public final class LSystem {
 	public final static String FEE = "0.012";
 
 	public final static String nativeCurrency = "xrp";
+
+	final public static ArrayList<String> send_addresses = new ArrayList<String>(
+			1000);
+
+	final static public LColor background = new LColor(88, 63, 126);
+
+	final static public LColor dialogbackground = new LColor(36, 36, 36);
+
+	final static public long SECOND = 1000;
+	final static public long MINUTE = SECOND * 60;
+	final static public long MSEC = 1L;
+	final static public long SEC = 1000 * MSEC;
+	final static public long MIN = 60 * SEC;
+	final static public long HOUR = 60 * MIN;
+	final static public long DAY = 24 * HOUR;
+	final static public long WEEK = 7 * DAY;
+	final static public long MONTH = 31 * DAY;
+	final static public long YEAR = 365 * DAY;
+
+	public static final int DEFAULT_MAX_CACHE_SIZE = 20;
+
+	public static final String applicationName = "RipplePower";
+
+	public static final String applicationVersion = "0.1";
+
+	public static final String walletName = "ripple_wallet.dat";
+
+	public static final char[] hex16 = "0123456789abcdef".toCharArray();
+
+	private static String applicationDataDirectory = null;
+
+	public static String applicationPassword = "mynameiscping0o5498^%1032%%76!7*(%$.com%.~";
+
+	public static Proxy applicationProxy = null;
+
+	public static MainForm applicationMain = null;
+
+	public static Language applicationLang = Language.DEF;
+
+	public static long applicationSleep = SECOND * 30;
+
+	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
+			100);
+
+	private static boolean _isWindows = false;
+	private static boolean _isWindowsNTor2000 = false;
+	private static boolean _isWindowsXP = false;
+	private static boolean _isWindowsVista = false;
+	private static boolean _isWindows7 = false;
+	private static boolean _isWindows8 = false;
+	private static boolean _isWindows2003 = false;
+	private static boolean _isClassicWindows = false;
+	private static boolean _isWindows95 = false;
+	private static boolean _isWindows98 = false;
+	private static boolean _supportsTray = false;
+	private static boolean _isMacClassic = false;
+	private static boolean _isMacOSX = false;
+	private static boolean _isLinux = false;
+	private static boolean _isSolaris = false;
+	private static JavaVersion _currentVersion;
+
+	static {
+		String os = getProperty("os.name", "Windows XP");
+		_isWindows = os.indexOf("Windows") != -1;
+		try {
+			String osVersion = getProperty("os.version", "5.0");
+			Float version = Float.valueOf(osVersion);
+			_isClassicWindows = version <= 4.0;
+		} catch (NumberFormatException ex) {
+			_isClassicWindows = false;
+		}
+		if (os.indexOf("Windows XP") != -1 || os.indexOf("Windows NT") != -1
+				|| os.indexOf("Windows 2000") != -1) {
+			_isWindowsNTor2000 = true;
+		}
+		if (os.indexOf("Windows XP") != -1) {
+			_isWindowsXP = true;
+		}
+		if (os.indexOf("Windows Vista") != -1) {
+			_isWindowsVista = true;
+		}
+		if (os.indexOf("Windows 7") != -1) {
+			_isWindows7 = true;
+		}
+		if (os.indexOf("Windows 8") != -1) {
+			_isWindows8 = true;
+		}
+		if (os.indexOf("Windows 2003") != -1) {
+			_isWindows2003 = true;
+			_isWindowsXP = true;
+		}
+		if (os.indexOf("Windows 95") != -1) {
+			_isWindows95 = true;
+		}
+		if (os.indexOf("Windows 98") != -1) {
+			_isWindows98 = true;
+		}
+		if (_isWindows)
+			_supportsTray = true;
+		_isSolaris = (os.indexOf("Solaris") != -1)
+				|| (os.indexOf("SunOS") != -1);
+		_isLinux = os.indexOf("Linux") != -1;
+		if (os.startsWith("Mac OS")) {
+			if (os.endsWith("X")) {
+				_isMacOSX = true;
+			} else {
+				_isMacClassic = true;
+			}
+		}
+	}
+
+	public static void putThread(final Runnable runnable) {
+		ThreadPoolService.addWork(runnable);
+	}
+
+	public static void submitThread() {
+		ThreadPoolService.exectueAll();
+	}
+
+	public static Thread postThread(final Updateable update) {
+		Thread thread = new Thread() {
+			public void run() {
+				if (update != null) {
+					update.action(null);
+				}
+			}
+		};
+		thread.start();
+		return thread;
+	}
+
+	public static void invokeLater(final Updateable update) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (update != null) {
+					update.action(null);
+				}
+			}
+		});
+	}
+
+	public static String getProperty(String key, String defaultValue) {
+		try {
+			return System.getProperty(key, defaultValue);
+		} catch (AccessControlException e) {
+			return defaultValue;
+		}
+	}
+
+	public static String getJavaVersion() {
+		return getProperty("java.version", "1.4.2");
+	}
+
+	public static String getJavaVendor() {
+		return getProperty("java.vendor", "");
+	}
+
+	public static String getJavaClassVersion() {
+		return getProperty("java.class.version", "");
+	}
+
+	public static String getOS() {
+		return getProperty("os.name", "Windows XP");
+	}
+
+	public static String getOSVersion() {
+		return getProperty("os.version", "");
+	}
+
+	public static String getOSArchitecture() {
+		return getProperty("os.arch", "");
+	}
+
+	public static String getCurrentDirectory() {
+		return getProperty("user.dir", "");
+	}
+
+	public static boolean supportsTray() {
+		return _supportsTray;
+	}
+
+	public static void setSupportsTray(boolean support) {
+		_supportsTray = support;
+	}
+
+	public static boolean isWindows() {
+		return _isWindows;
+	}
+
+	public static boolean isClassicWindows() {
+		return _isClassicWindows;
+	}
+
+	public static boolean isWindowsNTor2000() {
+		return _isWindowsNTor2000;
+	}
+
+	public static boolean isWindowsXP() {
+		return _isWindowsXP;
+	}
+
+	public static boolean isWindowsVista() {
+		return _isWindowsVista;
+	}
+
+	public static boolean isWindows7() {
+		return _isWindows7;
+	}
+
+	public static boolean isWindows8() {
+		return _isWindows8;
+	}
+
+	public static boolean isWindowsVistaAbove() {
+		return _isWindowsVista || _isWindows7 || _isWindows8;
+	}
+
+	public static boolean isWindows95() {
+		return _isWindows95;
+	}
+
+	public static boolean isWindows98() {
+		return _isWindows98;
+	}
+
+	public static boolean isWindows2003() {
+		return _isWindows2003;
+	}
+
+	public static boolean isMacClassic() {
+		return _isMacClassic;
+	}
+
+	public static boolean isMacOSX() {
+		return _isMacOSX;
+	}
+
+	public static boolean isAnyMac() {
+		return _isMacClassic || _isMacOSX;
+	}
+
+	public static boolean isSolaris() {
+		return _isSolaris;
+	}
+
+	public static boolean isLinux() {
+		return _isLinux;
+	}
+
+	public static boolean isUnix() {
+		return _isLinux || _isSolaris;
+	}
+
+	private static void checkJdkVersion() {
+		if (_currentVersion == null) {
+			_currentVersion = new JavaVersion(getJavaVersion());
+		}
+	}
+
+	public static boolean isJdk13Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.3, 0, 0) >= 0;
+	}
+
+	public static boolean isJdk142Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.4, 2, 0) >= 0;
+	}
+
+	public static boolean isJdk14Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.4, 0, 0) >= 0;
+	}
+
+	public static boolean isJdk15Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.5, 0, 0) >= 0;
+	}
+
+	public static boolean isJdk6Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.6, 0, 0) >= 0;
+	}
+
+	public static boolean isJdk6u10Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.6, 0, 10) >= 0;
+	}
+
+	public static boolean isJdk6u14Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.6, 0, 14) >= 0;
+	}
+
+	public static boolean isJdk6u25Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.6, 0, 25) >= 0;
+	}
+
+	public static boolean isJdk7Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.7, 0, 0) >= 0;
+	}
+
+	public static boolean isJdk8Above() {
+		checkJdkVersion();
+		return _currentVersion.compareVersion(1.8, 0, 0) >= 0;
+	}
+
+	public static boolean isJdkVersion(double majorVersion, int minorVersion,
+			int build) {
+		checkJdkVersion();
+		return _currentVersion
+				.compareVersion(majorVersion, minorVersion, build) == 0;
+	}
+
+	public static boolean isJdkVersionAbove(double majorVersion,
+			int minorVersion, int build) {
+		checkJdkVersion();
+		return _currentVersion
+				.compareVersion(majorVersion, minorVersion, build) >= 0;
+	}
+
+	public static boolean isJdkVersionBelow(double majorVersion,
+			int minorVersion, int build) {
+		checkJdkVersion();
+		return _currentVersion
+				.compareVersion(majorVersion, minorVersion, build) <= 0;
+	}
 
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
@@ -84,47 +420,6 @@ public final class LSystem {
 			}
 		}
 	}
-
-	final public static ArrayList<String> send_addresses = new ArrayList<String>(
-			1000);
-
-	final static public Color background = Color.decode("#583F7E");
-
-	final static public long SECOND = 1000;
-	final static public long MINUTE = SECOND * 60;
-	final static public long MSEC = 1L;
-	final static public long SEC = 1000 * MSEC;
-	final static public long MIN = 60 * SEC;
-	final static public long HOUR = 60 * MIN;
-	final static public long DAY = 24 * HOUR;
-	final static public long WEEK = 7 * DAY;
-	final static public long MONTH = 31 * DAY;
-	final static public long YEAR = 365 * DAY;
-
-	public static final int DEFAULT_MAX_CACHE_SIZE = 20;
-
-	public static final String applicationName = "RipplePower";
-
-	public static final String applicationVersion = "0.1";
-
-	public static final String walletName = "ripple_wallet.dat";
-
-	public static final char[] hex16 = "0123456789abcdef".toCharArray();
-
-	private static String applicationDataDirectory = null;
-
-	public static String applicationPassword = "mynameiscping0o5498^%1032%%76!7*(%$.com%.~";
-
-	public static Proxy applicationProxy = null;
-
-	public static MainForm applicationMain = null;
-
-	public static Language applicationLang = Language.DEF;
-
-	public static long applicationSleep = SECOND * 30;
-
-	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
-			100);
 
 	public static String getIPAddress() throws UnknownHostException {
 		InetAddress address = InetAddress.getLocalHost();
@@ -381,6 +676,95 @@ public final class LSystem {
 
 	public static int unite(int hashCode, int value) {
 		return 31 * hashCode + value;
+	}
+
+	public static class JavaVersion {
+
+		private static Pattern SUN_JAVA_VERSION = Pattern
+				.compile("(\\d+\\.\\d+)(\\.(\\d+))?(_([^-]+))?(.*)");
+		private static Pattern SUN_JAVA_VERSION_SIMPLE = Pattern
+				.compile("(\\d+\\.\\d+)(\\.(\\d+))?(.*)");
+		private double _majorVersion;
+		private int _minorVersion;
+		private int _buildNumber;
+		private String _patch;
+
+		public JavaVersion(String version) {
+			_majorVersion = 1.4;
+			_minorVersion = 0;
+			_buildNumber = 0;
+			try {
+				Matcher matcher = SUN_JAVA_VERSION.matcher(version);
+				if (matcher.matches()) {
+					int groups = matcher.groupCount();
+					_majorVersion = Double.parseDouble(matcher.group(1));
+					if (groups >= 3 && matcher.group(3) != null) {
+						_minorVersion = Integer.parseInt(matcher.group(3));
+					}
+					if (groups >= 5 && matcher.group(5) != null) {
+						try {
+							_buildNumber = Integer.parseInt(matcher.group(5));
+						} catch (NumberFormatException e) {
+							_patch = matcher.group(5);
+						}
+					}
+					if (groups >= 6 && matcher.group(6) != null) {
+						String s = matcher.group(6);
+						if (s != null && s.trim().length() > 0)
+							_patch = s;
+					}
+				}
+			} catch (NumberFormatException e) {
+				try {
+					Matcher matcher = SUN_JAVA_VERSION_SIMPLE.matcher(version);
+					if (matcher.matches()) {
+						int groups = matcher.groupCount();
+						_majorVersion = Double.parseDouble(matcher.group(1));
+						if (groups >= 3 && matcher.group(3) != null) {
+							_minorVersion = Integer.parseInt(matcher.group(3));
+						}
+					}
+				} catch (NumberFormatException e1) {
+					System.err
+							.println("Please check the installation of your JDK. The version number "
+									+ version + " is not right.");
+				}
+			}
+		}
+
+		public JavaVersion(double major, int minor, int build) {
+			_majorVersion = major;
+			_minorVersion = minor;
+			_buildNumber = build;
+		}
+
+		public int compareVersion(double major, int minor, int build) {
+			double majorResult = _majorVersion - major;
+			if (majorResult != 0) {
+				return majorResult < 0 ? -1 : 1;
+			}
+			int result = _minorVersion - minor;
+			if (result != 0) {
+				return result;
+			}
+			return _buildNumber - build;
+		}
+
+		public double getMajorVersion() {
+			return _majorVersion;
+		}
+
+		public int getMinorVersion() {
+			return _minorVersion;
+		}
+
+		public int getBuildNumber() {
+			return _buildNumber;
+		}
+
+		public String getPatch() {
+			return _patch;
+		}
 	}
 
 }

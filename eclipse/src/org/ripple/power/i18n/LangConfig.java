@@ -1,5 +1,6 @@
 package org.ripple.power.i18n;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.ripple.power.config.LSystem;
@@ -13,7 +14,19 @@ public class LangConfig {
 	private static I18nSupport _javai18n;
 
 	public static String fontName = "Dialog";
-	
+
+	public static boolean isEast() {
+		return isEastLocale(Language.DEF.getLocale());
+	}
+
+	public static boolean isEastLocale(Locale locale) {
+		return locale.equals(Locale.CHINA) || locale.equals(Locale.CHINESE)
+				|| locale.equals(new Locale("zh", "HK"))
+				|| locale.equals(Locale.TAIWAN) || locale.equals(Locale.JAPAN)
+				|| locale.equals(Locale.JAPANESE)
+				|| locale.equals(Locale.KOREA) || locale.equals(Locale.KOREAN);
+	}
+
 	public static void addJavaI18n(ResourceBundle resourceBundle,
 			Language language) {
 		initJavaI18n();
@@ -72,7 +85,7 @@ public class LangConfig {
 		}
 	}
 
-	private synchronized static void initJavaI18n(){
+	private synchronized static void initJavaI18n() {
 		if (_javai18n == null) {
 			_javai18n = new I18nSupport();
 		}
@@ -95,8 +108,8 @@ public class LangConfig {
 		if (result == null) {
 			return _config.getValue(res, value);
 		}
-		if(_javai18n != null&&_javai18n.isDirty()){
-				return _javai18n.translate(res, LSystem.applicationLang);
+		if (_javai18n != null && _javai18n.isDirty()) {
+			return _javai18n.translate(res, LSystem.applicationLang);
 		}
 		return result;
 	}

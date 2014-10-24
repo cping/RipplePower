@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -84,7 +83,7 @@ public class RPIOUSendDialog extends JDialog {
 
 		_walletItem = item;
 
-		getContentPane().setBackground(new Color(36, 36, 36));
+		getContentPane().setBackground(LSystem.dialogbackground);
 		_feeLabel = new RPLabel();
 		_curList = new RPComboBox();
 		_sendButton = new RPCButton();

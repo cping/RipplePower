@@ -358,8 +358,8 @@ public class MainPanel extends JPanel implements ActionListener {
 	private void submitActionCommand(String actionName) {
 		try {
 			if (actionName.equals(CommandFlag.RippledNodeS)) {
-				RPSimpleRippledConfigDialog.showDialog(LangConfig.get(
-						RPSimpleRippledConfigDialog.class, "update_node",
+				RPSRippledDialog.showDialog(LangConfig.get(
+						RPSRippledDialog.class, "update_node",
 						"Rippled Node"), LSystem.applicationMain);
 				return;
 			}

@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import javax.swing.JRadioButton;
 
+import org.ripple.power.config.LSystem;
+
 public class RPRadioButton extends JRadioButton{
 	/**
 	 * 
@@ -11,7 +13,7 @@ public class RPRadioButton extends JRadioButton{
 	private static final long serialVersionUID = 1L;
 	
 	public RPRadioButton(){
-		setBackground(new Color(36, 36, 36));
+		setBackground(LSystem.dialogbackground);
 		setForeground(Color.WHITE);
 	}
 }

@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -138,7 +137,6 @@ public class RPGatewayDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		getContentPane().setBackground(new Color(36, 36, 36));
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jScrollPane3 = new javax.swing.JScrollPane();
@@ -516,7 +514,7 @@ public class RPGatewayDialog extends JDialog {
 		_createGatewayButton.setText(LangConfig.get(this, "create", "Create"));
 		getContentPane().add(_createGatewayButton);
 		_createGatewayButton.setBounds(10, 540, 100, 30);
-
+		getContentPane().setBackground(LSystem.dialogbackground);
 		emptyAddress();
 		loadTrust();
 		pack();

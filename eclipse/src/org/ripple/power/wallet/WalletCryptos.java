@@ -1,14 +1,21 @@
 package org.ripple.power.wallet;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -18,6 +25,23 @@ import javax.crypto.spec.SecretKeySpec;
 import org.ripple.power.config.LSystem;
 
 public class WalletCryptos {
+
+	public static final String AES = "AES";
+
+	private final File _file;
+
+	public WalletCryptos(File file) {
+		super();
+		this._file = file;
+	}
+
+	public String encrypt(String value) throws Exception {
+		return encrypt(value, _file);
+	}
+
+	public String decrypt(String message) throws Exception {
+		return decrypt(message, _file);
+	}
 
 	public static class DecryptException extends Exception {
 
@@ -49,6 +73,77 @@ public class WalletCryptos {
 		public EncryptException() {
 			super();
 		}
+	}
+
+	public static String encrypt(String value, File keyFile)
+			throws GeneralSecurityException, IOException {
+		if (!keyFile.exists()) {
+			KeyGenerator keyGen = KeyGenerator.getInstance(AES);
+			keyGen.init(128);
+			SecretKey sk = keyGen.generateKey();
+			FileWriter fw = new FileWriter(keyFile);
+			fw.write(byteArrayToHexString(sk.getEncoded()));
+			fw.flush();
+			fw.close();
+		}
+		SecretKeySpec sks = getSecretKeySpec(keyFile);
+		Cipher cipher = Cipher.getInstance(AES);
+		cipher.init(Cipher.ENCRYPT_MODE, sks, cipher.getParameters());
+		byte[] encrypted = cipher.doFinal(value.getBytes());
+		return byteArrayToHexString(encrypted);
+	}
+
+	public static String decrypt(String message, File keyFile)
+			throws GeneralSecurityException, IOException {
+		SecretKeySpec sks = getSecretKeySpec(keyFile);
+		Cipher cipher = Cipher.getInstance(AES);
+		cipher.init(Cipher.DECRYPT_MODE, sks);
+		byte[] decrypted = cipher.doFinal(hexStringToByteArray(message));
+		return new String(decrypted);
+	}
+
+	private static SecretKeySpec getSecretKeySpec(File keyFile)
+			throws NoSuchAlgorithmException, IOException {
+		byte[] key = readKeyFile(keyFile);
+		SecretKeySpec sks = new SecretKeySpec(key, AES);
+		return sks;
+	}
+
+	private static byte[] readKeyFile(File keyFile)
+			throws FileNotFoundException {
+		Scanner scanner = null;
+		String keyValue;
+		try {
+			scanner = new Scanner(keyFile).useDelimiter("\\Z");
+			keyValue = scanner.next();
+		} finally {
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+		return hexStringToByteArray(keyValue);
+	}
+
+	private static String byteArrayToHexString(byte[] b) {
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		for (int i = 0; i < b.length; i++) {
+			int v = b[i] & 0xff;
+			if (v < 16) {
+				sb.append('0');
+			}
+			sb.append(Integer.toHexString(v));
+		}
+		return sb.toString().toUpperCase();
+	}
+
+	private static byte[] hexStringToByteArray(String s) {
+		byte[] b = new byte[s.length() / 2];
+		for (int i = 0; i < b.length; i++) {
+			int index = i * 2;
+			int v = Integer.parseInt(s.substring(index, index + 2), 16);
+			b[i] = (byte) v;
+		}
+		return b;
 	}
 
 	public static byte[] encrypt(String passphrase, byte[] plaintext)
@@ -106,7 +201,7 @@ public class WalletCryptos {
 				.getInstance("PBKDF2WithHmacSHA1");
 		SecretKey tmp = factory.generateSecret(new PBEKeySpec(passphrase
 				.toCharArray(), salt, iterations, 128));
-		return new SecretKeySpec(tmp.getEncoded(), "AES");
+		return new SecretKeySpec(tmp.getEncoded(), AES);
 	}
 
 	private static byte[] encrypt(SecretKeySpec key, byte[] plaintext)
