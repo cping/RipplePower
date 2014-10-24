@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import org.address.NativeSupport;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.ui.MainForm;
 import org.ripple.power.utils.MathUtils;
@@ -34,8 +35,8 @@ public final class LSystem {
 
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
-		LSystem.sendRESTCoin(address, name, label, amount, nativeCurrency.toUpperCase(),
-				MathUtils.random(1, 9999));
+		LSystem.sendRESTCoin(address, name, label, amount,
+				nativeCurrency.toUpperCase(), MathUtils.random(1, 9999));
 	}
 
 	public static void sendRESTCoin(String address, String name, String label,
@@ -117,10 +118,6 @@ public final class LSystem {
 
 	public static Proxy applicationProxy = null;
 
-	public static String[] applicationRipples = new String[] {
-			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
-			"wss://s-east.ripple.com:443" };
-
 	public static MainForm applicationMain = null;
 
 	public static Language applicationLang = Language.DEF;
@@ -129,6 +126,19 @@ public final class LSystem {
 
 	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
 			100);
+
+	private final static String[] applicationRippleLabes = new String[] {
+			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
+			"wss://s-east.ripple.com:443" };
+
+	public static String getRippledNode() {
+		if ("宋体".equals(LangConfig.fontName)) {
+			return applicationRippleLabes[2];
+		} else {
+			return LSystem.applicationRippleLabes[MathUtils.random(0,
+					LSystem.applicationRippleLabes.length - 1)];
+		}
+	}
 
 	public static String getIPAddress() throws UnknownHostException {
 		InetAddress address = InetAddress.getLocalHost();

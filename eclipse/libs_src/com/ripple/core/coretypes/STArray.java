@@ -76,7 +76,6 @@ public class STArray extends ArrayList<STObject> implements SerializedType {
 				try {
 					Object o = jsonArray.get(i);
 					arr.add(STObject.fromJSONObject((JSONObject) o));
-
 				} catch (JSONException e) {
 					throw new RuntimeException(e);
 				}

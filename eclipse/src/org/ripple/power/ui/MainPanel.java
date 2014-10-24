@@ -67,8 +67,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	protected String getWalletText(String s1, String s2) {
 		return String
-				.format("<html><h3><strong><font color=white>Wallet </font><font color=yellow>%s</font><font color=white> XRP </font><font size=3 color=yellow>(Rippled Status:%s)</font></strong></h3> </html>",
-						s1, s2);
+				.format("<html><h3><strong><font color=white>Wallet </font><font color=yellow>%s</font><font color=white> XRP </font><font size=3 color=yellow>(Rippled Node:%s Status:%s)</font></strong></h3> </html>",
+						s1, RPClient.ripple().getNodePath(), s2);
 	}
 
 	private RPPopupMenu popMenu = new RPPopupMenu();

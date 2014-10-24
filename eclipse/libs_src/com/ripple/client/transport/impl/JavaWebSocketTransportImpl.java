@@ -17,7 +17,7 @@ class WS extends WebSocketClient {
 	WeakReference<TransportEventHandler> h;
 
 	public WS(URI serverURI) {
-		super(serverURI, new Draft_17());
+		super(serverURI, new Draft_17(), null, 10000);
 	}
 
 	public void setProxy(Proxy proxy) {

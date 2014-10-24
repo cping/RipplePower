@@ -1,11 +1,15 @@
 package org.ripple.power.ui;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.qr.WebRippled;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.client.Client;
@@ -23,7 +27,78 @@ public class RPClient {
 
 	private static RPClient _rippleClient = null;
 
-	ArrayList<Updateable> loads = new ArrayList<Updateable>(10);;
+	private final ArrayList<Updateable> loads = new ArrayList<Updateable>(10);
+
+	public static ArrayList<String> loadRippleLabsIPS() {
+		ArrayList<String> list = new ArrayList<String>(30);
+		WebRippled rippled = loadWebRippledConfig("https://ripple.com/ripple.txt");
+		for (String ips : rippled.ips) {
+			String result = StringUtils.split(ips, " ")[0];
+			list.add(result);
+		}
+		return list;
+	}
+
+	public static WebRippled loadWebRippledConfig(String url) {
+		WebRippled rippled = new WebRippled();
+		HttpRequest request = HttpRequest.get(url);
+		if (request.ok()) {
+			String result = request.body();
+			StringTokenizer str = new StringTokenizer(result, "\n");
+			int flagNext = -1;
+			for (; str.hasMoreTokens();) {
+				String context = str.nextToken().trim();
+				if (context != null && context.length() > 0) {
+					if (context.startsWith("[")) {
+						if ("[accounts]".equals(context)) {
+							flagNext = 0;
+						} else if ("[validation_public_key]".equals(context)) {
+							flagNext = 1;
+						} else if ("[domain]".equals(context)) {
+							flagNext = 2;
+						} else if ("[ips]".equals(context)) {
+							flagNext = 3;
+						} else if ("[validators]".equals(context)) {
+							flagNext = 4;
+						} else if ("[authinfo_url]".equals(context)) {
+							flagNext = 5;
+						} else {
+							flagNext = -1;
+						}
+						continue;
+					}
+					switch (flagNext) {
+					case 0:
+						rippled.accounts.add(context);
+						break;
+					case 1:
+						rippled.validation_public_key.add(context);
+						break;
+					case 2:
+						rippled.domain.add(context);
+						break;
+					case 3:
+						rippled.ips.add(context);
+						break;
+					case 4:
+						rippled.validators.add(context);
+						break;
+					case 5:
+						rippled.authinfo_url.add(context);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return rippled;
+
+	}
+
+	public static void main(String[] args) {
+		loadRippleLabsIPS();
+	}
 
 	public void addLoad(Updateable u) {
 		synchronized (loads) {
@@ -66,9 +141,8 @@ public class RPClient {
 	}
 
 	public static RPClient ripple() {
-		final long sleep = LSystem.applicationSleep;
-		synchronized (RPClient.class) {
-			if (_rippleClient == null) {
+		if (_rippleClient == null) {
+			synchronized (RPClient.class) {
 				_rippleClient = new RPClient();
 				if (!testing) {
 					Runnable runnable = new Runnable() {
@@ -90,6 +164,7 @@ public class RPClient {
 									}
 								}
 								_rippleClient.load();
+								final long sleep = LSystem.applicationSleep;
 								if (sleep > 0) {
 									try {
 										Thread.sleep(sleep);
@@ -105,11 +180,13 @@ public class RPClient {
 					thread.start();
 				}
 			}
-			return _rippleClient;
 		}
+		return _rippleClient;
 	}
 
 	private final Client pClinet;
+
+	private String node_path = "unkown";
 
 	public RPClient() {
 		ClientLogger.quiet = true;
@@ -118,9 +195,13 @@ public class RPClient {
 			pClinet.setProxy(LSystem.applicationProxy);
 		}
 		if (!testing) {
-			pClinet.connect(LSystem.applicationRipples[MathUtils.random(0,
-					LSystem.applicationRipples.length - 1)]);
+			node_path = LSystem.getRippledNode();
+			pClinet.connect(node_path);
 		}
+	}
+
+	public String getNodePath() {
+		return node_path;
 	}
 
 	public AccountID getAccountID(String address) {

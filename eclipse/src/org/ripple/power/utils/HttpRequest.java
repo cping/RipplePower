@@ -806,8 +806,8 @@ public class HttpRequest {
 				connection = CONNECTION_FACTORY.create(url);
 			}
 			connection.setRequestMethod(requestMethod);
-			connection.setConnectTimeout(8000);
-			connection.setReadTimeout(8000);
+			connection.setConnectTimeout(9000);
+			connection.setReadTimeout(9000);
 			// connection.connect();
 			return connection;
 		} catch (IOException e) {
