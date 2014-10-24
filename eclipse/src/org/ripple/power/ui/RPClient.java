@@ -1,13 +1,17 @@
 package org.ripple.power.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Session;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.WebRippled;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.HttpRequest;
+import org.ripple.power.utils.HttpRequest.HttpRequestException;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -29,17 +33,67 @@ public class RPClient {
 
 	private final ArrayList<Updateable> loads = new ArrayList<Updateable>(10);
 
-	public static ArrayList<String> loadRippleLabsIPS() {
+	private final static String[] applicationRippleLabes = new String[] {
+			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
+			"wss://s-east.ripple.com:443" };
+
+	public static ArrayList<String> getRLNodes(boolean flag) {
+		ArrayList<String> tmp = new ArrayList<String>(40);
+		tmp.add("wss://localhost:443");
+		tmp.add(applicationRippleLabes[0]);
+		tmp.add(applicationRippleLabes[1]);
+		tmp.add(applicationRippleLabes[2]);
+		if (flag) {
+			try {
+				ArrayList<String> list = RPClient.loadRLNodes();
+				if (list != null && list.size() > 0) {
+					tmp.addAll(list);
+				}
+			} catch (Exception ex) {
+			}
+		}
+		return tmp;
+	}
+
+	public static void saveRippledNode(String wss) {
+		if (wss == null) {
+			return;
+		}
+		Session session = LSystem.session("ripple_node");
+		session.set("data", wss.trim());
+		session.save();
+	}
+
+	public static String getRippledNode() {
+		Session session = LSystem.session("ripple_node");
+		String result = session.get("data");
+		if (result == null) {
+			if ("宋体".equals(LangConfig.fontName)) {
+				return applicationRippleLabes[2];
+			} else {
+				return applicationRippleLabes[MathUtils.random(0,
+						applicationRippleLabes.length - 1)];
+			}
+		} else if (result.startsWith("wss://") && result.length() > 6) {
+			return result;
+		} else {
+			return applicationRippleLabes[2];
+		}
+	}
+
+	public static ArrayList<String> loadRLNodes() throws HttpRequestException,
+			IOException {
 		ArrayList<String> list = new ArrayList<String>(30);
 		WebRippled rippled = loadWebRippledConfig("https://ripple.com/ripple.txt");
 		for (String ips : rippled.ips) {
-			String result = StringUtils.split(ips, " ")[0];
+			String result = "wss://" + StringUtils.split(ips, " ")[0] + ":443";
 			list.add(result);
 		}
 		return list;
 	}
 
-	public static WebRippled loadWebRippledConfig(String url) {
+	public static WebRippled loadWebRippledConfig(String url)
+			throws HttpRequestException, IOException {
 		WebRippled rippled = new WebRippled();
 		HttpRequest request = HttpRequest.get(url);
 		if (request.ok()) {
@@ -96,10 +150,6 @@ public class RPClient {
 
 	}
 
-	public static void main(String[] args) {
-		loadRippleLabsIPS();
-	}
-
 	public void addLoad(Updateable u) {
 		synchronized (loads) {
 			loads.add(u);
@@ -145,48 +195,87 @@ public class RPClient {
 			synchronized (RPClient.class) {
 				_rippleClient = new RPClient();
 				if (!testing) {
-					Runnable runnable = new Runnable() {
-						@Override
-						public void run() {
-							for (;;) {
-								Client client = _rippleClient.getClinet();
-								if (client != null) {
-									MainForm form = LSystem.applicationMain;
-									if (form != null) {
-										MainPanel panel = form.getMainPanel();
-										if (panel != null) {
-											if (client.serverInfo.server_status != null) {
-												panel.walletChanged(client.serverInfo.server_status);
-											} else {
-												panel.walletChanged("none");
-											}
-										}
-									}
-								}
-								_rippleClient.load();
-								final long sleep = LSystem.applicationSleep;
-								if (sleep > 0) {
-									try {
-										Thread.sleep(sleep);
-									} catch (InterruptedException e) {
-									}
-								} else {
-									Thread.yield();
-								}
-							}
-						}
-					};
-					Thread thread = new Thread(runnable);
-					thread.start();
+					_rippleClient.threadLoop();
 				}
 			}
 		}
 		return _rippleClient;
 	}
 
+	public static void stop() {
+		if (_rippleClient != null) {
+			synchronized (RPClient.class) {
+				if (!testing) {
+					_rippleClient.threadStop();
+					_rippleClient = null;
+				}
+			}
+		}
+	}
+
+	public synchronized static void reset() {
+		stop();
+		ripple();
+	}
+
 	private final Client pClinet;
 
+	private Thread pThread;
+
 	private String node_path = "unkown";
+
+	private boolean pLooping;
+
+	public synchronized void threadStop() {
+		if (pThread != null) {
+			this.pLooping = false;
+			try {
+				pThread.interrupt();
+				pThread = null;
+			} catch (Throwable t) {
+
+			}
+		}
+	}
+
+	public synchronized void threadLoop() {
+		if (pThread == null) {
+			this.pLooping = true;
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					for (; pLooping;) {
+						Client client = getClinet();
+						if (client != null) {
+							MainForm form = LSystem.applicationMain;
+							if (form != null) {
+								MainPanel panel = form.getMainPanel();
+								if (panel != null) {
+									if (client.serverInfo.server_status != null) {
+										panel.walletChanged(client.serverInfo.server_status);
+									} else {
+										panel.walletChanged("none");
+									}
+								}
+							}
+						}
+						load();
+						final long sleep = LSystem.applicationSleep;
+						if (sleep > 0) {
+							try {
+								Thread.sleep(sleep);
+							} catch (InterruptedException e) {
+							}
+						} else {
+							Thread.yield();
+						}
+					}
+				}
+			};
+			pThread = new Thread(runnable);
+			pThread.start();
+		}
+	}
 
 	public RPClient() {
 		ClientLogger.quiet = true;
@@ -195,7 +284,7 @@ public class RPClient {
 			pClinet.setProxy(LSystem.applicationProxy);
 		}
 		if (!testing) {
-			node_path = LSystem.getRippledNode();
+			node_path = getRippledNode();
 			pClinet.connect(node_path);
 		}
 	}

@@ -2,6 +2,9 @@ package org.ripple.power.txns;
 
 public class CommandFlag {
 
+	//simple
+	public static final String RippledNodeS = "RippledNodeS";
+	
 	public static final String SendCoin = "Sendcoin";
 	
 	public static final String Donation = "Donation";

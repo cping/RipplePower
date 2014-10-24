@@ -27,6 +27,7 @@ public class RPProxyDialog extends JDialog {
 	private RPTextBox proxyServer;
 	private RPTextBox proxyUsername;
 	private javax.swing.JCheckBox useProxy;
+	
 	public RPProxyDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();

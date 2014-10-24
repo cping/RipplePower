@@ -277,6 +277,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
+		addPopMenu(LangConfig.get(this, "update_node", "Rippled Node"),
+				CommandFlag.RippledNodeS);
 		addPopMenu(LangConfig.get(this, "secret_key", "Secret Key"),
 				CommandFlag.Secret);
 		addPopMenu(LangConfig.get(this, "send_money", "Send Money"),
@@ -300,6 +302,12 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private void submitActionCommand(String actionName) {
 		try {
+			if (actionName.equals(CommandFlag.RippledNodeS)) {
+				RPSimpleRippledConfigDialog.showDialog(LangConfig.get(
+						RPSimpleRippledConfigDialog.class, "update_node",
+						"Rippled Node"), LSystem.applicationMain);
+				return;
+			}
 			if (actionName.equals(CommandFlag.AddAddress)) {
 				RPAddressDialog.showDialog(LSystem.applicationMain);
 				return;

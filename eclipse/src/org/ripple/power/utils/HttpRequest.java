@@ -856,43 +856,40 @@ public class HttpRequest {
 		return ignoreCloseExceptions;
 	}
 
-	public int code() {
-		try {
+	public int code() throws IOException {
+
 			closeOutput();
 			return getConnection().getResponseCode();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new HttpRequestException(e);
-		}
+	
 	}
 
 	public HttpRequest code(final AtomicInteger output)
-			throws HttpRequestException {
+			throws HttpRequestException, IOException {
 		output.set(code());
 		return this;
 	}
 
-	public boolean ok() throws HttpRequestException {
+	public boolean ok() throws HttpRequestException, IOException {
 		return HTTP_OK == code();
 	}
 
-	public boolean created() throws HttpRequestException {
+	public boolean created() throws HttpRequestException, IOException {
 		return HTTP_CREATED == code();
 	}
 
-	public boolean serverError() throws HttpRequestException {
+	public boolean serverError() throws HttpRequestException, IOException {
 		return HTTP_INTERNAL_ERROR == code();
 	}
 
-	public boolean badRequest() throws HttpRequestException {
+	public boolean badRequest() throws HttpRequestException, IOException {
 		return HTTP_BAD_REQUEST == code();
 	}
 
-	public boolean notFound() throws HttpRequestException {
+	public boolean notFound() throws HttpRequestException, IOException {
 		return HTTP_NOT_FOUND == code();
 	}
 
-	public boolean notModified() throws HttpRequestException {
+	public boolean notModified() throws HttpRequestException, IOException {
 		return HTTP_NOT_MODIFIED == code();
 	}
 
@@ -979,11 +976,11 @@ public class HttpRequest {
 		return output.toByteArray();
 	}
 
-	public BufferedInputStream buffer() throws HttpRequestException {
+	public BufferedInputStream buffer() throws HttpRequestException, IOException {
 		return new BufferedInputStream(stream(), bufferSize);
 	}
 
-	public InputStream stream() throws HttpRequestException {
+	public InputStream stream() throws HttpRequestException, IOException {
 		InputStream stream;
 		if (code() < HTTP_BAD_REQUEST)
 			try {
@@ -1012,7 +1009,7 @@ public class HttpRequest {
 	}
 
 	public InputStreamReader reader(final String charset)
-			throws HttpRequestException {
+			throws HttpRequestException, IOException {
 		try {
 			return new InputStreamReader(stream(), getValidCharset(charset));
 		} catch (UnsupportedEncodingException e) {
@@ -1020,16 +1017,16 @@ public class HttpRequest {
 		}
 	}
 
-	public InputStreamReader reader() throws HttpRequestException {
+	public InputStreamReader reader() throws HttpRequestException, IOException {
 		return reader(charset());
 	}
 
 	public BufferedReader bufferedReader(final String charset)
-			throws HttpRequestException {
+			throws HttpRequestException, IOException {
 		return new BufferedReader(reader(charset), bufferSize);
 	}
 
-	public BufferedReader bufferedReader() throws HttpRequestException {
+	public BufferedReader bufferedReader() throws HttpRequestException, IOException {
 		return bufferedReader(charset());
 	}
 
@@ -1066,7 +1063,7 @@ public class HttpRequest {
 	}
 
 	public HttpRequest receive(final Appendable appendable)
-			throws HttpRequestException {
+			throws HttpRequestException, IOException {
 		final BufferedReader reader = bufferedReader();
 		return new CloseOperation<HttpRequest>(reader, ignoreCloseExceptions) {
 
@@ -1084,7 +1081,7 @@ public class HttpRequest {
 		}.call();
 	}
 
-	public HttpRequest receive(final Writer writer) throws HttpRequestException {
+	public HttpRequest receive(final Writer writer) throws HttpRequestException, IOException {
 		final BufferedReader reader = bufferedReader();
 		return new CloseOperation<HttpRequest>(reader, ignoreCloseExceptions) {
 
