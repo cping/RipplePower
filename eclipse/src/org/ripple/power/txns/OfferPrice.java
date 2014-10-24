@@ -29,7 +29,7 @@ public abstract class OfferPrice {
 		}
 	}
 
-	public boolean subscribe = true;
+	public boolean subscribe = false;
 
 	public String highBuy;
 

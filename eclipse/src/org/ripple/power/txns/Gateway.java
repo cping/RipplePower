@@ -37,7 +37,9 @@ public class Gateway {
 		if (gs == null || gs.size() == 0) {
 			return null;
 		}
-		user_gateways.clear();
+		if (gs != user_gateways) {
+			user_gateways.clear();
+		}
 		JSONArray result = new JSONArray();
 		for (Gateway g : gs) {
 			JSONObject obj = new JSONObject();
@@ -58,7 +60,7 @@ public class Gateway {
 		return result;
 	}
 
-	public int delUserGateway(String name) {
+	public static int delUserGateway(String name) {
 		int idx = -1;
 		if (name == null) {
 			return idx;
@@ -77,6 +79,19 @@ public class Gateway {
 			setUserGateway(gs);
 		}
 		return idx;
+	}
+
+	public static Gateway delIndexUserGateway(int index) {
+		if (index < 0) {
+			return null;
+		}
+		ArrayList<Gateway> gs = getUserGateway();
+		if (index >= gs.size()) {
+			return null;
+		}
+		Gateway g = gs.remove(index);
+		setUserGateway(gs);
+		return g;
 	}
 
 	public static ArrayList<Gateway> getUserGateway() {
@@ -134,6 +149,41 @@ public class Gateway {
 		return list;
 	}
 
+	//
+	public static Gateway getOneUserAddress(String name) {
+		if (name == null) {
+			return null;
+		}
+		ArrayList<Gateway> temps = getUserGateway();
+		for (Gateway g : temps) {
+			if (g.name.equalsIgnoreCase(name)) {
+				return g;
+			}
+		}
+		return null;
+	}
+
+	public static Gateway getOneUserGateway(String address) {
+		if (address == null) {
+			return null;
+		}
+		ArrayList<Gateway> temps = getUserGateway();
+		for (Gateway g : temps) {
+			for (Item item : g.accounts) {
+				if (item.address.equals(address)) {
+					return g;
+				}
+			}
+			for (String hotwallet : g.hotwallets) {
+				if (hotwallet.equals(address)) {
+					return g;
+				}
+			}
+		}
+		return null;
+	}
+
+	//
 	public static Gateway getAddress(String name) {
 		if (name == null) {
 			return null;

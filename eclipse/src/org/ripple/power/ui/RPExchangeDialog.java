@@ -444,7 +444,7 @@ public class RPExchangeDialog extends JDialog {
 		});
 
 		jPanel2.add(_oksellButton);
-		_oksellButton.setBounds(860, 10, 90, 23);
+		_oksellButton.setBounds(860, 10, 95, 23);
 
 		_mybuyLabel.setFont(font14); // NOI18N
 		_mybuyLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -474,7 +474,7 @@ public class RPExchangeDialog extends JDialog {
 		_okbuyButton.setActionCommand("buy");
 		_okbuyButton.setFont(font14);
 		jPanel2.add(_okbuyButton);
-		_okbuyButton.setBounds(270, 10, 90, 23);
+		_okbuyButton.setBounds(270, 10, 95, 23);
 		_okbuyButton.addActionListener(new ActionListener() {
 
 			@Override

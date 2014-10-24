@@ -1,15 +1,20 @@
 package org.ripple.power.ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,10 +71,51 @@ public class RPGatewayDialog extends JDialog {
 	private javax.swing.JSlider _trustlimits;
 	private RPTextBox _addressText;
 	private RPTextBox _trustValueText;
-
+	private JPopupMenu _userGatewayMenu = new JPopupMenu();
 	// End of variables declaration
 
 	private ArrayList<String> _iouList = new ArrayList<String>(100);
+
+	private Font _font = new Font(LangConfig.fontName, 0, 14);
+
+	private class userMouseListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			if (_listGateway.getSelectedValuesList().size() > 0) {
+				if (e.isPopupTrigger()
+						&& Gateway.getOneUserAddress((String) _listGateway
+								.getSelectedValue()) != null) {
+					_userGatewayMenu.show((Component) e.getSource(), e.getX(),
+							e.getY());
+				}
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			if (_listGateway.getSelectedValuesList().size() > 0) {
+				if (e.isPopupTrigger()
+						&& Gateway.getOneUserAddress((String) _listGateway
+								.getSelectedValue()) != null) {
+					_userGatewayMenu.show((Component) e.getSource(), e.getX(),
+							e.getY());
+				}
+			}
+		}
+	}
+
+	private void addPopMenu(final String name, final Updateable update) {
+		JMenuItem tempMenu = new JMenuItem(name);
+		tempMenu.setFont(_font);
+		tempMenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (update != null) {
+					update.action(e);
+				}
+			}
+		});
+		_userGatewayMenu.add(tempMenu);
+	}
 
 	public static RPGatewayDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
@@ -224,6 +270,22 @@ public class RPGatewayDialog extends JDialog {
 
 		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 
+		_listGateway.addMouseListener(new userMouseListener());
+		addPopMenu(LangConfig.get(this, "delete", "Delete Custom Gateway"),
+				new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						if (_listGateway.getSelectedValuesList().size() > 0) {
+							String name = (String) _listGateway
+									.getSelectedValue();
+							if (Gateway.delUserGateway(name) != -1) {
+								updateGatewayList();
+							}
+						}
+
+					}
+				});
 		_listGateway.setModel(new javax.swing.AbstractListModel<Object>() {
 
 			/**
@@ -315,7 +377,9 @@ public class RPGatewayDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPAddGatewayDialog.showDialog(LangConfig.get(RPAddGatewayDialog.class, "title", "Add Gateway"), RPGatewayDialog.this);
+				RPAddGatewayDialog.showDialog(LangConfig.get(
+						RPAddGatewayDialog.class, "title", "Add Gateway"),
+						RPGatewayDialog.this);
 			}
 		});
 		getContentPane().add(_addGatewayButton);

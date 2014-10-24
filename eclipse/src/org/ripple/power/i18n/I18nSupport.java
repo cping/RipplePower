@@ -11,6 +11,8 @@ public class I18nSupport {
 
 	private HashMap<Language, List<ResourceBundle>> pLanguageToBundles = new HashMap<Language, List<ResourceBundle>>();
 
+	private boolean pDirty;
+	
 	public void addBundle(ResourceBundle resourceBundle, Language language) {
 		List<ResourceBundle> bundles = pLanguageToBundles.get(language);
 		if (bundles == null) {
@@ -18,6 +20,7 @@ public class I18nSupport {
 			pLanguageToBundles.put(language, bundles);
 		}
 		bundles.add(resourceBundle);
+		pDirty = true;
 	}
 
 	public void addBundle(String baseName, Language language) {
@@ -27,6 +30,7 @@ public class I18nSupport {
 				language.getLocale());
 		addBundle(bundle, language);
 		Locale.setDefault(oldLocale);
+		pDirty = true;
 	}
 
 	public void addBundleOnlyIfNeeded(String baseName, Language language,
@@ -64,6 +68,10 @@ public class I18nSupport {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean isDirty(){
+		return pDirty;
 	}
 
 }
