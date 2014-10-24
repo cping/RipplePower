@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -113,23 +114,22 @@ public class MainForm extends JFrame implements ActionListener {
 		setPreferredSize(dim);
 		setSize(dim);
 		setLocation(frameX, frameY);
-		Font font = new Font(LangConfig.fontName,0,14);
+		Font font = new Font(LangConfig.fontName, 0, 14);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 
 		JMenu menu;
 		JMenuItem menuItem;
-		
 
 		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
 		menu.setFont(font);
-		
+
 		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
 				"Wallet Password"));
-		
+
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
-		
+
 		menu.setFont(font);
 		menuItem.setFont(font);
 		menu.add(menuItem);
@@ -141,11 +141,11 @@ public class MainForm extends JFrame implements ActionListener {
 		menuItem = new JMenuItem("RPC");
 		menuItem.setFont(font);
 		menuItem.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JSonLog.get();
-				
+
 			}
 		});
 		menu.add(menuItem);
@@ -181,7 +181,8 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
 		menu.setFont(font);
-		menuItem = new JMenuItem(LangConfig.get(this, "automation", "Automation"));
+		menuItem = new JMenuItem(LangConfig.get(this, "automation",
+				"Automation"));
 		menuItem.setFont(font);
 		menuItem.setActionCommand("一键开启");
 		menuItem.addActionListener(this);
@@ -306,15 +307,16 @@ public class MainForm extends JFrame implements ActionListener {
 
 	}
 
-	private void exitProgram() throws IOException {
+	void exitProgram() throws IOException {
 		if (!windowMinimized) {
 			Point p = getLocation();
 			Dimension d = getSize();
 			LSystem.session("main").set("location", p.x + "," + p.y);
 			LSystem.session("main").set("dimension", d.width + "," + d.height);
 		}
+		dispose();
 		LSystem.shutdown();
-		
+
 	}
 
 	private void aboutMyWallet() {
@@ -372,12 +374,21 @@ public class MainForm extends JFrame implements ActionListener {
 		@Override
 		public void windowIconified(WindowEvent we) {
 			windowMinimized = true;
-
+			if (!SystemTray.isSupported()) {
+				return;
+			}
+			setState(JFrame.MAXIMIZED_BOTH);
+			setVisible(false);
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent we) {
 			windowMinimized = false;
+			if (!SystemTray.isSupported()) {
+				return;
+			}
+			setState(JFrame.MAXIMIZED_BOTH);
+			setVisible(true);
 		}
 
 		@Override

@@ -5,10 +5,15 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.swing.BorderFactory;
@@ -30,6 +35,7 @@ import org.ripple.power.config.RHClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.LColor;
 import org.ripple.power.wallet.Backup;
 import org.ripple.power.wallet.WalletCache;
@@ -102,12 +108,13 @@ public class MainPanel extends JPanel implements ActionListener {
 		popMenu.add(tempMenu);
 	}
 
+	private TrayIcon trayIcon;
+
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
 		setOpaque(true);
 		setBackground(LSystem.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
-
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
 
@@ -298,6 +305,54 @@ public class MainPanel extends JPanel implements ActionListener {
 		addPopMenu(LangConfig.get(this, "donation", "Donation"),
 				CommandFlag.Donation);
 
+		showTrayIcon();
+
+	}
+
+	public void showTrayIcon() {
+		if (!SystemTray.isSupported()) {
+			return;
+		}
+		trayIcon = new TrayIcon(GraphicsUtils.loadImage("icons/ripple.png"));
+		trayIcon.setImageAutoSize(true);
+		trayIcon.setToolTip("RipplePower");
+		final SystemTray tray = SystemTray.getSystemTray();
+		final PopupMenu menu = new PopupMenu();
+		MenuItem restore = new MenuItem("Restore");
+		restore.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (LSystem.applicationMain != null) {
+					if (LSystem.applicationMain.isVisible()) {
+						LSystem.applicationMain.setState(JFrame.MAXIMIZED_BOTH);
+						LSystem.applicationMain.setVisible(false);
+					} else {
+						LSystem.applicationMain.setState(JFrame.MAXIMIZED_BOTH);
+						LSystem.applicationMain.setExtendedState(JFrame.NORMAL);
+						LSystem.applicationMain.setVisible(true);
+					}
+				}
+			}
+		});
+		MenuItem exit = new MenuItem("Exit");
+		menu.add(restore);
+		menu.addSeparator();
+		menu.add(exit);
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tray.remove(trayIcon);
+				try {
+					LSystem.applicationMain.exitProgram();
+				} catch (IOException ex) {
+				}
+			}
+		});
+		trayIcon.setPopupMenu(menu);
+		try {
+			tray.add(trayIcon);
+		} catch (Exception e) {
+		}
 	}
 
 	private void submitActionCommand(String actionName) {
