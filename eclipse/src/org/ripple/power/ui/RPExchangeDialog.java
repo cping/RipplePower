@@ -50,6 +50,9 @@ public class RPExchangeDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	//default only the first 20 data show
+	private static final int _LIMIT_PAGE = 20;
 	private ArrayList<OfferFruit> _buyerList = new ArrayList<OfferFruit>(100);
 	private ArrayList<OfferFruit> _sellerList = new ArrayList<OfferFruit>(100);
 	private RPCButton _okButton;
@@ -680,6 +683,9 @@ public class RPExchangeDialog extends JDialog {
 								final ArrayList<OfferFruit> sells,
 								final OfferPrice price) {
 
+							_tip1Label.setText(String.format(info_price(),
+									price.highBuy, price.hightSell,
+									price.spread));
 							if (buys.size() > 0) {
 								synchronized (_buyerList) {
 									_buymList
@@ -687,7 +693,11 @@ public class RPExchangeDialog extends JDialog {
 												private static final long serialVersionUID = 1L;
 
 												public int getSize() {
-													return buys.size();
+													int size = buys.size();
+													if (size > _LIMIT_PAGE) {
+														return _LIMIT_PAGE;
+													}
+													return size;
 												}
 
 												public Object getElementAt(int i) {
@@ -714,7 +724,11 @@ public class RPExchangeDialog extends JDialog {
 												private static final long serialVersionUID = 1L;
 
 												public int getSize() {
-													return sells.size();
+													int size = sells.size();
+													if (size > _LIMIT_PAGE) {
+														return _LIMIT_PAGE;
+													}
+													return size;
 												}
 
 												public Object getElementAt(int i) {
@@ -735,9 +749,7 @@ public class RPExchangeDialog extends JDialog {
 								}
 							}
 							dialog.closeDialog();
-							_tip1Label.setText(String.format(info_price(),
-									price.highBuy, price.hightSell,
-									price.spread));
+
 							_tradeFlag = true;
 							loadTradingList();
 						}
@@ -1147,6 +1159,9 @@ public class RPExchangeDialog extends JDialog {
 			public void complete(final ArrayList<OfferFruit> buys,
 					final ArrayList<OfferFruit> sells, final OfferPrice price) {
 
+				_tip1Label.setText(String.format(info_price(), price.highBuy,
+						price.hightSell, price.spread));
+
 				if (sells.size() > 0) {
 					synchronized (_sellerList) {
 						_sellmList
@@ -1154,7 +1169,11 @@ public class RPExchangeDialog extends JDialog {
 									private static final long serialVersionUID = 1L;
 
 									public int getSize() {
-										return sells.size();
+										int size = sells.size();
+										if (size > _LIMIT_PAGE) {
+											return _LIMIT_PAGE;
+										}
+										return size;
 									}
 
 									public Object getElementAt(int i) {
@@ -1177,7 +1196,11 @@ public class RPExchangeDialog extends JDialog {
 									private static final long serialVersionUID = 1L;
 
 									public int getSize() {
-										return buys.size();
+										int size = buys.size();
+										if (size > _LIMIT_PAGE) {
+											return _LIMIT_PAGE;
+										}
+										return size;
 									}
 
 									public Object getElementAt(int i) {
@@ -1192,9 +1215,6 @@ public class RPExchangeDialog extends JDialog {
 								+ " Count:" + buys.size());
 					}
 				}
-
-				_tip1Label.setText(String.format(info_price(), price.highBuy,
-						price.hightSell, price.spread));
 
 			}
 
