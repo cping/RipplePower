@@ -124,8 +124,8 @@ public class RPExchangeDialog extends JDialog {
 		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
 				"您是否准备消除交易记录" + mes, new Object[] { "确定", "取消" });
 	}
-	
-	private String info_price(){
+
+	private String info_price() {
 		return LangConfig
 				.get(RPExchangeDialog.this, "tip1",
 						"The highest price buyer %s, the seller highest price %s, Spread %s");
@@ -251,7 +251,7 @@ public class RPExchangeDialog extends JDialog {
 		_currencyLabel.setBounds(700, 10, 80, 26);
 
 		_curComboBox.setFont(font); // NOI18N
-	
+
 		getContentPane().add(_curComboBox);
 		_curComboBox.setBounds(780, 10, 110, 30);
 
@@ -283,14 +283,11 @@ public class RPExchangeDialog extends JDialog {
 		_tip1Label.setForeground(new java.awt.Color(255, 255, 255));
 		_tip1Label.setFont(font14);
 		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-		_tip1Label
-				.setText(String.format(
-						info_price(),
-						0, 0, 0));
+		_tip1Label.setText(String.format(info_price(), 0, 0, 0));
 		jPanel1.add(_tip1Label);
 		_tip1Label.setBounds(0, 10, 970, 20);
 		_tip1Label.setForeground(Color.red);
-	
+
 		jScrollPane1.setViewportView(_mytradingList);
 
 		if (_item != null) {
@@ -306,7 +303,6 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_buymLabel);
 		_buymLabel.setBounds(10, 45, 360, 16);
 
-	
 		_buymList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_buymList.setBackground(new Color(70, 70, 70));
 		_buymList.setForeground(Color.orange);
@@ -329,7 +325,7 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 		jScrollPane2.setViewportView(_buymList);
-
+		_buymList.setCellRenderer(new HtmlRenderer());
 		jPanel1.add(jScrollPane2);
 		jScrollPane2.setBounds(10, 70, 360, 250);
 
@@ -359,7 +355,7 @@ public class RPExchangeDialog extends JDialog {
 				}
 			}
 		});
-		jScrollPane2.setViewportView(_buymList);
+		_sellmList.setCellRenderer(new HtmlRenderer());
 		jScrollPane3.setViewportView(_sellmList);
 
 		jPanel1.add(jScrollPane3);
@@ -629,8 +625,7 @@ public class RPExchangeDialog extends JDialog {
 			}
 		}
 		Collections.sort(temp);
-		_curComboBox.setItemModel(temp
-				.toArray());
+		_curComboBox.setItemModel(temp.toArray());
 		list.clear();
 		list = null;
 		temp.clear();
@@ -669,9 +664,7 @@ public class RPExchangeDialog extends JDialog {
 						@Override
 						public void error(JSONObject obj) {
 							if (obj != null) {
-								RPMessage.showInfoMessage(
-										LSystem.applicationMain, "Error",
-										obj.toString());
+								JSonLog.get().println(obj.toString());
 							}
 							dialog.closeDialog();
 						}
@@ -738,7 +731,7 @@ public class RPExchangeDialog extends JDialog {
 										.takerGets().toText());
 							}
 							dialog.closeDialog();
-							_tip1Label.setText(String.format( info_price(),
+							_tip1Label.setText(String.format(info_price(),
 									price.highBuy, price.hightSell,
 									price.spread));
 
@@ -1098,21 +1091,22 @@ public class RPExchangeDialog extends JDialog {
 
 			@Override
 			public void action(Object o) {
-				_mytradingList.setModel(new javax.swing.AbstractListModel<Object>() {
+				_mytradingList
+						.setModel(new javax.swing.AbstractListModel<Object>() {
 
-					/**
+							/**
 					 * 
 					 */
-					private static final long serialVersionUID = 1L;
+							private static final long serialVersionUID = 1L;
 
-					public int getSize() {
-						return _info.bookOffers.size();
-					}
+							public int getSize() {
+								return _info.bookOffers.size();
+							}
 
-					public Object getElementAt(int i) {
-						return _info.bookOffers.get(i);
-					}
-				});
+							public Object getElementAt(int i) {
+								return _info.bookOffers.get(i);
+							}
+						});
 			}
 		});
 	}
@@ -1149,7 +1143,7 @@ public class RPExchangeDialog extends JDialog {
 			@Override
 			public void complete(final ArrayList<OfferFruit> buys,
 					final ArrayList<OfferFruit> sells, final OfferPrice price) {
-				
+
 				synchronized (_sellerList) {
 					_sellerList.clear();
 					_sellerList.addAll(sells);
@@ -1174,23 +1168,24 @@ public class RPExchangeDialog extends JDialog {
 						return buys.get(i);
 					}
 				});
-				_sellmList.setModel(new javax.swing.AbstractListModel<Object>() {
+				_sellmList
+						.setModel(new javax.swing.AbstractListModel<Object>() {
 
-					/**
+							/**
 					 * 
 					 */
-					private static final long serialVersionUID = 1L;
+							private static final long serialVersionUID = 1L;
 
-					public int getSize() {
-						return sells.size();
-					}
+							public int getSize() {
+								return sells.size();
+							}
 
-					public Object getElementAt(int i) {
-						return sells.get(i);
-					}
-				});
-			
-				_tip1Label.setText(String.format( info_price(), price.highBuy,
+							public Object getElementAt(int i) {
+								return sells.get(i);
+							}
+						});
+
+				_tip1Label.setText(String.format(info_price(), price.highBuy,
 						price.hightSell, price.spread));
 
 			}

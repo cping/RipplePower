@@ -162,7 +162,7 @@ public abstract class OfferPrice {
 					price.highBuy = book.bid.toText();
 					price.hightSell = book.ask.toText();
 					price.spread = book.spread.toText();
-					// buy
+					// sell
 					for (STObject offer : book.asks) {
 						Offer o = (Offer) offer;
 						price.sell(o);
@@ -171,13 +171,17 @@ public abstract class OfferPrice {
 						Amount getsOne = o.getsOne();
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
-						fruit.message = o.takerGets().toText() + " Sell "
-								+ (o.takerPays().toText()) + " ("
+						fruit.message = o.takerGets().toText()
+								+ "<br><font size=5 color=red>Sell</font><br>"
+								+ (o.takerPays().toText())
+								+ "<br><font size=5 color=red>Exchange rate</font><br>"
 								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + ")";
+								+ paysOne.multiply(payForOne).toText() + "<br>"
+								+ paysOne.toText() + "=="
+								+ getsOne.divide(payForOne).toText();
 						sells.add(fruit);
 					}
-					// sell
+					// buy
 					for (STObject offer : book.bids) {
 						Offer o = (Offer) offer;
 						price.buy(o);
@@ -186,10 +190,14 @@ public abstract class OfferPrice {
 						Amount getsOne = o.getsOne();
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
-						fruit.message = o.takerGets().toText() + " Buy "
-								+ (o.takerPays().toText()) + " ("
+						fruit.message = o.takerGets().toText()
+								+ "<br><font size=5 color=red>Buy</font><br>"
+								+ (o.takerPays().toText())
+								+ "<br><font size=5 color=red>Exchange rate</font><br>"
 								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + ")";
+								+ paysOne.multiply(payForOne).toText() + "<br>"
+								+ paysOne.toText() + "=="
+								+ getsOne.divide(payForOne).toText();
 						buys.add(fruit);
 					}
 				} else {
