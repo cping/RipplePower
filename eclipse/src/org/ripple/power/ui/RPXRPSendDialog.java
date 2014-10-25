@@ -199,10 +199,10 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 								public void success(JSONObject res) {
 									JSonLog.get().println(res.toString());
 									WalletCache.get().reset();
+									dialog.closeDialog();
 									RPMessage.showInfoMessage(
 											LSystem.applicationMain, "Info",
 											"发送完毕.");
-									dialog.closeDialog();
 								}
 
 								@Override

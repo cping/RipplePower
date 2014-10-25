@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -22,6 +21,7 @@ import javax.swing.WindowConstants;
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
@@ -75,7 +75,7 @@ public class MainForm extends JFrame implements ActionListener {
 				LSystem.applicationVersion));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setIconImage(UIConfig.getDefaultAppIcon());
-		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setBackground(LColor.WHITE);
 
 		LSystem.applicationMain = this;
 		try {

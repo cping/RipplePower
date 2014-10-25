@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -9,6 +10,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.WebRippled;
+import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.HttpRequest.HttpRequestException;
@@ -311,18 +313,25 @@ public class RPClient {
 			public void called(Response response) {
 				JSONObject arrays = response.result;
 				JSONObject result = arrays.getJSONObject("account_data");
-				double new_amount = (result.getDouble("Balance") / 1000000);
-				double old_amount = Double.parseDouble(item.getAmount());
-				if (old_amount > new_amount) {
-					popXRP(item.getPublicKey(), "减少", (old_amount - new_amount));
-				} else if (new_amount > old_amount) {
-					popXRP(item.getPublicKey(), "增加", (new_amount - old_amount));
+				String number = CurrencyUtils.getRippleToValue(result
+						.getString("Balance"));
+				if (item.isTip()) {
+					double new_amount = Double.parseDouble(number);
+					double old_amount = Double.parseDouble(item.getAmount());
+					if (old_amount > new_amount) {
+						popXRP(item.getPublicKey(), "减少", old_amount
+								- new_amount);
+					} else if (new_amount > old_amount) {
+						popXRP(item.getPublicKey(), "增加", new_amount
+								- old_amount);
+					}
 				}
-				item.setAmount(String.valueOf(new_amount));
+				item.setAmount(number);
 				item.setStatus("full");
 			}
 
 		});
+
 		req.once(Request.OnError.class, new Request.OnError() {
 			@Override
 			public void called(Response response) {
@@ -333,10 +342,21 @@ public class RPClient {
 		req.request();
 	}
 
+	private final static String time() {
+		return "在" + RippleDate.now().getTimeString() + ", 发现您的地址：";
+	}
+
 	private static void popXRP(String address, String flag, double amount) {
-		RPBubbleDialog.pop("在" + RippleDate.now().getTimeString() + "左右,您的地址："
-				+ address + flag + "了" + String.valueOf(amount)
-				+ LSystem.nativeCurrency);
+		String result = String.valueOf(amount);
+		if (result.toLowerCase().indexOf("e") != -1
+				|| result.toLowerCase().indexOf("+") != -1) {
+			RPBubbleDialog.pop(time() + address + flag + "了"
+					+ new BigDecimal(result).toString()
+					+ LSystem.nativeCurrency);
+		} else {
+			RPBubbleDialog.pop(time() + address + flag + "了" + result
+					+ LSystem.nativeCurrency);
+		}
 	}
 
 	public Client getClinet() {

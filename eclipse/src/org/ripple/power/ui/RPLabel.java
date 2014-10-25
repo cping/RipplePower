@@ -1,8 +1,8 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
-
 import javax.swing.JLabel;
+
+import org.ripple.power.utils.LColor;
 
 public class RPLabel extends JLabel{
 
@@ -13,13 +13,12 @@ public class RPLabel extends JLabel{
 
 	public RPLabel(String name){
 		super(name);
-		setBackground(new Color(70, 70, 70));
-		setForeground(Color.WHITE);
+		setBackground(new LColor(70, 70, 70));
+		setForeground(LColor.white);
 	}
 	
 	public RPLabel(){
-		setBackground(new Color(70, 70, 70));
-		setForeground(Color.WHITE);
+		this(null);
 	}
 
 }

@@ -154,6 +154,11 @@ public class AccountFind {
 											String type = getStringObject(tx,
 													"TransactionType");
 
+											if (meta != null) {
+												transactionTx.meda = meta
+														.toString();
+											}
+
 											transactionTx.account = getStringObject(
 													tx, "Account");
 
@@ -184,7 +189,8 @@ public class AccountFind {
 											case "Payment":
 												IssuedCurrency currency = null;
 												String counterparty = null;
-												if (meta.has("DeliveredAmount")) {
+												if (meta != null
+														&& meta.has("DeliveredAmount")) {
 													currency = getAmount(getObject(
 															meta,
 															"DeliveredAmount"));

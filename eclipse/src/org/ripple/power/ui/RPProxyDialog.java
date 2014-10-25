@@ -1,12 +1,12 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.LColor;
 
 public class RPProxyDialog extends JDialog {
 
@@ -62,8 +62,8 @@ public class RPProxyDialog extends JDialog {
 		jButton2 = new RPCButton();
 		jButton1 = new RPCButton();
 		useProxy = new javax.swing.JCheckBox();
-		useProxy.setForeground(new Color(255, 255, 255));
-		useProxy.setBackground(new Color(36, 36, 36));
+		useProxy.setForeground(new LColor(255, 255, 255));
+		useProxy.setBackground(new LColor(36, 36, 36));
 		jLabel3 = new RPLabel();
 		jLabel4 = new RPLabel();
 		proxyServer = new RPTextBox();

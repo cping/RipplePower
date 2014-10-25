@@ -1,8 +1,8 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
-
 import javax.swing.JTextArea;
+
+import org.ripple.power.utils.LColor;
 
 public class RPTextArea extends JTextArea{
 
@@ -13,15 +13,15 @@ public class RPTextArea extends JTextArea{
 
 	public RPTextArea(String name){
 		super(name);
-		setCaretColor(Color.WHITE);
-		setBackground(new Color(70, 70, 70));
-		setForeground(Color.WHITE);
+		setCaretColor(LColor.white);
+		setBackground(new LColor(70, 70, 70));
+		setForeground(LColor.white);
+		setEditable(false);
+		setLineWrap(true);
 	}
 
 	public RPTextArea(){
-		setCaretColor(Color.WHITE);
-		setBackground(new Color(70, 70, 70));
-		setForeground(Color.WHITE);
+		this(null);
 	}
 
 }

@@ -4,6 +4,8 @@ public class TransactionTx {
 
     public String account;
 
+    public String meda;
+    
     public IssuedCurrency currency;
 
     public String fee;

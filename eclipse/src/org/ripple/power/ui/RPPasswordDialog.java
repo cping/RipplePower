@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.StringUtils;
 
 public class RPPasswordDialog extends JDialog implements ActionListener {
@@ -35,9 +35,9 @@ public class RPPasswordDialog extends JDialog implements ActionListener {
 
 	private void initUI() {
 		passwordField = new JPasswordField(30);
-		passwordField.setCaretColor(Color.WHITE);
-		passwordField.setBackground(new Color(70, 70, 70));
-		passwordField.setForeground(Color.WHITE);
+		passwordField.setCaretColor(LColor.WHITE);
+		passwordField.setBackground(new LColor(70, 70, 70));
+		passwordField.setForeground(LColor.WHITE);
 		add(passwordField, BorderLayout.CENTER);
 		passwordField.addActionListener(this);
 

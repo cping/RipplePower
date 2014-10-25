@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -17,6 +16,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.MaidSystem;
 import org.ripple.power.helper.Paramaters;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -67,7 +67,7 @@ public class MainUI {
 				"[70][fill]"));
 
 		JPanel navigationPanel = new JPanel();
-		navigationPanel.setBackground(Color.WHITE);
+		navigationPanel.setBackground(LColor.WHITE);
 		navigationPanel.setLayout(new MigLayout("gap 0, insets 0",
 				"[10%][80%][]", "[100%]"));
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
@@ -88,7 +88,7 @@ public class MainUI {
 		navbar.setBorder(null);
 		navbar.setForeground(UIConfig.getBrandColor());
 		navbar.setFont(new Font("Arial", Font.BOLD, 16));
-		navbar.setBackground(Color.WHITE);
+		navbar.setBackground(LColor.WHITE);
 
 		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel,
 				welcomePanel);

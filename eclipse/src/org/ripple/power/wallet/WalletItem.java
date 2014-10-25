@@ -3,6 +3,8 @@ package org.ripple.power.wallet;
 import org.address.ripple.RippleSeedAddress;
 
 public class WalletItem {
+	
+	private boolean pTip = true;
 
 	private String pDate;
 
@@ -64,6 +66,14 @@ public class WalletItem {
 
 	public void setStatus(String pStatus) {
 		this.pStatus = pStatus;
+	}
+
+	public boolean isTip() {
+		return pTip;
+	}
+
+	public void setTip(boolean t) {
+		this.pTip = t;
 	}
 
 }

@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -16,6 +15,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.ripple.power.utils.LColor;
 
 public class RPInput {
 
@@ -66,7 +67,7 @@ public class RPInput {
 				textPanel.add(textField);
 
 				final JLabel placeholderLabel = new JLabel(placeholder);
-				placeholderLabel.setForeground(Color.GRAY);
+				placeholderLabel.setForeground(LColor.GRAY);
 				placeholderLabel.setAlignmentX(0.0f);
 				textPanel.add(placeholderLabel, 0);
 

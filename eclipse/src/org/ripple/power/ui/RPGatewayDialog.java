@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -75,8 +74,6 @@ public class RPGatewayDialog extends JDialog {
 
 	private ArrayList<String> _iouList = new ArrayList<String>(100);
 
-	private Font _font = new Font(LangConfig.fontName, 0, 14);
-
 	private class userMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
 			if (_listGateway.getSelectedValuesList().size() > 0) {
@@ -101,20 +98,6 @@ public class RPGatewayDialog extends JDialog {
 		}
 	}
 
-	private void addPopMenu(final String name, final Updateable update) {
-		JMenuItem tempMenu = new JMenuItem(name);
-		tempMenu.setFont(_font);
-		tempMenu.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (update != null) {
-					update.action(e);
-				}
-			}
-		});
-		_userGatewayMenu.add(tempMenu);
-	}
 
 	public static RPGatewayDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
@@ -269,7 +252,7 @@ public class RPGatewayDialog extends JDialog {
 		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 
 		_listGateway.addMouseListener(new userMouseListener());
-		addPopMenu(LangConfig.get(this, "delete", "Delete Custom Gateway"),
+		UIRes.addPopMenu(_userGatewayMenu,LangConfig.get(this, "delete", "Delete Custom Gateway"),
 				new Updateable() {
 
 					@Override

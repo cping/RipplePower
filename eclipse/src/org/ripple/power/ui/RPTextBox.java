@@ -1,8 +1,8 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
-
 import javax.swing.JTextField;
+
+import org.ripple.power.utils.LColor;
 
 public class RPTextBox extends JTextField{
 
@@ -12,9 +12,9 @@ public class RPTextBox extends JTextField{
 	private static final long serialVersionUID = 1L;
 	
 	public RPTextBox(){
-		setCaretColor(Color.WHITE);
-		setBackground(new Color(70, 70, 70));
-		setForeground(Color.WHITE);
+		setCaretColor(LColor.WHITE);
+		setBackground(new LColor(70, 70, 70));
+		setForeground(LColor.WHITE);
 		setHorizontalAlignment(JTextField.LEFT); 
 		setAlignmentX(0);
 	}

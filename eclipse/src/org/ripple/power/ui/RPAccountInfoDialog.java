@@ -1,12 +1,16 @@
 package org.ripple.power.ui;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
@@ -332,7 +336,7 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(jSeparator2);
 		jSeparator2.setBounds(0, 540, 670, 10);
 
-		_booksLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_booksLabel.setFont(UIRes.getFont()); // NOI18N
 		_booksLabel.setText(LangConfig.get(this, "books", "Books"));
 		getContentPane().add(_booksLabel);
 		_booksLabel.setBounds(20, 360, 90, 20);
@@ -349,7 +353,8 @@ public class RPAccountInfoDialog extends JDialog {
 		jTable3.setFont(new Font(LangConfig.fontName, 0, 14));
 		jTable3.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
 		jTable3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		jTable3.addMouseListener(new infoMouseListener());
+		addMouseListener(new infoMouseListener());
 		jScrollPane3.setViewportView(jTable3);
 
 		getContentPane().add(jScrollPane3);
@@ -391,19 +396,51 @@ public class RPAccountInfoDialog extends JDialog {
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 60, 670, 10);
-		_assetsLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_assetsLabel.setFont(UIRes.getFont());
 		_assetsLabel.setText(LangConfig.get(this, "assets", "Assets"));
 		getContentPane().add(_assetsLabel);
 		_assetsLabel.setBounds(20, 65, 90, 20);
 
-		_issuedLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_issuedLabel.setFont(UIRes.getFont()); // NOI18N
 		_issuedLabel.setText(LangConfig.get(this, "issued", "Currency issued"));
 		getContentPane().add(_issuedLabel);
 		_issuedLabel.setBounds(20, 220, 190, 20);
 		getContentPane().setBackground(LSystem.dialogbackground);
+		final String ddata = LangConfig.get(this, "ddata", "Detailed data");
+		UIRes.addPopMenu(_popMenu, ddata, new Updateable() {
+
+			@Override
+			public void action(Object o) {
+				if (_accountinfo.transactions.size() > 0
+						&& jTable3.getSelectedRow() > -1) {
+					RPOtherInfoDialog.showDialog(ddata,
+							RPAccountInfoDialog.this, _accountinfo.transactions
+									.get(jTable3.getSelectedRow()));
+				}else{
+					RPOtherInfoDialog.showDialog(ddata,
+							RPAccountInfoDialog.this, new TransactionTx());
+				}
+			}
+		});
 		pack();
 
 	}// </editor-fold>
+
+	private JPopupMenu _popMenu = new JPopupMenu();
+
+	private class infoMouseListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			}
+		}
+	}
 
 	public AccountInfo call(final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,

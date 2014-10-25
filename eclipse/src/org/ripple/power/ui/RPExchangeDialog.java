@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,6 +36,7 @@ import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -273,23 +273,23 @@ public class RPExchangeDialog extends JDialog {
 				submitOK();
 			}
 		});
-		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+		jPanel1.setBackground(new LColor(51, 51, 51));
 		jPanel1.setLayout(null);
 
 		_mytradingLabel.setFont(font14); // NOI18N
-		_mytradingLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_mytradingLabel.setForeground(new LColor(255, 255, 255));
 		_mytradingLabel.setText(LangConfig
 				.get(this, "my_trading", "My trading"));
 		jPanel1.add(_mytradingLabel);
 		_mytradingLabel.setBounds(380, 185, 210, 18);
 
-		_tip1Label.setForeground(new java.awt.Color(255, 255, 255));
+		_tip1Label.setForeground(new LColor(255, 255, 255));
 		_tip1Label.setFont(font14);
 		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		_tip1Label.setText(String.format(info_price(), 0, 0, 0));
 		jPanel1.add(_tip1Label);
 		_tip1Label.setBounds(0, 10, 970, 20);
-		_tip1Label.setForeground(Color.red);
+		_tip1Label.setForeground(LColor.red);
 
 		jScrollPane1.setViewportView(_mytradingList);
 
@@ -301,14 +301,14 @@ public class RPExchangeDialog extends JDialog {
 		jScrollPane1.setBounds(380, 210, 210, 110);
 
 		_buymLabel.setFont(font14); // NOI18N
-		_buymLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_buymLabel.setForeground(new LColor(255, 255, 255));
 		_buymLabel.setText(LangConfig.get(this, "bm", "Buyer's Market"));
 		jPanel1.add(_buymLabel);
 		_buymLabel.setBounds(10, 45, 360, 16);
 
 		_buymList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		_buymList.setBackground(new Color(70, 70, 70));
-		_buymList.setForeground(Color.orange);
+		_buymList.setBackground(new LColor(70, 70, 70));
+		_buymList.setForeground(LColor.orange);
 		_buymList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -333,13 +333,13 @@ public class RPExchangeDialog extends JDialog {
 		jScrollPane2.setBounds(10, 70, 360, 250);
 
 		_sellmLabel.setFont(font14); // NOI18N
-		_sellmLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_sellmLabel.setForeground(new LColor(255, 255, 255));
 		_sellmLabel.setText(LangConfig.get(this, "sm", "Seller's Market"));
 		jPanel1.add(_sellmLabel);
 		_sellmLabel.setBounds(600, 45, 360, 16);
 
 		_sellmList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		_sellmList.setForeground(Color.orange);
+		_sellmList.setForeground(LColor.orange);
 		_sellmList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -365,7 +365,7 @@ public class RPExchangeDialog extends JDialog {
 		jScrollPane3.setBounds(600, 70, 360, 250);
 
 		_coinmarketcapLabel.setFont(font14); // NOI18N
-		_coinmarketcapLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_coinmarketcapLabel.setForeground(new LColor(255, 255, 255));
 		_coinmarketcapLabel.setText(LangConfig.get(this, "other_prices",
 				"Other Prices") + "(coinmarketcap)");
 		jPanel1.add(_coinmarketcapLabel);
@@ -401,11 +401,11 @@ public class RPExchangeDialog extends JDialog {
 		if (_selectGateawyCombobox.getItemCount() > 0) {
 			callCur((String) _selectGateawyCombobox.getSelectedItem());
 		}
-		jPanel2.setBackground(new java.awt.Color(51, 51, 51));
+		jPanel2.setBackground(new LColor(51, 51, 51));
 		jPanel2.setLayout(null);
 
 		_cansellLabel.setFont(font14); // NOI18N
-		_cansellLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_cansellLabel.setForeground(new LColor(255, 255, 255));
 		_cansellLabel.setText(LangConfig.get(this, "cansell", "Can Sell"));
 		jPanel2.add(_cansellLabel);
 		_cansellLabel.setBounds(600, 50, 90, 20);
@@ -419,7 +419,7 @@ public class RPExchangeDialog extends JDialog {
 		_cansellText.setBounds(670, 50, 170, 20);
 
 		_canbuyLabel.setFont(font14); // NOI18N
-		_canbuyLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_canbuyLabel.setForeground(new LColor(255, 255, 255));
 		_canbuyLabel.setText(LangConfig.get(this, "canbuy", "Can Buy"));
 		jPanel2.add(_canbuyLabel);
 		_canbuyLabel.setBounds(10, 50, 90, 20);
@@ -445,7 +445,7 @@ public class RPExchangeDialog extends JDialog {
 		_oksellButton.setBounds(860, 10, 95, 23);
 
 		_mybuyLabel.setFont(font14); // NOI18N
-		_mybuyLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_mybuyLabel.setForeground(new LColor(255, 255, 255));
 		_mybuyLabel.setText(LangConfig.get(this, "mybuy", "My Buy"));
 		jPanel2.add(_mybuyLabel);
 		_mybuyLabel.setBounds(10, 10, 90, 20);
@@ -457,7 +457,7 @@ public class RPExchangeDialog extends JDialog {
 		_mybuyText.addKeyListener(new MyKeyListener(1));
 
 		_mysellLabel.setFont(font14); // NOI18N
-		_mysellLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_mysellLabel.setForeground(new LColor(255, 255, 255));
 		_mysellLabel.setText(LangConfig.get(this, "mysell", "My Sell"));
 		jPanel2.add(_mysellLabel);
 		_mysellLabel.setBounds(600, 10, 90, 20);
@@ -1249,13 +1249,13 @@ public class RPExchangeDialog extends JDialog {
 
 	public void listsetforeground(RPList jlist, int k) {
 		jlist.setSelectedIndex(k);
-		jlist.setSelectionForeground(new Color(53, 104, 195));
-		jlist.setSelectionBackground(new Color(0, 0, 0));
+		jlist.setSelectionForeground(new LColor(53, 104, 195));
+		jlist.setSelectionBackground(new LColor(0, 0, 0));
 	}
 
 	public void listgetunsupported(RPList jlist, int k) {
 		jlist.setSelectedIndex(k);
-		jlist.setSelectionForeground(new Color(250, 250, 0));
-		jlist.setSelectionBackground(new Color(128, 128, 128));
+		jlist.setSelectionForeground(new LColor(250, 250, 0));
+		jlist.setSelectionBackground(new LColor(128, 128, 128));
 	}
 }

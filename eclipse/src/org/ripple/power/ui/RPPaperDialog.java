@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Window;
@@ -60,7 +59,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 			if (pImage != null) {
 				g.drawImage(pImage, 0, 0, getWidth(), getHeight(), this);
 			} else {
-				Color color = g.getColor();
+				java.awt.Color color = g.getColor();
 				g.setColor(LSystem.background);
 				g.fillRect(0, 0, getWidth(), getHeight() - 10);
 				g.setColor(color);
