@@ -177,8 +177,8 @@ public abstract class OfferPrice {
 								+ "<br><font size=5 color=red>Exchange rate</font><br>"
 								+ getsOne.toText() + "=="
 								+ paysOne.multiply(payForOne).toText() + "<br>"
-								+ paysOne.toText() + "=="
-								+ getsOne.divide(payForOne).toText();
+								+ getsOne.divide(payForOne).toText() + "=="
+								+paysOne.toText() ;
 						sells.add(fruit);
 					}
 					// buy
@@ -194,10 +194,10 @@ public abstract class OfferPrice {
 								+ "<br><font size=5 color=red>Buy</font><br>"
 								+ (o.takerPays().toText())
 								+ "<br><font size=5 color=red>Exchange rate</font><br>"
-								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + "<br>"
-								+ paysOne.toText() + "=="
-								+ getsOne.divide(payForOne).toText();
+								+ paysOne.multiply(payForOne).toText() + "=="
+								+ getsOne.toText() 
+								+ "<br>" + paysOne.toText()
+								+ "==" + getsOne.divide(payForOne).toText();
 						buys.add(fruit);
 					}
 				} else {
@@ -208,5 +208,6 @@ public abstract class OfferPrice {
 			}
 		}).requestUpdate(price);
 	}
+
 
 }

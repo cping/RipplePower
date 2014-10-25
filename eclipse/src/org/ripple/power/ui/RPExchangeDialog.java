@@ -680,61 +680,64 @@ public class RPExchangeDialog extends JDialog {
 								final ArrayList<OfferFruit> sells,
 								final OfferPrice price) {
 
-							_buymList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
+							if (buys.size() > 0) {
+								synchronized (_buyerList) {
+									_buymList
+											.setModel(new javax.swing.AbstractListModel<Object>() {
+												private static final long serialVersionUID = 1L;
 
-										/**
-										 * 
-										 */
-										private static final long serialVersionUID = 1L;
+												public int getSize() {
+													return buys.size();
+												}
 
-										public int getSize() {
-											return buys.size();
-										}
+												public Object getElementAt(int i) {
+													return buys.get(i);
+												}
+											});
 
-										public Object getElementAt(int i) {
-											return buys.get(i);
-										}
-									});
-
-							_sellmList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
-
-										/**
-										 * 
-										 */
-										private static final long serialVersionUID = 1L;
-
-										public int getSize() {
-											return sells.size();
-										}
-
-										public Object getElementAt(int i) {
-											return sells.get(i);
-										}
-									});
-							synchronized (_buyerList) {
-								_buyerList.clear();
-								_buyerList.addAll(buys);
-								_mysellText.setText(_buyerList.get(0).offer
-										.takerPays().toText());
-								_cansellText.setText(_buyerList.get(0).offer
-										.takerGets().toText());
-
+									_buyerList.clear();
+									_buyerList.addAll(buys);
+									_mysellText.setText(_buyerList.get(0).offer
+											.takerPays().toText());
+									_cansellText.setText(_buyerList.get(0).offer
+											.takerGets().toText());
+									_buymLabel.setText(LangConfig.get(
+											RPExchangeDialog.class, "bm",
+											"Buyer's Market")
+											+ " Count:" + buys.size());
+								}
 							}
-							synchronized (_sellerList) {
-								_sellerList.clear();
-								_sellerList.addAll(sells);
-								_mybuyText.setText(_sellerList.get(0).offer
-										.takerPays().toText());
-								_canbuyText.setText(_sellerList.get(0).offer
-										.takerGets().toText());
+							if (sells.size() > 0) {
+								synchronized (_sellerList) {
+									_sellmList
+											.setModel(new javax.swing.AbstractListModel<Object>() {
+												private static final long serialVersionUID = 1L;
+
+												public int getSize() {
+													return sells.size();
+												}
+
+												public Object getElementAt(int i) {
+													return sells.get(i);
+												}
+											});
+
+									_sellerList.clear();
+									_sellerList.addAll(sells);
+									_mybuyText.setText(_sellerList.get(0).offer
+											.takerPays().toText());
+									_canbuyText.setText(_sellerList.get(0).offer
+											.takerGets().toText());
+									_sellmLabel.setText(LangConfig.get(
+											RPExchangeDialog.class, "sm",
+											"Seller's Market")
+											+ " Count:" + sells.size());
+								}
 							}
 							dialog.closeDialog();
 							_tip1Label.setText(String.format(info_price(),
 									price.highBuy, price.hightSell,
 									price.spread));
-
 							_tradeFlag = true;
 							loadTradingList();
 						}
@@ -1144,46 +1147,51 @@ public class RPExchangeDialog extends JDialog {
 			public void complete(final ArrayList<OfferFruit> buys,
 					final ArrayList<OfferFruit> sells, final OfferPrice price) {
 
-				synchronized (_sellerList) {
-					_sellerList.clear();
-					_sellerList.addAll(sells);
-				}
-				synchronized (_buyerList) {
-					_buyerList.clear();
-					_buyerList.addAll(buys);
+				if (sells.size() > 0) {
+					synchronized (_sellerList) {
+						_sellmList
+								.setModel(new javax.swing.AbstractListModel<Object>() {
+									private static final long serialVersionUID = 1L;
 
-				}
-				_buymList.setModel(new javax.swing.AbstractListModel<Object>() {
+									public int getSize() {
+										return sells.size();
+									}
 
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+									public Object getElementAt(int i) {
+										return sells.get(i);
+									}
+								});
 
-					public int getSize() {
-						return buys.size();
+						_sellerList.clear();
+						_sellerList.addAll(sells);
+						_sellmLabel.setText(LangConfig
+								.get(RPExchangeDialog.class, "sm",
+										"Seller's Market")
+								+ " Count:" + sells.size());
 					}
+				}
+				if (buys.size() > 0) {
+					synchronized (_buyerList) {
+						_buymList
+								.setModel(new javax.swing.AbstractListModel<Object>() {
+									private static final long serialVersionUID = 1L;
 
-					public Object getElementAt(int i) {
-						return buys.get(i);
+									public int getSize() {
+										return buys.size();
+									}
+
+									public Object getElementAt(int i) {
+										return buys.get(i);
+									}
+								});
+
+						_buyerList.clear();
+						_buyerList.addAll(buys);
+						_buymLabel.setText(LangConfig.get(
+								RPExchangeDialog.class, "bm", "Buyer's Market")
+								+ " Count:" + buys.size());
 					}
-				});
-				_sellmList
-						.setModel(new javax.swing.AbstractListModel<Object>() {
-
-							/**
-					 * 
-					 */
-							private static final long serialVersionUID = 1L;
-
-							public int getSize() {
-								return sells.size();
-							}
-
-							public Object getElementAt(int i) {
-								return sells.get(i);
-							}
-						});
+				}
 
 				_tip1Label.setText(String.format(info_price(), price.highBuy,
 						price.hightSell, price.spread));
@@ -1198,12 +1206,10 @@ public class RPExchangeDialog extends JDialog {
 			return;
 		}
 		if (_item != null) {
-
-			Runnable update = new Runnable() {
+			Updateable update = new Updateable() {
 
 				@Override
-				public void run() {
-
+				public void action(Object o) {
 					for (; isVisible() && _tradeFlag;) {
 						String address = _addressText.getText().trim();
 						String cur = ((String) _curComboBox.getSelectedItem())
@@ -1217,11 +1223,8 @@ public class RPExchangeDialog extends JDialog {
 					}
 				}
 			};
-
-			_tradeThread = new Thread(update);
-			_tradeThread.start();
+			_tradeThread = LSystem.postThread(update);
 		}
-
 	}
 
 	public void listsetforeground(RPList jlist, int k) {
