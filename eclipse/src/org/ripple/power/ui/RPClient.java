@@ -23,6 +23,7 @@ import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
 import com.ripple.client.transport.impl.JavaWebSocketTransportImpl;
 import com.ripple.core.coretypes.AccountID;
+import com.ripple.core.coretypes.RippleDate;
 
 public class RPClient {
 
@@ -310,7 +311,14 @@ public class RPClient {
 			public void called(Response response) {
 				JSONObject arrays = response.result;
 				JSONObject result = arrays.getJSONObject("account_data");
-				item.setAmount(String.valueOf((result.getDouble("Balance") / 1000000)));
+				double new_amount = (result.getDouble("Balance") / 1000000);
+				double old_amount = Double.parseDouble(item.getAmount());
+				if (old_amount > new_amount) {
+					popXRP(item.getPublicKey(), "减少", (old_amount - new_amount));
+				} else if (new_amount > old_amount) {
+					popXRP(item.getPublicKey(), "增加", (new_amount - old_amount));
+				}
+				item.setAmount(String.valueOf(new_amount));
 				item.setStatus("full");
 			}
 
@@ -323,6 +331,12 @@ public class RPClient {
 
 		});
 		req.request();
+	}
+
+	private static void popXRP(String address, String flag, double amount) {
+		RPBubbleDialog.pop("在" + RippleDate.now().getTimeString() + "左右,您的地址："
+				+ address + flag + "了" + String.valueOf(amount)
+				+ LSystem.nativeCurrency);
 	}
 
 	public Client getClinet() {
