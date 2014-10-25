@@ -376,16 +376,19 @@ public final class LSystem {
 
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount, String currency, long dt) {
-		java.net.URI uri;
 		String page = "https://ripple.com//send?to=" + address + "&name="
 				+ name + "&label=" + label.replace(" ", "%20") + "&amount="
 				+ amount + "/" + currency + "&dt=" + dt;
+		openURL(page);
+	}
+
+	public static void openURL(String url) {
 		try {
-			uri = new java.net.URI(page);
+			java.net.URI uri = new java.net.URI(url);
 			java.awt.Desktop.getDesktop().browse(uri);
 		} catch (Exception e) {
 			try {
-				browse(page);
+				browse(url);
 			} catch (Exception err) {
 				err.printStackTrace();
 			}

@@ -472,10 +472,18 @@ public class RPAccountInfoDialog extends JDialog {
 						_accountLineItems3.clear();
 						for (TransactionTx tx : info.transactions) {
 							if ("Payment".equals(tx.clazz)) {
-								_accountLineItems3.add(tx.date + " " + tx.mode
-										+ " " + tx.counterparty + " "
-										+ tx.currency.toGatewayString()
-										+ ",Fee:" + tx.fee);
+								if (tx.counterparty != null) {
+									_accountLineItems3.add(tx.date + " "
+											+ tx.mode + " " + tx.counterparty
+											+ " "
+											+ tx.currency.toGatewayString()
+											+ ",Fee:" + tx.fee);
+								} else {
+									_accountLineItems3.add(tx.date + " "
+											+ tx.mode + " "
+											+ tx.currency.toGatewayString()
+											+ ",Fee:" + tx.fee);
+								}
 							}
 						}
 					}

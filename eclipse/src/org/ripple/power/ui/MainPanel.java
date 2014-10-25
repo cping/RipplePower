@@ -334,10 +334,16 @@ public class MainPanel extends JPanel implements ActionListener {
 				}
 			}
 		});
+
+		MenuItem code = new MenuItem("Source Code");
+		code.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://github.com/cping/ripplepower");
+			}
+		});
+
 		MenuItem exit = new MenuItem("Exit");
-		menu.add(restore);
-		menu.addSeparator();
-		menu.add(exit);
 		exit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -348,6 +354,12 @@ public class MainPanel extends JPanel implements ActionListener {
 				}
 			}
 		});
+
+		menu.add(restore);
+		menu.add(code);
+		menu.addSeparator();
+		menu.add(exit);
+
 		trayIcon.setPopupMenu(menu);
 		try {
 			tray.add(trayIcon);
@@ -359,8 +371,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		try {
 			if (actionName.equals(CommandFlag.RippledNodeS)) {
 				RPSRippledDialog.showDialog(LangConfig.get(
-						RPSRippledDialog.class, "update_node",
-						"Rippled Node"), LSystem.applicationMain);
+						RPSRippledDialog.class, "update_node", "Rippled Node"),
+						LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {
