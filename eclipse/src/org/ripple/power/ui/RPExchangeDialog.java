@@ -1270,9 +1270,6 @@ public class RPExchangeDialog extends JDialog {
 			public void complete(final ArrayList<OfferFruit> buys,
 					final ArrayList<OfferFruit> sells, final OfferPrice price) {
 
-				_tip1Label.setText(String.format(info_price(), price.highBuy,
-						price.hightSell, price.spread));
-
 				if (sells.size() > 0) {
 					synchronized (_sellerList) {
 						_sellmList
@@ -1327,6 +1324,8 @@ public class RPExchangeDialog extends JDialog {
 					}
 				}
 
+				_tip1Label.setText(String.format(info_price(), price.highBuy,
+						price.hightSell, price.spread));
 			}
 
 		});
@@ -1336,23 +1335,25 @@ public class RPExchangeDialog extends JDialog {
 		if (!_tradeFlag) {
 			return;
 		}
-		if (_item != null) {
-			Updateable update = new Updateable() {
+		/*
+		 * if (_item == null) { return; }
+		 */
+		Updateable update = new Updateable() {
 
-				@Override
-				public void action(Object o) {
-					for (; isVisible() && _tradeFlag;) {
-						updateTrading(address, split[0], split[1]);
-						loadOtherMarketList(address, split);
-						try {
-							Thread.sleep(LSystem.SECOND * 10);
-						} catch (InterruptedException e) {
-						}
+			@Override
+			public void action(Object o) {
+				for (; isVisible() && _tradeFlag;) {
+					updateTrading(address, split[0], split[1]);
+					loadOtherMarketList(address, split);
+					try {
+						Thread.sleep(LSystem.SECOND * 10);
+					} catch (InterruptedException e) {
 					}
 				}
-			};
-			_tradeThread = LSystem.postThread(update);
-		}
+			}
+		};
+		_tradeThread = LSystem.postThread(update);
+
 	}
 
 	public void listsetforeground(RPList jlist, int k) {
