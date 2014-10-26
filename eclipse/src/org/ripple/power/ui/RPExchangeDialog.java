@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -9,6 +8,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
+import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
@@ -51,7 +53,7 @@ public class RPExchangeDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	//default only the first 20 data show
+	// default only the first 20 data show
 	private static final int _LIMIT_PAGE = 20;
 	private ArrayList<OfferFruit> _buyerList = new ArrayList<OfferFruit>(100);
 	private ArrayList<OfferFruit> _sellerList = new ArrayList<OfferFruit>(100);
@@ -100,7 +102,7 @@ public class RPExchangeDialog extends JDialog {
 	private final AccountInfo _info = new AccountInfo();
 
 	private void warning_noselect() {
-		RPMessage.showWarningMessage(this, "Info", "请首先确定您要进行卖出的网关与币种");
+		RPMessage.showWarningMessage(this, "Info", "请首先确定您要进行交易的网关与币种");
 	}
 
 	private void warning_xrp() {
@@ -191,8 +193,11 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	public RPExchangeDialog(String text, JFrame parent, final WalletItem item) {
-		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent, text, false);
 		this._item = item;
+		if (_item != null) {
+			_item.setTip(false);
+		}
 		this.setResizable(false);
 		Dimension dim = new Dimension(992, 620);
 		this.setPreferredSize(dim);
@@ -370,7 +375,8 @@ public class RPExchangeDialog extends JDialog {
 				"Other Prices") + "(coinmarketcap)");
 		jPanel1.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
-
+		
+		_otherMarketList.setCellRenderer(new HtmlRenderer());
 		jScrollPane4.setViewportView(_otherMarketList);
 
 		jPanel1.add(jScrollPane4);
@@ -558,6 +564,9 @@ public class RPExchangeDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (_item != null) {
+					_item.setTip(false);
+				}
 				SwingUtils.close(RPExchangeDialog.this);
 			}
 		});
@@ -598,6 +607,7 @@ public class RPExchangeDialog extends JDialog {
 			_canceltradingButton.setEnabled(false);
 		}
 		getContentPane().setBackground(LSystem.dialogbackground);
+		addWindowListener(new windowListener());
 		pack();
 	}// </editor-fold>
 
@@ -645,9 +655,10 @@ public class RPExchangeDialog extends JDialog {
 			_tradeThread = null;
 		}
 		final String cur = (String) _curComboBox.getSelectedItem();
-		String[] split = StringUtils.split(cur, "/");
+		final String[] split = StringUtils.split(cur, "/");
 		if (split.length == 2) {
-			String address = (String) _selectGateawyCombobox.getSelectedItem();
+			final String address = (String) _selectGateawyCombobox
+					.getSelectedItem();
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
 			OfferPrice.load(
@@ -749,13 +760,65 @@ public class RPExchangeDialog extends JDialog {
 								}
 							}
 							dialog.closeDialog();
-
 							_tradeFlag = true;
-							loadTradingList();
+							loadTradingList(address, split);
+							loadOtherMarketList(address, split);
 						}
 
 					});
 
+		}
+
+	}
+
+	private void loadOtherMarketList(String address, String[] split) {
+		String srcCurName = split[0];
+		String dstCurName = split[1];
+		OtherData.CoinmarketcapData cData = null;
+		if ((srcCurName.equalsIgnoreCase("usd") && dstCurName
+				.equalsIgnoreCase("btc"))
+				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName
+						.equalsIgnoreCase("usd"))) {
+			srcCurName = "usd";
+			dstCurName = "btc";
+		}
+		if ((srcCurName.equalsIgnoreCase("xrp") && dstCurName
+				.equalsIgnoreCase("cny"))
+				|| (srcCurName.equalsIgnoreCase("cny") && dstCurName
+						.equalsIgnoreCase("xrp"))) {
+			srcCurName = "cny";
+			dstCurName = "xrp";
+		}
+		try {
+			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
+			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
+			}
+			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd", srcCurName);
+			}
+			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd",
+						LSystem.nativeCurrency);
+			}
+		} catch (Exception e) {
+		}
+
+		if (cData != null) {
+			final ArrayList<String> list = new ArrayList<String>(10);
+			list.add(cData.toHTMLString());
+			_otherMarketList
+					.setModel(new javax.swing.AbstractListModel<Object>() {
+						private static final long serialVersionUID = 1L;
+
+						public int getSize() {
+							return list.size();
+						}
+
+						public Object getElementAt(int i) {
+							return list.get(i);
+						}
+					});
 		}
 
 	}
@@ -766,7 +829,7 @@ public class RPExchangeDialog extends JDialog {
 			final String address = _addressText.getText().trim();
 			RPCButton btn = (RPCButton) obj;
 			String cur = ((String) _curComboBox.getSelectedItem()).trim();
-			String[] split = StringUtils.split(cur, "/");
+			final String[] split = StringUtils.split(cur, "/");
 			final String srcCurName = split[0];
 			final String dstCurName = split[1];
 			_info.lines.clear();
@@ -1055,6 +1118,47 @@ public class RPExchangeDialog extends JDialog {
 		}
 	}
 
+	private class windowListener implements WindowListener {
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+			if (_item != null) {
+				_item.setTip(true);
+			}
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+
+		}
+
+	}
+
 	private void checkTrade(final RPCButton button, final Updateable update) {
 		final String address = _addressText.getText().trim();
 		Object result = _flags.get(address);
@@ -1221,7 +1325,7 @@ public class RPExchangeDialog extends JDialog {
 		});
 	}
 
-	private void loadTradingList() {
+	private void loadTradingList(final String address, final String[] split) {
 		if (!_tradeFlag) {
 			return;
 		}
@@ -1231,11 +1335,8 @@ public class RPExchangeDialog extends JDialog {
 				@Override
 				public void action(Object o) {
 					for (; isVisible() && _tradeFlag;) {
-						String address = _addressText.getText().trim();
-						String cur = ((String) _curComboBox.getSelectedItem())
-								.trim();
-						String[] split = StringUtils.split(cur, "/");
 						updateTrading(address, split[0], split[1]);
+						loadOtherMarketList(address, split);
 						try {
 							Thread.sleep(LSystem.SECOND * 10);
 						} catch (InterruptedException e) {

@@ -27,7 +27,7 @@ public class HtmlRenderer extends DefaultListCellRenderer {
 		public void paintBorder(Component c, Graphics g, int x, int y,
 				int width, int height) {
 			g.setColor(LColor.gray);
-			g.drawRect(x + 1, y + 1, width - 2, height - 2);
+			g.drawRect(x + 1, y + 1, width - 3, height - 3);
 		}
 	};
 
@@ -37,8 +37,13 @@ public class HtmlRenderer extends DefaultListCellRenderer {
 		super.getListCellRendererComponent(list, value, index, isSelected,
 				cellHasFocus);
 		setBorder(noFocusBorder);
-		OfferFruit fruit = (OfferFruit) value;
-		this.setText("<html><b><i>" + fruit.message + "</i></b></html>");
+		if (value instanceof OfferFruit) {
+			OfferFruit fruit = (OfferFruit) value;
+			this.setText("<html><b><i>" + fruit.message + "</i></b></html>");
+		} else {
+			String message = (String) value;
+			this.setText("<html><b><i>" + message + "</i></b></html>");
+		}
 		return this;
 	}
 
