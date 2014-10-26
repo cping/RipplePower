@@ -375,7 +375,7 @@ public class RPExchangeDialog extends JDialog {
 				"Other Prices") + "(coinmarketcap)");
 		jPanel1.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
-		
+
 		_otherMarketList.setCellRenderer(new HtmlRenderer());
 		jScrollPane4.setViewportView(_otherMarketList);
 
@@ -846,7 +846,7 @@ public class RPExchangeDialog extends JDialog {
 				synchronized (_buyerList) {
 					if (_buyerList.size() > 0) {
 						if (_item != null) {
-							checkTrade(_okbuyButton, new Updateable() {
+							checkTrade(address, _okbuyButton, new Updateable() {
 
 								@Override
 								public void action(Object o) {
@@ -863,7 +863,7 @@ public class RPExchangeDialog extends JDialog {
 			case "sell":
 				synchronized (_sellerList) {
 					if (_sellerList.size() > 0) {
-						checkTrade(_oksellButton, new Updateable() {
+						checkTrade(address, _oksellButton, new Updateable() {
 
 							@Override
 							public void action(Object o) {
@@ -1166,8 +1166,8 @@ public class RPExchangeDialog extends JDialog {
 
 	}
 
-	private void checkTrade(final RPCButton button, final Updateable update) {
-		final String address = _addressText.getText().trim();
+	private void checkTrade(final String address, final RPCButton button,
+			final Updateable update) {
 		Object result = _flags.get(address);
 		if (result == null || (!(boolean) result)) {
 			final WaitDialog dialog = WaitDialog.showDialog(this);
@@ -1187,7 +1187,7 @@ public class RPExchangeDialog extends JDialog {
 							}
 							if (notfind) {
 								warning_trust(address);
-								button.setEnabled(false);
+								// button.setEnabled(false);
 								_flags.put(address, false);
 							} else {
 								_flags.put(address, true);
