@@ -1,11 +1,16 @@
 package org.ripple.power.txns;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +29,16 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class OtherData {
 
+	final static String ELEMENT_SEPARATOR = "\001";
+
+	final static String ROW_SEPARATOR = "\002";
+
+	final static String REGEX_TABLE = "<table.*?>\\s*?((<tr.*?>.*?</tr>)+?)\\s*?</table>";
+
+	final static String REGEX_ROW = "<tr.*?>\\s*?(.*?)\\s*?</tr>";
+
+	final static String REGEX_ELE = "(?:<th.*?>|<td.*?>)(?:\\s*<.*?>)*(?:&nbsp;)?(.*?)(?:&nbsp;)?(?:\\s*<.*?>)*?\\s*(?:</th>|</td>)";
+
 	public static class LegalTenderCurrency {
 		public String code;
 		public String name;
@@ -35,7 +50,7 @@ public class OtherData {
 
 		public String toHTMLString() {
 			StringBuffer sbr = new StringBuffer();
-			
+
 			sbr.append("name:");
 			sbr.append(name);
 			sbr.append("<br>");
@@ -214,7 +229,7 @@ public class OtherData {
 					.get("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('"
 							+ name
 							+ "')&format=json&diagnostics=false&env=http://datatables.org/alltables.env");
-			request.acceptGzipEncoding();
+
 			if (request.ok()) {
 				String result = request.body();
 				JSONObject obj = new JSONObject(result);
@@ -245,7 +260,7 @@ public class OtherData {
 			HttpRequest request = HttpRequest
 					.get("http://coinmarketcap.northpole.ro/api/" + name
 							+ ".json");
-			request.acceptGzipEncoding();
+
 			if (request.ok()) {
 				JSONObject a = new JSONObject(request.body());
 				if (a.has("price")) {
@@ -265,7 +280,7 @@ public class OtherData {
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
 						+ name + "-365d.json");
-		request.acceptGzipEncoding();
+
 		if (request.ok()) {
 			return new JSONArray(request.body());
 		}
@@ -277,7 +292,7 @@ public class OtherData {
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
 						+ name + "-1d.json");
-		request.acceptGzipEncoding();
+
 		if (request.ok()) {
 			return new JSONArray(request.body());
 		}
@@ -294,7 +309,7 @@ public class OtherData {
 		}
 		HttpRequest request = HttpRequest.get(String.format(
 				"http://coinmarketcap.northpole.ro/api/%s/%s.json", cur, name));
-		request.acceptGzipEncoding();
+
 		if (request.ok()) {
 			JSONObject obj = new JSONObject(request.body());
 			CoinmarketcapData data = CoinmarketcapData.from(obj);
@@ -307,7 +322,7 @@ public class OtherData {
 			throws Exception {
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.northpole.ro/api/all.json");
-		request.acceptGzipEncoding();
+
 		if (request.ok()) {
 			InputStreamReader reader = new InputStreamReader(request.stream());
 			StringBuilder sbr = new StringBuilder();
@@ -379,6 +394,102 @@ public class OtherData {
 			return result;
 		}
 		return null;
+	}
+
+	private static String find(int nStartLine, int nEndLine, BufferedReader br)
+			throws IOException {
+		String line;
+		String target = "";
+		String elements = "";
+		int i = 0;
+		while ((line = br.readLine()) != null) {
+			++i;
+			if (i < nStartLine) {
+				continue;
+			}
+			line.trim();
+			target = target + line;
+			if (i >= nEndLine) {
+				break;
+			}
+
+		}
+		Pattern r = Pattern.compile(REGEX_TABLE, Pattern.CASE_INSENSITIVE);
+		Matcher mTable = r.matcher(target);
+		if (mTable.find()) {
+			String strRows = mTable.group(1).trim();
+
+			Matcher mRow = Pattern.compile(REGEX_ROW, Pattern.CASE_INSENSITIVE)
+					.matcher(strRows);
+			while (mRow.find()) {
+				boolean firstEle = true;
+				String strEle = mRow.group(1).trim();
+
+				Matcher mEle = Pattern.compile(REGEX_ELE,
+						Pattern.CASE_INSENSITIVE).matcher(strEle);
+				if (!elements.equals(""))
+					elements = elements + ROW_SEPARATOR;
+				while (mEle.find()) {
+					String result = mEle.group(1).trim();
+					if (firstEle)
+						elements = elements + result;
+					else
+						elements = elements + ELEMENT_SEPARATOR + result;
+					firstEle = false;
+				}
+				if (!elements.equals("")) {
+					int len = elements.length();
+					elements = elements.substring(0, len - 2);
+				}
+			}
+		}
+		return new String(elements);
+	}
+
+	private final static DecimalFormat NUMBER_FORMAT = new DecimalFormat(
+			"0.00000");
+
+	public static ArrayList<String> getAllLegalTenderRateHTML()
+			throws Exception {
+		HttpRequest request = HttpRequest.get("http://www.usd-cny.com/");
+		request.acceptGzipEncoding();
+		request.uncompress(true);
+
+		if (!request.ok()) {
+			return null;
+		}
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				request.stream(), "gb2312"));
+
+		String result = find(78, 313, br);
+
+		String strRows[] = result.split(ROW_SEPARATOR);
+		String strCur, strRate;
+		NumberFormat numFormat = NumberFormat.getNumberInstance();
+		Number numb = null;
+
+		ArrayList<String> hashTable = new ArrayList<String>();
+
+		for (int i = 1; i < strRows.length; i++) {
+			String strEle[] = strRows[i].split(ELEMENT_SEPARATOR);
+			if (strEle[3].equals("")) {
+				break;
+			}
+			strCur = strEle[0].split(" ")[1];
+			strRate = strEle[3];
+			numb = numFormat.parse(strRate);
+			strRate = numb.toString();
+			hashTable.add("1/" + strCur + "<br>Rate<br>"
+					+ NUMBER_FORMAT.format(Double.valueOf(strRate) / 100.0d)
+					+ "/CNY");
+			hashTable.add("1/CNY" + "<br>Rate<br>"
+					+ NUMBER_FORMAT.format(100.0d/Double.valueOf(strRate)) + "/"
+					+ strCur);
+		}
+
+		br.close();
+		return hashTable;
 	}
 
 }

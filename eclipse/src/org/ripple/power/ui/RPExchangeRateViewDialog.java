@@ -185,28 +185,8 @@ public class RPExchangeRateViewDialog extends JDialog {
 										return list.get(i);
 									}
 								});
-
-							 final ArrayList<String> curs = new ArrayList<String>(30);
-							 curs.add("1/USD=="
-									+ OtherData
-											.getLegaltenderCurrencyToUSD("jpy")
-									+ "/JPY");
-							 curs.add("1/USD=="
-									+ OtherData
-											.getLegaltenderCurrencyToUSD("gbp")
-									+ "/GBP");
-							 curs.add("1/USD=="
-									+ OtherData
-											.getLegaltenderCurrencyToUSD("cny")
-									+ "/CNY");
-							 curs.add("1/USD=="
-									+ OtherData
-											.getLegaltenderCurrencyToUSD("eur")
-									+ "/EUR");
-							 curs.add("1/USD=="
-										+ OtherData
-												.getLegaltenderCurrencyToUSD("twd")
-										+ "/TWD");
+							 final ArrayList<String> curs = new ArrayList<String>(100);
+							 curs.addAll(OtherData.getAllLegalTenderRateHTML());
 							_legalTenderList
 									.setModel(new javax.swing.AbstractListModel<Object>() {
 										private static final long serialVersionUID = 1L;
@@ -242,7 +222,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 		jLabel3.setFont(UIRes.getFont()); // NOI18N
 		jLabel3.setForeground(LColor.white);
-		jLabel3.setText("法币外汇市场(yahoo)");
+		jLabel3.setText("法币外汇市场(usd-cny)");
 		jPanel1.add(jLabel3);
 		jLabel3.setBounds(380, 10, 360, 20);
 
