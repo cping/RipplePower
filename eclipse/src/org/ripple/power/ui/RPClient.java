@@ -349,9 +349,10 @@ public class RPClient {
 	private static void popXRP(String address, String flag, double amount) {
 		String result = String.valueOf(amount);
 		if (result.toLowerCase().indexOf("e") != -1
-				|| result.toLowerCase().indexOf("+") != -1) {
+				|| result.toLowerCase().indexOf("+") != -1
+				|| result.toLowerCase().indexOf("-") != -1) {
 			RPBubbleDialog.pop(time() + address + flag + "了"
-					+ new BigDecimal(result).toString()
+					+ LSystem.getNumber(new BigDecimal(result))
 					+ LSystem.nativeCurrency);
 		} else {
 			RPBubbleDialog.pop(time() + address + flag + "了" + result

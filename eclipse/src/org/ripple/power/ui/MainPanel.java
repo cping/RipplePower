@@ -182,7 +182,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		RPButton btn3 = new RPButton(LangConfig.get(this, "exchange_rate",
 				"Exchange Rate"), iconSearch);
-		btn3.setActionCommand("查看汇率");
+		btn3.setActionCommand(CommandFlag.ExchangeRate);
 		btn3.setFont(font);
 		btn3.addActionListener(this);
 
@@ -296,6 +296,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Gateway);
 		addPopMenu(LangConfig.get(this, "to_exchange", "To Exchange"),
 				CommandFlag.Exchange);
+		addPopMenu(LangConfig.get(this, "exchange_rate", "Exchange Rate"),
+				CommandFlag.ExchangeRate);
 		addPopMenu(LangConfig.get(this, "add_address", "Add Address"),
 				CommandFlag.AddAddress);
 		addPopMenu(LangConfig.get(this, "del_address", "Del Address"),
@@ -392,6 +394,12 @@ public class MainPanel extends JPanel implements ActionListener {
 							"error", "Error"), LangConfig.get(this, "back2",
 							"Backup fails, wallet file does not exist"));
 				}
+				return;
+			}
+			if (actionName.equals(CommandFlag.ExchangeRate)) {
+				RPExchangeRateViewDialog.showDialog(
+						LangConfig.get(this, "exchange_rate", "Exchange Rate"),
+						LSystem.applicationMain);
 				return;
 			}
 			int row = table.getSelectedRow();

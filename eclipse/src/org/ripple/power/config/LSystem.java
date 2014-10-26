@@ -8,11 +8,13 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.UnknownHostException;
 import java.security.AccessControlException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +40,8 @@ public final class LSystem {
 
 	public final static String nativeCurrency = "xrp";
 
+	public final static DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.0000000000");
+	
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
 
@@ -48,9 +52,7 @@ public final class LSystem {
 	final static public long SECOND = 1000;
 	final static public long MINUTE = SECOND * 60;
 	final static public long MSEC = 1L;
-	final static public long SEC = 1000 * MSEC;
-	final static public long MIN = 60 * SEC;
-	final static public long HOUR = 60 * MIN;
+	final static public long HOUR = 60 * MINUTE;
 	final static public long DAY = 24 * HOUR;
 	final static public long WEEK = 7 * DAY;
 	final static public long MONTH = 31 * DAY;
@@ -146,6 +148,10 @@ public final class LSystem {
 				_isMacClassic = true;
 			}
 		}
+	}
+	
+	public static String getNumber(BigDecimal big){
+		return NUMBER_FORMAT.format(big);
 	}
 
 	public static void putThread(final Runnable runnable) {

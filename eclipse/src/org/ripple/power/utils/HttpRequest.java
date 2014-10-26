@@ -1393,8 +1393,9 @@ public class HttpRequest {
 			public HttpRequest run() throws IOException {
 				final byte[] buffer = new byte[bufferSize];
 				int read;
-				while ((read = input.read(buffer)) != -1)
+				while ((read = input.read(buffer)) != -1){
 					output.write(buffer, 0, read);
+				}
 				return HttpRequest.this;
 			}
 		}.call();
