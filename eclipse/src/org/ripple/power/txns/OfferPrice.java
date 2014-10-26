@@ -50,12 +50,16 @@ public abstract class OfferPrice {
 
 	public static void load(String address, String buyCurName,
 			String sellCurName, OfferPrice price) {
-		AccountID account = AccountID.fromAddress(address);
-		RPClient ripple = RPClient.ripple();
-		if (ripple != null) {
-			Issue buy = account.issue(buyCurName);
-			Issue sell = account.issue(sellCurName);
-			load(ripple.getClinet(), buy, sell, price);
+		try {
+			AccountID account = AccountID.fromAddress(address);
+			RPClient ripple = RPClient.ripple();
+			if (ripple != null) {
+				Issue buy = account.issue(buyCurName);
+				Issue sell = account.issue(sellCurName);
+				load(ripple.getClinet(), buy, sell, price);
+			}
+		} catch (Exception ex) {
+
 		}
 	}
 
@@ -178,7 +182,7 @@ public abstract class OfferPrice {
 								+ getsOne.toText() + "=="
 								+ paysOne.multiply(payForOne).toText() + "<br>"
 								+ getsOne.divide(payForOne).toText() + "=="
-								+paysOne.toText() ;
+								+ paysOne.toText();
 						sells.add(fruit);
 					}
 					// buy
@@ -195,8 +199,7 @@ public abstract class OfferPrice {
 								+ (o.takerPays().toText())
 								+ "<br><font size=5 color=red>Exchange rate</font><br>"
 								+ paysOne.multiply(payForOne).toText() + "=="
-								+ getsOne.toText() 
-								+ "<br>" + paysOne.toText()
+								+ getsOne.toText() + "<br>" + paysOne.toText()
 								+ "==" + getsOne.divide(payForOne).toText();
 						buys.add(fruit);
 					}
@@ -208,6 +211,5 @@ public abstract class OfferPrice {
 			}
 		}).requestUpdate(price);
 	}
-
 
 }

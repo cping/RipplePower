@@ -789,6 +789,13 @@ public class RPExchangeDialog extends JDialog {
 			srcCurName = "cny";
 			dstCurName = "xrp";
 		}
+		if ((srcCurName.equalsIgnoreCase("btc") && dstCurName
+				.equalsIgnoreCase("xrp"))
+				|| (srcCurName.equalsIgnoreCase("xrp") && dstCurName
+						.equalsIgnoreCase("btc"))) {
+			srcCurName = "btc";
+			dstCurName = "xrp";
+		}
 		try {
 			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
 			if (cData == null) {
