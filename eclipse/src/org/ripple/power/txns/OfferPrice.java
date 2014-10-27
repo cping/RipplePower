@@ -19,13 +19,19 @@ import java.math.MathContext;
 import java.util.ArrayList;
 
 public abstract class OfferPrice {
-
+	
 	public static String getMoneyConvert(String srcValue, String src, String dst) {
+		if (srcValue == null || src == null | dst == null) {
+			return "unkown";
+		}
+		if (src.equalsIgnoreCase(dst)) {
+			return srcValue;
+		}
 		String oneValue = null;
 		String twoValue = null;
 		try {
 			oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
-			twoValue= OtherData.getCoinmarketcapCoinToUSD(dst);
+			twoValue = OtherData.getCoinmarketcapCoinToUSD(dst);
 			if (oneValue != null && twoValue != null) {
 				BigDecimal a1 = new BigDecimal(oneValue);
 				BigDecimal b1 = new BigDecimal(twoValue);
@@ -34,8 +40,10 @@ public abstract class OfferPrice {
 			}
 		} catch (Exception ex) {
 			// null
+			oneValue = null;
+			twoValue = null;
 		}
-		
+
 		try {
 			String tmp = OtherData.converterMoney(src, dst);
 			if (tmp != null) {
@@ -49,12 +57,15 @@ public abstract class OfferPrice {
 				if (oneValue == null) {
 					oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
 				}
+				if (oneValue == null && src.equalsIgnoreCase("ker")) {
+					oneValue = "0.00095";
+				}
 				if (oneValue != null) {
-					if(twoValue == null){
+					if (twoValue == null) {
 						twoValue = OtherData.converterMoney(dst, "usd");
 					}
 					if (twoValue == null && dst.equalsIgnoreCase("ker")) {
-						twoValue = "0.006";
+						twoValue = "0.00095";
 					}
 					if (twoValue != null) {
 						BigDecimal srcValueb = new BigDecimal(oneValue);
@@ -66,11 +77,11 @@ public abstract class OfferPrice {
 						double yahooValue = OtherData
 								.getLegaltenderCurrencyToUSD(src);
 						if (yahooValue != -1) {
-							if(twoValue == null){
-							   twoValue = OtherData.converterMoney(dst, "usd");
+							if (twoValue == null) {
+								twoValue = OtherData.converterMoney(dst, "usd");
 							}
 							if (twoValue == null && dst.equalsIgnoreCase("ker")) {
-								twoValue = "0.006";
+								twoValue = "0.00095";
 							}
 							if (twoValue != null) {
 								BigDecimal srcValueb = new BigDecimal(

@@ -799,6 +799,12 @@ public class RPExchangeDialog extends JDialog {
 		try {
 			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
 			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
+			}
+			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd", srcCurName);
+			}
+			if (cData == null) {
 				String result = OfferPrice.getMoneyConvert("1", srcCurName,
 						dstCurName);
 				if (result != null && !"unkown".equals(result)) {
@@ -819,12 +825,6 @@ public class RPExchangeDialog extends JDialog {
 							});
 					return;
 				}
-			}
-			if (cData == null) {
-				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
-			}
-			if (cData == null) {
-				cData = OtherData.getCoinmarketcapTo("usd", srcCurName);
 			}
 			if (cData == null) {
 				cData = OtherData.getCoinmarketcapTo("usd",
