@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPInput {
 

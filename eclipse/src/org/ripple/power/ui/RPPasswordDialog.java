@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.StringUtils;
 
 public class RPPasswordDialog extends JDialog implements ActionListener {

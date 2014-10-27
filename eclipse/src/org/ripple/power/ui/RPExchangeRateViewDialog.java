@@ -19,7 +19,7 @@ import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 

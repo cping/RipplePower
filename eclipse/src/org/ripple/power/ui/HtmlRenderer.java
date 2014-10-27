@@ -9,7 +9,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.ripple.power.txns.OfferPrice.OfferFruit;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class HtmlRenderer extends DefaultListCellRenderer {
 

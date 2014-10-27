@@ -21,7 +21,7 @@ import javax.swing.border.LineBorder;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPBubbleDialog {
 	

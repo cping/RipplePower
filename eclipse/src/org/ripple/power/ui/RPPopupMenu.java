@@ -8,7 +8,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.border.Border;
 
 import org.ripple.power.helper.Gradation;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPPopupMenu extends JPopupMenu {
 

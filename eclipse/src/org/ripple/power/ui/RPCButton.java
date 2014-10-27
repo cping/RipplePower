@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 
 class RPCButton extends JButton {

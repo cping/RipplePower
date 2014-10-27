@@ -21,7 +21,7 @@ import javax.swing.WindowConstants;
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;

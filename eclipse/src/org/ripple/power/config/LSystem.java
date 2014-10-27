@@ -29,7 +29,7 @@ import org.address.NativeSupport;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;

@@ -38,7 +38,7 @@ import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;

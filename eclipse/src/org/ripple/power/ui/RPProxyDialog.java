@@ -6,7 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPProxyDialog extends JDialog {
 

@@ -1,6 +1,6 @@
 package org.ripple.power.ui;
 
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 
 public class RPList extends javax.swing.JList<Object>{

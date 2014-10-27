@@ -16,7 +16,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.MaidSystem;
 import org.ripple.power.helper.Paramaters;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -151,6 +151,7 @@ public class MainUI {
 		
 		MaidSystem.get();
 		JSonLog.get();
+		
 	}
 
 }

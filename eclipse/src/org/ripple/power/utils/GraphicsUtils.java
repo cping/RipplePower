@@ -49,8 +49,9 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.UIRes;
-
+import org.ripple.power.ui.graphics.LColor;
 
 /**
  * 
@@ -92,8 +93,9 @@ final public class GraphicsUtils {
 	final static private Map<String, Image> cacheByteImages = new WeakHashMap<String, Image>(
 			LSystem.DEFAULT_MAX_CACHE_SIZE);
 
-	private static Map<String, Object> lazySplitMap = Collections.synchronizedMap(new HashMap<String, Object>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE));
+	private static Map<String, Object> lazySplitMap = Collections
+			.synchronizedMap(new HashMap<String, Object>(
+					LSystem.DEFAULT_MAX_CACHE_SIZE));
 
 	// 优秀但缓慢的图像加载方式
 	final static RenderingHints hints_excellent;
@@ -161,7 +163,8 @@ final public class GraphicsUtils {
 	}
 
 	public static Image createLImage(int width, int height, Color c) {
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR_PRE);
+		BufferedImage image = new BufferedImage(width, height,
+				BufferedImage.TYPE_4BYTE_ABGR_PRE);
 		Graphics g = image.getGraphics();
 		g.setColor(c);
 		g.fillRect(0, 0, width, height);
@@ -292,6 +295,10 @@ final public class GraphicsUtils {
 		g.setColor(color);
 		g.drawOval(x, y, width, height);
 		g.fillOval(x, y, width, height);
+	}
+
+	public static Font getFont(int size) {
+		return getFont(LangConfig.fontName, 0, size);
 	}
 
 	/**
@@ -473,8 +480,7 @@ final public class GraphicsUtils {
 	 */
 	final static public BufferedImage createImage(int w, int h, boolean flag) {
 		if (flag) {
-				return new BufferedImage(w, h,
-						BufferedImage.TYPE_4BYTE_ABGR_PRE);
+			return new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR_PRE);
 
 		} else {
 			return new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
@@ -610,7 +616,8 @@ final public class GraphicsUtils {
 	 * 获得一组序号连续的图片
 	 * 
 	 * @param fileName
-	 * @param range(指定图片范围，如("1-2"))
+	 * @param range
+	 *            (指定图片范围，如("1-2"))
 	 * @return
 	 */
 	public static Image[] loadSequenceImages(String fileName, String range) {
@@ -775,7 +782,6 @@ final public class GraphicsUtils {
 		}
 	}
 
-
 	/**
 	 * 分解整图为图片数组
 	 * 
@@ -842,16 +848,14 @@ final public class GraphicsUtils {
 						}
 					}
 				}
-				ImageProducer ip = new MemoryImageSource(pgr.getWidth(), pgr
-						.getHeight(), pixels, 0, pgr.getWidth());
+				ImageProducer ip = new MemoryImageSource(pgr.getWidth(),
+						pgr.getHeight(), pixels, 0, pgr.getWidth());
 				abufferedimage[index] = toolKit.createImage(ip);
 				index++;
 			}
 		}
 		return abufferedimage;
 	}
-
-
 
 	/**
 	 * 分解整图为图片数组
@@ -930,8 +934,8 @@ final public class GraphicsUtils {
 						}
 					}
 				}
-				ImageProducer ip = new MemoryImageSource(pgr.getWidth(), pgr
-						.getHeight(), pixels, 0, pgr.getWidth());
+				ImageProducer ip = new MemoryImageSource(pgr.getWidth(),
+						pgr.getHeight(), pixels, 0, pgr.getWidth());
 				abufferedimage[x][y] = toolKit.createImage(ip);
 			}
 		}
@@ -1062,9 +1066,10 @@ final public class GraphicsUtils {
 	public static BufferedImage rotateImage(final BufferedImage image,
 			final int degrees) {
 		AffineTransform at = new AffineTransform();
-		at.rotate(degrees < 0 ? -Math.toRadians(degrees) : Math
-				.toRadians(degrees), image.getWidth() / 2,
-				image.getHeight() / 2);
+		at.rotate(
+				degrees < 0 ? -Math.toRadians(degrees) : Math
+						.toRadians(degrees), image.getWidth() / 2, image
+						.getHeight() / 2);
 		BufferedImageOp bio = new AffineTransformOp(at,
 				AffineTransformOp.TYPE_BILINEAR);
 		BufferedImage dest = bio.filter(image, null);
@@ -1352,8 +1357,8 @@ final public class GraphicsUtils {
 			}
 			return ImageIO.read(in);
 		} catch (IOException e) {
-			throw new RuntimeException(("File not found. ( " + resName + " )")
-					.intern());
+			throw new RuntimeException(
+					("File not found. ( " + resName + " )").intern());
 		}
 	}
 
@@ -1419,7 +1424,8 @@ final public class GraphicsUtils {
 			try {
 				os = new ByteArrayOutputStream(8192);
 				if (isInner) {
-					in = new DataInputStream(new BufferedInputStream(UIRes.getStream(innerName)));
+					in = new DataInputStream(new BufferedInputStream(
+							UIRes.getStream(innerName)));
 					flag = true;
 				} else {
 					file_tmp = new File(tmp_file);
@@ -1485,7 +1491,8 @@ final public class GraphicsUtils {
 		try {
 			os = new ByteArrayOutputStream(8192);
 
-			in = new DataInputStream(new BufferedInputStream(UIRes.getStream(innerFileName)));
+			in = new DataInputStream(new BufferedInputStream(
+					UIRes.getStream(innerFileName)));
 
 			bytes = new byte[8192];
 			while ((read = in.read(bytes)) >= 0) {
@@ -1576,8 +1583,9 @@ final public class GraphicsUtils {
 	final static public BufferedImage loadDoubleFilterImage(
 			final String innerName) {
 		Image result = GraphicsUtils.loadImage(innerName);
-		return GraphicsUtils.loadDoubleFilterImage(result, Math.round(result
-				.getWidth(null) / 2), Math.round(result.getHeight(null)));
+		return GraphicsUtils.loadDoubleFilterImage(result,
+				Math.round(result.getWidth(null) / 2),
+				Math.round(result.getHeight(null)));
 	}
 
 	/**
@@ -1590,8 +1598,8 @@ final public class GraphicsUtils {
 	 */
 	final static public BufferedImage loadFilterGameImage(
 			final String innerName, final int width, final int height) {
-		return GraphicsUtils.loadDoubleFilterImage(GraphicsUtils
-				.loadImage(innerName), width, height);
+		return GraphicsUtils.loadDoubleFilterImage(
+				GraphicsUtils.loadImage(innerName), width, height);
 	}
 
 	/**

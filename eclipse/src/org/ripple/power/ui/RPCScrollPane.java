@@ -6,7 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import org.ripple.power.helper.Gradation;
-import org.ripple.power.utils.LColor;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPCScrollPane extends JScrollPane {
 
