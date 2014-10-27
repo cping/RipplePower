@@ -782,22 +782,44 @@ public class RPExchangeDialog extends JDialog {
 			srcCurName = "usd";
 			dstCurName = "btc";
 		}
-		if ((srcCurName.equalsIgnoreCase("xrp") && dstCurName
+		if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
 				.equalsIgnoreCase("cny"))
 				|| (srcCurName.equalsIgnoreCase("cny") && dstCurName
-						.equalsIgnoreCase("xrp"))) {
+						.equalsIgnoreCase(LSystem.nativeCurrency))) {
 			srcCurName = "cny";
-			dstCurName = "xrp";
+			dstCurName = LSystem.nativeCurrency;
 		}
 		if ((srcCurName.equalsIgnoreCase("btc") && dstCurName
-				.equalsIgnoreCase("xrp"))
-				|| (srcCurName.equalsIgnoreCase("xrp") && dstCurName
+				.equalsIgnoreCase(LSystem.nativeCurrency))
+				|| (srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
 						.equalsIgnoreCase("btc"))) {
 			srcCurName = "btc";
-			dstCurName = "xrp";
+			dstCurName = LSystem.nativeCurrency;
 		}
 		try {
 			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
+			if (cData == null) {
+				String result = OfferPrice.getMoneyConvert("1", srcCurName,
+						dstCurName);
+				if (result != null && !"unkown".equals(result)) {
+					final ArrayList<String> list = new ArrayList<String>(10);
+					list.add("1/" + srcCurName + "<br>Swap<br>" + result + "/"
+							+ dstCurName);
+					_otherMarketList
+							.setModel(new javax.swing.AbstractListModel<Object>() {
+								private static final long serialVersionUID = 1L;
+
+								public int getSize() {
+									return list.size();
+								}
+
+								public Object getElementAt(int i) {
+									return list.get(i);
+								}
+							});
+					return;
+				}
+			}
 			if (cData == null) {
 				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
 			}
@@ -810,7 +832,6 @@ public class RPExchangeDialog extends JDialog {
 			}
 		} catch (Exception e) {
 		}
-
 		if (cData != null) {
 			final ArrayList<String> list = new ArrayList<String>(10);
 			list.add(cData.toHTMLString());

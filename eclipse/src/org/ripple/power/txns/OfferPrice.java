@@ -22,18 +22,20 @@ public abstract class OfferPrice {
 
 	public static String getMoneyConvert(String srcValue, String src, String dst) {
 		String oneValue = null;
+		String twoValue = null;
 		try {
 			oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
-			String v2 = OtherData.getCoinmarketcapCoinToUSD(dst);
-			if (oneValue != null && v2 != null) {
+			twoValue= OtherData.getCoinmarketcapCoinToUSD(dst);
+			if (oneValue != null && twoValue != null) {
 				BigDecimal a1 = new BigDecimal(oneValue);
-				BigDecimal b1 = new BigDecimal(v2);
+				BigDecimal b1 = new BigDecimal(twoValue);
 				return LSystem.getNumber(a1.divide(b1, MathContext.DECIMAL128)
 						.multiply(new BigDecimal(srcValue)));
 			}
 		} catch (Exception ex) {
 			// null
 		}
+		
 		try {
 			String tmp = OtherData.converterMoney(src, dst);
 			if (tmp != null) {
@@ -42,16 +44,21 @@ public abstract class OfferPrice {
 				return LSystem.getNumber(srcValueb.multiply(valueb));
 			} else {
 				if (oneValue == null) {
+					oneValue = OtherData.converterMoney(src, "usd");
+				}
+				if (oneValue == null) {
 					oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
 				}
 				if (oneValue != null) {
-					String value = OtherData.converterMoney(dst, "usd");
-					if (value == null && dst.equalsIgnoreCase("ker")) {
-						value = "0.006";
+					if(twoValue == null){
+						twoValue = OtherData.converterMoney(dst, "usd");
 					}
-					if (value != null) {
+					if (twoValue == null && dst.equalsIgnoreCase("ker")) {
+						twoValue = "0.006";
+					}
+					if (twoValue != null) {
 						BigDecimal srcValueb = new BigDecimal(oneValue);
-						BigDecimal valueb = new BigDecimal(value);
+						BigDecimal valueb = new BigDecimal(twoValue);
 						return LSystem.getNumber(srcValueb.divide(valueb,
 								MathContext.DECIMAL128).multiply(
 								new BigDecimal(srcValue)));
@@ -59,14 +66,16 @@ public abstract class OfferPrice {
 						double yahooValue = OtherData
 								.getLegaltenderCurrencyToUSD(src);
 						if (yahooValue != -1) {
-							value = OtherData.converterMoney(dst, "usd");
-							if (value == null && dst.equalsIgnoreCase("ker")) {
-								value = "0.006";
+							if(twoValue == null){
+							   twoValue = OtherData.converterMoney(dst, "usd");
 							}
-							if (value != null) {
+							if (twoValue == null && dst.equalsIgnoreCase("ker")) {
+								twoValue = "0.006";
+							}
+							if (twoValue != null) {
 								BigDecimal srcValueb = new BigDecimal(
 										yahooValue);
-								BigDecimal valueb = new BigDecimal(value);
+								BigDecimal valueb = new BigDecimal(twoValue);
 								return LSystem.getNumber(srcValueb.divide(
 										valueb, MathContext.DECIMAL128)
 										.multiply(new BigDecimal(srcValue)));
