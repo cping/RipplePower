@@ -11,12 +11,77 @@ import com.ripple.core.coretypes.STObject;
 import com.ripple.core.types.known.sle.entries.Offer;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPClient;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 
 public abstract class OfferPrice {
+
+	public static String getMoneyConvert(String srcValue, String src, String dst) {
+		String oneValue = null;
+		try {
+			oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
+			String v2 = OtherData.getCoinmarketcapCoinToUSD(dst);
+			if (oneValue != null && v2 != null) {
+				BigDecimal a1 = new BigDecimal(oneValue);
+				BigDecimal b1 = new BigDecimal(v2);
+				return LSystem.getNumber(a1.divide(b1, MathContext.DECIMAL128)
+						.multiply(new BigDecimal(srcValue)));
+			}
+		} catch (Exception ex) {
+			// null
+		}
+		try {
+			String tmp = OtherData.converterMoney(src, dst);
+			if (tmp != null) {
+				BigDecimal srcValueb = new BigDecimal(srcValue);
+				BigDecimal valueb = new BigDecimal(tmp);
+				return LSystem.getNumber(srcValueb.multiply(valueb));
+			} else {
+				if (oneValue == null) {
+					oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
+				}
+				if (oneValue != null) {
+					String value = OtherData.converterMoney(dst, "usd");
+					if (value == null && dst.equalsIgnoreCase("ker")) {
+						value = "0.006";
+					}
+					if (value != null) {
+						BigDecimal srcValueb = new BigDecimal(oneValue);
+						BigDecimal valueb = new BigDecimal(value);
+						return LSystem.getNumber(srcValueb.divide(valueb,
+								MathContext.DECIMAL128).multiply(
+								new BigDecimal(srcValue)));
+					} else {
+						double yahooValue = OtherData
+								.getLegaltenderCurrencyToUSD(src);
+						if (yahooValue != -1) {
+							value = OtherData.converterMoney(dst, "usd");
+							if (value == null && dst.equalsIgnoreCase("ker")) {
+								value = "0.006";
+							}
+							if (value != null) {
+								BigDecimal srcValueb = new BigDecimal(
+										yahooValue);
+								BigDecimal valueb = new BigDecimal(value);
+								return LSystem.getNumber(srcValueb.divide(
+										valueb, MathContext.DECIMAL128)
+										.multiply(new BigDecimal(srcValue)));
+							} else {
+								return "unkown";
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception ex) {
+			return "unkown";
+		}
+		return "unkown";
+	}
 
 	public static class OfferFruit {
 

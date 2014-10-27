@@ -23,6 +23,7 @@ import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.HttpRequest.HttpRequestException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.ripple.core.coretypes.RippleDate;
@@ -100,19 +101,19 @@ public class OtherData {
 	}
 
 	public static class CoinmarketcapData {
-		int position = 0;
-		String marketCap;
-		String change7d;
-		String currency;
-		String id;
-		String change1h;
-		long timestamp;
-		String volume24;
-		String price;
-		String name;
-		String change7h;
-		String totalSupply;
-		String change24;
+		public int position = 0;
+		public String marketCap;
+		public String change7d;
+		public String currency;
+		public String id;
+		public String change1h;
+		public long timestamp;
+		public String volume24;
+		public String price;
+		public String name;
+		public String change7h;
+		public String totalSupply;
+		public String change24;
 
 		public static CoinmarketcapData from(JSONObject o) {
 			if (o != null) {
@@ -195,6 +196,7 @@ public class OtherData {
 		_coinmarketcap_names.put("dog", "doge");
 		_coinmarketcap_names.put("dogecoin", "doge");
 		_coinmarketcap_names.put("nxtcoin", "nxt");
+		_coinmarketcap_names.put("bts", "btsx");
 	}
 
 	public static double reset(String name) {
@@ -221,6 +223,10 @@ public class OtherData {
 
 	public static double getLegaltenderCurrencyToUSD(String name) {
 		try {
+			name = name.toLowerCase();
+			if (_coinmarketcap_names.containsKey(name)) {
+				name = _coinmarketcap_names.get(name);
+			}
 			double ret = reset(name + "currency");
 			if (ret != -1) {
 				return ret;
@@ -250,8 +256,9 @@ public class OtherData {
 
 	public static String getCoinmarketcapCoinToUSD(String name) {
 		try {
-			if (_coinmarketcap_names.containsKey(name.toLowerCase())) {
-				name = _coinmarketcap_names.get(name.toLowerCase());
+			name = name.toLowerCase();
+			if (_coinmarketcap_names.containsKey(name)) {
+				name = _coinmarketcap_names.get(name);
 			}
 			double ret = reset(name + "coin");
 			if (ret != -1) {
@@ -272,7 +279,7 @@ public class OtherData {
 
 		} catch (Exception e) {
 		}
-		return String.valueOf(-1);
+		return null;
 	}
 
 	public static JSONArray getCoinmarketcap365d(String name)
@@ -301,15 +308,16 @@ public class OtherData {
 
 	public static CoinmarketcapData getCoinmarketcapTo(String cur, String name)
 			throws HttpRequestException, JSONException, IOException {
-		if (!_coinmarketcap_limits.contains(cur.toLowerCase())) {
+		cur = cur.toLowerCase();
+		name = name.toLowerCase();
+		if (!_coinmarketcap_limits.contains(cur)) {
 			cur = "usd";
 		}
-		if (_coinmarketcap_names.containsKey(name.toLowerCase())) {
-			name = _coinmarketcap_names.get(name.toLowerCase());
+		if (_coinmarketcap_names.containsKey(name)) {
+			name = _coinmarketcap_names.get(name);
 		}
 		HttpRequest request = HttpRequest.get(String.format(
 				"http://coinmarketcap.northpole.ro/api/%s/%s.json", cur, name));
-
 		if (request.ok()) {
 			JSONObject obj = new JSONObject(request.body());
 			CoinmarketcapData data = CoinmarketcapData.from(obj);
@@ -484,12 +492,68 @@ public class OtherData {
 					+ NUMBER_FORMAT.format(Double.valueOf(strRate) / 100.0d)
 					+ "/CNY");
 			hashTable.add("1/CNY" + "<br>Rate<br>"
-					+ NUMBER_FORMAT.format(100.0d/Double.valueOf(strRate)) + "/"
-					+ strCur);
+					+ NUMBER_FORMAT.format(100.0d / Double.valueOf(strRate))
+					+ "/" + strCur);
 		}
 
 		br.close();
 		return hashTable;
+	}
+
+	private static String getCharacterDataFromElement(Element e) {
+		try {
+			Node child = e.getFirstChild();
+			if (child instanceof org.w3c.dom.CharacterData) {
+				org.w3c.dom.CharacterData cd = (org.w3c.dom.CharacterData) child;
+				return cd.getData();
+			}
+		} catch (Exception ex) {
+		}
+		return "";
+	}
+
+	protected float getFloat(String value) {
+		if (value != null && !value.equals(""))
+			return Float.parseFloat(value);
+		else
+			return 0;
+	}
+
+	protected static String getElementValue(Element parent, String label) {
+		return getCharacterDataFromElement((Element) parent
+				.getElementsByTagName(label).item(0));
+	}
+
+	public static String converterMoney(String src, String cur)
+			throws Exception {
+		String query = (cur + "/" + src).toUpperCase();
+		double ret = reset(query);
+		if (ret != -1) {
+			return String.valueOf(ret);
+		}
+		HttpRequest request = HttpRequest.get(String.format(
+				"http://themoneyconverter.com/rss-feed/%s/rss.xml", src));
+		request.acceptGzipEncoding();
+		request.uncompress(true);
+		if (!request.ok()) {
+			return null;
+		}
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+		Document doc = builder.parse(request.stream());
+		NodeList nodes = doc.getElementsByTagName("item");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element element = (Element) nodes.item(i);
+			String description = getElementValue(element, "description");
+			if (query.equals(getElementValue(element, "title"))) {
+				String[] leftright = description.split("=");
+				String[] rightWords = leftright[1].split(" ");
+				addStorage(new Store(Double.parseDouble(rightWords[1]), query));
+				return rightWords[1];
+			}
+		}
+		
+		return null;
 	}
 
 }

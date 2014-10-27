@@ -1,22 +1,26 @@
 package org.ripple.power.ui;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.LColor;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPExchangeRateViewDialog extends JDialog {
@@ -26,9 +30,9 @@ public class RPExchangeRateViewDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private RPCButton _exitButton;
-	private RPCButton jButton2;
-	private RPComboBox jComboBox1;
-	private RPComboBox jComboBox2;
+	private RPCButton _rateButton;
+	private RPComboBox _srcComboBox;
+	private RPComboBox _dstComboBox;
 	private RPLabel jLabel1;
 	private RPLabel jLabel2;
 	private RPLabel jLabel3;
@@ -39,8 +43,8 @@ public class RPExchangeRateViewDialog extends JDialog {
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JSeparator jSeparator1;
-	private RPTextBox jTextField1;
-	private RPTextBox jTextField2;
+	private RPTextBox _srcText;
+	private RPTextBox _dstText;
 	private boolean _closed;
 
 	public static RPExchangeRateViewDialog showDialog(String text, JFrame parent) {
@@ -53,7 +57,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 	}
 
 	public RPExchangeRateViewDialog(String text, JFrame parent) {
-		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent, text, false);
 		this.setResizable(false);
 		Dimension dim = new Dimension(774, 565);
 		this.setPreferredSize(dim);
@@ -108,12 +112,27 @@ public class RPExchangeRateViewDialog extends JDialog {
 			}
 		});
 
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				UIRes.getStream("config/currencies.list")));
+		final ArrayList<String> curList = new ArrayList<String>(20);
+		try {
+			String text = null;
+			for (; (text = reader.readLine()) != null;) {
+				curList.add(text);
+			}
+			reader.close();
+		} catch (Exception ex) {
+
+		}
+
 		jLabel1 = new RPLabel();
-		jTextField1 = new RPTextBox();
-		jComboBox1 = new RPComboBox();
+		_srcText = new RPTextBox();
+		_srcComboBox = new RPComboBox();
+		_srcComboBox.setEditable(true);
 		jLabel2 = new RPLabel();
-		jTextField2 = new RPTextBox();
-		jComboBox2 = new RPComboBox();
+		_dstText = new RPTextBox();
+		_dstComboBox = new RPComboBox();
+		_dstComboBox.setEditable(true);
 		jPanel1 = new javax.swing.JPanel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_encryptcoinList = new RPList();
@@ -122,36 +141,37 @@ public class RPExchangeRateViewDialog extends JDialog {
 		jLabel3 = new RPLabel();
 		jLabel4 = new RPLabel();
 		_exitButton = new RPCButton();
-		jButton2 = new RPCButton();
+		_rateButton = new RPCButton();
 		jSeparator1 = new javax.swing.JSeparator();
 
 		getContentPane().setLayout(null);
 
 		jLabel1.setFont(UIRes.getFont()); // NOI18N
-		jLabel1.setText("兑换币种");
+		jLabel1.setText(LangConfig.get(this, "src", "Source"));
 		getContentPane().add(jLabel1);
-		jLabel1.setBounds(20, 410, 103, 36);
+		jLabel1.setBounds(20, 412, 103, 36);
 
-		jTextField1.setFont(UIRes.getFont()); // NOI18N
-		getContentPane().add(jTextField1);
-		jTextField1.setBounds(90, 420, 190, 22);
+		_srcText.setFont(UIRes.getFont()); // NOI18N
+		getContentPane().add(_srcText);
+		_srcText.setBounds(90, 420, 190, 22);
 
-		jComboBox1.setItemModel(new String[] { "CNY" });
-		getContentPane().add(jComboBox1);
-		jComboBox1.setBounds(290, 420, 90, 21);
+		_srcComboBox.setItemModel(curList.toArray());
+		getContentPane().add(_srcComboBox);
+		_srcComboBox.setBounds(290, 420, 90, 21);
 
 		jLabel2.setFont(UIRes.getFont()); // NOI18N
-		jLabel2.setText("目标币种");
+		jLabel2.setText(LangConfig.get(this, "dst", "Target"));
 		getContentPane().add(jLabel2);
-		jLabel2.setBounds(410, 410, 103, 36);
+		jLabel2.setBounds(410, 412, 103, 36);
 
-		jTextField2.setFont(UIRes.getFont()); // NOI18N
-		getContentPane().add(jTextField2);
-		jTextField2.setBounds(480, 420, 180, 22);
+		_dstText.setFont(UIRes.getFont()); // NOI18N
+		getContentPane().add(_dstText);
+		_dstText.setBounds(480, 420, 180, 22);
 
-		jComboBox2.setItemModel(new String[] { "USD" });
-		getContentPane().add(jComboBox2);
-		jComboBox2.setBounds(670, 420, 90, 21);
+		Collections.sort(curList);
+		_dstComboBox.setItemModel(curList.toArray());
+		getContentPane().add(_dstComboBox);
+		_dstComboBox.setBounds(670, 420, 90, 21);
 
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
@@ -166,7 +186,6 @@ public class RPExchangeRateViewDialog extends JDialog {
 			public void action(Object o) {
 				try {
 					for (; !_closed;) {
-
 						ArrayList<CoinmarketcapData> datas = OtherData
 								.getCoinmarketcapAllTo(30);
 						final ArrayList<String> list = new ArrayList<String>(30);
@@ -185,21 +204,22 @@ public class RPExchangeRateViewDialog extends JDialog {
 										return list.get(i);
 									}
 								});
-							 final ArrayList<String> curs = new ArrayList<String>(100);
-							 curs.addAll(OtherData.getAllLegalTenderRateHTML());
-							_legalTenderList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
-										private static final long serialVersionUID = 1L;
+						final ArrayList<String> curs = new ArrayList<String>(
+								100);
+						curs.addAll(OtherData.getAllLegalTenderRateHTML());
+						_legalTenderList
+								.setModel(new javax.swing.AbstractListModel<Object>() {
+									private static final long serialVersionUID = 1L;
 
-										public int getSize() {
-											return curs.size();
-										}
+									public int getSize() {
+										return curs.size();
+									}
 
-										public Object getElementAt(int i) {
-											return curs.get(i);
-										}
-									});
-			
+									public Object getElementAt(int i) {
+										return curs.get(i);
+									}
+								});
+
 						waitDialog.closeDialog();
 						Thread.sleep(LSystem.MINUTE);
 					}
@@ -222,13 +242,15 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 		jLabel3.setFont(UIRes.getFont()); // NOI18N
 		jLabel3.setForeground(LColor.white);
-		jLabel3.setText("法币外汇市场(usd-cny)");
+		jLabel3.setText(LangConfig.get(this, "lt", "Legal tender")
+				+ "(usd-cny)");
 		jPanel1.add(jLabel3);
 		jLabel3.setBounds(380, 10, 360, 20);
 
 		jLabel4.setFont(UIRes.getFont()); // NOI18N
 		jLabel4.setForeground(LColor.white);
-		jLabel4.setText("电子币外汇市场(coinmarketcap)");
+		jLabel4.setText(LangConfig.get(this, "em", "Electronic money")
+				+ "(coinmarketcap)");
 		jPanel1.add(jLabel4);
 		jLabel4.setBounds(10, 10, 360, 20);
 
@@ -248,10 +270,51 @@ public class RPExchangeRateViewDialog extends JDialog {
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(650, 480, 110, 40);
 
-		jButton2.setText("换算");
-		jButton2.setFont(UIRes.getFont());
-		getContentPane().add(jButton2);
-		jButton2.setBounds(540, 480, 100, 40);
+		_rateButton.setText(LangConfig.get(this, "convert", "Convert"));
+		_rateButton.setFont(UIRes.getFont());
+		getContentPane().add(_rateButton);
+		_rateButton.setBounds(540, 480, 100, 40);
+		_rateButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final String src = ((String) _srcComboBox.getSelectedItem())
+						.trim();
+				final String dst = ((String) _dstComboBox.getSelectedItem())
+						.trim();
+				if (src.length() != 3 || dst.length() != 3) {
+					return;
+				}
+				final String srcValue = _srcText.getText().trim();
+
+				if (srcValue.length() == 0) {
+					return;
+				}
+				if ("0".equals(srcValue) || !StringUtils.isNumber(srcValue)) {
+					_srcText.setText("0");
+					_dstText.setText("0");
+					return;
+				}
+				if (src.equals(dst)) {
+					_srcText.setText("0");
+					_dstText.setText(_srcText.getText());
+					return;
+				}
+				final WaitDialog dialog = WaitDialog
+						.showDialog(RPExchangeRateViewDialog.this);
+
+				Updateable updateable = new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						_dstText.setText(OfferPrice.getMoneyConvert(srcValue,
+								src, dst));
+						dialog.closeDialog();
+					}
+				};
+				LSystem.postThread(updateable);
+			}
+		});
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 460, 770, 10);
 		getContentPane().setBackground(LSystem.dialogbackground);
