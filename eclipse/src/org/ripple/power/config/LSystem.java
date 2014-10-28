@@ -153,11 +153,13 @@ public final class LSystem {
 
 	public static String getNumber(BigDecimal big) {
 		StringBuffer sbr = new StringBuffer(NUMBER_FORMAT.format(big));
-		for (int i = 0; i < sbr.length(); i++) {
-			if (sbr.toString().endsWith("0")) {
-				sbr.delete(sbr.length() - 1, sbr.length());
-			} else {
-				break;
+		if (sbr.toString().indexOf('.') != -1) {
+			for (int i = 0; i < sbr.length(); i++) {
+				if (sbr.toString().endsWith("0")) {
+					sbr.delete(sbr.length() - 1, sbr.length());
+				} else {
+					break;
+				}
 			}
 		}
 		return sbr.toString();
