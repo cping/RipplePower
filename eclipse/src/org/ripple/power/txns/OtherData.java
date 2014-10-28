@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -163,12 +162,12 @@ public class OtherData {
 	protected static class Store {
 		protected double price;
 		protected String name;
-		protected Date date;
+		protected long date = 0;
 
 		public Store(double p, String str) {
 			this.price = p;
 			this.name = str;
-			this.date = new Date();
+			this.date = System.currentTimeMillis();
 		}
 
 		public boolean equals(Store other) {
@@ -202,9 +201,7 @@ public class OtherData {
 	public static double reset(String name) {
 		for (Store s : _storage) {
 			if (s.name.equals(name)
-					&& (s.date.getTime() - (new Date()).getTime()) >= -60 * 1000) {
-				_storage.remove(s);
-				_storage.add(s);
+					&& (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
 				return s.price;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);

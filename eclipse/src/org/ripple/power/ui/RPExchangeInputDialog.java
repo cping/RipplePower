@@ -287,21 +287,23 @@ public class RPExchangeInputDialog extends JDialog {
 			this._curPriceText.setText("0");
 			this._countText.setText("0");
 			this._curName = curName;
-			this.setTitle(curName + "/USD(Average Price)");
-			final WaitDialog waitDialog = WaitDialog.showDialog(this);
-			Updateable update = new Updateable() {
+			this.setTitle(curName + "/" + _dstCurrency + "(Average Price)");
+			if (!_dstCurrency.equals(curName)) {
+				final WaitDialog waitDialog = WaitDialog.showDialog(this);
+				Updateable update = new Updateable() {
 
-				@Override
-				public void action(Object o) {
-					String value = OfferPrice.getMoneyConvert("1", _curName,
-							_dstCurrency.toLowerCase());
-					if (!"unkown".equals(value)) {
-						_curPriceText.setText(value);
+					@Override
+					public void action(Object o) {
+						String value = OfferPrice.getMoneyConvert("1",
+								_curName, _dstCurrency.toLowerCase());
+						if (!"unkown".equals(value)) {
+							_curPriceText.setText(value);
+						}
+						waitDialog.closeDialog();
 					}
-					waitDialog.closeDialog();
-				}
-			};
-			LSystem.postThread(update);
+				};
+				LSystem.postThread(update);
+			}
 		}
 	}
 }

@@ -17,7 +17,6 @@ import org.ripple.power.ui.RPClient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Date;
 
 public abstract class OfferPrice {
 
@@ -26,12 +25,12 @@ public abstract class OfferPrice {
 	private static class Store {
 		public String price;
 		public String name;
-		public Date date;
+		public long date = 0;
 
 		public Store(String p, String str) {
 			this.price = p;
 			this.name = str;
-			this.date = new Date();
+			this.date = System.currentTimeMillis();
 		}
 
 	}
@@ -39,9 +38,7 @@ public abstract class OfferPrice {
 	private static String reset(String name) {
 		for (Store s : _storage) {
 			if (s.name.equals(name)
-					&& (s.date.getTime() - (new Date()).getTime()) >= -60 * 1000) {
-				_storage.remove(s);
-				_storage.add(s);
+					&& (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
 				return s.price;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);
@@ -58,7 +55,7 @@ public abstract class OfferPrice {
 		}
 	}
 
-	public static String getMoneyConvert(String srcValue, String src, String dst) {
+	public synchronized static String getMoneyConvert(String srcValue, String src, String dst) {
 		if (srcValue == null || src == null | dst == null) {
 			return "unkown";
 		}
@@ -67,9 +64,11 @@ public abstract class OfferPrice {
 		}
 		String name = (src + dst).trim().toLowerCase();
 		String ret = reset(name);
+
 		if (ret != null) {
 			return ret;
 		}
+
 		String oneValue = null;
 		String twoValue = null;
 		try {

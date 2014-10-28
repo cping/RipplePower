@@ -140,13 +140,31 @@ public class RPExchangeDialog extends JDialog {
 						"The highest price buyer %s, the seller highest price %s, Spread %s");
 	}
 
-	private int info_swap(String srcAmount, String srcCurrency,
-			String dstAmount, String dstCurrency) {
+	private int info_swap(final String srcAmount, final String srcCurrency,
+			final String dstAmount, final String dstCurrency) {
+		if (_priceTipCheckBox.isSelected()) {
+			Updateable update = new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					RPBubbleDialog.pop("场外汇率提示:"
+							+ srcAmount
+							+ "/"
+							+ srcCurrency
+							+ ", 平均可换取"
+							+ OfferPrice.getMoneyConvert(srcAmount,
+									srcCurrency, dstCurrency) + "/"
+							+ dstCurrency);
+				}
+			};
+			LSystem.postThread(update);
+		}
 		return RPMessage
 				.showConfirmMessage(RPExchangeDialog.this, "Info", "您准备用"
 						+ srcAmount + "/" + srcCurrency + "换取" + dstAmount
 						+ "/" + dstCurrency + ",是否确认交易?", new Object[] { "确定",
 						"取消" });
+
 	}
 
 	private HashMap<Integer, RPExchangeInputDialog> inputs = new HashMap<Integer, RPExchangeInputDialog>();
@@ -175,6 +193,9 @@ public class RPExchangeDialog extends JDialog {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (_priceTipCheckBox.isSelected()) {
+				String cur = ((String) _curComboBox.getSelectedItem()).trim();
+				String[] split = StringUtils.split(cur, "/");
+
 				RPExchangeInputDialog dialog = inputs.get(flag);
 				if (dialog == null) {
 					dialog = RPExchangeInputDialog.showDialog(
@@ -183,8 +204,6 @@ public class RPExchangeDialog extends JDialog {
 									"Price prompt"));
 					inputs.put(flag, dialog);
 				}
-				String cur = ((String) _curComboBox.getSelectedItem()).trim();
-				String[] split = StringUtils.split(cur, "/");
 				RPTextBox textBox = (RPTextBox) e.getSource();
 				String curName = split[0];
 				switch (type) {
@@ -770,16 +789,18 @@ public class RPExchangeDialog extends JDialog {
 
 						@Override
 						public void error(JSONObject obj) {
+							dialog.closeDialog();
 							if (obj != null) {
 								JSonLog.get().println(obj.toString());
 							}
-							dialog.closeDialog();
+
 						}
 
 						@Override
 						public void empty() {
-							empty_trading(cur);
 							dialog.closeDialog();
+							empty_trading(cur);
+
 						}
 
 						@Override
@@ -1024,8 +1045,9 @@ public class RPExchangeDialog extends JDialog {
 						double a = Double.parseDouble(_info.balance);
 						double b = Double.parseDouble(myBuy);
 						if (b > a) {
-							warning_xrp();
 							dialog.closeDialog();
+							warning_xrp();
+
 							return;
 						}
 					} else {
@@ -1042,8 +1064,9 @@ public class RPExchangeDialog extends JDialog {
 											.getAmount());
 									double b = Double.parseDouble(myBuy);
 									if (b > a) {
-										warning_iou(dstCurName);
 										dialog.closeDialog();
+										warning_iou(dstCurName);
+
 										return;
 									}
 
@@ -1051,8 +1074,9 @@ public class RPExchangeDialog extends JDialog {
 							}
 						}
 						if (!dst) {
-							warning_trust(dstCurName);
 							dialog.closeDialog();
+							warning_trust(dstCurName);
+
 							return;
 						}
 
@@ -1102,8 +1126,9 @@ public class RPExchangeDialog extends JDialog {
 						double a = Double.parseDouble(_info.balance);
 						double b = Double.parseDouble(mySell);
 						if (b > a) {
-							warning_xrp();
 							dialog.closeDialog();
+							warning_xrp();
+
 							return;
 						}
 					} else {
@@ -1123,8 +1148,9 @@ public class RPExchangeDialog extends JDialog {
 											.getAmount());
 									double b = Double.parseDouble(mySell);
 									if (b > a) {
-										warning_iou(srcCurName);
 										dialog.closeDialog();
+										warning_iou(srcCurName);
+
 										return;
 									}
 
@@ -1132,8 +1158,9 @@ public class RPExchangeDialog extends JDialog {
 							}
 						}
 						if (!src) {
-							warning_trust(srcCurName);
 							dialog.closeDialog();
+							warning_trust(srcCurName);
+
 							return;
 						}
 
@@ -1288,7 +1315,7 @@ public class RPExchangeDialog extends JDialog {
 			final Updateable update) {
 		Object result = _flags.get(address);
 		if (result == null || (!(boolean) result)) {
-			final WaitDialog dialog = WaitDialog.showDialog(this);
+
 			AccountFind.getTrusts(_item.getPublicKey(), new Updateable() {
 				@Override
 				public void action(Object o) {
@@ -1316,7 +1343,6 @@ public class RPExchangeDialog extends JDialog {
 
 						}
 					}
-					dialog.closeDialog();
 				}
 			});
 		}
