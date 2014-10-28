@@ -55,14 +55,15 @@ public abstract class OfferPrice {
 		}
 	}
 
-	public synchronized static String getMoneyConvert(String srcValue, String src, String dst) {
+	public synchronized static String getMoneyConvert(String srcValue,
+			String src, String dst) {
 		if (srcValue == null || src == null | dst == null) {
 			return "unkown";
 		}
 		if (src.equalsIgnoreCase(dst)) {
 			return srcValue;
 		}
-		String name = (src + dst).trim().toLowerCase();
+		String name = (srcValue + src + dst).trim().toLowerCase();
 		String ret = reset(name);
 
 		if (ret != null) {
