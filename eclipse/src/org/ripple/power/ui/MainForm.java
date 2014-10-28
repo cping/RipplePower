@@ -314,6 +314,9 @@ public class MainForm extends JFrame implements ActionListener {
 			LSystem.session("main").set("location", p.x + "," + p.y);
 			LSystem.session("main").set("dimension", d.width + "," + d.height);
 		}
+		if (mainPanel != null) {
+			mainPanel.removeTrayIcon();
+		}
 		dispose();
 		LSystem.shutdown();
 

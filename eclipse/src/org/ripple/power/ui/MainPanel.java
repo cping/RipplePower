@@ -108,8 +108,6 @@ public class MainPanel extends JPanel implements ActionListener {
 		popMenu.add(tempMenu);
 	}
 
-	private TrayIcon trayIcon;
-
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
 		setOpaque(true);
@@ -311,14 +309,27 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	}
 
+	private boolean isTray;
+
+	private TrayIcon trayIcon;
+
+	private SystemTray systemTray;
+
+	public void removeTrayIcon() {
+		if (systemTray != null) {
+			systemTray.remove(trayIcon);
+		}
+	}
+
 	public void showTrayIcon() {
-		if (!SystemTray.isSupported()) {
+		if (!SystemTray.isSupported() || isTray) {
 			return;
 		}
+		isTray = true;
 		trayIcon = new TrayIcon(GraphicsUtils.loadImage("icons/ripple.png"));
 		trayIcon.setImageAutoSize(true);
 		trayIcon.setToolTip("RipplePower");
-		final SystemTray tray = SystemTray.getSystemTray();
+		systemTray = SystemTray.getSystemTray();
 		final PopupMenu menu = new PopupMenu();
 		MenuItem restore = new MenuItem("Restore");
 		restore.addActionListener(new ActionListener() {
@@ -349,7 +360,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		exit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tray.remove(trayIcon);
+
 				try {
 					LSystem.applicationMain.exitProgram();
 				} catch (IOException ex) {
@@ -364,7 +375,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		trayIcon.setPopupMenu(menu);
 		try {
-			tray.add(trayIcon);
+			systemTray.add(trayIcon);
 		} catch (Exception e) {
 		}
 	}

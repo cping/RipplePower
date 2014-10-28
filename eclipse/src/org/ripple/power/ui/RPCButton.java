@@ -18,9 +18,13 @@ class RPCButton extends JButton {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	public RPCButton() {
-		super();
+		this(null);
+	}
+	
+	public RPCButton(String name) {
+		super(name);
 		setForeground(new LColor(255, 255, 255));
 		setBackground(new LColor(18, 18, 18));
 		setContentAreaFilled(true);
