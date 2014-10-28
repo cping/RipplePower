@@ -40,8 +40,9 @@ public final class LSystem {
 
 	public final static String nativeCurrency = "xrp";
 
-	public final static DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.0000000000");
-	
+	public final static DecimalFormat NUMBER_FORMAT = new DecimalFormat(
+			"0.00000000");
+
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
 
@@ -149,9 +150,17 @@ public final class LSystem {
 			}
 		}
 	}
-	
-	public static String getNumber(BigDecimal big){
-		return NUMBER_FORMAT.format(big);
+
+	public static String getNumber(BigDecimal big) {
+		StringBuffer sbr = new StringBuffer(NUMBER_FORMAT.format(big));
+		for (int i = 0; i < sbr.length(); i++) {
+			if (sbr.toString().endsWith("0")) {
+				sbr.delete(sbr.length() - 1, sbr.length());
+			} else {
+				break;
+			}
+		}
+		return sbr.toString();
 	}
 
 	public static void putThread(final Runnable runnable) {

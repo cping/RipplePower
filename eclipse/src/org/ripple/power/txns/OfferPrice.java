@@ -17,15 +17,58 @@ import org.ripple.power.ui.RPClient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class OfferPrice {
-	
+
+	protected static ArrayList<Store> _storage = new ArrayList<Store>();
+
+	private static class Store {
+		public String price;
+		public String name;
+		public Date date;
+
+		public Store(String p, String str) {
+			this.price = p;
+			this.name = str;
+			this.date = new Date();
+		}
+
+	}
+
+	private static String reset(String name) {
+		for (Store s : _storage) {
+			if (s.name.equals(name)
+					&& (s.date.getTime() - (new Date()).getTime()) >= -60 * 1000) {
+				_storage.remove(s);
+				_storage.add(s);
+				return s.price;
+			} else if (s.name.equals(name)) {
+				_storage.remove(s);
+				return null;
+			}
+		}
+		return null;
+	}
+
+	private static void addStorage(Store s) {
+		_storage.add(s);
+		if (_storage.size() > 100) {
+			_storage.remove(0);
+		}
+	}
+
 	public static String getMoneyConvert(String srcValue, String src, String dst) {
 		if (srcValue == null || src == null | dst == null) {
 			return "unkown";
 		}
 		if (src.equalsIgnoreCase(dst)) {
 			return srcValue;
+		}
+		String name = (src + dst).trim().toLowerCase();
+		String ret = reset(name);
+		if (ret != null) {
+			return ret;
 		}
 		String oneValue = null;
 		String twoValue = null;
@@ -35,8 +78,11 @@ public abstract class OfferPrice {
 			if (oneValue != null && twoValue != null) {
 				BigDecimal a1 = new BigDecimal(oneValue);
 				BigDecimal b1 = new BigDecimal(twoValue);
-				return LSystem.getNumber(a1.divide(b1, MathContext.DECIMAL128)
-						.multiply(new BigDecimal(srcValue)));
+				String result = LSystem.getNumber(a1.divide(b1,
+						MathContext.DECIMAL128).multiply(
+						new BigDecimal(srcValue)));
+				addStorage(new Store(result, name));
+				return result;
 			}
 		} catch (Exception ex) {
 			// null
@@ -49,7 +95,9 @@ public abstract class OfferPrice {
 			if (tmp != null) {
 				BigDecimal srcValueb = new BigDecimal(srcValue);
 				BigDecimal valueb = new BigDecimal(tmp);
-				return LSystem.getNumber(srcValueb.multiply(valueb));
+				String result = LSystem.getNumber(srcValueb.multiply(valueb));
+				addStorage(new Store(result, name));
+				return result;
 			} else {
 				if (oneValue == null) {
 					oneValue = OtherData.converterMoney(src, "usd");
@@ -70,9 +118,11 @@ public abstract class OfferPrice {
 					if (twoValue != null) {
 						BigDecimal srcValueb = new BigDecimal(oneValue);
 						BigDecimal valueb = new BigDecimal(twoValue);
-						return LSystem.getNumber(srcValueb.divide(valueb,
-								MathContext.DECIMAL128).multiply(
+						String result = LSystem.getNumber(srcValueb.divide(
+								valueb, MathContext.DECIMAL128).multiply(
 								new BigDecimal(srcValue)));
+						addStorage(new Store(result, name));
+						return result;
 					} else {
 						double yahooValue = OtherData
 								.getLegaltenderCurrencyToUSD(src);
@@ -87,10 +137,13 @@ public abstract class OfferPrice {
 								BigDecimal srcValueb = new BigDecimal(
 										yahooValue);
 								BigDecimal valueb = new BigDecimal(twoValue);
-								return LSystem.getNumber(srcValueb.divide(
-										valueb, MathContext.DECIMAL128)
+								String result = LSystem.getNumber(srcValueb
+										.divide(valueb, MathContext.DECIMAL128)
 										.multiply(new BigDecimal(srcValue)));
+								addStorage(new Store(result, name));
+								return result;
 							} else {
+								addStorage(new Store("unkown", name));
 								return "unkown";
 							}
 						}

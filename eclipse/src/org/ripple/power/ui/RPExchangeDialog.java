@@ -8,6 +8,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.math.BigDecimal;
@@ -23,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Session;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -93,6 +96,7 @@ public class RPExchangeDialog extends JDialog {
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JScrollPane jScrollPane3;
 	private javax.swing.JScrollPane jScrollPane4;
+	private RPCheckBox _priceTipCheckBox;
 	private RPTextBox _cansellText;
 	private RPTextBox _canbuyText;
 	private RPTextBox _mybuyText;
@@ -143,6 +147,71 @@ public class RPExchangeDialog extends JDialog {
 						+ srcAmount + "/" + srcCurrency + "换取" + dstAmount
 						+ "/" + dstCurrency + ",是否确认交易?", new Object[] { "确定",
 						"取消" });
+	}
+
+	private HashMap<Integer, RPExchangeInputDialog> inputs = new HashMap<Integer, RPExchangeInputDialog>();
+
+	class InputMouselstener implements MouseListener {
+
+		int flag;
+
+		int type;
+
+		public InputMouselstener(int flag, int type) {
+			this.flag = flag;
+			this.type = type;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (_priceTipCheckBox.isSelected()) {
+				RPExchangeInputDialog dialog = inputs.get(flag);
+				if (dialog == null) {
+					dialog = RPExchangeInputDialog.showDialog(
+							RPExchangeDialog.this, LangConfig.get(
+									RPExchangeInputDialog.class, "ppt",
+									"Price prompt"));
+					inputs.put(flag, dialog);
+				}
+				String cur = ((String) _curComboBox.getSelectedItem()).trim();
+				String[] split = StringUtils.split(cur, "/");
+				RPTextBox textBox = (RPTextBox) e.getSource();
+				String curName = split[0];
+				switch (type) {
+				case 0:
+					curName = split[0];
+					break;
+				case 1:
+					curName = split[1];
+					break;
+				}
+				dialog.setTextContext(textBox, curName);
+				if (!dialog.isVisible()) {
+					dialog.setVisible(true);
+				}
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+
+		}
+
 	}
 
 	public class MyKeyListener implements KeyListener {
@@ -247,11 +316,32 @@ public class RPExchangeDialog extends JDialog {
 		_autoexButton = new RPCButton();
 		_addressText = new RPTextBox();
 		_historyButton = new RPCButton();
+		_priceTipCheckBox = new RPCheckBox();
 
 		Font font = new Font(LangConfig.fontName, 0, 18);
 		Font font14 = new Font(LangConfig.fontName, 0, 14);
 
 		getContentPane().setLayout(null);
+
+		_priceTipCheckBox.setText(LangConfig.get(this, "ppt", "Price prompt"));
+		_priceTipCheckBox.setSelected(LSystem.session("system").getBoolean(
+				"exchange_price_tip"));
+		_priceTipCheckBox
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						Session session = LSystem.session("system");
+						if (_priceTipCheckBox.isSelected()) {
+							session.set("exchange_price_tip", true);
+						} else {
+							session.set("exchange_price_tip", false);
+						}
+						session.save();
+					}
+				});
+		jPanel2.add(_priceTipCheckBox);
+		_priceTipCheckBox.setBounds(858, 50, 110, 23);
+		_priceTipCheckBox.setFont(font14);
+		_priceTipCheckBox.setBackground(new LColor(51, 51, 51));
 
 		_currencyLabel.setFont(font); // NOI18N
 		_currencyLabel.setText(LangConfig.get(this, "selcur", "Currency"));
@@ -288,7 +378,6 @@ public class RPExchangeDialog extends JDialog {
 		jPanel1.add(_mytradingLabel);
 		_mytradingLabel.setBounds(380, 185, 210, 18);
 
-		_tip1Label.setForeground(new LColor(255, 255, 255));
 		_tip1Label.setFont(font14);
 		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		_tip1Label.setText(String.format(info_price(), 0, 0, 0));
@@ -421,6 +510,7 @@ public class RPExchangeDialog extends JDialog {
 		_cansellText.setText("0");
 		_cansellText.setFont(font12);
 		_cansellText.addKeyListener(new MyKeyListener(1));
+		_cansellText.addMouseListener(new InputMouselstener(1, 1));
 		jPanel2.add(_cansellText);
 		_cansellText.setBounds(670, 50, 170, 20);
 
@@ -433,6 +523,7 @@ public class RPExchangeDialog extends JDialog {
 		_canbuyText.setText("0");
 		_canbuyText.setFont(font12);
 		_canbuyText.addKeyListener(new MyKeyListener(0));
+		_canbuyText.addMouseListener(new InputMouselstener(0, 0));
 		jPanel2.add(_canbuyText);
 		_canbuyText.setBounds(80, 50, 170, 21);
 
@@ -461,6 +552,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(_mybuyText);
 		_mybuyText.setBounds(80, 10, 170, 21);
 		_mybuyText.addKeyListener(new MyKeyListener(1));
+		_mybuyText.addMouseListener(new InputMouselstener(0, 1));
 
 		_mysellLabel.setFont(font14); // NOI18N
 		_mysellLabel.setForeground(new LColor(255, 255, 255));
@@ -473,6 +565,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(_mysellText);
 		_mysellText.setBounds(670, 10, 170, 21);
 		_mysellText.addKeyListener(new MyKeyListener(0));
+		_mysellText.addMouseListener(new InputMouselstener(1, 0));
 
 		_okbuyButton.setText(LangConfig.get(this, "okbuy", "Confirm Buy"));
 		_okbuyButton.setActionCommand("buy");
@@ -781,19 +874,23 @@ public class RPExchangeDialog extends JDialog {
 						.equalsIgnoreCase("usd"))) {
 			srcCurName = "usd";
 			dstCurName = "btc";
-		}
-		if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
+				.equalsIgnoreCase("usd"))
+				|| (srcCurName.equalsIgnoreCase("usd") && dstCurName
+						.equalsIgnoreCase(LSystem.nativeCurrency))) {
+			srcCurName = "usd";
+			dstCurName = LSystem.nativeCurrency;
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
+				.equalsIgnoreCase("btc"))
+				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName
+						.equalsIgnoreCase(LSystem.nativeCurrency))) {
+			srcCurName = "btc";
+			dstCurName = LSystem.nativeCurrency;
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
 				.equalsIgnoreCase("cny"))
 				|| (srcCurName.equalsIgnoreCase("cny") && dstCurName
 						.equalsIgnoreCase(LSystem.nativeCurrency))) {
 			srcCurName = "cny";
-			dstCurName = LSystem.nativeCurrency;
-		}
-		if ((srcCurName.equalsIgnoreCase("btc") && dstCurName
-				.equalsIgnoreCase(LSystem.nativeCurrency))
-				|| (srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
-						.equalsIgnoreCase("btc"))) {
-			srcCurName = "btc";
 			dstCurName = LSystem.nativeCurrency;
 		}
 		try {
