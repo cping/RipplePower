@@ -162,6 +162,9 @@ public final class LSystem {
 				}
 			}
 		}
+		if(sbr.toString().endsWith(".")){
+			sbr.delete(sbr.length() - 1, sbr.length());
+		}
 		return sbr.toString();
 	}
 

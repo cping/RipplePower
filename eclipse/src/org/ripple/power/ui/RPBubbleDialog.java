@@ -21,11 +21,12 @@ import javax.swing.border.LineBorder;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 
 public class RPBubbleDialog {
-	
-	public static class  TipDialog extends JDialog {
+
+	public static class TipDialog extends JDialog {
 		/**
 		 * 
 		 */
@@ -76,6 +77,7 @@ public class RPBubbleDialog {
 			dispose();
 		}
 	}
+
 	private JPanel _headPane = null;
 	private JPanel _backPane = null;
 	private JPanel _btnPane = null;
@@ -86,22 +88,23 @@ public class RPBubbleDialog {
 	private RPLabel _updateLabel = null;
 
 	private Point _oldPos;
-	private TipDialog _tpDialog = null; 
+	private TipDialog _tpDialog = null;
 
-	private int _width = 300,_height = 120;
+	private int _width = 300, _height = 120;
 	private String _message;
 
-	public RPBubbleDialog(final String mes) {
-		this(mes,300,120);
+	public RPBubbleDialog(final String mes, final boolean autoClose) {
+		this(mes, 300, 120, autoClose);
 	}
-	
-	public RPBubbleDialog(final String mes,int w,int h) {
+
+	public RPBubbleDialog(final String mes, final int w, final int h,
+			final boolean autoClose) {
 		_message = mes;
 		_width = w;
 		_height = h;
 
 		_tpDialog = new TipDialog(_width, _height);
-		
+
 		_headPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		_backPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		_btnPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -111,14 +114,15 @@ public class RPBubbleDialog {
 		_contentText = new RPTextArea(_message);
 		_backagePane = new JScrollPane(_contentText);
 		_updateLabel = new RPLabel();
-		
-		((JPanel) _tpDialog.getContentPane()).setBackground(LSystem.dialogbackground);
+
+		((JPanel) _tpDialog.getContentPane())
+				.setBackground(LSystem.dialogbackground);
 		_headPane.setBackground(LSystem.dialogbackground);
 		_backPane.setBackground(LSystem.dialogbackground);
 		_btnPane.setBackground(LSystem.dialogbackground);
 
 		_headPane.setPreferredSize(new Dimension(300, 30));
-	
+
 		_tpDialog.getRootPane().setBorder(
 				BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
 		_titleLabel.setFont(new Font(LangConfig.fontName, 0, 14));
@@ -152,7 +156,7 @@ public class RPBubbleDialog {
 		_tpDialog.add(_headPane, BorderLayout.NORTH);
 		_tpDialog.add(_backPane, BorderLayout.CENTER);
 		_tpDialog.add(_btnPane, BorderLayout.SOUTH);
-	
+
 		_updateLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
@@ -161,7 +165,8 @@ public class RPBubbleDialog {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
-				_updateLabel.setBorder(BorderFactory.createLineBorder(Color.gray));
+				_updateLabel.setBorder(BorderFactory
+						.createLineBorder(Color.gray));
 			}
 
 			@Override
@@ -194,7 +199,8 @@ public class RPBubbleDialog {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
-				_closeLabel.setBorder(BorderFactory.createLineBorder(Color.gray));
+				_closeLabel.setBorder(BorderFactory
+						.createLineBorder(Color.gray));
 			}
 
 			@Override
@@ -202,15 +208,33 @@ public class RPBubbleDialog {
 				_closeLabel.setBorder(null);
 			}
 		});
-	
+
 		_tpDialog.setAlwaysOnTop(true);
 		_tpDialog.setUndecorated(true);
 		_tpDialog.setResizable(false);
 		_tpDialog.setVisible(true);
 		_tpDialog.run();
+
+		if (autoClose) {
+			Updateable update = new Updateable() {
+				@Override
+				public void action(Object o) {
+					try {
+						Thread.sleep(LSystem.SECOND * 20);
+					} catch (InterruptedException e) {
+					}
+					_tpDialog.close();
+				}
+			};
+			LSystem.postThread(update);
+		}
 	}
 
 	public static void pop(final String msg) {
-		new RPBubbleDialog(msg);
+		new RPBubbleDialog(msg, false);
+	}
+
+	public static void pop(final String msg, final boolean ac) {
+		new RPBubbleDialog(msg, ac);
 	}
 }

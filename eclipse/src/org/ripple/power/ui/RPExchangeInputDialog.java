@@ -82,7 +82,7 @@ public class RPExchangeInputDialog extends JDialog {
 				BigDecimal b = new BigDecimal(count);
 				if (a.compareTo(BigDecimal.ZERO) == 1
 						&& b.compareTo(BigDecimal.ZERO) == 1) {
-					String cprice = a.multiply(b).toString();
+					String cprice = LSystem.getNumber(a.multiply(b));
 					_countPriceText.setText(cprice + "/" + _dstCurrency);
 				} else {
 					_countPriceText.setText("0");

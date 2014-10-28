@@ -27,8 +27,7 @@ public class WaitDialog extends JDialog {
 	private boolean isRunning = false;
 
 	public WaitDialog(Window parent) {
-		super(parent, "Transaction Broadcast",
-				Dialog.ModalityType.MODELESS);
+		super(parent, "Transaction Broadcast", Dialog.ModalityType.MODELESS);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		Dimension dim = new Dimension(400, 150);
 		setResizable(false);

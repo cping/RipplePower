@@ -147,14 +147,15 @@ public class RPExchangeDialog extends JDialog {
 
 				@Override
 				public void action(Object o) {
-					RPBubbleDialog.pop("场外汇率提示:"
-							+ srcAmount
-							+ "/"
-							+ srcCurrency
-							+ ", 平均可换取"
-							+ OfferPrice.getMoneyConvert(srcAmount,
-									srcCurrency, dstCurrency) + "/"
-							+ dstCurrency);
+					RPBubbleDialog.pop(
+							"场外汇率提示:"
+									+ srcAmount
+									+ "/"
+									+ srcCurrency
+									+ ", 平均可换取"
+									+ OfferPrice.getMoneyConvert(srcAmount,
+											srcCurrency, dstCurrency) + "/"
+									+ dstCurrency, true);
 				}
 			};
 			LSystem.postThread(update);
