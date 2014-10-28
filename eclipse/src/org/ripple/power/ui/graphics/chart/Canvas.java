@@ -2,42 +2,51 @@ package org.ripple.power.ui.graphics.chart;
 
 import java.awt.AlphaComposite;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LGraphics;
+import org.ripple.power.ui.graphics.LImage;
 
 class Canvas {
 	private static final String UNKNOWN_STYLE = "unknown style: ";
 
-	private BufferedImage bufferedImage;
-	private Graphics2D graphics2D;
+	private LImage _bufferedImage;
+	private LGraphics _graphics2D;
 
 	Canvas() {
 
 	}
 
-	Canvas(Graphics2D graphics2D) {
-		this.graphics2D = graphics2D;
+	Canvas(LGraphics g) {
+		this._graphics2D = g;
 		enableAntiAliasing();
+		_graphics2D.save();
 	}
-
+	
+	public void restore(){
+		_graphics2D.restore();
+	}
+	
+	public void save(){
+		_graphics2D.save();
+	}
+	
 	public void drawBitmap(Bitmap bitmap, int left, int top) {
-		this.graphics2D.drawImage(
-				JavaSEGraphicFactory.getBufferedImage(bitmap), left, top, null);
+		this._graphics2D.drawImage(
+				JavaSEGraphicFactory.getBufferedImage(bitmap), left, top);
 	}
 
 	public void drawBitmap(Bitmap bitmap, Matrix matrix) {
-		this.graphics2D.drawRenderedImage(
-				JavaSEGraphicFactory.getBufferedImage(bitmap),
+		this._graphics2D.drawRenderedImage(
+				JavaSEGraphicFactory.getBufferedImage(bitmap).getBufferedImage(),
 				JavaSEGraphicFactory.getAffineTransform(matrix));
 	}
 
@@ -53,12 +62,12 @@ class Canvas {
 		Style style = awtPaint.style;
 		switch (style) {
 		case FILL:
-			this.graphics2D.fillOval(x - radius, y - radius, doubleRadius,
+			this._graphics2D.fillOval(x - radius, y - radius, doubleRadius,
 					doubleRadius);
 			return;
 
 		case STROKE:
-			this.graphics2D.drawOval(x - radius, y - radius, doubleRadius,
+			this._graphics2D.drawOval(x - radius, y - radius, doubleRadius,
 					doubleRadius);
 			return;
 		}
@@ -72,7 +81,7 @@ class Canvas {
 		}
 
 		setColorAndStroke(JavaSEGraphicFactory.getAwtPaint(paint));
-		this.graphics2D.drawLine(x1, y1, x2, y2);
+		this._graphics2D.drawLine(x1, y1, x2, y2);
 	}
 
 	public void drawPath(Path path, Paint paint) {
@@ -84,16 +93,16 @@ class Canvas {
 		Path awtPath = JavaSEGraphicFactory.getAwtPath(path);
 
 		setColorAndStroke(awtPaint);
-		this.graphics2D.setPaint(awtPaint.texturePaint);
+		this._graphics2D.setPaint(awtPaint.texturePaint);
 
 		Style style = awtPaint.style;
 		switch (style) {
 		case FILL:
-			this.graphics2D.fill(awtPath.path2D);
+			this._graphics2D.fill(awtPath.path2D);
 			return;
 
 		case STROKE:
-			this.graphics2D.draw(awtPath.path2D);
+			this._graphics2D.draw(awtPath.path2D);
 			return;
 		}
 
@@ -116,7 +125,7 @@ class Canvas {
 			AttributedCharacterIterator paragraph = attrString.getIterator();
 			int paragraphStart = paragraph.getBeginIndex();
 			int paragraphEnd = paragraph.getEndIndex();
-			FontRenderContext frc = this.graphics2D.getFontRenderContext();
+			FontRenderContext frc = this._graphics2D.getFontRenderContext();
 			LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph,
 					frc);
 			float layoutHeight = 0;
@@ -160,9 +169,9 @@ class Canvas {
 							.getAwtPaint(ptc.paintBack));
 					AffineTransform affineTransform = new AffineTransform();
 					affineTransform.translate(posX, posY);
-					this.graphics2D.draw(layout.getOutline(affineTransform));
+					this._graphics2D.draw(layout.getOutline(affineTransform));
 				}
-				layout.draw(this.graphics2D, posX, posY);
+				layout.draw(this._graphics2D, posX, posY);
 				drawPosY += layout.getAscent() + layout.getDescent()
 						+ layout.getLeading();
 			}
@@ -182,16 +191,16 @@ class Canvas {
 		Paint awtPaint = JavaSEGraphicFactory.getAwtPaint(paint);
 
 		if (awtPaint.stroke == null) {
-			this.graphics2D.setColor(awtPaint.color);
-			this.graphics2D.setFont(awtPaint.font);
-			this.graphics2D.drawString(text, x, y);
+			this._graphics2D.setColor(awtPaint.color);
+			this._graphics2D.setFont(awtPaint.font);
+			this._graphics2D.drawString(text, x, y);
 		} else {
 			setColorAndStroke(awtPaint);
 			TextLayout textLayout = new TextLayout(text, awtPaint.font,
-					this.graphics2D.getFontRenderContext());
+					this._graphics2D.getFontRenderContext());
 			AffineTransform affineTransform = new AffineTransform();
 			affineTransform.translate(x, y);
-			this.graphics2D.draw(textLayout.getOutline(affineTransform));
+			this._graphics2D.draw(textLayout.getOutline(affineTransform));
 		}
 	}
 
@@ -201,10 +210,10 @@ class Canvas {
 			return;
 		}
 
-		AffineTransform affineTransform = this.graphics2D.getTransform();
+		AffineTransform affineTransform = this._graphics2D.getTransform();
 
 		double theta = Math.atan2(y2 - y1, x2 - x1);
-		this.graphics2D.rotate(theta, x1, y1);
+		this._graphics2D.rotate(theta, x1, y1);
 
 		double lineLength = Math.hypot(x2 - x1, y2 - y1);
 		int textWidth = paint.getTextWidth(text);
@@ -212,7 +221,7 @@ class Canvas {
 		int xy = paint.getTextHeight(text) / 3;
 		drawText(text, x1 + dx, y1 + xy, paint);
 
-		this.graphics2D.setTransform(affineTransform);
+		this._graphics2D.setTransform(affineTransform);
 	}
 
 	public void fillColor(LColor color) {
@@ -228,52 +237,52 @@ class Canvas {
 	}
 
 	public int getHeight() {
-		return this.bufferedImage != null ? this.bufferedImage.getHeight() : 0;
+		return this._bufferedImage != null ? this._bufferedImage.getHeight() : 0;
 	}
 
 	public int getWidth() {
-		return this.bufferedImage != null ? this.bufferedImage.getWidth() : 0;
+		return this._bufferedImage != null ? this._bufferedImage.getWidth() : 0;
 	}
 
 	public void resetClip() {
-		this.graphics2D.setClip(null);
+		this._graphics2D.setClip(null);
 	}
 
 	public void setBitmap(Bitmap bitmap) {
 		if (bitmap == null) {
-			this.bufferedImage = null;
-			this.graphics2D = null;
+			this._bufferedImage = null;
+			this._graphics2D = null;
 		} else {
-			this.bufferedImage = JavaSEGraphicFactory.getBufferedImage(bitmap);
-			this.graphics2D = this.bufferedImage.createGraphics();
+			this._bufferedImage = JavaSEGraphicFactory.getBufferedImage(bitmap);
+			this._graphics2D = this._bufferedImage.getLGraphics();
 			enableAntiAliasing();
-			this.graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING,
+			this._graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING,
 					RenderingHints.VALUE_RENDER_QUALITY);
-			this.graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+			this._graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
 					RenderingHints.VALUE_STROKE_PURE);
 		}
 	}
 
 	public void setClip(int left, int top, int width, int height) {
-		this.graphics2D.setClip(left, top, width, height);
+		this._graphics2D.setClip(left, top, width, height);
 	}
 
 	private void enableAntiAliasing() {
-		this.graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		this._graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 	}
 
 	private void fillColor(java.awt.Color color) {
-		this.graphics2D.setComposite(AlphaComposite
+		this._graphics2D.setComposite(AlphaComposite
 				.getInstance(AlphaComposite.SRC));
-		this.graphics2D.setColor(color);
-		this.graphics2D.fillRect(0, 0, getWidth(), getHeight());
+		this._graphics2D.setColor(color);
+		this._graphics2D.fillRect(0, 0, getWidth(), getHeight());
 	}
 
 	private void setColorAndStroke(Paint awtPaint) {
-		this.graphics2D.setColor(awtPaint.color);
+		this._graphics2D.setColor(awtPaint.color);
 		if (awtPaint.stroke != null) {
-			this.graphics2D.setStroke(awtPaint.stroke);
+			this._graphics2D.setStroke(awtPaint.stroke);
 		}
 	}
 }

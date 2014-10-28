@@ -1,20 +1,18 @@
 package org.ripple.power.ui.graphics.chart;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+
 
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LGraphics;
+import org.ripple.power.ui.graphics.LImage;
 
 public final class JavaSEGraphicFactory {
 	public static final JavaSEGraphicFactory INSTANCE = new JavaSEGraphicFactory();
 
 
-	public static Canvas createGraphicContext(Graphics graphics) {
-		return new Canvas((Graphics2D) graphics);
+	public static Canvas createGraphicContext(LGraphics graphics) {
+		return new Canvas(graphics);
 	}
 
 	static AffineTransform getAffineTransform(Matrix matrix) {
@@ -29,18 +27,13 @@ public final class JavaSEGraphicFactory {
 		return  path;
 	}
 
-	static BufferedImage getBufferedImage(Bitmap bitmap) {
+	static LImage getBufferedImage(Bitmap bitmap) {
 		return  bitmap.bufferedImage;
 	}
 
 
 	private JavaSEGraphicFactory() {
 	
-	}
-
-	
-	public Bitmap createBitmap(InputStream inputStream) throws IOException {
-		return new Bitmap(inputStream);
 	}
 
 	

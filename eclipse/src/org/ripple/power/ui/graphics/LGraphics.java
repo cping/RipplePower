@@ -93,6 +93,11 @@ public class LGraphics extends Graphics2D implements LTrans {
 		this.setColor(Color.white);
 	}
 
+
+	public void save() {
+		this.store.save(g2d);
+	}
+	
 	public void restore() {
 		this.store.restore(g2d);
 	}

@@ -22,6 +22,10 @@ class Path   {
 		this.path2D.reset();
 	}
 
+	public void reset() {
+		this.path2D.reset();
+	}
+
 	
 	public void lineTo(int x, int y) {
 		this.path2D.lineTo(x, y);
