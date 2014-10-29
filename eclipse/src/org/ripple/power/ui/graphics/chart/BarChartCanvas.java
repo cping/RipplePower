@@ -232,7 +232,6 @@ public class BarChartCanvas extends ChartBaseCanvas {
 		mCnv.drawPath(mPath, mPntAxis);
 		if (_display != null && _display.message != null
 				&& _display.message.length() > 0) {
-			System.out.println("GGGGGGGGGGGGGGG");
 			LColor old = mCnv._graphics.getLColor();
 			mCnv._graphics.setColor(_display.color);
 			LFont font = mCnv._graphics.getLFont();

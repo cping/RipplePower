@@ -770,12 +770,10 @@ public class RPExchangeDialog extends JDialog {
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");
 		if (split.length == 2) {
-			final String address = (String) _selectGateawyCombobox
-					.getSelectedItem();
+			final String address = _addressText.getText().trim();
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
-			OfferPrice.load(
-					Gateway.getAddress(address).accounts.get(0).address,
+			OfferPrice.load(address,
 					split[0], split[1], new OfferPrice() {
 
 						@Override
@@ -1270,6 +1268,8 @@ public class RPExchangeDialog extends JDialog {
 			textbox.setText(result);
 		}
 	}
+	
+	private boolean closed;
 
 	private class windowListener implements WindowListener {
 
@@ -1288,6 +1288,7 @@ public class RPExchangeDialog extends JDialog {
 			if (_item != null) {
 				_item.setTip(true);
 			}
+			closed = true;
 		}
 
 		@Override
@@ -1487,7 +1488,7 @@ public class RPExchangeDialog extends JDialog {
 
 			@Override
 			public void action(Object o) {
-				for (; isVisible() && _tradeFlag;) {
+				for (; !closed && _tradeFlag;) {
 					updateTrading(address, split[0], split[1]);
 					loadOtherMarketList(address, split);
 					try {

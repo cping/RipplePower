@@ -45,7 +45,7 @@ public class RPPushTool {
 
 		public TipDialog(final Point start, final int end, final int width,
 				final int height) {
-			super(LSystem.applicationMain, false);
+			super(LSystem.applicationMain,  Dialog.ModalityType.MODELESS);
 			this.width = width;
 			this.height = height;
 			dim = Toolkit.getDefaultToolkit().getScreenSize();
