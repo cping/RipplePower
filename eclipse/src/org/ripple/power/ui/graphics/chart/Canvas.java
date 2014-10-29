@@ -15,6 +15,7 @@ import java.text.AttributedString;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.graphics.geom.RectF;
 import org.ripple.power.utils.GraphicsUtils;
 
 class Canvas {
@@ -51,40 +52,42 @@ class Canvas {
 		if (p != null) {
 			setColorAndStroke(p);
 		}
-		this._graphics.drawImage(
-				JavaSEGraphicFactory.getBufferedImage(bitmap), left, top);
+		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap),
+				left, top);
 	}
 
 	public void drawBitmap(Bitmap bitmap, int left, int top) {
-		this._graphics.drawImage(
-				JavaSEGraphicFactory.getBufferedImage(bitmap), left, top);
+		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap),
+				left, top);
 	}
 
 	public void drawBitmap(Bitmap bitmap, Matrix matrix) {
-		this._graphics.drawRenderedImage(JavaSEGraphicFactory
-				.getBufferedImage(bitmap).getBufferedImage(),
-				JavaSEGraphicFactory.getAffineTransform(matrix));
+		this._graphics.drawRenderedImage(
+				JavaSEGraphicFactory.getBufferedImage(bitmap)
+						.getBufferedImage(), JavaSEGraphicFactory
+						.getAffineTransform(matrix));
 	}
 
-	public void drawCircle(int x, int y, int radius, Paint paint) {
+	public void drawCircle(float x, float y, float radius, Paint paint) {
 		if (paint.isTransparent()) {
 			return;
 		}
 
 		Paint awtPaint = JavaSEGraphicFactory.getAwtPaint(paint);
 		setColorAndStroke(awtPaint);
-		int doubleRadius = radius * 2;
+		float doubleRadius = radius * 2;
 
 		Style style = awtPaint.style;
 		switch (style) {
 		case FILL:
-			this._graphics.fillOval(x - radius, y - radius, doubleRadius,
-					doubleRadius);
+			
+			this._graphics.fillOval((int)(x - radius), (int)(y - radius),(int) doubleRadius,
+					(int)doubleRadius);
 			return;
 
 		case STROKE:
-			this._graphics.drawOval(x - radius, y - radius, doubleRadius,
-					doubleRadius);
+			this._graphics.drawOval((int)(x - radius), (int)(y - radius),(int) doubleRadius,
+					(int)doubleRadius);
 			return;
 		}
 
@@ -95,6 +98,15 @@ class Canvas {
 		_graphics.drawClear();
 	}
 
+	public void drawClear(LColor c, int w, int h) {
+		_graphics.setColor(c);
+		_graphics.fillRect(0, 0, w, h);
+	}
+
+	public void drawRect(RectF rect,Paint paint){
+		drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+	}
+	
 	public void drawRect(float x, float y, float w, float h, Paint paint) {
 		if (paint.isTransparent()) {
 			return;
@@ -120,13 +132,13 @@ class Canvas {
 		throw new IllegalArgumentException(UNKNOWN_STYLE + style);
 	}
 
-	public void drawLine(int x1, int y1, int x2, int y2, Paint paint) {
+	public void drawLine(float x1, float y1, float x2, float y2, Paint paint) {
 		if (paint.isTransparent()) {
 			return;
 		}
 
 		setColorAndStroke(JavaSEGraphicFactory.getAwtPaint(paint));
-		this._graphics.drawLine(x1, y1, x2, y2);
+		this._graphics.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
 	}
 
 	public void drawPath(Path path, Paint paint) {
@@ -320,8 +332,7 @@ class Canvas {
 			enableAntiAliasing();
 			this._graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
 					RenderingHints.VALUE_RENDER_QUALITY);
-			this._graphics.setRenderingHint(
-					RenderingHints.KEY_STROKE_CONTROL,
+			this._graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
 					RenderingHints.VALUE_STROKE_PURE);
 		}
 	}

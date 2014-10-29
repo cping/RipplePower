@@ -24,7 +24,16 @@ public class ChartValueSerie {
 	public ChartValueSerie(int color) {
 		mColor = color;
 	}
+	
+	public ChartValueSerie(LColor color) {
+		mColor = color.getARGB();
+	}
 
+	public ChartValueSerie(LColor color, float width) {
+		mColor = color.getARGB();
+		mWidth = width;
+	}
+	
 	public ChartValueSerie(int color, float width) {
 		mColor = color;
 		mWidth = width;

@@ -35,14 +35,14 @@ public class BarChartCanvas extends ChartBaseCanvas {
 
 			getXYminmax();
 
-			if (p_yscale_auto)
+			if (p_yscale_auto){
 				calcYgridRange();
+			}
 
 			calcXYcoefs();
 			gX = (float) aX / (1 + mSeries.size());
 
-			mBmp = Bitmap.createBitmap(p_width, p_height);
-			mCnv = new Canvas(mBmp);
+			reset();
 
 			drawData();
 			if (p_grid_vis)

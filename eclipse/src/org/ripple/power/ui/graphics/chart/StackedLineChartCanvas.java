@@ -2,14 +2,13 @@ package org.ripple.power.ui.graphics.chart;
 
 import java.util.ArrayList;
 
-import org.ripple.power.ui.graphics.geom.RectF;
-
-public class StackedBarChartCanvas extends ChartBaseCanvas {
+public class StackedLineChartCanvas extends ChartBaseCanvas {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	private ArrayList<ChartValueSerie> mSeries = new ArrayList<ChartValueSerie>();
 	private ChartValueSerie mStacked = new ChartValueSerie();
 	private int mXnum = 0;
@@ -17,10 +16,10 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 
 	private Paint mPnt = new Paint();
 	private Paint mPntFill = new Paint();
+	private Path mPathFill;
 
-	public StackedBarChartCanvas(int w, int h) {
+	public StackedLineChartCanvas(int w, int h) {
 		super(w, h);
-
 	}
 
 	public void onDraw(Canvas cnv) {
@@ -31,35 +30,29 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 
 			getXYminmax();
 
-			if (p_yscale_auto){
+			if (p_yscale_auto) {
 				calcYgridRange();
 			}
-
 			calcXYcoefs();
-			
-			reset();
 
+			reset();
 			drawData();
 
 			if (p_grid_vis)
 				drawGrid();
-
 			if (p_xtext_vis)
 				drawXlabel();
-
 			if (p_ytext_vis)
 				drawYlabel();
-
 			if (p_border_vis)
 				drawBorder();
-
 			if (p_axis_vis)
 				drawAxis();
 
 			bRedraw = false;
 		}
 
-		cnv.drawBitmap(mBmp, 0, 0, null);
+		cnv.drawBitmap(mBmp, 0, 0);
 	}
 
 	public void clearSeries() {
@@ -106,8 +99,9 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 	}
 
 	public void setLabelMaxNum(int maxnum) {
-		if (maxnum <= 0)
+		if (maxnum <= 0) {
 			return;
+		}
 		mLabelMaxNum = maxnum;
 		bRedraw = true;
 
@@ -130,11 +124,10 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 	}
 
 	protected void drawData() {
-
-		float pY;
 		ChartValueSerie serie;
 		ChartValue v;
-		for (int ii = 0; ii < mSeries.size(); ii++) {
+		float pY;
+		for (int ii = mSeries.size() - 1; ii >= 0; ii--) {
 			serie = mSeries.get(ii);
 			if (serie.isVisible()) {
 				mPnt.reset();
@@ -144,29 +137,32 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 				mPntFill.setStyle(Style.FILL);
 				mPntFill.setColor(serie.mFillColor);
 				if (serie.mUseDip)
-					mPnt.setStrokeWidth(4);
+					mPnt.setStrokeWidth(dipToPixel(serie.mWidth));
 				else
 					mPnt.setStrokeWidth(serie.mWidth);
 				mPnt.setAntiAlias(true);
 				mPntFill.setAntiAlias(false);
-
 				for (int jj = 0; jj < mStacked.mPointList.size(); jj++) {
 					v = mStacked.mPointList.get(jj);
 					pY = v.y;
-
-					if (!Float.isNaN(pY)) {
-						RectF rect = new RectF(sX + aX / 4 + jj * aX + 1, eY,
-								sX + aX / 4 + aX / 2 + jj * aX, eY - (pY - bY)
-										* aY);
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPntFill);
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPnt);
+					if (jj == 0) {
+						mPath.reset();
+						mPath.moveTo(sX + bX + jj * aX, eY - (pY - bY) * aY);
+					} else {
+						mPath.lineTo(sX + bX + jj * aX, eY - (pY - bY) * aY);
 					}
 					mStacked.updatePoint(jj, v.y - serie.getPoint(jj).y);
 				}
+				if (serie.mFillColor != 0) {
+					mPathFill = new Path(mPath);
+					mPathFill.lineTo(sX + bX + (mStacked.mPointList.size() - 1)
+							* aX, eY);
+					mPathFill.lineTo(sX + bX, eY);
+					mPathFill.close();
+					mCnv.drawPath(mPathFill, mPntFill);
+				}
+				mCnv.drawPath(mPath, mPnt);
+
 			}
 		}
 	}
@@ -208,8 +204,9 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 	}
 
 	protected void calcStackedSerie() {
-		if (mSeries.size() == 0)
+		if (mSeries.size() == 0) {
 			return;
+		}
 		mStacked.clearPointList();
 		ChartValueSerie f = mSeries.get(0);
 		float acc = 0;
@@ -226,5 +223,4 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 			mStacked.addPoint(new ChartValue(null, acc));
 		}
 	}
-
 }

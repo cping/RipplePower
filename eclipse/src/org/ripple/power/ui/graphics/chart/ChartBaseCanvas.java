@@ -65,11 +65,11 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	LFont mFontText = LFont.getFont(14);
 	Path mPath = new Path();
 
-	private int mWidth, mHeight;
-
 	private final LImage _myImage;
 
 	private final Canvas _myCanvas;
+
+	private LColor _background = LColor.black;
 
 	public void update(Graphics g) {
 		paint(g);
@@ -79,7 +79,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	public void paint(Graphics g) {
 		if (_myImage != null) {
 			synchronized (_myImage) {
-				_myImage.getLGraphics().drawClear();
+				_myCanvas.drawClear(_background, p_width, p_height);
 				onDraw(_myCanvas);
 				g.drawImage(_myImage.getBufferedImage(), 0, 0, this);
 			}
@@ -89,8 +89,8 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	public ChartBaseCanvas(int w, int h) {
 		this._myImage = new LImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		this._myCanvas = new Canvas(_myImage.getLGraphics());
-		this.mWidth = w;
-		this.mHeight = h;
+		this.p_width = w;
+		this.p_height = h;
 		initPaint();
 	}
 
@@ -99,11 +99,11 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	}
 
 	public int getWidth() {
-		return mWidth;
+		return p_width;
 	}
 
 	public int getHeight() {
-		return mHeight;
+		return p_height;
 	}
 
 	protected void initPaint() {
@@ -128,6 +128,15 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		setBackgroundColor(p_background_color);
 	}
 
+	public void reset(){
+		if (mBmp == null) {
+			mBmp = Bitmap.createBitmap(p_width, p_height);
+			mCnv = new Canvas(mBmp);
+		}else{
+			_myCanvas.drawClear(_background, p_width, p_height);
+		}
+	}
+	
 	public void onDraw(Canvas cnv) {
 
 		if ((mBmp == null) || (bRedraw)) {
@@ -141,9 +150,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 				calcYgridRange();
 			}
 			calcXYcoefs();
-
-			mBmp = Bitmap.createBitmap(p_width, p_height);
-			mCnv = new Canvas(mBmp);
+			reset();
 
 			if (p_grid_vis) {
 				drawGrid();
@@ -162,7 +169,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 			}
 			bRedraw = false;
 		}
-		cnv.drawBitmap(mBmp, 0, 0, null);
+		cnv.drawBitmap(mBmp, 0, 0);
 	}
 
 	public void setPadding(int pad) {
@@ -457,7 +464,16 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mCnv.drawPath(mPath, mPntAxis);
 	}
 
+	public LColor getBackground() {
+		return _background;
+	}
+
+	public void setBackground(LColor b) {
+		this._background = b;
+	}
+
 	protected float dipToPixel(float dips) {
 		return dips;
 	}
+
 }

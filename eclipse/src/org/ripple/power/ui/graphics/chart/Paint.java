@@ -95,12 +95,15 @@ class Paint  {
 	}
 
 	
+	public void getTextBounds(){
+		
+	}
+	
 	public int getTextWidth(String text) {
 		BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		FontMetrics fontMetrics = bufferedImage.getGraphics().getFontMetrics(this.font);
 		return fontMetrics.stringWidth(text);
 	}
-
 	
 	public boolean isTransparent() {
 		return this.texturePaint == null && this.color.getAlpha() == 0;
