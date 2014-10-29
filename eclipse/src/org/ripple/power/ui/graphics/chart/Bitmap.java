@@ -15,6 +15,10 @@ import org.ripple.power.ui.graphics.LImage;
 
 class Bitmap {
 	LImage bufferedImage;
+	
+	public static Bitmap createBitmap(int width,int height){
+		return new Bitmap(width, height);
+	}
 
 	Bitmap(int width, int height) {
 		this.bufferedImage = new LImage(width, height, true);

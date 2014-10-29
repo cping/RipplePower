@@ -103,16 +103,16 @@ public class MaidSystem extends JDialog {
 		for (int i = 0; i < MessageArray.length; i++) {
 			g.drawString(
 					MessageArray[i],
-					(int) Math.round((double) fx + 0.029999999999999999D
-							* (double) fwidth),
-					(int) Math.round((double) fy + 0.29999999999999999D
-							* (double) (i + 1) * (double) fheight));
+					(int) Math.round(fx + 0.029D
+							*  fwidth),
+					(int) Math.round( fy + 0.29D
+							*  (i + 1) * fheight));
 		}
 		GraphicsUtils.setAntialiasAll(g, false);
 	}
 
 	private String[] changeArray(String str, int f, int w) {
-		int line = (int) Math.round((1.0D * (double) w) / (double) f);
+		int line = (int) Math.round((1.0D * w) / f);
 		int size = str.length();
 		if (size == 0)
 			return new String[0];

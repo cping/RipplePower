@@ -27,12 +27,12 @@ class Path   {
 	}
 
 	
-	public void lineTo(int x, int y) {
+	public void lineTo(float x, float y) {
 		this.path2D.lineTo(x, y);
 	}
 
 	
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		this.path2D.moveTo(x, y);
 	}
 

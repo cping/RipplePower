@@ -1,5 +1,7 @@
 package org.ripple.power.ui.graphics.chart;
 
-public enum FillRule {
-	EVEN_ODD, NON_ZERO;
+public class PathEffect {
+
+	float[] result;
+	
 }

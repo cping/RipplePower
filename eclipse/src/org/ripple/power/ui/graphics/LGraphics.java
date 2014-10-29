@@ -303,9 +303,9 @@ public class LGraphics extends Graphics2D implements LTrans {
 		drawString(str.substring(offset, offset + len), x, y, anchor);
 	}
 
-	public void drawString(String str, int x, int y, int anchor) {
-		int newx = x;
-		int newy = y;
+	public void drawString(String str, float x, float y, int anchor) {
+		float newx = x;
+		float newy = y;
 		if (anchor == 0) {
 			anchor = TOP | LEFT;
 		}

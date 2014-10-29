@@ -9,8 +9,23 @@ import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 
+import org.ripple.power.ui.graphics.LFont;
+
 
 class Paint  {
+	
+	private boolean _antiAlias;
+	
+	 Align _align;
+
+	public void setAntiAlias(boolean a){
+		this._antiAlias = a;
+	}
+
+	public boolean isAntiAlias(){
+		return this._antiAlias;
+	}
+	
 	private static int getCap(Cap cap) {
 		switch (cap) {
 			case BUTT:
@@ -68,7 +83,7 @@ class Paint  {
 
 	Paint() {
 		this.cap = getCap(Cap.ROUND);
-		this.color = java.awt.Color.BLACK;
+		this.color = java.awt.Color.WHITE;
 		this.style = Style.FILL;
 	}
 
@@ -124,17 +139,27 @@ class Paint  {
 		this.strokeWidth = strokeWidth;
 		createStroke();
 	}
+	
+	public void reset(){
+		this.cap = getCap(Cap.ROUND);
+		this.color = java.awt.Color.WHITE;
+		this.style = Style.FILL;
+		this.strokeDasharray = null;
+	}
 
+	public void setPathEffect(PathEffect effect){
+	//	this.strokeDasharray = effect.result;
+		createStroke();
+	}
 	
 	public void setStyle(Style style) {
 		this.style = style;
 	}
 
-	
 	public void setTextAlign(Align align) {
+		this._align = align;
 	}
 
-	
 	public void setTextSize(float textSize) {
 		this.textSize = textSize;
 		createFont();
@@ -145,6 +170,13 @@ class Paint  {
 		this.fontName = getFontName(fontFamily);
 		this.fontStyle = getFontStyle(fontStyle);
 		createFont();
+	}
+	
+	public void setTypeface(LFont font){
+		this.fontName = font.getFontName();
+		this.fontStyle = font.getStyle();
+		this.font = font.getFont();
+		this.textSize = font.getSize();
 	}
 
 	private void createFont() {
