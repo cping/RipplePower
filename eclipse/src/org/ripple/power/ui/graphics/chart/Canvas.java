@@ -1,8 +1,6 @@
 package org.ripple.power.ui.graphics.chart;
 
-import java.awt.AlphaComposite;
 import java.awt.Dimension;
-import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -20,6 +18,8 @@ import org.ripple.power.utils.GraphicsUtils;
 
 class Canvas {
 	private static final String UNKNOWN_STYLE = "unknown style: ";
+
+	private boolean _isFillAlpha = false;
 
 	LImage _bufferedImage;
 	LGraphics _graphics;
@@ -80,14 +80,19 @@ class Canvas {
 		Style style = awtPaint.style;
 		switch (style) {
 		case FILL:
-			
-			this._graphics.fillOval((int)(x - radius), (int)(y - radius),(int) doubleRadius,
-					(int)doubleRadius);
+			if (_isFillAlpha) {
+				_graphics.setAlpha(1.0f);
+			}
+			this._graphics.fillOval((int) (x - radius), (int) (y - radius),
+					(int) doubleRadius, (int) doubleRadius);
+			if (_isFillAlpha) {
+				_graphics.setAlpha(0.5f);
+			}
 			return;
 
 		case STROKE:
-			this._graphics.drawOval((int)(x - radius), (int)(y - radius),(int) doubleRadius,
-					(int)doubleRadius);
+			this._graphics.drawOval((int) (x - radius), (int) (y - radius),
+					(int) doubleRadius, (int) doubleRadius);
 			return;
 		}
 
@@ -103,10 +108,10 @@ class Canvas {
 		_graphics.fillRect(0, 0, w, h);
 	}
 
-	public void drawRect(RectF rect,Paint paint){
+	public void drawRect(RectF rect, Paint paint) {
 		drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
 	}
-	
+
 	public void drawRect(float x, float y, float w, float h, Paint paint) {
 		if (paint.isTransparent()) {
 			return;
@@ -122,10 +127,16 @@ class Canvas {
 
 		switch (style) {
 		case FILL:
+			if (_isFillAlpha) {
+				this._graphics.setAlpha(0.5f);
+			}
 			this._graphics.fill(new Rectangle2D.Float(w, h, x, y));
+			if (_isFillAlpha) {
+				_graphics.setAlpha(1.0f);
+			}
 			return;
 		case STROKE:
-			this._graphics.draw(new Rectangle2D.Float(w, h, x, y));
+			this._graphics.fill(new Rectangle2D.Float(w, h, x, y));
 			return;
 		}
 
@@ -138,7 +149,7 @@ class Canvas {
 		}
 
 		setColorAndStroke(JavaSEGraphicFactory.getAwtPaint(paint));
-		this._graphics.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+		this._graphics.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
 	}
 
 	public void drawPath(Path path, Paint paint) {
@@ -155,7 +166,13 @@ class Canvas {
 		Style style = awtPaint.style;
 		switch (style) {
 		case FILL:
+			if (_isFillAlpha) {
+				this._graphics.setAlpha(0.5f);
+			}
 			this._graphics.fill(awtPath.path2D);
+			if (_isFillAlpha) {
+				this._graphics.setAlpha(1.0f);
+			}
 			return;
 
 		case STROKE:
@@ -330,10 +347,6 @@ class Canvas {
 			this._bufferedImage = JavaSEGraphicFactory.getBufferedImage(bitmap);
 			this._graphics = this._bufferedImage.getLGraphics();
 			enableAntiAliasing();
-			this._graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
-					RenderingHints.VALUE_RENDER_QUALITY);
-			this._graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-					RenderingHints.VALUE_STROKE_PURE);
 		}
 	}
 
@@ -346,8 +359,6 @@ class Canvas {
 	}
 
 	private void fillColor(java.awt.Color color) {
-		this._graphics.setComposite(AlphaComposite
-				.getInstance(AlphaComposite.SRC));
 		this._graphics.setColor(color);
 		this._graphics.fillRect(0, 0, getWidth(), getHeight());
 	}
@@ -358,5 +369,13 @@ class Canvas {
 		if (awtPaint.stroke != null) {
 			this._graphics.setStroke(awtPaint.stroke);
 		}
+	}
+
+	public boolean isFillAlpha() {
+		return _isFillAlpha;
+	}
+
+	public void setFillAlpha(boolean f) {
+		this._isFillAlpha = f;
 	}
 }

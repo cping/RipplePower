@@ -31,6 +31,7 @@ public class ChartValueSerie {
 
 	public ChartValueSerie(LColor color, float width) {
 		mColor = color.getARGB();
+		mFillColor = new LColor(color.getRed(),color.getGreen(),color.getBlue(),125).getARGB();
 		mWidth = width;
 	}
 	
