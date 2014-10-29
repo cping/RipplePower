@@ -279,26 +279,15 @@ public class OtherData {
 		return null;
 	}
 
-	public static JSONArray getCoinmarketcap365d(String name)
+	public static JSONObject getCoinmarketcapTo(int limit,String name)
 			throws HttpRequestException, JSONException, IOException {
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
-						+ name + "-365d.json");
+						+ name + "-"+limit+"d.json");
 
 		if (request.ok()) {
-			return new JSONArray(request.body());
-		}
-		return null;
-	}
-
-	public static JSONArray getCoinmarketcap1d(String name)
-			throws HttpRequestException, JSONException, IOException {
-		HttpRequest request = HttpRequest
-				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
-						+ name + "-1d.json");
-
-		if (request.ok()) {
-			return new JSONArray(request.body());
+	
+			return new JSONObject(request.body());
 		}
 		return null;
 	}
@@ -552,5 +541,5 @@ public class OtherData {
 		
 		return null;
 	}
-
+	
 }

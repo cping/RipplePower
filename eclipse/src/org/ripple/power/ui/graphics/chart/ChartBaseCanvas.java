@@ -20,7 +20,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	int p_paddright = 8;
 	int p_paddbottom = 8;
 	int p_paddleft = 8;
-
+	
 	boolean p_xscale_auto = true;
 	boolean p_yscale_auto = true;
 	boolean p_border_vis = true;
@@ -62,7 +62,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	Paint mPntGrid = new Paint();
 	Paint mPntAxis = new Paint();
 	Paint mPntText = new Paint();
-	LFont mFontText = LFont.getFont(14);
+
 	Path mPath = new Path();
 
 	private final LImage _myImage;
@@ -70,6 +70,11 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	private final Canvas _myCanvas;
 
 	private LColor _background = LColor.black;
+	
+	public void repaint(){
+		bRedraw = true;
+		super.repaint();
+	}
 
 	public void update(Graphics g) {
 		paint(g);
@@ -95,7 +100,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	}
 
 	public ChartBaseCanvas(Frame frame) {
-		this(frame.getWidth() - 10, frame.getHeight() - 32);
+		this(frame.getWidth(), frame.getHeight());
 	}
 
 	public int getWidth() {
@@ -121,22 +126,20 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mPntAxis.setStrokeWidth(p_axis_width);
 		mPntAxis.setAntiAlias(p_grid_aa);
 		mPntText.setColor(p_text_color);
-		mPntText.setTypeface(mFontText);
+		mPntText.setTypeface(LFont.getFont(14));
 		mPntText.setTextSize(p_text_size);
 		mPntText.setStyle(Style.FILL);
 		mPntText.setAntiAlias(true);
 		setBackgroundColor(p_background_color);
 	}
 
-	public void reset(){
-		if (mBmp == null) {
+	public void reset() {
+
 			mBmp = Bitmap.createBitmap(p_width, p_height);
 			mCnv = new Canvas(mBmp);
-		}else{
-			_myCanvas.drawClear(_background, p_width, p_height);
-		}
+
 	}
-	
+
 	public void onDraw(Canvas cnv) {
 
 		if ((mBmp == null) || (bRedraw)) {
@@ -319,6 +322,23 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mYmax = 90;
 	}
 
+	public void setLeft(int p){
+		this.p_paddleft = p;
+	}
+
+	public void setTop(int p){
+		this.p_paddtop = p;
+	}
+	
+	
+	public void setBottom(int p){
+		this.p_paddbottom = p;
+	}
+
+	public void setRight(int p){
+		this.p_paddright = p;
+	}
+	
 	protected void calcXgridRange() {
 		mXdivGrid = (float) Math.pow(10,
 				Math.floor(Math.log10(Math.abs(mXmax - mXmin))));
@@ -397,7 +417,6 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mPntText.setTextAlign(Align.CENTER);
 		mPath.reset();
 		if (p_xtext_bottom) {
-
 			for (int ii = 1; ii < mXgridNum; ii++) {
 				mPath.moveTo(sX + ii * (dX / mXgridNum), eY - 3);
 				mPath.lineTo(sX + ii * (dX / mXgridNum), eY + 3);
@@ -417,6 +436,12 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mCnv.drawPath(mPath, mPntAxis);
 	}
 
+	private String mYLabelFlag = null;
+
+	public void setYLabelFlag(String label){
+		this.mYLabelFlag = label;
+	}
+	
 	protected void drawYlabel() {
 		if (p_ytext_left) {
 			mPntText.setTextAlign(Align.RIGHT);
@@ -429,17 +454,30 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 				mPath.moveTo(sX - 3, eY - ii * (dY / mYgridNum));
 				mPath.lineTo(sX + 3, eY - ii * (dY / mYgridNum));
 				float ff = mYminGrid + ii * (mYmaxGrid - mYminGrid) / mYgridNum;
-
-				mCnv.drawText(String.format("%.1f", ff), sX - 6, eY - ii
-						* (dY / mYgridNum) + p_text_size / 2, mPntText);
+				if (mYLabelFlag == null) {
+					mCnv.drawText(String.format("%s", (int) ff), sX - 6, eY
+							- ii * (dY / mYgridNum) + p_text_size / 2, mPntText);
+				} else {
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
+							sX - 6, eY - ii * (dY / mYgridNum) + p_text_size
+									/ 2, mPntText);
+				}
 			}
+			
 		} else {
 			for (int ii = 1; ii < mYgridNum; ii++) {
 				mPath.moveTo(eX - 3, eY - ii * (dY / mYgridNum));
 				mPath.lineTo(eX + 3, eY - ii * (dY / mYgridNum));
 				float ff = mYminGrid + ii * (mYmaxGrid - mYminGrid) / mYgridNum;
-				mCnv.drawText(String.format("%.1f", ff), eX + 6, eY - ii
-						* (dY / mYgridNum) + p_text_size / 2, mPntText);
+				if (mYLabelFlag == null) {
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
+							eX + 6, eY - ii * (dY / mYgridNum) + p_text_size
+									/ 2, mPntText);
+				} else {
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
+							eX + 6, eY - ii * (dY / mYgridNum) + p_text_size
+									/ 2, mPntText);
+				}
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);

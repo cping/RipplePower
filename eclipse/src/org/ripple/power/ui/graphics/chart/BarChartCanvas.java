@@ -3,6 +3,8 @@ package org.ripple.power.ui.graphics.chart;
 import java.awt.Frame;
 import java.util.ArrayList;
 
+import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.geom.RectF;
 
 public class BarChartCanvas extends ChartBaseCanvas {
@@ -18,6 +20,20 @@ public class BarChartCanvas extends ChartBaseCanvas {
 
 	private Paint mPnt = new Paint();
 	private Paint mPntFill = new Paint();
+
+	public static class TextDisplay {
+		public int x;
+		public int y;
+		public LColor color = LColor.yellow;
+		public String message;
+		public LFont font = LFont.getFont(12);
+	}
+
+	private TextDisplay _display;
+
+	public void setTextDisplay(TextDisplay d) {
+		_display = d;
+	}
 
 	public BarChartCanvas(int w, int h) {
 		super(w, h);
@@ -35,7 +51,7 @@ public class BarChartCanvas extends ChartBaseCanvas {
 
 			getXYminmax();
 
-			if (p_yscale_auto){
+			if (p_yscale_auto) {
 				calcYgridRange();
 			}
 
@@ -152,11 +168,17 @@ public class BarChartCanvas extends ChartBaseCanvas {
 				mPntFill.setAntiAlias(false);
 				for (int ii = 0; ii < serie.mPointList.size(); ii++) {
 					pY = serie.mPointList.get(ii).y;
+					int color = serie.mPointList.get(ii).color;
+					if (serie.mPointList.get(ii).color != -1) {
+						mPntFill.setColor(color);
+						mPnt.setColor(color);
+					}
 					zY = eY + bY * aY;
-					if (zY > eY)
+					if (zY > eY) {
 						zY = eY;
-					else if (zY < sY)
+					} else if (zY < sY) {
 						zY = sY;
+					}
 					if (!Float.isNaN(pY)) {
 						RectF rect = new RectF(
 								(sX + gX / 2 + jj * gX + ii * aX + 1), zY, (sX
@@ -208,6 +230,17 @@ public class BarChartCanvas extends ChartBaseCanvas {
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);
+		if (_display != null && _display.message != null
+				&& _display.message.length() > 0) {
+			System.out.println("GGGGGGGGGGGGGGG");
+			LColor old = mCnv._graphics.getLColor();
+			mCnv._graphics.setColor(_display.color);
+			LFont font = mCnv._graphics.getLFont();
+			mCnv._graphics.setFont(_display.font);
+			mCnv._graphics.drawString(_display.message, _display.x, _display.y);
+			mCnv._graphics.setColor(old);
+			mCnv._graphics.setFont(font);
+		}
 	}
 
 }

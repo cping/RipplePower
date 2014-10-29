@@ -2,6 +2,8 @@ package org.ripple.power.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Toolkit;
 
 import javax.swing.JDialog;
 
@@ -30,8 +32,14 @@ public class JSonLog extends JDialog {
 
 	public JSonLog() {
 		super(Paramaters.getContainer(), "RPC", false);
-		setLocation(getInsets().left + 20, getInsets().top + 260);
-		setPreferredSize(new Dimension(300, 300));
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
+				this.getGraphicsConfiguration());
+		Dimension size = new Dimension(300, 300);
+		setLocation(
+				20,
+				(int) (dim.getHeight() - screenInsets.bottom - size.getHeight() * 2));
+		setPreferredSize(size);
 		setResizable(false);
 		setBackground(Color.black);
 
@@ -40,6 +48,7 @@ public class JSonLog extends JDialog {
 
 		pack();
 		setVisible(true);
+
 	}
 
 	private JConsole lConsole;

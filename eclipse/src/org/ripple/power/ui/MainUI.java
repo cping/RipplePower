@@ -151,6 +151,8 @@ public class MainUI {
 		
 		MaidSystem.get();
 		JSonLog.get();
+		HoldXRP.get();
+		
 		
 	}
 

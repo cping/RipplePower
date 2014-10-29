@@ -316,7 +316,7 @@ public abstract class OfferPrice {
 						fruit.message = o.takerGets().toText()
 								+ "<br><font size=5 color=red>Sell</font><br>"
 								+ (o.takerPays().toText())
-								+ "<br><font size=5 color=red>Exchange rate</font><br>"
+								+ "<br><font size=5 color=green>Exchange rate</font><br>"
 								+ getsOne.toText() + "=="
 								+ paysOne.multiply(payForOne).toText() + "<br>"
 								+ getsOne.divide(payForOne).toText() + "=="
@@ -333,7 +333,7 @@ public abstract class OfferPrice {
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
 						fruit.message = o.takerGets().toText()
-								+ "<br><font size=5 color=red>Buy</font><br>"
+								+ "<br><font size=5 color=green>Buy</font><br>"
 								+ (o.takerPays().toText())
 								+ "<br><font size=5 color=red>Exchange rate</font><br>"
 								+ paysOne.multiply(payForOne).toText() + "=="
