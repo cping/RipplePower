@@ -571,7 +571,7 @@ public class OtherData {
 		_coin_names.put("btsx", "bitshares-x");
 	}
 
-	public static ArrayMap getCapitalization(String name)
+	public static ArrayMap getCapitalization(int day, String name)
 			throws Exception {
 		if (name == null) {
 			return null;
@@ -580,7 +580,7 @@ public class OtherData {
 		if (_coin_names.containsKey(name)) {
 			name = _coin_names.get(name);
 		}
-		JSONObject o = (getCoinmarketcapTo(1, name));
+		JSONObject o = (getCoinmarketcapTo(day, name));
 		if (o == null) {
 			CoinmarketcapData data = getCoinmarketcapTo("usd", name);
 			if (data != null) {
