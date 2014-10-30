@@ -369,6 +369,7 @@ public class MainForm extends JFrame implements ActionListener {
 	 * Listen for window events
 	 */
 	private class ApplicationWindowListener extends WindowAdapter {
+		private boolean windowClosed;
 
 		public ApplicationWindowListener(JFrame window) {
 
@@ -397,7 +398,22 @@ public class MainForm extends JFrame implements ActionListener {
 		@Override
 		public void windowClosing(WindowEvent we) {
 			try {
-				exitProgram();
+				if (!windowClosed) {
+					windowClosed = true;
+					exitProgram();
+				}
+			} catch (Exception ex) {
+
+			}
+		}
+
+		@Override
+		public void windowClosed(WindowEvent we) {
+			try {
+				if (!windowClosed) {
+					windowClosed = true;
+					exitProgram();
+				}
 			} catch (Exception ex) {
 
 			}

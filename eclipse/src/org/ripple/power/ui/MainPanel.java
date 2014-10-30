@@ -118,7 +118,6 @@ public class MainPanel extends JPanel implements ActionListener {
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
-
 		table.setFont(new Font("Dialog", 0, 14));
 		table.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
