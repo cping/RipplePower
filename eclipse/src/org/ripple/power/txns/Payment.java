@@ -43,7 +43,54 @@ public class Payment {
 					item.putField(BinaryFormatField.DestinationTag,
 							MathUtils.randomLong(1, 999999999));
 					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee) );
+							CurrencyUtils.getValueToRipple(fee));
+					TransactionUtils.submitBlob(seed, item, back);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void error(JSONObject message) {
+				if (back != null) {
+					back.error(message);
+				}
+
+			}
+		});
+
+	}
+
+	public static void sendXRPAndInvoiceIDAndTag(final String seed,
+			final String dstAddress, final String amount, final byte[] hash,
+			final long tag, final String fee, final Rollback back) {
+		Payment.sendXRPAndInvoiceIDAndTag(new RippleSeedAddress(seed),
+				dstAddress, amount, hash, tag, fee, back);
+	}
+
+	public static void sendXRPAndInvoiceIDAndTag(final RippleSeedAddress seed,
+			final String dstAddress, final String amount, final byte[] hash,
+			final long tag, final String fee, final Rollback back) {
+		final String address = seed.getPublicKey();
+		AccountFind find = new AccountFind();
+		find.info(address, new Rollback() {
+			@Override
+			public void success(JSONObject message) {
+				try {
+					long sequence = TransactionUtils.getSequence(message);
+					RippleObject item = new RippleObject();
+					item.putField(BinaryFormatField.TransactionType,
+							(int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account,
+							seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.Amount,
+							CurrencyUtils.getValueToRipple(amount));
+					item.putField(BinaryFormatField.InvoiceID, hash);
+					item.putField(BinaryFormatField.Sequence, sequence);
+					item.putField(BinaryFormatField.Destination, dstAddress);
+					item.putField(BinaryFormatField.DestinationTag, tag);
+					item.putField(BinaryFormatField.Fee,
+							CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -18,6 +18,10 @@ public class TransactionTx {
 
     public IssuedCurrency pay;
     
+    public long destinationTag;
+    
+    public String invoiceID;
+    
     public long flags;
 
     public long offersSequence;

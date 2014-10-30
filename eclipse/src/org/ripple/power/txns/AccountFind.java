@@ -187,6 +187,11 @@ public class AccountFind {
 
 											switch (type) {
 											case "Payment":
+
+												transactionTx.destinationTag = getLong(
+														tx, "DestinationTag");
+												transactionTx.invoiceID = getStringObject(tx, "InvoiceID");
+											
 												IssuedCurrency currency = null;
 												String counterparty = null;
 												if (meta != null
