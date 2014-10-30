@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindowListener;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.NameFind;
@@ -71,7 +71,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	public RPXRPSendDialog(String text, JFrame parent, final WalletItem item,
 			String address, String amount, String fee) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-		addWindowListener(HelperWindowListener.get());
+		addWindowListener(HelperWindow.get());
 		_feeLabel = new RPLabel();
 		_addressLabel = new RPLabel();
 		_amountLabel = new RPLabel();

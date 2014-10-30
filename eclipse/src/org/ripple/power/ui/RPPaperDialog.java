@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.address.utils.CoinUtils;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindowListener;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.print.PrintImageOutput;
 import org.ripple.power.qr.EncoderDecoder;
@@ -82,7 +82,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 		// 1导入私钥
 		switch (modelFlag) {
 		case 0:
-			addWindowListener(HelperWindowListener.get());
+			addWindowListener(HelperWindow.get());
 			this.setTitle(LangConfig.get(this, "title1", "Export Ripple Paper Wallet"));
 			title = LangConfig.get(this, "export", "Export");
 			try {

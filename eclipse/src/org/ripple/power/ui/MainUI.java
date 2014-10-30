@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.Paramaters;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
@@ -52,7 +51,6 @@ public class MainUI {
 		UIConfig.loadConfig();
 		LangConfig.init();
 		form = new MainForm();
-		Paramaters.format(form);
 		form.getContentPane().setLayout(
 				new MigLayout("fill", "[fill]", "[fill]"));
 
@@ -144,6 +142,7 @@ public class MainUI {
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
 		SwingUtils.centerOnScreen(form);
+		//form.setAlwaysOnTop(true);
 		form.setLocationRelativeTo(null);
 		form.pack();
 		form.setVisible(true);

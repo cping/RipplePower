@@ -36,13 +36,13 @@ public class HelperDialog extends Canvas {
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 				LSystem.applicationMain.getGraphicsConfiguration());
 		HelperDialog helper = new HelperDialog();
-		helper.setSize(new Dimension(Paramaters.Width_MaidSystem,
-				Paramaters.Height_MaidSystem));
-		helper.setPreferredSize(new Dimension(Paramaters.Width_MaidSystem,
-				Paramaters.Height_MaidSystem));
+		helper.setSize(new Dimension(GraphicTool.Width_MaidSystem,
+				GraphicTool.Height_MaidSystem));
+		helper.setPreferredSize(new Dimension(GraphicTool.Width_MaidSystem,
+				GraphicTool.Height_MaidSystem));
 		helper.setBackground(LColor.black);
 		return RPPushTool.pop(
-				new Point((size.width - Paramaters.Width_MaidSystem) / 2, size
+				new Point((size.width - GraphicTool.Width_MaidSystem) / 2, size
 						.getHeight()),
 				(int) (screenInsets.bottom + helper.getHeight() + 90),
 				LangConfig.get(HelperDialog.class, "ripple_wizard",
@@ -92,7 +92,7 @@ public class HelperDialog extends Canvas {
 	public void paint(Graphics g) {
 		if (offscreenImg == null) {
 			offscreenImg = createImage(getWidth(), getHeight());
-			Paramaters.Image_BOX.loadWait(offscreenImg);
+			GraphicTool.get().loadWait(offscreenImg);
 		}
 		Graphics offscreenG = offscreenImg.getGraphics();
 		offscreenG.setColor(getBackground());

@@ -217,7 +217,7 @@ public class MainForm extends JFrame implements ActionListener {
 		mainPanel = new MainPanel(this);
 
 		addWindowListener(new ApplicationWindowListener(this));
-
+	
 		RPClient.ripple();
 
 	}
@@ -374,7 +374,7 @@ public class MainForm extends JFrame implements ActionListener {
 		public ApplicationWindowListener(JFrame window) {
 
 		}
-
+	
 		@Override
 		public void windowIconified(WindowEvent we) {
 			windowMinimized = true;

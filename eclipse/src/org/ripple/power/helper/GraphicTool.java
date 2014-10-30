@@ -7,6 +7,23 @@ import org.ripple.power.utils.GraphicsUtils;
 
 public class GraphicTool {
 
+    public static final int Width_MaidSystem = 886;
+    public static final int Height_MaidSystem = 158;
+    public static final int defaultFrameSize = 0;
+    public static int frameTop = 0;
+    public static int frameLeft = 0;
+    private static ImageSet Image_BOX;
+
+    public static ImageSet get()
+    {
+    	if(Image_BOX==null){
+        Image_BOX = new ImageSet();
+        Image image =  GraphicsUtils.loadImage("icons/win.png");
+        image = GraphicsUtils.transparencyBlackColor(image);
+        Image_BOX.SplitWindow(GraphicsUtils.getBufferImage(image));
+    	}
+    	return Image_BOX;
+    }
 	public GraphicTool() {
 		MenuItemColor = Color.yellow;
 	}
@@ -89,7 +106,7 @@ public class GraphicTool {
 			int height) {
 		BufferedImage corners[] = new BufferedImage[4];
 		for (int i = 0; i < corners.length; i++) {
-			corners[i] = Paramaters.Image_BOX
+			corners[i] = GraphicTool.get()
 					.getBufferdImage((new StringBuilder("win")).append(i + 4)
 							.toString());
 		}
@@ -103,26 +120,26 @@ public class GraphicTool {
 			switch (a) {
 			case 0:
 				length = width;
-				img = Paramaters.Image_BOX.getBufferdImage("win0");
+				img = GraphicTool.get().getBufferdImage("win0");
 				size = img.getWidth();
 				break;
 
 			case 1:
 				length = height;
-				img = Paramaters.Image_BOX.getBufferdImage("win1");
+				img = GraphicTool.get().getBufferdImage("win1");
 				size = img.getHeight();
 				break;
 
 			case 2:
 				length = width;
-				img = Paramaters.Image_BOX.getBufferdImage("win2");
+				img = GraphicTool.get().getBufferdImage("win2");
 				size = img.getWidth();
 				StartY = height - img.getHeight();
 				break;
 
 			case 3:
 				length = height;
-				img = Paramaters.Image_BOX.getBufferdImage("win3");
+				img = GraphicTool.get().getBufferdImage("win3");
 				size = img.getHeight();
 				StartX = width - img.getWidth();
 				break;
@@ -145,7 +162,7 @@ public class GraphicTool {
 
 	private void drawBorder(Graphics g, Container con, int x, int y, int width,
 			int height, int nums) {
-		BufferedImage img = Paramaters.Image_BOX.getBufferdImage("win0");
+		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int size = img.getHeight();
 		int length = img.getWidth();
 		int bun = (int) Math.round((1.0D * (double) (height - size))
@@ -160,7 +177,7 @@ public class GraphicTool {
 
 	public void drawHorizonLine(Graphics g, Container con, int x, int y,
 			int width) {
-		BufferedImage img = Paramaters.Image_BOX.getBufferdImage("win0");
+		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int length = img.getWidth();
 		for (int j = 0; j <= width; j += length)
 			g.drawImage(img, x + j, y, con);
@@ -178,7 +195,7 @@ public class GraphicTool {
 
 	private void drawChoices(Graphics g, int x, int y, int width, int height,
 			String strs[], boolean oks[], Color colors[]) {
-		BufferedImage img = Paramaters.Image_BOX.getBufferdImage("win0");
+		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int size = img.getHeight();
 		int bun = (int) Math.round((1.0D * (double) (height - size))
 				/ (double) strs.length);
@@ -205,7 +222,7 @@ public class GraphicTool {
 		if (now == -1) {
 			return;
 		} else {
-			BufferedImage img = Paramaters.Image_BOX.getBufferdImage("win0");
+			BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 			int size = img.getHeight();
 			int bun = (int) Math.round((1.0D * (double) (height - size))
 					/ (double) nums);

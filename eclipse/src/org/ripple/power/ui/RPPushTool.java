@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -230,7 +231,7 @@ public class RPPushTool {
 			}
 		});
 
-		_tpDialog.setAlwaysOnTop(true);
+		//_tpDialog.setAlwaysOnTop(true);
 		_tpDialog.setUndecorated(true);
 		_tpDialog.setResizable(false);
 		_tpDialog.setVisible(true);

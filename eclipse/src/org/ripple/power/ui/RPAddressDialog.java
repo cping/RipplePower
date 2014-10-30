@@ -22,7 +22,7 @@ import org.address.utils.CoinUtils;
 import org.address.utils.Helper;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
-import org.ripple.power.helper.HelperWindowListener;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
@@ -72,7 +72,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	public RPAddressDialog(JFrame parent) {
 		super(parent, LangConfig.get(RPAddressDialog.class, "title",
 				"Import or create a public key and a secret key"), Dialog.ModalityType.DOCUMENT_MODAL);
-		addWindowListener(HelperWindowListener.get());
+		addWindowListener(HelperWindow.get());
 		setLayout(new FlowLayout());
 		setResizable(false);
 		Dimension dim = new Dimension(615, 365);
