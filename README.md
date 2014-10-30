@@ -4,6 +4,10 @@ RipplePower is a Simplified Payment Ripple desktop client , This is a general pu
 
 PS: system support i18n
 
+In the page right [Download ZIP] option, you can download the entire project source code and Demo files.
+
+在Github页面右侧下方【Download ZIP】选项，您可以下载整个项目源码与Demo文件.
+
 <a href="https://ripple.com//send?to=rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp&name=cping&label=Thank you donate to RipplePower&amount=100/XRP&dt=20140906"><img src="https://raw.github.com/cping/RipplePower/master/rippledonate.png" alt="RippleDonate" /></a>
 
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/001.png "0")
