@@ -2,7 +2,7 @@
 
 RipplePower is a Simplified Payment Ripple desktop client , This is a general purpose Ripple client in Java that targets HTML5 browsers (via GWT), desktop JavaSE, Android and iOS and WP devices.
 
-PS: Current system does not support i18n, only the chinese version.(will soon increase)
+PS: system support i18n
 
 <a href="https://ripple.com//send?to=rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp&name=cping&label=Thank you donate to RipplePower&amount=100/XRP&dt=20140906"><img src="https://raw.github.com/cping/RipplePower/master/rippledonate.png" alt="RippleDonate" /></a>
 
