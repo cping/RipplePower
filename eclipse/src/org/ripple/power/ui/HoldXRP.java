@@ -22,7 +22,8 @@ public class HoldXRP {
 		if (LSystem.applicationMain != null) {
 
 			final BarChartCanvas canvas = new BarChartCanvas(180, 200);
-			ChartValueSerie c = new ChartValueSerie(LColor.RED.getRGB(), 1);
+			final ChartValueSerie c = new ChartValueSerie(LColor.RED.getRGB(),
+					1);
 			c.addPoint(new ChartValue("Total", 100f));
 			c.addPoint(new ChartValue("You", 1f, LColor.green));
 
@@ -47,10 +48,11 @@ public class HoldXRP {
 			Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 					LSystem.applicationMain.getGraphicsConfiguration());
 			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-			final RPPushTool tool = RPPushTool
-					.pop(new Point(20, size.getHeight()),
-							(int) (screenInsets.bottom + canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2)-20),
-							"Total XRP assets",canvas);
+			final RPPushTool tool = RPPushTool.pop(
+					new Point(20, size.getHeight()),
+					(int) (screenInsets.bottom + canvas.getHeight()
+							+ (RPPushTool.TITLE_SIZE * 2) - 20),
+					"Total XRP assets", canvas);
 			Updateable update = new Updateable() {
 
 				@Override
@@ -65,12 +67,18 @@ public class HoldXRP {
 								if (total.indexOf(',') != -1) {
 									total = total.replace(",", "");
 								}
+								String result = LSystem
+										.getNumber(new BigDecimal(WalletCache
+												.get().getAmounts()).divide(
+												new BigDecimal(total),
+												MathContext.DECIMAL128)
+												.multiply(new BigDecimal(100)));
+								double dd = Double.parseDouble(result);
+								if (dd > 1d) {
+									c.getPoint(1).y = (int) dd;
+								}
 								textDisplay.message = "Hold XRP "
-										+ (LSystem.getNumber(new BigDecimal(
-												WalletCache.get().getAmounts())
-												.divide(new BigDecimal(total),
-														MathContext.DECIMAL128)
-												.multiply(new BigDecimal(100))) + "%");
+										+ (result + "%");
 								textDisplay.x = (canvas.getWidth() - textDisplay.font
 										.stringWidth(textDisplay.message)) / 2;
 								canvas.repaint();

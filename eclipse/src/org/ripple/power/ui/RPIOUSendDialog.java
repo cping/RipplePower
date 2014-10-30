@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -77,7 +76,7 @@ public class RPIOUSendDialog extends JDialog {
 	public RPIOUSendDialog(String text, JFrame parent, final WalletItem item,
 			String address, String amount, String fee) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-		addWindowListener(HelperWindow.get());
+		//addWindowListener(HelperWindow.get());
 		setResizable(false);
 		Dimension dim = new Dimension(575, 270);
 		setPreferredSize(dim);

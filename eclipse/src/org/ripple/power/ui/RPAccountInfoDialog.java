@@ -17,7 +17,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -285,7 +284,7 @@ public class RPAccountInfoDialog extends JDialog {
 
 	private void initComponents(String address) {
 
-		addWindowListener(HelperWindow.get());
+		//addWindowListener(HelperWindow.get());
 		_addressLabel = new RPLabel();
 		_addressText = new RPTextBox();
 		_loadButton = new RPCButton();

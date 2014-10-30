@@ -1,5 +1,6 @@
 package org.ripple.power.utils;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -7,8 +8,10 @@ import java.awt.Desktop.Action;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -33,12 +36,81 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 public class SwingUtils {
+
+	static public Window getParentContainer(Component component) {
+		if (component instanceof Window) {
+			return (Window) component;
+		}
+		while (component.getParent() != null) {
+			component = component.getParent();
+			if (component instanceof Window) {
+				return (Window) component;
+			}
+		}
+		if (component instanceof Window) {
+			return (Window) component;
+		} else {
+			return null;
+		}
+	}
+
+	static public JDialog addModelessWindow(Component jpanel, String title) {
+		return addModelessWindow((Window) null, jpanel, title);
+	}
+
+	static public JDialog addModelessWindow(Window mainWindow,
+			Component jpanel, String title) {
+		JDialog dialog;
+		if (mainWindow != null) {
+			dialog = new JDialog(mainWindow, title);
+		} else {
+			dialog = new JDialog();
+			dialog.setTitle(title);
+		}
+		dialog.getContentPane().setLayout(new BorderLayout());
+		dialog.getContentPane().add(jpanel, BorderLayout.CENTER);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.pack();
+		dialog.setLocationRelativeTo(mainWindow);
+		dialog.setModalityType(ModalityType.MODELESS);
+		dialog.setSize(jpanel.getPreferredSize());
+		dialog.setVisible(true);
+		return dialog;
+	}
+
+	static public JDialog addModelessWindow(Frame mainWindow, Component jpanel,
+			String title) {
+		JDialog dialog = new JDialog(mainWindow, title, true);
+		dialog.getContentPane().setLayout(new BorderLayout());
+		dialog.getContentPane().add(jpanel, BorderLayout.CENTER);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.pack();
+		dialog.setLocationRelativeTo(mainWindow);
+		dialog.setModalityType(ModalityType.MODELESS);
+		dialog.setSize(jpanel.getPreferredSize());
+		dialog.setVisible(true);
+		return dialog;
+	}
+
+	static public JDialog addDialogWindow(Frame mainWindow, Component jpanel,
+			String title) {
+		JDialog dialog = new JDialog(mainWindow, title, true);
+		dialog.getContentPane().setLayout(new BorderLayout());
+		dialog.getContentPane().add(jpanel, BorderLayout.CENTER);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.pack();
+		dialog.setLocationRelativeTo(mainWindow);
+		dialog.setSize(jpanel.getPreferredSize());
+		dialog.setVisible(true);
+		return dialog;
+	}
 
 	public static void fadeIn(final Dialog win) {
 		if (!win.isUndecorated()) {

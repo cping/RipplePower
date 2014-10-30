@@ -34,7 +34,10 @@ public class RPClient {
 
 	private static RPClient _rippleClient = null;
 
-	private final ArrayList<Updateable> loads = new ArrayList<Updateable>(10);
+	private final ArrayList<Updateable> _loads = new ArrayList<Updateable>(10);
+
+	private final ArrayList<Updateable> _longloads = new ArrayList<Updateable>(
+			10);
 
 	private final static String[] applicationRippleLabes = new String[] {
 			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
@@ -153,28 +156,68 @@ public class RPClient {
 
 	}
 
+	//
+
+	public void addLongLoad(Updateable u) {
+		synchronized (_longloads) {
+			_longloads.add(u);
+		}
+	}
+
+	public void removeLongLoad(Updateable u) {
+		synchronized (_longloads) {
+			_longloads.remove(u);
+		}
+	}
+
+	public void removeAllLongLoad() {
+		synchronized (_longloads) {
+			_longloads.clear();
+		}
+	}
+
+	public void loadLong() {
+		final int count = _longloads.size();
+		if (count > 0) {
+			callLongUpdateable(_longloads);
+		}
+	}
+
+	private final static void callLongUpdateable(
+			final ArrayList<Updateable> list) {
+		synchronized (list) {
+			for (int i = 0; i < list.size(); i++) {
+				Updateable running = list.get(i);
+				synchronized (running) {
+					running.action(null);
+				}
+			}
+		}
+	}
+
+	//
 	public void addLoad(Updateable u) {
-		synchronized (loads) {
-			loads.add(u);
+		synchronized (_loads) {
+			_loads.add(u);
 		}
 	}
 
 	public void removeLoad(Updateable u) {
-		synchronized (loads) {
-			loads.remove(u);
+		synchronized (_loads) {
+			_loads.remove(u);
 		}
 	}
 
 	public void removeAllLoad() {
-		synchronized (loads) {
-			loads.clear();
+		synchronized (_loads) {
+			_loads.clear();
 		}
 	}
 
 	public void load() {
-		final int count = loads.size();
+		final int count = _loads.size();
 		if (count > 0) {
-			callUpdateable(loads);
+			callUpdateable(_loads);
 		}
 	}
 
@@ -263,6 +306,7 @@ public class RPClient {
 							}
 						}
 						load();
+						loadLong();
 						final long sleep = LSystem.applicationSleep;
 						if (sleep > 0) {
 							try {
