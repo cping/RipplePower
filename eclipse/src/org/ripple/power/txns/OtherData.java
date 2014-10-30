@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +17,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.address.collection.ArrayMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -219,8 +223,11 @@ public class OtherData {
 	}
 
 	public static double getLegaltenderCurrencyToUSD(String name) {
+		if (name == null) {
+			return -1;
+		}
 		try {
-			name = name.toLowerCase();
+			name = name.trim().toLowerCase();
 			if (_coinmarketcap_names.containsKey(name)) {
 				name = _coinmarketcap_names.get(name);
 			}
@@ -252,6 +259,9 @@ public class OtherData {
 	}
 
 	public static String getCoinmarketcapCoinToUSD(String name) {
+		if (name == null) {
+			return null;
+		}
 		try {
 			name = name.toLowerCase();
 			if (_coinmarketcap_names.containsKey(name)) {
@@ -279,14 +289,15 @@ public class OtherData {
 		return null;
 	}
 
-	public static JSONObject getCoinmarketcapTo(int limit,String name)
+	public static JSONObject getCoinmarketcapTo(int limit, String name)
 			throws HttpRequestException, JSONException, IOException {
+		if (name == null) {
+			return null;
+		}
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
-						+ name + "-"+limit+"d.json");
-
+						+ name + "-" + limit + "d.json");
 		if (request.ok()) {
-	
 			return new JSONObject(request.body());
 		}
 		return null;
@@ -294,6 +305,9 @@ public class OtherData {
 
 	public static CoinmarketcapData getCoinmarketcapTo(String cur, String name)
 			throws HttpRequestException, JSONException, IOException {
+		if (cur == null || name == null) {
+			return null;
+		}
 		cur = cur.toLowerCase();
 		name = name.toLowerCase();
 		if (!_coinmarketcap_limits.contains(cur)) {
@@ -512,6 +526,9 @@ public class OtherData {
 
 	public static String converterMoney(String src, String cur)
 			throws Exception {
+		if (src == null || cur == null) {
+			return null;
+		}
 		String query = (cur + "/" + src).toUpperCase();
 		double ret = reset(query);
 		if (ret != -1) {
@@ -538,8 +555,57 @@ public class OtherData {
 				return rightWords[1];
 			}
 		}
-		
+
 		return null;
 	}
-	
+
+	private static HashMap<String, String> _coin_names = new HashMap<String, String>(
+			10);
+	static {
+		_coin_names.put("xrp", "ripple");
+		_coin_names.put("btc", "bitcoin");
+		_coin_names.put("dog", "dogecoin");
+		_coin_names.put("doge", "dogecoin");
+		_coin_names.put("ppc", "peercoin");
+		_coin_names.put("ltc", "litecoin");
+		_coin_names.put("btsx", "bitshares-x");
+	}
+
+	public static ArrayMap getCapitalization(String name)
+			throws Exception {
+		if (name == null) {
+			return null;
+		}
+		name = name.trim().toLowerCase();
+		if (_coin_names.containsKey(name)) {
+			name = _coin_names.get(name);
+		}
+		JSONObject o = (getCoinmarketcapTo(1, name));
+		if (o == null) {
+			CoinmarketcapData data = getCoinmarketcapTo("usd", name);
+			if (data != null) {
+				_coin_names.put(name, data.name);
+				name = data.name;
+				o = (getCoinmarketcapTo(1, name));
+			}
+		}
+		if (o == null) {
+			return null;
+		}
+		DateFormat YYYY_MM_DD_HHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		ArrayMap list = new ArrayMap(10);
+		if (o.has("market_cap_by_total_supply_data")) {
+			JSONArray arrays = o
+					.getJSONArray("market_cap_by_total_supply_data");
+			for (int i = 0; i < arrays.length(); i++) {
+				JSONArray result = arrays.getJSONArray(i);
+				String key = YYYY_MM_DD_HHMM
+						.format(new Date(result.getLong(0)));
+				String value = String.valueOf(result.getLong(1));
+				list.put(key, value);
+			}
+		}
+		return list;
+	}
+
 }
