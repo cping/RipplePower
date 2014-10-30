@@ -6,6 +6,7 @@ import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
@@ -17,6 +18,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
@@ -29,11 +32,62 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 public class SwingUtils {
+
+	public static void fadeIn(final Dialog win) {
+		if (!win.isUndecorated()) {
+			return;
+		}
+		final Timer timer = new Timer(60, null);
+		timer.setRepeats(true);
+		timer.addActionListener(new ActionListener() {
+			private float opacity = 0;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opacity += 0.15f;
+				win.setOpacity(Math.min(opacity, 1));
+				if (opacity >= 1)
+					timer.stop();
+			}
+		});
+		win.setOpacity(0);
+		timer.start();
+		win.setVisible(true);
+	}
+
+	public static void fadeOut(final Dialog win, final boolean close) {
+		if (!win.isUndecorated()) {
+			return;
+		}
+		final Timer timer = new Timer(60, null);
+		timer.setRepeats(true);
+		timer.addActionListener(new ActionListener() {
+			private float opacity = 1;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				opacity -= 0.15f;
+				win.setOpacity(Math.max(opacity, 0));
+				if (opacity <= 0) {
+					timer.stop();
+					if (close) {
+						SwingUtils.close(win);
+					} else {
+						win.setVisible(false);
+					}
+				}
+			}
+		});
+		win.setOpacity(1);
+		timer.start();
+	}
 
 	public static void close(Window win) {
 		if (win != null) {

@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindowListener;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountLine;
@@ -111,6 +112,7 @@ public class RPGatewayDialog extends JDialog {
 	public RPGatewayDialog(String text, JFrame parent, final WalletItem item) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		this._item = item;
+		addWindowListener(HelperWindowListener.get());
 		setResizable(false);
 		Dimension dim = new Dimension(780, 610);
 		setPreferredSize(dim);

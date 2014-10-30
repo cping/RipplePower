@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -773,112 +774,110 @@ public class RPExchangeDialog extends JDialog {
 			final String address = _addressText.getText().trim();
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
-			OfferPrice.load(address,
-					split[0], split[1], new OfferPrice() {
+			OfferPrice.load(address, split[0], split[1], new OfferPrice() {
 
-						@Override
-						public void sell(Offer offer) {
+				@Override
+				public void sell(Offer offer) {
 
+				}
+
+				@Override
+				public void buy(Offer offer) {
+
+				}
+
+				@Override
+				public void error(JSONObject obj) {
+					dialog.closeDialog();
+					if (obj != null) {
+						JSonLog.get().println(obj.toString());
+					}
+
+				}
+
+				@Override
+				public void empty() {
+					dialog.closeDialog();
+					empty_trading(cur);
+
+				}
+
+				@Override
+				public void complete(final ArrayList<OfferFruit> buys,
+						final ArrayList<OfferFruit> sells,
+						final OfferPrice price) {
+
+					_tip1Label.setText(String.format(info_price(),
+							price.highBuy, price.hightSell, price.spread));
+					if (buys.size() > 0) {
+						synchronized (_buyerList) {
+							_buymList
+									.setModel(new javax.swing.AbstractListModel<Object>() {
+										private static final long serialVersionUID = 1L;
+
+										public int getSize() {
+											int size = buys.size();
+											if (size > _LIMIT_PAGE) {
+												return _LIMIT_PAGE;
+											}
+											return size;
+										}
+
+										public Object getElementAt(int i) {
+											return buys.get(i);
+										}
+									});
+
+							_buyerList.clear();
+							_buyerList.addAll(buys);
+							_mysellText.setText(_buyerList.get(0).offer
+									.takerPays().toText());
+							_cansellText.setText(_buyerList.get(0).offer
+									.takerGets().toText());
+							_buymLabel.setText(LangConfig.get(
+									RPExchangeDialog.class, "bm",
+									"Buyer's Market")
+									+ " Count:" + buys.size());
 						}
+					}
+					if (sells.size() > 0) {
+						synchronized (_sellerList) {
+							_sellmList
+									.setModel(new javax.swing.AbstractListModel<Object>() {
+										private static final long serialVersionUID = 1L;
 
-						@Override
-						public void buy(Offer offer) {
+										public int getSize() {
+											int size = sells.size();
+											if (size > _LIMIT_PAGE) {
+												return _LIMIT_PAGE;
+											}
+											return size;
+										}
 
+										public Object getElementAt(int i) {
+											return sells.get(i);
+										}
+									});
+
+							_sellerList.clear();
+							_sellerList.addAll(sells);
+							_mybuyText.setText(_sellerList.get(0).offer
+									.takerPays().toText());
+							_canbuyText.setText(_sellerList.get(0).offer
+									.takerGets().toText());
+							_sellmLabel.setText(LangConfig.get(
+									RPExchangeDialog.class, "sm",
+									"Seller's Market")
+									+ " Count:" + sells.size());
 						}
+					}
+					dialog.closeDialog();
+					_tradeFlag = true;
+					loadTradingList(address, split);
+					loadOtherMarketList(address, split);
+				}
 
-						@Override
-						public void error(JSONObject obj) {
-							dialog.closeDialog();
-							if (obj != null) {
-								JSonLog.get().println(obj.toString());
-							}
-
-						}
-
-						@Override
-						public void empty() {
-							dialog.closeDialog();
-							empty_trading(cur);
-
-						}
-
-						@Override
-						public void complete(final ArrayList<OfferFruit> buys,
-								final ArrayList<OfferFruit> sells,
-								final OfferPrice price) {
-
-							_tip1Label.setText(String.format(info_price(),
-									price.highBuy, price.hightSell,
-									price.spread));
-							if (buys.size() > 0) {
-								synchronized (_buyerList) {
-									_buymList
-											.setModel(new javax.swing.AbstractListModel<Object>() {
-												private static final long serialVersionUID = 1L;
-
-												public int getSize() {
-													int size = buys.size();
-													if (size > _LIMIT_PAGE) {
-														return _LIMIT_PAGE;
-													}
-													return size;
-												}
-
-												public Object getElementAt(int i) {
-													return buys.get(i);
-												}
-											});
-
-									_buyerList.clear();
-									_buyerList.addAll(buys);
-									_mysellText.setText(_buyerList.get(0).offer
-											.takerPays().toText());
-									_cansellText.setText(_buyerList.get(0).offer
-											.takerGets().toText());
-									_buymLabel.setText(LangConfig.get(
-											RPExchangeDialog.class, "bm",
-											"Buyer's Market")
-											+ " Count:" + buys.size());
-								}
-							}
-							if (sells.size() > 0) {
-								synchronized (_sellerList) {
-									_sellmList
-											.setModel(new javax.swing.AbstractListModel<Object>() {
-												private static final long serialVersionUID = 1L;
-
-												public int getSize() {
-													int size = sells.size();
-													if (size > _LIMIT_PAGE) {
-														return _LIMIT_PAGE;
-													}
-													return size;
-												}
-
-												public Object getElementAt(int i) {
-													return sells.get(i);
-												}
-											});
-
-									_sellerList.clear();
-									_sellerList.addAll(sells);
-									_mybuyText.setText(_sellerList.get(0).offer
-											.takerPays().toText());
-									_canbuyText.setText(_sellerList.get(0).offer
-											.takerGets().toText());
-									_sellmLabel.setText(LangConfig.get(
-											RPExchangeDialog.class, "sm",
-											"Seller's Market")
-											+ " Count:" + sells.size());
-								}
-							}
-							dialog.closeDialog();
-							_tradeFlag = true;
-							loadTradingList(address, split);
-							loadOtherMarketList(address, split);
-						}
-
-					});
+			});
 
 		}
 
@@ -1268,19 +1267,20 @@ public class RPExchangeDialog extends JDialog {
 			textbox.setText(result);
 		}
 	}
-	
+
 	private boolean closed;
 
 	private class windowListener implements WindowListener {
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-
+			HelperDialog.hideSystem();
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-
+			closed = true;
+			HelperDialog.showSystem();
 		}
 
 		@Override
@@ -1289,6 +1289,7 @@ public class RPExchangeDialog extends JDialog {
 				_item.setTip(true);
 			}
 			closed = true;
+			HelperDialog.showSystem();
 		}
 
 		@Override

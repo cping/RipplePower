@@ -263,6 +263,14 @@ public class RPPushTool {
 		return _tpDialog.isVisible();
 	}
 
+	public void setOpacity(float opacity){
+		_tpDialog.setOpacity(opacity);
+	}
+	
+	public float getOpacity(){
+		return _tpDialog.getOpacity();
+	}
+	
 	public void close(){
 		_tpDialog.close();
 	}

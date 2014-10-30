@@ -148,8 +148,6 @@ public class MainUI {
 		form.pack();
 		form.setVisible(true);
 		
-		
-		
 	}
 
 }

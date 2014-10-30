@@ -32,7 +32,7 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
-import org.ripple.power.helper.MaidSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.txns.Updateable;
@@ -318,7 +318,7 @@ public class MainPanel extends JPanel implements ActionListener {
 					Thread.sleep(LSystem.SECOND * 3);
 				} catch (InterruptedException e) {
 				}
-				MaidSystem.get();
+				HelperDialog.get();
 				try {
 					Thread.sleep(LSystem.SECOND);
 				} catch (InterruptedException e) {
