@@ -45,7 +45,7 @@ public class RPPushTool {
 
 		public TipDialog(final Point start, final int end, final int width,
 				final int height) {
-			super(LSystem.applicationMain,  Dialog.ModalityType.MODELESS);
+			super(LSystem.applicationMain, Dialog.ModalityType.MODELESS);
 			this.width = width;
 			this.height = height;
 			dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -112,15 +112,13 @@ public class RPPushTool {
 
 	private int _width = -1, _height = -1;
 
-	public RPPushTool(final Point start, final int endTop, final String title,
-			final Component comp, final int w, final int h,
-			final boolean autoClose) {
+	public RPPushTool(final boolean bottom, final Point start,
+			final int endTop, final String title, final Component comp,
+			final int w, final int h, final boolean autoClose) {
 
 		_width = w;
 		_height = h;
-
 		_tpDialog = new TipDialog(start, endTop, _width, _height);
-
 		_headPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		_backPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		_btnPane = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -129,7 +127,6 @@ public class RPPushTool {
 		_closeLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		_backagePane = new JPanel(new BorderLayout());
-		_updateLabel = new RPLabel();
 
 		((JPanel) _tpDialog.getContentPane())
 				.setBackground(LSystem.dialogbackground);
@@ -167,35 +164,37 @@ public class RPPushTool {
 
 		_backagePane.add(comp);
 
-		_updateLabel.setPreferredSize(new Dimension(_width, TITLE_SIZE));
-		_updateLabel.setCursor(new Cursor(12));
-
 		_headPane.add(_titleLabel);
 		_headPane.add(_closeLabel);
 		_backPane.add(_backagePane);
 
-		_btnPane.add(_updateLabel);
 		_tpDialog.add(_headPane, BorderLayout.NORTH);
 		_tpDialog.add(_backPane, BorderLayout.CENTER);
-		_tpDialog.add(_btnPane, BorderLayout.SOUTH);
 
-		_updateLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				_tpDialog.close();
-			}
+		if (bottom) {
+			_tpDialog.add(_btnPane, BorderLayout.SOUTH);
+			_updateLabel = new RPLabel();
+			_updateLabel.setPreferredSize(new Dimension(_width, TITLE_SIZE));
+			_updateLabel.setCursor(new Cursor(12));
+			_btnPane.add(_updateLabel);
+			_updateLabel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(final MouseEvent e) {
+					_tpDialog.close();
+				}
 
-			@Override
-			public void mouseEntered(final MouseEvent e) {
-				_updateLabel.setBorder(BorderFactory
-						.createLineBorder(Color.gray));
-			}
+				@Override
+				public void mouseEntered(final MouseEvent e) {
+					_updateLabel.setBorder(BorderFactory
+							.createLineBorder(Color.gray));
+				}
 
-			@Override
-			public void mouseExited(final MouseEvent e) {
-				_updateLabel.setBorder(null);
-			}
-		});
+				@Override
+				public void mouseExited(final MouseEvent e) {
+					_updateLabel.setBorder(null);
+				}
+			});
+		}
 
 		_titleLabel.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -256,6 +255,18 @@ public class RPPushTool {
 		return _tpDialog.closed;
 	}
 
+	public void setVisible(boolean v) {
+		_tpDialog.setVisible(v);
+	}
+
+	public boolean isVisible() {
+		return _tpDialog.isVisible();
+	}
+
+	public void close(){
+		_tpDialog.close();
+	}
+	
 	public Dialog getDialog() {
 		return _tpDialog;
 	}
@@ -267,6 +278,26 @@ public class RPPushTool {
 
 	public static RPPushTool pop(Point start, int end, String title,
 			Component comp, int w, int h, boolean ac) {
-		return new RPPushTool(start, end, title, comp, w, h, ac);
+		return pop(false, start, end, title, comp, w, h, ac);
+	}
+
+	public static RPPushTool pop(Point start, int end, String title,
+			Component comp, boolean ac) {
+		return pop(false, start, end, title, comp, comp.getWidth(),
+				comp.getHeight(), ac);
+	}
+
+	public static RPPushTool pop(Point start, int end, String title,
+			Component comp) {
+		return pop(false, start, end, title, comp, comp.getWidth(),
+				comp.getHeight(), false);
+	}
+
+	public static RPPushTool pop(boolean bottom, Point start, int end,
+			String title, Component comp, int w, int h, boolean ac) {
+		return new RPPushTool(bottom, start, end, title, comp, w,
+				h
+						+ (bottom ? (RPPushTool.TITLE_SIZE * 2)
+								: RPPushTool.TITLE_SIZE), ac);
 	}
 }

@@ -508,6 +508,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 
 	public void setBackground(LColor b) {
 		this._background = b;
+		super.setBackground(b);
 	}
 
 	protected float dipToPixel(float dips) {

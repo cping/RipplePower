@@ -49,9 +49,8 @@ public class HoldXRP {
 			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			final RPPushTool tool = RPPushTool
 					.pop(new Point(20, size.getHeight()),
-							(int) (screenInsets.bottom + canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2)),
-							"Total XRP assets", canvas, canvas.getWidth(),
-							canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2));
+							(int) (screenInsets.bottom + canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2)-20),
+							"Total XRP assets",canvas);
 			Updateable update = new Updateable() {
 
 				@Override

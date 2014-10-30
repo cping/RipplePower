@@ -11,7 +11,7 @@ public class Paramaters
 {
 
     public static final int Width_MaidSystem = 886;
-    public static final int Height_MaidSystem = 180;
+    public static final int Height_MaidSystem = 158;
     public static final int defaultFrameSize = 0;
     public static int frameTop = 0;
     public static int frameLeft = 0;

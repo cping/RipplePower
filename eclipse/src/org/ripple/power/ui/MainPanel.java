@@ -32,9 +32,11 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RHClipboard;
+import org.ripple.power.helper.MaidSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
-import org.ripple.power.ui.Toast.Style;
+import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.GraphicsUtils;
@@ -308,6 +310,29 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		showTrayIcon();
 
+		Updateable update = new Updateable() {
+
+			@Override
+			public void action(Object o) {
+				try {
+					Thread.sleep(LSystem.SECOND * 3);
+				} catch (InterruptedException e) {
+				}
+				MaidSystem.get();
+				try {
+					Thread.sleep(LSystem.SECOND);
+				} catch (InterruptedException e) {
+				}
+				JSonLog.get();
+				try {
+					Thread.sleep(LSystem.SECOND);
+				} catch (InterruptedException e) {
+				}
+				HoldXRP.get();
+			}
+		};
+		LSystem.postThread(update);
+
 	}
 
 	private boolean isTray;
@@ -384,20 +409,25 @@ public class MainPanel extends JPanel implements ActionListener {
 	private void submitActionCommand(String actionName) {
 		try {
 			if (actionName.equals(CommandFlag.RippledNodeS)) {
-				Toast.makeText(LSystem.applicationMain, "Please select a node go to Ripple Network.", Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain,
+						"Please select a node go to Ripple Network.",
+						Style.SUCCESS).display();
 				RPSRippledDialog.showDialog(LangConfig.get(
 						RPSRippledDialog.class, "update_node", "Rippled Node"),
 						LSystem.applicationMain);
-			
+
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {
-				Toast.makeText(LSystem.applicationMain, "Here import or create your Ripple address.", Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain,
+						"Here import or create your Ripple address.",
+						Style.SUCCESS).display();
 				RPAddressDialog.showDialog(LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.Backup)) {
-				Toast.makeText(LSystem.applicationMain, "Backup your wallet file.", Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain,
+						"Backup your wallet file.", Style.SUCCESS).display();
 				String path = Backup.create();
 				if (path != null) {
 					RPMessage.showInfoMessage(this, LangConfig.get(this,
@@ -413,7 +443,9 @@ public class MainPanel extends JPanel implements ActionListener {
 				return;
 			}
 			if (actionName.equals(CommandFlag.ExchangeRate)) {
-				Toast.makeText(LSystem.applicationMain, "View the current exchange rate.", Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain,
+						"View the current exchange rate.", Style.SUCCESS)
+						.display();
 				RPExchangeRateViewDialog.showDialog(
 						LangConfig.get(this, "exchange_rate", "Exchange Rate"),
 						LSystem.applicationMain);
@@ -427,14 +459,18 @@ public class MainPanel extends JPanel implements ActionListener {
 					return;
 				}
 				if (actionName.equals(CommandFlag.DetailsAddress)) {
-					Toast.makeText(LSystem.applicationMain, "View Ripple address details.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"View Ripple address details.", Style.SUCCESS)
+							.display();
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
 							LangConfig.get(RPAccountInfoDialog.class,
 									"details", "Address details info"), "");
 					return;
 				}
 				if (actionName.equals(CommandFlag.Gateway)) {
-					Toast.makeText(LSystem.applicationMain, "Gateway Management and settings.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"Gateway Management and settings.", Style.SUCCESS)
+							.display();
 					RPGatewayDialog.showDialog(LangConfig
 							.get(RPGatewayDialog.class, "title",
 									"Gateway Operation"),
@@ -442,7 +478,9 @@ public class MainPanel extends JPanel implements ActionListener {
 					return;
 				}
 				if (actionName.equals(CommandFlag.Exchange)) {
-					Toast.makeText(LSystem.applicationMain, "Go to currency exchange trading network.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"Go to currency exchange trading network.",
+							Style.SUCCESS).display();
 					RPExchangeDialog.showDialog(LangConfig.get(this,
 							"rippletrade", "Ripple Trading Network"),
 							LSystem.applicationMain, null);
@@ -516,7 +554,8 @@ public class MainPanel extends JPanel implements ActionListener {
 													.get(this, "stop",
 															"Sorry, currently the address  XRP not send XRP"));
 						} else {
-							Toast.makeText(LSystem.applicationMain, "Send XRP.", Style.SUCCESS).display();
+							RPToast.makeText(LSystem.applicationMain,
+									"Send XRP.", Style.SUCCESS).display();
 							RPXRPSendDialog.showDialog(
 									item.getPublicKey()
 											+ " "
@@ -526,7 +565,8 @@ public class MainPanel extends JPanel implements ActionListener {
 						}
 						break;
 					case 1:
-						Toast.makeText(LSystem.applicationMain, "Send IOU.", Style.SUCCESS).display();
+						RPToast.makeText(LSystem.applicationMain, "Send IOU.",
+								Style.SUCCESS).display();
 						RPIOUSendDialog.showDialog(item.getPublicKey() + " "
 								+ LangConfig.get(this, "send_iou", "Send IOU"),
 								LSystem.applicationMain, item);
@@ -537,13 +577,17 @@ public class MainPanel extends JPanel implements ActionListener {
 					}
 					break;
 				case CommandFlag.Exchange:
-					Toast.makeText(LSystem.applicationMain, "Go to currency exchange trading network.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"Go to currency exchange trading network.",
+							Style.SUCCESS).display();
 					RPExchangeDialog.showDialog("Ripple Trading Network("
 							+ item.getPublicKey() + ")",
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Gateway:
-					Toast.makeText(LSystem.applicationMain, "Gateway Management and settings.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"Gateway Management and settings.", Style.SUCCESS)
+							.display();
 					RPGatewayDialog.showDialog(
 							LangConfig.get(RPGatewayDialog.class, "title",
 									"Gateway Operation")
@@ -614,7 +658,9 @@ public class MainPanel extends JPanel implements ActionListener {
 					}
 					break;
 				case CommandFlag.DetailsAddress:
-					Toast.makeText(LSystem.applicationMain, "View Ripple address details.", Style.SUCCESS).display();
+					RPToast.makeText(LSystem.applicationMain,
+							"View Ripple address details.", Style.SUCCESS)
+							.display();
 					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
 							LangConfig.get(RPAccountInfoDialog.class,
 									"details", "Address details info"), item

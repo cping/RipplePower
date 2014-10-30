@@ -1,20 +1,14 @@
 package org.ripple.power.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
-import javax.swing.JDialog;
 
-import org.ripple.power.helper.Paramaters;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.graphics.geom.Point;
 
-public class JSonLog extends JDialog {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class JSonLog {
 
 	private int count;
 
@@ -23,32 +17,39 @@ public class JSonLog extends JDialog {
 	public synchronized static JSonLog get() {
 		if (instance == null) {
 			instance = new JSonLog();
-		}
-		if (!instance.isVisible()) {
-			instance.setVisible(true);
+		}else if(instance.isClose()){
+			instance._tool.close();
+			instance = new JSonLog();
 		}
 		return instance;
 	}
 
+	private RPPushTool _tool;
+	
+	public boolean isClose(){
+		return _tool.isClose();
+	}
+	
+	public void setVisible(boolean v) {
+		_tool.setVisible(v);
+	}
+
+	public boolean isVisible() {
+		return _tool.isVisible();
+	}
+	
 	public JSonLog() {
-		super(Paramaters.getContainer(), "RPC", false);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-				this.getGraphicsConfiguration());
-		Dimension size = new Dimension(300, 300);
-		setLocation(
-				20,
-				(int) (dim.getHeight() - screenInsets.bottom - size.getHeight() * 2));
-		setPreferredSize(size);
-		setResizable(false);
-		setBackground(Color.black);
-
+				LSystem.applicationMain.getGraphicsConfiguration());
+		Dimension panSize = new Dimension(180, 220);
 		lConsole = new JConsole();
-		add(lConsole);
-
-		pack();
-		setVisible(true);
-
+		lConsole.setPreferredSize(panSize);
+		lConsole.setSize(panSize);
+		_tool = RPPushTool
+				.pop(new Point(20, size.getHeight()),
+						(int) (screenInsets.bottom + lConsole.getHeight() + (RPPushTool.TITLE_SIZE)+260),
+						"RPC",lConsole);
 	}
 
 	private JConsole lConsole;

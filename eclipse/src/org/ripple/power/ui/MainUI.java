@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.MaidSystem;
 import org.ripple.power.helper.Paramaters;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
@@ -149,9 +148,6 @@ public class MainUI {
 		form.pack();
 		form.setVisible(true);
 		
-		MaidSystem.get();
-		JSonLog.get();
-		HoldXRP.get();
 		
 		
 	}

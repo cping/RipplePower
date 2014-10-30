@@ -17,7 +17,7 @@ import javax.swing.Timer;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 
-public class Toast extends JDialog {
+public class RPToast extends JDialog {
 	private static final long serialVersionUID = -1602907470843951525L;
 
 	public enum Style {
@@ -41,7 +41,7 @@ public class Toast extends JDialog {
 	private Color mBackgroundColor = Color.BLACK;
 	private Color mForegroundColor = Color.WHITE;
 
-	public Toast(Window owner) {
+	public RPToast(Window owner) {
 		super(owner, Dialog.ModalityType.MODELESS);
 		mOwner = owner;
 	}
@@ -128,21 +128,21 @@ public class Toast extends JDialog {
 		mForegroundColor = foregroundColor;
 	}
 
-	public static Toast makeText(JFrame owner, String text) {
+	public static RPToast makeText(JFrame owner, String text) {
 		return makeText(owner, text, LENGTH_SHORT);
 	}
 
-	public static Toast makeText(JFrame owner, String text, Style style) {
+	public static RPToast makeText(JFrame owner, String text, Style style) {
 		return makeText(owner, text, LENGTH_SHORT, style);
 	}
 
-	public static Toast makeText(JFrame owner, String text, int duration) {
+	public static RPToast makeText(JFrame owner, String text, int duration) {
 		return makeText(owner, text, duration, Style.NORMAL);
 	}
 
-	public static Toast makeText(JFrame owner, String text, int duration,
+	public static RPToast makeText(JFrame owner, String text, int duration,
 			Style style) {
-		Toast toast = new Toast(owner);
+		RPToast toast = new RPToast(owner);
 		toast.mText = text;
 		toast.mDuration = duration;
 		if (style == Style.SUCCESS) {

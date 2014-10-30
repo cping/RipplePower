@@ -1,4 +1,4 @@
-package org.ripple.power.ui.graphics.chart.test;
+package org.ripple.power.chart.test;
 
 import java.awt.Dimension;
 
