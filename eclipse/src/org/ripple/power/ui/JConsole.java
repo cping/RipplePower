@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -50,7 +51,7 @@ public class JConsole extends JScrollPane {
 		text = new MyJTextPane();
 
 		text.setAutoscrolls(true);
-		final Font lFont = new Font("Monospaced", Font.PLAIN, 15);
+		final Font lFont = new Font("Monospaced", Font.PLAIN, 12);
 		text.setText("");
 		text.setFont(lFont);
 		text.setMargin(new Insets(5, 3, 5, 3));
