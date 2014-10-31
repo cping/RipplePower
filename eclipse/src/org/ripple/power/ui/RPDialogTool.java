@@ -43,7 +43,7 @@ public class RPDialogTool {
 
 		final Window parent;
 
-		boolean fadeclose;
+		boolean fadeclose = true;
 
 		public BaseDialog(final Window parent, final int x, int y,
 				final int width, final int height) {

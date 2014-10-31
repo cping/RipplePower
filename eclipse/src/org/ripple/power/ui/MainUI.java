@@ -29,13 +29,34 @@ public class MainUI {
 		try {
 			System.setProperty("java.net.preferIPv4Stack", "true");
 			System.setProperty("jsse.enableSNIExtension", "false");
+			if (LSystem.isWindows()) {
+				System.setProperty("sun.java2d.translaccel", "true");
+				System.setProperty("sun.java2d.ddforcevram", "true");
+			} else if (LSystem.isAnyMac()) {
+				System.setProperty("apple.awt.showGrowBox", "false");
+				System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
+				System.setProperty("apple.awt.graphics.EnableLazyDrawing",
+						"true");
+				System.setProperty(
+						"apple.awt.window.position.forceSafeUserPositioning",
+						"true");
+				System.setProperty(
+						"apple.awt.window.position.forceSafeCreation", "true");
+				System.setProperty("com.apple.hwaccel", "true");
+				System.setProperty("com.apple.forcehwaccel", "true");
+				System.setProperty("com.apple.macos.smallTabs", "true");
+				System.setProperty("com.apple.macos.use-file-dialog-packages",
+						"true");
+			} else {
+				System.setProperty("sun.java2d.opengl", "true");
+			}
 		} catch (SecurityException se) {
 		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					new MainUI();
-				
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -105,14 +126,16 @@ public class MainUI {
 
 		// bitcoin
 		Icon iconBtc = UIRes.getImage("icons/btc.png");
-		RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, new NullPanel());
+		RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel,
+				new NullPanel());
 		btcLink.setIcon(iconBtc);
 		btcLink.setForeground(UIConfig.getBrandColor());
 		btcLink.setFont(navLinkFont);
 		navLinkList.add(btcLink);
 
 		// config
-		RPNavlink expoLink = new RPNavlink(LangConfig.get(this, "config", "Config"));
+		RPNavlink expoLink = new RPNavlink(LangConfig.get(this, "config",
+				"Config"));
 		expoLink.setForeground(UIConfig.getBrandColor());
 		expoLink.setFont(navLinkFont);
 		expoLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
@@ -142,11 +165,11 @@ public class MainUI {
 		navLinkList.add(exitLink);
 		navbar.setNavLinkList(navLinkList);
 		SwingUtils.centerOnScreen(form);
-		//form.setAlwaysOnTop(true);
+		// form.setAlwaysOnTop(true);
 		form.setLocationRelativeTo(null);
 		form.pack();
 		form.setVisible(true);
-		
+
 	}
 
 }

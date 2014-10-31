@@ -116,7 +116,7 @@ public class SwingUtils {
 		if (!win.isUndecorated()) {
 			return;
 		}
-		final Timer timer = new Timer(60, null);
+		final Timer timer = new Timer(30, null);
 		timer.setRepeats(true);
 		timer.addActionListener(new ActionListener() {
 			private float opacity = 0;
@@ -142,7 +142,7 @@ public class SwingUtils {
 			}
 			return;
 		}
-		final Timer timer = new Timer(60, null);
+		final Timer timer = new Timer(30, null);
 		timer.setRepeats(true);
 		timer.addActionListener(new ActionListener() {
 			private float opacity = 1;

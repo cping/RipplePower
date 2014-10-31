@@ -70,7 +70,8 @@ public class HelperDialog extends Canvas {
 
 	public static void showSystem() {
 		if (instance != null) {
-			if (!instance.isVisible() && instance.getOpacity() == 0f && !instance.isClose()) {
+			if (!instance.isVisible() && instance.getOpacity() == 0f
+					&& !instance.isClose()) {
 				SwingUtils.fadeIn(instance.getDialog());
 			}
 		}
@@ -87,7 +88,7 @@ public class HelperDialog extends Canvas {
 	}
 
 	public void update(Graphics g) {
-		paint(g);
+			paint(g);
 	}
 
 	public void paint(Graphics g) {
@@ -96,13 +97,11 @@ public class HelperDialog extends Canvas {
 			GraphicTool.get().loadWait(offscreenImg);
 		}
 		if (offscreenImg != null) {
-			synchronized (offscreenImg) {
-				Graphics offscreenG = offscreenImg.getGraphics();
-				offscreenG.setColor(getBackground());
-				offscreenG.fillRect(0, 0, getWidth(), getHeight());
-				draw(offscreenG);
-				g.drawImage(offscreenImg, 0, 0, null);
-			}
+			Graphics offscreenG = offscreenImg.getGraphics();
+			offscreenG.setColor(getBackground());
+			offscreenG.clearRect(0, 0, getWidth(), getHeight());
+			draw(offscreenG);
+			g.drawImage(offscreenImg, 0, 0, null);
 		}
 	}
 
@@ -123,14 +122,13 @@ public class HelperDialog extends Canvas {
 		g.drawImage(_backimage, fx, fy, this);
 		g.setColor(Color.white);
 		g.setFont(deffont);
-		GraphicsUtils.setAntialiasAll(g, true);
+		GraphicsUtils.setAntialias(g, true);
 		String MessageArray[] = changeArray(NowSerif.Message, 23, fwidth);
 		for (int i = 0; i < MessageArray.length; i++) {
 			g.drawString(MessageArray[i],
 					(int) Math.round(fx + 0.029D * fwidth),
 					(int) Math.round(fy + 0.29D * (i + 1) * fheight));
 		}
-		GraphicsUtils.setAntialiasAll(g, false);
 	}
 
 	private String[] changeArray(String str, int f, int w) {

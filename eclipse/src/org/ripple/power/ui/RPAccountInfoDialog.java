@@ -447,12 +447,15 @@ public class RPAccountInfoDialog extends JDialog {
 			final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
 
+		repaint();
+		getContentPane().repaint();
 		final AccountInfo info = new AccountInfo();
 		final WaitDialog dialog = WaitDialog.showDialog(this);
 		final String address = _addressText.getText().trim();
 
 		AccountFind find = new AccountFind();
-
+		repaint();
+		getContentPane().repaint();
 		Updateable update_info = new Updateable() {
 
 			@Override
