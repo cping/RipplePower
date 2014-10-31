@@ -136,6 +136,9 @@ public class SwingUtils {
 
 	public static void fadeOut(final Dialog win, final boolean close) {
 		if (!win.isUndecorated()) {
+			if (close) {
+				SwingUtils.close(win);
+			}
 			return;
 		}
 		final Timer timer = new Timer(60, null);

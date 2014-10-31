@@ -1,14 +1,13 @@
 package org.ripple.power.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JDialog;
-import javax.swing.WindowConstants;
+import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
@@ -16,50 +15,32 @@ import org.ripple.power.ui.graphics.Cycle;
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.MathUtils;
-import org.ripple.power.utils.SwingUtils;
 
-public class WaitDialog extends JDialog {
+public class WaitDialog {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private boolean isRunning = false;
 
+	private RPDialogTool tool;
+
 	public WaitDialog(Window parent) {
-		super(parent, "Transaction Broadcast", Dialog.ModalityType.MODELESS);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		Dimension dim = new Dimension(400, 150);
-		setResizable(false);
-		setPreferredSize(dim);
-		setSize(dim);
+		Dimension dim = new Dimension(400, 128);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBackground(LSystem.dialogbackground);
+		panel.setPreferredSize(dim);
+		panel.setSize(dim);
 		isRunning = true;
-		new ShowPanel(this, dim.width, dim.height);
+		new ShowPanel(panel, dim.width, dim.height);
+		tool = RPDialogTool.show(parent, "Transaction Broadcast", panel, -1,
+				-1, true, LSystem.MINUTE);
 	}
 
 	public static WaitDialog showDialog(Window parent) {
-		final WaitDialog dialog = new WaitDialog(parent);
-		dialog.pack();
-		dialog.setLocationRelativeTo(parent);
-		dialog.setVisible(true);
-		Updateable update = new Updateable() {
-			public void action(Object o) {
-				for (int i = 0; dialog != null && i < 20 && dialog.isVisible(); i++) {
-					try {
-						Thread.sleep(LSystem.SECOND);
-					} catch (InterruptedException e) {
-					}
-				}
-				dialog.closeDialog();
-			}
-		};
-		LSystem.postThread(update);
-		return dialog;
+		return new WaitDialog(parent);
 	}
 
 	public void closeDialog() {
 		isRunning = false;
-		SwingUtils.close(this);
+		tool.close();
 	}
 
 	class ShowPanel extends Canvas {
@@ -67,7 +48,7 @@ public class WaitDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 		private final BufferedImage image;
 
-		ShowPanel(final Window window, final int w, final int h) {
+		ShowPanel(final JPanel panel, final int w, final int h) {
 			final String message = "Broadcasting transaction .... please wait";
 			image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			setBackground(LSystem.dialogbackground);
@@ -123,10 +104,13 @@ public class WaitDialog extends JDialog {
 							g.setFont(font);
 							g.drawString(message,
 									(w - font.stringWidth(message)) / 2 - 5,
-									(h - font.getHeight()) / 2);
+									(h - font.getHeight()) / 2 + 15);
 							g.setAntialiasAll(false);
 						}
-						window.update(window.getGraphics());
+						if (panel != null && isRunning
+								&& panel.getGraphics() != null) {
+							panel.update(panel.getGraphics());
+						}
 						repaint();
 						try {
 							Thread.sleep(30);
@@ -136,7 +120,7 @@ public class WaitDialog extends JDialog {
 				}
 			};
 			LSystem.postThread(update);
-			window.add(this);
+			panel.add(this);
 		}
 
 		public void update(Graphics g) {
