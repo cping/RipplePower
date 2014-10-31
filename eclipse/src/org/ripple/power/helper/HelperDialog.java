@@ -61,7 +61,8 @@ public class HelperDialog extends Canvas {
 
 	public static void hideSystem() {
 		if (instance != null) {
-			if (instance.isVisible() && !instance.isClose()) {
+			if (instance.isVisible() && instance.getOpacity() == 1f
+					&& !instance.isClose()) {
 				SwingUtils.fadeOut(instance.getDialog(), false);
 			}
 		}
@@ -69,7 +70,7 @@ public class HelperDialog extends Canvas {
 
 	public static void showSystem() {
 		if (instance != null) {
-			if (!instance.isVisible() && !instance.isClose()) {
+			if (!instance.isVisible() && instance.getOpacity() == 0f && !instance.isClose()) {
 				SwingUtils.fadeIn(instance.getDialog());
 			}
 		}
@@ -94,12 +95,15 @@ public class HelperDialog extends Canvas {
 			offscreenImg = createImage(getWidth(), getHeight());
 			GraphicTool.get().loadWait(offscreenImg);
 		}
-		Graphics offscreenG = offscreenImg.getGraphics();
-		offscreenG.setColor(getBackground());
-		offscreenG.fillRect(0, 0, getWidth(), getHeight());
-		offscreenG.setColor(Color.white);
-		draw(offscreenG);
-		g.drawImage(offscreenImg, 0, 0, this);
+		if (offscreenImg != null) {
+			synchronized (offscreenImg) {
+				Graphics offscreenG = offscreenImg.getGraphics();
+				offscreenG.setColor(getBackground());
+				offscreenG.fillRect(0, 0, getWidth(), getHeight());
+				draw(offscreenG);
+				g.drawImage(offscreenImg, 0, 0, null);
+			}
+		}
 	}
 
 	public void drawFace(Graphics g, int x, int y) {
@@ -116,7 +120,6 @@ public class HelperDialog extends Canvas {
 			return;
 		}
 		drawFace(g, 18, fy + 24);
-
 		g.drawImage(_backimage, fx, fy, this);
 		g.setColor(Color.white);
 		g.setFont(deffont);

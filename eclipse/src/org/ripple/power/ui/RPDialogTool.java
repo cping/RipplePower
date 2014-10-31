@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -44,6 +43,8 @@ public class RPDialogTool {
 
 		final Window parent;
 
+		boolean fadeclose;
+
 		public BaseDialog(final Window parent, final int x, int y,
 				final int width, final int height) {
 			super(parent, Dialog.ModalityType.MODELESS);
@@ -65,9 +66,21 @@ public class RPDialogTool {
 			this.setBackground(LColor.black);
 		}
 
+		public void setFadeClose(boolean f) {
+			fadeclose = f;
+		}
+
+		public boolean isFadeClose() {
+			return fadeclose;
+		}
+
 		public void close() {
 			closed = true;
-			SwingUtils.fadeOut(this, true);
+			if (fadeclose) {
+				SwingUtils.fadeOut(this, true);
+			} else {
+				SwingUtils.close(this);
+			}
 		}
 	}
 
@@ -111,7 +124,7 @@ public class RPDialogTool {
 		_headPane.setSize(dim);
 
 		_baseDialog.getRootPane().setBorder(
-				BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+				BorderFactory.createMatteBorder(1, 1, 1, 1, LColor.gray));
 		_titleLabel.setFont(new Font(LangConfig.fontName, 0, 12));
 		_titleLabel
 				.setPreferredSize(new Dimension(_width - 40, TITLE_SIZE - 4));
@@ -167,7 +180,7 @@ public class RPDialogTool {
 			@Override
 			public void mouseEntered(final MouseEvent e) {
 				_closeLabel.setBorder(BorderFactory
-						.createLineBorder(Color.gray));
+						.createLineBorder(LColor.gray));
 			}
 
 			@Override
@@ -200,6 +213,14 @@ public class RPDialogTool {
 		return _baseDialog.closed;
 	}
 
+	public void setFadeClose(boolean f) {
+		_baseDialog.setFadeClose(f);
+	}
+	
+	public boolean isFadeClose() {
+		return _baseDialog.isFadeClose();
+	}
+	
 	public void setVisible(boolean v) {
 		_baseDialog.setVisible(v);
 	}

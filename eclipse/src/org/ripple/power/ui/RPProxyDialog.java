@@ -6,8 +6,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.SwingUtils;
 
 public class RPProxyDialog extends JDialog {
 
@@ -15,8 +15,8 @@ public class RPProxyDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private RPTextBox deviceKey;
-	private RPTextBox deviceSecret;
+	private RPTextBox rippledPath;
+	private RPTextBox rippledPort;
 	private RPCButton jButton1;
 	private RPCButton jButton2;
 	private RPLabel jLabel1;
@@ -30,10 +30,10 @@ public class RPProxyDialog extends JDialog {
 	private RPTextBox proxyServer;
 	private RPTextBox proxyUsername;
 	private javax.swing.JCheckBox useProxy;
-	
+
 	public RPProxyDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-		addWindowListener(HelperWindow.get());
+		// addWindowListener(HelperWindow.get());
 		initComponents();
 	}
 
@@ -59,8 +59,8 @@ public class RPProxyDialog extends JDialog {
 		getContentPane().setBackground(LSystem.dialogbackground);
 		jLabel1 = new RPLabel();
 		jLabel2 = new RPLabel();
-		deviceKey = new RPTextBox();
-		deviceSecret = new RPTextBox();
+		rippledPath = new RPTextBox();
+		rippledPort = new RPTextBox();
 		jButton2 = new RPCButton();
 		jButton1 = new RPCButton();
 		useProxy = new javax.swing.JCheckBox();
@@ -75,12 +75,12 @@ public class RPProxyDialog extends JDialog {
 		jLabel6 = new RPLabel();
 		proxyPassword = new RPTextBox();
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		jLabel1.setText("Enter your device key");
-		jLabel2.setText("Enter secret for the key");
+		jLabel1.setText("Rippled Path");
+		jLabel2.setText("Rippled Port");
 		jButton2.setText("Save");
 		jButton2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton2ActionPerformed(evt);
+				saveConfig(evt);
 			}
 		});
 		jButton1.setText("Cancel");
@@ -120,7 +120,7 @@ public class RPProxyDialog extends JDialog {
 														javax.swing.GroupLayout.DEFAULT_SIZE,
 														javax.swing.GroupLayout.DEFAULT_SIZE,
 														Short.MAX_VALUE)
-												.addComponent(deviceKey)
+												.addComponent(rippledPath)
 												.addGroup(
 														javax.swing.GroupLayout.Alignment.TRAILING,
 														layout.createSequentialGroup()
@@ -132,7 +132,7 @@ public class RPProxyDialog extends JDialog {
 																		Short.MAX_VALUE)
 																.addComponent(
 																		jButton2))
-												.addComponent(deviceSecret)
+												.addComponent(rippledPort)
 												.addComponent(proxyServer)
 												.addComponent(proxyPort)
 												.addComponent(proxyUsername)
@@ -166,7 +166,7 @@ public class RPProxyDialog extends JDialog {
 								.addComponent(jLabel1)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(deviceKey,
+								.addComponent(rippledPath,
 										javax.swing.GroupLayout.PREFERRED_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -175,7 +175,7 @@ public class RPProxyDialog extends JDialog {
 								.addComponent(jLabel2)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(deviceSecret,
+								.addComponent(rippledPort,
 										javax.swing.GroupLayout.PREFERRED_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -238,7 +238,23 @@ public class RPProxyDialog extends JDialog {
 		this.dispose();
 	}
 
-	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+	private void saveConfig(java.awt.event.ActionEvent evt) {
+		String ripplePath = rippledPath.getText().toLowerCase().trim();
+		String ripplePort = rippledPort.getText().toLowerCase().trim();
+		if (ripplePath.length() > 0) {
+			if (ripplePath.indexOf(":") == -1
+					&& !ripplePath.startsWith("wss://")) {
+				ripplePath = "wss://" + ripplePath;
+			}
+			if (ripplePort.length() > 0) {
+				RPClient.saveRippledNode(String.format("%s:%s", ripplePath,
+						ripplePort));
+			} else {
+				RPClient.saveRippledNode(ripplePath);
+			}
+			RPClient.reset();
+			SwingUtils.close(this);
+		}
 	}
 
 	private void useProxyItemStateChanged(java.awt.event.ItemEvent evt) {

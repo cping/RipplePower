@@ -123,10 +123,11 @@ public class SwingUtils {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				opacity += 0.15f;
-				win.setOpacity(Math.min(opacity, 1));
-				if (opacity >= 1)
+				opacity += 0.05f;
+				win.setOpacity(Math.min(opacity, 1f));
+				if (opacity >= 1){
 					timer.stop();
+				}
 			}
 		});
 		win.setOpacity(0);
@@ -148,8 +149,8 @@ public class SwingUtils {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				opacity -= 0.15f;
-				win.setOpacity(Math.max(opacity, 0));
+				opacity -= 0.05f;
+				win.setOpacity(Math.max(opacity, 0f));
 				if (opacity <= 0) {
 					timer.stop();
 					if (close) {

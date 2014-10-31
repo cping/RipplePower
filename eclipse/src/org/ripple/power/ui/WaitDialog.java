@@ -37,6 +37,10 @@ public class WaitDialog {
 	public static WaitDialog showDialog(Window parent) {
 		return new WaitDialog(parent);
 	}
+	
+	public RPDialogTool get(){
+		return tool;
+	}
 
 	public void closeDialog() {
 		isRunning = false;

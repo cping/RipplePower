@@ -711,6 +711,13 @@ public class RPExchangeDialog extends JDialog {
 		_historyButton.setFont(font14);
 		getContentPane().add(_historyButton);
 		_historyButton.setBounds(300, 540, 130, 40);
+		_historyButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPChartsHistoryDialog.showDialog(RPExchangeDialog.this);
+			}
+		});
 
 		if (_item == null) {
 			_setautoButton.setEnabled(false);
@@ -789,10 +796,9 @@ public class RPExchangeDialog extends JDialog {
 				@Override
 				public void error(JSONObject obj) {
 					dialog.closeDialog();
-					if (obj != null) {
+					/*if (obj != null) {
 						JSonLog.get().println(obj.toString());
-					}
-
+					}*/
 				}
 
 				@Override

@@ -9,6 +9,10 @@ public class LineChartCanvas extends ChartBaseCanvas {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private ArrayList<LineChartCanvas> mJoinLines = new ArrayList<LineChartCanvas>(
+			100);
+
 	private ArrayList<ChartValueSerie> mSeries = new ArrayList<ChartValueSerie>();
 	private int mXnum = 0;
 	private int mLabelMaxNum = 10;
@@ -18,7 +22,7 @@ public class LineChartCanvas extends ChartBaseCanvas {
 	public LineChartCanvas(Frame frame) {
 		super(frame);
 	}
-	
+
 	public LineChartCanvas(int w, int h) {
 		super(w, h);
 	}
@@ -52,7 +56,13 @@ public class LineChartCanvas extends ChartBaseCanvas {
 				drawAxis();
 			}
 			drawData();
-
+			if (mJoinLines.size() > 0) {
+				for (LineChartCanvas c : mJoinLines) {
+					if (c != null) {
+						c.drawLine(mCnv);
+					}
+				}
+			}
 			bRedraw = false;
 		}
 
@@ -104,6 +114,14 @@ public class LineChartCanvas extends ChartBaseCanvas {
 
 	}
 
+	public void joinLine(LineChartCanvas line) {
+		mJoinLines.add(line);
+	}
+
+	public void joinRemove(LineChartCanvas line) {
+		mJoinLines.remove(line);
+	}
+
 	protected void getXYminmax() {
 		ChartValueSerie serie;
 		for (int ii = 0; ii < mSeries.size(); ii++) {
@@ -119,6 +137,44 @@ public class LineChartCanvas extends ChartBaseCanvas {
 					mYmin = serie.mYmin;
 				if (serie.mYmax > mYmax)
 					mYmax = serie.mYmax;
+			}
+		}
+	}
+
+	private void drawLine(Canvas c) {
+		getViewSizes();
+		getXYminmax();
+		if (p_yscale_auto) {
+			calcYgridRange();
+		}
+		calcXYcoefs();
+		float pY;
+		boolean pValid;
+		for (ChartValueSerie serie : mSeries) {
+			if (serie.isVisible()) {
+				mPnt.reset();
+				mPnt.setStyle(Style.STROKE);
+				mPnt.setColor(serie.mColor);
+				if (serie.mUseDip) {
+					mPnt.setStrokeWidth(dipToPixel(serie.mWidth));
+				} else {
+					mPnt.setStrokeWidth(serie.mWidth);
+				}
+				mPnt.setAntiAlias(true);
+				pValid = false;
+				mPath.reset();
+				for (int ii = 0; ii < serie.mPointList.size(); ii++) {
+					pY = serie.mPointList.get(ii).y;
+					if (Float.isNaN(pY)) {
+						pValid = false;
+					} else if (!pValid) {
+						mPath.moveTo(sX + bX + ii * aX, eY - (pY - bY) * aY);
+						pValid = true;
+					} else {
+						mPath.lineTo(sX + bX + ii * aX, eY - (pY - bY) * aY);
+					}
+				}
+				c.drawPath(mPath, mPnt);
 			}
 		}
 	}

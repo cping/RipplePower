@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -141,7 +140,7 @@ public class RPPushTool {
 		_headPane.setSize(dim);
 
 		_tpDialog.getRootPane().setBorder(
-				BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+				BorderFactory.createMatteBorder(1, 1, 1, 1, LColor.gray));
 		_titleLabel.setFont(new Font(LangConfig.fontName, 0, 14));
 		_titleLabel
 				.setPreferredSize(new Dimension(_width - 40, TITLE_SIZE - 4));
@@ -187,7 +186,7 @@ public class RPPushTool {
 				@Override
 				public void mouseEntered(final MouseEvent e) {
 					_updateLabel.setBorder(BorderFactory
-							.createLineBorder(Color.gray));
+							.createLineBorder(LColor.gray));
 				}
 
 				@Override
@@ -222,7 +221,7 @@ public class RPPushTool {
 			@Override
 			public void mouseEntered(final MouseEvent e) {
 				_closeLabel.setBorder(BorderFactory
-						.createLineBorder(Color.gray));
+						.createLineBorder(LColor.gray));
 			}
 
 			@Override
@@ -263,7 +262,7 @@ public class RPPushTool {
 	public boolean isVisible() {
 		return _tpDialog.isVisible();
 	}
-
+	
 	public void setOpacity(float opacity){
 		_tpDialog.setOpacity(opacity);
 	}

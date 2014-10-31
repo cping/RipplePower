@@ -83,7 +83,7 @@ public class HoldXRP {
 										.stringWidth(textDisplay.message)) / 2;
 								canvas.repaint();
 							} catch (Exception ex) {
-								ex.printStackTrace();
+								//ex.printStackTrace();
 							}
 						}
 						try {

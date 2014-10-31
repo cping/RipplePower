@@ -6,9 +6,7 @@
 package org.jdesktop.layout;
 
 import javax.swing.border.EmptyBorder;
-import org.jdesktop.layout.*;
 import java.awt.*;
-import java.lang.reflect.*;
 import javax.swing.*;
 import java.util.*;
 

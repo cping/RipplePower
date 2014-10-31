@@ -528,7 +528,9 @@ public class RPAccountInfoDialog extends JDialog {
 					tableModel3.update();
 					dialog.closeDialog();
 				}
+				RPAccountInfoDialog.this.repaint();
 			}
+			
 		};
 
 		find.processInfo(address, info, update_info);

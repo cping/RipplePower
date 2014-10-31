@@ -569,6 +569,7 @@ public class OtherData {
 		_coin_names.put("ppc", "peercoin");
 		_coin_names.put("ltc", "litecoin");
 		_coin_names.put("btsx", "bitshares-x");
+		_coin_names.put("bitsharesx", "bitshares-x");
 	}
 
 	public static ArrayMap getCapitalization(int day, String name)
@@ -593,7 +594,7 @@ public class OtherData {
 			return null;
 		}
 		DateFormat YYYY_MM_DD_HHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		ArrayMap list = new ArrayMap(10);
+		ArrayMap list = new ArrayMap(100);
 		if (o.has("market_cap_by_total_supply_data")) {
 			JSONArray arrays = o
 					.getJSONArray("market_cap_by_total_supply_data");

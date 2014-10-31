@@ -24,17 +24,18 @@ public class ChartValueSerie {
 	public ChartValueSerie(int color) {
 		mColor = color;
 	}
-	
+
 	public ChartValueSerie(LColor color) {
 		mColor = color.getARGB();
 	}
 
 	public ChartValueSerie(LColor color, float width) {
 		mColor = color.getARGB();
-		mFillColor = new LColor(color.getRed(),color.getGreen(),color.getBlue(),125).getARGB();
+		mFillColor = new LColor(color.getRed(), color.getGreen(),
+				color.getBlue(), 125).getARGB();
 		mWidth = width;
 	}
-	
+
 	public ChartValueSerie(int color, float width) {
 		mColor = color;
 		mWidth = width;
@@ -55,16 +56,17 @@ public class ChartValueSerie {
 	}
 
 	public void clearPointList() {
-		this.mPointList.clear();
+		if (mPointList.size() > 0) {
+			this.mPointList.clear();
+		}
 	}
 
 	public void addPoint(ChartValue point) {
 		if (mAutoYminmax) {
 			if (mPointList.size() > 0) {
-				if (point.y > mYmax){
+				if (point.y > mYmax) {
 					mYmax = point.y;
-				}
-				else if (point.y < mYmin){
+				} else if (point.y < mYmin) {
 					mYmin = point.y;
 				}
 			} else
@@ -75,10 +77,10 @@ public class ChartValueSerie {
 
 	public void shiftPoint(ChartValue point, int max) {
 		addPoint(point);
-		while (mPointList.size() > max){
+		while (mPointList.size() > max) {
 			mPointList.remove(0);
 		}
-		if (mAutoYminmax){
+		if (mAutoYminmax) {
 			calcRanges();
 		}
 	}
@@ -105,17 +107,16 @@ public class ChartValueSerie {
 
 	private void calcRanges() {
 		int i;
-		if (mPointList.size() == 0){
+		if (mPointList.size() == 0) {
 			return;
 		}
 		if (mAutoYminmax) {
 			mYmin = mPointList.get(0).y;
 			mYmax = mPointList.get(0).y;
 			for (i = 1; i < mPointList.size(); i++) {
-				if (mPointList.get(i).y > mYmax){
+				if (mPointList.get(i).y > mYmax) {
 					mYmax = mPointList.get(i).y;
-				}
-				else if (mPointList.get(i).y < mYmin){
+				} else if (mPointList.get(i).y < mYmin) {
 					mYmin = mPointList.get(i).y;
 				}
 			}
@@ -124,7 +125,7 @@ public class ChartValueSerie {
 
 	public void setAutoMinmax(boolean bAutoY) {
 		this.mAutoYminmax = bAutoY;
-		if (bAutoY){
+		if (bAutoY) {
 			calcRanges();
 		}
 	}
@@ -135,7 +136,7 @@ public class ChartValueSerie {
 			this.mYmin = fYmin;
 			this.mYmax = fYmax;
 		}
-		if (bAutoY){
+		if (bAutoY) {
 			calcRanges();
 		}
 	}

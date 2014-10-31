@@ -298,6 +298,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Exchange);
 		addPopMenu(LangConfig.get(this, "exchange_rate", "Exchange Rate"),
 				CommandFlag.ExchangeRate);
+		addPopMenu(LangConfig.get(this, "hp", "Historical Prices"),
+				CommandFlag.HistoricalPrices);
 		addPopMenu(LangConfig.get(this, "add_address", "Add Address"),
 				CommandFlag.AddAddress);
 		addPopMenu(LangConfig.get(this, "del_address", "Del Address"),
@@ -415,6 +417,14 @@ public class MainPanel extends JPanel implements ActionListener {
 						RPSRippledDialog.class, "update_node", "Rippled Node"),
 						LSystem.applicationMain);
 
+				return;
+			}
+			if (actionName.equals(CommandFlag.HistoricalPrices)) {
+				RPToast.makeText(LSystem.applicationMain,
+						"Historical price charts.",
+						Style.SUCCESS).display();
+				RPChartsHistoryDialog.showDialog(
+						LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {

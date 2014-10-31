@@ -134,10 +134,12 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	}
 
 	public void reset() {
-
 			mBmp = Bitmap.createBitmap(p_width, p_height);
 			mCnv = new Canvas(mBmp);
-
+	}
+	
+	public void setAxisVis(boolean a){
+		p_axis_vis = a;
 	}
 
 	public void onDraw(Canvas cnv) {
