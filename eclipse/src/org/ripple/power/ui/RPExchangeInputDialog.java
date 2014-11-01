@@ -14,6 +14,7 @@ import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.Updateable;
@@ -39,6 +40,7 @@ public class RPExchangeInputDialog extends JDialog {
 
 	public RPExchangeInputDialog(Window parent, String name) {
 		super(parent, name, Dialog.ModalityType.MODELESS);
+		addWindowListener(HelperWindow.get());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		Dimension dim = new Dimension(380, 200);
 		setResizable(false);

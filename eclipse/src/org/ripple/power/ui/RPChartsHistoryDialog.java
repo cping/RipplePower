@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import org.address.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 
 import org.ripple.power.txns.OtherData;
@@ -97,6 +98,7 @@ public class RPChartsHistoryDialog extends JDialog {
 	public RPChartsHistoryDialog(Window parent) {
 		super(parent, LangConfig.get(RPChartsHistoryDialog.class, "hp",
 				"Historical Prices Charts"), Dialog.ModalityType.MODELESS);
+		addWindowListener(HelperWindow.get());
 		setResizable(false);
 		Dimension dim = new Dimension(755, 625);
 		setPreferredSize(dim);
@@ -255,15 +257,15 @@ public class RPChartsHistoryDialog extends JDialog {
 
 		jLabel1.setText("30 Day");
 		getContentPane().add(jLabel1);
-		jLabel1.setBounds(10, 320, 130, 15);
+		jLabel1.setBounds(10, 322, 130, 15);
 
 		jLabel2.setText("1 Day");
 		getContentPane().add(jLabel2);
-		jLabel2.setBounds(10, 0, 130, 15);
+		jLabel2.setBounds(10, 2, 130, 15);
 
 		jLabel3.setText("7 Day");
 		getContentPane().add(jLabel3);
-		jLabel3.setBounds(10, 160, 130, 15);
+		jLabel3.setBounds(10, 162, 130, 15);
 
 		getContentPane().setBackground(LSystem.dialogbackground);
 		addWindowListener(new WindowListener() {
@@ -313,7 +315,7 @@ public class RPChartsHistoryDialog extends JDialog {
 			public void action(Object o) {
 				try {
 					ArrayList<CoinmarketcapData> datas = OtherData
-							.getCoinmarketcapAllTo(30);
+							.getCoinmarketcapAllTo(15);
 					if (datas.size() > 0) {
 						final ArrayList<String> list = new ArrayList<String>(30);
 						for (CoinmarketcapData data : datas) {

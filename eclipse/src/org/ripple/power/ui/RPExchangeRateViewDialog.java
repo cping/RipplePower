@@ -14,7 +14,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperDialog;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
@@ -72,7 +72,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 			@Override
 			public void windowOpened(WindowEvent e) {
-				HelperDialog.hideSystem();
+				HelperWindow.addObject(e.getSource());
 
 			}
 
@@ -97,13 +97,14 @@ public class RPExchangeRateViewDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				_closed = true;
-				HelperDialog.showSystem();
+				HelperWindow.removeObject(e.getSource());
+			
 			}
 
 			@Override
 			public void windowClosed(WindowEvent e) {
 				_closed = true;
-				HelperDialog.showSystem();
+				HelperWindow.removeObject(e.getSource());
 
 			}
 

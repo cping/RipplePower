@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
@@ -150,6 +151,7 @@ public class RPAddGatewayDialog extends JDialog {
 	}
 
 	private void initComponents() {
+		addWindowListener(HelperWindow.get());
 		ArrayList<Gateway> tmp = Gateway.getUserGateway();
 		if (tmp != null) {
 			_gateways.addAll(tmp);

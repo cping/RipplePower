@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.utils.SwingUtils;
@@ -56,7 +57,7 @@ public class RPOtherInfoDialog extends JDialog {
 	}
 
 	private void initComponents(TransactionTx tx) {
-
+		addWindowListener(HelperWindow.get());
 		_metaLabel = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_MetaText = new RPTextArea();

@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
 
@@ -33,7 +34,7 @@ public class RPProxyDialog extends JDialog {
 
 	public RPProxyDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-		// addWindowListener(HelperWindow.get());
+		addWindowListener(HelperWindow.get());
 		initComponents();
 	}
 

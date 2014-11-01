@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
-import org.ripple.power.helper.HelperDialog;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -778,6 +778,8 @@ public class RPExchangeDialog extends JDialog {
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");
 		if (split.length == 2) {
+			repaint();
+			getContentPane().repaint();
 			final String address = _addressText.getText().trim();
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
@@ -881,8 +883,10 @@ public class RPExchangeDialog extends JDialog {
 					_tradeFlag = true;
 					loadTradingList(address, split);
 					loadOtherMarketList(address, split);
+					repaint();
+					getContentPane().repaint();
 				}
-
+	
 			});
 
 		}
@@ -1280,13 +1284,13 @@ public class RPExchangeDialog extends JDialog {
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			HelperDialog.hideSystem();
+			HelperWindow.addObject(e.getSource());
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
 			closed = true;
-			HelperDialog.showSystem();
+			HelperWindow.removeObject(e.getSource());
 		}
 
 		@Override
@@ -1295,7 +1299,7 @@ public class RPExchangeDialog extends JDialog {
 				_item.setTip(true);
 			}
 			closed = true;
-			HelperDialog.showSystem();
+			HelperWindow.removeObject(e.getSource());
 		}
 
 		@Override

@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.StringUtils;
 
@@ -34,6 +35,7 @@ public class RPPasswordDialog extends JDialog implements ActionListener {
 	}
 
 	private void initUI() {
+		addWindowListener(HelperWindow.get());
 		passwordField = new JPasswordField(30);
 		passwordField.setCaretColor(LColor.WHITE);
 		passwordField.setBackground(new LColor(70, 70, 70));

@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.SwingUtils;
@@ -39,6 +40,7 @@ public class RPSRippledDialog extends JDialog {
 
 	public RPSRippledDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
+		addWindowListener(HelperWindow.get());
 		setResizable(false);
 		Dimension dim = new Dimension(460, 170);
 		setPreferredSize(dim);
