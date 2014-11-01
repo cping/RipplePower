@@ -66,6 +66,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONObject;
+import org.ripple.power.config.LSystem;
 
 public class HttpRequest {
 
@@ -800,15 +801,25 @@ public class HttpRequest {
 	private HttpURLConnection createConnection() {
 		try {
 			final HttpURLConnection connection;
-			if (httpProxyHost != null) {
-				connection = CONNECTION_FACTORY.create(url, createProxy());
+			if (LSystem.applicationProxy != null) {
+				connection = CONNECTION_FACTORY.create(url,
+						LSystem.applicationProxy.getProxy());
 			} else {
-				connection = CONNECTION_FACTORY.create(url);
+				if (httpProxyHost != null) {
+					connection = CONNECTION_FACTORY.create(url, createProxy());
+				} else {
+					connection = CONNECTION_FACTORY.create(url);
+				}
 			}
 			connection.setRequestMethod(requestMethod);
 			connection.setConnectTimeout(9000);
 			connection.setReadTimeout(9000);
-			// connection.connect();
+			if (LSystem.applicationProxy != null
+					&& LSystem.applicationProxy.isProxyWithAuthentication()) {
+				
+				connection.setRequestProperty("Proxy-Authorization", "Basic "
+						+ LSystem.applicationProxy.getProxyAuthentication());
+			}
 			return connection;
 		} catch (IOException e) {
 			throw new HttpRequestException(e);
@@ -820,11 +831,6 @@ public class HttpRequest {
 		return method() + ' ' + url();
 	}
 
-	/**
-	 * Get underlying connection
-	 * 
-	 * @return connection
-	 */
 	public HttpURLConnection getConnection() {
 		if (connection == null) {
 			connection = createConnection();
@@ -832,35 +838,20 @@ public class HttpRequest {
 		return connection;
 	}
 
-	/**
-	 * Set whether or not to ignore exceptions that occur from calling
-	 * {@link Closeable#close()}
-	 * <p>
-	 * The default value of this setting is <code>true</code>
-	 * 
-	 * @param ignore
-	 * @return this request
-	 */
 	public HttpRequest ignoreCloseExceptions(final boolean ignore) {
 		ignoreCloseExceptions = ignore;
 		return this;
 	}
 
-	/**
-	 * Get whether or not exceptions thrown by {@link Closeable#close()} are
-	 * ignored
-	 * 
-	 * @return true if ignoring, false if throwing
-	 */
 	public boolean ignoreCloseExceptions() {
 		return ignoreCloseExceptions;
 	}
 
 	public int code() throws IOException {
 
-			closeOutput();
-			return getConnection().getResponseCode();
-	
+		closeOutput();
+		return getConnection().getResponseCode();
+
 	}
 
 	public HttpRequest code(final AtomicInteger output)
@@ -976,7 +967,8 @@ public class HttpRequest {
 		return output.toByteArray();
 	}
 
-	public BufferedInputStream buffer() throws HttpRequestException, IOException {
+	public BufferedInputStream buffer() throws HttpRequestException,
+			IOException {
 		return new BufferedInputStream(stream(), bufferSize);
 	}
 
@@ -1026,7 +1018,8 @@ public class HttpRequest {
 		return new BufferedReader(reader(charset), bufferSize);
 	}
 
-	public BufferedReader bufferedReader() throws HttpRequestException, IOException {
+	public BufferedReader bufferedReader() throws HttpRequestException,
+			IOException {
 		return bufferedReader(charset());
 	}
 
@@ -1081,7 +1074,8 @@ public class HttpRequest {
 		}.call();
 	}
 
-	public HttpRequest receive(final Writer writer) throws HttpRequestException, IOException {
+	public HttpRequest receive(final Writer writer)
+			throws HttpRequestException, IOException {
 		final BufferedReader reader = bufferedReader();
 		return new CloseOperation<HttpRequest>(reader, ignoreCloseExceptions) {
 
@@ -1393,7 +1387,7 @@ public class HttpRequest {
 			public HttpRequest run() throws IOException {
 				final byte[] buffer = new byte[bufferSize];
 				int read;
-				while ((read = input.read(buffer)) != -1){
+				while ((read = input.read(buffer)) != -1) {
 					output.write(buffer, 0, read);
 				}
 				return HttpRequest.this;

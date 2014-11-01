@@ -1,22 +1,57 @@
 package org.ripple.power.i18n;
 
+import java.awt.ComponentOrientation;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.RHConfig;
+import org.ripple.power.config.RPConfig;
 import org.ripple.power.ui.UIRes;
+
+import com.google.common.base.Preconditions;
 
 public class LangConfig {
 
-	private static RHConfig _config;
+	private static RPConfig _config;
 
 	private static I18nSupport _javai18n;
 
 	public static String fontName = "Dialog";
 
+	public static ComponentOrientation currentComponentOrientation() {
+		return ComponentOrientation.getOrientation(Language.DEF.getLocale());
+	}
+
+	public static boolean isLeftToRight() {
+		return ComponentOrientation.getOrientation(Language.DEF.getLocale())
+				.isLeftToRight();
+	}
+
 	public static boolean isEast() {
 		return isEastLocale(Language.DEF.getLocale());
+	}
+
+	public static Locale newLocaleFromCode(String value) {
+		Preconditions.checkNotNull(value, "'value' must be present");
+		String[] parameters = value.split("_");
+		Preconditions.checkState(parameters.length > 0,
+				"'value' must not be empty");
+		final Locale newLocale;
+		switch (parameters.length) {
+		case 1:
+			newLocale = new Locale(parameters[0]);
+			break;
+		case 2:
+			newLocale = new Locale(parameters[0], parameters[1]);
+			break;
+		case 3:
+			newLocale = new Locale(parameters[0], parameters[1], parameters[2]);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown locale descriptor: "
+					+ value);
+		}
+		return newLocale;
 	}
 
 	public static boolean isEastLocale(Locale locale) {
@@ -61,22 +96,22 @@ public class LangConfig {
 				if (Language.SIMPLECN.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
-					_config = new RHConfig(UIRes.getStream("cn_zh/mes"));
+					_config = new RPConfig(UIRes.getStream("cn_zh/mes"));
 					// 繁
 				} else if (Language.TRADITIONALCN.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					fontName = "Dialog";
-					_config = new RHConfig(UIRes.getStream("cn_tw/mes"));
+					_config = new RPConfig(UIRes.getStream("cn_tw/mes"));
 					// 日
 				} else if (Language.JP.getLocale().equals(
 						LSystem.applicationLang.getLocale())) {
 					// ＭＳ ゴシック
 					fontName = "Dialog";
-					_config = new RHConfig(UIRes.getStream("jp/mes"));
+					_config = new RPConfig(UIRes.getStream("jp/mes"));
 					// 其它
 				} else {
 					fontName = "Dialog";
-					_config = new RHConfig(UIRes.getStream("en/mes"));
+					_config = new RPConfig(UIRes.getStream("en/mes"));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

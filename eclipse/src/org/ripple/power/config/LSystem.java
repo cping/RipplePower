@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.Proxy;
 import java.net.UnknownHostException;
 import java.security.AccessControlException;
 import java.text.DecimalFormat;
@@ -73,7 +72,7 @@ public final class LSystem {
 
 	public static String applicationPassword = "mynameiscping0o5498^%1032%%76!7*(%$.com%.~";
 
-	public static Proxy applicationProxy = null;
+	public static ProxySettings applicationProxy = null;
 
 	public static MainForm applicationMain = null;
 

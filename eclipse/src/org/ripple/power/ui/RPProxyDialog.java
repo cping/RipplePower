@@ -6,8 +6,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.ProxySettings;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPProxyDialog extends JDialog {
@@ -57,10 +59,10 @@ public class RPProxyDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		getContentPane().setBackground(LSystem.dialogbackground);
 		jLabel1 = new RPLabel();
 		jLabel2 = new RPLabel();
 		rippledPath = new RPTextBox();
+		rippledPath.setText("wss://");
 		rippledPort = new RPTextBox();
 		jButton2 = new RPCButton();
 		jButton1 = new RPCButton();
@@ -232,6 +234,7 @@ public class RPProxyDialog extends JDialog {
 														javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addComponent(jButton1))
 								.addContainerGap()));
+		getContentPane().setBackground(LSystem.dialogbackground);
 		pack();
 	}
 
@@ -247,11 +250,22 @@ public class RPProxyDialog extends JDialog {
 					&& !ripplePath.startsWith("wss://")) {
 				ripplePath = "wss://" + ripplePath;
 			}
+
 			if (ripplePort.length() > 0) {
 				RPClient.saveRippledNode(String.format("%s:%s", ripplePath,
 						ripplePort));
 			} else {
 				RPClient.saveRippledNode(ripplePath);
+			}
+
+			if (useProxy.isSelected()) {
+				String server = proxyServer.getText().trim();
+				String port = proxyPort.getText().trim();
+				if (server.length() > 0 && port.length() > 0
+						&& StringUtils.isNumber(port)) {
+					LSystem.applicationProxy = new ProxySettings(server,
+							Integer.parseInt(port));
+				}
 			}
 			RPClient.reset();
 			SwingUtils.close(this);

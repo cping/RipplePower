@@ -21,7 +21,7 @@ import org.address.password.PasswordEasy;
 import org.address.utils.CoinUtils;
 import org.address.utils.Helper;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.RHClipboard;
+import org.ripple.power.config.RPClipboard;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.utils.MathUtils;
@@ -609,7 +609,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
-			RHClipboard clip = new RHClipboard();
+			RPClipboard clip = new RPClipboard();
 			StringBuilder copy = new StringBuilder();
 			String pass = passwordText.getText();
 			String pub = publicAddressText.getText();

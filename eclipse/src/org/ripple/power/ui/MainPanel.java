@@ -31,7 +31,7 @@ import javax.swing.table.TableRowSorter;
 import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.RHClipboard;
+import org.ripple.power.config.RPClipboard;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
@@ -641,7 +641,7 @@ public class MainPanel extends JPanel implements ActionListener {
 										@Override
 										public void input(String text) {
 											if (text.length() > 0) {
-												RHClipboard clipboard = new RHClipboard();
+												RPClipboard clipboard = new RPClipboard();
 												clipboard
 														.setClipboardContents(text);
 											}

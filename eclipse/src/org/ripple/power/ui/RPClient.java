@@ -328,7 +328,7 @@ public class RPClient {
 		ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
-			pClinet.setProxy(LSystem.applicationProxy);
+			pClinet.setProxy(LSystem.applicationProxy.getProxy());
 		}
 		if (!testing) {
 			node_path = getRippledNode();
@@ -363,11 +363,13 @@ public class RPClient {
 					double new_amount = Double.parseDouble(number);
 					double old_amount = Double.parseDouble(item.getAmount());
 					if (old_amount > new_amount) {
-						popXRP(item.getPublicKey(), "减少", old_amount
+						popXRP(item.getPublicKey(), LangConfig.get(
+								RPClient.class, "lower", "Lower"), old_amount
 								- new_amount);
 					} else if (new_amount > old_amount) {
-						popXRP(item.getPublicKey(), "增加", new_amount
-								- old_amount);
+						popXRP(item.getPublicKey(), LangConfig.get(
+								RPClient.class, "heighten", "Heighten"),
+								new_amount - old_amount);
 					}
 				}
 				item.setAmount(number);
@@ -387,7 +389,9 @@ public class RPClient {
 	}
 
 	private final static String time() {
-		return "在" + RippleDate.now().getTimeString() + ", 发现您的地址：";
+		return LangConfig.get(RPClient.class, "in", "In")
+				+ RippleDate.now().getTimeString() + ", "
+				+ LangConfig.get(RPClient.class, "ya", "Your address") + ": ";
 	}
 
 	private static void popXRP(String address, String flag, double amount) {
@@ -395,11 +399,11 @@ public class RPClient {
 		if (result.toLowerCase().indexOf("e") != -1
 				|| result.toLowerCase().indexOf("+") != -1
 				|| result.toLowerCase().indexOf("-") != -1) {
-			RPBubbleDialog.pop(time() + address + flag + "了"
+			RPBubbleDialog.pop(time() + address + flag + " "
 					+ LSystem.getNumber(new BigDecimal(result))
 					+ LSystem.nativeCurrency);
 		} else {
-			RPBubbleDialog.pop(time() + address + flag + "了" + result
+			RPBubbleDialog.pop(time() + address + flag + " " + result
 					+ LSystem.nativeCurrency);
 		}
 	}

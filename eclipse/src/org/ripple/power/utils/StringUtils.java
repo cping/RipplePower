@@ -1,8 +1,3 @@
-package org.ripple.power.utils;
-
-import java.io.UnsupportedEncodingException;
-import java.util.StringTokenizer;
-
 /**
  * 
  * Copyright 2008 - 2012
@@ -24,6 +19,15 @@ import java.util.StringTokenizer;
  * @email：javachenpeng@yahoo.com
  * @version 0.3.3
  */
+package org.ripple.power.utils;
+
+import java.io.UnsupportedEncodingException;
+import java.util.StringTokenizer;
+
+import org.ripple.power.i18n.LangConfig;
+
+import com.google.common.base.Strings;
+
 final public class StringUtils {
 
 	public static final String ASCII_CHARSET = "US-ASCII";
@@ -31,6 +35,68 @@ final public class StringUtils {
 	public static final String ISO88591_CHARSET = "ISO-8859-1";
 
 	private StringUtils() {
+	}
+
+	public static String toLineBreaks(String[] lines) {
+		final StringBuilder sbr;
+		if (LangConfig.isLeftToRight()) {
+			sbr = new StringBuilder(
+					"<html><body style='width: 100%'><div align=left>");
+		} else {
+			sbr = new StringBuilder(
+					"<html><body style='width: 100%'><div align=right>");
+		}
+		boolean first = true;
+		for (String line : lines) {
+			if (!first) {
+				sbr.append("<br>");
+			}
+			sbr.append("<p>").append(line).append("</p>");
+			first = false;
+		}
+		sbr.append("</div></body></html>");
+		return sbr.toString();
+	}
+
+	public static String toWithCenteredLinedBreaks(String[] lines) {
+		final StringBuilder sbr = new StringBuilder(
+				"<html><body style='width: 100%'><div align=center>");
+		boolean first = true;
+		for (String line : lines) {
+			if (!first) {
+				sbr.append("<br>");
+			}
+			sbr.append("<p>").append(line).append("</p>");
+			first = false;
+		}
+		sbr.append("</div></body></html>");
+		return sbr.toString();
+	}
+
+	public static String toBoldFragments(String fragment, String sourceText) {
+		if (Strings.isNullOrEmpty(fragment)
+				|| Strings.isNullOrEmpty(sourceText)) {
+			return "<html>" + sourceText + "</html>";
+		}
+		String lowerFragment = fragment.toLowerCase();
+		String lowerSource = sourceText.toLowerCase();
+		int sourceIndex = 0;
+		int matchIndex;
+		StringBuilder sbr = new StringBuilder("<html>");
+		do {
+			matchIndex = lowerSource.indexOf(lowerFragment, sourceIndex);
+			if (matchIndex > -1) {
+				sbr.append(sourceText.substring(sourceIndex, matchIndex))
+						.append("<b>")
+						.append(sourceText.substring(matchIndex, matchIndex
+								+ fragment.length())).append("</b>");
+				sourceIndex = matchIndex + fragment.length();
+			}
+
+		} while (matchIndex > -1);
+		sbr.append(sourceText.substring(sourceIndex));
+		sbr.append("</html>");
+		return sbr.toString();
 	}
 
 	public final static boolean startsWith(String n, char tag) {
@@ -423,17 +489,6 @@ final public class StringUtils {
 			}
 		}
 		return count == value.length();
-	}
-
-	public final static boolean isTest(String t) {
-		char[] chars = t.toCharArray();
-		int count = 0;
-		for (int i = 0; i < chars.length; i++) {
-			if (StringUtils.isChinese(chars[i])) {
-				count++;
-			}
-		}
-		return count > 0 && count != chars.length;
 	}
 
 	/**

@@ -2,6 +2,7 @@ package org.ripple.power.txns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,7 +22,23 @@ public class AccountFind {
 	public JSONObject _offer;
 
 	public JSONObject _subscribe;
-
+	
+	public final static boolean isRippleAddress(String address){
+		String reg = "^r[1-9A-HJ-NP-Za-km-z]{25,33}$";
+		return Pattern.matches(reg, address);
+	}
+	
+	public final static boolean is256hash(String hash){
+		String reg = "^$|^[A-Fa-f0-9]{64}$";
+		return Pattern.matches(reg, hash);
+	}
+	
+	public final static boolean isRippleResult(String result){
+		String reg = "te[cfjlms][A-Za-z_]+";
+		return Pattern.matches(reg, result);
+	}
+	
+	
 	private final static JSONObject getJsonObject(JSONObject obj, String key) {
 		if (obj.has(key)) {
 			return obj.getJSONObject(key);

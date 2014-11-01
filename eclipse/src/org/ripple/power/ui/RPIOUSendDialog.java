@@ -125,7 +125,7 @@ public class RPIOUSendDialog extends JDialog {
 				String fee = _feeText.getText().trim();
 				Object o = _curList.getSelectedItem();
 				if (!address.startsWith("~")) {
-					if (!address.startsWith("r") || address.length() < 31) {
+					if (!address.startsWith("r") || AccountFind.isRippleAddress(address)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
 								"Error", "无效的Ripple地址!");
 						return;

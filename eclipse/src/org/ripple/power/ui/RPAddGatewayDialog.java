@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.utils.SwingUtils;
@@ -97,7 +98,7 @@ public class RPAddGatewayDialog extends JDialog {
 			return;
 		}
 		if (!address.startsWith("~")) {
-			if (!address.startsWith("r") || address.length() < 31) {
+			if (!address.startsWith("r") || AccountFind.isRippleAddress(address)) {
 				RPMessage.showErrorMessage(LSystem.applicationMain, "Error",
 						"无效的Ripple地址!");
 				return;
