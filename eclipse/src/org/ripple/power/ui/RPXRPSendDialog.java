@@ -150,7 +150,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 					String feeValue = _feeText.getText().trim();
 					if (!address.startsWith("~")) {
-						if (!address.startsWith("r") || AccountFind.isRippleAddress(address)) {
+						if (!AccountFind.isRippleAddress(address)) {
 							RPMessage.showErrorMessage(LSystem.applicationMain,
 									"Error", "无效的Ripple地址!");
 							return;

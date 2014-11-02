@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.ui.RPClient;
 
+import com.google.common.base.Strings;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
@@ -22,23 +23,34 @@ public class AccountFind {
 	public JSONObject _offer;
 
 	public JSONObject _subscribe;
-	
-	public final static boolean isRippleAddress(String address){
+
+	public final static boolean isRippleAddress(String address) {
+		if (Strings.isNullOrEmpty(address)) {
+			return false;
+		}
+		if (!address.startsWith("r")) {
+			return false;
+		}
 		String reg = "^r[1-9A-HJ-NP-Za-km-z]{25,33}$";
 		return Pattern.matches(reg, address);
 	}
-	
-	public final static boolean is256hash(String hash){
+
+	public final static boolean is256hash(String hash) {
+		if (Strings.isNullOrEmpty(hash)) {
+			return false;
+		}
 		String reg = "^$|^[A-Fa-f0-9]{64}$";
 		return Pattern.matches(reg, hash);
 	}
-	
-	public final static boolean isRippleResult(String result){
+
+	public final static boolean isRippleResult(String result) {
+		if (Strings.isNullOrEmpty(result)) {
+			return false;
+		}
 		String reg = "te[cfjlms][A-Za-z_]+";
 		return Pattern.matches(reg, result);
 	}
-	
-	
+
 	private final static JSONObject getJsonObject(JSONObject obj, String key) {
 		if (obj.has(key)) {
 			return obj.getJSONObject(key);
@@ -207,8 +219,9 @@ public class AccountFind {
 
 												transactionTx.destinationTag = getLong(
 														tx, "DestinationTag");
-												transactionTx.invoiceID = getStringObject(tx, "InvoiceID");
-											
+												transactionTx.invoiceID = getStringObject(
+														tx, "InvoiceID");
+
 												IssuedCurrency currency = null;
 												String counterparty = null;
 												if (meta != null

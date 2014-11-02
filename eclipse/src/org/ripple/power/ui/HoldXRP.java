@@ -76,6 +76,8 @@ public class HoldXRP {
 								double dd = Double.parseDouble(result);
 								if (dd > 1d) {
 									c.getPoint(1).y = (int) dd;
+								}else{
+									c.getPoint(1).y =  1f;
 								}
 								textDisplay.message = "Hold XRP "
 										+ (result + "%");
