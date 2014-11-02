@@ -23,12 +23,20 @@ package org.ripple.power.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ripple.power.i18n.LangConfig;
 
 import com.google.common.base.Strings;
 
 final public class StringUtils {
+
+	private static final String whiteRange = "\\p{javaWhitespace}\\p{Zs}";
+	private static final Pattern whiteStart = Pattern.compile("^[" + whiteRange
+			+ "]+");
+	private static final Pattern whiteEnd = Pattern.compile("[" + whiteRange
+			+ "]+$");
 
 	public static final String ASCII_CHARSET = "US-ASCII";
 
@@ -97,6 +105,31 @@ final public class StringUtils {
 		sbr.append(sourceText.substring(sourceIndex));
 		sbr.append("</html>");
 		return sbr.toString();
+	}
+
+	public static String ltrim(String text) {
+		if (text == null) {
+			return "";
+		}
+		Matcher mStart = whiteStart.matcher(text);
+		return mStart.find() ? text.substring(mStart.end()) : text;
+	}
+
+	public static String rtrim(String text) {
+		if (text == null) {
+			return "";
+		}
+		Matcher mEnd = whiteEnd.matcher(text);
+		if (mEnd.find()) {
+			int matchStart = mEnd.start();
+			return text.substring(0, matchStart);
+		} else {
+			return text;
+		}
+	}
+
+	public static String trim(String text) {
+		return (rtrim(ltrim(text.trim()))).trim();
 	}
 
 	public final static boolean startsWith(String n, char tag) {

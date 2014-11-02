@@ -10,7 +10,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -128,19 +127,19 @@ public class RPToast extends JDialog {
 		mForegroundColor = foregroundColor;
 	}
 
-	public static RPToast makeText(JFrame owner, String text) {
+	public static RPToast makeText(Window owner, String text) {
 		return makeText(owner, text, LENGTH_SHORT);
 	}
 
-	public static RPToast makeText(JFrame owner, String text, Style style) {
+	public static RPToast makeText(Window owner, String text, Style style) {
 		return makeText(owner, text, LENGTH_SHORT, style);
 	}
 
-	public static RPToast makeText(JFrame owner, String text, int duration) {
+	public static RPToast makeText(Window owner, String text, int duration) {
 		return makeText(owner, text, duration, Style.NORMAL);
 	}
 
-	public static RPToast makeText(JFrame owner, String text, int duration,
+	public static RPToast makeText(Window owner, String text, int duration,
 			Style style) {
 		RPToast toast = new RPToast(owner);
 		toast.mText = text;

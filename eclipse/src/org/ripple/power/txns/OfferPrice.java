@@ -63,6 +63,12 @@ public abstract class OfferPrice {
 		if (src.equalsIgnoreCase(dst)) {
 			return srcValue;
 		}
+		if ("ker".equalsIgnoreCase(src) || "won".equalsIgnoreCase(src)) {
+			src = "krw";
+		}
+		if ("ker".equalsIgnoreCase(dst) || "won".equalsIgnoreCase(dst)) {
+			dst = "krw";
+		}
 		String name = (srcValue + src + dst).trim().toLowerCase();
 		String ret = reset(name);
 
@@ -105,15 +111,9 @@ public abstract class OfferPrice {
 				if (oneValue == null) {
 					oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
 				}
-				if (oneValue == null && src.equalsIgnoreCase("ker")) {
-					oneValue = "0.00095";
-				}
 				if (oneValue != null) {
 					if (twoValue == null) {
 						twoValue = OtherData.converterMoney(dst, "usd");
-					}
-					if (twoValue == null && dst.equalsIgnoreCase("ker")) {
-						twoValue = "0.00095";
 					}
 					if (twoValue != null) {
 						BigDecimal srcValueb = new BigDecimal(oneValue);
@@ -129,9 +129,6 @@ public abstract class OfferPrice {
 						if (yahooValue != -1) {
 							if (twoValue == null) {
 								twoValue = OtherData.converterMoney(dst, "usd");
-							}
-							if (twoValue == null && dst.equalsIgnoreCase("ker")) {
-								twoValue = "0.00095";
 							}
 							if (twoValue != null) {
 								BigDecimal srcValueb = new BigDecimal(
@@ -189,14 +186,14 @@ public abstract class OfferPrice {
 	public static void load(String address, String buyCurName,
 			String sellCurName, OfferPrice price) {
 
-			AccountID account = AccountID.fromAddress(address);
-			RPClient ripple = RPClient.ripple();
-			if (ripple != null) {
-				Issue buy = account.issue(buyCurName);
-				Issue sell = account.issue(sellCurName);
-				load(ripple.getClinet(), buy, sell, price);
-			}
-	
+		AccountID account = AccountID.fromAddress(address);
+		RPClient ripple = RPClient.ripple();
+		if (ripple != null) {
+			Issue buy = account.issue(buyCurName);
+			Issue sell = account.issue(sellCurName);
+			load(ripple.getClinet(), buy, sell, price);
+		}
+
 	}
 
 	public static class OrderBooks {

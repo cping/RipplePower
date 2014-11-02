@@ -3,10 +3,10 @@ package org.ripple.power.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
@@ -65,6 +66,21 @@ public class RPExchangeRateViewDialog extends JDialog {
 		this.setSize(dim);
 		this.initComponents();
 	}
+	
+	private void select(ItemEvent e){
+		final String name = StringUtils.trim((String) e.getItem()
+				);
+		if (name.length() == 3) {
+			LSystem.invokeLater(new Updateable() {
+				public void action(Object o) {
+					RPExchangeRateViewDialog.this.repaint();
+					RPToast.makeText(RPExchangeRateViewDialog.this,
+							Currencies.name(name)).display();
+					RPExchangeRateViewDialog.this.repaint();
+				}
+			});
+		}
+	}
 
 	private void initComponents() {
 
@@ -78,19 +94,16 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 			@Override
 			public void windowIconified(WindowEvent e) {
-				
 
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
-				
 
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				
 
 			}
 
@@ -98,7 +111,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 			public void windowClosing(WindowEvent e) {
 				_closed = true;
 				HelperWindow.removeObject(e.getSource());
-			
+
 			}
 
 			@Override
@@ -110,23 +123,11 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 			@Override
 			public void windowActivated(WindowEvent e) {
-				
 
 			}
 		});
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				UIRes.getStream("config/currencies.list")));
-		final ArrayList<String> curList = new ArrayList<String>(20);
-		try {
-			String text = null;
-			for (; (text = reader.readLine()) != null;) {
-				curList.add(text);
-			}
-			reader.close();
-		} catch (Exception ex) {
-
-		}
+		ArrayList<String> curList = Currencies.values();
 
 		jLabel1 = new RPLabel();
 		_srcText = new RPTextBox();
@@ -161,6 +162,13 @@ public class RPExchangeRateViewDialog extends JDialog {
 		_srcComboBox.setItemModel(curList.toArray());
 		getContentPane().add(_srcComboBox);
 		_srcComboBox.setBounds(290, 420, 90, 21);
+		_srcComboBox.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				select(e);
+			}
+		});
 
 		jLabel2.setFont(UIRes.getFont()); // NOI18N
 		jLabel2.setText(LangConfig.get(this, "dst", "Target"));
@@ -175,6 +183,13 @@ public class RPExchangeRateViewDialog extends JDialog {
 		_dstComboBox.setItemModel(curList.toArray());
 		getContentPane().add(_dstComboBox);
 		_dstComboBox.setBounds(670, 420, 90, 21);
+		_dstComboBox.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				select(e);
+			}
+		});
 
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
