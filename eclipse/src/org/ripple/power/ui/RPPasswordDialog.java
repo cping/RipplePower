@@ -5,8 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -14,7 +13,6 @@ import javax.swing.JOptionPane;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
@@ -33,8 +31,9 @@ public class RPPasswordDialog extends JDialog {
 	public RPPasswordDialog(JFrame owner) {
 		super(owner, "Please enter the wallet file password", true);
 		setLayout(new FlowLayout());
-		setPreferredSize(new Dimension(390, 180));
-		setSize(new Dimension(390, 180));
+		Dimension dim = new Dimension(390, 180);
+		setPreferredSize(dim);
+		setSize(dim);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		initComponents();

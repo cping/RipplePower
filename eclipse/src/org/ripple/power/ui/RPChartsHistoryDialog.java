@@ -208,7 +208,8 @@ public class RPChartsHistoryDialog extends JDialog {
 							initChart();
 						} catch (Exception e) {
 							RPToast.makeText(RPChartsHistoryDialog.this,
-									e.getMessage(), RPToast.Style.ERROR).display();
+									e.getMessage(), RPToast.Style.ERROR)
+									.display();
 						}
 						dialog.closeDialog();
 						initChart();
@@ -326,7 +327,7 @@ public class RPChartsHistoryDialog extends JDialog {
 						_cComboBox.setItemModel(list.toArray());
 					}
 				} catch (Exception ex) {
-					
+
 				}
 				for (; !_closed;) {
 					if (_autoRefreshCheckBox.isSelected()) {
@@ -340,7 +341,8 @@ public class RPChartsHistoryDialog extends JDialog {
 							addData(chartsThree, 30, cur, match, chartsThreebtc);
 						} catch (Exception ex) {
 							RPToast.makeText(RPChartsHistoryDialog.this,
-									ex.getMessage(), RPToast.Style.ERROR).display();
+									ex.getMessage(), RPToast.Style.ERROR)
+									.display();
 						}
 					}
 					if (_chartOnePanel != null
@@ -409,7 +411,7 @@ public class RPChartsHistoryDialog extends JDialog {
 			}
 		}
 		if (match) {
-			arrays = OtherData.getCapitalization(1, "bitcoin");
+			arrays = OtherData.getCapitalization(day, "bitcoin");
 			if (arrays != null && arrays.size() > 0) {
 				btcchart.clearPointList();
 				for (int i = 0; i < arrays.size(); i++) {
