@@ -335,6 +335,7 @@ public class TraderProcess extends TraderBase {
 		} else {
 			all_sell_difference = sell_difference;
 		}
+		Trend trend = task.process.getTrend(task.source_currency, 18);
 
 		System.out.println(all_buy_difference);
 		System.out.println(all_sell_difference);
