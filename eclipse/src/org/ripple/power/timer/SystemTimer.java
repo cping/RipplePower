@@ -1,4 +1,3 @@
-package org.ripple.power.ui.graphics.timer;
 
 /**
  * Copyright 2008 - 2009
@@ -15,11 +14,13 @@ package org.ripple.power.ui.graphics.timer;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * @project loonframework
- * @author chenpeng
- * @email：ceponline@yahoo.com.cn
+ * @project loon
+ * @author cping
+ * @email：javachenpeng@yahoo.com
  * @version 0.1
  */
+package org.ripple.power.timer;
+
 public class SystemTimer {
 
 	private long lastTime = 0;
@@ -39,7 +40,7 @@ public class SystemTimer {
 		long time = goalTimeMicros - getTimeMicros();
 		if (time > 100) {
 			try {
-				Thread.sleep((int) ((time + 100) / 1000));
+				Thread.sleep((time + 100) >> 10);
 			} catch (InterruptedException ex) {
 			}
 		}
@@ -50,7 +51,7 @@ public class SystemTimer {
 		long time = goalTimeMicros - timer.getTimeMicros();
 		if (time > 100) {
 			try {
-				Thread.sleep((int) ((time + 100) / 1000));
+				Thread.sleep((time + 100) >> 10);
 			} catch (InterruptedException ex) {
 			}
 		}
@@ -63,12 +64,11 @@ public class SystemTimer {
 			virtualTime += time - lastTime;
 		}
 		lastTime = time;
-
 		return virtualTime;
 	}
 
 	public long getTimeMicros() {
-		return getTimeMillis() * 1000;
+		return getTimeMillis() << 10;
 	}
 
 	public void stop() {

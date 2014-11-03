@@ -1,5 +1,3 @@
-package org.ripple.power.ui.graphics.timer;
-
 /**
  * Copyright 2008 - 2011
  * 
@@ -15,11 +13,14 @@ package org.ripple.power.ui.graphics.timer;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * @project loonframework
- * @author chenpeng
- * @email：ceponline@yahoo.com.cn
+ * @project loon
+ * @author cping
+ * @email：javachenpeng@yahoo.com
  * @version 0.1.1
  */
+package org.ripple.power.timer;
+
+
 public class LTimerContext {
 
 	public long timeSinceLastUpdate, millisSleepTime;
@@ -34,6 +35,10 @@ public class LTimerContext {
 
 	public synchronized long getTimeSinceLastUpdate() {
 		return timeSinceLastUpdate;
+	}
+
+	public float getMilliseconds() {
+		return timeSinceLastUpdate / 1000f;
 	}
 
 	public long getSleepTimeMicros() {

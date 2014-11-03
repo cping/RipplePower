@@ -2,12 +2,6 @@ package org.ripple.power.hft;
 
 public abstract class TraderBase {
 
-	private boolean _killSignal;
-	protected int _intervalMs;
-	protected boolean _cleanup;
-
-	protected abstract void check();
-
 	public static boolean equals(double value, double other) {
 		return equals(value, other, 0.01);
 	}
@@ -43,18 +37,5 @@ public abstract class TraderBase {
 		return (minVolume + (madnessCoef * (maxVolue - minVolume)));
 	}
 
-	public void startTrading() {
-		do {
-			try {
-				check();
-				Thread.sleep(_intervalMs);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-
-			}
-		} while (!_killSignal);
-	}
-
-	public abstract void kill();
 
 }

@@ -39,8 +39,11 @@ public final class LSystem {
 
 	public final static String nativeCurrency = "xrp";
 
-	public final static DecimalFormat NUMBER_FORMAT = new DecimalFormat(
+	public final static DecimalFormat NUMBER_8_FORMAT = new DecimalFormat(
 			"0.00000000");
+
+	public final static DecimalFormat NUMBER_5_FORMAT = new DecimalFormat(
+			"0.00000");
 
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
@@ -150,8 +153,21 @@ public final class LSystem {
 		}
 	}
 
-	public static String getNumber(BigDecimal big) {
-		StringBuffer sbr = new StringBuffer(NUMBER_FORMAT.format(big));
+	public static String getNumberShort(String value) {
+		return LSystem.getNumber(new BigDecimal(value), false);
+	}
+
+	public static String getNumber(BigDecimal value) {
+		return LSystem.getNumber(value, true);
+	}
+	
+	public static String getNumber(BigDecimal big, boolean flag) {
+		StringBuffer sbr = null;//
+		if (flag) {
+			sbr = new StringBuffer(NUMBER_8_FORMAT.format(big));
+		} else {
+			sbr = new StringBuffer(NUMBER_5_FORMAT.format(big));
+		}
 		if (sbr.toString().indexOf('.') != -1) {
 			for (int i = 0; i < sbr.length(); i++) {
 				if (sbr.toString().endsWith("0")) {
@@ -161,7 +177,7 @@ public final class LSystem {
 				}
 			}
 		}
-		if(sbr.toString().endsWith(".")){
+		if (sbr.toString().endsWith(".")) {
 			sbr.delete(sbr.length() - 1, sbr.length());
 		}
 		return sbr.toString();

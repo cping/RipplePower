@@ -1,6 +1,3 @@
-package org.ripple.power.ui.graphics.timer;
-
-import java.io.Serializable;
 
 /**
  * Copyright 2008 - 2009
@@ -17,11 +14,15 @@ import java.io.Serializable;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * @project loonframework
- * @author chenpeng
- * @email：ceponline@yahoo.com.cn
+ * @project loon
+ * @author cping
+ * @email：javachenpeng@yahoo.com
  * @version 0.1
  */
+package org.ripple.power.timer;
+
+import java.io.Serializable;
+
 public class LTimer implements Serializable {
 
 	/**
@@ -54,7 +55,7 @@ public class LTimer implements Serializable {
 
 		return false;
 	}
-	
+
 	public boolean action(LTimerContext context) {
 		if (this.active) {
 			this.currentTick += context.getTimeSinceLastUpdate();
@@ -65,7 +66,7 @@ public class LTimer implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public void refresh() {
 		this.currentTick = 0;
 	}
@@ -79,15 +80,15 @@ public class LTimer implements Serializable {
 	public boolean isActive() {
 		return this.active;
 	}
-	
+
 	public void start() {
 		this.active = true;
 	}
-	
+
 	public void stop() {
 		this.active = false;
 	}
-	
+
 	public void setActive(boolean bool) {
 		this.active = bool;
 		this.refresh();

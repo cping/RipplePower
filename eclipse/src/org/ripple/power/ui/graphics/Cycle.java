@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ripple.power.ui.graphics.geom.RectBox;
-import org.ripple.power.ui.graphics.timer.LTimer;
+import org.ripple.power.timer.LTimer;
 
 public class Cycle extends LObject{
 
