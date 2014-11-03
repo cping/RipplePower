@@ -185,13 +185,18 @@ public abstract class OfferPrice {
 
 	public static void load(String address, String buyCurName,
 			String sellCurName, OfferPrice price) {
+		load(address, buyCurName, sellCurName, price, true);
+	}
+
+	public static void load(String address, String buyCurName,
+			String sellCurName, OfferPrice price, boolean html) {
 
 		AccountID account = AccountID.fromAddress(address);
 		RPClient ripple = RPClient.ripple();
 		if (ripple != null) {
 			Issue buy = account.issue(buyCurName);
 			Issue sell = account.issue(sellCurName);
-			load(ripple.getClinet(), buy, sell, price);
+			load(ripple.getClinet(), buy, sell, price, html);
 		}
 
 	}
@@ -286,7 +291,7 @@ public abstract class OfferPrice {
 	}
 
 	private static void load(Client client, final Issue first,
-			final Issue second, final OfferPrice price) {
+			final Issue second, final OfferPrice price, final boolean html) {
 		if (price == null) {
 			return;
 		}
@@ -308,14 +313,17 @@ public abstract class OfferPrice {
 						Amount getsOne = o.getsOne();
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
-						fruit.message = o.takerGets().toText()
-								+ "<br><font size=5 color=red>Sell</font><br>"
-								+ (o.takerPays().toText())
-								+ "<br><font size=5 color=green>Exchange rate</font><br>"
-								+ getsOne.toText() + "=="
-								+ paysOne.multiply(payForOne).toText() + "<br>"
-								+ getsOne.divide(payForOne).toText() + "=="
-								+ paysOne.toText();
+						if (html) {
+							fruit.message = o.takerGets().toText()
+									+ "<br><font size=5 color=red>Sell</font><br>"
+									+ (o.takerPays().toText())
+									+ "<br><font size=5 color=green>Exchange rate</font><br>"
+									+ getsOne.toText() + "=="
+									+ paysOne.multiply(payForOne).toText()
+									+ "<br>"
+									+ getsOne.divide(payForOne).toText() + "=="
+									+ paysOne.toText();
+						}
 						sells.add(fruit);
 					}
 					// buy
@@ -327,13 +335,16 @@ public abstract class OfferPrice {
 						Amount getsOne = o.getsOne();
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
-						fruit.message = o.takerGets().toText()
-								+ "<br><font size=5 color=green>Buy</font><br>"
-								+ (o.takerPays().toText())
-								+ "<br><font size=5 color=red>Exchange rate</font><br>"
-								+ paysOne.multiply(payForOne).toText() + "=="
-								+ getsOne.toText() + "<br>" + paysOne.toText()
-								+ "==" + getsOne.divide(payForOne).toText();
+						if (html) {
+							fruit.message = o.takerGets().toText()
+									+ "<br><font size=5 color=green>Buy</font><br>"
+									+ (o.takerPays().toText())
+									+ "<br><font size=5 color=red>Exchange rate</font><br>"
+									+ paysOne.multiply(payForOne).toText()
+									+ "==" + getsOne.toText() + "<br>"
+									+ paysOne.toText() + "=="
+									+ getsOne.divide(payForOne).toText();
+						}
 						buys.add(fruit);
 					}
 				} else {

@@ -221,17 +221,5 @@ public class Market {
 		}
 	}
 	
-	/*
-	public static void main(String[] args) {
 	
-	System.out.println(Market.getExchangeRates( "USD",
-				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
-		
-		System.out.println(offers_exercised24hour("XRP", "USD",
-				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
-
-		System.out.println(historicalMetrics("USD",
-				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
-	}
-*/
 }

@@ -9,6 +9,7 @@ import org.ripple.power.timer.SystemTimer;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
+import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.MathUtils;
 
@@ -41,7 +42,9 @@ public class Process extends TraderBase {
 	}
 
 	public static class Task {
+		int id;
 		public RippleSeedAddress seed;
+		public String target_issuer = "unkown";
 		public String currency = "unkown";
 		public String issuer = "unkown";
 		public double value = -1;
@@ -57,6 +60,33 @@ public class Process extends TraderBase {
 		public boolean stop;
 
 		public void update(LTimerContext context) {
+			if (model == null) {
+				errors.add(new Error());
+				return;
+			}
+			if (target_issuer == null
+					|| "unkown".equalsIgnoreCase(target_issuer)) {
+				return;
+			}
+			if(stop){
+				return;
+			}
+			switch (model) {
+			case CrazyBuyer:
+				double volumeWall = suggestWallVolume(real_max_value,
+						minWallVolume, maxWallVolume);
+				
+
+				break;
+			case CrazySeller:
+				break;
+			case UserSet:
+				break;
+			case UserScript:
+				break;
+			default:
+				break;
+			}
 
 		}
 	}
@@ -80,8 +110,52 @@ public class Process extends TraderBase {
 	public void setFPS(long frames) {
 		this._maxFrames = frames;
 	}
-
+	
+	public ArrayList<Task> getAllSeller(){
+		ArrayList<Task> tasks = new ArrayList<Task>(10);
+		for(Task t:_HFT_tasks){
+			if(t.model.equals(Model.CrazySeller)){
+				tasks.add(t);
+			}
+		}
+		return tasks;
+	}
+	
+	public ArrayList<Task> getAllBuyer(){
+		ArrayList<Task> tasks = new ArrayList<Task>(10);
+		for(Task t:_HFT_tasks){
+			if(t.model.equals(Model.CrazyBuyer)){
+				tasks.add(t);
+			}
+		}
+		return tasks;
+	}
+	
+	public ArrayList<Task> getUserSet(){
+		ArrayList<Task> tasks = new ArrayList<Task>(10);
+		for(Task t:_HFT_tasks){
+			if(t.model.equals(Model.UserSet)){
+				tasks.add(t);
+			}
+		}
+		return tasks;
+	}
+	
+	public ArrayList<Task> getUserScript(){
+		ArrayList<Task> tasks = new ArrayList<Task>(10);
+		for(Task t:_HFT_tasks){
+			if(t.model.equals(Model.UserScript)){
+				tasks.add(t);
+			}
+		}
+		return tasks;
+	}
+	
+	
 	public void loop() {
+		if (_HFT_tasks.size() > 0) {
+			_isResume = true;
+		}
 		if (_mainLoop == null) {
 			_mainLoop = new Thread() {
 				public void run() {
@@ -183,6 +257,7 @@ public class Process extends TraderBase {
 					String balance = info.balance;
 					double srcXrpValue = Double.parseDouble(LSystem
 							.getNumberShort(balance));
+					task.id++;
 					task.real_max_value = srcXrpValue;
 					callTask(task);
 
@@ -202,6 +277,7 @@ public class Process extends TraderBase {
 									&& task.equals(line.getIssuer())) {
 								double srcIouValue = Double.parseDouble(line
 										.getAmount());
+								task.id++;
 								task.real_max_value = srcIouValue;
 							}
 						}
@@ -212,4 +288,6 @@ public class Process extends TraderBase {
 
 		}
 	}
+	
+	
 }

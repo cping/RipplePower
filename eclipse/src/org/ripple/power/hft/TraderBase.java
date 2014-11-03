@@ -10,22 +10,22 @@ public abstract class TraderBase {
 		return Math.abs(value - other) < delta;
 	}
 
-	public static int suggestInterval(float madnessCoef) {
+	public static long suggestInterval(double madnessCoef) {
 		return suggestInterval(madnessCoef, 2000, 11000);
 	}
 
-	public static int suggestInterval(float madnessCoef, int minInterval,
-			int maxInterval) {
+	public static long suggestInterval(double madnessCoef, long minInterval,
+			long maxInterval) {
 		if (madnessCoef <= 0.0f) {
 			return maxInterval;
 		}
 		if (madnessCoef >= 1.0f) {
 			return minInterval;
 		}
-		return (int) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
+		return (long) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
 	}
 
-	public static double suggestWallVolume(float madnessCoef, double minVolume,
+	public static double suggestWallVolume(double madnessCoef, double minVolume,
 			double maxVolue) {
 		if (madnessCoef <= 0.0f) {
 			return minVolume;

@@ -816,7 +816,6 @@ public class HttpRequest {
 			connection.setReadTimeout(9000);
 			if (LSystem.applicationProxy != null
 					&& LSystem.applicationProxy.isProxyWithAuthentication()) {
-				
 				connection.setRequestProperty("Proxy-Authorization", "Basic "
 						+ LSystem.applicationProxy.getProxyAuthentication());
 			}

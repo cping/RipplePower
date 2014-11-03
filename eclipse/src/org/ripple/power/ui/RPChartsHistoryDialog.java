@@ -207,6 +207,8 @@ public class RPChartsHistoryDialog extends JDialog {
 							addData(chartsThree, 30, cur, match, chartsThreebtc);
 							initChart();
 						} catch (Exception e) {
+							RPToast.makeText(RPChartsHistoryDialog.this,
+									e.getMessage(), RPToast.Style.ERROR).display();
 						}
 						dialog.closeDialog();
 						initChart();
@@ -324,6 +326,7 @@ public class RPChartsHistoryDialog extends JDialog {
 						_cComboBox.setItemModel(list.toArray());
 					}
 				} catch (Exception ex) {
+					
 				}
 				for (; !_closed;) {
 					if (_autoRefreshCheckBox.isSelected()) {
@@ -336,7 +339,8 @@ public class RPChartsHistoryDialog extends JDialog {
 							addData(chartsTwo, 7, cur, match, chartsTwobtc);
 							addData(chartsThree, 30, cur, match, chartsThreebtc);
 						} catch (Exception ex) {
-
+							RPToast.makeText(RPChartsHistoryDialog.this,
+									ex.getMessage(), RPToast.Style.ERROR).display();
 						}
 					}
 					if (_chartOnePanel != null
