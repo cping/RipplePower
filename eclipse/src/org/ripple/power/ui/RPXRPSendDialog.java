@@ -221,7 +221,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 			}
 		});
 		getContentPane().add(_sendButton);
-		_sendButton.setBounds(187, 159, 100, 23);
+		_sendButton.setBounds(187, 159, 105, 23);
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(font);
@@ -231,7 +231,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 			}
 		});
 		getContentPane().add(_exitButton);
-		_exitButton.setBounds(312, 159, 57, 23);
+		_exitButton.setBounds(302, 159, 77, 23);
 		getContentPane().setBackground(LSystem.dialogbackground);
 	}
 
