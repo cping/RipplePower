@@ -48,6 +48,7 @@ import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 
+import com.google.common.base.Strings;
 import com.other.calc.Calc;
 import com.ripple.core.types.known.sle.entries.Offer;
 
@@ -120,21 +121,33 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void warning_iou(String cur) {
+		if(Strings.isNullOrEmpty(cur)){
+			return;
+		}
 		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", cur
 				+ "数量不足, 交易无法成立");
 	}
 
 	private void warning_trust(String mes) {
+		if(Strings.isNullOrEmpty(mes)){
+			return;
+		}
 		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", mes
 				+ "在您账户中缺少信任,请信任后再使用");
 	}
 
 	private void empty_trading(String mes) {
+		if(Strings.isNullOrEmpty(mes)){
+			return;
+		}
 		RPMessage.showWarningMessage(LSystem.applicationMain, "Info",
 				String.format("很抱歉，目前没有任何人对%s的交易挂单", mes));
 	}
 
 	private int cancel_trust(String mes) {
+		if(Strings.isNullOrEmpty(mes)){
+			return -1;
+		}
 		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
 				"您是否准备消除交易记录" + mes, new Object[] { "确定", "取消" });
 	}
@@ -899,6 +912,9 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void updateTrend(String cur) {
+		if(Strings.isNullOrEmpty(cur)){
+			return;
+		}
 		TraderProcess.Trend trend = _traderProcess.getTrend(cur, 18);
 		if (lastTrend != trend) {
 			RPToast.makeText(this,

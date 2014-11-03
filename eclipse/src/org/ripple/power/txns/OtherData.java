@@ -328,6 +328,9 @@ public class OtherData {
 
 	public static ArrayList<CoinmarketcapData> getCoinmarketcapAllTo(int limit)
 			throws Exception {
+		if (limit <= 0) {
+			limit = 1;
+		}
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.northpole.ro/api/all.json");
 
