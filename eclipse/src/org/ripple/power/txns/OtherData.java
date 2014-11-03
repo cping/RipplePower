@@ -574,6 +574,11 @@ public class OtherData {
 
 	public static ArrayMap getCapitalization(int day, String name)
 			throws Exception {
+		return getCapitalization(day, name, -1);
+	}
+
+	public static ArrayMap getCapitalization(int day, String name,
+			int trend_limit) throws Exception {
 		if (name == null) {
 			return null;
 		}
@@ -598,12 +603,19 @@ public class OtherData {
 		if (o.has("market_cap_by_total_supply_data")) {
 			JSONArray arrays = o
 					.getJSONArray("market_cap_by_total_supply_data");
-			for (int i = 0; i < arrays.length(); i++) {
-				JSONArray result = arrays.getJSONArray(i);
-				String key = YYYY_MM_DD_HHMM
-						.format(new Date(result.getLong(0)));
-				String value = String.valueOf(result.getLong(1));
-				list.put(key, value);
+			if (trend_limit > 0) {
+				for (int i = arrays.length() - trend_limit; i < arrays.length(); i++) {
+					JSONArray result = arrays.getJSONArray(i);
+					list.put(result.getLong(0), result.getLong(1));
+				}
+			} else {
+				for (int i = 0; i < arrays.length(); i++) {
+					JSONArray result = arrays.getJSONArray(i);
+					String key = YYYY_MM_DD_HHMM.format(new Date(result
+							.getLong(0)));
+					String value = String.valueOf(result.getLong(1));
+					list.put(key, value);
+				}
 			}
 		}
 		return list;

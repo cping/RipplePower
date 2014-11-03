@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
+import org.ripple.power.hft.TraderProcess;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
@@ -59,6 +60,9 @@ public class RPExchangeDialog extends JDialog {
 
 	// default only the first 20 data show
 	private static final int _LIMIT_PAGE = 20;
+	// automated trading processor
+	private TraderProcess _traderProcess = new TraderProcess();
+	private TraderProcess.Trend lastTrend = TraderProcess.Trend.UNKOWN;
 	private ArrayList<OfferFruit> _buyerList = new ArrayList<OfferFruit>(100);
 	private ArrayList<OfferFruit> _sellerList = new ArrayList<OfferFruit>(100);
 	private RPCButton _okButton;
@@ -712,7 +716,7 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().add(_historyButton);
 		_historyButton.setBounds(300, 540, 130, 40);
 		_historyButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPChartsHistoryDialog.showDialog(RPExchangeDialog.this);
@@ -798,9 +802,10 @@ public class RPExchangeDialog extends JDialog {
 				@Override
 				public void error(JSONObject obj) {
 					dialog.closeDialog();
-					/*if (obj != null) {
-						JSonLog.get().println(obj.toString());
-					}*/
+					/*
+					 * if (obj != null) { JSonLog.get().println(obj.toString());
+					 * }
+					 */
 				}
 
 				@Override
@@ -885,12 +890,22 @@ public class RPExchangeDialog extends JDialog {
 					loadOtherMarketList(address, split);
 					repaint();
 					getContentPane().repaint();
+					updateTrend(split[0]);
 				}
-	
+
 			});
 
 		}
+	}
 
+	private void updateTrend(String cur) {
+		TraderProcess.Trend trend = _traderProcess.getTrend(cur, 18);
+		if (lastTrend != trend) {
+			RPToast.makeText(this,
+					cur.toUpperCase() + "  price trend : " + trend)
+					.display();
+			lastTrend = trend;
+		}
 	}
 
 	private void loadOtherMarketList(String address, String[] split) {
@@ -1502,6 +1517,7 @@ public class RPExchangeDialog extends JDialog {
 				for (; !closed && _tradeFlag;) {
 					updateTrading(address, split[0], split[1]);
 					loadOtherMarketList(address, split);
+					updateTrend(split[0]);
 					try {
 						Thread.sleep(LSystem.SECOND * 10);
 					} catch (InterruptedException e) {

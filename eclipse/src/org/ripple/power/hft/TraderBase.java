@@ -3,7 +3,7 @@ package org.ripple.power.hft;
 public abstract class TraderBase {
 
 	public static boolean equals(double value, double other) {
-		return equals(value, other, 0.01);
+		return equals(value, other, 0.1);
 	}
 
 	public static boolean equals(double value, double other, double delta) {
@@ -25,16 +25,9 @@ public abstract class TraderBase {
 		return (long) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
 	}
 
-	public static double suggestWallVolume(double madnessCoef, double minVolume,
-			double maxVolue) {
-		if (madnessCoef <= 0.0f) {
-			return minVolume;
-		}
-		if (madnessCoef >= 1.0f) {
-			return maxVolue;
-		}
-
-		return (minVolume + (madnessCoef * (maxVolue - minVolume)));
+	public static double suggestWallVolume(double minVolume,
+			double maxVolume) {
+		return Math.min(minVolume, maxVolume);
 	}
 
 
