@@ -1,6 +1,8 @@
 warning="Warning"
 info="Info"
 error="Error"
+wpassword="Wallet Password"
+rpassword="Repeat Password"
 copy="Copy"
 ok="OK"
 cancel="Cancel"

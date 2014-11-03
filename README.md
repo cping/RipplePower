@@ -1,4 +1,4 @@
-# Ripple Client (Java)
+﻿# Ripple Desktop Client (100% Java)
 
 RipplePower is a Simplified Payment Ripple desktop client , This is a general purpose Ripple client in Java that targets HTML5 browsers (via GWT), desktop JavaSE, Android and iOS and WP devices.
 
@@ -13,6 +13,12 @@ In the page right [Download ZIP] option, you can download the entire project sou
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/001.png "0")
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/002.png "1")
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/003.png "2")
+
+#Rippled Path
+
+https://github.com/ripple/rippled
+
+PS : This is the repository for Ripple's rippled, reference P2P server.
 
 License : http://www.apache.org/licenses/LICENSE-2.0
 

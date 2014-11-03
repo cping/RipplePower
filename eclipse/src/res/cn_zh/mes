@@ -1,6 +1,8 @@
 warning="警告"
 info="信息"
 error="错误"
+wpassword="钱包密码"
+rpassword="重复密码"
 copy="复制"
 ok="确定"
 cancel="取消"
