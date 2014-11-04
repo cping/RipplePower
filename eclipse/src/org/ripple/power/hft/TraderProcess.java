@@ -26,6 +26,8 @@ public class TraderProcess extends TraderBase {
 
 	private int analyze_limit = 5;
 
+	private int orders_percent_filter;
+
 	private ArrayList<Task> _HFT_tasks = new ArrayList<Task>(10);
 
 	private long _lastTimeMicros, _currTimeMicros, _goalTimeMicros,
@@ -161,7 +163,6 @@ public class TraderProcess extends TraderBase {
 		}
 		return result == null ? Trend.UNKOWN : result;
 	}
-
 
 	public static class Error {
 		public int code;
@@ -319,8 +320,10 @@ public class TraderProcess extends TraderBase {
 	private static void callCore(double volumeWall, double otherPrice,
 			Task task, ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells,
 			OfferPrice price, double highBuy, double hightSell) {
-		double avg_buy_value = task.process.averageBuyPrice(buys);
-		double avg_sell_value = task.process.averageSellPrice(sells);
+		//filter the transaction volume
+		double filter = volumeWall / task.process.orders_percent_filter;
+		double avg_buy_value = task.process.averageBuyPrice(buys,filter);
+		double avg_sell_value = task.process.averageSellPrice(sells,filter);
 		double buy_difference = highBuy - avg_buy_value;
 		double sell_difference = hightSell - avg_buy_value;
 		double all_buy_difference = 0;
@@ -335,7 +338,7 @@ public class TraderProcess extends TraderBase {
 		} else {
 			all_sell_difference = sell_difference;
 		}
-		Trend trend = task.process.getTrend(task.source_currency, 18);
+		Trend trend = task.process.getTrend(task.source_currency, 12);
 
 		System.out.println(all_buy_difference);
 		System.out.println(all_sell_difference);
@@ -367,7 +370,7 @@ public class TraderProcess extends TraderBase {
 		return this.analyze_limit;
 	}
 
-	private double averageBuyPrice(ArrayList<OfferFruit> bids) {
+	private double averageBuyPrice(ArrayList<OfferFruit> bids, double filter) {
 		double sumVolume = 0.0d;
 		List<OfferFruit> tmp = null;
 		if (bids.size() > analyze_limit) {
@@ -384,7 +387,7 @@ public class TraderProcess extends TraderBase {
 		return sumVolume / size;
 	}
 
-	private double averageSellPrice(ArrayList<OfferFruit> asks) {
+	private double averageSellPrice(ArrayList<OfferFruit> asks, double filter) {
 		double sumVolume = 0.0d;
 		List<OfferFruit> tmp = null;
 		if (asks.size() > analyze_limit) {
@@ -575,6 +578,14 @@ public class TraderProcess extends TraderBase {
 				}
 			}
 		}
+	}
+
+	public int getOrdersPercentFilter() {
+		return orders_percent_filter;
+	}
+
+	public void setOrdersPercentFilter(int o) {
+		this.orders_percent_filter = o;
 	}
 
 	private final void callTask(Task task) {

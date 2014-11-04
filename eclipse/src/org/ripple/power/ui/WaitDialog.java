@@ -17,7 +17,7 @@ import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.MathUtils;
 
 public class WaitDialog {
-
+	private static WaitDialog lock = null;
 	private boolean isRunning = false;
 
 	private RPDialogTool tool;
@@ -35,16 +35,25 @@ public class WaitDialog {
 	}
 
 	public static WaitDialog showDialog(Window parent) {
-		return new WaitDialog(parent);
+		synchronized (WaitDialog.class) {
+			if (lock == null) {
+				return (lock = new WaitDialog(parent));
+			} else {
+				return lock;
+			}
+		}
 	}
-	
-	public RPDialogTool get(){
+
+	public RPDialogTool get() {
 		return tool;
 	}
 
 	public void closeDialog() {
-		isRunning = false;
-		tool.close();
+		synchronized (WaitDialog.class) {
+			isRunning = false;
+			tool.close();
+			lock = null;
+		}
 	}
 
 	class ShowPanel extends Canvas {
