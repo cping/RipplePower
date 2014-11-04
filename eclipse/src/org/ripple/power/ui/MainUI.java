@@ -10,7 +10,9 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
@@ -55,8 +57,8 @@ public class MainUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(new MetalLookAndFeel());
 					new MainUI();
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

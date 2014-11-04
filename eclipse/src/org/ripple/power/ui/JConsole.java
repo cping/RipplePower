@@ -3,6 +3,8 @@ package org.ripple.power.ui;
 import javax.swing.*;
 import javax.swing.text.*;
 
+import org.ripple.power.ui.graphics.LColor;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -48,6 +50,7 @@ public class JConsole extends JScrollPane {
 
 		setBackground(new Color(70, 70, 70));
 		setForeground(Color.WHITE);
+		setBorder(BorderFactory.createLineBorder(LColor.black));
 		text = new MyJTextPane();
 
 		text.setAutoscrolls(true);
