@@ -8,18 +8,18 @@ import java.awt.Toolkit;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.geom.Point;
 
-public class JSonLog {
+public class RPJSonLog {
 
 	private int count;
 
-	private static JSonLog instance = null;
+	private static RPJSonLog instance = null;
 
-	public synchronized static JSonLog get() {
+	public synchronized static RPJSonLog get() {
 		if (instance == null) {
-			instance = new JSonLog();
+			instance = new RPJSonLog();
 		}else if(instance.isClose()){
 			instance._tool.close();
-			instance = new JSonLog();
+			instance = new RPJSonLog();
 		}
 		return instance;
 	}
@@ -38,7 +38,7 @@ public class JSonLog {
 		return _tool.isVisible();
 	}
 	
-	public JSonLog() {
+	public RPJSonLog() {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 				LSystem.applicationMain.getGraphicsConfiguration());

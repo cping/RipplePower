@@ -144,7 +144,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JSonLog.get();
+				RPJSonLog.get();
 
 			}
 		});

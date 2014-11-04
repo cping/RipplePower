@@ -199,7 +199,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 								@Override
 								public void success(JSONObject res) {
-									JSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res.toString());
 									WalletCache.get().reset();
 									dialog.closeDialog();
 									RPMessage.showInfoMessage(
@@ -209,7 +209,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 								@Override
 								public void error(JSONObject res) {
-									JSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res.toString());
 									dialog.closeDialog();
 								}
 							});

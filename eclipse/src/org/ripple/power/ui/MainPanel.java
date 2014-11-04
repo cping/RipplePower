@@ -324,12 +324,17 @@ public class MainPanel extends JPanel implements ActionListener {
 					Thread.sleep(LSystem.SECOND);
 				} catch (InterruptedException e) {
 				}
-				JSonLog.get();
+				RPJSonLog.get();
 				try {
 					Thread.sleep(LSystem.SECOND);
 				} catch (InterruptedException e) {
 				}
 				HoldXRP.get();
+				try {
+					Thread.sleep(LSystem.SECOND);
+				} catch (InterruptedException e) {
+				}
+				RPOtherServicesDialog.get();
 			}
 		};
 		LSystem.postThread(update);

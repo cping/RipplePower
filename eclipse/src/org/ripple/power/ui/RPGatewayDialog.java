@@ -407,7 +407,7 @@ public class RPGatewayDialog extends JDialog {
 								new Rollback() {
 									@Override
 									public void success(JSONObject res) {
-										JSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res.toString());
 										dialog.closeDialog();
 										String result = res.getJSONObject(
 												"result").getString(
@@ -423,7 +423,7 @@ public class RPGatewayDialog extends JDialog {
 
 									@Override
 									public void error(JSONObject res) {
-										JSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res.toString());
 										dialog.closeDialog();
 										RPMessage.showErrorMessage(
 												LSystem.applicationMain,
@@ -470,7 +470,7 @@ public class RPGatewayDialog extends JDialog {
 
 								@Override
 								public void success(JSONObject res) {
-									JSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res.toString());
 									dialog.closeDialog();
 									String result = res.getJSONObject("result")
 											.getString("engine_result_message");
@@ -485,7 +485,7 @@ public class RPGatewayDialog extends JDialog {
 
 								@Override
 								public void error(JSONObject res) {
-									JSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res.toString());
 									dialog.closeDialog();
 									RPMessage.showErrorMessage(
 											LSystem.applicationMain, "Error",

@@ -320,10 +320,10 @@ public class TraderProcess extends TraderBase {
 	private static void callCore(double volumeWall, double otherPrice,
 			Task task, ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells,
 			OfferPrice price, double highBuy, double hightSell) {
-		//filter the transaction volume
+		// filter the transaction volume
 		double filter = volumeWall / task.process.orders_percent_filter;
-		double avg_buy_value = task.process.averageBuyPrice(buys,filter);
-		double avg_sell_value = task.process.averageSellPrice(sells,filter);
+		double avg_buy_value = task.process.averageBuyPrice(buys, filter);
+		double avg_sell_value = task.process.averageSellPrice(sells, filter);
 		double buy_difference = highBuy - avg_buy_value;
 		double sell_difference = hightSell - avg_buy_value;
 		double all_buy_difference = 0;
@@ -340,8 +340,8 @@ public class TraderProcess extends TraderBase {
 		}
 		Trend trend = task.process.getTrend(task.source_currency, 12);
 
-		System.out.println(all_buy_difference);
-		System.out.println(all_sell_difference);
+		System.out.println("buyd:"+all_buy_difference);
+		System.out.println("selld:"+all_sell_difference);
 		switch (task.model) {
 		case CrazyBuyer:
 
@@ -372,11 +372,13 @@ public class TraderProcess extends TraderBase {
 
 	private double averageBuyPrice(ArrayList<OfferFruit> bids, double filter) {
 		double sumVolume = 0.0d;
-		List<OfferFruit> tmp = null;
-		if (bids.size() > analyze_limit) {
-			tmp = bids.subList(0, analyze_limit);
-		} else {
-			tmp = bids;
+		List<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
+		for (int i = 0; i < bids.size() && tmp.size() < analyze_limit; i++) {
+			OfferFruit offer = bids.get(i);
+			double v = offer.offer.takerPays().doubleValue();
+			if (v >= filter || equals(v, filter)) {
+				tmp.add(offer);
+			}
 		}
 		int size = tmp.size();
 		for (OfferFruit bid : tmp) {
@@ -389,11 +391,13 @@ public class TraderProcess extends TraderBase {
 
 	private double averageSellPrice(ArrayList<OfferFruit> asks, double filter) {
 		double sumVolume = 0.0d;
-		List<OfferFruit> tmp = null;
-		if (asks.size() > analyze_limit) {
-			tmp = asks.subList(0, analyze_limit);
-		} else {
-			tmp = asks;
+		List<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
+		for (int i = 0; i < asks.size() && tmp.size() < analyze_limit; i++) {
+			OfferFruit offer = asks.get(i);
+			double v = offer.offer.takerGets().doubleValue();
+			if (v >= filter || equals(v, filter)) {
+				tmp.add(offer);
+			}
 		}
 		int size = tmp.size();
 		for (OfferFruit ask : tmp) {

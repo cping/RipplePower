@@ -42,8 +42,8 @@ public final class LSystem {
 	public final static DecimalFormat NUMBER_8_FORMAT = new DecimalFormat(
 			"0.00000000");
 
-	public final static DecimalFormat NUMBER_5_FORMAT = new DecimalFormat(
-			"0.00000");
+	public final static DecimalFormat NUMBER_6_FORMAT = new DecimalFormat(
+			"0.000000");
 
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
@@ -160,16 +160,17 @@ public final class LSystem {
 	public static String getNumber(BigDecimal value) {
 		return LSystem.getNumber(value, true);
 	}
-	
+
 	public static String getNumber(BigDecimal big, boolean flag) {
-		StringBuffer sbr = null;//
+		StringBuffer sbr = null;
 		if (flag) {
 			sbr = new StringBuffer(NUMBER_8_FORMAT.format(big));
 		} else {
-			sbr = new StringBuffer(NUMBER_5_FORMAT.format(big));
+			sbr = new StringBuffer(NUMBER_6_FORMAT.format(big));
 		}
 		if (sbr.toString().indexOf('.') != -1) {
-			for (int i = 0; i < sbr.length(); i++) {
+			int size = sbr.length();
+			for (int i = 0; i < size; i++) {
 				if (sbr.toString().endsWith("0")) {
 					sbr.delete(sbr.length() - 1, sbr.length());
 				} else {

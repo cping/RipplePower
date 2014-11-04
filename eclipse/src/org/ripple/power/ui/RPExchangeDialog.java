@@ -646,14 +646,14 @@ public class RPExchangeDialog extends JDialog {
 
 									@Override
 									public void success(JSONObject res) {
-										JSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res.toString());
 										updateMyTrading();
 										submitOK();
 									}
 
 									@Override
 									public void error(JSONObject res) {
-										JSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res.toString());
 
 									}
 								});
@@ -1068,8 +1068,8 @@ public class RPExchangeDialog extends JDialog {
 		myBuytmp = myBuytmp.substring(0, idx);
 		idx = canBuytmp.indexOf("/");
 		canBuytmp = canBuytmp.substring(0, idx);
-		final String myBuy = myBuytmp;
-		final String canBuy = canBuytmp;
+		final String myBuy = LSystem.getNumberShort(myBuytmp);
+		final String canBuy = LSystem.getNumberShort(canBuytmp);
 		int result = info_swap(myBuy, dstCurName, canBuy, srcCurName);
 		if (result == 0) {
 
@@ -1148,8 +1148,8 @@ public class RPExchangeDialog extends JDialog {
 		mySelltmp = mySelltmp.substring(0, idx);
 		idx = canSelltmp.indexOf("/");
 		canSelltmp = canSelltmp.substring(0, idx);
-		final String mySell = mySelltmp;
-		final String canSell = canSelltmp;
+		final String mySell = LSystem.getNumberShort(mySelltmp);
+		final String canSell = LSystem.getNumberShort(canSelltmp);
 		int result = info_swap(mySell, srcCurName, canSell, dstCurName);
 		if (result == 0) {
 
@@ -1263,7 +1263,7 @@ public class RPExchangeDialog extends JDialog {
 
 					@Override
 					public void success(JSONObject res) {
-						JSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res.toString());
 						try {
 							updateMyTrading();
 							submitOK();
@@ -1273,7 +1273,7 @@ public class RPExchangeDialog extends JDialog {
 
 					@Override
 					public void error(JSONObject res) {
-						JSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res.toString());
 					}
 				});
 
