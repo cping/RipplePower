@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.GraphicTool;
 import org.ripple.power.ui.graphics.geom.Point;
 
 
@@ -23,7 +22,8 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _btc2ripple_sn;
 	private RPCButton _rippleTrade;
 	private RPCButton _xrp2vpn;
-
+	private RPCButton _ripple_bitcoin_news;
+	
 	private static RPPushTool instance = null;
 
 	public synchronized static RPPushTool get() {
@@ -44,12 +44,12 @@ public class RPOtherServicesDialog extends JPanel {
 		return RPPushTool.pop(
 				new Point((size.width - services.getWidth()) - 10, size
 						.getHeight()),
-				(int) (screenInsets.bottom + services.getHeight() + 340),
+				(int) (screenInsets.bottom + services.getHeight() + 320),
 				"Third Party Services", services);
 	}
 	
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 235);
+		Dimension dim = new Dimension(246, 275);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -63,6 +63,7 @@ public class RPOtherServicesDialog extends JPanel {
 		_xrp2vpn = new RPCButton();
 		_btc2ripple_sn = new RPCButton();
 		_btc2ripple_co = new RPCButton();
+		_ripple_bitcoin_news = new RPCButton();
 
 		setLayout(null);
 
@@ -92,6 +93,20 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
+		_ripple_bitcoin_news.setText("Ripple/Bitcoin News");
+		_ripple_bitcoin_news.setFont(font);
+		add(_ripple_bitcoin_news);
+		_ripple_bitcoin_news.setBounds(10, 210, 224, 34);
+		_ripple_bitcoin_news.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPNewsDialog.showDialog();
+				
+			}
+		});
+		
+		
 		_btc2ripple_sn.setText("Btc2Ripple(~snapswap)");
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
