@@ -594,6 +594,26 @@ final public class StringUtils {
 		return count;
 	}
 
+	/**
+	 * 批量转换字符串数组编码
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static String[] getString(String[] strs, String sourceEncoding,
+			String objectEncoding) {
+		String[] ss = new String[strs.length];
+		try {
+			for (int i = 0; i < strs.length; i++) {
+				byte[] aa = strs[i].getBytes(sourceEncoding);
+				ss[i] = new String(aa, objectEncoding);
+			}
+		} catch (java.io.UnsupportedEncodingException e) {
+			return null;
+		}
+		return ss;
+	}
+
 	public static byte[] getAsciiBytes(String data) {
 		if (data == null) {
 			throw new IllegalArgumentException("Parameter may not be null");

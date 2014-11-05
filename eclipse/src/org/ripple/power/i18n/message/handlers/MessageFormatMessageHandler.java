@@ -3,7 +3,7 @@ package org.ripple.power.i18n.message.handlers;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import org.ripple.power.i18nl.message.MessageHandler;
+import org.ripple.power.i18n.message.MessageHandler;
 
 
 public class MessageFormatMessageHandler extends MessageHandler {

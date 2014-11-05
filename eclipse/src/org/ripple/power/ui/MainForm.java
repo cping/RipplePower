@@ -90,7 +90,11 @@ public class MainForm extends JFrame implements ActionListener {
 		}
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
+		try {
+			SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		int frameX = 0;
 		int frameY = 0;
 		String propValue = LSystem.session("main").get("location");

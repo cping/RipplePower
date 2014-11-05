@@ -238,10 +238,14 @@ public class Gateway {
 
 	public synchronized static ArrayList<Gateway> get() {
 		if (gateways.size() == 0) {
-			JSONTokener jsonTokener = new JSONTokener(
-					UIRes.getStream("config/gateways.json"));
+			JSONTokener jsonTokener = null;
+			try {
+				jsonTokener = new JSONTokener(
+						UIRes.getStream("config/gateways.json"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			JSONArray array = new JSONArray(jsonTokener);
-
 			for (int i = 0; i < array.length(); i++) {
 				Gateway gateway = new Gateway();
 				JSONObject o = array.getJSONObject(i);

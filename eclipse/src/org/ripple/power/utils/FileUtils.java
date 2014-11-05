@@ -17,10 +17,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.address.collection.ArrayByte;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.UIRes;
 
 /**
  * Copyright 2008 - 2012
@@ -647,6 +653,58 @@ final public class FileUtils {
 	}
 
 	/**
+	 * 读取本地或网络文件，并返回文件流和文件长度
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	@SuppressWarnings("resource")
+	public static Object[] readPath(String fileName) {
+		try {
+			int len = 0;
+			File file = new File(fileName);
+			InputStream is = null;
+			if (file.exists()) {
+				is = new DataInputStream(new BufferedInputStream(
+						new FileInputStream(file)));
+				len = (int) file.length();
+			} else {
+				is = UIRes.getStream(fileName);
+				if (is != null) {
+					if (is.available() > 0) {
+						len = is.available();
+					} else {
+						len = new ArrayByte(is, ArrayByte.BIG_ENDIAN).length();
+					}
+				} else {
+					URL url = new URL(fileName);
+					URLConnection uc = url.openConnection();
+					uc.setUseCaches(true);
+					if (fileName.endsWith(".zip")) {
+						try {
+							is = new ZipInputStream(new BufferedInputStream(
+									uc.getInputStream(), 8192));
+							ZipEntry ze = ((ZipInputStream) is).getNextEntry();
+							len = (int) ze.getSize();
+						} catch (Exception ex) {
+							is = null;
+						}
+					}
+					if (is == null) {
+						len = uc.getContentLength();
+						is = new DataInputStream(new BufferedInputStream(
+								uc.getInputStream(), 8192));
+					}
+				}
+
+			}
+			return new Object[] { is, new Integer(len) };
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
 	 * 获得指定路径下的文件列表(包含全路径),仅包含一级目录
 	 * 
 	 * @param path
@@ -737,12 +795,22 @@ final public class FileUtils {
 		if (name == null) {
 			return "";
 		}
-		int length = name.length();
-		int size = name.lastIndexOf(LSystem.FS) + 1;
-		if (size < length) {
-			return name.substring(size, length);
+		if (name.indexOf(LSystem.FS) != -1) {
+			int length = name.length();
+			int size = name.lastIndexOf(LSystem.FS) + 1;
+			if (size < length) {
+				return name.substring(size, length);
+			} else {
+				return "";
+			}
 		} else {
-			return "";
+			int length = name.length();
+			int size = name.lastIndexOf("/") + 1;
+			if (size < length) {
+				return name.substring(size, length);
+			} else {
+				return "";
+			}
 		}
 	}
 

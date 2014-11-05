@@ -83,6 +83,14 @@ public class WalletCache {
 			if (idx > -1 && idx < size) {
 				pCaches.remove(idx);
 			}
+			if (pCaches.size() == 0) {
+				String fileName = LSystem.getDirectory() + LSystem.FS
+						+ LSystem.walletName;
+				File file = new File(fileName);
+				if (file.exists()) {
+					file.deleteOnExit();
+				}
+			}
 		}
 	}
 

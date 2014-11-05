@@ -1,5 +1,9 @@
+package org.ripple.power.sound;
+
+import java.io.InputStream;
+
 /**
- * Copyright 2008 - 2012
+ * Copyright 2008 - 2009
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,88 +17,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * @project loon
- * @author cping
- * @email：javachenpeng@yahoo.com
- * @version 0.3.3
+ * @project loonframework
+ * @author chenpeng
+ * @email：ceponline@yahoo.com.cn
+ * @version 0.1
  */
-package org.ripple.power.sound;
-
-import org.ripple.power.config.Callback;
-
 public interface Sound {
 
-	public static class Silence implements Sound {
-		@Override
-		public boolean prepare() {
-			return false;
-		}
+	static int defaultMaxVolume = 95;
 
-		@Override
-		public boolean play() {
-			return false;
-		}
+	public void playSound(String fileName);
 
-		@Override
-		public void stop() {
-		}
+	public void playSound(InputStream in);
 
-		@Override
-		public void setLooping(boolean looping) {
-		}
+	public void setSoundVolume(int volume);
 
-		@Override
-		public float volume() {
-			return 0;
-		}
+	public void stopSound();
 
-		@Override
-		public void setVolume(float volume) {
-		}
-
-		@Override
-		public boolean isPlaying() {
-			return false;
-		}
-
-		@Override
-		public void release() {
-		}
-
-		@Override
-		public void addCallback(Callback<Sound> callback) {
-			callback.onSuccess(this);
-		}
-	}
-
-	public static class Error extends Silence {
-		private final Exception error;
-
-		public Error(Exception error) {
-			this.error = error;
-		}
-
-		@Override
-		public void addCallback(Callback<Sound> callback) {
-			callback.onFailure(error);
-		}
-	}
-
-	boolean prepare();
-
-	boolean play();
-
-	void stop();
-
-	void setLooping(boolean looping);
-
-	float volume();
-
-	void setVolume(float volume);
-
-	boolean isPlaying();
-
-	void release();
-
-	void addCallback(Callback<Sound> callback);
+	public boolean isVolumeSupported();
 }

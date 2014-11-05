@@ -48,26 +48,31 @@ public class Currencies {
 	}
 
 	public static String name(String name) {
-		if(Strings.isNullOrEmpty(name)){
+		if (Strings.isNullOrEmpty(name)) {
 			return null;
 		}
 		ArrayList<Item> items = load();
 		for (Item item : items) {
-			if(name.equalsIgnoreCase(item.value)){
+			if (name.equalsIgnoreCase(item.value)) {
 				return item.name;
 			}
 		}
 		return null;
 	}
-	
+
 	public static ArrayList<Item> get() {
 		return new ArrayList<Item>(load());
 	}
 
 	private static ArrayList<Item> load() {
 		if (_items.size() == 0) {
-			JSONTokener tokener = new JSONTokener(
-					UIRes.getStream("config/currencies.json"));
+			JSONTokener tokener = null;
+			try {
+				tokener = new JSONTokener(
+						UIRes.getStream("config/currencies.json"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			JSONArray arrays = new JSONArray(tokener);
 			for (int i = 0; i < arrays.length(); i++) {
 				JSONObject obj = arrays.getJSONObject(i);

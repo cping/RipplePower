@@ -5,8 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.ripple.power.i18n.message.MessageHandler;
 import org.ripple.power.i18n.message.handlers.StringFormatMessageHandler;
-import org.ripple.power.i18nl.message.MessageHandler;
 
 
 @Retention(RetentionPolicy.RUNTIME)

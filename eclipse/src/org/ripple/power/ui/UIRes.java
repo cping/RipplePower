@@ -3,6 +3,7 @@ package org.ripple.power.ui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.address.collection.ArrayByte;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 
@@ -68,15 +70,19 @@ public class UIRes {
 		return imageIcons.get(path);
 	}
 
-	public static InputStream getStream(String path) {
+	public static ArrayByte getDataSource(String path) throws IOException{
+		return new ArrayByte(getStream(path),ArrayByte.BIG_ENDIAN);
+	}
+	
+	public static InputStream getStream(String path) throws IOException {
 		path = computePath(path);
 		InputStream is = classLoader.getResourceAsStream(path);
 		if (is == null) {
-			throw new RuntimeException("File not found: " + path);
+			throw new IOException("File not found: " + path);
 		}
 		return is;
 	}
-
+	
 	public static URL getUrl(String path) {
 		path = computePath(path);
 		URL url = classLoader.getResource(path);
