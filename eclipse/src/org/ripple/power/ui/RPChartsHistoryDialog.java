@@ -210,6 +210,7 @@ public class RPChartsHistoryDialog extends JDialog {
 							RPToast.makeText(RPChartsHistoryDialog.this,
 									e.getMessage(), RPToast.Style.ERROR)
 									.display();
+							update();
 						}
 						dialog.closeDialog();
 						initChart();
