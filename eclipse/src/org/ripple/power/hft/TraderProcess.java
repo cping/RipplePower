@@ -138,7 +138,9 @@ public class TraderProcess extends TraderBase {
 							}
 						}
 					}
-					if (down_coherent_flag > up_coherent_flag) {
+					if (down_coherent_flag - 1 == up_coherent_flag) {
+						return Trend.UP;
+					} else if (down_coherent_flag > up_coherent_flag) {
 						return Trend.DOWN;
 					} else if (up_coherent_flag > down_coherent_flag) {
 						return Trend.UP;
@@ -340,8 +342,8 @@ public class TraderProcess extends TraderBase {
 		}
 		Trend trend = task.process.getTrend(task.source_currency, 12);
 
-		System.out.println("buyd:"+all_buy_difference);
-		System.out.println("selld:"+all_sell_difference);
+		System.out.println("buyd:" + all_buy_difference);
+		System.out.println("selld:" + all_sell_difference);
 		switch (task.model) {
 		case CrazyBuyer:
 

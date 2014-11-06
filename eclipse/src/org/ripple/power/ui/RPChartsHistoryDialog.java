@@ -344,6 +344,7 @@ public class RPChartsHistoryDialog extends JDialog {
 							RPToast.makeText(RPChartsHistoryDialog.this,
 									ex.getMessage(), RPToast.Style.ERROR)
 									.display();
+							update();
 						}
 					}
 					if (_chartOnePanel != null
@@ -373,6 +374,7 @@ public class RPChartsHistoryDialog extends JDialog {
 			}
 		};
 		LSystem.postThread(update);
+		update();
 	}
 
 	private void update() {

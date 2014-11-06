@@ -915,7 +915,7 @@ public class RPExchangeDialog extends JDialog {
 		if(Strings.isNullOrEmpty(cur)){
 			return;
 		}
-		TraderProcess.Trend trend = _traderProcess.getTrend(cur, 18);
+		TraderProcess.Trend trend = _traderProcess.getTrend(cur, 8);
 		if (lastTrend != trend) {
 			RPToast.makeText(this,
 					cur.toUpperCase() + "  price trend : " + trend)
