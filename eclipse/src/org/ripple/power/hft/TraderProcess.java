@@ -121,14 +121,14 @@ public class TraderProcess extends TraderBase {
 						if (i + 1 < size) {
 							long one = (long) arrays.get(i);
 							long two = (long) arrays.get(i + 1);
-							if (two > one) {
+							if (two >= one) {
 								if (last == Trend.DOWN) {
 									up_coherent_flag--;
 								} else {
 									up_coherent_flag++;
 								}
 								last = Trend.UP;
-							} else {
+							} else if (two < one) {
 								if (last == Trend.UP) {
 									down_coherent_flag--;
 								} else {
@@ -138,7 +138,8 @@ public class TraderProcess extends TraderBase {
 							}
 						}
 					}
-					if (down_coherent_flag - 1 == up_coherent_flag) {
+					if (down_coherent_flag - 1 == up_coherent_flag
+							|| down_coherent_flag - 2 == up_coherent_flag) {
 						return Trend.UP;
 					} else if (down_coherent_flag > up_coherent_flag) {
 						return Trend.DOWN;
