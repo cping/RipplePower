@@ -8,7 +8,15 @@ In the page right [Download ZIP] option, you can download the entire project sou
 
 在Github页面右侧下方【Download ZIP】选项，您可以下载整个项目源码与Demo文件.
 
+#Download Java Runtime Platform(下载Java程序运行环境):
+
+http://www.java.com
+
+#Donation
+
 <a href="https://ripple.com//send?to=rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp&name=cping&label=Thank you donate to RipplePower&amount=100/XRP&dt=20140906"><img src="https://raw.github.com/cping/RipplePower/master/rippledonate.png" alt="RippleDonate" /></a>
+
+#Screenshot
 
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/001.png "0")
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/002.png "1")
