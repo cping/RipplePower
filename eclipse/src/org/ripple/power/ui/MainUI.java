@@ -136,12 +136,12 @@ public class MainUI {
 		navLinkList.add(btcLink);
 
 		// config
-		RPNavlink expoLink = new RPNavlink(LangConfig.get(this, "config",
+		RPNavlink configLink = new RPNavlink(LangConfig.get(this, "config",
 				"Config"));
-		expoLink.setForeground(UIConfig.getBrandColor());
-		expoLink.setFont(navLinkFont);
-		expoLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
-		expoLink.addActionListener(new ActionListener() {
+		configLink.setForeground(UIConfig.getBrandColor());
+		configLink.setFont(navLinkFont);
+		configLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
+		configLink.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -150,7 +150,7 @@ public class MainUI {
 
 			}
 		});
-		navLinkList.add(expoLink);
+		navLinkList.add(configLink);
 
 		// exit
 		RPNavlink exitLink = new RPNavlink(LangConfig.get(this, "exit", "Exit"));

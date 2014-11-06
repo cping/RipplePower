@@ -42,6 +42,7 @@ public class JConsole extends JScrollPane {
 
 	private JPopupMenu contextMenu;
 	private final static String CMD_CUT = "Cut";
+	private final static String CMD_CLEAR = "Clear";
 	private final static String CMD_COPY = "Copy";
 	private final static String CMD_PASTE = "Paste";
 
@@ -68,6 +69,8 @@ public class JConsole extends JScrollPane {
 		contextMenu.add(new JMenuItem(CMD_COPY)).addActionListener(
 				lActionListener);
 		contextMenu.add(new JMenuItem(CMD_PASTE)).addActionListener(
+				lActionListener);
+		contextMenu.add(new JMenuItem(CMD_CLEAR)).addActionListener(
 				lActionListener);
 		text.addMouseListener(new MyMouseListener());
 
@@ -106,7 +109,7 @@ public class JConsole extends JScrollPane {
 			outPump.setAttr(aAttribs);
 		}
 	}
-	
+
 	public void setErrAttributes(AttributeSet aAttribs) {
 		attrError = aAttribs;
 		if (errPump != null) {
@@ -317,7 +320,6 @@ public class JConsole extends JScrollPane {
 	public void print(final Object aContent, final AttributeSet aAttribs) {
 		invokeAndWait(new Runnable() {
 			public void run() {
-				
 
 				appendConsoleText(String.valueOf(aContent));
 				initCommandPos();
@@ -500,6 +502,8 @@ public class JConsole extends JScrollPane {
 				text.copy();
 			} else if (lActionCommand.equals(CMD_PASTE)) {
 				text.paste();
+			} else if (lActionCommand.equals(CMD_CLEAR)) {
+				clear();
 			}
 		}
 	}
@@ -519,7 +523,6 @@ public class JConsole extends JScrollPane {
 			setColumns(20);
 			setRows(5);
 		}
-
 
 		public void cut() {
 			if (text.getCaretPosition() < commandPos)
