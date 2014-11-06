@@ -251,9 +251,11 @@ public class Gateway {
 				JSONObject o = array.getJSONObject(i);
 				String name = o.getString("name");
 				gateway.name = name;
-				JSONArray hotwallets = o.getJSONArray("hotwallets");
-				for (int n = 0; n < hotwallets.length(); n++) {
-					gateway.hotwallets.add(hotwallets.getString(n));
+				if (o.has("hotwallets")) {
+					JSONArray hotwallets = o.getJSONArray("hotwallets");
+					for (int n = 0; n < hotwallets.length(); n++) {
+						gateway.hotwallets.add(hotwallets.getString(n));
+					}
 				}
 				JSONArray accounts = o.getJSONArray("accounts");
 				for (int n = 0; n < accounts.length(); n++) {
