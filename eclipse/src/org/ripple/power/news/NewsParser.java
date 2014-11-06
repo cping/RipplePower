@@ -42,7 +42,7 @@ public class NewsParser {
 			if (o == this) {
 				return true;
 			}
-			if (url.equals(((News) o).url)) {
+			if (url.equals(((News) o).url) || title.equals(((News) o).title)) {
 				return true;
 			}
 			return false;
