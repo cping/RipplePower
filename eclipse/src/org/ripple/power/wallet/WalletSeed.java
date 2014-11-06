@@ -32,7 +32,7 @@ public class WalletSeed {
 		this.pPassword = password;
 	}
 
-	public byte[] decrypt(byte[] bytes) throws IOException {
+	public byte[] decrypt(byte[] bytes) throws Exception {
 		byte[] buffer = bytes;
 		if (pPassword != null && pPassword.length() > 0) {
 			buffer = pSsl.decrypt(bytes, pPassword);

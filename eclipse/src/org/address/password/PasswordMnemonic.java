@@ -2,7 +2,7 @@ package org.address.password;
 
 import java.math.BigInteger;
 
-import com.google.bitcoin.core.Utils;
+import org.address.utils.CoinUtils;
 
 public class PasswordMnemonic {
 
@@ -291,7 +291,7 @@ public class PasswordMnemonic {
 			final BigInteger nx = new BigInteger(String.valueOf(n));
 			BigInteger sum = p1.add(nx.multiply(p2.subtract(p1).mod(nx))).add(
 					nx.multiply(nx).multiply(p3.subtract(p2).mod(nx)));
-			sbr.append(Utils.bytesToHexString(Utils.bigIntegerToBytes(sum, 4)));
+			sbr.append(CoinUtils.toHex(CoinUtils.bigIntegerToBytes(sum, 4)));
 		}
 		return sbr.toString();
 	}

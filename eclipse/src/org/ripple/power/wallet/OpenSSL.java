@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.Arrays;
 
+import org.address.utils.CoinUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.ripple.power.config.LSystem;
 import org.slf4j.Logger;
@@ -18,8 +19,6 @@ import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.ParametersWithIV;
 
-import com.google.bitcoin.core.Utils;
-import com.google.bitcoin.crypto.KeyCrypterException;
 
 public class OpenSSL {
     private Logger log = LoggerFactory.getLogger(OpenSSL.class);
@@ -56,7 +55,7 @@ public class OpenSSL {
     }
 
 
-    private CipherParameters getAESPasswordKey(CharSequence password, byte[] salt) throws KeyCrypterException {
+    private CipherParameters getAESPasswordKey(CharSequence password, byte[] salt) throws Exception {
         try {
             PBEParametersGenerator generator = new OpenSSLPBEParametersGenerator();
             generator.init(PBEParametersGenerator.PKCS5PasswordToBytes(convertToCharArray(password)), salt, NUMBER_OF_ITERATIONS);
@@ -65,12 +64,12 @@ public class OpenSSL {
 
             return key;
         } catch (Exception e) {
-            throw new KeyCrypterException("Could not generate key from password of length " + password.length()
-                    + " and salt '" + Utils.bytesToHexString(salt), e);
+            throw new Exception("Could not generate key from password of length " + password.length()
+                    + " and salt '" + CoinUtils.toHex(salt), e);
         }
     }
 
-    public String encrypt(String plainText, CharSequence password) throws KeyCrypterException {
+    public String encrypt(String plainText, CharSequence password) throws Exception {
         try {
             byte[] plainTextAsBytes;
             if (plainText == null) {
@@ -85,11 +84,11 @@ public class OpenSSL {
             
             return Base64.encodeBase64String(encryptedBytesPlusSaltedText);
         } catch (Exception e) {
-            throw new KeyCrypterException("Could not encrypt string '" + plainText + "'", e);
+            throw new Exception("Could not encrypt string '" + plainText + "'", e);
         }
     }
 
-    public byte[] encrypt(byte[] plainTextAsBytes, CharSequence password) throws KeyCrypterException {
+    public byte[] encrypt(byte[] plainTextAsBytes, CharSequence password) throws Exception {
         try {
             byte[] salt = new byte[SALT_LENGTH];
             secureRandom.nextBytes(salt);
@@ -105,12 +104,12 @@ public class OpenSSL {
 
             return concat(salt, encryptedBytes);
         } catch (Exception e) {
-            throw new KeyCrypterException("Could not encrypt bytes '" + Utils.bytesToHexString(plainTextAsBytes) + "'", e);
+            throw new Exception("Could not encrypt bytes '" + CoinUtils.toHex(plainTextAsBytes) + "'", e);
         }
     }
 
 
-    public String decrypt(String textToDecode, CharSequence password) throws KeyCrypterException {
+    public String decrypt(String textToDecode, CharSequence password) throws Exception {
         try {
             final byte[] decodeTextAsBytes = Base64.decodeBase64(textToDecode.getBytes(LSystem.encoding));
             
@@ -124,12 +123,12 @@ public class OpenSSL {
             
             return new String(decryptedBytes, LSystem.encoding).trim();
         } catch (Exception e) {
-            throw new KeyCrypterException("Could not decrypt input string", e); 
+            throw new Exception("Could not decrypt input string", e); 
         }
     }
 
 
-    public byte[] decrypt(byte[] bytesToDecode, CharSequence password) throws KeyCrypterException {
+    public byte[] decrypt(byte[] bytesToDecode, CharSequence password) throws Exception {
         try {
   
             byte[] salt = new byte[SALT_LENGTH];
@@ -151,7 +150,7 @@ public class OpenSSL {
 
             return decryptedBytes;
         } catch (Exception e) {
-            throw new KeyCrypterException("Could not decrypt input string", e);
+            throw new Exception("Could not decrypt input string", e);
         }
     }
 

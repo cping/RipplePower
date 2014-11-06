@@ -386,6 +386,7 @@ public class JSONTokener {
 		this.back();
 
 		string = sb.toString().trim();
+		
 		if ("".equals(string)) {
 			throw this.syntaxError("Missing value");
 		}
