@@ -1,9 +1,3 @@
-package org.ripple.power.utils;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Copyright 2008 - 2012
@@ -25,9 +19,28 @@ import java.util.Random;
  * @email：javachenpeng@yahoo.com
  * @version 0.3.3
  */
+package org.ripple.power.utils;
+
+import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.graphics.geom.RectBox;
+
 public class MathUtils {
 
-	private static Random rand = new Random();
+	public static RectBox getBounds(float x, float y, float width,
+			float height, float rotate, RectBox result) {
+		int[] rect = getLimit(x, y, width, height, rotate);
+		if (result == null) {
+			result = new RectBox(rect[0], rect[1], rect[2], rect[3]);
+		} else {
+			result.setBounds(rect[0], rect[1], rect[2], rect[3]);
+		}
+		return result;
+	}
+
+	public static RectBox getBounds(float x, float y, float width,
+			float height, float rotate) {
+		return getBounds(x, y, width, height, rotate, null);
+	}
 
 	public static int[] getLimit(float x, float y, float width, float height,
 			float rotate) {
@@ -45,6 +58,9 @@ public class MathUtils {
 		return new int[] { newX, newY, newW, newH };
 	}
 
+	final static private String[] zeros = { "", "0", "00", "000", "0000",
+			"00000", "000000", "0000000", "00000000", "000000000", "0000000000" };
+
 	/**
 	 * 为指定数值补足位数
 	 * 
@@ -56,9 +72,6 @@ public class MathUtils {
 		return addZeros(String.valueOf(number), numDigits);
 	}
 
-	private static HashMap<Integer, String> _zeros = new HashMap<Integer, String>(
-			10);
-
 	/**
 	 * 为指定数值补足位数
 	 * 
@@ -68,16 +81,8 @@ public class MathUtils {
 	 */
 	public static String addZeros(String number, int numDigits) {
 		int length = numDigits - number.length();
-		String zero = _zeros.get(length);
-		if (zero == null) {
-			StringBuffer sbr = new StringBuffer();
-			for (int i = 0; i < length; i++) {
-				sbr.append('0');
-			}
-			zero = sbr.toString();
-		}
 		if (length != 0) {
-			number = zero + number;
+			number = zeros[length] + number;
 		}
 		return number;
 	}
@@ -92,12 +97,77 @@ public class MathUtils {
 		if (StringUtils.isEmpty(str)) {
 			return false;
 		}
-		try {
-			Double.valueOf(str);
-		} catch (Exception ex) {
+		char[] chars = str.toCharArray();
+		int sz = chars.length;
+		boolean hasExp = false;
+		boolean hasDecPoint = false;
+		boolean allowSigns = false;
+		boolean foundDigit = false;
+		int start = (chars[0] == '-') ? 1 : 0;
+		if (sz > start + 1) {
+			if (chars[start] == '0' && chars[start + 1] == 'x') {
+				int i = start + 2;
+				if (i == sz) {
+					return false;
+				}
+				for (; i < chars.length; i++) {
+					if ((chars[i] < '0' || chars[i] > '9')
+							&& (chars[i] < 'a' || chars[i] > 'f')
+							&& (chars[i] < 'A' || chars[i] > 'F')) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		sz--;
+		int i = start;
+		while (i < sz || (i < sz + 1 && allowSigns && !foundDigit)) {
+			if (chars[i] >= '0' && chars[i] <= '9') {
+				foundDigit = true;
+				allowSigns = false;
+			} else if (chars[i] == '.') {
+				if (hasDecPoint || hasExp) {
+					return false;
+				}
+				hasDecPoint = true;
+			} else if (chars[i] == 'e' || chars[i] == 'E') {
+				if (hasExp) {
+					return false;
+				}
+				if (!foundDigit) {
+					return false;
+				}
+				hasExp = true;
+				allowSigns = true;
+			} else if (chars[i] == '+' || chars[i] == '-') {
+				if (!allowSigns) {
+					return false;
+				}
+				allowSigns = false;
+				foundDigit = false;
+			} else {
+				return false;
+			}
+			i++;
+		}
+		if (i < chars.length) {
+			if (chars[i] >= '0' && chars[i] <= '9') {
+				return true;
+			}
+			if (chars[i] == 'e' || chars[i] == 'E') {
+				return false;
+			}
+			if (!allowSigns
+					&& (chars[i] == 'd' || chars[i] == 'D' || chars[i] == 'f' || chars[i] == 'F')) {
+				return foundDigit;
+			}
+			if (chars[i] == 'l' || chars[i] == 'L') {
+				return foundDigit && !hasExp;
+			}
 			return false;
 		}
-		return true;
+		return !allowSigns && foundDigit;
 	}
 
 	public static final float PI_OVER2 = 1.5708f;
@@ -625,39 +695,39 @@ public class MathUtils {
 	}
 
 	public static final int nextInt(int range) {
-		return range <= 0 ? 0 : rand.nextInt(range);
+		return range <= 0 ? 0 : LSystem.random.nextInt(range);
 	}
 
 	public static final int nextInt(int start, int end) {
-		return end <= 0 ? 0 : start + rand.nextInt(end - start);
+		return end <= 0 ? 0 : start + LSystem.random.nextInt(end - start);
 	}
 
 	public static final int random(int range) {
-		return rand.nextInt(range + 1);
+		return LSystem.random.nextInt(range + 1);
 	}
 
 	public static final int random(int start, int end) {
-		return start + rand.nextInt(end - start + 1);
+		return start + LSystem.random.nextInt(end - start + 1);
 	}
 
 	public static final long randomLong(int start, int end) {
-		return start + rand.nextInt(end - start + 1);
+		return start + LSystem.random.nextInt(end - start + 1);
 	}
 	
 	public static final boolean randomBoolean() {
-		return rand.nextBoolean();
+		return LSystem.random.nextBoolean();
 	}
 
 	public static final float random() {
-		return rand.nextFloat();
+		return LSystem.random.nextFloat();
 	}
 
 	public static final float random(float range) {
-		return rand.nextFloat() * range;
+		return LSystem.random.nextFloat() * range;
 	}
 
 	public static final float random(float start, float end) {
-		return start + rand.nextFloat() * (end - start);
+		return start + LSystem.random.nextFloat() * (end - start);
 	}
 
 	public static int floor(float x) {
@@ -755,40 +825,6 @@ public class MathUtils {
 			angle -= 6.283185f;
 		}
 		return angle;
-	}
-
-	private static final BigDecimal MBTC = new BigDecimal("100000000");
-
-	public static BigInteger stringTomc(String value)
-			throws NumberFormatException {
-		if (value == null)
-			throw new IllegalArgumentException("No string value provided");
-		if (value.isEmpty())
-			return BigInteger.ZERO;
-		BigDecimal decValue = new BigDecimal(value);
-		return decValue.multiply(MBTC).toBigInteger();
-	}
-
-	public static String mcToString(BigInteger value) {
-		BigInteger bvalue = value;
-		boolean negative = bvalue.compareTo(BigInteger.ZERO) < 0;
-		if (negative) {
-			bvalue = bvalue.negate();
-		}
-		BigDecimal dvalue = new BigDecimal(bvalue, 8);
-		String formatted = dvalue.toPlainString();
-		int decimalPoint = formatted.indexOf(".");
-		int toDelete = 0;
-		for (int i = formatted.length() - 1; i > decimalPoint + 4; i--) {
-			if (formatted.charAt(i) == '0') {
-				toDelete++;
-			} else {
-				break;
-			}
-		}
-		String text = (negative ? "-" : "")
-				+ formatted.substring(0, formatted.length() - toDelete);
-		return text;
 	}
 
 }
