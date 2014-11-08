@@ -133,6 +133,12 @@ public class ArrayMap {
 		return valueTables[index];
 	}
 
+	public void putAll(ArrayMap map) {
+		for (int i = 0; i < map.size(); i++) {
+			put(map.getKey(i), map.get(i));
+		}
+	}
+
 	public Object put(final Object key, final Object value) {
 		int hashCode = 0;
 		int index = 0;
