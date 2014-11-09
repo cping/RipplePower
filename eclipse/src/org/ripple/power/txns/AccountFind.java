@@ -34,7 +34,18 @@ public class AccountFind {
 		String reg = "^r[1-9A-HJ-NP-Za-km-z]{25,33}$";
 		return Pattern.matches(reg, address);
 	}
-
+	
+	public final static boolean isRippleSecret(String address) {
+		if (Strings.isNullOrEmpty(address)) {
+			return false;
+		}
+		if (!address.startsWith("s")) {
+			return false;
+		}
+		String reg = "^s[1-9A-HJ-NP-Za-km-z]{25,31}$";
+		return Pattern.matches(reg, address);
+	}
+	
 	public final static boolean is256hash(String hash) {
 		if (Strings.isNullOrEmpty(hash)) {
 			return false;

@@ -37,7 +37,7 @@ public final class LSystem {
 
 	final static public ClassLoader classLoader;
 	
-	public final static String FEE = "0.012";
+	public static String FEE = "0.012";
 
 	public final static String nativeCurrency = "xrp";
 

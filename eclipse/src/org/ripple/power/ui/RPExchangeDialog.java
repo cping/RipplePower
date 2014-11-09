@@ -834,7 +834,7 @@ public class RPExchangeDialog extends JDialog {
 						final OfferPrice price) {
 
 					_tip1Label.setText(String.format(info_price(),
-							price.highBuy, price.hightSell, price.spread));
+							price.highBuy, price.highSell, price.spread));
 					if (buys.size() > 0) {
 						synchronized (_buyerList) {
 							_buymList
@@ -1513,7 +1513,7 @@ public class RPExchangeDialog extends JDialog {
 				}
 
 				_tip1Label.setText(String.format(info_price(), price.highBuy,
-						price.hightSell, price.spread));
+						price.highSell, price.spread));
 			}
 
 		});

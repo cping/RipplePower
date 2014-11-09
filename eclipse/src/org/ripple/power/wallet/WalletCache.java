@@ -94,6 +94,21 @@ public class WalletCache {
 		}
 	}
 
+	public String findSecret(String address) {
+		synchronized (pCaches) {
+			int size = pCaches.size();
+			if (size > 0) {
+				for (int i = 0; i < size; i++) {
+					WalletItem item = (WalletItem) pCaches.get(i);
+					if (item.getPublicKey().equals(address)) {
+						return item.getPrivateKey();
+					}
+				}
+			}
+			return null;
+		}
+	}
+
 	public String getAmounts() {
 		return amounts;
 	}

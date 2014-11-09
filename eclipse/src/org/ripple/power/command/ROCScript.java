@@ -40,7 +40,7 @@ public class ROCScript {
 		errors[UNBALPARENS] = "(... or ...)";
 		errors[DIVBYZERO] = "1/0";
 		errors[EQUALEXPECTED] = "Equal Expected";
-		errors[NOTAVAR] = "For vars that have no value: assignments,loops";
+		errors[UNKOWN] = "For vars that have no value: assignments,loops";
 		errors[NOTABOOL] = "Not a boolean";
 		errors[NOTANUMB] = "Not a number";
 		errors[NOTASTR] = " Not a string";
@@ -102,7 +102,7 @@ public class ROCScript {
 	private final int UNBALPARENS = 1;
 	private final int DIVBYZERO = 2;
 	private final int EQUALEXPECTED = 3;
-	private final int NOTAVAR = 4;
+	private final int UNKOWN = 4;
 	private final int NOTABOOL = 5;
 	private final int NOTANUMB = 6;
 	private final int NOTASTR = 7;
@@ -575,7 +575,7 @@ public class ROCScript {
 			scriptLog.line("? ");
 		}
 		if (!Character.isLetter(item.charAt(0))) {
-			handleError(NOTAVAR);
+			handleError(UNKOWN);
 			return;
 		}
 		try {
@@ -779,7 +779,7 @@ public class ROCScript {
 		nextItem();
 
 		if (!(Character.isLetter(item.charAt(0)))) {
-			handleError(NOTAVAR);
+			handleError(UNKOWN);
 		}
 
 		fName = item;
@@ -806,7 +806,7 @@ public class ROCScript {
 				}
 
 			} else {
-				handleError(NOTAVAR);
+				handleError(UNKOWN);
 				return;
 			}
 		}
@@ -1606,7 +1606,7 @@ public class ROCScript {
 		String var;
 		var = item;
 		if (!Character.isLetter(var.charAt(0))) {
-			handleError(NOTAVAR);
+			handleError(UNKOWN);
 			return;
 		}
 		nextItem();
@@ -1868,7 +1868,7 @@ public class ROCScript {
 
 	private Object getVarVal(String vname) throws ScriptException {
 		if (!Character.isLetter(vname.charAt(0))) {
-			handleError(NOTAVAR);
+			handleError(UNKOWN);
 			return 0;
 		}
 		Object o = null;
@@ -1932,8 +1932,10 @@ public class ROCScript {
 				}
 			}
 		}
-		if (o == null) {
-			handleError(NOTAVAR);
+		if (vname.indexOf('.') != -1) {
+			o = "unkown";
+		} else if (o == null) {
+			handleError(UNKOWN);
 		}
 		debug("Get var: " + o);
 		return o;

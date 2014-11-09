@@ -292,9 +292,9 @@ public class TraderProcess extends TraderBase {
 									highBuy = LSystem.getNumberShort(highBuy);
 								}
 								String hightSell = null;
-								if (price.hightSell != null) {
-									if (price.hightSell.indexOf("/") != -1) {
-										hightSell = price.hightSell.split("/")[0];
+								if (price.highSell != null) {
+									if (price.highSell.indexOf("/") != -1) {
+										hightSell = price.highSell.split("/")[0];
 									}
 									hightSell = LSystem
 											.getNumberShort(hightSell);

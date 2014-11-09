@@ -20,15 +20,21 @@
  */
 package org.ripple.power.txns;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.address.ripple.RippleSeedAddress;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.command.AMacros;
 import org.ripple.power.command.IScriptLog;
 import org.ripple.power.command.DMacros;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.StringUtils;
+import org.ripple.power.wallet.WalletCache;
 
 import com.ripple.client.enums.Command;
+import com.ripple.core.types.known.sle.entries.Offer;
 
 public class RippleMacros extends AMacros {
 
@@ -50,31 +56,165 @@ public class RippleMacros extends AMacros {
 
 	private final int ACCOUNT_TX = 6;
 
-	// developing
-	// send address1 10/usd to address2
-	// swap address1 10/usd to address2 10/xrp
-	// server_info
-	// server_state
-	// ping
+	private final int TRANSACTION_ENTRY = 7;
+
+	private final int TRANSACTION_TX = 8;
+
+	private final int TRANSACTION_HISTORY = 9;
+
+	private final int SEND = 10;
+
+	private final int OFFER_CREATE = 11;
+
+	private final int OFFER_CANCEL = 12;
+
+	private final int OFFER_PRICE = 13;
 
 	public RippleMacros() {
-		super("ripple.",
-				new String[] { "ping", "server_info", "server_state",
-						"account_info", "account_lines", "account_offers",
-						"account_tx" }, new String[] { "send" });
+		super("ripple.", new String[] { "ping", "server_info", "server_state",
+				"account_info", "account_lines", "account_offers",
+				"account_tx", "transaction_entry", "tx", "tx_history", "send",
+				"offer_create", "offer_cancel", "offer_price" });
 	}
 
 	@Override
 	public void call(final IScriptLog log, final int scriptLine,
 			final DMacros macros, final String message) {
 		setConfig(log, macros, scriptLine);
-		List<String> list = DMacros.commandSplit(message);
+		List<String> list = DMacros.commandSplit(message, false);
 		int size = list.size();
 
 		if (size > 0) {
 			JSONObject obj = new JSONObject();
 			final String cmd = list.get(0);
 			final int type = lookupCommand(cmd);
+
+			// 视为同种交易操作
+			if (type == SEND || type == OFFER_CREATE) {
+				if (size > 3) {
+					String curOne = list.get(1);
+					String curTwo = list.get(2);
+					int start = curOne.indexOf("/");
+					String secret = null;
+					if (start != -1) {
+						secret = curOne.substring(0, start);
+						secret = getSecret(secret);
+					}
+					if (secret == null) {
+						return;
+					}
+					if (size == 3) {
+						send(type, curOne, curTwo, secret, LSystem.FEE);
+					} else if (size == 4) {
+						String fee = list.get(3);
+						if (StringUtils.isNumber(fee)) {
+							send(type, curOne, curTwo, secret, fee);
+						} else {
+							error(new Exception(
+									"Transaction fees must be in digital format"));
+						}
+					}
+				}
+				return;
+			} else if (type == OFFER_CANCEL) {
+				if (size > 3) {
+					String secret = list.get(1);
+					secret = getSecret(secret);
+					if (secret == null) {
+						return;
+					}
+					long offerSequence = 0;
+					try {
+						offerSequence = Long.parseLong(list.get(2));
+					} catch (Exception ex) {
+						error(ex);
+						return;
+					}
+					String fee = LSystem.FEE;
+					if (size == 4) {
+						fee = list.get(3);
+					}
+					if (!StringUtils.isNumber(fee)) {
+						error(new Exception(
+								"Transaction fees must be in digital format"));
+					}
+					setSyncing(type, true);
+					OfferCancel.set(new RippleSeedAddress(secret),
+							offerSequence, fee, new Rollback() {
+
+								@Override
+								public void success(JSONObject res) {
+									setVar(type, res);
+									log(type, res);
+									setSyncing(type, false);
+								}
+
+								@Override
+								public void error(JSONObject res) {
+									log(type, res);
+									setSyncing(type, false);
+								}
+							});
+				}
+			} else if (type == OFFER_PRICE) {
+				if (size == 4) {
+
+					String address = list.get(1);
+					final String seller = list.get(2);
+					final String buyer = list.get(3);
+					address = getAddress(address);
+					System.out.println("FFF" + address);
+					if (address == null) {
+
+						return;
+					}
+					setSyncing(type, true);
+					OfferPrice.load(address, seller, buyer, new OfferPrice() {
+
+						@Override
+						public void sell(Offer offer) {
+
+						}
+
+						@Override
+						public void error(JSONObject obj) {
+							setSyncing(type, false);
+						}
+
+						@Override
+						public void empty() {
+							setSyncing(type, false);
+						}
+
+						@Override
+						public void complete(ArrayList<OfferFruit> buys,
+								ArrayList<OfferFruit> sells, OfferPrice price) {
+							log(type, String.format(
+									"1/%s high_buy:%s high_sell:%s spread%s",
+									seller, price.highBuy, price.highSell,
+									price.spread));
+							setVar(type, "highbuy", price.highBuy);
+							setVar(type, "highsell", price.highSell);
+							setVar(type, "spread", price.spread);
+							setVar(type, "highbuy_value", Double
+									.parseDouble(price.highBuy.split("/")[0]));
+							setVar(type, "highsell_value", Double
+									.parseDouble(price.highSell.split("/")[0]));
+							setVar(type, "spread_value", Double
+									.parseDouble(price.spread.split("/")[0]));
+							setVar(type, "buys", buys);
+							setVar(type, "sells", sells);
+							setSyncing(type, false);
+						}
+
+						@Override
+						public void buy(Offer offer) {
+
+						}
+					}, false);
+
+				}
+			}
 			switch (size) {
 			case 1:
 				setSyncing(type, true);
@@ -135,7 +275,57 @@ public class RippleMacros extends AMacros {
 
 				break;
 			case 2:
-				if (!checkAddress(list, 1, type)) {
+				if (type == TRANSACTION_TX) {
+					setSyncing(type, true);
+					String parameter = list.get(1);
+					if (!AccountFind.is256hash(parameter)) {
+						error(new Exception(String.format("%s Not 256 Hash",
+								parameter)));
+						break;
+					}
+					obj.put("transaction", parameter);
+					RippleCommand.get(Command.tx, obj, new Rollback() {
+
+						@Override
+						public void success(JSONObject res) {
+							setVar(type, res);
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+					});
+					break;
+				} else if (type == TRANSACTION_HISTORY) {
+					setSyncing(type, true);
+					String parameter = list.get(1);
+					obj.put("start", Long.parseLong(parameter));
+					RippleCommand.get(Command.tx_history, obj, new Rollback() {
+
+						@Override
+						public void success(JSONObject res) {
+							setVar(type, res);
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+					});
+					break;
+				}
+				if (!checkAddress(list, 1)) {
 					break;
 				}
 				setSyncing(type, true);
@@ -192,7 +382,7 @@ public class RippleMacros extends AMacros {
 					});
 					break;
 				case ACCOUNT_TX:
-					find.tx(address, -1, 10, new Rollback() {
+					find.tx(address, -1, 200, new Rollback() {
 
 						@Override
 						public void success(JSONObject res) {
@@ -209,10 +399,61 @@ public class RippleMacros extends AMacros {
 					});
 					break;
 				}
-
 				break;
 			case 3:
+				String parameter1 = list.get(1);
+				String parameter2 = list.get(2);
+				if (!AccountFind.is256hash(parameter1)) {
+					error(new Exception(String.format("%s Not 256 Hash",
+							parameter1)));
+					break;
+				}
+				setSyncing(type, true);
+				switch (type) {
+				case TRANSACTION_ENTRY:
+					obj.put("tx_hash", parameter1);
+					obj.put("ledger_index", Long.parseLong(parameter2));
+					RippleCommand.get(Command.transaction_entry, obj,
+							new Rollback() {
 
+								@Override
+								public void success(JSONObject res) {
+									setVar(type, res);
+									log(type, res);
+									setSyncing(type, false);
+
+								}
+
+								@Override
+								public void error(JSONObject res) {
+									log(type, res);
+									setSyncing(type, false);
+
+								}
+							});
+					break;
+				case 2:
+					obj.put("tx_hash", parameter1);
+					obj.put("ledger_index", Long.parseLong(parameter2));
+					RippleCommand.get(Command.tx_history, obj, new Rollback() {
+
+						@Override
+						public void success(JSONObject res) {
+							setVar(type, res);
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
+
+						}
+					});
+					break;
+				}
 				break;
 			default:
 				break;
@@ -221,23 +462,148 @@ public class RippleMacros extends AMacros {
 		}
 	}
 
-	private boolean checkAddress(List<String> list, int idx, int type) {
-		address = list.get(idx);
-		if (!AccountFind.isRippleAddress(address)) {
-			if (!address.startsWith("~")) {
-				address = "~" + address;
+	protected void send(final int type, final String curOne,
+			final String curTwo, final String secret, final String fee) {
+		Object sendSrc = getCurrency(curOne);
+		Object sendDst = getCurrency(curTwo);
+
+		if (sendSrc != null && sendDst != null && !sendSrc.equals(sendDst)) {
+
+			if (sendSrc instanceof IssuedCurrency && sendDst instanceof String) {
+				setSyncing(type, true);
+				Payment.send(secret, (String) sendDst,
+						((IssuedCurrency) sendSrc), fee, new Rollback() {
+
+							@Override
+							public void success(JSONObject res) {
+								setVar(type, res);
+								log(type, res);
+								setSyncing(type, false);
+							}
+
+							@Override
+							public void error(JSONObject res) {
+								log(type, res);
+								setSyncing(type, false);
+							}
+						});
+
+				// 视为挂单
+			} else if (sendSrc instanceof IssuedCurrency
+					&& sendDst instanceof IssuedCurrency) {
+				setSyncing(type, true);
+				OfferCreate.set(new RippleSeedAddress(secret),
+						((IssuedCurrency) sendSrc), ((IssuedCurrency) sendDst),
+						fee, new Rollback() {
+
+							@Override
+							public void success(JSONObject res) {
+								setVar(type, res);
+								log(type, res);
+								setSyncing(type, false);
+							}
+
+							@Override
+							public void error(JSONObject res) {
+								log(type, res);
+								setSyncing(type, false);
+							}
+						});
 			}
-			try {
-				address = NameFind.getAddress(address);
-			} catch (Exception e) {
-				return false;
+		} else {
+			error(new Exception("Invalid Send command"));
+		}
+	}
+
+	protected Object getCurrency(String str) {
+		IssuedCurrency currency = null;
+		int start = str.indexOf("/");
+		if (start != -1) {
+			String cur = str.substring(start + 1, str.length());
+			if (cur.indexOf(LSystem.nativeCurrency) != -1) {
+				currency = new IssuedCurrency(cur, true);
+			} else {
+				String[] split = StringUtils.split(cur, "/");
+				if (split.length == 3) {
+					String v = split[2];
+					String addr = getAddress(v);
+					if (addr == null) {
+						if (Gateway.getAddress(v) != null) {
+							ArrayList<Gateway.Item> items = Gateway
+									.getAddress(v).accounts;
+							if (items.size() > 0) {
+								addr = items.get(0).address;
+							}
+						}
+						if (addr == null) {
+							return null;
+						}
+						StringBuffer sbr = new StringBuffer();
+						for (int i = 0; i < split.length - 1; i++) {
+							sbr.append(split[i]);
+							sbr.append('/');
+						}
+						sbr.append(addr);
+						cur = sbr.toString();
+					}
+					currency = new IssuedCurrency(cur);
+				} else {
+					error(new Exception(String.format("%s is invalid format",
+							cur)));
+				}
 			}
-			if (address == null || !AccountFind.isRippleAddress(address)) {
-				log(type, String.format("%s is an invalid address", address));
-				return false;
+		} else {
+			if (AccountFind.isRippleAddress(str)) {
+				return str;
+			} else {
+				str = getAddress(str);
+				if (str == null) {
+					error(new Exception(String.format("%s is invalid format",
+							str)));
+				}
 			}
 		}
-		return true;
+		return currency;
+	}
+
+	protected String getSecret(final String name) {
+		String result = null;
+		if (AccountFind.isRippleSecret(name)) {
+			return name;
+		} else {
+			result = getAddress(name);
+			if (result == null) {
+				return null;
+			}
+		}
+		result = WalletCache.get().findSecret(result);
+		if (result == null) {
+			error(new Exception(String.format("%s is an invalid secret", name)));
+		}
+		return result;
+	}
+
+	protected String getAddress(String name) {
+		if (!AccountFind.isRippleAddress(name)) {
+			if (!name.startsWith("~")) {
+				name = "~" + name;
+			}
+			try {
+				name = NameFind.getAddress(name);
+			} catch (Exception e) {
+			}
+			if (name == null || !AccountFind.isRippleAddress(name)) {
+				error(new Exception(String.format("%s is an invalid address",
+						name)));
+			}
+			return name;
+		} else {
+			return name;
+		}
+	}
+
+	private boolean checkAddress(List<String> list, int idx) {
+		return (address = getAddress(list.get(idx))) != null;
 	}
 
 	private void setAccountOffer(int type, JSONObject obj) {

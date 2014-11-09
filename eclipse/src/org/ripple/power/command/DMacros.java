@@ -34,7 +34,6 @@ import java.util.List;
 import org.address.collection.ArrayMap;
 import org.address.collection.ArrayMap.Entry;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.Session;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
@@ -977,59 +976,6 @@ public class DMacros extends Conversion implements Serializable {
 	}
 
 	/**
-	 * 获得脚本保存用名
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public final String getSaveName(final String name) {
-		String newName = scriptName + "_" + name;
-		newName = StringUtils.replaceIgnoreCase(newName, "/", "$");
-		newName = StringUtils.replaceIgnoreCase(newName, "\\", "$");
-		return newName;
-	}
-
-	/**
-	 * 保存游戏脚本数据(请注意，此处仅仅保存了脚本数据，并不主动为具体游戏保存任何额外的参数)
-	 * 
-	 * @param name
-	 * @param other
-	 */
-	public final void saveCommand(String name, ArrayMap other) {
-		isRead = false;
-		addCommand = false;
-		if (name == null && temps != null && temps.size() > 0) {
-			name = (String) temps.get(1);
-		}
-		Session session = new Session(getSaveName(name), false);
-		for (int i = 0; i < setEnvironmentList.size(); i++) {
-			Entry entry = setEnvironmentList.getEntry(i);
-			session.add((String) entry.getKey(), (String) entry.getValue());
-		}
-		session.add("cmd_offsetPos", MathUtils.min(offsetPos + 1, scriptSize));
-		session.add("cmd_cacheName", cacheCommandName);
-		session.add("cmd_nowPosFlagName", nowPosFlagName);
-		session.add("cmd_flaging", flaging);
-		session.add("cmd_ifing", ifing);
-		session.add("cmd_functioning", functioning);
-		session.add("cmd_esleflag", esleflag);
-		session.add("cmd_esleover", esleover);
-		session.add("cmd_backIfBool", backIfBool);
-		session.add("cmd_isInnerCommand", isInnerCommand);
-		session.add("cmd_isRead", isRead);
-		session.add("cmd_isCall", isCall);
-		session.add("cmd_if_bool", if_bool);
-		session.add("cmd_elseif_bool", elseif_bool);
-		if (other != null) {
-			for (int i = 0; i < other.size(); i++) {
-				Entry entry = other.getEntry(i);
-				session.add((String) entry.getKey(), (String) entry.getValue());
-			}
-		}
-		session.save();
-	}
-
-	/**
 	 * 载入其它脚本
 	 * 
 	 * @param cmd
@@ -1189,11 +1135,27 @@ public class DMacros extends Conversion implements Serializable {
 	 * @return
 	 */
 	public static List<String> commandSplit(final String src) {
+		return commandSplit(src, true);
+	}
+
+	/**
+	 * 过滤指定脚本文件内容为list
+	 * 
+	 * @param src
+	 * @param useNumber
+	 * @return
+	 */
+	public static List<String> commandSplit(final String src,
+			final boolean useNumber) {
 		if (src.length() == 0) {
 			return new ArrayList<String>();
 		}
-		String result = updateOperator(src);
-		String[] cmds = StringUtils.split(result, FLAG);
+		String[] cmds = null;
+		if (useNumber) {
+			cmds = StringUtils.split(updateOperator(src), FLAG);
+		} else {
+			cmds = StringUtils.split(src, " ");
+		}
 		if (cmds.length > 0) {
 			return Arrays.asList(cmds);
 		} else {

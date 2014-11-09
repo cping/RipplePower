@@ -1,5 +1,6 @@
 package org.ripple.power.txns;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONObject;
@@ -19,6 +20,15 @@ public class NameFind {
 				String jsonResult = request.body();
 				JSONObject obj = new JSONObject(jsonResult);
 				result = obj.getString("address");
+			}
+		}
+		if (result == null) {
+			name = name.replace("~", "");
+			if (Gateway.getAddress(name) != null) {
+				ArrayList<Gateway.Item> items = Gateway.getAddress(name).accounts;
+				if (items.size() > 0) {
+					result = items.get(0).address;
+				}
 			}
 		}
 		return result;

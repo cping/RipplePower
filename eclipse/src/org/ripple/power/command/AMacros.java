@@ -9,8 +9,6 @@ public abstract class AMacros implements IMacros {
 
 	protected final String[] commands;
 
-	protected final String[] command_types;
-
 	protected boolean syncing;
 
 	protected DMacros macros;
@@ -21,7 +19,7 @@ public abstract class AMacros implements IMacros {
 
 	protected void error(Exception ex) {
 		if (log != null) {
-			log.err("line: %s\nexception %s", line, ex.getMessage());
+			log.err("line: %s\nexception: %s", line, ex.getMessage());
 		}
 	}
 
@@ -43,10 +41,9 @@ public abstract class AMacros implements IMacros {
 		setLine(line);
 	}
 
-	public AMacros(String clazz, String[] cmdtables, String[] cmdtypes) {
+	public AMacros(String clazz, String[] cmdtables) {
 		this.clazz = clazz;
 		this.commands = cmdtables;
-		this.command_types = cmdtypes;
 	}
 
 	protected void log(int type, JSONObject res) {
@@ -141,16 +138,4 @@ public abstract class AMacros implements IMacros {
 		return -1;
 	}
 
-	protected int lookupCommandType(String str) {
-		if (command_types == null) {
-			return -1;
-		}
-		str = str.toLowerCase().trim();
-		for (int i = 0; i < command_types.length; i++) {
-			if (str.equals(command_types[i])) {
-				return i;
-			}
-		}
-		return -1;
-	}
 }

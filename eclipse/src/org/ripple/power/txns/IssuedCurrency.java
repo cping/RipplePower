@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import org.address.ripple.RippleAddress;
 import org.json.JSONObject;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.StringUtils;
 
 public class IssuedCurrency {
 	public BigDecimal amount;
@@ -18,8 +20,20 @@ public class IssuedCurrency {
 	}
 
 	public IssuedCurrency(String amountStr) {
-		if (amountStr.indexOf("XRP") != -1) {
-			amountStr = amountStr.replace("XRP", "").trim();
+		this(amountStr, false);
+	}
+
+	public IssuedCurrency(String amountStr, boolean update) {
+		if (amountStr.toLowerCase().indexOf(LSystem.nativeCurrency) != -1) {
+			amountStr = StringUtils.replaceIgnoreCase(amountStr,
+					LSystem.nativeCurrency, "").trim();
+			int idx = amountStr.indexOf('/');
+			if (idx != -1) {
+				amountStr = amountStr.substring(0, idx);
+			}
+			if (update) {
+				amountStr = CurrencyUtils.getValueToRipple(amountStr);
+			}
 		}
 		if (amountStr.indexOf('/') == -1) {
 			amount = new BigDecimal(amountStr).stripTrailingZeros();
@@ -79,7 +93,7 @@ public class IssuedCurrency {
 	public IssuedCurrency(int xrpAmount) {
 		this(BigDecimal.valueOf(xrpAmount));
 	}
-	
+
 	public boolean isNative() {
 		return issuer == null;
 	}

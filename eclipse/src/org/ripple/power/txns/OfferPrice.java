@@ -168,7 +168,7 @@ public abstract class OfferPrice {
 
 	public String highBuy;
 
-	public String hightSell;
+	public String highSell;
 
 	public String spread;
 
@@ -302,7 +302,7 @@ public abstract class OfferPrice {
 				ArrayList<OfferFruit> sells = new ArrayList<OfferFruit>(100);
 				if (!book.isEmpty()) {
 					price.highBuy = book.bid.toText();
-					price.hightSell = book.ask.toText();
+					price.highSell = book.ask.toText();
 					price.spread = book.spread.toText();
 					// sell
 					for (STObject offer : book.asks) {

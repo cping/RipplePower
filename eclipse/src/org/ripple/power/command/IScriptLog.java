@@ -2,6 +2,8 @@ package org.ripple.power.command;
 
 public interface IScriptLog {
 
+	public void show(boolean flag);
+	
 	public void err(Object mes);
 	
 	public void info(Object mes);
