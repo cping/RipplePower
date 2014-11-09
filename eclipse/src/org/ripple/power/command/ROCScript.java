@@ -10,8 +10,11 @@ import java.util.HashMap;
 
 import org.address.collection.Array;
 import org.address.collection.ArrayMap;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.ReflectorUtils;
 import org.ripple.power.utils.StringUtils;
 
 public class ROCScript {
@@ -59,7 +62,7 @@ public class ROCScript {
 				+ "\nItem Type: " + itemType + "\ncommType: " + commType);
 	}
 
-	private final static int MAX_TEXT_SIZE = 655355;
+	private final static int MAX_TEXT_SIZE = 65535;
 
 	// 参数类型
 	private final int NONE = 0; // 不存在
@@ -118,12 +121,17 @@ public class ROCScript {
 	private final int EXPERR = 19;
 	private final int FILEIOERROR = 20;
 
-	// 脚本线程
-	private Thread commandThread;
 	// 宏
 	private final int MACROS = 21;
 	// 未知区域
 	private final int UNKNOWN = 22;
+
+	// 宏指令设置
+	private boolean waitMacros = true;
+	private boolean initNextMacros = true;
+
+	// 脚本线程
+	private Thread commandThread;
 
 	// 保存脚本用
 	private Array<Command> commands;
@@ -466,7 +474,13 @@ public class ROCScript {
 		return null;
 	}
 
-	private boolean initNextMacros = true;
+	public boolean isWaitMacros() {
+		return waitMacros;
+	}
+
+	public void setWaitMacros(boolean waitMacros) {
+		this.waitMacros = waitMacros;
+	}
 
 	public void setCallMacros(boolean f) {
 		this.initNextMacros = f;
@@ -510,6 +524,14 @@ public class ROCScript {
 			if (macros_listener != null) {
 				macros_listener.call(scriptLog, textLine, macros_executer,
 						result);
+				if (waitMacros) {
+					for (; macros_listener.isSyncing();) {
+						try {
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
 			}
 		}
 		vars.add(macros_executer.getVariables());
@@ -531,7 +553,6 @@ public class ROCScript {
 				break;
 			}
 		}
-
 		scriptLog.newline();
 	}
 
@@ -1459,13 +1480,19 @@ public class ROCScript {
 			}
 		case VARIABLE:
 			Object o = getVarVal(item);
-			if (isNumber(o)) {
-				if (DEBUG_E)
+			if (o instanceof Number) {
+				return (Number) o;
+			} else if (isNumber(o)) {
+				if (DEBUG_E) {
 					debug("atom: " + o.toString());
+				}
 				return Double.parseDouble(o.toString());
 			}
-			if (isBoolean(o))
+			if (o instanceof Boolean) {
+				return (boolean) o;
+			} else if (isBoolean(o)) {
 				return toBoolean((String) o);
+			}
 			return o;
 		case BOOLEAN:
 			return toBoolean(item);
@@ -1603,6 +1630,242 @@ public class ROCScript {
 		}
 	}
 
+	private Object[] findVar(String vname) {
+		Object o = null;
+		int idx = vname.lastIndexOf('.');
+		if (idx == -1) {
+			return null;
+		}
+		String name = vname.substring(0, idx);
+		for (int i = 0; i < vars.size(); i++) {
+			ArrayMap tm = vars.get(i);
+			if (tm.containsKey(name)) {
+				o = tm.get(name);
+				break;
+			}
+		}
+		if (o != null) {
+			String method = vname.substring(idx + 1, vname.length());
+			return new Object[] { name, method, o };
+		}
+		return findVar(name);
+	}
+
+	private Object getReflector(String method, Object value) {
+		Object o = null;
+		try {
+			o = ReflectorUtils.getField(value, method);
+		} catch (Exception e) {
+			o = null;
+		}
+		try {
+			o = ReflectorUtils.getNotPrefixInvoke(value, method);
+		} catch (Exception e) {
+			o = null;
+		}
+		try {
+			o = ReflectorUtils.getInvoke(value, method);
+		} catch (Exception e) {
+			o = null;
+		}
+		return o;
+	}
+
+	/**
+	 * 查询指定的json对象元素（暂时未使用递归，预防有不愿展露的数据被穷举出来）
+	 * 
+	 * @param value
+	 * @param vname
+	 * @param method
+	 * @return
+	 */
+	private Object queryJson(Object value, String vname, String method) {
+		int start = 0;
+		int end = 0;
+		Object o = null;
+		JSONObject json = (JSONObject) value;
+		if (json.has(method)) {
+			o = json.get(method);
+		}
+		if (!vname.equals(method)) {
+			start = vname.indexOf(method);
+			String packName = vname.substring(start + method.length() + 1,
+					vname.length());
+			json = (JSONObject) o;
+			if (packName.indexOf("[") != -1 && packName.indexOf("]") != -1) {
+				if (packName.indexOf(".") == -1) {
+					start = packName.indexOf('[');
+					end = packName.indexOf(']');
+					String idxName = packName.substring(start + 1, end);
+					packName = packName.substring(0, start);
+					if (json.has(packName)) {
+						o = json.get(packName);
+						if (o != null && o instanceof JSONArray) {
+							JSONArray arrays = (JSONArray) o;
+							int idx = 0;
+							try {
+								idx = (int) Double.parseDouble(idxName);
+							} catch (Exception ex) {
+								idx = 0;
+							}
+							if (idx < arrays.length()) {
+								o = arrays.get(idx);
+							} else {
+								o = null;
+							}
+						}
+					}
+				} else {
+					String[] split = StringUtils.split(packName, ".");
+					Object obj = null;
+					for (String n : split) {
+						if (obj == null) {
+							if (n.indexOf("[") != -1 && n.indexOf("]") != -1) {
+								if (n.indexOf(".") == -1) {
+									start = n.indexOf('[');
+									end = n.indexOf(']');
+									String idxName = n
+											.substring(start + 1, end);
+									n = n.substring(0, start);
+									if (json.has(n)) {
+										obj = json.get(n);
+										if (obj != null
+												&& obj instanceof JSONArray) {
+											JSONArray arrays = (JSONArray) obj;
+											int idx = 0;
+											try {
+												idx = (int) Double
+														.parseDouble(idxName);
+											} catch (Exception ex) {
+												idx = 0;
+											}
+											if (idx < arrays.length()) {
+												obj = arrays.get(idx);
+											} else {
+												obj = null;
+											}
+										}
+									}
+								}
+							} else {
+								if (packName.indexOf(".") == -1) {
+									if (o != null && o instanceof JSONObject) {
+										if (json.has(packName)) {
+											o = json.get(packName);
+										}
+									}
+								} else {
+									if (o != null && o instanceof JSONObject) {
+										String[] splits = StringUtils.split(
+												packName, ",");
+										Object v = null;
+										for (String s : splits) {
+											if (v == null) {
+												if (json.has(s)) {
+													v = json.get(s);
+												}
+											} else {
+												if (v instanceof JSONObject) {
+													if (((JSONObject) v).has(s)) {
+														v = ((JSONObject) v)
+																.get(s);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						} else {
+							if (n.indexOf("[") != -1 && n.indexOf("]") != -1) {
+								if (n.indexOf(".") == -1) {
+									start = n.indexOf('[');
+									end = n.indexOf(']');
+									String idxName = n
+											.substring(start + 1, end);
+									n = n.substring(0, start);
+									if (((JSONObject) obj).has(n)) {
+										obj = ((JSONObject) obj).get(n);
+										if (obj != null
+												&& obj instanceof JSONArray) {
+											JSONArray arrays = (JSONArray) obj;
+											int idx = 0;
+											try {
+												idx = (int) Double
+														.parseDouble(idxName);
+											} catch (Exception ex) {
+												idx = 0;
+											}
+											if (idx < arrays.length()) {
+												obj = arrays.get(idx);
+											} else {
+												obj = null;
+											}
+										}
+									}
+								}
+							} else if (n.indexOf(".") == -1) {
+								if (obj != null && obj instanceof JSONObject) {
+									if (((JSONObject) obj).has(n)) {
+										obj = ((JSONObject) obj).get(n);
+									}
+								}
+							} else {
+								if (obj != null && obj instanceof JSONObject) {
+									String[] splits = StringUtils.split(n, ",");
+									Object v = null;
+									for (String s : splits) {
+										if (v == null) {
+											if (((JSONObject) obj).has(s)) {
+												v = ((JSONObject) obj).get(s);
+											}
+										} else {
+											if (v instanceof JSONObject) {
+												if (((JSONObject) v).has(s)) {
+													v = ((JSONObject) v).get(s);
+												}
+											}
+										}
+									}
+								}
+							}
+
+						}
+					}
+					o = obj;
+				}
+
+			} else {
+				if (packName.indexOf(".") == -1) {
+					if (o != null && o instanceof JSONObject) {
+						if (json.has(packName)) {
+							o = json.get(packName);
+						}
+					}
+				} else {
+					if (o != null && o instanceof JSONObject) {
+						String[] split = StringUtils.split(packName, ",");
+						Object v = null;
+						for (String n : split) {
+							if (v == null) {
+								if (json.has(n)) {
+									v = json.get(n);
+								}
+							} else {
+								if (v instanceof JSONObject) {
+									if (((JSONObject) v).has(n)) {
+										v = ((JSONObject) v).get(n);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return o;
+	}
+
 	private Object getVarVal(String vname) throws ScriptException {
 		if (!Character.isLetter(vname.charAt(0))) {
 			handleError(NOTAVAR);
@@ -1613,6 +1876,60 @@ public class ROCScript {
 			ArrayMap tm = vars.get(i);
 			if (tm.containsKey(vname)) {
 				o = tm.get(vname);
+				break;
+			}
+		}
+		if (o == null) {
+			o = findVar(vname);
+			int start = 0;
+			int end = 0;
+			if (o != null) {
+				Object[] result = (Object[]) o;
+				// String key = (String) result[0];
+				String method = (String) result[1];
+				Object value = result[2];
+				if (value instanceof JSONObject) {
+					o = queryJson(value, vname, method);
+				} else if (method.indexOf("|") == -1) {
+					o = getReflector(method, value);
+				} else {
+					start = method.indexOf("|");
+					end = method.lastIndexOf("|");
+					if (end - start <= 1) {
+						method = StringUtils.replace(method, "|", "");
+						o = getReflector(method, value);
+					} else {
+						String[] split = StringUtils.split(
+								method.substring(start + 1, end), ",");
+						method = method.substring(0, start);
+						ArrayList<Object> objs = new ArrayList<Object>(5);
+						for (String s : split) {
+							s = StringUtils.rtrim(s);
+							if (s.indexOf("\"") != -1 || s.indexOf("'") != -1) {
+								s = s.replace("\"", "").replace("'", "");
+								objs.add(s);
+							} else {
+								if ("true".equalsIgnoreCase(s)
+										|| "yes".equalsIgnoreCase(s)
+										|| "ok".equalsIgnoreCase(s)) {
+									objs.add(true);
+								} else if ("false".equalsIgnoreCase(s)
+										|| "no".equalsIgnoreCase(s)) {
+									objs.add(false);
+								} else if (StringUtils.isNumber(s)) {
+									objs.add(Double.parseDouble(s));
+								} else {
+									Object var = getVarVal(s);
+									if (var != null) {
+										objs.add(var);
+									}
+								}
+							}
+						}
+						o = ReflectorUtils.getNotPrefixInvoke(value, method,
+								objs.toArray());
+					}
+				}
 			}
 		}
 		if (o == null) {
@@ -1621,7 +1938,4 @@ public class ROCScript {
 		debug("Get var: " + o);
 		return o;
 	}
-
-
-
 }

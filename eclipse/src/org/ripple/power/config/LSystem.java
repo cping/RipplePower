@@ -35,6 +35,8 @@ import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
+	final static public ClassLoader classLoader;
+	
 	public final static String FEE = "0.012";
 
 	public final static String nativeCurrency = "xrp";
@@ -104,6 +106,7 @@ public final class LSystem {
 	private static JavaVersion _currentVersion;
 
 	static {
+		classLoader = Thread.currentThread().getContextClassLoader();
 		String os = getProperty("os.name", "Windows XP");
 		_isWindows = os.indexOf("Windows") != -1;
 		try {

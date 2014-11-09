@@ -1,7 +1,21 @@
 package org.ripple.power.utils;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+
+import org.address.collection.ArrayIterator;
+import org.address.collection.ConverterMap;
+import org.address.collection.MapArray;
+import org.ripple.power.ioc.injector.Dispose;
 
 public class CollectionUtils {
 
@@ -368,4 +382,181 @@ public class CollectionUtils {
 		System.arraycopy(obj, 0, tempArr, 0, MathUtils.min(obj.length, newSize));
 		return tempArr;
 	}
+
+	final static public Set createSet() {
+		return createSet(INITIAL_CAPACITY);
+	}
+
+	final static public Set createSet(final int size) {
+		return new HashSet(size);
+	}
+
+	final static public Set createSet(final Set set) {
+		return new HashSet(set);
+	}
+
+	final static public List createList() {
+		return createList(INITIAL_CAPACITY);
+	}
+
+	final static public List createList(int size) {
+		return size > 0 ? new ArrayList(size) : createList();
+	}
+
+	final static public ConverterMap createConverterMap() {
+		return new ConverterMap();
+	}
+
+	final static public Map createMap() {
+		return createMap(INITIAL_CAPACITY);
+	}
+
+	final static public Map createMap(final int size) {
+		return size > 0 ? new HashMap(size) : new HashMap();
+	}
+
+	final static public MapArray createArrayMap() {
+		return new MapArray();
+	}
+
+	final static public MapArray createArrayMap(final int size) {
+		return size > 0 ? new MapArray(size) : createArrayMap();
+	}
+
+	final static public Collection createCollection() {
+		return new ArrayList();
+	}
+
+	final static public Collection createCollection(int size) {
+		return size > 0 ? new ArrayList(size) : createCollection();
+	}
+
+	final static public Collection createCollection(Object object) {
+		Collection collection = createCollection();
+		collection.add(object);
+		return collection;
+	}
+
+	/**
+	 * 将数组变成字符串。
+	 * 
+	 * @param tag
+	 * @param array
+	 * @return
+	 */
+	final static public String implode(final String tag, final Object[] array) {
+		if (array == null || array.length == 0)
+			return null;
+		StringBuffer result = new StringBuffer();
+		for (Iterator it = new ArrayIterator(array); it.hasNext();) {
+			result.append(it.next());
+			result.append(tag);
+		}
+		int len = result.length();
+		result = result.delete(len - tag.length(), len);
+
+		return result.toString();
+	}
+
+	/**
+	 * 检查指定Collection是否为空
+	 * 
+	 * @param collection
+	 * @return
+	 */
+	final static public boolean isEmpty(Collection collection) {
+		return collection == null || collection.size() == 0;
+	}
+
+	/**
+	 * 检查指定Map是否为空
+	 * 
+	 * @param map
+	 * @return
+	 */
+	final static public boolean isEmpty(Map map) {
+		return map == null || map.size() == 0;
+	}
+
+	/**
+	 * 检查指定Collection中是否包含指定对象
+	 * 
+	 * @param collection
+	 * @param item
+	 * @return
+	 */
+	final static public boolean contains(Collection collection, Object item) {
+		return collection != null && collection.contains(item);
+	}
+
+	/**
+	 * 检查指定Map中是否包含指定键
+	 * 
+	 * @param collection
+	 * @param item
+	 * @return
+	 */
+	final static public boolean containsKey(Map collection, Object item) {
+		return collection != null && collection.containsKey(item);
+	}
+
+	/**
+	 * 检查指定Map中是否包含指定值
+	 * 
+	 * @param collection
+	 * @param item
+	 * @return
+	 */
+	final static public boolean containsValue(Map collection, Object item) {
+		return collection != null && collection.containsValue(item);
+	}
+
+	/**
+	 * 返回指定Collection的首元素
+	 * 
+	 * @param collection
+	 * @return
+	 */
+	final static public Object first(Collection collection) {
+		Object[] obj = collection.toArray();
+		if (obj.length > 0) {
+			return obj[0];
+		} else {
+			return null;
+		}
+	}
+
+	final static public Set synchronizedSet() {
+		return Collections.synchronizedSet(new HashSet(INITIAL_CAPACITY));
+	}
+
+	final static public List synchronizedList(final int size) {
+		return Collections.synchronizedList(createList(size));
+	}
+
+	final static public List synchronizedList() {
+		return synchronizedList(INITIAL_CAPACITY);
+	}
+
+	final static public List createList(Collection collection) {
+		return new ArrayList(collection);
+	}
+
+	final static public Collection createCollection(Object[] objects) {
+		Collection result = createCollection();
+		for (int i = 0; i < objects.length; i++) {
+			result.add(objects[i]);
+		}
+		return result;
+	}
+
+	final static public void visitor(final Collection collection,
+			final Dispose dispose) {
+		if (collection != null && dispose != null) {
+			for (Iterator it = collection.iterator(); it.hasNext();) {
+				dispose.accept(it.next());
+			}
+		}
+	}
+
 }

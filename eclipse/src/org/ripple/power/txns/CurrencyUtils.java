@@ -3,12 +3,23 @@ package org.ripple.power.txns;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
 public class CurrencyUtils {
 	private static final BigDecimal MILLION = new BigDecimal("1000000");
 
+	public static IssuedCurrency getAmount(Object jsonDenominatedAmount) {
+		if (jsonDenominatedAmount instanceof JSONObject) {
+			IssuedCurrency amount = new IssuedCurrency();
+			amount.copyFrom((JSONObject) jsonDenominatedAmount);
+			return amount;
+		} else {
+			return new IssuedCurrency((String) jsonDenominatedAmount);
+		}
+	}
+	
 	public static String toFee(String amount) {
 		if (MathUtils.isNan(amount)) {
 			long number = Long.valueOf(amount);

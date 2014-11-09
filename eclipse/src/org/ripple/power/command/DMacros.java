@@ -752,7 +752,7 @@ public class DMacros extends Conversion implements Serializable {
 			}
 
 			// 获得全行命令
-			String cmd = scriptList[offsetPos].toLowerCase().trim();
+			String cmd = scriptList[offsetPos].trim();
 
 			// 清空脚本缓存
 			if (cmd.startsWith(RESET_CACHE_TAG)) {
@@ -881,7 +881,6 @@ public class DMacros extends Conversion implements Serializable {
 
 				}
 			}
-
 			// 分支结束
 			if (cmd.startsWith(IF_END_TAG)) {
 				conditionEnvironmentList.clear();

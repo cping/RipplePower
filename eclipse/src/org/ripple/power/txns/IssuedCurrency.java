@@ -79,7 +79,7 @@ public class IssuedCurrency {
 	public IssuedCurrency(int xrpAmount) {
 		this(BigDecimal.valueOf(xrpAmount));
 	}
-
+	
 	public boolean isNative() {
 		return issuer == null;
 	}

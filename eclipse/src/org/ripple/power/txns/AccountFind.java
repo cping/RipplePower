@@ -147,7 +147,7 @@ public class AccountFind {
 			@Override
 			public void action(Object res) {
 
-				tx(address, txPreLgrSeq == -1 ? accountinfo.txPreLgrSeq : 0,
+				tx(address, txPreLgrSeq == -1 ? accountinfo.txPreLgrSeq : -1,
 						max, new Rollback() {
 
 							@Override
@@ -226,11 +226,11 @@ public class AccountFind {
 												String counterparty = null;
 												if (meta != null
 														&& meta.has("DeliveredAmount")) {
-													currency = getAmount(getObject(
+													currency = CurrencyUtils.getAmount(getObject(
 															meta,
 															"DeliveredAmount"));
 												} else {
-													currency = getAmount(getObject(
+													currency = CurrencyUtils.getAmount(getObject(
 															tx, "Amount"));
 												}
 												transactionTx.currency = currency;
@@ -274,15 +274,15 @@ public class AccountFind {
 												Object limitAmount = getObject(
 														tx, "LimitAmount");
 												if (limitAmount != null) {
-													transactionTx.currency = getAmount(limitAmount);
+													transactionTx.currency = CurrencyUtils.getAmount(limitAmount);
 													transactionTx.trusted = transactionTx.currency.issuer
 															.toString();
 												}
 												break;
 											case "OfferCreate":
-												transactionTx.get = getAmount(getObject(
+												transactionTx.get = CurrencyUtils.getAmount(getObject(
 														tx, "TakerGets"));
-												transactionTx.pay = getAmount(getObject(
+												transactionTx.pay = CurrencyUtils.getAmount(getObject(
 														tx, "TakerPays"));
 												break;
 											case "OfferCancel":
@@ -308,10 +308,10 @@ public class AccountFind {
 																	"Account");
 															if (ffactount
 																	.equals(transactionTx.account)) {
-																transactionTx.get = getAmount(getObject(
+																transactionTx.get = CurrencyUtils.getAmount(getObject(
 																		ff,
 																		"TakerGets"));
-																transactionTx.pay = getAmount(getObject(
+																transactionTx.pay = CurrencyUtils.getAmount(getObject(
 																		ff,
 																		"TakerPays"));
 															}
@@ -537,8 +537,8 @@ public class AccountFind {
 							Object taker_pays = getObject(o, "taker_pays");
 
 							BookOffer offer = new BookOffer(
-									getAmount(taker_gets),
-									getAmount(taker_pays), seq);
+									CurrencyUtils.getAmount(taker_gets),
+									CurrencyUtils.getAmount(taker_pays), seq);
 
 							accountinfo.bookOffers.add(offer);
 
@@ -586,15 +586,6 @@ public class AccountFind {
 		return accountinfo;
 	}
 
-	private IssuedCurrency getAmount(Object jsonDenominatedAmount) {
-		if (jsonDenominatedAmount instanceof JSONObject) {
-			IssuedCurrency amount = new IssuedCurrency();
-			amount.copyFrom((JSONObject) jsonDenominatedAmount);
-			return amount;
-		} else {
-			return new IssuedCurrency((String) jsonDenominatedAmount);
-		}
-	}
 
 	public void subscribe(String[] srcAddress, final Rollback back) {
 		RPClient client = RPClient.ripple();
