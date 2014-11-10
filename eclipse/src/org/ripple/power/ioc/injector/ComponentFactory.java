@@ -6,7 +6,7 @@ public interface ComponentFactory {
 
 	public AttributeInjectorBuilder createAttributeInjectorBuilder();
 
-	public ClassBind createClassBind(Class classDependency);
+	public ClassBind createClassBind(Class<?> classDependency);
 
 	public Bind createInstanceBind(Object instance);
 

@@ -1,4 +1,3 @@
-package org.ripple.power.ioc.reflect;
 /**
  * 
  * Copyright 2008 
@@ -20,11 +19,13 @@ package org.ripple.power.ioc.reflect;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.reflect;
+
 public interface Converter {
 
 	public Object convert(Object object);
 
-	public boolean supportsType(Class inputType);
+	public boolean supportsType(Class<?> inputType);
 
-	public Class getInputType();
+	public Class<?> getInputType();
 }

@@ -43,7 +43,7 @@ public class ClassMethod {
 
 	private final MapArray setterMethods = CollectionUtils.createArrayMap();
 
-	private final Set nonGetters = CollectionUtils.createSet();
+	private final Set<Object> nonGetters = CollectionUtils.createSet();
 
 	/**
 	 * 缓冲对应类数据，并设置是否保存Final方法
@@ -51,7 +51,7 @@ public class ClassMethod {
 	 * @param clazz
 	 * @param includeFinalMethods
 	 */
-	public ClassMethod(final Class clazz, final boolean includeFinalMethods) {
+	public ClassMethod(final Class<?> clazz, final boolean includeFinalMethods) {
 		processClass(clazz, includeFinalMethods);
 	}
 
@@ -61,7 +61,7 @@ public class ClassMethod {
 	 * @param clazz
 	 * @param includeFinalMethods
 	 */
-	private void processClass(final Class clazz,
+	private void processClass(final Class<?> clazz,
 			final boolean includeFinalMethods) {
 		final Method[] methods = clazz.getMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -108,7 +108,7 @@ public class ClassMethod {
 	 * 
 	 * @param clazz
 	 */
-	private void addFieldToMapping(final Class clazz) {
+	private void addFieldToMapping(final Class<?> clazz) {
 		Field[] fields = clazz.getFields();
 		for (int i = 0; i < fields.length; i++) {
 			addFieldToMapping(fields[i]);

@@ -21,11 +21,11 @@ public class IocFactory {
 		defaultContainer.stop();
 	}
 
-	public static Ioc bind(final Container container, final Class clazz) {
+	public static Ioc bind(final Container container, final Class<?> clazz) {
 		return new IocBind(container, clazz);
 	}
 
-	public static Ioc bind(final Container container, final Class clazz,
+	public static Ioc bind(final Container container, final Class<?> clazz,
 			final int model) {
 		return new IocBind(container, clazz, model);
 	}
@@ -39,7 +39,7 @@ public class IocFactory {
 	}
 
 	public static Ioc bind(final Container container, final String className,
-			final Map args) {
+			final Map<Object, Object> args) {
 		return bind(container, className, args.values().toArray());
 	}
 
@@ -52,22 +52,22 @@ public class IocFactory {
 		}
 	}
 
-	public static Ioc bind(final Container container, final Class clazz,
+	public static Ioc bind(final Container container, final Class<?> clazz,
 			final Object[] args) {
 		return new IocBind(container, clazz, args);
 	}
 
-	public static Ioc bind(final Container container, final Class clazz,
+	public static Ioc bind(final Container container, final Class<?> clazz,
 			final Object[] args, final int model) {
 		return new IocBind(container, clazz, args, model);
 	}
 
 	// ---------- 使用默认容器--------------//
-	public static Ioc bind(final Class clazz) {
+	public static Ioc bind(final Class<?> clazz) {
 		return new IocBind(defaultContainer, clazz);
 	}
 
-	public static Ioc bind(final Class clazz, final int model) {
+	public static Ioc bind(final Class<?> clazz, final int model) {
 		return new IocBind(defaultContainer, clazz, model);
 	}
 
@@ -79,7 +79,7 @@ public class IocFactory {
 		}
 	}
 
-	public static Ioc bind(final String className, final Map args) {
+	public static Ioc bind(final String className, final Map<Object,Object> args) {
 		return bind(defaultContainer, className, args.values().toArray());
 	}
 
@@ -91,11 +91,11 @@ public class IocFactory {
 		}
 	}
 
-	public static Ioc bind(final Class clazz, final Object[] args) {
+	public static Ioc bind(final Class<?> clazz, final Object[] args) {
 		return new IocBind(defaultContainer, clazz, args);
 	}
 
-	public static Ioc bind(final Class clazz, final Object[] args,
+	public static Ioc bind(final Class<?> clazz, final Object[] args,
 			final int model) {
 		return new IocBind(defaultContainer, clazz, args, model);
 	}

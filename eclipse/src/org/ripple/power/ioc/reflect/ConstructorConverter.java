@@ -1,6 +1,3 @@
-package org.ripple.power.ioc.reflect;
-
-import java.lang.reflect.Constructor;
 /**
  * 
  * Copyright 2008 
@@ -22,11 +19,15 @@ import java.lang.reflect.Constructor;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.reflect;
+
+import java.lang.reflect.Constructor;
+
 public class ConstructorConverter extends BaseConverter implements Converter {
 
-	private Constructor constructor;
+	private Constructor<?> constructor;
 
-	public ConstructorConverter(Class inputType, Constructor c) {
+	public ConstructorConverter(Class<?> inputType, Constructor<?> c) {
 		super(inputType);
 		this.constructor = c;
 	}

@@ -6,13 +6,13 @@ import org.ripple.power.utils.ReflectorUtils;
 
 public class TypeArray {
 
-	protected final Class[] types;
+	protected final Class<?>[] types;
 
 	private int hashcode;
 
 	private boolean aliased;
 
-	public TypeArray(final Class[] types) {
+	public TypeArray(final Class<?>[] types) {
 		this.types = (Class[]) (types != null ? types.clone() : new Class[0]);
 		this.hashcode = ReflectorUtils.arrayHashCode(this.types);
 	}
@@ -29,7 +29,7 @@ public class TypeArray {
 		return false;
 	}
 
-	public Class[] getParameterTypes() {
+	public Class<?>[] getParameterTypes() {
 		return (Class[]) types.clone();
 	}
 

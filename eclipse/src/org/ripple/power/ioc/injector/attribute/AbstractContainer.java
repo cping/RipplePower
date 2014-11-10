@@ -18,9 +18,9 @@ import org.ripple.power.utils.CollectionUtils;
 
 public abstract class AbstractContainer implements Container {
 
-	private Map injectors = CollectionUtils.createMap();
+	private Map<Object, Object> injectors = CollectionUtils.createMap();
 
-	private Map binds = CollectionUtils.createMap();
+	private Map<Object, Object> binds = CollectionUtils.createMap();
 
 	private Interceptor interceptor = this.createInterceptor();
 
@@ -53,16 +53,16 @@ public abstract class AbstractContainer implements Container {
 	private Object getKey(Object key) {
 
 		Object rightKey = key;
-		Collection keys = CollectionUtils.createList();
+		Collection<Object> keys = CollectionUtils.createList();
 
 		if (!binds.containsKey(key) && key instanceof Class) {
-			for (Iterator it = binds.keySet().iterator(); it.hasNext();) {
+			for (Iterator<Object> it = binds.keySet().iterator(); it.hasNext();) {
 				Object candidateKey = (Object) it.next();
 
 				if (candidateKey instanceof Class) {
 					keys
-							.add(((Class) key)
-									.isAssignableFrom((Class) candidateKey) ? candidateKey
+							.add(((Class<?>) key)
+									.isAssignableFrom((Class<?>) candidateKey) ? candidateKey
 									: key);
 				}
 			}
@@ -84,10 +84,10 @@ public abstract class AbstractContainer implements Container {
 	}
 
 	public void inject(Object target) {
-		for (Iterator it = this.injectors.keySet().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = this.injectors.keySet().iterator(); it.hasNext();) {
 			Object key = it.next();
 			if (key instanceof Class) {
-				Class classKey = (Class) key;
+				Class<?> classKey = (Class<?>) key;
 
 				if (classKey.isAssignableFrom(target.getClass())) {
 					Injector injector = getInjector(classKey);
@@ -100,10 +100,10 @@ public abstract class AbstractContainer implements Container {
 
 	public Object getAttributeValue(Object key) {
 		Object rightKey = key;
-		Collection keys = CollectionUtils.createList();
+		Collection<Object> keys = CollectionUtils.createList();
 
 		if (binds.containsKey(key)) {
-			for (Iterator it = binds.keySet().iterator(); it.hasNext();) {
+			for (Iterator<Object> it = binds.keySet().iterator(); it.hasNext();) {
 				Object candidateKey = (Object) it.next();
 				keys.add(candidateKey);
 			}
@@ -152,7 +152,7 @@ public abstract class AbstractContainer implements Container {
 		return attributeInjector;
 	}
 
-	public ClassBind addClassBind(Object key, Class classDependency) {
+	public ClassBind addClassBind(Object key, Class<?> classDependency) {
 		ClassBind dependency = new ClassBindImpl(classDependency);
 		this.addBind(key, dependency);
 		return dependency;
@@ -160,7 +160,7 @@ public abstract class AbstractContainer implements Container {
 
 	public void start() {
 		if (!this.started) {
-			for (Iterator it = binds.values().iterator(); it.hasNext();) {
+			for (Iterator<Object> it = binds.values().iterator(); it.hasNext();) {
 				Start startable = (Start) it.next();
 				startable.start();
 			}
@@ -170,7 +170,7 @@ public abstract class AbstractContainer implements Container {
 
 	public void stop() {
 		if (this.started) {
-			for (Iterator it = binds.values().iterator(); it.hasNext();) {
+			for (Iterator<Object> it = binds.values().iterator(); it.hasNext();) {
 				Start startable = (Start) it.next();
 				startable.stop();
 			}

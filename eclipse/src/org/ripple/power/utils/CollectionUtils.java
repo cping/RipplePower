@@ -383,36 +383,36 @@ public class CollectionUtils {
 		return tempArr;
 	}
 
-	final static public Set createSet() {
+	final static public Set<Object> createSet() {
 		return createSet(INITIAL_CAPACITY);
 	}
 
-	final static public Set createSet(final int size) {
-		return new HashSet(size);
+	final static public Set<Object> createSet(final int size) {
+		return new HashSet<Object>(size);
 	}
 
-	final static public Set createSet(final Set set) {
-		return new HashSet(set);
+	final static public Set<Object> createSet(final Set<?> set) {
+		return new HashSet<Object>(set);
 	}
 
-	final static public List createList() {
+	final static public List<Object> createList() {
 		return createList(INITIAL_CAPACITY);
 	}
 
-	final static public List createList(int size) {
-		return size > 0 ? new ArrayList(size) : createList();
+	final static public List<Object> createList(int size) {
+		return size > 0 ? new ArrayList<Object>(size) : createList();
 	}
 
 	final static public ConverterMap createConverterMap() {
 		return new ConverterMap();
 	}
 
-	final static public Map createMap() {
+	final static public Map<Object, Object> createMap() {
 		return createMap(INITIAL_CAPACITY);
 	}
 
-	final static public Map createMap(final int size) {
-		return size > 0 ? new HashMap(size) : new HashMap();
+	final static public Map<Object, Object> createMap(final int size) {
+		return size > 0 ? new HashMap<Object, Object>(size) : new HashMap<Object, Object>();
 	}
 
 	final static public MapArray createArrayMap() {
@@ -423,16 +423,16 @@ public class CollectionUtils {
 		return size > 0 ? new MapArray(size) : createArrayMap();
 	}
 
-	final static public Collection createCollection() {
-		return new ArrayList();
+	final static public Collection<Object> createCollection() {
+		return new ArrayList<Object>();
 	}
 
-	final static public Collection createCollection(int size) {
-		return size > 0 ? new ArrayList(size) : createCollection();
+	final static public Collection<Object> createCollection(int size) {
+		return size > 0 ? new ArrayList<Object>(size) : createCollection();
 	}
 
-	final static public Collection createCollection(Object object) {
-		Collection collection = createCollection();
+	final static public Collection<Object> createCollection(Object object) {
+		Collection<Object> collection = createCollection();
 		collection.add(object);
 		return collection;
 	}
@@ -448,7 +448,7 @@ public class CollectionUtils {
 		if (array == null || array.length == 0)
 			return null;
 		StringBuffer result = new StringBuffer();
-		for (Iterator it = new ArrayIterator(array); it.hasNext();) {
+		for (Iterator<Object> it = new ArrayIterator(array); it.hasNext();) {
 			result.append(it.next());
 			result.append(tag);
 		}
@@ -464,7 +464,7 @@ public class CollectionUtils {
 	 * @param collection
 	 * @return
 	 */
-	final static public boolean isEmpty(Collection collection) {
+	final static public boolean isEmpty(Collection<Object> collection) {
 		return collection == null || collection.size() == 0;
 	}
 
@@ -474,7 +474,7 @@ public class CollectionUtils {
 	 * @param map
 	 * @return
 	 */
-	final static public boolean isEmpty(Map map) {
+	final static public boolean isEmpty(Map<Object,Object> map) {
 		return map == null || map.size() == 0;
 	}
 
@@ -485,7 +485,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean contains(Collection collection, Object item) {
+	final static public boolean contains(Collection<Object> collection, Object item) {
 		return collection != null && collection.contains(item);
 	}
 
@@ -496,7 +496,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsKey(Map collection, Object item) {
+	final static public boolean containsKey(Map<Object,Object> collection, Object item) {
 		return collection != null && collection.containsKey(item);
 	}
 
@@ -507,7 +507,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsValue(Map collection, Object item) {
+	final static public boolean containsValue(Map<Object,Object> collection, Object item) {
 		return collection != null && collection.containsValue(item);
 	}
 
@@ -517,7 +517,7 @@ public class CollectionUtils {
 	 * @param collection
 	 * @return
 	 */
-	final static public Object first(Collection collection) {
+	final static public Object first(Collection<Object> collection) {
 		Object[] obj = collection.toArray();
 		if (obj.length > 0) {
 			return obj[0];
@@ -526,34 +526,34 @@ public class CollectionUtils {
 		}
 	}
 
-	final static public Set synchronizedSet() {
-		return Collections.synchronizedSet(new HashSet(INITIAL_CAPACITY));
+	final static public Set<Object> synchronizedSet() {
+		return Collections.synchronizedSet(new HashSet<Object>(INITIAL_CAPACITY));
 	}
 
-	final static public List synchronizedList(final int size) {
+	final static public List<Object> synchronizedList(final int size) {
 		return Collections.synchronizedList(createList(size));
 	}
 
-	final static public List synchronizedList() {
+	final static public List<Object> synchronizedList() {
 		return synchronizedList(INITIAL_CAPACITY);
 	}
 
-	final static public List createList(Collection collection) {
-		return new ArrayList(collection);
+	final static public List<Object> createList(Collection<Object> collection) {
+		return new ArrayList<Object>(collection);
 	}
 
-	final static public Collection createCollection(Object[] objects) {
-		Collection result = createCollection();
+	final static public Collection<Object> createCollection(Object[] objects) {
+		Collection<Object> result = createCollection();
 		for (int i = 0; i < objects.length; i++) {
 			result.add(objects[i]);
 		}
 		return result;
 	}
 
-	final static public void visitor(final Collection collection,
+	final static public void visitor(final Collection<Object> collection,
 			final Dispose dispose) {
 		if (collection != null && dispose != null) {
-			for (Iterator it = collection.iterator(); it.hasNext();) {
+			for (Iterator<Object> it = collection.iterator(); it.hasNext();) {
 				dispose.accept(it.next());
 			}
 		}

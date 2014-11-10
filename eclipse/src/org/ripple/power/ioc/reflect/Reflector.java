@@ -44,10 +44,10 @@ import org.ripple.power.utils.ReflectorUtils;
 
 final public class Reflector {
 
-	private static final Map reflectorMap = Collections
-			.synchronizedMap(new HashMap(1000));
+	private static final Map<Object,Object> reflectorMap = Collections
+			.synchronizedMap(new HashMap<Object,Object>(1000));
 
-	private Class clazz;
+	private Class<?> clazz;
 
 	private MapArray invokables;
 
@@ -67,7 +67,7 @@ final public class Reflector {
 	 * @param clazz
 	 * @return
 	 */
-	public static Reflector getReflector(final Class clazz) {
+	public static Reflector getReflector(final Class<?> clazz) {
 		Reflector reflector = (Reflector) reflectorMap.get(clazz);
 		if (reflector == null) {
 			reflector = new Reflector(clazz);
@@ -111,7 +111,7 @@ final public class Reflector {
 	 * 
 	 * @param clazz
 	 */
-	private Reflector(Class clazz) {
+	private Reflector(Class<?> clazz) {
 		super();
 		this.clazz = clazz;
 		reflect();
@@ -148,7 +148,7 @@ final public class Reflector {
 	}
 
 	private void reflectConstructors() {
-		Constructor[] c = clazz.getConstructors();
+		Constructor<?>[] c = clazz.getConstructors();
 		int size = c.length;
 		for (int i = 0; i < size; i++) {
 			invokables.put(TypeArrays.getNamedTypeArray(c[i]), c[i]);
@@ -178,7 +178,7 @@ final public class Reflector {
 	 * @param throwException
 	 * @return
 	 */
-	public Method lookupMethod(String name, Class[] parameterTypes,
+	public Method lookupMethod(String name, Class<?>[] parameterTypes,
 			ConverterMap converterMap, boolean throwException) {
 		TypeArrays desired = new TypeArrays(name, parameterTypes);
 		Object value = invokables.get(desired);
@@ -195,7 +195,7 @@ final public class Reflector {
 	 * @param parameters
 	 * @return
 	 */
-	public Method lookupMethod(String name, Class[] parameters) {
+	public Method lookupMethod(String name, Class<?>[] parameters) {
 		Method method = lookupMethod(name, ReflectorUtils
 				.parameterToTypeArray(parameters), ReflectorUtils.converterMap,
 				true);
@@ -210,15 +210,15 @@ final public class Reflector {
 	 * @param throwException
 	 * @return
 	 */
-	public Constructor lookupConstructor(Class[] parameterTypes,
+	public Constructor<?> lookupConstructor(Class<?>[] parameterTypes,
 			ConverterMap converterMap, boolean throwException) {
 		TypeArrays desired = new TypeArrays(TypeArrays.CONSTRUCTOR_METHOD_NAME,
 				parameterTypes);
 		Object object = invokables.get(desired);
 		if (object != null) {
-			return (Constructor) object;
+			return (Constructor<?>) object;
 		}
-		return (Constructor) lookupInvokable(desired, converterMap,
+		return (Constructor<?>) lookupInvokable(desired, converterMap,
 				throwException);
 
 	}
@@ -228,7 +228,7 @@ final public class Reflector {
 	 * 
 	 * @return
 	 */
-	public Set getFields() {
+	public Set<Object> getFields() {
 		return ReflectorUtils.getFields(clazz);
 	}
 
@@ -240,7 +240,7 @@ final public class Reflector {
 	 * @return
 	 * @throws Exception
 	 */
-	public int compareTypes(Class[] appleParams, Class[] orangeParams)
+	public int compareTypes(Class<?>[] appleParams, Class<?>[] orangeParams)
 			throws Exception {
 		Boolean chose = null;
 		for (int i = 0; i < appleParams.length; i++) {
@@ -274,6 +274,7 @@ final public class Reflector {
 		Invokable candidate = null;
 		Invokable current = null;
 		TypeArrays currentDescriptor = null;
+		@SuppressWarnings("unchecked")
 		TypeArrays[] ntarrays = (TypeArrays[]) invokables.keySet().toArray(
 				new TypeArrays[invokables.size()]);
 		for (int i = 0; i < ntarrays.length; i++) {
@@ -332,10 +333,10 @@ final public class Reflector {
 	 * @param objClass
 	 * @return
 	 */
-	public boolean isImplInterface(Class objClass) {
+	public boolean isImplInterface(Class<?> objClass) {
 		Object[] names = ReflectorUtils.getInterfaceToObjects(clazz);
 		if (names != null && names.length > 0) {
-			for (Iterator it = new ArrayIterator(names); it.hasNext();) {
+			for (Iterator<Object> it = new ArrayIterator(names); it.hasNext();) {
 				String name = it.next().toString();
 				if (name.equalsIgnoreCase(objClass.getName())) {
 					return true;
@@ -352,7 +353,7 @@ final public class Reflector {
 	 * @param types
 	 * @return
 	 */
-	public boolean methodExists(String name, Class[] types) {
+	public boolean methodExists(String name, Class<?>[] types) {
 		return (lookupMethod(name, types, ReflectorUtils.converterMap, false) != null);
 	}
 
@@ -362,7 +363,7 @@ final public class Reflector {
 	 * @param types
 	 * @return
 	 */
-	public boolean constructorExists(Class[] types) {
+	public boolean constructorExists(Class<?>[] types) {
 		return (lookupConstructor(types, ReflectorUtils.converterMap, false) != null);
 	}
 
@@ -455,7 +456,7 @@ final public class Reflector {
 	 * @param beanProperty
 	 * @return
 	 */
-	final static public Object[] doStaticInvokeMatch(final Class clazz,
+	final static public Object[] doStaticInvokeMatch(final Class<?> clazz,
 			final String beanProperty) {
 		Object[] result = new Object[2];
 		String nowPropertyName = ReflectorUtils.initialUppercase(beanProperty);
@@ -497,7 +498,7 @@ final public class Reflector {
 	public static void doStaticInvoke(final Object object,
 			final String beanProperty, final Object parameters) {
 		Reflector reflector = Reflector.getReflector(object);
-		Class clazz = reflector.getReflectedClass();
+		Class<?> clazz = reflector.getReflectedClass();
 		String keyName = ReflectorUtils.getMatchSetMethod(clazz, beanProperty);
 		Object beanObject = ReflectorUtils.doSetMethod(clazz, keyName);
 		Object[] nowParameters = new Object[1];
@@ -553,7 +554,7 @@ final public class Reflector {
 	 * @return
 	 */
 	public Object newInstance(Object[] args) {
-		Constructor constructor = lookupConstructor(ReflectorUtils
+		Constructor<?> constructor = lookupConstructor(ReflectorUtils
 				.parameterToTypeArray(args), ReflectorUtils.converterMap, true);
 		Object[] parametersToUse = ReflectorUtils.converterMap
 				.convertParameters(constructor.getParameterTypes(), args);
@@ -578,7 +579,7 @@ final public class Reflector {
 	 * 
 	 * @return
 	 */
-	public Class getReflectedClass() {
+	public Class<?> getReflectedClass() {
 		return clazz;
 	}
 }

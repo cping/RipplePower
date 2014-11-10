@@ -19,19 +19,19 @@ final public class IocBind implements Ioc {
 
 	private int model = 0;
 
-	IocBind(final Container container, final Class clazz) {
+	IocBind(final Container container, final Class<?> clazz) {
 		this(container, clazz, 0);
 	}
 
-	IocBind(final Container container, final Class clazz, final int model) {
+	IocBind(final Container container, final Class<?> clazz, final int model) {
 		this(container, clazz, null, 0);
 	}
 
-	IocBind(final Container container, final Class clazz, final Object[] args) {
+	IocBind(final Container container, final Class<?> clazz, final Object[] args) {
 		this(container, clazz, args, 0);
 	}
 
-	IocBind(final Container container, final Class clazz, final Object[] args,
+	IocBind(final Container container, final Class<? extends Object> clazz, final Object[] args,
 			final int model) {
 		this.container = container;
 		this.reflector = Reflector.getReflector(clazz);
@@ -52,7 +52,7 @@ final public class IocBind implements Ioc {
 		if (source == null) {
 			throw new RuntimeException("!");
 		}
-		Class clazz = source.getClass();
+		Class<? extends Object> clazz = source.getClass();
 		this.container = container;
 		this.reflector = Reflector.getReflector(clazz);
 		this.object = source;
@@ -78,7 +78,7 @@ final public class IocBind implements Ioc {
 		return ioc;
 	}
 
-	public Set getFeilds() {
+	public Set<Object> getFeilds() {
 		return reflector.getFields();
 	}
 
@@ -91,7 +91,7 @@ final public class IocBind implements Ioc {
 		}
 	}
 
-	public boolean isImplInterface(final Class clazz) {
+	public boolean isImplInterface(final Class<?> clazz) {
 		return reflector.isImplInterface(clazz);
 	}
 

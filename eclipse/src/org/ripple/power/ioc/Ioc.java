@@ -11,7 +11,7 @@ public interface Ioc extends IControl {
 	 * 
 	 * @return
 	 */
-	public Set getFeilds();
+	public Set<Object> getFeilds();
 
 	/**
 	 * 获得一个指定的Feild数值
@@ -27,7 +27,7 @@ public interface Ioc extends IControl {
 	 * @param clazz
 	 * @return
 	 */
-	public boolean isImplInterface(final Class clazz);
+	public boolean isImplInterface(final Class<?> clazz);
 
 	/**
 	 * 检查当前Ioc对象是否为指定接口的实现

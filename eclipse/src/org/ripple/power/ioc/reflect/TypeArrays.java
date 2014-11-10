@@ -18,16 +18,16 @@ public class TypeArrays extends TypeArray {
 		return new TypeArrays(method, method.getParameterTypes());
 	}
 
-	public static TypeArrays getNamedTypeArray(Constructor constructor) {
+	public static TypeArrays getNamedTypeArray(Constructor<?> constructor) {
 		return new TypeArrays(CONSTRUCTOR_METHOD_NAME, constructor
 				.getParameterTypes());
 	}
 
-	public TypeArrays(Method method, Class[] types) {
+	public TypeArrays(Method method, Class<?>[] types) {
 		this(ReflectorUtils.getMethodName(method), types);
 	}
 
-	public TypeArrays(String methodName, Class[] types) {
+	public TypeArrays(String methodName, Class<?>[] types) {
 		super(types);
 		this.name = methodName;
 		this.hashCode = ((super.hashCode() * 17) + (name.hashCode() * 31));

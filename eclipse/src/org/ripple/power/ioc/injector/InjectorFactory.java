@@ -13,7 +13,7 @@ public class InjectorFactory {
 		return new DefaultContainer();
 	}
 
-	public static ClassBindImpl createClassDependency(Class classDependency) {
+	public static ClassBindImpl createClassDependency(Class<?> classDependency) {
 		return new ClassBindImpl(classDependency);
 	}
 	

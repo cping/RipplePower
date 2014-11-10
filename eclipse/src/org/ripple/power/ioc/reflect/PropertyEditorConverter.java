@@ -1,6 +1,3 @@
-package org.ripple.power.ioc.reflect;
-
-import java.beans.PropertyEditor;
 /**
  * 
  * Copyright 2008 
@@ -22,8 +19,11 @@ import java.beans.PropertyEditor;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.reflect;
+
+import java.beans.PropertyEditor;
+
 public class PropertyEditorConverter extends BaseConverter implements Converter {
-	
 
 	private PropertyEditor editor;
 

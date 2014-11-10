@@ -1,6 +1,3 @@
-package org.ripple.power.ioc.injector;
-
-import java.util.Stack;
 /**
  * 
  * Copyright 2008 
@@ -22,15 +19,19 @@ import java.util.Stack;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.injector;
+
+import java.util.Stack;
+
 
 public class BindInterceptor implements Interceptor {
 
-	private static ThreadLocal threadLocal = new ThreadLocal();
+	private static ThreadLocal<Stack<Object>> threadLocal = new ThreadLocal<Stack<Object>>();
 
 	public void before(Object key) {
-		Stack stack = getStack();
+		Stack<Object> stack = getStack();
 		if (stack == null) {
-			stack = new Stack();
+			stack = new Stack<Object>();
 			stack.push(key);
 			threadLocal.set(stack);
 		}
@@ -41,17 +42,17 @@ public class BindInterceptor implements Interceptor {
 
 
 	public void after(Object key) {
-		Stack stack = getStack();
+		Stack<Object> stack = getStack();
 		stack.pop();
 	}
 
-	private Stack getStack() {
-		return (Stack) threadLocal.get();
+	private Stack<Object> getStack() {
+		return (Stack<Object>) threadLocal.get();
 	}
 	
 	
 	public void clear() {
-		Stack stack = getStack();
+		Stack<?> stack = getStack();
 		if (stack != null) {			
 			stack.clear();
 		}

@@ -9,7 +9,7 @@ public class DefaultComponentFactory implements ComponentFactory {
 		return InjectorFactory.createAttributeInjectorBuilder();
 	}
 
-	public ClassBind createClassBind(Class classDependency) {
+	public ClassBind createClassBind(Class<?> classDependency) {
 		return InjectorFactory.createClassDependency(classDependency);
 	}
 

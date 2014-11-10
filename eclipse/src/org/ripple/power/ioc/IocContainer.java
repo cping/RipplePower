@@ -10,14 +10,14 @@ public class IocContainer {
 
 	final Container defaultContainer;
 
-	final Set args;
+	final Set<Object> args;
 
 	public IocContainer() {
 		defaultContainer = InjectorFactory.createContainer();
-		args = new HashSet(20);
+		args = new HashSet<Object>(20);
 	}
 
-	public Object getInstance(Class clazz) {
+	public Object getInstance(Class<?> clazz) {
 		return defaultContainer.getInstance(clazz);
 	}
 
@@ -29,11 +29,11 @@ public class IocContainer {
 		args.clear();
 	}
 
-	public void addConstructor(Class clazz) {
+	public void addConstructor(Class<?> clazz) {
 		IocFactory.bind(defaultContainer, clazz, args.toArray());
 	}
 
-	public void addConstructor(Class clazz, Object[] args) {
+	public void addConstructor(Class<?> clazz, Object[] args) {
 		IocFactory.bind(defaultContainer, clazz, args);
 	}
 

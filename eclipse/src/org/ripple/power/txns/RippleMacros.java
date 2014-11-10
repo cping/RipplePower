@@ -70,11 +70,15 @@ public class RippleMacros extends AMacros {
 
 	private final int OFFER_PRICE = 13;
 
+	private final int CONVERT_PRICE = 14;
+
 	public RippleMacros() {
-		super("ripple.", new String[] { "ping", "server_info", "server_state",
-				"account_info", "account_lines", "account_offers",
-				"account_tx", "transaction_entry", "tx", "tx_history", "send",
-				"offer_create", "offer_cancel", "offer_price" });
+		super("ripple.",
+				new String[] { "ping", "server_info", "server_state",
+						"account_info", "account_lines", "account_offers",
+						"account_tx", "transaction_entry", "tx", "tx_history",
+						"send", "offer_create", "offer_cancel", "offer_price",
+						"convert_price" });
 	}
 
 	@Override
@@ -156,16 +160,15 @@ public class RippleMacros extends AMacros {
 								}
 							});
 				}
+				return;
 			} else if (type == OFFER_PRICE) {
 				if (size == 4) {
-
 					String address = list.get(1);
 					final String seller = list.get(2);
 					final String buyer = list.get(3);
 					address = getAddress(address);
-					System.out.println("FFF" + address);
-					if (address == null) {
 
+					if (address == null) {
 						return;
 					}
 					setSyncing(type, true);
@@ -214,6 +217,31 @@ public class RippleMacros extends AMacros {
 					}, false);
 
 				}
+				return;
+			} else if (type == CONVERT_PRICE) {
+				if (size == 4) {
+					setSyncing(type, true);
+					String amount = list.get(1);
+					if (StringUtils.isNumber(amount)) {
+						String cur1 = list.get(2);
+						String cur2 = list.get(3);
+						String result = OfferPrice.getMoneyConvert(amount,
+								cur1, cur2);
+						if (StringUtils.isNumber(result)) {
+							setVar(type, Double.parseDouble(result));
+						} else {
+							setVar(type, result);
+						}
+						log(type,
+								String.format("%s/%s == %s/%s", amount,
+										cur1.toUpperCase(), result,
+										cur2.toUpperCase()));
+					} else {
+						error(new Exception("Invalid Conversion Amount"));
+					}
+					setSyncing(type, false);
+				}
+				return;
 			}
 			switch (size) {
 			case 1:

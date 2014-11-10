@@ -1,8 +1,3 @@
-package org.ripple.power.ioc.reflect;
-
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 /**
  * 
  * Copyright 2008 - 2009
@@ -24,25 +19,31 @@ import java.lang.reflect.Method;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.reflect;
+
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 
 class Invokable extends Object {
 
 	private final Method _method;
-	private final Constructor _constructor;
+	private final Constructor<?> _constructor;
 	
 	public Invokable(AccessibleObject accessibleObject) {
 		if (accessibleObject instanceof Method) {
 			this._method = (Method)accessibleObject;
 			this._constructor = null;
 		} else if (accessibleObject instanceof Constructor) {
-			this._constructor = (Constructor)accessibleObject;
+			this._constructor = (Constructor<?>)accessibleObject;
 			this._method = null;
 		} else {
 			throw new IllegalArgumentException(accessibleObject + " is not a Constructor or Method");
 		}
 	}
 	
-	public Class[] getParameterTypes() {
+	public Class<?>[] getParameterTypes() {
 		if (_method != null) {
 			return _method.getParameterTypes();
 		} else {
@@ -50,7 +51,7 @@ class Invokable extends Object {
 		}
 	}
 	
-	public Class getDeclaringClass() {
+	public Class<?> getDeclaringClass() {
 		if (_method != null) {
 			return _method.getDeclaringClass();
 		} else {

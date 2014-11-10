@@ -10,13 +10,13 @@ public class AutoKeyAttributeInjector extends AttributeAbstractInjector {
 		super(reflector, attributeName);
 	}
 
-	private Class inspect(Object target) {
+	private Class<?> inspect(Object target) {
 		return ReflectorUtils.getParameterType(target.getClass(),
 				this.attributeName, "set");
 	}
 
 	protected Object getInstance(Container container, Object target) {
-		Class key = inspect(target);
+		Class<?> key = inspect(target);
 		return container.getInstance(key);
 	}
 

@@ -21,7 +21,7 @@ public class ROCScript {
 
 	private DMacros macros_executer = null;
 
-	private IMacros macros_listener;
+	private ArrayList<IMacros> macros_listeners = new ArrayList<IMacros>(10);
 
 	private final IScriptLog scriptLog;
 
@@ -497,8 +497,30 @@ public class ROCScript {
 		macrosCommand(this.item, this.textLine);
 	}
 
-	public void setMacrosListener(IMacros listener) {
-		this.macros_listener = listener;
+	public void setMacrosListener(ArrayList<IMacros> list) {
+		if (list == null) {
+			return;
+		}
+		this.macros_listeners = list;
+	}
+
+	public void setMacrosListener(IMacros... args) {
+		if (args == null) {
+			return;
+		}
+		for (int i = 0; i < args.length; i++) {
+			this.macros_listeners.add(args[i]);
+		}
+	}
+
+	public void setMacrosListener(IMacros macros) {
+		addMacrosListener(macros);
+	}
+
+	public void addMacrosListener(IMacros macros) {
+		if (this.macros_listeners != null && macros != null) {
+			this.macros_listeners.add(macros);
+		}
 	}
 
 	private void macrosCommand(String context, int id) {
@@ -521,14 +543,16 @@ public class ROCScript {
 			if (result == null) {
 				continue;
 			}
-			if (macros_listener != null) {
-				macros_listener.call(scriptLog, textLine, macros_executer,
-						result);
-				if (waitMacros) {
-					for (; macros_listener.isSyncing();) {
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
+			if (macros_listeners != null) {
+				for (IMacros macros_listener : macros_listeners) {
+					macros_listener.call(scriptLog, textLine, macros_executer,
+							result);
+					if (waitMacros) {
+						for (; macros_listener.isSyncing();) {
+							try {
+								Thread.sleep(1);
+							} catch (InterruptedException e) {
+							}
 						}
 					}
 				}
@@ -1932,7 +1956,7 @@ public class ROCScript {
 				}
 			}
 		}
-		if (vname.indexOf('.') != -1) {
+		if (vname.indexOf('.') != -1 && o == null) {
 			o = "unkown";
 		} else if (o == null) {
 			handleError(UNKOWN);

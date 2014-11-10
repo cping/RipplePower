@@ -42,6 +42,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.address.collection.ConverterMap;
+import org.address.collection.MapArray;
 import org.ripple.power.ioc.ClassUtils;
 import org.ripple.power.ioc.reflect.ClassConverter;
 import org.ripple.power.ioc.reflect.Reflector;
@@ -53,9 +54,9 @@ public class ReflectorUtils {
 	final static public ConverterMap converterMap = CollectionUtils
 			.createConverterMap();
 
-	final static private Map interfaceMap = CollectionUtils.createMap();
+	final static private Map<Object, Object> interfaceMap = CollectionUtils.createMap();
 
-	final static private Class[] EMPTY_CLASS = new Class[0];
+	final static private Class<?>[] EMPTY_CLASS = new Class[0];
 
 	final static private Object[] EMPTY_OBJECT = new Object[0];
 
@@ -63,11 +64,11 @@ public class ReflectorUtils {
 		converterMap.store(Class.class, new ClassConverter());
 	}
 
-	final static public Object newInstance(final Class targetClass) {
+	final static public Object newInstance(final Class<?> targetClass) {
 		return Reflector.getReflector(targetClass).newInstance();
 	}
 
-	final static public Object getInvoke(Class clazz, String name) {
+	final static public Object getInvoke(Class<?> clazz, String name) {
 		String nfieldName = name.substring(0, 1).toUpperCase()
 				+ name.substring(1);
 		return getNotPrefixInvoke(clazz, ("get" + nfieldName).intern());
@@ -81,7 +82,7 @@ public class ReflectorUtils {
 
 	}
 
-	final static public Object getNotPrefixInvoke(Class clazz, String name) {
+	final static public Object getNotPrefixInvoke(Class<?> clazz, String name) {
 		Reflector reflector = Reflector.getReflector(clazz);
 		try {
 			return reflector.doInvoke(name, null);
@@ -109,18 +110,18 @@ public class ReflectorUtils {
 		}
 	}
 
-	public static Class getParameterType(Class targetClass,
+	public static Class<?> getParameterType(Class<?> targetClass,
 			String attributeName, String preffix) {
 		String setName = preffix + initialUppercase(attributeName);
-		Collection methods = CollectionUtils.createCollection(targetClass
+		Collection<Object> methods = CollectionUtils.createCollection(targetClass
 				.getMethods());
-		for (Iterator it = methods.iterator(); it.hasNext();) {
+		for (Iterator<Object> it = methods.iterator(); it.hasNext();) {
 			Method method = (Method) it.next();
 			if (setName.equals(method.getName())
 					&& method.getParameterTypes().length == 1) {
-				Collection collection = CollectionUtils.createCollection(method
+				Collection<Object> collection = CollectionUtils.createCollection(method
 						.getParameterTypes());
-				return (Class) CollectionUtils.first(collection);
+				return (Class<?>) CollectionUtils.first(collection);
 			}
 		}
 		return null;
@@ -164,8 +165,8 @@ public class ReflectorUtils {
 
 	public void setField(final Object object, final String name,
 			final Object value) throws Exception {
-		Class clazz = object.getClass();
-		Map fields = ClassUtils.getFieldInspector(clazz).getFields();
+		Class<?> clazz = object.getClass();
+		MapArray fields = ClassUtils.getFieldInspector(clazz).getFields();
 		Field field = (Field) fields.get(name);
 		Object[] parameters = new Object[] { value };
 		try {
@@ -173,7 +174,7 @@ public class ReflectorUtils {
 		} catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
-		Class[] targetType = new Class[] { field.getType() };
+		Class<?>[] targetType = new Class[] { field.getType() };
 		Object[] valueToUse = ReflectorUtils.converterMap.convertParameters(
 				targetType, parameters);
 		try {
@@ -185,21 +186,21 @@ public class ReflectorUtils {
 
 	final public static Object getField(final Object object, final String name)
 			throws IllegalArgumentException, IllegalAccessException {
-		Class clazz = object.getClass();
-		Map fields = ClassUtils.getFieldInspector(clazz).getFields();
+		Class<?> clazz = object.getClass();
+		MapArray fields = ClassUtils.getFieldInspector(clazz).getFields();
 		Field field = (Field) fields.get(name);
 		return field.get(object);
 	}
 
-	public static boolean isImplInterface(Class classSource, Class target) {
+	public static boolean isImplInterface(Class<?> classSource, Class<?> target) {
 		return Reflector.getReflector(classSource).isImplInterface(target);
 	}
 
-	public static Class[] parameterToTypeArray(Object[] parameters) {
+	public static Class<?>[] parameterToTypeArray(Object[] parameters) {
 		if (parameters == null) {
 			return null;
 		}
-		Class[] types = new Class[parameters.length];
+		Class<?>[] types = new Class[parameters.length];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = (parameters[i] != null ? parameters[i].getClass() : null);
 		}
@@ -210,18 +211,17 @@ public class ReflectorUtils {
 		return beanName.endsWith(FAIL_TAG);
 	}
 
-	public static Object invokeContructor(Class clazz, Collection instances) {
+	public static Object invokeContructor(Class<?> clazz, Collection<Object> instances) {
 		return getReturnObjects(clazz, instances != null ? instances.toArray()
 				: null);
 	}
 
-	final public static Object getReturnObject(Class methodType, Object value) {
-
+	final public static Object getReturnObject(Class<?> methodType, Object value) {
 		return getReturnObject(FileUtils.getExtension(methodType.getName()),
 				value);
 	}
 
-	final public static Object getReturnObjects(Class methodType, Object[] value) {
+	final public static Object getReturnObjects(Class<?> methodType, Object[] value) {
 		return getReturnObjects(FileUtils.getExtension(methodType.getName()),
 				value);
 	}
@@ -857,11 +857,11 @@ public class ReflectorUtils {
 		return offset;
 	}
 
-	final static public Set getMethodNames(Class clazz) {
+	final static public Set<Object> getMethodNames(Class clazz) {
 		return ClassUtils.getFieldInspector(clazz).getMethods().keySet();
 	}
 
-	final static public Set getFields(Class clazz) {
+	final static public Set<Object> getFields(Class clazz) {
 		return ClassUtils.getFieldInspector(clazz).getFields().keySet();
 	}
 

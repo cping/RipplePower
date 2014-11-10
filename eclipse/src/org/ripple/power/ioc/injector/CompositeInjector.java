@@ -7,17 +7,17 @@ import org.ripple.power.utils.CollectionUtils;
 
 public class CompositeInjector implements Injector {
 
-	private Collection injectors = CollectionUtils.createCollection();
+	private Collection<Object> injectors = CollectionUtils.createCollection();
 
 	public void inject(Container container, Object target) {
-		for (Iterator it = injectors.iterator(); it.hasNext();) {
+		for (Iterator<Object> it = injectors.iterator(); it.hasNext();) {
 			Injector injector = (Injector) it.next();
 
 			injector.inject(container, target);
 		}
 	}
 	
-	public Collection injects() {
+	public Collection<Object> injects() {
 	          return injectors;
 	}
 

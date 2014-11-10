@@ -1,4 +1,3 @@
-package org.ripple.power.ioc.reflect;
 /**
  * 
  * Copyright 2008 
@@ -20,11 +19,13 @@ package org.ripple.power.ioc.reflect;
  * @email：ceponline@yahoo.com.cn 
  * @version 0.1
  */
+package org.ripple.power.ioc.reflect;
+
 public abstract class BaseConverter implements Converter {
 
-	protected final Class inputType;
+	protected final Class<?> inputType;
 
-	protected BaseConverter(Class inputType) {
+	protected BaseConverter(Class<?> inputType) {
 		this.inputType = inputType;
 	}
 
@@ -41,11 +42,11 @@ public abstract class BaseConverter implements Converter {
 
 	protected abstract Object doConversion(Object input);
 
-	public boolean supportsType(Class type) {
+	public boolean supportsType(Class<?> type) {
 		return (inputType.isAssignableFrom(type));
 	}
 
-	public Class getInputType() {
+	public Class<?> getInputType() {
 		return inputType;
 	}
 }

@@ -1,6 +1,3 @@
-package org.ripple.power.ioc.injector;
-
-import org.ripple.power.ioc.injector.attribute.AttributeInjectorBuilder;
 
 /**
  * 
@@ -24,6 +21,10 @@ import org.ripple.power.ioc.injector.attribute.AttributeInjectorBuilder;
  * @version 0.1
  */
 
+package org.ripple.power.ioc.injector;
+
+import org.ripple.power.ioc.injector.attribute.AttributeInjectorBuilder;
+
 public interface Container extends Start {
 
 	public void inject(Object key, Object target);
@@ -42,7 +43,7 @@ public interface Container extends Start {
 
 	public AttributeInjectorBuilder addAttributeInjector(Object key);
 
-	public ClassBind addClassBind(Object key, Class classDependecy);
+	public ClassBind addClassBind(Object key, Class<?> classDependecy);
 
 	public Bind getBind(Object key);
 }
