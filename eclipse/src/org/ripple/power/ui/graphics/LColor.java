@@ -8,31 +8,79 @@ public class LColor extends Color {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static LColor white = new LColor(255, 255, 255);
+	public final static LColor silver = new LColor(0xffc0c0c0);
 
-	public final static LColor lightGray = new LColor(192, 192, 192);
+	public final static LColor lightBlue = new LColor(0xffadd8e6);
 
-	public final static LColor gray = new LColor(128, 128, 128);
+	public final static LColor lightCoral = new LColor(0xfff08080);
 
-	public final static LColor darkGray = new LColor(64, 64, 64);
+	public final static LColor lightCyan = new LColor(0xffe0ffff);
 
-	public final static LColor black = new LColor(0, 0, 0);
+	public final static LColor lightGoldenrodYellow = new LColor(0xfffafad2);
 
-	public final static LColor red = new LColor(255, 0, 0);
+	public final static LColor lightGreen = new LColor(0xff90ee90);
 
-	public final static LColor pink = new LColor(255, 175, 175);
+	public final static LColor lightPink = new LColor(0xffffb6c1);
 
-	public final static LColor orange = new LColor(255, 200, 0);
+	public final static LColor lightSalmon = new LColor(0xffffa07a);
 
-	public final static LColor yellow = new LColor(255, 255, 0);
+	public final static LColor lightSeaGreen = new LColor(0xff20b2aa);
 
-	public final static LColor green = new LColor(0, 255, 0);
+	public final static LColor lightSkyBlue = new LColor(0xff87cefa);
 
-	public final static LColor magenta = new LColor(255, 0, 255);
+	public final static LColor lightSlateGray = new LColor(0xff778899);
 
-	public final static LColor cyan = new LColor(0, 255, 255);
+	public final static LColor lightSteelBlue = new LColor(0xffb0c4de);
 
-	public final static LColor blue = new LColor(0, 0, 255);
+	public final static LColor lightYellow = new LColor(0xffffffe0);
+
+	public final static LColor lime = new LColor(0xff00ff00);
+
+	public final static LColor limeGreen = new LColor(0xff32cd32);
+
+	public final static LColor linen = new LColor(0xfffaf0e6);
+
+	public final static LColor maroon = new LColor(0xff800000);
+
+	public final static LColor mediumAquamarine = new LColor(0xff66cdaa);
+
+	public final static LColor mediumBlue = new LColor(0xff0000cd);
+
+	public final static LColor purple = new LColor(0xff800080);
+
+	public final static LColor wheat = new LColor(0xfff5deb3);
+
+	public final static LColor gold = new LColor(0xffffd700);
+
+	public static final LColor white = new LColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	public static final LColor yellow = new LColor(1.0f, 1.0f, 0.0f, 1.0f);
+
+	public static final LColor red = new LColor(1.0f, 0.0f, 0.0f, 1.0f);
+
+	public static final LColor blue = new LColor(0.0f, 0.0f, 1.0f, 1.0f);
+
+	public static final LColor cornFlowerBlue = new LColor(0.4f, 0.6f, 0.9f,
+			1.0f);
+
+	public static final LColor green = new LColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+	public static final LColor black = new LColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	public static final LColor gray = new LColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+	public static final LColor cyan = new LColor(0.0f, 1.0f, 1.0f, 1.0f);
+
+	public static final LColor darkGray = new LColor(0.3f, 0.3f, 0.3f, 1.0f);
+
+	public static final LColor lightGray = new LColor(0.7f, 0.7f, 0.7f, 1.0f);
+
+	public final static LColor pink = new LColor(1.0f, 0.7f, 0.7f, 1.0f);
+
+	public final static LColor orange = new LColor(1.0f, 0.8f, 0.0f, 1.0f);
+
+	public final static LColor magenta = new LColor(1.0f, 0.0f, 1.0f, 1.0f);
+
 
 	public final static int transparent = 0xff000000;
 	

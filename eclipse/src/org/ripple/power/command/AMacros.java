@@ -19,7 +19,7 @@ public abstract class AMacros implements IMacros {
 
 	protected void error(Exception ex) {
 		if (log != null) {
-			log.err("line: %s\nexception: %s", line, ex.getMessage());
+			log.err("line: %s\nexception: %s\n", line, ex.getMessage());
 		}
 	}
 
@@ -47,9 +47,8 @@ public abstract class AMacros implements IMacros {
 	}
 
 	protected void log(int type, JSONObject res) {
-		if (log != null && res != null) {
-			log.info(clazz + getCommandName(type));
-			log.info(res.toString());
+		if (res != null) {
+			log(type, res.toString());
 		}
 	}
 
@@ -57,6 +56,7 @@ public abstract class AMacros implements IMacros {
 		if (log != null && message != null) {
 			log.info(clazz + getCommandName(type));
 			log.info(message);
+			log.newline();
 		}
 	}
 
@@ -103,7 +103,7 @@ public abstract class AMacros implements IMacros {
 	protected void setVar(int type, Object value) {
 		setVar(type, null, value, true);
 	}
-	
+
 	protected void setVar(int type, String key, Object value, boolean useThis) {
 		if (macros != null) {
 			if (useThis) {

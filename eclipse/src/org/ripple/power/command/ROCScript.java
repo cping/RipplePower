@@ -57,9 +57,13 @@ public class ROCScript {
 		errors[EXPERR] = "For if, while and for";
 		errors[FILEIOERROR] = "Can't load file";
 		errors[UNKNOWN] = "Unknown error";
-		throw new ScriptException(errors[error] + ": " + textIdx
-				+ "\nLine number: " + textLine + "\nItem: " + item
-				+ "\nItem Type: " + itemType + "\ncommType: " + commType);
+		String err = errors[error] + ": " + textIdx + "\nLine number: "
+				+ textLine + "\nItem: " + item + "\nItem Type: " + itemType
+				+ "\ncommType: " + commType;
+		if (scriptLog != null) {
+			scriptLog.err(err);
+		}
+		throw new ScriptException(err);
 	}
 
 	private final static int MAX_TEXT_SIZE = 65535;
@@ -96,6 +100,7 @@ public class ROCScript {
 	private final int FUNCTION = 11;
 	// 延迟
 	private final int WAIT = 12;
+	private final int PRINTLN = 13;
 
 	// 错误
 	private final int SYNTAX = 0;
@@ -169,7 +174,8 @@ public class ROCScript {
 	private final String selectOps[] = { "and", "or", "not", "xor", "xand" };
 
 	private String[] commTable = { "", "print", "input", "return", "then",
-			"end", "begin", "else", "if", "for", "while", "function", "wait" };
+			"end", "begin", "else", "if", "for", "while", "function", "wait",
+			"println" };
 
 	private String[] macros = { "{", "}" };
 
@@ -257,6 +263,51 @@ public class ROCScript {
 		}
 	}
 
+	private void splitFlag(String src, StringBuffer out, char flag) {
+		char[] chars = src.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			char ch = chars[i];
+			if (ch == flag) {
+				out.append(flag);
+				if (i + 1 < chars.length && chars[i + 1] != '\n') {
+					out.append(LSystem.LS);
+				}
+			} else {
+				out.append(ch);
+			}
+		}
+	}
+
+	private String filtrScript(String script){
+		StringBuffer out = new StringBuffer();
+		String[] context = script.split("[\r\n\t]");
+		for (String c : context) {
+			if (c.toLowerCase().startsWith("print")
+					|| c.toLowerCase().startsWith("println")) {
+				char[] chars = c.toCharArray();
+				boolean flag = false;
+				for (int i = 0; i < chars.length; i++) {
+					if (chars[i] == '"') {
+						flag = !flag;
+					}
+					if (!flag) {
+						if (chars[i] == '+') {
+							chars[i] = ',';
+						}
+					}
+				}
+				c = new String(chars);
+			}
+			if (c.indexOf('{') != -1) {
+				splitFlag(c, out, '{');
+			} else {
+				out.append(c);
+			}
+			out.append(LSystem.LS);
+		}
+		return out.toString();
+	}
+	
 	/**
 	 * 构建脚本
 	 * 
@@ -285,9 +336,7 @@ public class ROCScript {
 		if (useFile) {
 			size = fileToChars(charlist, script);
 		} else {
-			// 直接加载内容
-			script = script.trim();
-			charlist = script.toCharArray();
+			charlist = filtrScript(script).toCharArray();
 			size = charlist.length;
 		}
 		if (size > MAX_TEXT_SIZE) {
@@ -392,6 +441,12 @@ public class ROCScript {
 		}
 	}
 
+	private boolean stop = false;
+
+	public void stop() {
+		stop = true;
+	}
+
 	/**
 	 * 执行脚本命令
 	 * 
@@ -400,7 +455,8 @@ public class ROCScript {
 	 */
 	private Object running() throws ScriptException {
 		debug("Starting script...");
-		while (nextItem()) {
+
+		while (nextItem() && !stop) {
 			switch (itemType) {
 			// 变量
 			case VARIABLE:
@@ -416,6 +472,9 @@ public class ROCScript {
 				switch (commType) {
 				case PRINT:
 					print();
+					break;
+				case PRINTLN:
+					println();
 					break;
 				case INPUT:
 					input();
@@ -561,7 +620,7 @@ public class ROCScript {
 		vars.add(macros_executer.getVariables());
 	}
 
-	private void print() throws ScriptException {
+	private void println() throws ScriptException {
 		debug("Print");
 		String lastDelim = "";
 		while (nextItem() && itemType != EOL && itemType != EOP) {
@@ -578,6 +637,24 @@ public class ROCScript {
 			}
 		}
 		scriptLog.newline();
+	}
+
+	private void print() throws ScriptException {
+		debug("Println");
+		String lastDelim = "";
+		while (nextItem() && itemType != EOL && itemType != EOP) {
+			scriptLog.line(analysis());
+			lastDelim = item;
+			if (lastDelim.equals(",")) {
+				scriptLog.line(" ");
+			} else if (lastDelim.equals(";")) {
+				scriptLog.line("\t");
+			} else if (itemType != EOL && itemType != EOP) {
+				handleError(SYNTAX);
+			} else {
+				break;
+			}
+		}
 	}
 
 	private void input() throws ScriptException {
@@ -1191,6 +1268,7 @@ public class ROCScript {
 	private Object analysis() throws ScriptException {
 		debug("Analysis");
 		Object result;
+
 		if (item.equals(EOL) || item.equals(EOP)) {
 			handleError(EXPERR);
 		}

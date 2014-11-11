@@ -10,8 +10,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
-
 
 public class RPOtherServicesDialog extends JPanel {
 	/**
@@ -23,33 +23,33 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _rippleTrade;
 	private RPCButton _xrp2vpn;
 	private RPCButton _ripple_bitcoin_news;
-	
+	private RPCButton _script_editor;
+
 	private static RPPushTool instance = null;
 
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();
-		}else if(instance.isClose()){
+		} else if (instance.isClose()) {
 			instance.close();
 			instance = load();
 		}
 		return instance;
 	}
-	
+
 	private static RPPushTool load() {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 				LSystem.applicationMain.getGraphicsConfiguration());
 		RPOtherServicesDialog services = new RPOtherServicesDialog();
-		return RPPushTool.pop(
-				new Point((size.width - services.getWidth()) - 10, size
-						.getHeight()),
-				(int) (screenInsets.bottom + services.getHeight() + 320),
-				"Third Party Services", services);
+		return RPPushTool.pop(new Point(
+				(size.width - services.getWidth()) - 10, size.getHeight()),
+				(int) (screenInsets.bottom + services.getHeight() + 270),
+				"Other Apps/Services", services);
 	}
-	
+
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 275);
+		Dimension dim = new Dimension(246, 335);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -58,12 +58,13 @@ public class RPOtherServicesDialog extends JPanel {
 	private void initComponents() {
 
 		Font font = new Font("Arial", Font.BOLD, 14);
-		
+
 		_rippleTrade = new RPCButton();
 		_xrp2vpn = new RPCButton();
 		_btc2ripple_sn = new RPCButton();
 		_btc2ripple_co = new RPCButton();
 		_ripple_bitcoin_news = new RPCButton();
+		_script_editor = new RPCButton();
 
 		setLayout(null);
 
@@ -72,11 +73,11 @@ public class RPOtherServicesDialog extends JPanel {
 		add(_rippleTrade);
 		_rippleTrade.setBounds(10, 10, 224, 34);
 		_rippleTrade.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://www.rippletrade.com");
-				
+
 			}
 		});
 
@@ -85,11 +86,11 @@ public class RPOtherServicesDialog extends JPanel {
 		add(_xrp2vpn);
 		_xrp2vpn.setBounds(10, 160, 224, 34);
 		_xrp2vpn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://www.privateinternetaccess.com/pages/buy-vpn");
-				
+
 			}
 		});
 
@@ -98,25 +99,36 @@ public class RPOtherServicesDialog extends JPanel {
 		add(_ripple_bitcoin_news);
 		_ripple_bitcoin_news.setBounds(10, 210, 224, 34);
 		_ripple_bitcoin_news.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPNewsDialog.showDialog();
-				
+
 			}
 		});
-		
-		
+
+		_script_editor.setText("Ripple Script Editor");
+		_script_editor.setFont(font);
+		add(_script_editor);
+		_script_editor.setBounds(10, 260, 224, 34);
+		_script_editor.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EditorDialog.showDialog(LSystem.applicationMain);
+			}
+		});
+
 		_btc2ripple_sn.setText("Btc2Ripple(~snapswap)");
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
 		_btc2ripple_sn.setBounds(10, 60, 224, 34);
 		_btc2ripple_sn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://www.btc2ripple.com");
-				
+
 			}
 		});
 
@@ -125,14 +137,14 @@ public class RPOtherServicesDialog extends JPanel {
 		add(_btc2ripple_co);
 		_btc2ripple_co.setBounds(10, 110, 224, 34);
 		_btc2ripple_co.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://coinist.co/ripple/assets/btc-btc2ripple");
-				
+
 			}
 		});
-		
+
 		setBackground(LSystem.dialogbackground);
 	}
 }

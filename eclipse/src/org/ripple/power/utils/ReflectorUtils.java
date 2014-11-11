@@ -420,8 +420,8 @@ public class ReflectorUtils {
 		return date;
 	}
 
-	final static public Class getReturnClass(String typeName) {
-		Class result = null;
+	final static public Class<?> getReturnClass(String typeName) {
+		Class<?> result = null;
 		if (typeName.equalsIgnoreCase("long")) {
 			result = long.class;
 		} else if (typeName.equalsIgnoreCase("int")) {
@@ -474,7 +474,7 @@ public class ReflectorUtils {
 		return (apple.equals(orange) && orange.equals(apple));
 	}
 
-	public static Object checkAssignment(Class targetClass, Object rawObject) {
+	public static Object checkAssignment(Class<?> targetClass, Object rawObject) {
 		if (rawObject == null) {
 			return null;
 		}
@@ -482,32 +482,32 @@ public class ReflectorUtils {
 		return rawObject;
 	}
 
-	public static void checkAssignment(Class targetClass, Class clazz) {
+	public static void checkAssignment(Class<?> targetClass, Class<?> clazz) {
 		if (!targetClass.isAssignableFrom(clazz)) {
 			throwClassCastException(targetClass, clazz);
 		}
 	}
 
-	private static void throwClassCastException(Class targetClass, Class clazz) {
+	private static void throwClassCastException(Class<?> targetClass, Class<?> clazz) {
 		throw new ClassCastException("Cannot assign an object of type " + clazz
 				+ " to an object of type " + targetClass);
 	}
 
-	public static Object invokeInit(Class clazz, Object arg)
+	public static Object invokeInit(Class<?> clazz, Object arg)
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
 		Object[] args = { arg };
 		return invokeInit(clazz, args);
 	}
 
-	public static Object invokeInit(Class clazz, Object[] args)
+	public static Object invokeInit(Class<?> clazz, Object[] args)
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
 		if (null == args) {
 			args = EMPTY_OBJECT;
 		}
 		int arguments = args.length;
-		Class parameterTypes[] = new Class[arguments];
+		Class<?> parameterTypes[] = new Class[arguments];
 		for (int i = 0; i < arguments; i++) {
 			parameterTypes[i] = args[i].getClass();
 		}

@@ -26,4 +26,6 @@ public class CommandFlag {
 	public static final String ExchangeRate = "ExchangeRate";
 
 	public static final String HistoricalPrices = "HistoricalPrices";
+	
+	public static final String Editor = "Editor";
 }

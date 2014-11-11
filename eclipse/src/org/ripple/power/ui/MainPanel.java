@@ -37,6 +37,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
+import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.GraphicsUtils;
@@ -284,6 +285,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
+		addPopMenu(LangConfig.get(this, "editor", "Editor Script"),
+				CommandFlag.Editor);
 		addPopMenu(LangConfig.get(this, "update_node", "Rippled Node"),
 				CommandFlag.RippledNodeS);
 		addPopMenu(LangConfig.get(this, "secret_key", "Secret Key"),
@@ -414,6 +417,13 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private void submitActionCommand(String actionName) {
 		try {
+			if (actionName.equals(CommandFlag.Editor)) {
+				RPToast.makeText(LSystem.applicationMain,
+						"Edit Ripple script and running.",
+						Style.SUCCESS).display();
+				EditorDialog.showDialog(LSystem.applicationMain);
+				return;
+			}
 			if (actionName.equals(CommandFlag.RippledNodeS)) {
 				RPToast.makeText(LSystem.applicationMain,
 						"Please select a node go to Ripple Network.",
@@ -426,10 +436,8 @@ public class MainPanel extends JPanel implements ActionListener {
 			}
 			if (actionName.equals(CommandFlag.HistoricalPrices)) {
 				RPToast.makeText(LSystem.applicationMain,
-						"Historical price charts.",
-						Style.SUCCESS).display();
-				RPChartsHistoryDialog.showDialog(
-						LSystem.applicationMain);
+						"Historical price charts.", Style.SUCCESS).display();
+				RPChartsHistoryDialog.showDialog(LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {

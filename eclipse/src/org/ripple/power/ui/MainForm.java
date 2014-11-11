@@ -153,6 +153,17 @@ public class MainForm extends JFrame implements ActionListener {
 			}
 		});
 		menu.add(menuItem);
+		menuItem = new JMenuItem("Other");
+		menuItem.setFont(font);
+		menuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPOtherServicesDialog.get();
+
+			}
+		});
+		menu.add(menuItem);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "transaction", "Transaction"));

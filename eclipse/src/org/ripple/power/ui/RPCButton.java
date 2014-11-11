@@ -12,7 +12,7 @@ import javax.swing.event.ChangeListener;
 import org.ripple.power.ui.graphics.LColor;
 
 
-class RPCButton extends JButton {
+public class RPCButton extends JButton {
 
 	/**
 	 * 
