@@ -20,6 +20,8 @@ http://www.java.com
 
 #Base Design
 
+![RipplePower](https://raw.github.com/cping/RipplePower/master/base_en.png "base")
+
 ![RipplePower](https://raw.github.com/cping/RipplePower/master/base.png "base")
 
 #Screenshot
