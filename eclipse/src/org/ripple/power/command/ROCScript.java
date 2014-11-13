@@ -968,7 +968,8 @@ public class ROCScript {
 			}
 
 			if (value.length() > 0 && value.indexOf(",") == -1) {
-				if (value.indexOf("\"") == -1 && !isNumber(value)) {
+				if (value.indexOf("\"") == -1 && value.indexOf("/") == -1
+						&& !isNumber(value)) {
 					String tmp = getVarVal(value).toString();
 					if (!"unkown".equalsIgnoreCase(tmp)) {
 						value = tmp;
@@ -978,7 +979,8 @@ public class ROCScript {
 				String[] split = StringUtils.split(value, ",");
 				StringBuilder sbr = new StringBuilder();
 				for (String s : split) {
-					if (s.indexOf("\"") == -1 && !isNumber(s)) {
+					if (s.indexOf("\"") == -1 && value.indexOf("/") == -1
+							&& !isNumber(s)) {
 						String tmp = getVarVal(s).toString();
 						if (!"unkown".equalsIgnoreCase(tmp)) {
 							sbr.append(tmp.toString());
@@ -996,7 +998,8 @@ public class ROCScript {
 				}
 
 			}
-			return ROCFunction.getValue(key, value);
+			Object reuslt = ROCFunction.getValue(key, value);
+			return reuslt == null ? "unkown" : reuslt;
 		}
 
 		Function f = (Function) functs.get(item.toLowerCase());
@@ -1817,7 +1820,9 @@ public class ROCScript {
 		if (idx == -1) {
 			return null;
 		}
+
 		String name = vname.substring(0, idx);
+
 		for (int i = 0; i < vars.size(); i++) {
 			ArrayMap tm = vars.get(i);
 			if (tm.containsKey(name)) {
@@ -1826,7 +1831,9 @@ public class ROCScript {
 			}
 		}
 		if (o != null) {
+
 			String method = vname.substring(idx + 1, vname.length());
+
 			return new Object[] { name, method, o };
 		}
 		return findVar(name);
@@ -1839,15 +1846,21 @@ public class ROCScript {
 		} catch (Exception e) {
 			o = null;
 		}
-		try {
-			o = ReflectorUtils.getNotPrefixInvoke(value, method);
-		} catch (Exception e) {
-			o = null;
+		if (o == null) {
+			try {
+				o = ReflectorUtils.getNotPrefixInvoke(value, method);
+				return o;
+			} catch (Exception e) {
+				o = null;
+			}
 		}
-		try {
-			o = ReflectorUtils.getInvoke(value, method);
-		} catch (Exception e) {
-			o = null;
+		if (o == null) {
+			try {
+				o = ReflectorUtils.getInvoke(value, method);
+				return o;
+			} catch (Exception e) {
+				o = null;
+			}
 		}
 		return o;
 	}
@@ -2065,8 +2078,10 @@ public class ROCScript {
 				o = tm.get(vname);
 			}
 		}
+
 		if (o == null) {
 			o = findVar(vname);
+
 			int start = 0;
 			int end = 0;
 			if (o != null) {
@@ -2074,11 +2089,15 @@ public class ROCScript {
 				// String key = (String) result[0];
 				String method = (String) result[1];
 				Object value = result[2];
+
 				if (value instanceof JSONObject) {
 					o = queryJson(value, vname, method);
 				} else if (method.indexOf("|") == -1) {
+
 					o = getReflector(method, value);
+
 				} else {
+
 					start = method.indexOf("|");
 					end = method.lastIndexOf("|");
 					if (end - start <= 1) {
@@ -2118,6 +2137,7 @@ public class ROCScript {
 				}
 			}
 		}
+
 		if (o == null) {
 			o = "unkown";
 		}
