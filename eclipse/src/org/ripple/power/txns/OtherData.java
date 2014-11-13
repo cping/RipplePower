@@ -291,14 +291,55 @@ public class OtherData {
 
 	public static JSONObject getCoinmarketcapTo(int limit, String name)
 			throws HttpRequestException, JSONException, IOException {
+		return getCoinmarketcapTo(limit, name, null);
+	}
+
+	public static JSONObject getCoinmarketcapTo(int limit, String name,
+			String jsonKey) throws HttpRequestException, JSONException,
+			IOException {
 		if (name == null) {
 			return null;
 		}
-		HttpRequest request = HttpRequest
-				.get("http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
-						+ name + "-" + limit + "d.json");
+		name = name.trim().toLowerCase();
+		if (_coin_names.containsKey(name)) {
+			name = _coin_names.get(name);
+		}
+		String s = "http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
+				+ name + "-" + limit + "d.json";
+		HttpRequest request = HttpRequest.get(s);
 		if (request.ok()) {
-			return new JSONObject(request.body());
+			if (jsonKey == null) {
+				return new JSONObject(request.body());
+			} else {
+				InputStreamReader reader = new InputStreamReader(
+						request.stream());
+				StringBuilder sbr = new StringBuilder();
+				boolean flag = false;
+				boolean brackets = false;
+				for (;;) {
+					char ch = (char) reader.read();
+					if (ch < 0) {
+						break;
+					}
+					if (!flag && sbr.indexOf(jsonKey) != -1) {
+						flag = true;
+					}
+					if (flag) {
+						if (!brackets && ch == '[') {
+							brackets = true;
+						}
+						if (brackets && ch == '"') {
+							sbr.delete(sbr.length() - 2, sbr.length());
+							sbr.append('}');
+							return new JSONObject(sbr.toString());
+						}
+					}
+					sbr.append(ch);
+				}
+				reader.close();
+				System.out.println("DSDS2" + sbr.toString());
+				return new JSONObject(sbr);
+			}
 		}
 		return null;
 	}
@@ -589,7 +630,8 @@ public class OtherData {
 		if (_coin_names.containsKey(name)) {
 			name = _coin_names.get(name);
 		}
-		JSONObject o = (getCoinmarketcapTo(day, name));
+		final String jsonKey = "market_cap_by_available_supply_data";
+		JSONObject o = (getCoinmarketcapTo(day, name, jsonKey));
 		if (o == null) {
 			CoinmarketcapData data = getCoinmarketcapTo("usd", name);
 			if (data != null) {
@@ -603,9 +645,8 @@ public class OtherData {
 		}
 		DateFormat YYYY_MM_DD_HHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ArrayMap list = new ArrayMap(100);
-		if (o.has("market_cap_by_total_supply_data")) {
-			JSONArray arrays = o
-					.getJSONArray("market_cap_by_total_supply_data");
+		if (o.has(jsonKey)) {
+			JSONArray arrays = o.getJSONArray(jsonKey);
 			if (trend_limit > 0) {
 				for (int i = arrays.length() - trend_limit; i < arrays.length(); i++) {
 					JSONArray result = arrays.getJSONArray(i);

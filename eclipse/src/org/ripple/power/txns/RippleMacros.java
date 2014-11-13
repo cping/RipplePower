@@ -700,6 +700,11 @@ public class RippleMacros extends AMacros {
 					setJsonVar(type, account_data, "Flags");
 					setJsonVar(type, account_data, "Sequence");
 					setJsonVar(type, account_data, "Balance");
+					if (account_data.has("Balance")) {
+						setVar(type, "Balance", CurrencyUtils.getRippleToValue(account_data.getString("Balance")));
+					}else{
+						setVar(type, "Balance", account_data.get("unkown"));
+					}
 				}
 			}
 		} catch (Exception ex) {

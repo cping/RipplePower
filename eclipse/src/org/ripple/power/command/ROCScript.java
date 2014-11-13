@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.address.collection.Array;
 import org.address.collection.ArrayMap;
@@ -25,7 +24,7 @@ public class ROCScript {
 
 	private final IScriptLog scriptLog;
 
-	private static HashMap<String, Long> waitTimes = new HashMap<String, Long>();
+	private static ArrayMap waitTimes = new ArrayMap();
 	static {
 		waitTimes.put("mesc", LSystem.MSEC);
 		waitTimes.put("second", LSystem.SECOND);
@@ -212,6 +211,7 @@ public class ROCScript {
 		public ForLoop(String n, int exp, int it, int lo, int lin) {
 			comm = FOR;
 			vName = n;
+
 			expLoc = exp;
 			itLoc = it;
 			loc = lo;
@@ -278,12 +278,14 @@ public class ROCScript {
 		}
 	}
 
-	private String filtrScript(String script){
+	private String filtrScript(String script) {
 		StringBuffer out = new StringBuffer();
 		String[] context = script.split("[\r\n\t]");
 		for (String c : context) {
-			if (c.toLowerCase().startsWith("print")
-					|| c.toLowerCase().startsWith("println")) {
+			if ((c.toLowerCase().startsWith("print") || c.toLowerCase()
+					.startsWith("println"))
+					&& c.indexOf("\"") != -1
+					&& c.indexOf(",") == -1) {
 				char[] chars = c.toCharArray();
 				boolean flag = false;
 				for (int i = 0; i < chars.length; i++) {
@@ -307,7 +309,7 @@ public class ROCScript {
 		}
 		return out.toString();
 	}
-	
+
 	/**
 	 * 构建脚本
 	 * 
@@ -457,6 +459,9 @@ public class ROCScript {
 		debug("Starting script...");
 
 		while (nextItem() && !stop) {
+			if (item != null) {
+				item = item.trim();
+			}
 			switch (itemType) {
 			// 变量
 			case VARIABLE:
@@ -621,7 +626,7 @@ public class ROCScript {
 	}
 
 	private void println() throws ScriptException {
-		debug("Print");
+		debug("Println");
 		String lastDelim = "";
 		while (nextItem() && itemType != EOL && itemType != EOP) {
 			scriptLog.info(analysis());
@@ -640,7 +645,7 @@ public class ROCScript {
 	}
 
 	private void print() throws ScriptException {
-		debug("Println");
+		debug("Print");
 		String lastDelim = "";
 		while (nextItem() && itemType != EOL && itemType != EOP) {
 			scriptLog.line(analysis());
@@ -775,6 +780,7 @@ public class ROCScript {
 
 		nextItem();
 		vname = item;
+
 		// =
 		nextItem();
 		if (item.equals("=")) {
@@ -1055,7 +1061,7 @@ public class ROCScript {
 		debug("Next end");
 		int count = 1;
 		while (count > 0 && nextItem()) {
-			if (commType > 7) {
+			if (commType > 7 && commType != PRINTLN) {
 				count++;
 				debug("Find End: " + count);
 			}
@@ -1249,7 +1255,7 @@ public class ROCScript {
 					if (isNumber(item)) {
 						sleep = (long) Double.parseDouble(item);
 					} else {
-						sleep = waitTimes.get(item.toLowerCase());
+						sleep = (long) waitTimes.get(item.toLowerCase());
 					}
 					if (sleep <= 0) {
 						sleep = 1;
@@ -1724,6 +1730,7 @@ public class ROCScript {
 
 	private void passBack() {
 		ArrayMap tvars = vars.pop();
+
 		for (int i = 0; i < tvars.size(); i++) {
 			String str = (String) tvars.getKey(i);
 			if (vars.last().containsKey(str)) {
@@ -1791,8 +1798,13 @@ public class ROCScript {
 		}
 		if (!vname.equals(method)) {
 			start = vname.indexOf(method);
-			String packName = vname.substring(start + method.length() + 1,
-					vname.length());
+			int size = start + method.length() + 1;
+			String packName = "";
+			if (size >= vname.length()) {
+				packName = method;
+			} else {
+				packName = vname.substring(size, vname.length());
+			}
 			json = (JSONObject) o;
 			if (packName.indexOf("[") != -1 && packName.indexOf("]") != -1) {
 				if (packName.indexOf(".") == -1) {
@@ -1974,11 +1986,11 @@ public class ROCScript {
 			return 0;
 		}
 		Object o = null;
+
 		for (int i = 0; i < vars.size(); i++) {
 			ArrayMap tm = vars.get(i);
 			if (tm.containsKey(vname)) {
 				o = tm.get(vname);
-				break;
 			}
 		}
 		if (o == null) {

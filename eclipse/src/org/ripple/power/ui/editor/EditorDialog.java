@@ -75,12 +75,13 @@ public class EditorDialog extends JDialog {
 		}
 
 	}
+
 	public void println(String line) {
 		if (_log != null) {
-			_log.uiprint(line+"\n");
+			_log.uiprint(line + "\n");
 		}
 	}
-	
+
 	public void print(String line) {
 		if (_log != null) {
 			_log.uiprint(line);
@@ -96,6 +97,10 @@ public class EditorDialog extends JDialog {
 	private final static ArrayList samples = new ArrayList(10);
 	static {
 		samples.add("hello");
+		samples.add("if then else");
+		samples.add("calculate");
+		samples.add("for while");
+		samples.add("function");
 		samples.add("ping");
 		samples.add("server_info");
 		samples.add("server_state");
@@ -123,18 +128,59 @@ public class EditorDialog extends JDialog {
 
 	private String getContext(String name) {
 		StringBuffer sbr = new StringBuffer();
+		sbr.append("#ROC Script\n");
 		if ("hello".equals(name)) {
-			sbr.append("#ROC Script");
-			sbr.append("\n");
 			sbr.append("function hello() begin");
 			sbr.append("\n");
-			sbr.append(" return \"Hello World!\"");
+			sbr.append("  return \"Hello World!\"");
 			sbr.append("\n");
 			sbr.append("end");
 			sbr.append("\n");
 			sbr.append("println hello()");
+		} else if ("if then else".equals(name)) {
+			sbr.append("x = 1\n");
+			sbr.append("if x < 0 then\n");
+			sbr.append("  print \"This won't print\"\n");
+			sbr.append("else if x == 0 then\n");
+			sbr.append("  print \"This won't print either\"\n");
+			sbr.append("else\n");
+			sbr.append("  print \"This will print\"\n");
+			sbr.append("end");
+		} else if ("calculate".equals(name)) {
+			sbr.append("x = 119\n");
+			sbr.append("println 2 + x * -2\n");
+			sbr.append("println 2 - x / 2\n");
+			sbr.append("println x ^ 3 % 7\n");
+			sbr.append("x = 128 + 6 - 714 + 911\n");
+			sbr.append("println x");
+		} else if ("for while".equals(name)) {
+			sbr.append("x = 10\n");
+			sbr.append("for i = 0, i < x, i + 1 begin\n");
+			sbr.append("   println i\n");
+			sbr.append("end\n\n");
+			sbr.append("for i = 0, i < 2, i + 1 begin\n");
+			sbr.append("	for j = 0, j < 2, j + 1 begin\n");
+			sbr.append("		println i == 0 or j == 0\n");
+			sbr.append("	end\n");
+			sbr.append("end\n\n");
+			sbr.append("x = -10\n");
+			sbr.append("while x < 0 begin\n");
+			sbr.append("    print x\n");
+			sbr.append("    x = x + 1\n");
+			sbr.append("end\n");
+		} else if ("function".equals(name)) {
+			sbr.append("function xyz(x , y) begin\n");
+			sbr.append("  for i = x, i < y, i + 1 begin\n");
+			sbr.append("    println i\n");
+			sbr.append("  end\n");
+			sbr.append("end\n");
+			sbr.append("xyz(5 , 8)\n");
+			sbr.append("function getNum(x) begin\n");
+			sbr.append("	return x + 1\n");
+			sbr.append("end\n");
+			sbr.append("print getNum(9) + getNum(6)\n");
 		} else if ("ping".equals(name)) {
-			sbr.append("#ping");
+			sbr.append("#Ping");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
 			sbr.append(LSystem.LS);
@@ -144,12 +190,76 @@ public class EditorDialog extends JDialog {
 			sbr.append("}");
 			sbr.append(LSystem.LS);
 			sbr.append("print \"Hello World!\"+ripple.ping.id");
+		}else if ("server_info".equals(name)) {
+			sbr.append("#Server_info");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("server_info");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+			sbr.append("print ripple.server_info.load_factor");
+		}else if ("server_state".equals(name)) {
+			sbr.append("#Server_state");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("server_state");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+			sbr.append("print ripple.server_state.load_base");
+		}else if ("account_info".equals(name)) {
+			sbr.append("#Account_info");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("account_info ~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+			sbr.append("print ripple.account_info.Balance");
+		}else if ("account_lines".equals(name)) {
+			sbr.append("#Account_lines");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("account_lines ~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("account_offers".equals(name)) {
+			sbr.append("#Account_offers");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("account_offers ~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("account_tx".equals(name)) {
+			sbr.append("#Account_tx");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("account_tx ~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
 		}
 		return sbr.toString();
 	}
 
 	public EditorDialog(Window parent) {
-		super(parent, "ROC Script Editor(Developing)", Dialog.ModalityType.MODELESS);
+		super(parent, "ROC Script Editor(Developing)",
+				Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
 		setResizable(false);
 		Dimension dim = new Dimension(818, 595);
@@ -221,7 +331,7 @@ public class EditorDialog extends JDialog {
 
 		add(jScrollPane3);
 		jScrollPane3.setBounds(130, 340, 670, 160);
-		
+
 		Font font = GraphicsUtils.getFont(14);
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
@@ -238,10 +348,11 @@ public class EditorDialog extends JDialog {
 				_log.clear();
 				if (_script != null) {
 					_script.stop();
-					_script =null;
+					_script = null;
 				}
 				try {
-					_script = new ROCScript(new Console(),_editorText.getText() , false);
+					_script = new ROCScript(new Console(), _editorText
+							.getText(), false);
 				} catch (ScriptException ex) {
 					print(ex.getMessage());
 				}
