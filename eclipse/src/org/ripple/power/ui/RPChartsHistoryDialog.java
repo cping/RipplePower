@@ -77,7 +77,6 @@ public class RPChartsHistoryDialog extends JDialog {
 			chart.addSerie(btc);
 			canvas.joinLine(chart);
 		} else {
-			panel.repaint();
 			canvas.repaint();
 			canvas.update(panel.getGraphics());
 		}
@@ -85,8 +84,6 @@ public class RPChartsHistoryDialog extends JDialog {
 	}
 
 	private void initChart() {
-		repaint();
-		getContentPane().repaint();
 		chartOneCanvas = addChart(chartOneCanvas, _chartOnePanel, chartsOne,
 				chartsOnebtc);
 		chartTwoCanvas = addChart(chartTwoCanvas, _chartTwoPanel, chartsTwo,
@@ -196,7 +193,6 @@ public class RPChartsHistoryDialog extends JDialog {
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPChartsHistoryDialog.this);
 				dialog.get().setFadeClose(false);
-				update();
 				Updateable update = new Updateable() {
 
 					@Override
@@ -210,7 +206,6 @@ public class RPChartsHistoryDialog extends JDialog {
 							RPToast.makeText(RPChartsHistoryDialog.this,
 									e.getMessage(), RPToast.Style.ERROR)
 									.display();
-							update();
 						}
 						dialog.closeDialog();
 						initChart();
@@ -344,29 +339,25 @@ public class RPChartsHistoryDialog extends JDialog {
 							RPToast.makeText(RPChartsHistoryDialog.this,
 									ex.getMessage(), RPToast.Style.ERROR)
 									.display();
-							update();
 						}
 					}
-					if (_chartOnePanel != null
-							&& _chartOnePanel.getGraphics() != null) {
+					if (_chartOnePanel != null && _chartOnePanel.getGraphics() != null) {
 						if (chartOneCanvas != null) {
-							chartOneCanvas.repaint();
+							chartOneCanvas.update(_chartOnePanel.getGraphics());
 						}
 					}
-					if (_chartTwoPanel != null
-							&& _chartTwoPanel.getGraphics() != null) {
+					if (_chartTwoPanel != null && _chartTwoPanel.getGraphics() != null) {
 						if (chartTwoCanvas != null) {
-							chartTwoCanvas.repaint();
+							chartTwoCanvas.update(_chartTwoPanel.getGraphics());
 						}
 					}
-					if (_chartThreePanel != null
-							&& _chartThreePanel.getGraphics() != null) {
+					if (_chartThreePanel != null && _chartThreePanel.getGraphics() != null) {
 						if (chartThreeCanvas != null) {
-							chartThreeCanvas.repaint();
+							chartThreeCanvas.update(_chartThreePanel.getGraphics());
 						}
 					}
 					try {
-						Thread.sleep(LSystem.SECOND);
+						Thread.sleep(120);
 					} catch (InterruptedException e) {
 					}
 
@@ -374,31 +365,8 @@ public class RPChartsHistoryDialog extends JDialog {
 			}
 		};
 		LSystem.postThread(update);
-		update();
 	}
 
-	private void update() {
-		repaint();
-		getContentPane().repaint();
-		if (_chartOnePanel != null && _chartOnePanel.getGraphics() != null) {
-			if (chartOneCanvas != null) {
-				_chartOnePanel.repaint();
-				_chartOnePanel.update(chartOneCanvas.getGraphics());
-			}
-		}
-		if (_chartTwoPanel != null && _chartTwoPanel.getGraphics() != null) {
-			if (chartTwoCanvas != null) {
-				_chartTwoPanel.repaint();
-				_chartTwoPanel.update(chartTwoCanvas.getGraphics());
-			}
-		}
-		if (_chartThreePanel != null && _chartThreePanel.getGraphics() != null) {
-			if (chartThreeCanvas != null) {
-				_chartThreePanel.repaint();
-				_chartThreePanel.update(chartThreeCanvas.getGraphics());
-			}
-		}
-	}
 
 	private static void addData(ChartValueSerie chart, int day, String cur,
 			boolean match, ChartValueSerie btcchart) throws Exception {
