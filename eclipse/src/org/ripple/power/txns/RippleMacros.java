@@ -193,7 +193,7 @@ public class RippleMacros extends AMacros {
 						public void complete(ArrayList<OfferFruit> buys,
 								ArrayList<OfferFruit> sells, OfferPrice price) {
 							log(type, String.format(
-									"1/%s high_buy:%s high_sell:%s spread%s",
+									"1/%s high_buy:%s high_sell:%s spread:%s",
 									seller, price.highBuy, price.highSell,
 									price.spread));
 							setVar(type, "highbuy", price.highBuy);
@@ -700,11 +700,6 @@ public class RippleMacros extends AMacros {
 					setJsonVar(type, account_data, "Flags");
 					setJsonVar(type, account_data, "Sequence");
 					setJsonVar(type, account_data, "Balance");
-					if (account_data.has("Balance")) {
-						setVar(type, "Balance", CurrencyUtils.getRippleToValue(account_data.getString("Balance")));
-					}else{
-						setVar(type, "Balance", account_data.get("unkown"));
-					}
 				}
 			}
 		} catch (Exception ex) {

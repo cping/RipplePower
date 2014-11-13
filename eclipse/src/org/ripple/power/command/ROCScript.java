@@ -516,7 +516,7 @@ public class ROCScript {
 				}
 				debug("Done with command");
 				break;
-			// 宏指定
+			// 宏指令
 			case MACROS:
 				switch (macroType) {
 				case 0:
@@ -602,6 +602,9 @@ public class ROCScript {
 			ArrayMap maps = vars.get(i);
 			macros_executer.setVariables(maps);
 		}
+		if (scriptLog != null) {
+			scriptLog.info("Syncing...");
+		}
 		for (; macros_executer.next();) {
 			String result = macros_executer.doExecute();
 			if (result == null) {
@@ -621,6 +624,9 @@ public class ROCScript {
 					}
 				}
 			}
+		}
+		if (scriptLog != null) {
+			scriptLog.info("Synchro is completed.");
 		}
 		vars.add(macros_executer.getVariables());
 	}
@@ -937,6 +943,61 @@ public class ROCScript {
 
 	private Object execFunct() throws ScriptException {
 		debug("Execute Function");
+
+		if (ROCFunction.system_functs.contains(item.toLowerCase())) {
+
+			String key = item;
+			nextItem();
+			if (!item.equals("(")) {
+				handleError(UNBALPARENS);
+				return null;
+			}
+			nextItem();
+			String value = "";
+
+			if (!item.equals(")")) {
+				while (item.indexOf(")") == -1) {
+					value += item;
+					nextItem();
+
+				}
+				if (!item.equals(")")) {
+					handleError(UNBALPARENS);
+					return null;
+				}
+			}
+
+			if (value.length() > 0 && value.indexOf(",") == -1) {
+				if (value.indexOf("\"") == -1 && !isNumber(value)) {
+					String tmp = getVarVal(value).toString();
+					if (!"unkown".equalsIgnoreCase(tmp)) {
+						value = tmp;
+					}
+				}
+			} else if (value.indexOf(",") != -1) {
+				String[] split = StringUtils.split(value, ",");
+				StringBuilder sbr = new StringBuilder();
+				for (String s : split) {
+					if (s.indexOf("\"") == -1 && !isNumber(s)) {
+						String tmp = getVarVal(s).toString();
+						if (!"unkown".equalsIgnoreCase(tmp)) {
+							sbr.append(tmp.toString());
+						} else {
+							sbr.append(s);
+						}
+					} else {
+						sbr.append(s);
+					}
+					sbr.append(',');
+				}
+				value = sbr.toString();
+				if (value.endsWith(",")) {
+					value = value.substring(0, value.length() - 1);
+				}
+
+			}
+			return ROCFunction.getValue(key, value);
+		}
 
 		Function f = (Function) functs.get(item.toLowerCase());
 
@@ -1526,8 +1587,11 @@ public class ROCScript {
 	private Object evalExp5() throws ScriptException {
 		Object result;
 		String op = item;
+
 		if (item.equals("-") || item.toLowerCase().equals(selectOps[NOT])) {
+
 			nextItem();
+
 			result = evalExp6();
 			if (isNumber(result)) {
 				if (op.equals("-"))
@@ -1548,7 +1612,9 @@ public class ROCScript {
 				return null;
 			}
 		} else {
+
 			result = evalExp6();
+
 		}
 		if (DEBUG_E) {
 			debug("5: " + result);
@@ -1558,6 +1624,7 @@ public class ROCScript {
 
 	private Object evalExp6() throws ScriptException {
 		Object result;
+
 		if (item.equals("(")) {
 			nextItem();
 			result = evalExp1();
@@ -1567,7 +1634,9 @@ public class ROCScript {
 			nextItem();
 			return result;
 		} else {
+
 			result = atom();
+
 			nextItem();
 		}
 		if (DEBUG_E) {
@@ -1577,6 +1646,7 @@ public class ROCScript {
 	}
 
 	private Object atom() throws ScriptException {
+
 		switch (itemType) {
 		case FUNCT:
 			return execFunct();
@@ -1682,8 +1752,10 @@ public class ROCScript {
 				return VARIABLE;
 			}
 		}
+
 		// 判定是否已定义的函数
-		if (functs.containsKey(str)) {
+		if (functs.containsKey(str)
+				|| ROCFunction.system_functs.contains(str.toLowerCase())) {
 			return FUNCT;
 		}
 		// 判定是否分支指令
@@ -2046,9 +2118,10 @@ public class ROCScript {
 				}
 			}
 		}
-		if (vname.indexOf('.') != -1 && o == null) {
+		if (o == null) {
 			o = "unkown";
-		} else if (o == null) {
+		}
+		if (debug) {
 			handleError(UNKOWN);
 		}
 		debug("Get var: " + o);

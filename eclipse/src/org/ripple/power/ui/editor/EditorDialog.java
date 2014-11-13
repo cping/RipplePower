@@ -108,9 +108,6 @@ public class EditorDialog extends JDialog {
 		samples.add("account_lines");
 		samples.add("account_offers");
 		samples.add("account_tx");
-		samples.add("transaction_entry");
-		samples.add("tx");
-		samples.add("tx_history");
 		samples.add("send");
 		samples.add("offer_create");
 		samples.add("offer_cancel");
@@ -222,7 +219,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-			sbr.append("print ripple.account_info.Balance");
+			sbr.append("print roc.xrp_to_val(ripple.account_info.Balance)");
 		}else if ("account_lines".equals(name)) {
 			sbr.append("#Account_lines");
 			sbr.append(LSystem.LS);
@@ -250,6 +247,64 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append(" ");
 			sbr.append("account_tx ~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("send".equals(name)) {
+			sbr.append("#Send");
+			sbr.append(LSystem.LS);
+			sbr.append("#[secret] location write secret or address (address need to add to \n#RipplePower)\n");
+			sbr.append("#not XRP , format: secret/1/btc/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B \n");
+			sbr.append("#secret位置可为私钥或者地址(如果使用地址发币,则地址需要添加到RipplePower)\n");
+			sbr.append("#如非XRP,则格式为: secret/1/btc/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B \n");
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("send secret/1/xrp rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("offer_create".equals(name)) {
+			sbr.append("#Offer_create");
+			sbr.append(LSystem.LS);
+			sbr.append("#[secret] location write secret or address (address need to add to \n#RipplePower)\n");
+			sbr.append("#not XRP , format: secret/1/btc/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B \n");
+			sbr.append("#secret位置可为私钥或者地址(如果使用地址发币,则地址需要添加到RipplePower)\n");
+			sbr.append("#如非XRP,则格式为: secret/1/btc/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B \n");
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("offer_create secret/1/xrp secret/1/btc/~Bitstamp");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("offer_cancel".equals(name)) {
+			sbr.append("#Offer_cancel");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("offer_cancel 0");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("offer_price".equals(name)) {
+			sbr.append("#Offer_price");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("offer_price ~Bitstamp btc usd");
+			sbr.append(LSystem.LS);
+			sbr.append("}");
+			sbr.append(LSystem.LS);
+		}else if ("convert_price".equals(name)) {
+			sbr.append("#Convert_price");
+			sbr.append(LSystem.LS);
+			sbr.append("{");
+			sbr.append(LSystem.LS);
+			sbr.append(" ");
+			sbr.append("convert_price 16 cny jpy");
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);

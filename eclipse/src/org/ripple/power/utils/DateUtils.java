@@ -250,7 +250,7 @@ final public class DateUtils {
 	 * @param tmpDate
 	 * @return
 	 */
-	public static String toDate(final String tmpDate) {
+	public static String toDate() {
 		Date dt = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		df.setTimeZone(TimeZone.getDefault());

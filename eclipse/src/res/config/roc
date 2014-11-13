@@ -49,3 +49,9 @@ selects
 rand
 out
 @
+
+roc.xrp_to_val
+roc.val_to_xrp
+roc.date_cn
+roc.date
+roc.price
