@@ -1,5 +1,6 @@
 package org.ripple.power.hft;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +122,7 @@ public class TraderProcess extends TraderBase {
 						if (i + 1 < size) {
 							long one = (long) arrays.get(i);
 							long two = (long) arrays.get(i + 1);
+				
 							if (two >= one) {
 								if (last == Trend.DOWN) {
 									up_coherent_flag--;

@@ -337,7 +337,6 @@ public class OtherData {
 					sbr.append(ch);
 				}
 				reader.close();
-				System.out.println("DSDS2" + sbr.toString());
 				return new JSONObject(sbr);
 			}
 		}
