@@ -66,10 +66,9 @@ public class RPExchangeRateViewDialog extends JDialog {
 		this.setSize(dim);
 		this.initComponents();
 	}
-	
-	private void select(ItemEvent e){
-		final String name = StringUtils.trim((String) e.getItem()
-				);
+
+	private void select(ItemEvent e) {
+		final String name = StringUtils.trim((String) e.getItem());
 		if (name.length() == 3) {
 			LSystem.invokeLater(new Updateable() {
 				public void action(Object o) {

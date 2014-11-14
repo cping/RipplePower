@@ -23,6 +23,7 @@ public class ROCFunction {
 		system_functs.add("roc.isnumber");
 		system_functs.add("roc.ischinese");
 		system_functs.add("roc.tocurrency");
+		system_functs.add("roc.indexof");
 	}
 
 	public static Object getValue(String name, String value) {
@@ -46,28 +47,36 @@ public class ROCFunction {
 			if (value.indexOf(",") != -1) {
 				String[] split = StringUtils.split(value, ",");
 				if (split.length == 3) {
-					return OfferPrice.getMoneyConvert(split[0], split[1], split[2]);
+					return OfferPrice.getMoneyConvert(split[0], split[1],
+							split[2]);
 				}
 			}
 		} else if ("roc.trim".equalsIgnoreCase(name)) {
 			if (value.indexOf(",") == -1) {
-				return  StringUtils.trim(value);
+				return StringUtils.trim(value);
 			}
-		}else if ("roc.rtrim".equalsIgnoreCase(name)) {
+		} else if ("roc.rtrim".equalsIgnoreCase(name)) {
 			if (value.indexOf(",") == -1) {
-				return  StringUtils.rtrim(value);
+				return StringUtils.rtrim(value);
 			}
-		}else if ("roc.isnumber".equalsIgnoreCase(name)) {
+		} else if ("roc.isnumber".equalsIgnoreCase(name)) {
 			if (value.indexOf(",") == -1) {
-				return  StringUtils.isNumber(value);
+				return StringUtils.isNumber(value);
 			}
-		}else if ("roc.ischinese".equalsIgnoreCase(name)) {
+		} else if ("roc.ischinese".equalsIgnoreCase(name)) {
 			if (value.indexOf(",") == -1) {
-				return  StringUtils.isChinaLanguage(value.toCharArray());
+				return StringUtils.isChinaLanguage(value.toCharArray());
 			}
-		}else if ("roc.tocurrency".equalsIgnoreCase(name)) {
-			if (value.indexOf(",") == -1 && value.indexOf("/")!=-1) {
+		} else if ("roc.tocurrency".equalsIgnoreCase(name)) {
+			if (value.indexOf(",") == -1 && value.indexOf("/") != -1) {
 				return new IssuedCurrency(value);
+			}
+		} else if ("roc.indexof".equalsIgnoreCase(name)) {
+			if (value.indexOf(",") != -1) {
+				String[] split = StringUtils.split(value, ",");
+				if (split.length == 2) {
+					return split[0].indexOf(split[1]) != -1;
+				}
 			}
 		}
 		return "unkown";

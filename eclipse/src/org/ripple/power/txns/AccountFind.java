@@ -395,7 +395,7 @@ public class AccountFind {
 							Double limit_peer_number = Double
 									.valueOf(limit_peer);
 
-							// 获得的IOU
+							// get IOU
 							if (number > 0) {
 								AccountLine line = new AccountLine();
 								line.issuer = account;
@@ -406,7 +406,7 @@ public class AccountFind {
 								line.quality_out = quality_out;
 								line.limit_peer = limit_peer;
 								accountinfo.lines.add(line);
-								// 发出的IOU
+								// send IOU
 							} else if (number < 0) {
 								if (currency != null) {
 									cntTrust++;
@@ -421,7 +421,7 @@ public class AccountFind {
 										debtCount.put(currency, 1l);
 									}
 								}
-								// 单纯信任
+								// set Trust
 							} else if (number == 0) {
 								AccountLine line = new AccountLine();
 								line.issuer = account;

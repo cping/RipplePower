@@ -2,6 +2,8 @@
 
 RipplePower is a Simplified Payment Ripple desktop client , This is a general purpose Ripple client in Java that targets HTML5 browsers (via GWT), desktop JavaSE, Android and iOS and WP devices.
 
+But, Ripple-Blockchain System is the Real Core. (And provides Ripple-Blockchain special scripting language, The script also supports Based Blockchain HFT\Arbitrage\Bot\Web\Game\UI\Phone\Game code program) , Work in Process......-_-
+
 PS: system support i18n
 
 In the page right [Download ZIP] option, you can download the entire project source code and Demo files.

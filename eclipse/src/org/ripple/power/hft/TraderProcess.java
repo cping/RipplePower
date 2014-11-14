@@ -140,8 +140,7 @@ public class TraderProcess extends TraderBase {
 							}
 						}
 					}
-					if (down_coherent_flag - 1 == up_coherent_flag
-							|| down_coherent_flag - 2 == up_coherent_flag) {
+					if (down_coherent_flag - 1 == up_coherent_flag) {
 						return Trend.UP;
 					} else if (down_coherent_flag > up_coherent_flag) {
 						return Trend.DOWN;
