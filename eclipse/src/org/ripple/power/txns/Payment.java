@@ -12,8 +12,57 @@ import org.json.JSONObject;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
+import com.ripple.core.coretypes.STObject;
+import com.ripple.core.fields.Field;
 
 public class Payment {
+
+	public static void send(final RippleSeedAddress seed,
+			final String dstAddress, final IssuedCurrency amount,
+			final String fee, final String memotype, final String memodata,
+			final Rollback back) {
+
+		final String address = seed.getPublicRippleAddress().toString();
+		AccountFind find = new AccountFind();
+		find.info(address, new Rollback() {
+			@Override
+			public void success(JSONObject message) {
+				try {
+					long sequence = TransactionUtils.getSequence(message);
+					RippleObject item = new RippleObject();
+					item.putField(BinaryFormatField.TransactionType,
+							(int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account,
+							seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.Destination, dstAddress);
+					STObject obj = new STObject();
+					obj.putTranslated(Field.MemoType, memotype);
+					obj.putTranslated(Field.MemoData, memodata);
+					STObject memo = new STObject();
+					memo.put(Field.Memo, obj);
+					item.putField(BinaryFormatField.Memos, memo);
+					item.putField(BinaryFormatField.Amount, amount);
+					item.putField(BinaryFormatField.Sequence, sequence);
+					item.putField(BinaryFormatField.DestinationTag,
+							MathUtils.randomLong(1, 999999999));
+					item.putField(BinaryFormatField.Fee,
+							CurrencyUtils.getValueToRipple(fee));
+					TransactionUtils.submitBlob(seed, item, back);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void error(JSONObject message) {
+				if (back != null) {
+					back.error(message);
+				}
+
+			}
+		});
+
+	}
 
 	public static void sendXRP(final String seed, final String dstAddress,
 			final String amount, final String fee, final Rollback back) {

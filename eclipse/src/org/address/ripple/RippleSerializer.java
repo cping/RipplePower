@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.address.ripple.RippleSchemas.BinaryFormatField;
 import org.address.ripple.RippleSchemas.PrimitiveTypes;
+import org.address.utils.CoinUtils;
 import org.ripple.power.txns.IssuedCurrency;
 
 import com.ripple.core.coretypes.Amount;
+import com.ripple.core.coretypes.STArray;
+import com.ripple.core.coretypes.STObject;
 
 public class RippleSerializer {
 
@@ -258,7 +261,13 @@ public class RippleSerializer {
 				writeAmount(output, (IssuedCurrency) value);
 			}
 		} else if (primitive == PrimitiveTypes.VARIABLE_LENGTH) {
-			writeVariableLength(output, (byte[]) value);
+			if (value instanceof Byte[]) {
+				writeVariableLength(output, (byte[]) value);
+			} else if (value instanceof String) {
+				writeVariableLength(output, CoinUtils.fromHex((String) value));
+			}else {
+				throw new RuntimeException("Variable type, not yet supported");
+			}
 		} else if (primitive == PrimitiveTypes.ACCOUNT) {
 			if (value instanceof String) {
 				writeAccount(output, new RippleAddress((String) value));
@@ -266,9 +275,17 @@ public class RippleSerializer {
 				writeAccount(output, (RippleAddress) value);
 			}
 		} else if (primitive == PrimitiveTypes.OBJECT) {
-			throw new RuntimeException("Object type, not yet supported");
+			if (value instanceof STObject) {
+				output.put(((STObject) value).toBytes());
+			} else {
+				throw new RuntimeException("Object type, not yet supported");
+			}
 		} else if (primitive == PrimitiveTypes.ARRAY) {
-			throw new RuntimeException("Array type, not yet supported");
+			if (value instanceof STArray) {
+				output.put(((STArray) value).toBytes());
+			} else {
+				throw new RuntimeException("Array type, not yet supported");
+			}
 		} else if (primitive == PrimitiveTypes.UINT8) {
 			int intValue = (int) value;
 			if (intValue > 0xFF) {

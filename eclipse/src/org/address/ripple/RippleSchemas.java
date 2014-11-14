@@ -3,9 +3,9 @@ package org.address.ripple;
 public class RippleSchemas {
 
 	public enum PrimitiveTypes {
-		UINT16(1), UINT32(2), UINT64(3), HASH128(4), HASH256(5), AMOUNT(6), VARIABLE_LENGTH(
-				7), ACCOUNT(8), OBJECT(14), ARRAY(15), UINT8(16), HASH160(17), PATHSET(
-				18), VECTOR256(19);
+		Unknown(0), UINT16(1), UINT32(2), UINT64(3), HASH128(4), HASH256(5), AMOUNT(
+				6), VARIABLE_LENGTH(7), ACCOUNT(8), OBJECT(14), ARRAY(15), UINT8(
+				16), HASH160(17), PATHSET(18), VECTOR256(19);
 
 		public int typeCode;
 
@@ -35,6 +35,8 @@ public class RippleSchemas {
 	};
 
 	public enum BinaryFormatField {
+		Generic(PrimitiveTypes.Unknown, 0), Invalid(PrimitiveTypes.Unknown, -1),
+
 		CloseResolution(PrimitiveTypes.UINT8, 1), TemplateEntryType(
 				PrimitiveTypes.UINT8, 2), TransactionResult(
 				PrimitiveTypes.UINT8, 3),
@@ -107,7 +109,10 @@ public class RippleSchemas {
 				PrimitiveTypes.VARIABLE_LENGTH, 8), RemoveCode(
 				PrimitiveTypes.VARIABLE_LENGTH, 9), ExpireCode(
 				PrimitiveTypes.VARIABLE_LENGTH, 10), CreateCode(
-				PrimitiveTypes.VARIABLE_LENGTH, 11),
+				PrimitiveTypes.VARIABLE_LENGTH, 11), MemoType(
+				PrimitiveTypes.VARIABLE_LENGTH, 12), MemoData(
+				PrimitiveTypes.VARIABLE_LENGTH, 13), MemoFormat(
+				PrimitiveTypes.VARIABLE_LENGTH, 14),
 
 		Account(PrimitiveTypes.ACCOUNT, 1), Owner(PrimitiveTypes.ACCOUNT, 2), Destination(
 				PrimitiveTypes.ACCOUNT, 3), Issuer(PrimitiveTypes.ACCOUNT, 4), Target(
@@ -124,12 +129,13 @@ public class RippleSchemas {
 				PrimitiveTypes.OBJECT, 5), PreviousFields(
 				PrimitiveTypes.OBJECT, 6), FinalFields(PrimitiveTypes.OBJECT, 7), NewFields(
 				PrimitiveTypes.OBJECT, 8), TemplateEntry(PrimitiveTypes.OBJECT,
-				9),
+				9), Memo(PrimitiveTypes.OBJECT, 10),
 
 		SigningAccounts(PrimitiveTypes.ARRAY, 2), TxnSignatures(
 				PrimitiveTypes.ARRAY, 3), Signatures(PrimitiveTypes.ARRAY, 4), Template(
 				PrimitiveTypes.ARRAY, 5), Necessary(PrimitiveTypes.ARRAY, 6), Sufficient(
-				PrimitiveTypes.ARRAY, 7), AffectedNodes(PrimitiveTypes.ARRAY, 8);
+				PrimitiveTypes.ARRAY, 7), AffectedNodes(PrimitiveTypes.ARRAY, 8), Memos(
+				PrimitiveTypes.ARRAY, 9);
 
 		PrimitiveTypes primitive;
 		int fieldId;
