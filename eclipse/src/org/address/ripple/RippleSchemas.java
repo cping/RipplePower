@@ -1,11 +1,15 @@
 package org.address.ripple;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class RippleSchemas {
 
 	public enum PrimitiveTypes {
-		Unknown(0), UINT16(1), UINT32(2), UINT64(3), HASH128(4), HASH256(5), AMOUNT(
-				6), VARIABLE_LENGTH(7), ACCOUNT(8), OBJECT(14), ARRAY(15), UINT8(
-				16), HASH160(17), PATHSET(18), VECTOR256(19);
+		UNKOWN(-2), DONE(-1), NOTPRESENT(0), UINT16(1), UINT32(2), UINT64(3), HASH128(
+				4), HASH256(5), AMOUNT(6), VARIABLE_LENGTH(7), ACCOUNT(8), OBJECT(
+				14), ARRAY(15), UINT8(16), HASH160(17), PATHSET(18), VECTOR256(
+				19), Transaction(10001), LedgerEntry(10002), Validation(10003);
 
 		public int typeCode;
 
@@ -14,15 +18,15 @@ public class RippleSchemas {
 		}
 
 		static int MAXBYTEVALUE = 0;
-		static final PrimitiveTypes reverseLookup[];
+		static final ArrayList<PrimitiveTypes> reverseLookups;
 		static {
 			for (PrimitiveTypes type : values()) {
 				MAXBYTEVALUE = Math.max(MAXBYTEVALUE, type.typeCode);
 			}
 			MAXBYTEVALUE++;
-			reverseLookup = new PrimitiveTypes[MAXBYTEVALUE];
+			reverseLookups = new ArrayList<PrimitiveTypes>(MAXBYTEVALUE);
 			for (PrimitiveTypes type : values()) {
-				reverseLookup[type.typeCode] = type;
+				reverseLookups.add(type);
 			}
 		}
 
@@ -30,12 +34,19 @@ public class RippleSchemas {
 			if (type < 0 || type >= MAXBYTEVALUE) {
 				return null;
 			}
-			return reverseLookup[type];
+			for (int i = 0; i < reverseLookups.size(); i++) {
+				PrimitiveTypes types = reverseLookups.get(i);
+				if (types.typeCode == type) {
+					return types;
+				}
+			}
+			return null;
 		}
 	};
 
 	public enum BinaryFormatField {
-		Generic(PrimitiveTypes.Unknown, 0), Invalid(PrimitiveTypes.Unknown, -1),
+
+		Generic(PrimitiveTypes.UNKOWN, 0), Invalid(PrimitiveTypes.UNKOWN, -1),
 
 		CloseResolution(PrimitiveTypes.UINT8, 1), TemplateEntryType(
 				PrimitiveTypes.UINT8, 2), TransactionResult(
@@ -146,16 +157,25 @@ public class RippleSchemas {
 		}
 
 		static int MAXBYTEVALUE = 0;
-		static final BinaryFormatField[][] typeFieldLookup;
+
+		static private HashMap<Integer, ArrayList<BinaryFormatField>> typeFieldLookups;
 		static {
+
 			for (BinaryFormatField f : values()) {
 				MAXBYTEVALUE = Math.max(MAXBYTEVALUE, f.fieldId);
 			}
 			MAXBYTEVALUE++;
-			typeFieldLookup = new BinaryFormatField[PrimitiveTypes.MAXBYTEVALUE][BinaryFormatField.MAXBYTEVALUE];
-
+			typeFieldLookups = new HashMap<Integer, ArrayList<BinaryFormatField>>(
+					PrimitiveTypes.MAXBYTEVALUE);
 			for (BinaryFormatField f : values()) {
-				typeFieldLookup[f.primitive.typeCode][f.fieldId] = f;
+				ArrayList<BinaryFormatField> result = typeFieldLookups
+						.get(f.primitive.typeCode);
+				if (result == null) {
+					result = new ArrayList<RippleSchemas.BinaryFormatField>(
+							PrimitiveTypes.MAXBYTEVALUE);
+					typeFieldLookups.put(f.primitive.typeCode, result);
+				}
+				result.add(f);
 			}
 		}
 
@@ -167,7 +187,18 @@ public class RippleSchemas {
 					|| fieldType >= BinaryFormatField.MAXBYTEVALUE) {
 				fieldToReturn = null;
 			} else {
-				fieldToReturn = typeFieldLookup[type][fieldType];
+				ArrayList<BinaryFormatField> result = typeFieldLookups
+						.get(type);
+				if (result != null) {
+					for (int i = 0; i < result.size(); i++) {
+						BinaryFormatField field = result.get(i);
+						if (field.primitive.typeCode == type
+								&& field.fieldId == fieldType) {
+							fieldToReturn = field;
+							break;
+						}
+					}
+				}
 			}
 			if (fieldToReturn == null) {
 				throw new RuntimeException("Could not find type " + type
@@ -178,21 +209,21 @@ public class RippleSchemas {
 	}
 
 	public enum TransactionTypes {
-		// INVALID(-1),
-		PAYMENT(0), CLAIM(1), WALLET_ADD(2), ACCOUNT_SET(3), PASSWORD_FUND(4), REGULAR_KEY_SET(
-				5), NICKNAME_SET(6), OFFER_CREATE(7), OFFER_CANCEL(8), CONTRACT(
-				9), CONTRACT_REMOVE(10), TRUST_SET(20), FEATURE(100), FEE(101);
+		INVALID(-1), PAYMENT(0), CLAIM(1), WALLET_ADD(2), ACCOUNT_SET(3), PASSWORD_FUND(
+				4), REGULAR_KEY_SET(5), NICKNAME_SET(6), OFFER_CREATE(7), OFFER_CANCEL(
+				8), CONTRACT(9), CONTRACT_REMOVE(10), TRUST_SET(20), FEATURE(
+				100), FEE(101);
 
 		static int MAXBYTEVALUE = 0;
-		static TransactionTypes[] reverseLookup;
+		static ArrayList<TransactionTypes> reverseLookups;
 		static {
 			for (TransactionTypes type : values()) {
 				MAXBYTEVALUE = Math.max(MAXBYTEVALUE, type.byteValue);
 			}
 			MAXBYTEVALUE++;
-			reverseLookup = new TransactionTypes[MAXBYTEVALUE];
+			reverseLookups = new ArrayList<TransactionTypes>(MAXBYTEVALUE);
 			for (TransactionTypes type : values()) {
-				reverseLookup[type.byteValue] = type;
+				reverseLookups.add(type);
 			}
 		}
 
@@ -206,7 +237,13 @@ public class RippleSchemas {
 			if (txType < 0 || txType >= MAXBYTEVALUE) {
 				return null;
 			}
-			return reverseLookup[txType];
+			for (int i = 0; i < reverseLookups.size(); i++) {
+				TransactionTypes types = reverseLookups.get(i);
+				if (types.byteValue == (byte) txType) {
+					return types;
+				}
+			}
+			return null;
 		}
 	};
 }

@@ -1,53 +1,61 @@
 package org.ripple.power.txns;
 
 import org.ripple.power.ui.RPClient;
+import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.utils.MathUtils;
 
 import org.address.ripple.RippleObject;
 import org.address.ripple.RippleSeedAddress;
 import org.address.ripple.RippleSchemas.BinaryFormatField;
 import org.address.ripple.RippleSchemas.TransactionTypes;
+import org.address.utils.CoinUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
+import com.ripple.core.coretypes.STArray;
 import com.ripple.core.coretypes.STObject;
 import com.ripple.core.fields.Field;
+import com.ripple.core.serialized.enums.TransactionType;
+import com.ripple.core.types.known.tx.Transaction;
 
 public class Payment {
 
 	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final IssuedCurrency amount,
-			final String fee, final String memotype, final String memodata,
-			final Rollback back) {
+			final String dstAddress, final String amount, final String fee,
+			final byte[] memotype, final byte[] memodata, final Rollback back) {
+		String typeStr = CoinUtils.toHex(Base64Coder.encode(memotype));
+		String typeData = CoinUtils.toHex(Base64Coder.encode(memodata));
+		send(seed, dstAddress, amount, fee, typeStr, typeData, back);
+	}
 
+	public static void send(final RippleSeedAddress seed,
+			final String dstAddress, final String amount, final String fee,
+			final String memotype, final String memodata, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
 			@Override
 			public void success(JSONObject message) {
+				long sequence = TransactionUtils.getSequence(message);
+				Transaction txn = new Transaction(TransactionType.Payment);
+				txn.putTranslated(Field.Account, seed.getPublicKey());
+				txn.putTranslated(Field.Destination, dstAddress);
+				txn.putTranslated(Field.Amount, amount);
+				txn.putTranslated(Field.DestinationTag,
+						MathUtils.randomLong(1, 999999999));
+				STObject obj = new STObject();
+				obj.putTranslated(Field.MemoType, memotype);
+				obj.putTranslated(Field.MemoData, memodata);
+				STObject memo = new STObject();
+				memo.put(Field.Memo, obj);
+				STArray arrays = new STArray();
+				arrays.add(memo);
+				txn.putTranslated(Field.Memos, arrays);
 				try {
-					long sequence = TransactionUtils.getSequence(message);
-					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.PAYMENT.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
-					item.putField(BinaryFormatField.Destination, dstAddress);
-					STObject obj = new STObject();
-					obj.putTranslated(Field.MemoType, memotype);
-					obj.putTranslated(Field.MemoData, memodata);
-					STObject memo = new STObject();
-					memo.put(Field.Memo, obj);
-					item.putField(BinaryFormatField.Memos, memo);
-					item.putField(BinaryFormatField.Amount, amount);
-					item.putField(BinaryFormatField.Sequence, sequence);
-					item.putField(BinaryFormatField.DestinationTag,
-							MathUtils.randomLong(1, 999999999));
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
-					TransactionUtils.submitBlob(seed, item, back);
+					TransactionUtils.submitBlob(seed, txn, fee, sequence, back);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -221,8 +229,8 @@ public class Payment {
 		}
 	}
 
-	public void sendTxJson(String srcAddress, String seed, String dstAddress,
-			String amount, String fee, final Rollback back) {
+	public static void sendTxJson(String srcAddress, String seed,
+			String dstAddress, String amount, String fee, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);
@@ -232,6 +240,54 @@ public class Payment {
 			tx.put("Amount", CurrencyUtils.getValueToRipple(amount));
 			tx.put("Destination", dstAddress);
 			tx.put("Fee", CurrencyUtils.getValueToRipple(fee));
+			req.json("tx_json", tx);
+			req.json("secret", seed);
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.success(response.message);
+					}
+				}
+
+			});
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.error(response.message);
+					}
+				}
+
+			});
+			req.request();
+		}
+	}
+
+	public static void sendTxMemosJson(String srcAddress, String seed,
+			String dstAddress, String amount, String fee, String memotype,
+			String memodata, final Rollback back) {
+		RPClient client = RPClient.ripple();
+		if (client != null) {
+			Request req = client.newRequest(Command.submit);
+			JSONObject tx = new JSONObject();
+			tx.put("TransactionType", "Payment");
+			tx.put("Account", srcAddress);
+			tx.put("Amount", CurrencyUtils.getValueToRipple(amount));
+			tx.put("Destination", dstAddress);
+			tx.put("Fee", CurrencyUtils.getValueToRipple(fee));
+
+			JSONObject obj = new JSONObject();
+			obj.put("MemoType", memotype);
+			obj.put("MemoData", memodata);
+
+			JSONObject memo = new JSONObject();
+			memo.put("Memo", obj);
+
+			JSONArray memos = new JSONArray();
+			memos.put(memo);
+
+			req.json("Memos", memos);
 			req.json("tx_json", tx);
 			req.json("secret", seed);
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {

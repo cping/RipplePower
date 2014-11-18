@@ -261,7 +261,7 @@ public class RippleSerializer {
 				writeAmount(output, (IssuedCurrency) value);
 			}
 		} else if (primitive == PrimitiveTypes.VARIABLE_LENGTH) {
-			if (value instanceof Byte[]) {
+			if (value instanceof byte[]) {
 				writeVariableLength(output, (byte[]) value);
 			} else if (value instanceof String) {
 				writeVariableLength(output, CoinUtils.fromHex((String) value));
