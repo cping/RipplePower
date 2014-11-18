@@ -1,5 +1,6 @@
 package org.ripple.power.txns;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.utils.MathUtils;
@@ -22,6 +23,18 @@ import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.types.known.tx.Transaction;
 
 public class Payment {
+
+	public static void sendMessage(final RippleSeedAddress seed,
+			final String dstAddress, final String memotype,
+			final String memodata, final String fee, final Rollback back) {
+		try {
+			byte[] typeByte = memotype.getBytes(LSystem.encoding);
+			byte[] dataByte = memodata.getBytes(LSystem.encoding);
+			send(seed, dstAddress, "0.001", fee, typeByte, dataByte, back);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void send(final RippleSeedAddress seed,
 			final String dstAddress, final String amount, final String fee,

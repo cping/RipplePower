@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.txns.TransactionTx.Memo;
 import org.ripple.power.ui.RPClient;
 
 import com.google.common.base.Strings;
@@ -34,7 +35,7 @@ public class AccountFind {
 		String reg = "^r[1-9A-HJ-NP-Za-km-z]{25,33}$";
 		return Pattern.matches(reg, address);
 	}
-	
+
 	public final static boolean isRippleSecret(String address) {
 		if (Strings.isNullOrEmpty(address)) {
 			return false;
@@ -45,7 +46,7 @@ public class AccountFind {
 		String reg = "^s[1-9A-HJ-NP-Za-km-z]{25,31}$";
 		return Pattern.matches(reg, address);
 	}
-	
+
 	public final static boolean is256hash(String hash) {
 		if (Strings.isNullOrEmpty(hash)) {
 			return false;
@@ -150,7 +151,7 @@ public class AccountFind {
 	}
 
 	public AccountInfo processTx(final String address, final long txPreLgrSeq,
-			final int max, final AccountInfo accountinfo,
+			final long max, final AccountInfo accountinfo,
 			final Updateable update) {
 		final ArrayList<IssuedCurrency> issues = new ArrayList<>(10);
 		Updateable updateable = new Updateable() {
@@ -163,20 +164,28 @@ public class AccountFind {
 
 							@Override
 							public void success(JSONObject res) {
-
 								JSONObject result = getJsonObject(res, "result");
 								if (result != null) {
 									if (result.has("marker")) {
 										JSONObject marker = result
 												.getJSONObject("marker");
-										accountinfo.marker = accountinfo.marker == getLong(
-												marker, "ledger") ? accountinfo.marker - 1
-												: getLong(marker, "ledger");
-										AccountInfo newInfo = new AccountInfo();
-										processTx(address, accountinfo.marker,
-												max, newInfo, null);
-										accountinfo.accountlinks.add(newInfo);
+										long ledger = getLong(marker, "ledger");
+										if (accountinfo.marker != ledger) {
+											if (accountinfo.marker == ledger) {
+												accountinfo.marker = ledger - 1;
+											} else {
+												accountinfo.marker = ledger;
+											}
+											AccountInfo newInfo = new AccountInfo();
+											newInfo.marker = accountinfo.marker;
+											processTx(address,
+													accountinfo.marker, ledger,
+													newInfo, null);
+											accountinfo.accountlinks
+													.add(newInfo);
+										}
 									}
+
 									if (result.has("transactions")) {
 										JSONArray arrays = getArray(result,
 												"transactions");
@@ -206,6 +215,17 @@ public class AccountFind {
 
 											transactionTx.date = getDateTime(
 													date).getTimeString();
+
+											if (tx.has("Memos")) {
+												JSONArray list = tx
+														.getJSONArray("Memos");
+												for (int m = 0; m < list
+														.length(); m++) {
+													transactionTx.memos.add(new Memo(
+															list.getJSONObject(m),
+															date));
+												}
+											}
 
 											String fee = CurrencyUtils.getRippleToValue(String
 													.valueOf(getLong(tx, "Fee")));
@@ -237,12 +257,15 @@ public class AccountFind {
 												String counterparty = null;
 												if (meta != null
 														&& meta.has("DeliveredAmount")) {
-													currency = CurrencyUtils.getAmount(getObject(
-															meta,
-															"DeliveredAmount"));
+													currency = CurrencyUtils
+															.getAmount(getObject(
+																	meta,
+																	"DeliveredAmount"));
 												} else {
-													currency = CurrencyUtils.getAmount(getObject(
-															tx, "Amount"));
+													currency = CurrencyUtils
+															.getAmount(getObject(
+																	tx,
+																	"Amount"));
 												}
 												transactionTx.currency = currency;
 												String flagType;
@@ -285,16 +308,19 @@ public class AccountFind {
 												Object limitAmount = getObject(
 														tx, "LimitAmount");
 												if (limitAmount != null) {
-													transactionTx.currency = CurrencyUtils.getAmount(limitAmount);
+													transactionTx.currency = CurrencyUtils
+															.getAmount(limitAmount);
 													transactionTx.trusted = transactionTx.currency.issuer
 															.toString();
 												}
 												break;
 											case "OfferCreate":
-												transactionTx.get = CurrencyUtils.getAmount(getObject(
-														tx, "TakerGets"));
-												transactionTx.pay = CurrencyUtils.getAmount(getObject(
-														tx, "TakerPays"));
+												transactionTx.get = CurrencyUtils
+														.getAmount(getObject(
+																tx, "TakerGets"));
+												transactionTx.pay = CurrencyUtils
+														.getAmount(getObject(
+																tx, "TakerPays"));
 												break;
 											case "OfferCancel":
 												JSONArray affectedNodes = getArray(
@@ -319,12 +345,14 @@ public class AccountFind {
 																	"Account");
 															if (ffactount
 																	.equals(transactionTx.account)) {
-																transactionTx.get = CurrencyUtils.getAmount(getObject(
-																		ff,
-																		"TakerGets"));
-																transactionTx.pay = CurrencyUtils.getAmount(getObject(
-																		ff,
-																		"TakerPays"));
+																transactionTx.get = CurrencyUtils
+																		.getAmount(getObject(
+																				ff,
+																				"TakerGets"));
+																transactionTx.pay = CurrencyUtils
+																		.getAmount(getObject(
+																				ff,
+																				"TakerPays"));
 															}
 														}
 													}
@@ -547,9 +575,9 @@ public class AccountFind {
 							Object taker_gets = getObject(o, "taker_gets");
 							Object taker_pays = getObject(o, "taker_pays");
 
-							BookOffer offer = new BookOffer(
-									CurrencyUtils.getAmount(taker_gets),
-									CurrencyUtils.getAmount(taker_pays), seq);
+							BookOffer offer = new BookOffer(CurrencyUtils
+									.getAmount(taker_gets), CurrencyUtils
+									.getAmount(taker_pays), seq);
 
 							accountinfo.bookOffers.add(offer);
 
@@ -596,7 +624,6 @@ public class AccountFind {
 
 		return accountinfo;
 	}
-
 
 	public void subscribe(String[] srcAddress, final Rollback back) {
 		RPClient client = RPClient.ripple();
@@ -709,7 +736,8 @@ public class AccountFind {
 		}
 	}
 
-	public void tx(String srcAddress, int ledger, int limit, final Rollback back) {
+	public void tx(String srcAddress, long ledger, long limit,
+			final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.account_tx);
