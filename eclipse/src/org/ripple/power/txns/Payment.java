@@ -1,5 +1,7 @@
 package org.ripple.power.txns;
 
+import org.ripple.power.blockchain.RippleMemoEncode;
+import org.ripple.power.blockchain.RippleMemoEncodes;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base64Coder;
@@ -24,13 +26,71 @@ import com.ripple.core.types.known.tx.Transaction;
 
 public class Payment {
 
+	public static void send(final RippleSeedAddress seed,
+			final String dstAddress, final RippleMemoEncode memo, final String fee,
+			final Rollback back) {
+		RippleMemoEncodes memos = new RippleMemoEncodes();
+		memos.add(memo);
+		send(seed, dstAddress, memos, fee, back);
+	}
+
+	public static void send(final RippleSeedAddress seed,
+			final String dstAddress, final RippleMemoEncodes list, final String fee,
+			final Rollback back) {
+		final String address = seed.getPublicRippleAddress().toString();
+		AccountFind find = new AccountFind();
+		find.info(address, new Rollback() {
+			@Override
+			public void success(JSONObject message) {
+				long sequence = TransactionUtils.getSequence(message);
+				Transaction txn = new Transaction(TransactionType.Payment);
+				txn.putTranslated(Field.Account, seed.getPublicKey());
+				txn.putTranslated(Field.Destination, dstAddress);
+				txn.putTranslated(Field.Amount, LSystem.MIN_AMOUNT);
+				txn.putTranslated(Field.DestinationTag,
+						MathUtils.randomLong(1, 999999999));
+				STArray arrays = new STArray();
+				for (int i = 0; i < list.size(); i++) {
+					RippleMemoEncode rpmemo = list.get(i);
+					STObject obj = new STObject();
+					obj.putTranslated(Field.MemoType, rpmemo.getType());
+					obj.putTranslated(Field.MemoData, rpmemo.getData());
+					if (rpmemo.getFormat() != null) {
+						obj.putTranslated(Field.MemoFormat, rpmemo.getFormat());
+					}
+					STObject memo = new STObject();
+					memo.put(Field.Memo, obj);
+					arrays.add(memo);
+				}
+				txn.putTranslated(Field.Memos, arrays);
+				try {
+					TransactionUtils.submitBlob(seed, txn, fee, sequence, back);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void error(JSONObject message) {
+				if (back != null) {
+					back.error(message);
+				}
+
+			}
+		});
+
+	}
+
 	public static void sendMessage(final RippleSeedAddress seed,
 			final String dstAddress, final String memotype,
-			final String memodata, final String fee, final Rollback back) {
+			final String memodata, final String memoformat, final String fee,
+			final Rollback back) {
 		try {
 			byte[] typeByte = memotype.getBytes(LSystem.encoding);
 			byte[] dataByte = memodata.getBytes(LSystem.encoding);
-			send(seed, dstAddress, "0.001", fee, typeByte, dataByte, back);
+			byte[] formatByte = memoformat.getBytes(LSystem.encoding);
+			send(seed, dstAddress, LSystem.MIN_AMOUNT, fee, typeByte, dataByte,
+					formatByte, back);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -38,15 +98,18 @@ public class Payment {
 
 	public static void send(final RippleSeedAddress seed,
 			final String dstAddress, final String amount, final String fee,
-			final byte[] memotype, final byte[] memodata, final Rollback back) {
+			final byte[] memotype, final byte[] memodata,
+			final byte[] memoformat, final Rollback back) {
 		String typeStr = CoinUtils.toHex(Base64Coder.encode(memotype));
 		String typeData = CoinUtils.toHex(Base64Coder.encode(memodata));
-		send(seed, dstAddress, amount, fee, typeStr, typeData, back);
+		String typeFormat = CoinUtils.toHex(Base64Coder.encode(memoformat));
+		send(seed, dstAddress, amount, fee, typeStr, typeData, typeFormat, back);
 	}
 
 	public static void send(final RippleSeedAddress seed,
 			final String dstAddress, final String amount, final String fee,
-			final String memotype, final String memodata, final Rollback back) {
+			final String memotype, final String memodata,
+			final String memoformat, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -62,6 +125,9 @@ public class Payment {
 				STObject obj = new STObject();
 				obj.putTranslated(Field.MemoType, memotype);
 				obj.putTranslated(Field.MemoData, memodata);
+				if (memoformat != null) {
+					obj.putTranslated(Field.MemoFormat, memoformat);
+				}
 				STObject memo = new STObject();
 				memo.put(Field.Memo, obj);
 				STArray arrays = new STArray();

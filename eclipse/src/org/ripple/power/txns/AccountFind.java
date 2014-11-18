@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.blockchain.RippleMemoDecode;
+import org.ripple.power.blockchain.RippleMemoDecodes;
 import org.ripple.power.txns.TransactionTx.Memo;
 import org.ripple.power.ui.RPClient;
 
@@ -105,7 +107,7 @@ public class AccountFind {
 		return null;
 	}
 
-	public static RippleDate getDateTime(int date) {
+	public static RippleDate getDateTime(long date) {
 		return RippleDate.fromSecondsSinceRippleEpoch(date);
 	}
 
@@ -143,6 +145,71 @@ public class AccountFind {
 			}
 		});
 		return lines;
+	}
+
+	public RippleMemoDecodes message(final String address,
+			final String password, final Updateable update) {
+		return message(address, password, -1, 200, update);
+	}
+
+	/**
+	 * send message to Rippled
+	 * 
+	 * @param address
+	 * @param password (Only ENCODE mode become effective)
+	 * @param txPreLgrSeq
+	 * @param max
+	 * @param update
+	 * @return
+	 */
+	public RippleMemoDecodes message(final String address,
+			final String password, final long txPreLgrSeq, final long max,
+			final Updateable update) {
+		final RippleMemoDecodes decodes = new RippleMemoDecodes();
+		tx(address, txPreLgrSeq, max, new Rollback() {
+
+			@Override
+			public void success(JSONObject res) {
+				if (res.has("result")) {
+					JSONObject result = res.getJSONObject("result");
+					if (result != null) {
+						if (result.has("transactions")) {
+							JSONArray arrays = result
+									.getJSONArray("transactions");
+							for (int i = 0; i < arrays.length(); i++) {
+								JSONObject transaction = arrays
+										.getJSONObject(i);
+								JSONObject tx = transaction.getJSONObject("tx");
+								String account = tx.getString("Account");
+								long date = tx.getLong("date");
+								if (tx.has("Memos")) {
+									JSONArray list = tx.getJSONArray("Memos");
+									for (int m = 0; m < list.length(); m++) {
+										RippleMemoDecode decode = new RippleMemoDecode(
+												account, list.getJSONObject(m),
+												date, password);
+										decodes.add(decode);
+									}
+								}
+
+							}
+						}
+					}
+				}
+				if (update != null) {
+					update.action(decodes);
+				}
+			}
+
+			@Override
+			public void error(JSONObject res) {
+				if (update != null) {
+					update.action(decodes);
+				}
+			}
+		});
+
+		return decodes;
 	}
 
 	public AccountInfo processTx(final String address,
@@ -211,7 +278,7 @@ public class AccountFind {
 											transactionTx.account = getStringObject(
 													tx, "Account");
 
-											int date = getInt(tx, "date");
+											long date = getLong(tx, "date");
 
 											transactionTx.date = getDateTime(
 													date).getTimeString();

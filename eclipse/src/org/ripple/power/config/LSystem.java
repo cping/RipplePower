@@ -36,6 +36,8 @@ import org.ripple.power.wallet.WalletCache;
 public final class LSystem {
 
 	final static public ClassLoader classLoader;
+
+	public static String MIN_AMOUNT = "0.0001";
 	
 	public static String FEE = "0.012";
 

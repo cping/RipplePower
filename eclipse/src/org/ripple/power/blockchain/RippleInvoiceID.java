@@ -1,5 +1,5 @@
 package org.ripple.power.blockchain;
 
-public class Memos {
+public class RippleInvoiceID {
 
 }

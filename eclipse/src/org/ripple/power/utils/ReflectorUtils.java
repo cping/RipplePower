@@ -515,8 +515,8 @@ public class ReflectorUtils {
 
 	}
 
-	public static Object invokeInit(Class clazz, Object[] args,
-			Class[] parameterTypes) throws NoSuchMethodException,
+	public static Object invokeInit(Class<?> clazz, Object[] args,
+			Class<?>[] parameterTypes) throws NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException,
 			InstantiationException {
 		if (parameterTypes == null) {
@@ -525,7 +525,7 @@ public class ReflectorUtils {
 		if (args == null) {
 			args = EMPTY_OBJECT;
 		}
-		Constructor ctor = getMatchingAccessibleConstructor(clazz,
+		Constructor<?> ctor = getMatchingAccessibleConstructor(clazz,
 				parameterTypes);
 		if (null == ctor) {
 			return null;
