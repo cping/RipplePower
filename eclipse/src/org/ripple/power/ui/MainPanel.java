@@ -419,8 +419,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		try {
 			if (actionName.equals(CommandFlag.Editor)) {
 				RPToast.makeText(LSystem.applicationMain,
-						"Edit Ripple script and running.",
-						Style.SUCCESS).display();
+						"Edit Ripple script and running.", Style.SUCCESS)
+						.display();
 				EditorDialog.showDialog(LSystem.applicationMain);
 				return;
 			}
@@ -560,6 +560,8 @@ public class MainPanel extends JPanel implements ActionListener {
 													"Send XRP"),
 											LangConfig.get(this, "send_iou",
 													"Send IOU"),
+											LangConfig.get(this, "send_memo",
+													"Memo Send/Receive"),
 											LangConfig.get(this, "cancel",
 													"Cancel") },
 									JOptionPane.NO_OPTION);
@@ -592,7 +594,12 @@ public class MainPanel extends JPanel implements ActionListener {
 						RPIOUSendDialog.showDialog(item.getPublicKey() + " "
 								+ LangConfig.get(this, "send_iou", "Send IOU"),
 								LSystem.applicationMain, item);
-
+						break;
+					case 2:
+						RPToast.makeText(LSystem.applicationMain,
+								"Memo Send/Receive.", Style.SUCCESS).display();
+						RPRippledMemoDialog.showDialog("Memo Send/Receive",
+								LSystem.applicationMain, item);
 						break;
 					default:
 						break;

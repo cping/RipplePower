@@ -26,17 +26,17 @@ import com.ripple.core.types.known.tx.Transaction;
 
 public class Payment {
 
-	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final RippleMemoEncode memo, final String fee,
-			final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String amount,
+			final String dstAddress, final RippleMemoEncode memo,
+			final String fee, final Rollback back) {
 		RippleMemoEncodes memos = new RippleMemoEncodes();
 		memos.add(memo);
-		send(seed, dstAddress, memos, fee, back);
+		send(seed, amount, dstAddress, memos, fee, back);
 	}
 
-	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final RippleMemoEncodes list, final String fee,
-			final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String amount,
+			final String dstAddress, final RippleMemoEncodes list,
+			final String fee, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -46,7 +46,7 @@ public class Payment {
 				Transaction txn = new Transaction(TransactionType.Payment);
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				txn.putTranslated(Field.Destination, dstAddress);
-				txn.putTranslated(Field.Amount, LSystem.MIN_AMOUNT);
+				txn.putTranslated(Field.Amount, amount);
 				txn.putTranslated(Field.DestinationTag,
 						MathUtils.randomLong(1, 999999999));
 				STArray arrays = new STArray();

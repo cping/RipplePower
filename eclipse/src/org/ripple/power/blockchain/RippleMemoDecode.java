@@ -5,26 +5,37 @@ import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.utils.Base64Coder;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.OpenSSL;
+
+import com.ripple.core.coretypes.RippleDate;
 
 public class RippleMemoDecode {
 
-	public String account;
-	
-	public String modeName;
+	private String dataHash;
 
-	public String data;
+	private String typeHash;
 
-	public String type;
+	private String account;
+
+	private String modeName;
+
+	private String data;
+
+	private String type;
 
 	public long date = -1;
 
-	public RippleMemoDecode(String account,JSONObject obj, long date, String password) {
+	public RippleMemoDecode(String account, JSONObject obj, long date,
+			String password) {
+		this.date = date;
 		this.account = account;
 		TransactionTx.Memo tx_memo = new TransactionTx.Memo(obj, date);
 		if (tx_memo.memo_format != null) {
 			modeName = convertBase64(tx_memo.memo_format);
 		}
+		this.typeHash = tx_memo.memo_type;
+		this.dataHash = tx_memo.memo_data;
 		if (tx_memo.memo_format == null || tx_memo.memo_data == null
 				|| tx_memo.memo_type == null) {
 			modeName = "UNKOWN";
@@ -59,7 +70,6 @@ public class RippleMemoDecode {
 				}
 				break;
 			}
-			this.date = date;
 		}
 	}
 
@@ -112,4 +122,76 @@ public class RippleMemoDecode {
 	public long getDate() {
 		return date;
 	}
+
+	public String getDataHash() {
+		return dataHash;
+	}
+
+	public String getTypeHash() {
+		return typeHash;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public String getModeName() {
+		return modeName;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	private String wrap(String res, int limit) {
+		if (res.length() <= limit) {
+			return res;
+		}
+		char[] chars = res.toCharArray();
+		StringBuilder sbr = new StringBuilder();
+		final int size = chars.length;
+		for (int i = 0; i < size; i++) {
+			sbr.append(chars[i]);
+			if (i != 0 && i % limit == 0) {
+				sbr.append("<br>");
+			}
+		}
+		return sbr.toString();
+	}
+
+	public String toHTML() {
+		StringBuilder sbr = new StringBuilder();
+		sbr.append("<font size=3 color=red>Account </font>");
+		sbr.append(account);
+		sbr.append("<br>");
+		sbr.append("<font size=3 color=red>Date </font>");
+		sbr.append(RippleDate.fromSecondsSinceRippleEpoch(date).getTimeString());
+		sbr.append("<br>");
+		sbr.append("<font size=3 color=red>Type </font>");
+		sbr.append(type.toUpperCase());
+		sbr.append(" ");
+		sbr.append("<font size=3 color=red>Mode </font>");
+		sbr.append(modeName.toUpperCase());
+		sbr.append("<br>");
+		sbr.append("<font size=3 color=red>Type Hash </font>");
+		sbr.append("<br>");
+		sbr.append(wrap(typeHash, 60));
+		sbr.append("<br>");
+		sbr.append("<font size=3 color=red>Data Hash </font>");
+		sbr.append("<br>");
+		sbr.append(wrap(dataHash, 60));
+		sbr.append("<br>");
+		sbr.append("<font size=4 color=orange>");
+		String html = data;
+		html = StringUtils.replaceIgnoreCase(html, "\n", "<br>");
+		html = StringUtils.replaceIgnoreCase(html, "\r", "<br>");
+		sbr.append(html);
+		sbr.append("</font>");
+		return sbr.toString();
+	}
+
 }

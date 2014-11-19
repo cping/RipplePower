@@ -37,14 +37,15 @@ public class RippleMemoEncode {
 				break;
 			case Mode.ENCODE:
 				modeName = "ENCODE";
-				if (password == null) {
-					password = LSystem.applicationName;
+				type = mtype.getBytes(LSystem.encoding);
+				data = mdata.getBytes(LSystem.encoding);
+				if (password != null) {
+					OpenSSL ssl = new OpenSSL();
+					type = ssl.encrypt(type, password);
+					data = ssl.encrypt(data, password);
 				}
-				OpenSSL ssl = new OpenSSL();
-				type = ssl.encrypt(type, password);
-				data = ssl.encrypt(data, password);
-				type = Base64Coder.encode(mtype.getBytes(LSystem.encoding));
-				data = Base64Coder.encode(mdata.getBytes(LSystem.encoding));
+				type = Base64Coder.encode(type);
+				data = Base64Coder.encode(data);
 				break;
 			}
 			format = Base64Coder.encode(modeName.getBytes(LSystem.encoding));

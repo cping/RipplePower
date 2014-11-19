@@ -182,9 +182,11 @@ public class AccountFind {
 								JSONObject tx = transaction.getJSONObject("tx");
 								String account = tx.getString("Account");
 								long date = tx.getLong("date");
+							
 								if (tx.has("Memos")) {
 									JSONArray list = tx.getJSONArray("Memos");
 									for (int m = 0; m < list.length(); m++) {
+								
 										RippleMemoDecode decode = new RippleMemoDecode(
 												account, list.getJSONObject(m),
 												date, password);

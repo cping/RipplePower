@@ -533,29 +533,29 @@ public class ReflectorUtils {
 		return ctor.newInstance(args);
 	}
 
-	public static Object invokeInitExact(Class clazz, Object arg)
+	public static Object invokeInitExact(Class<?> clazz, Object arg)
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
 		Object[] args = { arg };
 		return invokeInitExact(clazz, args);
 	}
 
-	public static Object invokeInitExact(Class clazz, Object[] args)
+	public static Object invokeInitExact(Class<?> clazz, Object[] args)
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
 		if (null == args) {
 			args = EMPTY_OBJECT;
 		}
 		int arguments = args.length;
-		Class parameterTypes[] = new Class[arguments];
+		Class<?> parameterTypes[] = new Class<?>[arguments];
 		for (int i = 0; i < arguments; i++) {
 			parameterTypes[i] = args[i].getClass();
 		}
 		return invokeInitExact(clazz, args, parameterTypes);
 	}
 
-	public static Object invokeInitExact(Class clazz, Object[] args,
-			Class[] parameterTypes) throws NoSuchMethodException,
+	public static Object invokeInitExact(Class<?> clazz, Object[] args,
+			Class<?>[] parameterTypes) throws NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException,
 			InstantiationException {
 
@@ -567,7 +567,7 @@ public class ReflectorUtils {
 			parameterTypes = EMPTY_CLASS;
 		}
 
-		Constructor ctor = getAccessible(clazz, parameterTypes);
+		Constructor<?> ctor = getAccessible(clazz, parameterTypes);
 		if (null == ctor) {
 			return null;
 		}
@@ -575,12 +575,12 @@ public class ReflectorUtils {
 
 	}
 
-	public static Constructor getAccessible(Class clazz, Class parameterType) {
-		Class[] parameterTypes = { parameterType };
+	public static Constructor<?> getAccessible(Class<?> clazz, Class<?> parameterType) {
+		Class<?>[] parameterTypes = { parameterType };
 		return getAccessible(clazz, parameterTypes);
 	}
 
-	public static Constructor getAccessible(Class clazz, Class[] parameterTypes) {
+	public static Constructor<?> getAccessible(Class<?> clazz, Class<?>[] parameterTypes) {
 		try {
 			return getAccessible(clazz.getConstructor(parameterTypes));
 		} catch (NoSuchMethodException e) {
@@ -588,24 +588,24 @@ public class ReflectorUtils {
 		}
 	}
 
-	public static Constructor getAccessible(Constructor ctor) {
+	public static Constructor<?> getAccessible(Constructor<?> ctor) {
 		if (ctor == null) {
 			return (null);
 		}
 		if (!Modifier.isPublic(ctor.getModifiers())) {
 			return (null);
 		}
-		Class clazz = ctor.getDeclaringClass();
+		Class<?> clazz = ctor.getDeclaringClass();
 		if (Modifier.isPublic(clazz.getModifiers())) {
 			return (ctor);
 		}
 		return null;
 	}
 
-	private static Constructor getMatchingAccessibleConstructor(Class clazz,
-			Class[] parameterTypes) {
+	private static Constructor<?> getMatchingAccessibleConstructor(Class<?> clazz,
+			Class<?>[] parameterTypes) {
 		try {
-			Constructor ctor = clazz.getConstructor(parameterTypes);
+			Constructor<?> ctor = clazz.getConstructor(parameterTypes);
 			try {
 				ctor.setAccessible(true);
 			} catch (SecurityException se) {
@@ -614,9 +614,9 @@ public class ReflectorUtils {
 		} catch (NoSuchMethodException e) {
 		}
 		int paramSize = parameterTypes.length;
-		Constructor[] ctors = clazz.getConstructors();
+		Constructor<?>[] ctors = clazz.getConstructors();
 		for (int i = 0, size = ctors.length; i < size; i++) {
-			Class[] ctorParams = ctors[i].getParameterTypes();
+			Class<?>[] ctorParams = ctors[i].getParameterTypes();
 			int ctorParamSize = ctorParams.length;
 			if (ctorParamSize == paramSize) {
 				boolean match = true;
@@ -628,7 +628,7 @@ public class ReflectorUtils {
 					}
 				}
 				if (match) {
-					Constructor ctor = getAccessible(ctors[i]);
+					Constructor<?> ctor = getAccessible(ctors[i]);
 					if (ctor != null) {
 						try {
 							ctor.setAccessible(true);
@@ -642,13 +642,13 @@ public class ReflectorUtils {
 		return null;
 	}
 
-	public static final boolean isAssignmentCompatible(Class parameterType,
-			Class parameterization) {
+	public static final boolean isAssignmentCompatible(Class<?> parameterType,
+			Class<?> parameterization) {
 		if (parameterType.isAssignableFrom(parameterization)) {
 			return true;
 		}
 		if (parameterType.isPrimitive()) {
-			Class parameterWrapperClazz = getWrapper(parameterType);
+			Class<?> parameterWrapperClazz = getWrapper(parameterType);
 			if (parameterWrapperClazz != null) {
 				return parameterWrapperClazz.equals(parameterization);
 			}
@@ -656,7 +656,7 @@ public class ReflectorUtils {
 		return false;
 	}
 
-	public static Class getWrapper(Class classType) {
+	public static Class<?> getWrapper(Class<?> classType) {
 		if (boolean.class.equals(classType)) {
 			return Boolean.class;
 		} else if (float.class.equals(classType)) {
@@ -689,24 +689,25 @@ public class ReflectorUtils {
 	}
 
 	public static Object[] getInterfaceToObjects(Object object) {
-		Set set = getInterfaceToSet(object.getClass());
+		Set<?> set = getInterfaceToSet(object.getClass());
 		return (Object[]) set.toArray(new Object[set.size()]);
 	}
 
-	public static Object[] getInterfaceToObjects(Class clazz) {
+	public static Object[] getInterfaceToObjects(Class<?> clazz) {
 		return getInterfaceToSet(clazz).toArray();
 	}
 
-	final static public Set getInterfaceToSet(Class clazz) {
+	final static public Set<?> getInterfaceToSet(Class<?> clazz) {
 		if (clazz.isInterface()) {
 			return null;
 		}
-		Set interfaceSet = (Set) interfaceMap.get(clazz);
+		@SuppressWarnings("unchecked")
+		Set<Object> interfaceSet = (Set<Object>) interfaceMap.get(clazz);
 		if (interfaceSet == null) {
 			interfaceSet = CollectionUtils.createSet();
-			for (Class target = clazz; target != Object.class; target = target
+			for (Class<?> target = clazz; target != Object.class; target = target
 					.getSuperclass()) {
-				Class[] interfaces = target.getInterfaces();
+				Class<?>[] interfaces = target.getInterfaces();
 				for (int i = 0; i < interfaces.length; ++i) {
 					interfaceSet.add(interfaces[i].getName());
 				}
@@ -716,15 +717,15 @@ public class ReflectorUtils {
 		return interfaceSet;
 	}
 
-	final static public Method doMethod(Class clazz, String name) {
+	final static public Method doMethod(Class<?> clazz, String name) {
 		return doMethod(clazz, name, 0);
 	}
 
-	final static public Method doSetMethod(final Class clazz, final String name) {
+	final static public Method doSetMethod(final Class<?> clazz, final String name) {
 		return doMethod(clazz, name, 1);
 	}
 
-	final static public Method doGetMethod(Class clazz, String name) {
+	final static public Method doGetMethod(Class<?> clazz, String name) {
 		return doMethod(clazz, name, 2);
 	}
 
@@ -734,9 +735,9 @@ public class ReflectorUtils {
 		return result;
 	}
 
-	final static private Method doMethod(final Class clazz, final String name,
+	final static private Method doMethod(final Class<?> clazz, final String name,
 			final int flag) {
-		Map asmMethods = ClassUtils.getFieldInspector(clazz).getMethods();
+		MapArray asmMethods = ClassUtils.getFieldInspector(clazz).getMethods();
 		Method method = (Method) asmMethods.get(name);
 		if (flag == 0 || method != null) {
 			return method;
@@ -745,9 +746,9 @@ public class ReflectorUtils {
 			Reflector reflector = Reflector.getReflector(keyName);
 			keyName = StringUtils.replace(StringUtils
 					.replace(name, keyName, ""), "()", "");
-			Set entrys = asmMethods.entrySet();
-			for (Iterator it = entrys.iterator(); it.hasNext();) {
-				Entry entry = (Entry) it.next();
+			Set<?> entrys = asmMethods.entrySet();
+			for (Iterator<?> it = entrys.iterator(); it.hasNext();) {
+				Entry<?, ?> entry = (Entry<?, ?>) it.next();
 				String methodName = (String) entry.getKey();
 				if (methodName.startsWith(keyName)) {
 					String result = ReflectorUtils.getParameter(methodName);
@@ -759,9 +760,9 @@ public class ReflectorUtils {
 		}
 		int offset = -1;
 		if (method == null) {
-			Set entrys = asmMethods.entrySet();
-			for (Iterator it = entrys.iterator(); it.hasNext();) {
-				Entry entry = (Entry) it.next();
+			Set<?> entrys = asmMethods.entrySet();
+			for (Iterator<?> it = entrys.iterator(); it.hasNext();) {
+				Entry<?, ?> entry = (Entry<?, ?>) it.next();
 				String methodName = (String) entry.getKey();
 				if (flag == 1) {
 					offset = ReflectorUtils.getMethodOffset(methodName);
@@ -780,14 +781,14 @@ public class ReflectorUtils {
 		return method;
 	}
 
-	final static public String getMatchSetMethod(final Class clazz,
+	final static public String getMatchSetMethod(final Class<?> clazz,
 			final String name) {
-		Set set = ClassUtils.getFieldInspector(clazz).getSetterMethods()
+		Set<?> set = ClassUtils.getFieldInspector(clazz).getSetterMethods()
 				.keySet();
 		if (name.startsWith("set")) {
 			return name;
 		}
-		for (Iterator it = set.iterator(); it.hasNext();) {
+		for (Iterator<?> it = set.iterator(); it.hasNext();) {
 			String methodName = (String) it.next();
 			int offset = ReflectorUtils.getMethodOffset(methodName);
 			if (offset > 0) {
@@ -802,14 +803,14 @@ public class ReflectorUtils {
 		return name;
 	}
 
-	final static public String getMatchGetMethod(final Class clazz,
+	final static public String getMatchGetMethod(final Class<?> clazz,
 			final String name) {
-		Set set = ClassUtils.getFieldInspector(clazz).getGetterMethods()
+		Set<?> set = ClassUtils.getFieldInspector(clazz).getGetterMethods()
 				.keySet();
 		if (name.startsWith("get") || name.startsWith("is")) {
 			return name;
 		}
-		for (Iterator it = set.iterator(); it.hasNext();) {
+		for (Iterator<?> it = set.iterator(); it.hasNext();) {
 			String methodName = (String) it.next();
 			int offset = ReflectorUtils.getMethodOffget(methodName);
 			if (offset > 0) {
@@ -857,11 +858,12 @@ public class ReflectorUtils {
 		return offset;
 	}
 
-	final static public Set<Object> getMethodNames(Class clazz) {
+	@SuppressWarnings("unchecked")
+	final static public Set<Object> getMethodNames(Class<?> clazz) {
 		return ClassUtils.getFieldInspector(clazz).getMethods().keySet();
 	}
-
-	final static public Set<Object> getFields(Class clazz) {
+	@SuppressWarnings("unchecked")
+	final static public Set<Object> getFields(Class<?> clazz) {
 		return ClassUtils.getFieldInspector(clazz).getFields().keySet();
 	}
 
