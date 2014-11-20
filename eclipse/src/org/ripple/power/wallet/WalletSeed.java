@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.address.utils.CoinUtils;
+import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.FileUtils;
 

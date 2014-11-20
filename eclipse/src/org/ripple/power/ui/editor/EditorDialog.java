@@ -11,7 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.address.collection.ArrayList;
+import org.ripple.power.collection.ArrayList;
 import org.ripple.power.command.IScriptLog;
 import org.ripple.power.command.ROCScript;
 import org.ripple.power.command.ROCScript.ScriptException;

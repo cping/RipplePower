@@ -15,6 +15,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.news.NewsParser;
 import org.ripple.power.news.NewsParser.News;
@@ -55,6 +56,8 @@ public class RPNewsDialog extends JDialog {
 
 	private void initComponents() {
 
+		addWindowListener(HelperWindow.get());
+		
 		_loadStatusLabel = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_newsList = new RPList();

@@ -1,11 +1,11 @@
 package org.ripple.power.txns;
 
-import org.address.ripple.RippleObject;
-import org.address.ripple.RippleSeedAddress;
-import org.address.ripple.RippleSerializer;
-import org.address.ripple.RippleSigner;
-import org.address.utils.CoinUtils;
 import org.json.JSONObject;
+import org.ripple.power.CoinUtils;
+import org.ripple.power.RippleObject;
+import org.ripple.power.RippleSeedAddress;
+import org.ripple.power.RippleSerializer;
+import org.ripple.power.RippleSigner;
 import org.ripple.power.ui.RPClient;
 
 import com.ripple.client.enums.Command;

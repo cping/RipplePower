@@ -4,9 +4,9 @@ import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.address.collection.ArrayMap;
-import org.address.ripple.RippleSeedAddress;
 import org.json.JSONObject;
+import org.ripple.power.RippleSeedAddress;
+import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.timer.LTimerContext;

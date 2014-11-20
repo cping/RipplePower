@@ -1,6 +1,6 @@
 package org.ripple.power.wallet;
 
-import org.address.ripple.RippleSeedAddress;
+import org.ripple.power.RippleSeedAddress;
 
 public class WalletItem {
 	

@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.address.collection.ArrayByte;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.UIRes;
 

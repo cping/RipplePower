@@ -1,11 +1,11 @@
 package org.ripple.power.txns;
 
-import org.address.ripple.RippleObject;
-import org.address.ripple.RippleSeedAddress;
-import org.address.ripple.RippleSchemas.BinaryFormatField;
-import org.address.ripple.RippleSchemas.TransactionTypes;
 
 import org.json.JSONObject;
+import org.ripple.power.RippleObject;
+import org.ripple.power.RippleSeedAddress;
+import org.ripple.power.RippleSchemas.BinaryFormatField;
+import org.ripple.power.RippleSchemas.TransactionTypes;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.StringUtils;
 

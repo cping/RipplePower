@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.address.collection.ArrayByte;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 

@@ -41,8 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.address.collection.ConverterMap;
-import org.address.collection.MapArray;
+import org.ripple.power.collection.ConverterMap;
+import org.ripple.power.collection.MapArray;
 import org.ripple.power.ioc.ClassUtils;
 import org.ripple.power.ioc.reflect.ClassConverter;
 import org.ripple.power.ioc.reflect.Reflector;

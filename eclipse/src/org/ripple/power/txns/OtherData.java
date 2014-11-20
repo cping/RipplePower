@@ -17,10 +17,10 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.address.collection.ArrayMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.HttpRequest.HttpRequestException;

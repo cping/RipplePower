@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.address.collection.ArrayMap;
+import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;

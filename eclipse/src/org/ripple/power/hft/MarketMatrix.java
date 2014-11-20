@@ -1,6 +1,6 @@
 package org.ripple.power.hft;
 
-import org.address.collection.ArrayMap;
+import org.ripple.power.collection.ArrayMap;
 
 public class MarketMatrix {
 	protected final static long UNSET = -1l;

@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.address.collection.ArrayMap;
-import org.address.collection.ArrayMap.Entry;
+import org.ripple.power.collection.ArrayMap;
+import org.ripple.power.collection.ArrayMap.Entry;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.CollectionUtils;

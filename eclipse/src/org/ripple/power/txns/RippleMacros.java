@@ -23,9 +23,9 @@ package org.ripple.power.txns;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.address.ripple.RippleSeedAddress;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.command.AMacros;
 import org.ripple.power.command.IScriptLog;
 import org.ripple.power.command.DMacros;
@@ -108,7 +108,7 @@ public class RippleMacros extends AMacros {
 						return;
 					}
 					if (size == 3) {
-						send(type, curOne, curTwo, secret, LSystem.FEE);
+						send(type, curOne, curTwo, secret, LSystem.getFee());
 					} else if (size == 4) {
 						String fee = list.get(3);
 						if (StringUtils.isNumber(fee)) {
@@ -134,7 +134,7 @@ public class RippleMacros extends AMacros {
 						error(ex);
 						return;
 					}
-					String fee = LSystem.FEE;
+					String fee = LSystem.getFee();
 					if (size == 4) {
 						fee = list.get(3);
 					}

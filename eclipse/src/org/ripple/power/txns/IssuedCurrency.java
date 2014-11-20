@@ -2,8 +2,8 @@ package org.ripple.power.txns;
 
 import java.math.BigDecimal;
 
-import org.address.ripple.RippleAddress;
 import org.json.JSONObject;
+import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.StringUtils;
 

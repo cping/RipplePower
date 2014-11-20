@@ -9,7 +9,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import org.address.collection.ArrayByte;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.ui.UIRes;
 
 public class LModSound implements Sound {

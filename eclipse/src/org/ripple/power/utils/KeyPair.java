@@ -1,6 +1,6 @@
 package org.ripple.power.utils;
 
-import org.address.utils.CoinUtils;
+import org.ripple.power.CoinUtils;
 
 public class KeyPair {
 	   public final byte[] publicKey;

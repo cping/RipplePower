@@ -642,7 +642,7 @@ public class RPExchangeDialog extends JDialog {
 					if (result == 0) {
 						BookOffer offer = (BookOffer) o;
 						OfferCancel.set(_item.getSeed(), offer.sequence,
-								LSystem.FEE, new Rollback() {
+								LSystem.getFee(), new Rollback() {
 
 									@Override
 									public void success(JSONObject res) {
@@ -1259,7 +1259,7 @@ public class RPExchangeDialog extends JDialog {
 		}
 
 		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc,
-				flag ? currencySrc : currencyDst, LSystem.FEE, new Rollback() {
+				flag ? currencySrc : currencyDst, LSystem.getFee(), new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {

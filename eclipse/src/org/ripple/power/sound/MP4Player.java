@@ -16,7 +16,7 @@ import mediaframe.mpeg4.video.BitStream;
 import mediaframe.mpeg4.video.MPEG4Decoder;
 import mediaframe.mpeg4.video.VideoFrame;
 
-import org.address.collection.ArrayByte;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.WaitAnimation;

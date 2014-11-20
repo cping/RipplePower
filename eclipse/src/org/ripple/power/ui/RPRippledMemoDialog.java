@@ -9,13 +9,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.address.password.PasswordEasy;
 import org.json.JSONObject;
 import org.ripple.power.blockchain.RippleMemoDecodes;
 import org.ripple.power.blockchain.RippleMemoEncode;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.password.PasswordEasy;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
@@ -99,7 +99,9 @@ public class RPRippledMemoDialog extends JDialog {
 	}
 
 	private void initComponents() {
-
+		
+		addWindowListener(HelperWindow.get());
+		
 		Font font = GraphicsUtils.getFont(LangConfig.fontName, 0, 14);
 
 		jScrollPane1 = new javax.swing.JScrollPane();
@@ -168,7 +170,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_passwordLabel.setBounds(10, 440, 70, 20);
 		getContentPane().add(_feeAmount);
 		_feeAmount.setBounds(340, 400, 160, 20);
-		_feeAmount.setText(LSystem.FEE);
+		_feeAmount.setText(LSystem.getFee());
 
 		_encodeCheckBox.setText(LangConfig.get(this, "mpassword",
 				"Message Password"));
@@ -199,7 +201,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_feeLabel.setBounds(290, 400, 50, 20);
 		getContentPane().add(_amountText);
 		_amountText.setBounds(80, 400, 180, 20);
-		_amountText.setText(LSystem.MIN_AMOUNT);
+		_amountText.setText(LSystem.getMinSend());
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 480, 520, 10);

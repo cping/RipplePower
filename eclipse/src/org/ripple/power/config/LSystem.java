@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
 
-import org.address.NativeSupport;
+import org.ripple.power.NativeSupport;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
@@ -37,9 +37,9 @@ public final class LSystem {
 
 	final static public ClassLoader classLoader;
 
-	public static String MIN_AMOUNT = "0.0001";
-	
-	public static String FEE = "0.012";
+	private static String MIN_AMOUNT = "0.0001";
+
+	private static String FEE = "0.012";
 
 	public final static String nativeCurrency = "xrp";
 
@@ -156,6 +156,30 @@ public final class LSystem {
 				_isMacClassic = true;
 			}
 		}
+	}
+
+	public static void setFee(String fee) {
+		Session system = session("system");
+		system.set("fee", fee.trim());
+		system.save();
+	}
+
+	public static String getFee() {
+		Session system = session("system");
+		String result = system.get("fee");
+		return result == null ? FEE : result;
+	}
+
+	public static void setMinSend(String send) {
+		Session system = session("system");
+		system.set("min_send", send.trim());
+		system.save();
+	}
+
+	public static String getMinSend() {
+		Session system = session("system");
+		String result = system.get("min_send");
+		return result == null ? MIN_AMOUNT : result;
 	}
 
 	public static String getNumberShort(String value) {

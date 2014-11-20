@@ -1,5 +1,10 @@
 package org.ripple.power.txns;
 
+import org.ripple.power.CoinUtils;
+import org.ripple.power.RippleObject;
+import org.ripple.power.RippleSeedAddress;
+import org.ripple.power.RippleSchemas.BinaryFormatField;
+import org.ripple.power.RippleSchemas.TransactionTypes;
 import org.ripple.power.blockchain.RippleMemoEncode;
 import org.ripple.power.blockchain.RippleMemoEncodes;
 import org.ripple.power.config.LSystem;
@@ -7,11 +12,6 @@ import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.utils.MathUtils;
 
-import org.address.ripple.RippleObject;
-import org.address.ripple.RippleSeedAddress;
-import org.address.ripple.RippleSchemas.BinaryFormatField;
-import org.address.ripple.RippleSchemas.TransactionTypes;
-import org.address.utils.CoinUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -89,8 +89,8 @@ public class Payment {
 			byte[] typeByte = memotype.getBytes(LSystem.encoding);
 			byte[] dataByte = memodata.getBytes(LSystem.encoding);
 			byte[] formatByte = memoformat.getBytes(LSystem.encoding);
-			send(seed, dstAddress, LSystem.MIN_AMOUNT, fee, typeByte, dataByte,
-					formatByte, back);
+			send(seed, dstAddress, LSystem.getMinSend(), fee, typeByte,
+					dataByte, formatByte, back);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -301,7 +301,7 @@ public class Payment {
 		if (cName != null) {
 			_currencyName = _currencyName.toUpperCase();
 		} else {
-			_currencyName = "XRP";
+			_currencyName = LSystem.nativeCurrency.toUpperCase();
 		}
 		if (issuer != null) {
 			_issuer = issuer;

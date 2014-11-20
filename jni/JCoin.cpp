@@ -5,6 +5,8 @@
 #include "uint256.h"
 #include "key.h"
 #include "RippleAddress.h"
+#include "curve25519.h"
+#include "SHA256.h"
 #include <iostream>
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
@@ -26,6 +28,8 @@ struct CoinRIPEMD160
 {
 unsigned char data[COIN_RIPEMD160_SIZE];
 };
+
+
 
 inline void Bitcoin_SHA256(struct CoinSHA256 *output, const void *input, size_t size)
 {
@@ -98,7 +102,7 @@ std::string jstring2str(JNIEnv* env, jstring jstr)
 	return str;
 }   
 
-JNIEXPORT jboolean JNICALL Java_org_address_NativeSupport_findByteAddress(JNIEnv* env, jclass, jbyteArray dst, jbyteArray src){
+JNIEXPORT jboolean JNICALL Java_org_ripple_power_NativeSupport_findByteAddress(JNIEnv* env, jclass, jbyteArray dst, jbyteArray src){
         int len = (int)(env->GetArrayLength(dst));
         unsigned char* dstPtr = (unsigned char*)env->GetByteArrayElements(dst, 0);
 		int size = (int)(env->GetArrayLength(src));
@@ -140,7 +144,7 @@ JNIEXPORT jboolean JNICALL Java_org_address_NativeSupport_findByteAddress(JNIEnv
 
 
 
-JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getByteKeys(JNIEnv* env, jclass, jbyteArray res, jboolean b){
+JNIEXPORT jstring JNICALL Java_org_ripple_power_NativeSupport_getByteKeys(JNIEnv* env, jclass, jbyteArray res, jboolean b){
 	       
            int len = (int)(env->GetArrayLength(res));
            unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
@@ -161,7 +165,7 @@ JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getByteKeys(JNIEnv* env
 }
 
 
-JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getHashKeys(JNIEnv* env, jclass, jbyteArray res, jboolean b){
+JNIEXPORT jstring JNICALL Java_org_ripple_power_NativeSupport_getHashKeys(JNIEnv* env, jclass, jbyteArray res, jboolean b){
 	       
            int len = (int)(env->GetArrayLength(res));
            unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
@@ -180,7 +184,7 @@ JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getHashKeys(JNIEnv* env
 }
 
 
-JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getRippleBase58(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jstring JNICALL Java_org_ripple_power_NativeSupport_getRippleBase58(JNIEnv* env, jclass, jbyteArray res){
            int len = (int)(env->GetArrayLength(res));
            unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
 		   uchar_vector hash(arrPtr,len);
@@ -188,7 +192,7 @@ JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getRippleBase58(JNIEnv*
 		   return str2jstring(env,toBase58Check(hash,_RIPPLE_W,RIPPLE_BASE58_CHARS));
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getRipemd160Sha256(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jbyteArray JNICALL Java_org_ripple_power_NativeSupport_getRipemd160Sha256(JNIEnv* env, jclass, jbyteArray res){
            int len = (int)(env->GetArrayLength(res));
            unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
 		   uchar_vector hash(arrPtr,len);
@@ -214,7 +218,7 @@ void getRand(unsigned char *buf, int num)
 }
 	
 
-JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getRippleByteKeys(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jstring JNICALL Java_org_ripple_power_NativeSupport_getRippleByteKeys(JNIEnv* env, jclass, jbyteArray res){
 		 int len = (int)(env->GetArrayLength(res));
 
          unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
@@ -233,7 +237,7 @@ JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getRippleByteKeys(JNIEn
 }
 
 
-JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getRippleHashKeys(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jbyteArray JNICALL Java_org_ripple_power_NativeSupport_getRippleHashKeys(JNIEnv* env, jclass, jbyteArray res){
 		 int len = (int)(env->GetArrayLength(res));
 
          unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
@@ -254,7 +258,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getRippleHashKeys(JN
 		return bytes;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_org_address_NativeSupport_getRippleBatchKeys(JNIEnv* env, jclass, jbyteArray res,jint max){
+JNIEXPORT jobjectArray JNICALL Java_org_ripple_power_NativeSupport_getRippleBatchKeys(JNIEnv* env, jclass, jbyteArray res,jint max){
 		 int len = (int)(env->GetArrayLength(res));
          unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
 	 	 uchar_vector hash(arrPtr,len);
@@ -279,7 +283,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_address_NativeSupport_getRippleBatchKeys
 }
 
 
-JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getSha512Quarter(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jbyteArray JNICALL Java_org_ripple_power_NativeSupport_getSha512Quarter(JNIEnv* env, jclass, jbyteArray res){
 	 int len = (int)(env->GetArrayLength(res));
      unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
 	 uchar_vector hash(arrPtr,len);
@@ -289,6 +293,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getSha512Quarter(JNI
 		   len = hash.size();
 		   unsigned char* bytes = new unsigned char[len];
 		   hash.copyToArray(bytes);
+
 		   dst = env->NewByteArray(len);
            env->SetByteArrayRegion(dst, 0, len, (jbyte*)bytes);
 		   delete bytes;
@@ -296,7 +301,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getSha512Quarter(JNI
 	 return dst; 
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getSha512Half(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jbyteArray JNICALL Java_org_ripple_power_NativeSupport_getSha512Half(JNIEnv* env, jclass, jbyteArray res){
 	 int len = (int)(env->GetArrayLength(res));
      unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
 	 uchar_vector hash(arrPtr,len);
@@ -314,7 +319,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_address_NativeSupport_getSha512Half(JNIEnv
 }
 
 
-JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getSecp256k1ToPublic(JNIEnv* env, jclass, jbyteArray res){
+JNIEXPORT jstring JNICALL Java_org_ripple_power_NativeSupport_getSecp256k1ToPublic(JNIEnv* env, jclass, jbyteArray res){
 		 
 		   int len = (int)(env->GetArrayLength(res));
 		   unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
@@ -339,4 +344,31 @@ JNIEXPORT jstring JNICALL Java_org_address_NativeSupport_getSecp256k1ToPublic(JN
 			free(arrPtr);
 
 	        return str2jstring(env,leading0s + base58check);
+}
+
+
+		     static const unsigned char basepoint[32] = {9};
+
+JNIEXPORT jbyteArray JNICALL Java_org_ripple_power_NativeSupport_getNxtHashKeys(JNIEnv* env, jclass, jbyteArray res){
+		 int len = (int)(env->GetArrayLength(res));
+
+         unsigned char* arrPtr = (unsigned char*)env->GetByteArrayElements(res, 0);
+	 	 uchar_vector hash(arrPtr,len);
+	
+       unsigned char mysecret[32],mypublic[32];
+
+	   Sha256(arrPtr,mysecret);
+
+       curve25519_donna(mypublic, mysecret, basepoint);
+	   
+       unsigned char newmypublic[32];
+	   Sha256(mypublic,newmypublic);
+
+	   jbyteArray bytes;
+	   bytes = env->NewByteArray(32);
+       env->SetByteArrayRegion(bytes, 0, 32, (jbyte*)newmypublic);
+
+	   free(arrPtr);
+	   
+	   return bytes;
 }

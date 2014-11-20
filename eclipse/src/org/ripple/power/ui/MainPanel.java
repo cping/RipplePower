@@ -531,7 +531,7 @@ public class MainPanel extends JPanel implements ActionListener {
 					RPXRPSendDialog.showDialog(item.getPublicKey()
 							+ " XRP Send", LSystem.applicationMain, item,
 							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10",
-							LSystem.FEE);
+							LSystem.getFee());
 				}
 			} else if (actionName.equals(CommandFlag.AddAddress)) {
 

@@ -13,7 +13,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
 
-import org.address.collection.ArrayByte;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.ui.UIRes;
 
 

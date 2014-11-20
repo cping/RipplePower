@@ -1,6 +1,6 @@
 package org.ripple.power.blockchain;
 
-import org.address.utils.CoinUtils;
+import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.wallet.OpenSSL;

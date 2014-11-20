@@ -1,7 +1,7 @@
 package org.ripple.power.blockchain;
 
-import org.address.utils.CoinUtils;
 import org.json.JSONObject;
+import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.utils.Base64Coder;

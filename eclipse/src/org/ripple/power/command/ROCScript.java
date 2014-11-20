@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import org.address.collection.Array;
-import org.address.collection.ArrayMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.collection.Array;
+import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.ReflectorUtils;

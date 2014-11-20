@@ -403,7 +403,7 @@ public class RPGatewayDialog extends JDialog {
 								RPGatewayDialog.this);
 						IssuedCurrency cur = new IssuedCurrency("0",
 								currency.issuer.toString(), currency.currency);
-						TrustSet.set(_item.getSeed(), cur, LSystem.FEE,
+						TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
 								new Rollback() {
 									@Override
 									public void success(JSONObject res) {
@@ -465,7 +465,7 @@ public class RPGatewayDialog extends JDialog {
 							RPGatewayDialog.this);
 					IssuedCurrency cur = new IssuedCurrency(trustValue,
 							address, curName);
-					TrustSet.set(_item.getSeed(), cur, LSystem.FEE,
+					TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
 							new Rollback() {
 
 								@Override

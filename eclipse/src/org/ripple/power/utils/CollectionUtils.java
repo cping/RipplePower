@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.address.collection.ArrayIterator;
-import org.address.collection.ConverterMap;
-import org.address.collection.MapArray;
+import org.ripple.power.collection.ArrayIterator;
+import org.ripple.power.collection.ConverterMap;
+import org.ripple.power.collection.MapArray;
 import org.ripple.power.ioc.injector.Dispose;
 
 public class CollectionUtils {

@@ -5,8 +5,8 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.Arrays;
 
-import org.address.utils.CoinUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

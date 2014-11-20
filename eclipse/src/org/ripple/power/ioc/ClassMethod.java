@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import org.address.collection.MapArray;
+import org.ripple.power.collection.MapArray;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.ReflectorUtils;
 

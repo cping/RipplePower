@@ -23,7 +23,7 @@ public class CurrencyUtils {
 	public static String toFee(String amount) {
 		if (MathUtils.isNan(amount)) {
 			long number = Long.valueOf(amount);
-			double fee = Double.valueOf(LSystem.FEE);
+			double fee = Double.valueOf(LSystem.getFee());
 			double old = fee;
 			long limit = 3000;
 			for (long l = limit; l < number; l += limit) {
@@ -42,7 +42,7 @@ public class CurrencyUtils {
 				}
 			}
 		}
-		return LSystem.FEE;
+		return LSystem.getFee();
 	}
 
 	public static String getFee(String fee) {

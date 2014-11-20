@@ -50,7 +50,7 @@ public class RPIOUSendDialog extends JDialog {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPIOUSendDialog dialog = new RPIOUSendDialog(name, parent, item,
-					"", LSystem.MIN_AMOUNT, LSystem.FEE);
+					"", LSystem.getMinSend(), LSystem.getFee());
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);

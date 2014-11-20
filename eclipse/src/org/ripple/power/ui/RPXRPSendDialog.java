@@ -37,7 +37,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	private RPLabel _feeLabel;
 	private RPLabel _addressLabel;
 	private RPLabel _amountLabel;
-	private javax.swing.JSeparator jSeparator1;
+	private javax.swing.JSeparator _jSeparator;
 	private RPTextBox _addressText;
 	private RPTextBox _amountText;
 	private RPTextBox _feeText;
@@ -45,7 +45,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
-					"", LSystem.MIN_AMOUNT, LSystem.FEE);
+					"", LSystem.getMinSend(), LSystem.getFee());
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -79,7 +79,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		_addressText = new RPTextBox();
 		_amountText = new RPTextBox();
 		_feeText = new RPTextBox();
-		jSeparator1 = new javax.swing.JSeparator();
+		_jSeparator = new javax.swing.JSeparator();
 		_sendButton = new RPCButton();
 		_exitButton = new RPCButton();
 
@@ -136,8 +136,8 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		_feeText.setText(fee);
 		getContentPane().add(_feeText);
 		_feeText.setBounds(82, 95, 152, 21);
-		getContentPane().add(jSeparator1);
-		jSeparator1.setBounds(0, 135, 389, 18);
+		getContentPane().add(_jSeparator);
+		_jSeparator.setBounds(0, 135, 389, 18);
 
 		_sendButton.setText(LangConfig.get(this, "send", "Send"));
 		_sendButton.setFont(font);
