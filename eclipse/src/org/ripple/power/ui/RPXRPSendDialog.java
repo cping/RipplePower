@@ -45,7 +45,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
-					"", "1", LSystem.FEE);
+					"", LSystem.MIN_AMOUNT, LSystem.FEE);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -152,18 +152,18 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					if (!address.startsWith("~")) {
 						if (!AccountFind.isRippleAddress(address)) {
 							RPMessage.showErrorMessage(LSystem.applicationMain,
-									"Error", "无效的Ripple地址!");
+									"Error", UIMessage.errAddress);
 							return;
 						}
 					}
 					if (!MathUtils.isNan(amountValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", "无效的发币数量!");
+								"Error", UIMessage.errMoney);
 						return;
 					}
 					if (!MathUtils.isNan(feeValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", "无效的手续费数量!");
+								"Error", UIMessage.errFee);
 						return;
 					}
 					if (address.startsWith("~")) {
@@ -172,12 +172,12 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 						} catch (Exception e1) {
 							RPMessage.showWarningMessage(
 									LSystem.applicationMain, "Warning",
-									"发送失败,无法获得当前地址数据!");
+									UIMessage.errNotAddress);
 						}
 						if (address == null) {
 							RPMessage.showWarningMessage(
 									LSystem.applicationMain, "Warning",
-									"发送失败,无法获得当前地址数据!");
+									UIMessage.errNotAddress);
 						}
 					}
 
@@ -187,7 +187,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 					if (number.longValue() >= (maxSend.longValue() - 20)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", "资金不足,无法发送.");
+								"Error", UIMessage.errNotMoney);
 						return;
 					}
 
@@ -204,7 +204,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 									dialog.closeDialog();
 									RPMessage.showInfoMessage(
 											LSystem.applicationMain, "Info",
-											"发送完毕.");
+											UIMessage.completed);
 								}
 
 								@Override

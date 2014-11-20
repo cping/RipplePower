@@ -21,6 +21,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
@@ -33,7 +34,7 @@ public class RPRippledMemoDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private RPTextBox _amountText;
 	private RPCheckBox _encodeCheckBox;
 	private RPTextBox _feeAmount;
@@ -54,11 +55,21 @@ public class RPRippledMemoDialog extends JDialog {
 	private RPTextArea _messageText;
 	private RPTextBox _recipientText;
 	private WalletItem _item;
+	private String _address;
+
+	public static void showDialog(String name, JFrame parent, String address) {
+		showDialog(name, parent, address, null);
+	}
 
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
+		showDialog(name, parent, null, item);
+	}
+
+	public static void showDialog(String name, JFrame parent, String address,
+			WalletItem item) {
 		try {
 			RPRippledMemoDialog dialog = new RPRippledMemoDialog(name, parent,
-					item);
+					address, item);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -67,20 +78,27 @@ public class RPRippledMemoDialog extends JDialog {
 		}
 	}
 
-	public RPRippledMemoDialog(String text, JFrame parent, WalletItem item) {
+	public RPRippledMemoDialog(String text, JFrame parent, String address,
+			WalletItem item) {
 		super(parent, text
-				+ (item == null ? "" : "(" + item.getPublicKey() + ")"),
+				+ (item == null ? (address == null ? "" : "(" + address + ")")
+						: "(" + item.getPublicKey() + ")"),
 				Dialog.ModalityType.DOCUMENT_MODAL);
+		if (item == null) {
+			this._address = address;
+		} else {
+			this._address = item.getPublicKey();
+		}
 		this._item = item;
 		this.addWindowListener(HelperWindow.get());
 		this.setResizable(false);
 		Dimension dim = new Dimension(518, 580);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
-		this.initComponents(_item.getPublicKey());
+		this.initComponents();
 	}
 
-	private void initComponents(String address) {
+	private void initComponents() {
 
 		Font font = GraphicsUtils.getFont(LangConfig.fontName, 0, 14);
 
@@ -202,6 +220,9 @@ public class RPRippledMemoDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (_item == null) {
+					return;
+				}
 				String address = _recipientText.getText().trim();
 				if (address.startsWith("~")) {
 					try {
@@ -221,9 +242,13 @@ public class RPRippledMemoDialog extends JDialog {
 					String context = _messageText.getText();
 					String amount = _amountText.getText().trim();
 					String fee = _feeAmount.getText().trim();
+					if (!StringUtils.isNumber(fee)) {
+						RPToast.makeText(RPRippledMemoDialog.this,
+								UIMessage.errFee, Style.ERROR).display();
+						return;
+					}
 					Amount amountValue = Amount.fromString(amount);
 					if (StringUtils.isNumber(amountValue.valueText())) {
-
 						RippleMemoEncode encode = null;
 						if (password == null) {
 							encode = new RippleMemoEncode(
@@ -243,6 +268,10 @@ public class RPRippledMemoDialog extends JDialog {
 									public void success(JSONObject res) {
 										RPJSonLog.get().println(res.toString());
 										wait.closeDialog();
+										RPToast.makeText(
+												RPRippledMemoDialog.this,
+												UIMessage.completed,
+												Style.SUCCESS).display();
 									}
 
 									@Override
@@ -251,7 +280,13 @@ public class RPRippledMemoDialog extends JDialog {
 										wait.closeDialog();
 									}
 								});
+					} else {
+						RPToast.makeText(RPRippledMemoDialog.this,
+								UIMessage.errMoney, Style.ERROR).display();
 					}
+				} else {
+					RPToast.makeText(RPRippledMemoDialog.this,
+							UIMessage.errAddress, Style.ERROR).display();
 				}
 
 			}
@@ -265,8 +300,8 @@ public class RPRippledMemoDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_item != null) {
-					loadMessages(_item.getPublicKey(), -1, 200);
+				if (_address != null) {
+					loadMessages(_address, -1, 200);
 				}
 			}
 		});
@@ -278,7 +313,13 @@ public class RPRippledMemoDialog extends JDialog {
 		getContentPane().add(_recipientText);
 		_recipientText.setBounds(80, 360, 420, 21);
 		getContentPane().setBackground(LSystem.dialogbackground);
-		loadMessages(address, -1, 200);
+		if (_address != null) {
+			loadMessages(_address, -1, 200);
+		}
+		if (_item == null) {
+			_submitButton.setEnabled(false);
+			_resetButton.setEnabled(false);
+		}
 		pack();
 	}
 

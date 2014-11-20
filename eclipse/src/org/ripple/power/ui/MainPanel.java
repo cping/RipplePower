@@ -598,7 +598,8 @@ public class MainPanel extends JPanel implements ActionListener {
 					case 2:
 						RPToast.makeText(LSystem.applicationMain,
 								"Memo Send/Receive.", Style.SUCCESS).display();
-						RPRippledMemoDialog.showDialog("Memo Send/Receive",
+						RPRippledMemoDialog.showDialog(LangConfig.get(this,
+								"send_memo", "Memo Send/Receive"),
 								LSystem.applicationMain, item);
 						break;
 					default:

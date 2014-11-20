@@ -50,13 +50,12 @@ public class RPIOUSendDialog extends JDialog {
 	public static void showDialog(String name, JFrame parent, WalletItem item) {
 		try {
 			RPIOUSendDialog dialog = new RPIOUSendDialog(name, parent, item,
-					"", "1", LSystem.FEE);
+					"", LSystem.MIN_AMOUNT, LSystem.FEE);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
 			exc.printStackTrace();
-
 		}
 	}
 
@@ -127,18 +126,18 @@ public class RPIOUSendDialog extends JDialog {
 				if (!address.startsWith("~")) {
 					if (!AccountFind.isRippleAddress(address)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", "无效的Ripple地址!");
+								"Error", UIMessage.errAddress);
 						return;
 					}
 				}
 				if (!MathUtils.isNan(amount)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", "无效的发币数量!");
+							"Error", UIMessage.errMoney);
 					return;
 				}
 				if (!MathUtils.isNan(fee)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", "无效的手续费数量!");
+							"Error", UIMessage.errFee);
 					return;
 				}
 				IssuedCurrency cur = null;
@@ -154,12 +153,12 @@ public class RPIOUSendDialog extends JDialog {
 					Double b = Double.parseDouble(line.getAmount());
 					if (a > b) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", "发送失败,您的IOU货币量不足以完成本次发送!");
+								"Warning", UIMessage.errNotMoney);
 						return;
 					}
 				} else {
 					RPMessage.showWarningMessage(LSystem.applicationMain,
-							"Warning", "发送失败,无法获得当前Address数据!");
+							"Warning", UIMessage.errNotAddress);
 					return;
 				}
 				if (address.startsWith("~")) {
@@ -167,11 +166,11 @@ public class RPIOUSendDialog extends JDialog {
 						address = NameFind.getAddress(address);
 					} catch (Exception e1) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", "发送失败,无法获得当前地址数据!");
+								"Warning", UIMessage.errNotAddress);
 					}
 					if (address == null) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", "发送失败,无法获得当前地址数据!");
+								"Warning", UIMessage.errNotAddress);
 					}
 				}
 				final WaitDialog dialog = WaitDialog
@@ -183,7 +182,7 @@ public class RPIOUSendDialog extends JDialog {
 						RPJSonLog.get().println(res.toString());
 						WalletCache.get().reset();
 						RPMessage.showInfoMessage(LSystem.applicationMain,
-								"Info", "发送完毕.");
+								"Info", UIMessage.completed);
 						dialog.closeDialog();
 					}
 

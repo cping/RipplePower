@@ -22,8 +22,10 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
+import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.SwingUtils;
 
@@ -35,6 +37,7 @@ public class RPAccountInfoDialog extends JDialog {
 	private javax.swing.JSeparator jSeparator1;
 	private javax.swing.JSeparator jSeparator2;
 	private RPCButton _loadButton;
+	private RPCButton _memoButton;
 	private RPCButton _exitButton;
 	private RPLabel _addressLabel;
 	private RPLabel _assetsLabel;
@@ -289,6 +292,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_addressLabel = new RPLabel();
 		_addressText = new RPTextBox();
 		_loadButton = new RPCButton();
+		_memoButton = new RPCButton();
 		_exitButton = new RPCButton();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jScrollPane2 = new javax.swing.JScrollPane();
@@ -387,6 +391,32 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(_loadButton);
 		_loadButton.setBounds(513, 21, 125, 23);
 
+		_memoButton.setText("Memo Data");
+		_memoButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				String address = _addressText.getText().trim();
+				if (address.startsWith("~")) {
+					try {
+						address = NameFind.getAddress(address);
+					} catch (Exception ex) {
+						RPToast.makeText(RPAccountInfoDialog.this,
+								UIMessage.errAddress, Style.ERROR).display();
+						return;
+					}
+				}
+				if (!AccountFind.isRippleAddress(address)) {
+					RPToast.makeText(RPAccountInfoDialog.this,
+							UIMessage.errAddress, Style.ERROR).display();
+					return;
+				}
+				RPRippledMemoDialog.showDialog(
+						LangConfig.get(this, "send_memo", "Memo Send/Receive"),
+						LSystem.applicationMain, address);
+			}
+		});
+		getContentPane().add(_memoButton);
+		_memoButton.setBounds(11, 555, 165, 30);
+
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -394,7 +424,7 @@ public class RPAccountInfoDialog extends JDialog {
 			}
 		});
 		getContentPane().add(_exitButton);
-		_exitButton.setBounds(520, 550, 125, 30);
+		_exitButton.setBounds(520, 555, 128, 30);
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 60, 670, 10);
@@ -418,7 +448,7 @@ public class RPAccountInfoDialog extends JDialog {
 					RPOtherInfoDialog.showDialog(ddata,
 							RPAccountInfoDialog.this, _accountinfo.transactions
 									.get(jTable3.getSelectedRow()));
-				}else{
+				} else {
 					RPOtherInfoDialog.showDialog(ddata,
 							RPAccountInfoDialog.this, new TransactionTx());
 				}
@@ -452,8 +482,20 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().repaint();
 		final AccountInfo info = new AccountInfo();
 		final WaitDialog dialog = WaitDialog.showDialog(this);
-		final String address = _addressText.getText().trim();
-
+		String addressTmp = _addressText.getText().trim();
+		if (addressTmp.startsWith("~")) {
+			try {
+				addressTmp = NameFind.getAddress(addressTmp);
+			} catch (Exception ex) {
+				RPToast.makeText(this, UIMessage.errAddress, Style.ERROR).display();
+				return info;
+			}
+		}
+		if (!AccountFind.isRippleAddress(addressTmp)) {
+			RPToast.makeText(this, UIMessage.errAddress, Style.ERROR).display();
+			return info;
+		}
+		final String address = addressTmp;
 		AccountFind find = new AccountFind();
 		repaint();
 		getContentPane().repaint();
@@ -534,7 +576,7 @@ public class RPAccountInfoDialog extends JDialog {
 				}
 				RPAccountInfoDialog.this.repaint();
 			}
-			
+
 		};
 
 		find.processInfo(address, info, update_info);
