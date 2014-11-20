@@ -112,44 +112,49 @@ public class RPExchangeDialog extends JDialog {
 	private final AccountInfo _info = new AccountInfo();
 
 	private void warning_noselect() {
-		RPMessage.showWarningMessage(this, "Info", "请首先确定您要进行交易的网关与币种");
+		RPMessage.showWarningMessage(this, "Info", UIMessage.noselect);
 	}
 
 	private void warning_xrp() {
 		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
-				"XRP数量不足, 交易无法成立");
+				LSystem.nativeCurrency.toUpperCase() + ","
+						+ UIMessage.errNotMoney);
 	}
 
 	private void warning_iou(String cur) {
-		if(Strings.isNullOrEmpty(cur)){
+		if (Strings.isNullOrEmpty(cur)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", cur
-				+ "数量不足, 交易无法成立");
+		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
+				cur.toUpperCase() + "," + UIMessage.errNotMoney);
 	}
 
 	private void warning_trust(String mes) {
-		if(Strings.isNullOrEmpty(mes)){
+		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning", mes
-				+ "在您账户中缺少信任,请信任后再使用");
+		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
+				String.format(UIMessage.plasetrust, mes));
 	}
 
 	private void empty_trading(String mes) {
-		if(Strings.isNullOrEmpty(mes)){
+		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
 		RPMessage.showWarningMessage(LSystem.applicationMain, "Info",
-				String.format("很抱歉，目前没有任何人对%s的交易挂单", mes));
+				String.format(UIMessage.sntr, mes));
 	}
 
 	private int cancel_trust(String mes) {
-		if(Strings.isNullOrEmpty(mes)){
+		if (Strings.isNullOrEmpty(mes)) {
 			return -1;
 		}
-		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
-				"您是否准备消除交易记录" + mes, new Object[] { "确定", "取消" });
+		return RPMessage.showConfirmMessage(
+				RPExchangeDialog.this,
+				"Info",
+				String.format(UIMessage.ydel, mes),
+				new Object[] { LangConfig.get(this, "ok", "OK"),
+						LangConfig.get(this, "cancel", "Cancel") });
 	}
 
 	private String info_price() {
@@ -166,11 +171,11 @@ public class RPExchangeDialog extends JDialog {
 				@Override
 				public void action(Object o) {
 					RPBubbleDialog.pop(
-							"场外汇率提示:"
+							"Exchange tips:"
 									+ srcAmount
 									+ "/"
 									+ srcCurrency
-									+ ", 平均可换取"
+									+ ", Average exchange "
 									+ OfferPrice.getMoneyConvert(srcAmount,
 											srcCurrency, dstCurrency) + "/"
 									+ dstCurrency, true);
@@ -178,11 +183,13 @@ public class RPExchangeDialog extends JDialog {
 			};
 			LSystem.postThread(update);
 		}
-		return RPMessage
-				.showConfirmMessage(RPExchangeDialog.this, "Info", "您准备用"
-						+ srcAmount + "/" + srcCurrency + "换取" + dstAmount
-						+ "/" + dstCurrency + ",是否确认交易?", new Object[] { "确定",
-						"取消" });
+		return RPMessage.showConfirmMessage(
+				RPExchangeDialog.this,
+				"Info",
+				"You are ready to use " + srcAmount + "/" + srcCurrency + " Swap " + dstAmount + "/"
+						+ dstCurrency + ", Are you sure ?",
+				new Object[] { LangConfig.get(this, "ok", "OK"),
+						LangConfig.get(this, "cancel", "Cancel") });
 
 	}
 
@@ -912,14 +919,13 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void updateTrend(String cur) {
-		if(Strings.isNullOrEmpty(cur)){
+		if (Strings.isNullOrEmpty(cur)) {
 			return;
 		}
 		TraderProcess.Trend trend = _traderProcess.getTrend(cur, 7);
 		if (lastTrend != trend) {
 			RPToast.makeText(this,
-					cur.toUpperCase() + "  price trend : " + trend)
-					.display();
+					cur.toUpperCase() + "  price trend : " + trend).display();
 			lastTrend = trend;
 		}
 	}
@@ -1259,7 +1265,8 @@ public class RPExchangeDialog extends JDialog {
 		}
 
 		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc,
-				flag ? currencySrc : currencyDst, LSystem.getFee(), new Rollback() {
+				flag ? currencySrc : currencyDst, LSystem.getFee(),
+				new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {
