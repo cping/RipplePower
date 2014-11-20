@@ -123,13 +123,6 @@ public class RPIOUSendDialog extends JDialog {
 				String amount = _amountText.getText().trim();
 				String fee = _feeText.getText().trim();
 				Object o = _curList.getSelectedItem();
-				if (!address.startsWith("~")) {
-					if (!AccountFind.isRippleAddress(address)) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", UIMessage.errAddress);
-						return;
-					}
-				}
 				if (!MathUtils.isNan(amount)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
 							"Error", UIMessage.errMoney);
@@ -164,14 +157,21 @@ public class RPIOUSendDialog extends JDialog {
 				if (address.startsWith("~")) {
 					try {
 						address = NameFind.getAddress(address);
-					} catch (Exception e1) {
+					} catch (Exception ex) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
 								"Warning", UIMessage.errNotAddress);
+						return;
 					}
 					if (address == null) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
 								"Warning", UIMessage.errNotAddress);
+						return;
 					}
+				}
+				if (!AccountFind.isRippleAddress(address)) {
+					RPMessage.showErrorMessage(LSystem.applicationMain,
+							"Error", UIMessage.errAddress);
+					return;
 				}
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPIOUSendDialog.this);

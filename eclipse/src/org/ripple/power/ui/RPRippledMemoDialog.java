@@ -99,9 +99,9 @@ public class RPRippledMemoDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		
+
 		addWindowListener(HelperWindow.get());
-		
+
 		Font font = GraphicsUtils.getFont(LangConfig.fontName, 0, 14);
 
 		jScrollPane1 = new javax.swing.JScrollPane();
@@ -234,8 +234,10 @@ public class RPRippledMemoDialog extends JDialog {
 				if (address.startsWith("~")) {
 					try {
 						address = NameFind.getAddress(address);
-					} catch (Exception e1) {
-						address = "";
+					} catch (Exception ex) {
+						RPMessage.showWarningMessage(LSystem.applicationMain,
+								"Warning", UIMessage.errNotAddress);
+						return;
 					}
 				}
 				if (AccountFind.isRippleAddress(address)) {

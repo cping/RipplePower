@@ -29,7 +29,7 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class RPClient {
 
-	// 测试状态不实际联网
+	// Test status is not networking
 	public static boolean testing = false;
 
 	private static RPClient _rippleClient = null;
@@ -104,6 +104,9 @@ public class RPClient {
 		HttpRequest request = HttpRequest.get(url);
 		if (request.ok()) {
 			String result = request.body();
+			if (result.indexOf('\r') != -1) {
+				result = StringUtils.replace(result, "\r", "\n");
+			}
 			StringTokenizer str = new StringTokenizer(result, "\n");
 			int flagNext = -1;
 			for (; str.hasMoreTokens();) {
@@ -195,7 +198,7 @@ public class RPClient {
 		}
 	}
 
-	//
+	//Updateable Region
 	public void addLoad(Updateable u) {
 		synchronized (_loads) {
 			_loads.add(u);

@@ -149,13 +149,6 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					String amountValue = _amountText.getText().trim();
 
 					String feeValue = _feeText.getText().trim();
-					if (!address.startsWith("~")) {
-						if (!AccountFind.isRippleAddress(address)) {
-							RPMessage.showErrorMessage(LSystem.applicationMain,
-									"Error", UIMessage.errAddress);
-							return;
-						}
-					}
 					if (!MathUtils.isNan(amountValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
 								"Error", UIMessage.errMoney);
@@ -169,18 +162,24 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					if (address.startsWith("~")) {
 						try {
 							address = NameFind.getAddress(address);
-						} catch (Exception e1) {
+						} catch (Exception ex) {
 							RPMessage.showWarningMessage(
 									LSystem.applicationMain, "Warning",
 									UIMessage.errNotAddress);
+							return;
 						}
 						if (address == null) {
 							RPMessage.showWarningMessage(
 									LSystem.applicationMain, "Warning",
 									UIMessage.errNotAddress);
+							return;
 						}
 					}
-
+					if (!AccountFind.isRippleAddress(address)) {
+						RPMessage.showErrorMessage(LSystem.applicationMain,
+								"Error", UIMessage.errAddress);
+						return;
+					}
 					BigDecimal number = new BigDecimal(amountValue);
 
 					BigDecimal maxSend = new BigDecimal(item.getAmount());
