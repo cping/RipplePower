@@ -14,8 +14,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.ripple.power.collection.ArrayByte;
-import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.GraphicsUtils;
 
 public class UIRes {
 
@@ -36,7 +36,7 @@ public class UIRes {
 
 	public static Font getFont() {
 		if (_font == null) {
-			_font = new Font(LangConfig.fontName, 0, 14);
+			_font = GraphicsUtils.getFont(14);
 		}
 		return _font;
 	}

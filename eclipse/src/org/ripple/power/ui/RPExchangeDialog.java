@@ -44,6 +44,7 @@ import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -363,8 +364,8 @@ public class RPExchangeDialog extends JDialog {
 		_historyButton = new RPCButton();
 		_priceTipCheckBox = new RPCheckBox();
 
-		Font font = new Font(LangConfig.fontName, 0, 18);
-		Font font14 = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(18);
+		Font font14 = GraphicsUtils.getFont(14);
 
 		getContentPane().setLayout(null);
 

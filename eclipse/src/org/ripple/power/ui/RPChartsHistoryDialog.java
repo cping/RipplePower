@@ -25,6 +25,7 @@ import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.chart.ChartValue;
 import org.ripple.power.ui.graphics.chart.ChartValueSerie;
 import org.ripple.power.ui.graphics.chart.LineChartCanvas;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPChartsHistoryDialog extends JDialog {
@@ -129,7 +130,7 @@ public class RPChartsHistoryDialog extends JDialog {
 		jLabel1 = new RPLabel();
 		jLabel2 = new RPLabel();
 		jLabel3 = new RPLabel();
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 
 		getContentPane().setLayout(null);
 

@@ -27,6 +27,7 @@ import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPAccountInfoDialog extends JDialog {
@@ -303,7 +304,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_issuedLabel = new RPLabel();
 		_booksLabel = new RPLabel();
 
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 		_loadButton.setFont(font);
 		_exitButton.setFont(font);
 
@@ -318,7 +319,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
 		jTable1 = new AddressTable(tableModel, columnTypes);
-		jTable1.setFont(new Font(LangConfig.fontName, 0, 14));
+		jTable1.setFont(GraphicsUtils.getFont(14));
 		jTable1.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -330,7 +331,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel2 tableModel2 = new AccountTableModel2(
 				columnNames, columnClasses);
 		jTable2 = new AddressTable(tableModel2, columnTypes);
-		jTable2.setFont(new Font(LangConfig.fontName, 0, 14));
+		jTable2.setFont(GraphicsUtils.getFont(14));
 		jTable2.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		jTable2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -356,7 +357,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel3 tableModel3 = new AccountTableModel3(
 				columnNames1, columnClasses1);
 		jTable3 = new AddressTable(tableModel3, columnTypes1);
-		jTable3.setFont(new Font(LangConfig.fontName, 0, 14));
+		jTable3.setFont(GraphicsUtils.getFont(14));
 		jTable3.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
 		jTable3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jTable3.addMouseListener(new infoMouseListener());
@@ -369,7 +370,7 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().setLayout(null);
 
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
-		_addressLabel.setFont(new Font(LangConfig.fontName, 1, 14));
+		_addressLabel.setFont(new Font(LangConfig.getFontName(), 1, 14));
 		getContentPane().add(_addressLabel);
 		_addressLabel.setBounds(20, 25, 80, 15);
 		getContentPane().add(_addressText);

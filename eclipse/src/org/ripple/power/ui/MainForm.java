@@ -22,6 +22,7 @@ import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
@@ -118,7 +119,7 @@ public class MainForm extends JFrame implements ActionListener {
 		setPreferredSize(dim);
 		setSize(dim);
 		setLocation(frameX, frameY);
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 

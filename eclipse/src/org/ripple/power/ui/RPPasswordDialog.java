@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
@@ -50,7 +51,7 @@ public class RPPasswordDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 
 		jLabel1.setFont(font);
 		jLabel1.setText(LangConfig.get(this, "wpassword", "Wallet Password"));

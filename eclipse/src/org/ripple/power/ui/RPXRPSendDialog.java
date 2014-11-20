@@ -20,6 +20,7 @@ import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -90,7 +91,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 		getContentPane().setLayout(null);
 
-		java.awt.Font font = new java.awt.Font(LangConfig.fontName, 0, 14);
+		java.awt.Font font = GraphicsUtils.getFont(14);
 
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
 		_addressLabel.setFont(font);

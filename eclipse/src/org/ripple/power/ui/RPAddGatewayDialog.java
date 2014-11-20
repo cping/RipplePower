@@ -15,6 +15,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPAddGatewayDialog extends JDialog {
@@ -100,20 +101,22 @@ public class RPAddGatewayDialog extends JDialog {
 		if (!address.startsWith("~")) {
 			if (!AccountFind.isRippleAddress(address)) {
 				RPMessage.showErrorMessage(LSystem.applicationMain, "Error",
-						"无效的Ripple地址!");
+						UIMessage.errAddress);
 				return;
 			}
 		}
 		if (address.startsWith("~")) {
 			try {
 				address = NameFind.getAddress(address);
-			} catch (Exception e1) {
+			} catch (Exception ex) {
 				RPMessage.showWarningMessage(LSystem.applicationMain,
-						"Warning", "无法获得当前地址数据!");
+						"Warning", UIMessage.errNotAddress);
+				return;
 			}
 			if (address == null) {
 				RPMessage.showWarningMessage(LSystem.applicationMain,
-						"Warning", "无法获得当前地址数据!");
+						"Warning", UIMessage.errNotAddress);
+				return;
 			}
 		}
 		Gateway gateway = new Gateway();
@@ -175,9 +178,9 @@ public class RPAddGatewayDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 
-		Font btnfont = new Font(LangConfig.fontName, 0, 12);
+		Font btnfont = GraphicsUtils.getFont(12);
 
 		_iouNameLabel.setFont(font); // NOI18N
 		_iouNameLabel.setText(LangConfig.get(this, "ioun", "IOU Name"));
@@ -294,7 +297,7 @@ public class RPAddGatewayDialog extends JDialog {
 				if (name.length() > 0) {
 					if (delGateway(name) != -1) {
 						RPMessage.showInfoMessage(RPAddGatewayDialog.this,
-								"Info", "数据删除成功");
+								"Info", "Deleted successfully");
 					}
 				}
 			}

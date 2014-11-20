@@ -16,8 +16,13 @@ public class LangConfig {
 
 	private static I18nSupport _javai18n;
 
-	public static String fontName = "Dialog";
+	private static String fontName = "Dialog";
 
+	public static String getFontName(){
+		init();
+		return fontName;
+	}
+	
 	public static ComponentOrientation currentComponentOrientation() {
 		return ComponentOrientation.getOrientation(Language.DEF.getLocale());
 	}

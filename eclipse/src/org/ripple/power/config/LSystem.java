@@ -158,8 +158,9 @@ public final class LSystem {
 		}
 	}
 
-	public static void setFee(String fee) {
+	public static void setMinAmountAndFee(String amount, String fee) {
 		Session system = session("system");
+		system.set("min_send", amount.trim());
 		system.set("fee", fee.trim());
 		system.save();
 	}
@@ -168,12 +169,6 @@ public final class LSystem {
 		Session system = session("system");
 		String result = system.get("fee");
 		return result == null ? FEE : result;
-	}
-
-	public static void setMinSend(String send) {
-		Session system = session("system");
-		system.set("min_send", send.trim());
-		system.save();
 	}
 
 	public static String getMinSend() {

@@ -1,3 +1,24 @@
+/**
+ * 
+ * Copyright 2008 - 2009
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * @project loonframework
+ * @author chenpeng
+ * @email：ceponline@yahoo.com.cn
+ * @version 0.1
+ */
 package org.ripple.power.utils;
 
 import java.awt.AlphaComposite;
@@ -53,27 +74,6 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
 
-/**
- * 
- * Copyright 2008 - 2009
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * 
- * @project loonframework
- * @author chenpeng
- * @email：ceponline@yahoo.com.cn
- * @version 0.1
- */
 final public class GraphicsUtils {
 
 	// 自定义的RGB配色器
@@ -298,7 +298,7 @@ final public class GraphicsUtils {
 	}
 
 	public static Font getFont(int size) {
-		return getFont(LangConfig.fontName, 0, size);
+		return getFont(LangConfig.getFontName(), 0, size);
 	}
 
 	/**
@@ -312,6 +312,9 @@ final public class GraphicsUtils {
 		return getFont(fontName, 0, size);
 	}
 
+	private static HashMap<Integer, Font> _fonts = new HashMap<Integer, Font>(
+			10);
+
 	/**
 	 * 返回一个实例化的字体
 	 * 
@@ -321,7 +324,17 @@ final public class GraphicsUtils {
 	 * @return
 	 */
 	public static Font getFont(String fontName, int style, int size) {
-		return new Font(fontName, style, size);
+		int hashCode = 1;
+		hashCode = LSystem.unite(hashCode, fontName.hashCode());
+		hashCode = LSystem.unite(hashCode, fontName.length());
+		hashCode = LSystem.unite(hashCode, style);
+		hashCode = LSystem.unite(hashCode, size);
+		Font font = _fonts.get(hashCode);
+		if (font == null) {
+			font = new Font(fontName, style, size);
+			_fonts.put(hashCode, font);
+		}
+		return font;
 	}
 
 	/**

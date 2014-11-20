@@ -21,6 +21,7 @@ import org.ripple.power.news.NewsParser;
 import org.ripple.power.news.NewsParser.News;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 
 public class RPNewsDialog extends JDialog {
@@ -67,7 +68,7 @@ public class RPNewsDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = new Font(LangConfig.fontName, 0, 12);
+		Font font = GraphicsUtils.getFont(12);
 
 		_loadStatusLabel.setFont(font); // NOI18N
 		_loadStatusLabel

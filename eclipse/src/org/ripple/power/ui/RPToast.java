@@ -15,6 +15,7 @@ import javax.swing.Timer;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.graphics.LColor;
 
 public class RPToast extends JDialog {
 	private static final long serialVersionUID = -1602907470843951525L;
@@ -25,8 +26,8 @@ public class RPToast extends JDialog {
 
 	public static final int LENGTH_SHORT = 3000;
 	public static final int LENGTH_LONG = 6000;
-	public static final Color ERROR_RED = new Color(121, 0, 0);
-	public static final Color SUCCESS_GREEN = new Color(127, 127, 127);
+	public static final Color ERROR_RED = LColor.maroon;
+	public static final Color SUCCESS_GREEN = LColor.lightSteelBlue;
 	public static final Color NORMAL_BLACK = new Color(0, 0, 0);
 	private final float MAX_OPACITY = 0.8f;
 	private final float OPACITY_INCREMENT = 0.05f;

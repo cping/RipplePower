@@ -99,7 +99,7 @@ public class MainUI {
 
 		WelcomePanel welcomePanel = new WelcomePanel();
 
-		Font navLinkFont = new Font(LangConfig.fontName, Font.BOLD, 14);
+		Font navLinkFont = new Font(LangConfig.getFontName(), Font.BOLD, 14);
 		List<JComponent> navLinkList = new ArrayList<JComponent>();
 
 		RPNavbar navbar = new RPNavbar("RipplePower");
@@ -145,9 +145,7 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPProxyDialog
-						.showDialog("ProxyConfig", LSystem.applicationMain);
-
+				RPConfigDialog.showDialog("Configuration", LSystem.applicationMain);
 			}
 		});
 		navLinkList.add(configLink);

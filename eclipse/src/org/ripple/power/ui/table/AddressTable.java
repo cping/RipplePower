@@ -11,6 +11,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.ripple.power.utils.GraphicsUtils;
+
 
 public final class AddressTable extends ColorTable {
 
@@ -42,6 +44,7 @@ public final class AddressTable extends ColorTable {
 			
 			header.setBackground(new Color(70, 70, 70));
 			header.setForeground(Color.WHITE);
+			header.setFont(GraphicsUtils.getFont(14));
 
 		Component component;
 		TableCellRenderer renderer;

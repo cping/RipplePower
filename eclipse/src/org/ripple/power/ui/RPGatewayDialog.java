@@ -30,6 +30,7 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TrustSet;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 
@@ -145,7 +146,7 @@ public class RPGatewayDialog extends JDialog {
 		_addressText = new RPTextBox();
 		_curList = new RPComboBox();
 
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 
 		_addGatewayButton = new RPCButton();
 		_manageGatewayButton = new RPCButton();
@@ -176,14 +177,13 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.setLayout(null);
 
 		_currencyNameList
-				.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+				.setFont(font); // NOI18N
 		_currencyNameList.setForeground(new java.awt.Color(255, 255, 255));
 		_currencyNameList.setText(LangConfig.get(this, "currency", "Currency"));
 		jPanel1.add(_currencyNameList);
 		_currencyNameList.setBounds(10, 70, 80, 16);
 
-		_gatewayAddressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0,
-				14)); // NOI18N
+		_gatewayAddressLabel.setFont(font); // NOI18N
 		_gatewayAddressLabel.setForeground(new java.awt.Color(255, 255, 255));
 		_gatewayAddressLabel
 				.setText(LangConfig.get(this, "address", "Address"));
@@ -218,7 +218,7 @@ public class RPGatewayDialog extends JDialog {
 		_trustValueText.setText(String.valueOf(max_trust));
 		jPanel1.add(_trustValueText);
 
-		_limitLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_limitLabel.setFont(font); // NOI18N
 		_limitLabel.setForeground(new java.awt.Color(255, 255, 255));
 		_limitLabel.setText(LangConfig.get(this, "limit", "Trust Limit"));
 		jPanel1.add(_limitLabel);
@@ -226,13 +226,13 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.add(_addressText);
 		_addressText.setBounds(90, 20, 478, 21);
 
-		_amountLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_amountLabel.setFont(font); // NOI18N
 		_amountLabel.setForeground(new java.awt.Color(255, 255, 255));
 		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
 		jPanel1.add(_amountLabel);
 		_amountLabel.setBounds(10, 170, 80, 16);
 
-		_trustLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14)); // NOI18N
+		_trustLabel.setFont(font); // NOI18N
 		_trustLabel.setForeground(new java.awt.Color(255, 255, 255));
 		_trustLabel.setText(LangConfig.get(this, "trust", "My Trust"));
 		jPanel1.add(_trustLabel);

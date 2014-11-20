@@ -23,6 +23,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.GraphicsUtils;
 
 public class RPBubbleDialog {
 
@@ -125,7 +126,7 @@ public class RPBubbleDialog {
 
 		_tpDialog.getRootPane().setBorder(
 				BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
-		_titleLabel.setFont(new Font(LangConfig.fontName, 0, 14));
+		_titleLabel.setFont(GraphicsUtils.getFont(14));
 		_titleLabel.setPreferredSize(new Dimension(260, 26));
 		_titleLabel.setVerticalTextPosition(RPLabel.CENTER);
 		_titleLabel.setHorizontalTextPosition(RPLabel.CENTER);
@@ -138,7 +139,7 @@ public class RPBubbleDialog {
 		_closeLabel.setToolTipText(LangConfig.get(this, "close", "Close"));
 
 		_contentText.setEditable(false);
-		_contentText.setFont(new Font(LangConfig.fontName, Font.PLAIN, 13));
+		_contentText.setFont(new Font(LangConfig.getFontName(), Font.PLAIN, 13));
 		_contentText.setForeground(LColor.white);
 		_contentText.setLineWrap(true);
 		_contentText.setText(_message);

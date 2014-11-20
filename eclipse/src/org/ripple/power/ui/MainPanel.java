@@ -72,7 +72,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private final AddressTableModel tableModel;
 
-	private Font font = new Font("宋体".equals(LangConfig.fontName) ? "黑体"
+	private Font font = new Font("宋体".equals(LangConfig.getFontName()) ? "黑体"
 			: "Dialog", 1, 15);
 
 	protected String getWalletText(String s1, String s2) {
@@ -97,7 +97,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private Font fontBig = new Font(LangConfig.fontName, 0, 18);
+	private Font fontBig = GraphicsUtils.getFont(18);
 
 	private void addPopMenu(final String name, final String flagName) {
 		RPPopMenuItem tempMenu = new RPPopMenuItem(name);

@@ -24,6 +24,8 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.password.PasswordCrackerBF;
 import org.ripple.power.password.PasswordEasy;
 import org.ripple.power.password.PasswordMnemonic;
+import org.ripple.power.txns.AccountFind;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
@@ -68,10 +70,11 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		dialog.setVisible(true);
 		return dialog;
 	}
-	
+
 	public RPAddressDialog(JFrame parent) {
 		super(parent, LangConfig.get(RPAddressDialog.class, "title",
-				"Import or create a public key and a secret key"), Dialog.ModalityType.DOCUMENT_MODAL);
+				"Import or create a public key and a secret key"),
+				Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
 		setLayout(new FlowLayout());
 		setResizable(false);
@@ -222,8 +225,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				pInput = true;
 			}
 		} catch (IOException e) {
-			RPMessage.showErrorMessage(this, "导入失败",
-					"纸钱包导入失败!" + e.getMessage());
+			RPMessage.showErrorMessage(this, "Import failed",
+					"Paper wallet import fails !" + e.getMessage());
 		}
 
 	}
@@ -236,8 +239,9 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				String[] res = text.split(" ");
 				if (res.length < 3) {
 					JOptionPane.showMessageDialog(this,
-							"短语格式有误，缺少必要单词，请确定来源正确后重新输入!", "Error",
-							JOptionPane.ERROR_MESSAGE);
+							"Less than three words, The phrase is malformed !",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				PasswordMnemonic mnemonic = new PasswordMnemonic();
 				String result = mnemonic.decode(text);
@@ -249,11 +253,13 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				pInput = true;
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this,
-						"短语导入失败，您输入的短语密钥中有单词不在解密字典内，因此无法被此软件解密!", "Error",
+						"The phrase can not be decrypted !", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 		} else {
-			JOptionPane.showMessageDialog(this, "无效的短语格式，请确定来源正确后重新输入!",
+			JOptionPane.showMessageDialog(this,
+					"Less than three words, The phrase is malformed !",
 					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -263,16 +269,12 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	private void callMyWallet() {
 		pInput = false;
 		String pri = privateAddressText.getText();
-		if (pri.length() < 26) {
-			JOptionPane.showMessageDialog(this, "私钥长度过短!", "Error",
+		if (!AccountFind.isRippleSecret(pri)) {
+			JOptionPane.showMessageDialog(this,
+					"This is not a Ripple Address Secret !", "Error",
 					JOptionPane.ERROR_MESSAGE);
-		} else if (pri.length() > 34) {
-			JOptionPane.showMessageDialog(this, "私钥长度过长!", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} else if (!pri.startsWith("s")) {
-			JOptionPane.showMessageDialog(this, "此界面无法识别非Ripple体系的私钥.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-		} else {
+			return;
+		}  else {
 			try {
 				byte[] buffer = Config.getB58IdentiferCodecs()
 						.decodeFamilySeed(pri);
@@ -287,7 +289,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, "私钥数据异常，导入失败!", "Error",
+				JOptionPane.showMessageDialog(this, "Private Key data exception, the import failed !", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -316,7 +318,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				pInput = true;
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this,
-						"私钥数据异常，创建失败!" + ex.getMessage(), "Error",
+						"Private Key data exception, the import failed !" + ex.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -326,15 +328,15 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pInput = false;
 		String password = passwordText.getText();
 		if (password.length() < 6) {
-			JOptionPane.showMessageDialog(this, "脑钱包密码最少不能低于6位数字!", "Error",
+			JOptionPane.showMessageDialog(this, "Brain wallet password at least not less than six figures!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		} else if (StringUtils.isAlphabet(password)) {
-			JOptionPane.showMessageDialog(this, "脑钱包密码不允许全部采用英文字母!", "Error",
+			JOptionPane.showMessageDialog(this, "All alphabet are not allowed !", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		} else if (StringUtils.isNumber(password)) {
-			JOptionPane.showMessageDialog(this, "脑钱包密码不允许全部采用数字!", "Error",
+			JOptionPane.showMessageDialog(this, "All number are not allowed !", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		}
@@ -355,7 +357,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				pInput = true;
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this,
-						"私钥数据异常，创建失败!" + ex.getMessage(), "Error",
+						"Private Key data exception, the import failed !" + ex.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -366,19 +368,18 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pBrainButton = new RPRadioButton();
 		pPassButton = new RPRadioButton();
 		pPaperButton = new RPRadioButton();
-		
+
 		_resetButton = new RPCButton();
 		_exitButton = new RPCButton();
 		_loadButton = new RPCButton();
 		_copyButton = new RPCButton();
-		
 
-		Font font = new Font(LangConfig.fontName, 0, 12);
+		Font font = GraphicsUtils.getFont(12);
 		_resetButton.setFont(font);
 		_exitButton.setFont(font);
 		_loadButton.setFont(font);
 		_copyButton.setFont(font);
-		
+
 		jSeparator1 = new javax.swing.JSeparator();
 
 		_passwordLabel = new RPLabel();
@@ -395,14 +396,14 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 		setLayout(null);
 
-		Font defFont = new Font(LangConfig.fontName, 0, 12);
+		Font defFont = GraphicsUtils.getFont(12);
 
 		pBrainButton.setFont(defFont);
 		pRandButton.setFont(defFont);
 		pPassButton.setFont(defFont);
 		pMyButton.setFont(defFont);
 		pPaperButton.setFont(defFont);
-	
+
 		pBrainButton.setText(LangConfig.get(this, "brain_wallet",
 				"Brain Wallet"));
 		pBrainButton.addActionListener(new java.awt.event.ActionListener() {
@@ -441,7 +442,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(pPassButton);
 		pPassButton.setBounds(310, 10, 100, 23);
 
-		pPaperButton.setText(LangConfig.get(this, "use_paperwallet","Use Paper Wallet"));
+		pPaperButton.setText(LangConfig.get(this, "use_paperwallet",
+				"Use Paper Wallet"));
 		pPaperButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jRadioButton5ActionPerformed(evt);
@@ -450,7 +452,6 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(pPaperButton);
 		pPaperButton.setBounds(405, 10, 130, 23);
 
-		
 		_copyButton.setText(LangConfig.get(this, "copy", "Copy"));
 		_copyButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -490,19 +491,18 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jSeparator1);
 		jSeparator1.setBounds(0, 230, 0, 2);
 
-		_passwordLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_passwordLabel.setFont(GraphicsUtils.getFont(14));
 		_passwordLabel.setText(LangConfig.get(this, "password", "Password"));
 		add(_passwordLabel);
 		_passwordLabel.setBounds(20, 40, 70, 50);
 
 		passwordText.setText("");
-		passwordText.setFont(new Font(LangConfig.fontName, 1, 15));
+		passwordText.setFont(new Font(LangConfig.getFontName(), 1, 15));
 		passwordText.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-
+			
 			}
 
 			@Override
@@ -517,14 +517,13 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-
+		
 			}
 		});
 		add(passwordText);
 		passwordText.setBounds(90, 50, 500, 30);
 
-		_addressLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_addressLabel.setFont(GraphicsUtils.getFont(14));
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
 		add(_addressLabel);
 		_addressLabel.setBounds(20, 80, 70, 50);
@@ -533,7 +532,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(publicAddressText);
 		publicAddressText.setBounds(90, 90, 500, 30);
 
-		_phraseLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_phraseLabel.setFont(GraphicsUtils.getFont(14));
 		_phraseLabel.setText(LangConfig.get(this, "phrase", "Phrase"));
 		add(_phraseLabel);
 		_phraseLabel.setBounds(20, 160, 70, 50);
@@ -550,7 +549,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jScrollPane1);
 		jScrollPane1.setBounds(90, 170, 500, 90);
 
-		_secretLabel.setFont(new java.awt.Font(LangConfig.fontName, 0, 14));
+		_secretLabel.setFont(GraphicsUtils.getFont(14));
 		_secretLabel.setText(LangConfig.get(this, "secret", "Secret"));
 		add(_secretLabel);
 		_secretLabel.setBounds(20, 120, 70, 50);
@@ -584,15 +583,17 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String pub = publicAddressText.getText();
 			String pri = privateAddressText.getText();
 			if (pub.length() > 0 && pri.length() > 0) {
-				int result = RPMessage.showConfirmMessage(this, "私钥导入",
-						"是否导入当前私钥数据到钱包中?", "是", "否");
+				int result = RPMessage.showConfirmMessage(this, "Private Key import",
+						"Import the data to current wallet ?", LangConfig.get(this, "ok", "OK"),
+						LangConfig.get(this, "cancel", "Cancel"));
 				if (result == 0) {
 					WalletCache.get().add(pub, pri);
 					try {
 						WalletCache.saveDefWallet();
 					} catch (Exception e) {
-						RPMessage.showErrorMessage(this, "系统异常，钱包保存失败!",
+						RPMessage.showErrorMessage(this, "System exception, wallets save failed !",
 								"Error");
+						return;
 					}
 					this.dispose();
 					MainForm form = LSystem.applicationMain;
@@ -634,15 +635,16 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String context = copy.toString();
 			if (context.length() > 0) {
 				clip.setClipboardContents(context);
-				JOptionPane.showMessageDialog(this, "复制成功，当前界面数据已保存到剪切板.",
+				JOptionPane.showMessageDialog(this, "Current data has been saved to the clipboard",
 						"Info", JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(this, "当前界面没有可以复制的数据.",
+				JOptionPane.showMessageDialog(this, "No data can be copy",
 						"Warning", JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "复制失败，当前界面数据无法被保存到剪切板.",
+			JOptionPane.showMessageDialog(this, "Failure, the current data can not be saved to the clipboard !",
 					"Info", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 	}
 

@@ -21,6 +21,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -99,7 +100,7 @@ public class RPIOUSendDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = new Font(LangConfig.fontName, 0, 14);
+		Font font = GraphicsUtils.getFont(14);
 
 		_feeLabel.setFont(font); // NOI18N
 		_feeLabel.setText(LangConfig.get(this, "fee", "Fee"));
