@@ -43,11 +43,11 @@ public class RPRippledMemoDialog extends JDialog {
 	private RPCButton _exitButton;
 	private RPCButton _submitButton;
 	private RPCButton _resetButton;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel4;
-	private RPLabel jLabel5;
-	private RPLabel jLabel6;
+	private RPLabel _historyLabel;
+	private RPLabel _my_messageLabel;
+	private RPLabel _passwordLabel;
+	private RPLabel _feeLabel;
+	private RPLabel _amountLabel;
 	private RPList _messageList;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
@@ -104,25 +104,26 @@ public class RPRippledMemoDialog extends JDialog {
 
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_messageList = new RPList();
-		jLabel1 = new RPLabel();
-		jLabel2 = new RPLabel();
+		_historyLabel = new RPLabel();
+		_my_messageLabel = new RPLabel();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		_messageText = new RPTextArea();
 		_messageText.setEditable(true);
 		_messageText.setFont(GraphicsUtils.getFont(15));
 		_recipientLabel = new RPLabel();
 		_passwordText = new RPTextBox();
-		jLabel4 = new RPLabel();
+		_passwordLabel = new RPLabel();
 		_feeAmount = new RPTextBox();
 		_encodeCheckBox = new RPCheckBox();
 		_encodeCheckBox.setBackground(LSystem.dialogbackground);
-		jLabel5 = new RPLabel();
+		_encodeCheckBox.setFont(font);
+		_feeLabel = new RPLabel();
 		_amountText = new RPTextBox();
 		jSeparator1 = new javax.swing.JSeparator();
 		_exitButton = new RPCButton();
 		_submitButton = new RPCButton();
 		_resetButton = new RPCButton();
-		jLabel6 = new RPLabel();
+		_amountLabel = new RPLabel();
 		_recipientText = new RPTextBox();
 
 		getContentPane().setLayout(null);
@@ -135,13 +136,16 @@ public class RPRippledMemoDialog extends JDialog {
 		getContentPane().add(jScrollPane1);
 		jScrollPane1.setBounds(10, 28, 494, 170);
 
-		jLabel1.setText("History");
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(10, 7, 150, 20);
+		_historyLabel.setText(LangConfig.get(this, "history", "History"));
+		getContentPane().add(_historyLabel);
+		_historyLabel.setFont(font);
+		_historyLabel.setBounds(10, 5, 150, 20);
 
-		jLabel2.setText("My Message");
-		getContentPane().add(jLabel2);
-		jLabel2.setBounds(10, 208, 150, 20);
+		_my_messageLabel
+				.setText(LangConfig.get(this, "mmessage", "My Message"));
+		getContentPane().add(_my_messageLabel);
+		_my_messageLabel.setFont(font);
+		_my_messageLabel.setBounds(10, 208, 150, 20);
 
 		_messageText.setColumns(20);
 		_messageText.setRows(5);
@@ -152,21 +156,22 @@ public class RPRippledMemoDialog extends JDialog {
 		jScrollPane2.setBounds(10, 233, 494, 110);
 
 		_recipientLabel.setFont(font); // NOI18N
-		_recipientLabel.setText("Recipient");
+		_recipientLabel.setText(LangConfig.get(this, "recipient", "Recipient"));
 		getContentPane().add(_recipientLabel);
 		_recipientLabel.setBounds(10, 360, 70, 20);
 		getContentPane().add(_passwordText);
 		_passwordText.setBounds(80, 440, 180, 20);
 
-		jLabel4.setFont(font); // NOI18N
-		jLabel4.setText("Password");
-		getContentPane().add(jLabel4);
-		jLabel4.setBounds(10, 440, 70, 20);
+		_passwordLabel.setFont(font); // NOI18N
+		_passwordLabel.setText(LangConfig.get(this, "password", "Password"));
+		getContentPane().add(_passwordLabel);
+		_passwordLabel.setBounds(10, 440, 70, 20);
 		getContentPane().add(_feeAmount);
 		_feeAmount.setBounds(340, 400, 160, 20);
 		_feeAmount.setText(LSystem.FEE);
 
-		_encodeCheckBox.setText("Message Password");
+		_encodeCheckBox.setText(LangConfig.get(this, "mpassword",
+				"Message Password"));
 		getContentPane().add(_encodeCheckBox);
 		_encodeCheckBox.setBounds(285, 440, 210, 23);
 		if (!_encodeCheckBox.isSelected()) {
@@ -188,10 +193,10 @@ public class RPRippledMemoDialog extends JDialog {
 			}
 		});
 
-		jLabel5.setFont(font); // NOI18N
-		jLabel5.setText("Fee");
-		getContentPane().add(jLabel5);
-		jLabel5.setBounds(290, 400, 50, 20);
+		_feeLabel.setFont(font); // NOI18N
+		_feeLabel.setText(LangConfig.get(this, "fee", "Fee"));
+		getContentPane().add(_feeLabel);
+		_feeLabel.setBounds(290, 400, 50, 20);
 		getContentPane().add(_amountText);
 		_amountText.setBounds(80, 400, 180, 20);
 		_amountText.setText(LSystem.MIN_AMOUNT);
@@ -199,7 +204,7 @@ public class RPRippledMemoDialog extends JDialog {
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 480, 520, 10);
 
-		_exitButton.setText("Exit");
+		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(font);
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(420, 500, 81, 40);
@@ -212,7 +217,7 @@ public class RPRippledMemoDialog extends JDialog {
 			}
 		});
 
-		_submitButton.setText("Submit");
+		_submitButton.setText(LangConfig.get(this, "send", "Send"));
 		_submitButton.setFont(font);
 		getContentPane().add(_submitButton);
 		_submitButton.setBounds(320, 500, 81, 40);
@@ -292,7 +297,7 @@ public class RPRippledMemoDialog extends JDialog {
 			}
 		});
 
-		_resetButton.setText("Reset");
+		_resetButton.setText(LangConfig.get(this, "reset", "Reset"));
 		_resetButton.setFont(font);
 		getContentPane().add(_resetButton);
 		_resetButton.setBounds(10, 500, 81, 40);
@@ -306,10 +311,10 @@ public class RPRippledMemoDialog extends JDialog {
 			}
 		});
 
-		jLabel6.setFont(font); // NOI18N
-		jLabel6.setText("Amount");
-		getContentPane().add(jLabel6);
-		jLabel6.setBounds(10, 400, 70, 20);
+		_amountLabel.setFont(font); // NOI18N
+		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
+		getContentPane().add(_amountLabel);
+		_amountLabel.setBounds(10, 400, 70, 20);
 		getContentPane().add(_recipientText);
 		_recipientText.setBounds(80, 360, 420, 21);
 		getContentPane().setBackground(LSystem.dialogbackground);

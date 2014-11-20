@@ -273,6 +273,8 @@ public class RPIOUSendDialog extends JDialog {
 					calldisable();
 				}
 				dialog.closeDialog();
+				repaint();
+				getContentPane().repaint();
 			}
 		};
 		AccountFind find = new AccountFind();

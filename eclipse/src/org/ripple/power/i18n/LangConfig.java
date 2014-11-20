@@ -120,7 +120,7 @@ public class LangConfig {
 		}
 	}
 
-	private synchronized static void initJavaI18n() {
+	private static void initJavaI18n() {
 		if (_javai18n == null) {
 			_javai18n = new I18nSupport();
 		}
