@@ -20,6 +20,7 @@ public class RPOtherInfoDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private RPTextBox _FlagsText;
+	private RPTextBox _FlagsNameText;
 	private RPTextArea _HashText;
 	private RPTextArea _MetaText;
 	private RPTextBox _OfferSequenceText;
@@ -33,8 +34,15 @@ public class RPOtherInfoDialog extends JDialog {
 	private RPLabel _offerSequenceLabel;
 	private RPLabel _inLedgerLabel;
 	private RPLabel _flagsLabel;
+	private RPLabel _flagsNameLabel;
+	private RPLabel _signingPubKeyLabel;
+	private RPLabel _txnSignatureLabel;
+	private RPTextArea _SigningPubKeyText;
+	private RPTextArea _TxnSignatureText;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
+	private javax.swing.JScrollPane jScrollPane3;
+	private javax.swing.JScrollPane jScrollPane4;
 	private RPTextBox _ledger_index_Text;
 
 	public static RPOtherInfoDialog showDialog(String text, JDialog parent,
@@ -49,11 +57,10 @@ public class RPOtherInfoDialog extends JDialog {
 	public RPOtherInfoDialog(String text, JDialog parent, TransactionTx tx) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		setResizable(false);
-		Dimension dim = new Dimension(510, 500);
+		Dimension dim = new Dimension(510, 720);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents(tx);
-
 	}
 
 	private void initComponents(TransactionTx tx) {
@@ -63,6 +70,7 @@ public class RPOtherInfoDialog extends JDialog {
 		_MetaText = new RPTextArea();
 		_hashLabel = new RPLabel();
 		_FlagsText = new RPTextBox();
+		_FlagsNameText = new RPTextBox();
 		_sequenceLabel = new RPLabel();
 		_SequenceText = new RPTextBox();
 		_offerSequenceLabel = new RPLabel();
@@ -75,7 +83,14 @@ public class RPOtherInfoDialog extends JDialog {
 		jScrollPane2 = new javax.swing.JScrollPane();
 		_HashText = new RPTextArea();
 		_flagsLabel = new RPLabel();
-
+		_flagsNameLabel = new RPLabel();
+		_txnSignatureLabel = new RPLabel();
+		_signingPubKeyLabel = new RPLabel();
+		_TxnSignatureText = new RPTextArea();
+		_SigningPubKeyText = new RPTextArea();
+		jScrollPane3 = new javax.swing.JScrollPane();
+		jScrollPane4 = new javax.swing.JScrollPane();
+		
 		getContentPane().setLayout(null);
 
 		_metaLabel.setText("Meta_JSON");
@@ -86,7 +101,35 @@ public class RPOtherInfoDialog extends JDialog {
 		_MetaText.setRows(5);
 		jScrollPane1.setViewportView(_MetaText);
 		_MetaText.setText(tx.meda);
+		
+		_flagsNameLabel.setText("Flags Name");
+		getContentPane().add(_flagsNameLabel);
+		_flagsNameLabel.setBounds(10, 425, 100, 20);
 
+		getContentPane().add(_FlagsNameText);
+		_FlagsNameText.setBounds(130, 430, 360, 30);
+		_FlagsNameText.setText(tx.flagsName);
+		
+		_signingPubKeyLabel.setText("SigningPubKey");
+		getContentPane().add(_signingPubKeyLabel);
+		_signingPubKeyLabel.setBounds(10, 475, 100, 20);
+		_SigningPubKeyText.setColumns(5);
+		_SigningPubKeyText.setRows(5);
+		jScrollPane3.setViewportView(_SigningPubKeyText);
+		getContentPane().add(jScrollPane3);
+		jScrollPane3.setBounds(130, 480, 360, 50);
+		_SigningPubKeyText.setText(tx.signingPubKey);
+		
+		_txnSignatureLabel.setText("TxnSignature");
+		getContentPane().add(_txnSignatureLabel);
+		_txnSignatureLabel.setBounds(10, 550, 100, 20);
+		_TxnSignatureText.setColumns(5);
+		_TxnSignatureText.setRows(5);
+		jScrollPane4.setViewportView(_TxnSignatureText);
+		getContentPane().add(jScrollPane4);
+		jScrollPane4.setBounds(130, 550, 360, 80);
+		_TxnSignatureText.setText(tx.txnSignature);
+		
 		getContentPane().add(jScrollPane1);
 		jScrollPane1.setBounds(130, 350, 360, 60);
 
@@ -128,7 +171,7 @@ public class RPOtherInfoDialog extends JDialog {
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(UIRes.getFont());
 		getContentPane().add(_exitButton);
-		_exitButton.setBounds(410, 430, 81, 30);
+		_exitButton.setBounds(410, 650, 81, 30);
 		_exitButton.addActionListener(new ActionListener() {
 
 			@Override

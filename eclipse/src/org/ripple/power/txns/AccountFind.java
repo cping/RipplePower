@@ -16,6 +16,7 @@ import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
 import com.ripple.core.coretypes.RippleDate;
+import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
@@ -156,7 +157,8 @@ public class AccountFind {
 	 * send message to Rippled
 	 * 
 	 * @param address
-	 * @param password (Only ENCODE mode become effective)
+	 * @param password
+	 *            (Only ENCODE mode become effective)
 	 * @param txPreLgrSeq
 	 * @param max
 	 * @param update
@@ -182,11 +184,11 @@ public class AccountFind {
 								JSONObject tx = transaction.getJSONObject("tx");
 								String account = tx.getString("Account");
 								long date = tx.getLong("date");
-							
+
 								if (tx.has("Memos")) {
 									JSONArray list = tx.getJSONArray("Memos");
 									for (int m = 0; m < list.length(); m++) {
-								
+
 										RippleMemoDecode decode = new RippleMemoDecode(
 												account, list.getJSONObject(m),
 												date, password);
@@ -212,6 +214,143 @@ public class AccountFind {
 		});
 
 		return decodes;
+	}
+
+	public TransactionTx processTxHash(final String hash,
+			final TransactionTx transactionTx, final Updateable update) {
+		txHash(hash, new Rollback() {
+
+			@Override
+			public void success(JSONObject res) {
+				if (res.has("result")) {
+					JSONObject result = res.getJSONObject("result");
+
+					JSONObject meta = getJsonObject(result, "meta");
+					String type = getStringObject(result, "TransactionType");
+
+					if (meta != null) {
+						transactionTx.meda = meta.toString();
+					}
+
+					transactionTx.account = getStringObject(result, "Account");
+
+					long date = getLong(result, "date");
+
+					transactionTx.date_number = date;
+					transactionTx.date = getDateTime(date).getTimeString();
+
+					if (result.has("Memos")) {
+						JSONArray list = result.getJSONArray("Memos");
+						for (int m = 0; m < list.length(); m++) {
+							transactionTx.memos.add(new Memo(list
+									.getJSONObject(m), date));
+						}
+					}
+
+					String fee = CurrencyUtils.getRippleToValue(String
+							.valueOf(getLong(result, "Fee")));
+
+					transactionTx.fee = fee;
+					transactionTx.hash = getStringObject(result, "hash");
+					transactionTx.sequence = getLong(result, "Sequence");
+					transactionTx.offersSequence = getLong(result,
+							"OfferSequence");
+					transactionTx.inLedger = getLong(result, "inLedger");
+					transactionTx.ledgerIndex = getLong(result, "ledger_index");
+					transactionTx.flags = getLong(result, "Flags");
+					transactionTx.clazz = type;
+					if (transactionTx.flags != 0) {
+						transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
+						transactionTx.flagsName = TransactionFlagMap
+								.getString(transactionTx.flags);
+					}
+					if (result.has("SendMax")) {
+						transactionTx.sendMax = CurrencyUtils.getAmount(result
+								.get("SendMax"));
+					}
+					transactionTx.signingPubKey = getStringObject(
+							result, "SigningPubKey");
+					transactionTx.txnSignature = getStringObject(
+							result, "TxnSignature");
+					
+					switch (type) {
+					case "Payment":
+						transactionTx.destinationTag = getLong(result,
+								"DestinationTag");
+						transactionTx.invoiceID = getStringObject(result,
+								"InvoiceID");
+						IssuedCurrency currency = null;
+						String counterparty = null;
+						if (meta != null && meta.has("DeliveredAmount")) {
+							currency = CurrencyUtils.getAmount(getObject(meta,
+									"DeliveredAmount"));
+						} else {
+							currency = CurrencyUtils.getAmount(getObject(
+									result, "Amount"));
+						}
+						transactionTx.currency = currency;
+						transactionTx.counterparty = counterparty;
+						break;
+					case "TrustSet":
+						Object limitAmount = getObject(result, "LimitAmount");
+						if (limitAmount != null) {
+							transactionTx.currency = CurrencyUtils
+									.getAmount(limitAmount);
+							transactionTx.trusted = transactionTx.currency.issuer
+									.toString();
+						}
+						break;
+					case "OfferCreate":
+						transactionTx.get = CurrencyUtils.getAmount(getObject(
+								result, "TakerGets"));
+						transactionTx.pay = CurrencyUtils.getAmount(getObject(
+								result, "TakerPays"));
+						break;
+					case "OfferCancel":
+						JSONArray affectedNodes = getArray(meta,
+								"AffectedNodes");
+						for (int n = 0; n < affectedNodes.length(); n++) {
+							JSONObject obj = affectedNodes.getJSONObject(n);
+							if (obj.has("DeletedNode")) {
+								JSONObject deleted = obj
+										.getJSONObject("DeletedNode");
+								String ledgerEntryType = getStringObject(
+										deleted, "LedgerEntryType");
+								if ("Offer".equals(ledgerEntryType)) {
+									JSONObject ff = getJsonObject(deleted,
+											"FinalFields");
+									String ffactount = getStringObject(ff,
+											"Account");
+									if (ffactount.equals(transactionTx.account)) {
+										transactionTx.get = CurrencyUtils
+												.getAmount(getObject(ff,
+														"TakerGets"));
+										transactionTx.pay = CurrencyUtils
+												.getAmount(getObject(ff,
+														"TakerPays"));
+									}
+								}
+							}
+
+						}
+						break;
+					}
+
+				}
+
+				if (update != null) {
+					update.action(res);
+				}
+			}
+
+			@Override
+			public void error(JSONObject res) {
+				if (update != null) {
+					update.action(res);
+				}
+			}
+		});
+		return transactionTx;
 	}
 
 	public AccountInfo processTx(final String address,
@@ -282,6 +421,7 @@ public class AccountFind {
 
 											long date = getLong(tx, "date");
 
+											transactionTx.date_number = date;
 											transactionTx.date = getDateTime(
 													date).getTimeString();
 
@@ -313,6 +453,19 @@ public class AccountFind {
 											transactionTx.flags = getLong(tx,
 													"Flags");
 											transactionTx.clazz = type;
+											if (transactionTx.flags != 0) {
+												transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
+												transactionTx.flagsName = TransactionFlagMap
+														.getString(transactionTx.flags);
+											}
+											if (tx.has("SendMax")) {
+												transactionTx.sendMax = CurrencyUtils.getAmount(tx
+														.get("SendMax"));
+											}
+											transactionTx.signingPubKey = getStringObject(
+													tx, "SigningPubKey");
+											transactionTx.txnSignature = getStringObject(
+													tx, "TxnSignature");
 
 											switch (type) {
 											case "Payment":
@@ -817,6 +970,31 @@ public class AccountFind {
 				@Override
 				public void called(Response response) {
 					_balanceXRP = response.message;
+					if (back != null) {
+						back.success(response.message);
+					}
+				}
+			});
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.error(response.message);
+					}
+				}
+			});
+			req.request();
+		}
+	}
+
+	public void txHash(String hash, final Rollback back) {
+		RPClient client = RPClient.ripple();
+		if (client != null) {
+			Request req = client.newRequest(Command.tx);
+			req.json("transaction", hash);
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
 					if (back != null) {
 						back.success(response.message);
 					}

@@ -327,7 +327,7 @@ public class RPRippledMemoDialog extends JDialog {
 		}
 		if (_item == null) {
 			_submitButton.setEnabled(false);
-			_resetButton.setEnabled(false);
+			//_resetButton.setEnabled(false);
 		}
 		pack();
 	}

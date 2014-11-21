@@ -9,8 +9,14 @@ public class TransactionTx {
 	public String account;
 
 	public String meda;
+	
+	public String signingPubKey;
 
+	public String txnSignature;
+	
 	public IssuedCurrency currency;
+	
+	public IssuedCurrency sendMax;
 
 	public String fee;
 
@@ -26,7 +32,7 @@ public class TransactionTx {
 
 	public String invoiceID;
 
-	public long flags;
+	public long flags = 0;
 
 	public long offersSequence;
 
@@ -34,10 +40,16 @@ public class TransactionTx {
 
 	public String date;
 
+	public long date_number;
+	
 	public ArrayList<Memo> memos = new ArrayList<Memo>(10);
 
 	public String hash;
 
+	public boolean isPartialPayment;
+	
+	public String flagsName = "Unkown";
+	
 	public String clazz;
 
 	public long inLedger;

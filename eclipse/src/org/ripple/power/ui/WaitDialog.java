@@ -39,6 +39,10 @@ public class WaitDialog {
 			if (lock == null) {
 				return (lock = new WaitDialog(parent));
 			} else {
+				if (lock != null) {
+					lock.closeDialog();
+					lock = new WaitDialog(parent);
+				}
 				return lock;
 			}
 		}
