@@ -21,6 +21,7 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _btc2ripple_co;
 	private RPCButton _btc2ripple_sn;
 	private RPCButton _rippleTrade;
+	private RPCButton _activeRipple;
 	private RPCButton _xrp2vpn;
 	private RPCButton _ripple_bitcoin_news;
 	private RPCButton _script_editor;
@@ -44,12 +45,12 @@ public class RPOtherServicesDialog extends JPanel {
 		RPOtherServicesDialog services = new RPOtherServicesDialog();
 		return RPPushTool.pop(new Point(
 				(size.width - services.getWidth()) - 10, size.getHeight()),
-				(int) (screenInsets.bottom + services.getHeight() + 270),
+				(int) (screenInsets.bottom + services.getHeight() + 230),
 				"Other Apps/Services", services);
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 335);
+		Dimension dim = new Dimension(246, 375);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -60,6 +61,7 @@ public class RPOtherServicesDialog extends JPanel {
 		Font font = new Font("Arial", Font.BOLD, 14);
 
 		_rippleTrade = new RPCButton();
+		_activeRipple = new RPCButton();
 		_xrp2vpn = new RPCButton();
 		_btc2ripple_sn = new RPCButton();
 		_btc2ripple_co = new RPCButton();
@@ -118,7 +120,19 @@ public class RPOtherServicesDialog extends JPanel {
 				EditorDialog.showDialog(LSystem.applicationMain);
 			}
 		});
+		
+		_activeRipple.setText("Activating Wallet");
+		_activeRipple.setFont(font);
+		add(_activeRipple);
+		_activeRipple.setBounds(10, 310, 224, 34);
+		_activeRipple.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202964876-Activating-Your-Wallet");
+			}
+		});
+		
 		_btc2ripple_sn.setText("Btc2Ripple(~snapswap)");
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
@@ -128,7 +142,6 @@ public class RPOtherServicesDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://www.btc2ripple.com");
-
 			}
 		});
 
@@ -141,7 +154,6 @@ public class RPOtherServicesDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://coinist.co/ripple/assets/btc-btc2ripple");
-
 			}
 		});
 

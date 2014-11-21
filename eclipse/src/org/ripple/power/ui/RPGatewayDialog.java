@@ -48,6 +48,7 @@ public class RPGatewayDialog extends JDialog {
 	// Variables declaration - do not modify
 	private RPCButton _addGatewayButton;
 	private RPCButton _manageGatewayButton;
+	private RPCButton _rlGatewayButton;
 	private RPCButton _exitButton;
 	private RPCButton _cancelTrustButton;
 	private RPCButton _okTrustButton;
@@ -150,6 +151,7 @@ public class RPGatewayDialog extends JDialog {
 
 		_addGatewayButton = new RPCButton();
 		_manageGatewayButton = new RPCButton();
+		_rlGatewayButton = new RPCButton();
 		_exitButton = new RPCButton();
 		_cancelTrustButton = new RPCButton();
 		_okTrustButton = new RPCButton();
@@ -158,6 +160,7 @@ public class RPGatewayDialog extends JDialog {
 		_createGatewayButton.setFont(font);
 		_addGatewayButton.setFont(font);
 		_manageGatewayButton.setFont(font);
+		_rlGatewayButton.setFont(font);
 		_exitButton.setFont(font);
 		_cancelTrustButton.setFont(font);
 		_okTrustButton.setFont(font);
@@ -371,6 +374,17 @@ public class RPGatewayDialog extends JDialog {
 		_manageGatewayButton.setText(LangConfig.get(this, "manage", "Manage"));
 		getContentPane().add(_manageGatewayButton);
 		_manageGatewayButton.setBounds(120, 540, 100, 30);
+		
+		_rlGatewayButton.setText("Gateway-Info");
+		getContentPane().add(_rlGatewayButton);
+		_rlGatewayButton.setBounds(230, 540, 100, 30);
+		_rlGatewayButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202847686-Gateway-Information");
+			}
+		});
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new ActionListener() {
@@ -392,10 +406,10 @@ public class RPGatewayDialog extends JDialog {
 				if (idx > -1) {
 					IssuedCurrency currency = TrustSet
 							.fromString((String) _myGateway.getSelectedValue());
-					String message = String.format("您希望取消对网关%s的信任吗?",
+					String message = String.format("You wish to cancel the gateway %s trust ?",
 							currency.issuer.toString());
 					int result = RPMessage.showConfirmMessage(
-							LSystem.applicationMain, "信任归零", message,
+							LSystem.applicationMain, "Cancel trust", message,
 							LangConfig.get(this, "ok", "OK"),
 							LangConfig.get(this, "cancel", "Cancel"));
 					if (result == 0) {
@@ -415,7 +429,7 @@ public class RPGatewayDialog extends JDialog {
 										if (result != null) {
 											RPMessage.showInfoMessage(
 													LSystem.applicationMain,
-													"Info", "操作被处理,Rippled反馈:"
+													"Info", "Rippled Result : "
 															+ result);
 											loadTrust();
 										}
@@ -427,7 +441,7 @@ public class RPGatewayDialog extends JDialog {
 										dialog.closeDialog();
 										RPMessage.showErrorMessage(
 												LSystem.applicationMain,
-												"Error", "信任归零失败");
+												"Error", "Trust failed");
 									}
 								});
 					}
@@ -453,11 +467,11 @@ public class RPGatewayDialog extends JDialog {
 				String trustValue = _trustValueText.getText().trim();
 
 				String message = String.format(
-						"您希望信任网关%s\n的货币%s,并且设置信任额度为%s吗?", address, curName,
+						"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?", address, curName,
 						trustValue);
 
 				int result = RPMessage.showConfirmMessage(
-						LSystem.applicationMain, "信任网关", message,
+						LSystem.applicationMain, "Trust Gateway", message,
 						LangConfig.get(this, "ok", "OK"),
 						LangConfig.get(this, "cancel", "Cancel"));
 				if (result == 0) {
@@ -477,7 +491,7 @@ public class RPGatewayDialog extends JDialog {
 									if (result != null) {
 										RPMessage.showInfoMessage(
 												LSystem.applicationMain,
-												"Info", "操作被处理,Rippled反馈:"
+												"Info", "Rippled Result : "
 														+ result);
 										loadTrust();
 									}
@@ -489,7 +503,7 @@ public class RPGatewayDialog extends JDialog {
 									dialog.closeDialog();
 									RPMessage.showErrorMessage(
 											LSystem.applicationMain, "Error",
-											"信任失败.");
+											"Trust failed");
 								}
 							});
 				}
