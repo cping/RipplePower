@@ -18,7 +18,18 @@ import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 
 public class RPToast extends JDialog {
-	private static final long serialVersionUID = -1602907470843951525L;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static void playWorking(Window owner) {
+		RPToast toast = RPToast.makeText(owner, "Work in process");
+		toast._frame_radius = 35;
+		toast._frame_length_multiplier = 30;
+		toast.display();
+	}
 
 	public enum Style {
 		NORMAL, SUCCESS, ERROR
@@ -27,19 +38,19 @@ public class RPToast extends JDialog {
 	public static final int LENGTH_SHORT = 3000;
 	public static final int LENGTH_LONG = 6000;
 	public static final Color ERROR_RED = LColor.maroon;
-	public static final Color SUCCESS_GREEN = LColor.lightSteelBlue;
+	public static final Color SUCCESS_GRAY = LColor.gray;
 	public static final Color NORMAL_BLACK = new Color(0, 0, 0);
 	private final float MAX_OPACITY = 0.8f;
 	private final float OPACITY_INCREMENT = 0.05f;
 	private final int FADE_REFRESH_RATE = 20;
-	private final int WINDOW_RADIUS = 15;
-	private final int CHARACTER_LENGTH_MULTIPLIER = 10;
+	private int _frame_radius = 15;
+	private int _frame_length_multiplier = 10;
 
 	private Window mOwner;
 	private String mText;
 	private int mDuration;
-	private Color mBackgroundColor = Color.BLACK;
-	private Color mForegroundColor = Color.WHITE;
+	private Color mBackgroundColor = LColor.BLACK;
+	private Color mForegroundColor = LColor.WHITE;
 
 	public RPToast(Window owner) {
 		super(owner, Dialog.ModalityType.MODELESS);
@@ -53,14 +64,14 @@ public class RPToast extends JDialog {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				setShape(new RoundRectangle2D.Double(0, 0, getWidth(),
-						getHeight(), WINDOW_RADIUS, WINDOW_RADIUS));
+						getHeight(), _frame_radius, _frame_radius));
 			}
 		});
 		setAlwaysOnTop(true);
 		setUndecorated(true);
 		setFocusableWindowState(false);
 		setModalityType(ModalityType.MODELESS);
-		setSize(mText.length() * CHARACTER_LENGTH_MULTIPLIER, 25);
+		setSize(mText.length() * _frame_length_multiplier, 25);
 		getContentPane().setBackground(mBackgroundColor);
 		JLabel label = new JLabel(mText);
 		label.setForeground(mForegroundColor);
@@ -109,7 +120,6 @@ public class RPToast extends JDialog {
 		timer.start();
 	}
 
-
 	public void setText(String text) {
 		mText = text;
 	}
@@ -146,7 +156,7 @@ public class RPToast extends JDialog {
 		toast.mText = text;
 		toast.mDuration = duration;
 		if (style == Style.SUCCESS) {
-			toast.mBackgroundColor = SUCCESS_GREEN;
+			toast.mBackgroundColor = SUCCESS_GRAY;
 		}
 		if (style == Style.ERROR) {
 			toast.mBackgroundColor = ERROR_RED;
@@ -167,7 +177,7 @@ public class RPToast extends JDialog {
 					fadeIn();
 					Thread.sleep(mDuration);
 					fadeOut();
-					
+
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

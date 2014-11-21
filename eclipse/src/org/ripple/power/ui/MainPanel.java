@@ -177,7 +177,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn.addActionListener(this);
 
 		RPButton btn2 = new RPButton("Ripple<->Blockchain", iconMale);
-		btn2.setActionCommand("Ripple_Blockchain");
+		btn2.setActionCommand(CommandFlag.Ripple_Blockchain);
 		btn2.setFont(font);
 		btn2.addActionListener(this);
 
@@ -417,6 +417,10 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private void submitActionCommand(String actionName) {
 		try {
+			if (actionName.equals(CommandFlag.Ripple_Blockchain)) {
+				RPToast.playWorking(LSystem.applicationMain);
+				return;
+			}
 			if (actionName.equals(CommandFlag.Editor)) {
 				RPToast.makeText(LSystem.applicationMain,
 						"Edit Ripple script and running.", Style.SUCCESS)

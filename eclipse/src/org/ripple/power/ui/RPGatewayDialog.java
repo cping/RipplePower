@@ -101,7 +101,6 @@ public class RPGatewayDialog extends JDialog {
 		}
 	}
 
-
 	public static RPGatewayDialog showDialog(String text, JFrame parent,
 			final WalletItem item) {
 		RPGatewayDialog dialog = new RPGatewayDialog(text, parent, item);
@@ -179,8 +178,7 @@ public class RPGatewayDialog extends JDialog {
 		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 		jPanel1.setLayout(null);
 
-		_currencyNameList
-				.setFont(font); // NOI18N
+		_currencyNameList.setFont(font); // NOI18N
 		_currencyNameList.setForeground(new java.awt.Color(255, 255, 255));
 		_currencyNameList.setText(LangConfig.get(this, "currency", "Currency"));
 		jPanel1.add(_currencyNameList);
@@ -257,7 +255,8 @@ public class RPGatewayDialog extends JDialog {
 		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 
 		_listGateway.addMouseListener(new userMouseListener());
-		UIRes.addPopMenu(_userGatewayMenu,LangConfig.get(this, "delete", "Delete Custom Gateway"),
+		UIRes.addPopMenu(_userGatewayMenu,
+				LangConfig.get(this, "delete", "Delete Custom Gateway"),
 				new Updateable() {
 
 					@Override
@@ -374,12 +373,19 @@ public class RPGatewayDialog extends JDialog {
 		_manageGatewayButton.setText(LangConfig.get(this, "manage", "Manage"));
 		getContentPane().add(_manageGatewayButton);
 		_manageGatewayButton.setBounds(120, 540, 100, 30);
-		
+		_manageGatewayButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPGatewayDialog.this);
+			}
+		});
+
 		_rlGatewayButton.setText("Gateway-Info");
 		getContentPane().add(_rlGatewayButton);
 		_rlGatewayButton.setBounds(230, 540, 100, 30);
 		_rlGatewayButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202847686-Gateway-Information");
@@ -406,7 +412,8 @@ public class RPGatewayDialog extends JDialog {
 				if (idx > -1) {
 					IssuedCurrency currency = TrustSet
 							.fromString((String) _myGateway.getSelectedValue());
-					String message = String.format("You wish to cancel the gateway %s trust ?",
+					String message = String.format(
+							"You wish to cancel the gateway %s trust ?",
 							currency.issuer.toString());
 					int result = RPMessage.showConfirmMessage(
 							LSystem.applicationMain, "Cancel trust", message,
@@ -466,9 +473,9 @@ public class RPGatewayDialog extends JDialog {
 
 				String trustValue = _trustValueText.getText().trim();
 
-				String message = String.format(
-						"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?", address, curName,
-						trustValue);
+				String message = String
+						.format("You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?",
+								address, curName, trustValue);
 
 				int result = RPMessage.showConfirmMessage(
 						LSystem.applicationMain, "Trust Gateway", message,
@@ -513,6 +520,14 @@ public class RPGatewayDialog extends JDialog {
 		_createGatewayButton.setText(LangConfig.get(this, "create", "Create"));
 		getContentPane().add(_createGatewayButton);
 		_createGatewayButton.setBounds(10, 540, 100, 30);
+		_createGatewayButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPGatewayDialog.this);
+			}
+		});
+
 		getContentPane().setBackground(LSystem.dialogbackground);
 		emptyAddress();
 		loadTrust();

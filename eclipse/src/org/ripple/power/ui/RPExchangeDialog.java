@@ -629,6 +629,13 @@ public class RPExchangeDialog extends JDialog {
 
 		_stopautonButton.setText(LangConfig.get(this, "stopauto",
 				"Stop auto trading"));
+		_stopautonButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPExchangeDialog.this);
+			}
+		});
 		_stopautonButton.setFont(font14);
 		jPanel2.add(_stopautonButton);
 		_stopautonButton.setBounds(560, 90, 130, 23);
@@ -672,6 +679,13 @@ public class RPExchangeDialog extends JDialog {
 
 		_setautoButton.setText(LangConfig
 				.get(this, "setauto", "Set auto trade"));
+		_setautoButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPExchangeDialog.this);
+			}
+		});
 		_setautoButton.setFont(font14);
 		jPanel2.add(_setautoButton);
 		_setautoButton.setBounds(270, 90, 130, 23);
@@ -681,6 +695,13 @@ public class RPExchangeDialog extends JDialog {
 		_startautobutton.setFont(font14);
 		jPanel2.add(_startautobutton);
 		_startautobutton.setBounds(420, 90, 120, 23);
+		_startautobutton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPExchangeDialog.this);
+			}
+		});
 
 		getContentPane().add(jPanel2);
 		jPanel2.setBounds(10, 400, 970, 130);
@@ -690,12 +711,27 @@ public class RPExchangeDialog extends JDialog {
 		_editHFTButton.setFont(font14);
 		getContentPane().add(_editHFTButton);
 		_editHFTButton.setBounds(10, 540, 130, 40);
+		_editHFTButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPExchangeDialog.this);
+			}
+		});
 
 		_autoHFTButton.setText(LangConfig.get(this, "startscript",
 				"Start Script"));
 		_autoHFTButton.setFont(font14);
 		getContentPane().add(_autoHFTButton);
 		_autoHFTButton.setBounds(150, 540, 140, 40);
+		_autoHFTButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPToast.playWorking(RPExchangeDialog.this);
+				
+			}
+		});
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(font14);

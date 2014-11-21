@@ -4,6 +4,8 @@ public class CommandFlag {
 
 	// simple
 	public static final String RippledNodeS = "RippledNodeS";
+	
+	public static final String Ripple_Blockchain = "Ripple_Blockchain";
 
 	public static final String SendCoin = "Sendcoin";
 
