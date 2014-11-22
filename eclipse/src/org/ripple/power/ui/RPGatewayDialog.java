@@ -30,6 +30,7 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TrustSet;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -61,16 +62,18 @@ public class RPGatewayDialog extends JDialog {
 	private RPLabel _limitLabel;
 	private RPLabel _amountLabel;
 	private RPLabel _trustLabel;
+	private RPLabel _webLabel;
 	private RPList _ioulistTable;
 	private RPList _listGateway;
 	private RPList _myGateway;
-	private javax.swing.JPanel jPanel1;
+	private javax.swing.JPanel _panel;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JScrollPane jScrollPane3;
 	private javax.swing.JSeparator jSeparator1;
 	private javax.swing.JSlider _trustlimits;
 	private RPTextBox _addressText;
+	private RPTextBox _webText;
 	private RPTextBox _trustValueText;
 	private JPopupMenu _userGatewayMenu = new JPopupMenu();
 	// End of variables declaration
@@ -123,6 +126,10 @@ public class RPGatewayDialog extends JDialog {
 	}
 
 	private void initComponents() {
+		
+		LColor color = new LColor(255, 255, 255);
+		
+		
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jScrollPane3 = new javax.swing.JScrollPane();
@@ -133,17 +140,19 @@ public class RPGatewayDialog extends JDialog {
 
 		jSeparator1 = new javax.swing.JSeparator();
 		_gatewayListLabel = new RPLabel();
-		jPanel1 = new javax.swing.JPanel();
+		_panel = new javax.swing.JPanel();
 		_currencyNameList = new RPLabel();
 		_gatewayAddressLabel = new RPLabel();
 		_iouSupportLabel = new RPLabel();
 		_limitLabel = new RPLabel();
 		_amountLabel = new RPLabel();
 		_trustLabel = new RPLabel();
+		_webLabel = new RPLabel();
 
 		_trustlimits = new javax.swing.JSlider();
 
 		_addressText = new RPTextBox();
+		_webText = new RPTextBox();
 		_curList = new RPComboBox();
 
 		Font font = GraphicsUtils.getFont(14);
@@ -175,20 +184,20 @@ public class RPGatewayDialog extends JDialog {
 		getContentPane().add(_gatewayListLabel);
 		_gatewayListLabel.setBounds(10, 10, 170, 20);
 
-		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
-		jPanel1.setLayout(null);
+		_panel.setBackground(new java.awt.Color(51, 51, 51));
+		_panel.setLayout(null);
 
 		_currencyNameList.setFont(font); // NOI18N
-		_currencyNameList.setForeground(new java.awt.Color(255, 255, 255));
+		_currencyNameList.setForeground(color);
 		_currencyNameList.setText(LangConfig.get(this, "currency", "Currency"));
-		jPanel1.add(_currencyNameList);
+		_panel.add(_currencyNameList);
 		_currencyNameList.setBounds(10, 70, 80, 16);
 
 		_gatewayAddressLabel.setFont(font); // NOI18N
-		_gatewayAddressLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_gatewayAddressLabel.setForeground(color);
 		_gatewayAddressLabel
 				.setText(LangConfig.get(this, "address", "Address"));
-		jPanel1.add(_gatewayAddressLabel);
+		_panel.add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(10, 20, 91, 16);
 
 		_trustlimits.setBackground(new java.awt.Color(51, 51, 51));
@@ -212,39 +221,47 @@ public class RPGatewayDialog extends JDialog {
 
 			}
 		});
-		jPanel1.add(_trustlimits);
+		_panel.add(_trustlimits);
 
 		_trustValueText = new RPTextBox();
 		_trustValueText.setBounds(90, 170, 200, 21);
 		_trustValueText.setText(String.valueOf(max_trust));
-		jPanel1.add(_trustValueText);
+		_panel.add(_trustValueText);
 
 		_limitLabel.setFont(font); // NOI18N
-		_limitLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_limitLabel.setForeground(color);
 		_limitLabel.setText(LangConfig.get(this, "limit", "Trust Limit"));
-		jPanel1.add(_limitLabel);
+		_panel.add(_limitLabel);
 		_limitLabel.setBounds(10, 120, 80, 16);
-		jPanel1.add(_addressText);
+		_panel.add(_addressText);
 		_addressText.setBounds(90, 20, 478, 21);
 
 		_amountLabel.setFont(font); // NOI18N
-		_amountLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_amountLabel.setForeground(color);
 		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
-		jPanel1.add(_amountLabel);
+		_panel.add(_amountLabel);
 		_amountLabel.setBounds(10, 170, 80, 16);
+		
+		_webLabel.setFont(font); // NOI18N
+		_webLabel.setForeground(color);
+		_webLabel.setText(LangConfig.get(this, "domain", "Domain"));
+		_panel.add(_webLabel);
+		_webLabel.setBounds(10, 450, 80, 16);
+		_panel.add(_webText);
+		_webText.setBounds(90, 450, 380, 21);
 
 		_trustLabel.setFont(font); // NOI18N
-		_trustLabel.setForeground(new java.awt.Color(255, 255, 255));
+		_trustLabel.setForeground(color);
 		_trustLabel.setText(LangConfig.get(this, "trust", "My Trust"));
-		jPanel1.add(_trustLabel);
+		_panel.add(_trustLabel);
 		_trustLabel.setBounds(10, 220, 80, 16);
 
 		_curList.setItemModel(new String[] { "CNY", "BTC", "USD", "JPY" });
-		jPanel1.add(_curList);
+		_panel.add(_curList);
 		_curList.setBounds(90, 70, 130, 21);
 
-		getContentPane().add(jPanel1);
-		jPanel1.setBounds(190, 10, 580, 500);
+		getContentPane().add(_panel);
+		_panel.setBounds(190, 10, 580, 500);
 
 		_iouSupportLabel.setText(LangConfig.get(this, "iou_support",
 				"IOU Support"));
@@ -293,18 +310,19 @@ public class RPGatewayDialog extends JDialog {
 				RPList list = (RPList) e.getSource();
 				String name = (String) list.getSelectedValue();
 				synchronized (_iouList) {
-					if (Gateway.getAddress(name) != null) {
+					Gateway gateway = Gateway.getAddress(name);
+					if (gateway != null) {
 						_iouList.clear();
-						ArrayList<Gateway.Item> items = Gateway
-								.getAddress(name).accounts;
+						ArrayList<Gateway.Item> items = gateway.accounts;
 						for (int i = 0; i < items.size(); i++) {
 							_iouList.addAll(items.get(i).currencies);
 
 						}
+						_webText.setText(gateway.domain);
 						_ioulistTable.updateUI();
 						_curList.setItemModel(_iouList.toArray());
 						if (Gateway.getAddress(name).accounts.size() > 0) {
-							_addressText.setText(Gateway.getAddress(name).accounts
+							_addressText.setText(gateway.accounts
 									.get(0).address);
 						}
 
@@ -353,7 +371,7 @@ public class RPGatewayDialog extends JDialog {
 
 		jScrollPane3.setViewportView(_myGateway);
 
-		jPanel1.add(jScrollPane3);
+		_panel.add(jScrollPane3);
 
 		jScrollPane3.setBounds(90, 220, 480, 200);
 

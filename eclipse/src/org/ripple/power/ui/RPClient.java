@@ -73,17 +73,12 @@ public class RPClient {
 	public static String getRippledNode() {
 		Session session = LSystem.session("ripple_node");
 		String result = session.get("data");
-		if (result == null) {
-			if (LangConfig.isEast()) {
-				return applicationRippleLabes[2];
-			} else {
-				return applicationRippleLabes[MathUtils.random(0,
-						applicationRippleLabes.length - 1)];
-			}
-		} else if (result.startsWith("wss://") && result.length() > 6) {
+		if (result != null && result.startsWith("wss://")
+				&& result.length() > 6) {
 			return result;
 		} else {
-			return applicationRippleLabes[2];
+			return applicationRippleLabes[MathUtils.random(0,
+					applicationRippleLabes.length - 1)];
 		}
 	}
 
@@ -198,7 +193,7 @@ public class RPClient {
 		}
 	}
 
-	//Updateable Region
+	// Updateable Region
 	public void addLoad(Updateable u) {
 		synchronized (_loads) {
 			_loads.add(u);

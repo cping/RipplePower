@@ -19,7 +19,7 @@ public class Gateway {
 
 	public String name;
 
-	public String domain;
+	public String domain = "unkown";
 
 	public ArrayList<String> hotwallets = new ArrayList<String>(10);
 
@@ -256,6 +256,9 @@ public class Gateway {
 					for (int n = 0; n < hotwallets.length(); n++) {
 						gateway.hotwallets.add(hotwallets.getString(n));
 					}
+				}
+				if (o.has("domain")) {
+					gateway.domain = o.getString("domain");
 				}
 				JSONArray accounts = o.getJSONArray("accounts");
 				for (int n = 0; n < accounts.length(); n++) {
