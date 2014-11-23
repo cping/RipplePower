@@ -6,11 +6,23 @@ public class BookOffer {
 	public IssuedCurrency sell;
 
 	public long sequence;
-	
-	public BookOffer(IssuedCurrency buy, IssuedCurrency sell,long seq) {
+
+	public long flags;
+
+	public BookOffer(IssuedCurrency buy, IssuedCurrency sell, long seq,
+			long flags) {
 		this.buy = buy;
 		this.sell = sell;
 		this.sequence = seq;
+		this.flags = flags;
+	}
+
+	public BookOffer(IssuedCurrency buy, IssuedCurrency sell, long flags) {
+		this(buy, sell, System.currentTimeMillis(), flags);
+	}
+
+	public BookOffer(IssuedCurrency buy, IssuedCurrency sell) {
+		this(buy, sell, System.currentTimeMillis(), 0);
 	}
 
 	public String toString() {

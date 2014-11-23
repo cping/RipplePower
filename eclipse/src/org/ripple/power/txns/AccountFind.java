@@ -233,9 +233,9 @@ public class AccountFind {
 					}
 
 					transactionTx.account = getStringObject(result, "Account");
-					transactionTx.destination = getStringObject(
-							result, "Destination");
-					
+					transactionTx.destination = getStringObject(result,
+							"Destination");
+
 					long date = getLong(result, "date");
 
 					transactionTx.date_number = date;
@@ -422,13 +422,13 @@ public class AccountFind {
 													tx, "Account");
 											transactionTx.destination = getStringObject(
 													tx, "Destination");
-											
+
 											long date = getLong(tx, "date");
 
 											transactionTx.date_number = date;
 											transactionTx.date = getDateTime(
 													date).getTimeString();
-											
+
 											if (tx.has("Memos")) {
 												JSONArray list = tx
 														.getJSONArray("Memos");
@@ -790,12 +790,18 @@ public class AccountFind {
 
 							long seq = getLong(o, "seq");
 
+							long flags = 0;
+
+							if (o.has("flags")) {
+								flags = getLong(o, "flags");
+							}
+
 							Object taker_gets = getObject(o, "taker_gets");
 							Object taker_pays = getObject(o, "taker_pays");
 
 							BookOffer offer = new BookOffer(CurrencyUtils
 									.getAmount(taker_gets), CurrencyUtils
-									.getAmount(taker_pays), seq);
+									.getAmount(taker_pays), seq, flags);
 
 							accountinfo.bookOffers.add(offer);
 
