@@ -45,6 +45,8 @@ public class TransactionFlagMap {
 		_flags.put(TransactionFlag.SetFreeze, "SetFreeze");
 		_flags.put(TransactionFlag.ClearFreeze, "ClearFreeze");
 		_flags.put(TransactionFlag.TrustSetMask, "TrustSetMask");
+		// Special flags:
+		_flags.put(0x30000L, "Cheater");
 	}
 
 	public final static String getString(long flag) {

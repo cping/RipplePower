@@ -14,6 +14,8 @@ public class TransactionTx {
 
 	public String txnSignature;
 	
+	public String destination;
+	
 	public IssuedCurrency currency;
 	
 	public IssuedCurrency sendMax;

@@ -233,7 +233,9 @@ public class AccountFind {
 					}
 
 					transactionTx.account = getStringObject(result, "Account");
-
+					transactionTx.destination = getStringObject(
+							result, "Destination");
+					
 					long date = getLong(result, "date");
 
 					transactionTx.date_number = date;
@@ -268,11 +270,11 @@ public class AccountFind {
 						transactionTx.sendMax = CurrencyUtils.getAmount(result
 								.get("SendMax"));
 					}
-					transactionTx.signingPubKey = getStringObject(
-							result, "SigningPubKey");
-					transactionTx.txnSignature = getStringObject(
-							result, "TxnSignature");
-					
+					transactionTx.signingPubKey = getStringObject(result,
+							"SigningPubKey");
+					transactionTx.txnSignature = getStringObject(result,
+							"TxnSignature");
+
 					switch (type) {
 					case "Payment":
 						transactionTx.destinationTag = getLong(result,
@@ -418,13 +420,15 @@ public class AccountFind {
 
 											transactionTx.account = getStringObject(
 													tx, "Account");
-
+											transactionTx.destination = getStringObject(
+													tx, "Destination");
+											
 											long date = getLong(tx, "date");
 
 											transactionTx.date_number = date;
 											transactionTx.date = getDateTime(
 													date).getTimeString();
-
+											
 											if (tx.has("Memos")) {
 												JSONArray list = tx
 														.getJSONArray("Memos");
@@ -492,18 +496,13 @@ public class AccountFind {
 												transactionTx.currency = currency;
 												String flagType;
 												if (address
-														.equals(getStringObject(
-																tx, "Account"))) {
+														.equals(transactionTx.account)) {
 													if (address
-															.equals(getStringObject(
-																	tx,
-																	"Destination"))) {
+															.equals(transactionTx.destination)) {
 														flagType = "Exchange";
 													} else {
 														flagType = "Send";
-														counterparty = getStringObject(
-																tx,
-																"Destination");
+														counterparty = transactionTx.destination;
 														int index = inCredits(
 																issues,
 																currency);
@@ -514,12 +513,9 @@ public class AccountFind {
 														}
 													}
 												} else if (address
-														.equals(getStringObject(
-																tx,
-																"Destination"))) {
+														.equals(transactionTx.destination)) {
 													flagType = "Receive";
-													counterparty = getStringObject(
-															tx, "Account");
+													counterparty = transactionTx.account;
 												} else {
 													flagType = "Convert";
 												}

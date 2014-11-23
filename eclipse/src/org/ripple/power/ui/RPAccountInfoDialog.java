@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -35,22 +37,23 @@ public class RPAccountInfoDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private javax.swing.JSeparator jSeparator1;
-	private javax.swing.JSeparator jSeparator2;
+	private javax.swing.JSeparator _spOne;
+	private javax.swing.JSeparator _spTwo;
 	private RPCButton _loadButton;
 	private RPCButton _memoButton;
+	private RPCButton _hashButton;
 	private RPCButton _exitButton;
 	private RPLabel _addressLabel;
 	private RPLabel _assetsLabel;
 	private RPLabel _issuedLabel;
 	private RPLabel _booksLabel;
-	private javax.swing.JTextField _addressText;
-	private AddressTable jTable1;
-	private AddressTable jTable2;
-	private AddressTable jTable3;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JScrollPane jScrollPane3;
+	private RPTextBox _addressText;
+	private AddressTable _tableOne;
+	private AddressTable _tableTwo;
+	private AddressTable _tableThree;
+	private javax.swing.JScrollPane _panelOne;
+	private javax.swing.JScrollPane _panelTwo;
+	private javax.swing.JScrollPane _panelThree;
 	private ArrayList<AccountLine> _accountLineItems = new ArrayList<AccountLine>();
 
 	private ArrayList<AccountLine> _accountLineItems2 = new ArrayList<AccountLine>();
@@ -294,12 +297,13 @@ public class RPAccountInfoDialog extends JDialog {
 		_addressText = new RPTextBox();
 		_loadButton = new RPCButton();
 		_memoButton = new RPCButton();
+		_hashButton = new RPCButton();
 		_exitButton = new RPCButton();
-		jScrollPane1 = new javax.swing.JScrollPane();
-		jScrollPane2 = new javax.swing.JScrollPane();
-		jScrollPane3 = new javax.swing.JScrollPane();
-		jSeparator1 = new javax.swing.JSeparator();
-		jSeparator2 = new javax.swing.JSeparator();
+		_panelOne = new javax.swing.JScrollPane();
+		_panelTwo = new javax.swing.JScrollPane();
+		_panelThree = new javax.swing.JScrollPane();
+		_spOne = new javax.swing.JSeparator();
+		_spTwo = new javax.swing.JSeparator();
 		_assetsLabel = new RPLabel();
 		_issuedLabel = new RPLabel();
 		_booksLabel = new RPLabel();
@@ -318,30 +322,30 @@ public class RPAccountInfoDialog extends JDialog {
 
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
-		jTable1 = new AddressTable(tableModel, columnTypes);
-		jTable1.setFont(GraphicsUtils.getFont(14));
-		jTable1.setRowSorter(new TableRowSorter<TableModel>(tableModel));
-		jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_tableOne = new AddressTable(tableModel, columnTypes);
+		_tableOne.setFont(GraphicsUtils.getFont(14));
+		_tableOne.setRowSorter(new TableRowSorter<TableModel>(tableModel));
+		_tableOne.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		jScrollPane1.setViewportView(jTable1);
+		_panelOne.setViewportView(_tableOne);
 
-		getContentPane().add(jScrollPane1);
-		jScrollPane1.setBounds(10, 90, 640, 120);
+		getContentPane().add(_panelOne);
+		_panelOne.setBounds(10, 90, 640, 120);
 
 		final AccountTableModel2 tableModel2 = new AccountTableModel2(
 				columnNames, columnClasses);
-		jTable2 = new AddressTable(tableModel2, columnTypes);
-		jTable2.setFont(GraphicsUtils.getFont(14));
-		jTable2.setRowSorter(new TableRowSorter<TableModel>(tableModel));
-		jTable2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_tableTwo = new AddressTable(tableModel2, columnTypes);
+		_tableTwo.setFont(GraphicsUtils.getFont(14));
+		_tableTwo.setRowSorter(new TableRowSorter<TableModel>(tableModel));
+		_tableTwo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		jScrollPane2.setViewportView(jTable2);
+		_panelTwo.setViewportView(_tableTwo);
 
-		getContentPane().add(jScrollPane2);
-		jScrollPane2.setBounds(10, 250, 640, 100);
+		getContentPane().add(_panelTwo);
+		_panelTwo.setBounds(10, 250, 640, 100);
 
-		getContentPane().add(jSeparator2);
-		jSeparator2.setBounds(0, 540, 670, 10);
+		getContentPane().add(_spTwo);
+		_spTwo.setBounds(0, 540, 670, 10);
 
 		_booksLabel.setFont(UIRes.getFont()); // NOI18N
 		_booksLabel.setText(LangConfig.get(this, "books", "Books"));
@@ -356,16 +360,16 @@ public class RPAccountInfoDialog extends JDialog {
 
 		final AccountTableModel3 tableModel3 = new AccountTableModel3(
 				columnNames1, columnClasses1);
-		jTable3 = new AddressTable(tableModel3, columnTypes1);
-		jTable3.setFont(GraphicsUtils.getFont(14));
-		jTable3.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
-		jTable3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jTable3.addMouseListener(new infoMouseListener());
+		_tableThree = new AddressTable(tableModel3, columnTypes1);
+		_tableThree.setFont(GraphicsUtils.getFont(14));
+		_tableThree.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
+		_tableThree.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_tableThree.addMouseListener(new infoMouseListener());
 		addMouseListener(new infoMouseListener());
-		jScrollPane3.setViewportView(jTable3);
+		_panelThree.setViewportView(_tableThree);
 
-		getContentPane().add(jScrollPane3);
-		jScrollPane3.setBounds(10, 390, 640, 130);
+		getContentPane().add(_panelThree);
+		_panelThree.setBounds(10, 390, 640, 130);
 
 		getContentPane().setLayout(null);
 
@@ -418,6 +422,24 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(_memoButton);
 		_memoButton.setBounds(11, 555, 165, 30);
 
+		_hashButton.setText("Hash Data");
+		_hashButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (_accountinfo.transactions.size() > 0
+						&& _tableThree.getSelectedRow() > -1) {
+					TransactionTx tx = _accountinfo.transactions
+							.get(_tableThree.getSelectedRow());
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
+				} else {
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this);
+				}
+			}
+		});
+		getContentPane().add(_hashButton);
+		_hashButton.setBounds(191, 555, 165, 30);
+
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,8 +449,8 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(520, 555, 128, 30);
 
-		getContentPane().add(jSeparator1);
-		jSeparator1.setBounds(0, 60, 670, 10);
+		getContentPane().add(_spOne);
+		_spOne.setBounds(0, 60, 670, 10);
 		_assetsLabel.setFont(UIRes.getFont());
 		_assetsLabel.setText(LangConfig.get(this, "assets", "Assets"));
 		getContentPane().add(_assetsLabel);
@@ -445,13 +467,12 @@ public class RPAccountInfoDialog extends JDialog {
 			@Override
 			public void action(Object o) {
 				if (_accountinfo.transactions.size() > 0
-						&& jTable3.getSelectedRow() > -1) {
-					RPOtherInfoDialog.showDialog(ddata,
-							RPAccountInfoDialog.this, _accountinfo.transactions
-									.get(jTable3.getSelectedRow()));
+						&& _tableThree.getSelectedRow() > -1) {
+					TransactionTx tx = _accountinfo.transactions
+							.get(_tableThree.getSelectedRow());
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
 				} else {
-					RPOtherInfoDialog.showDialog(ddata,
-							RPAccountInfoDialog.this, new TransactionTx());
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this);
 				}
 			}
 		});
@@ -488,7 +509,8 @@ public class RPAccountInfoDialog extends JDialog {
 			try {
 				addressTmp = NameFind.getAddress(addressTmp);
 			} catch (Exception ex) {
-				RPToast.makeText(this, UIMessage.errAddress, Style.ERROR).display();
+				RPToast.makeText(this, UIMessage.errAddress, Style.ERROR)
+						.display();
 				return info;
 			}
 		}
