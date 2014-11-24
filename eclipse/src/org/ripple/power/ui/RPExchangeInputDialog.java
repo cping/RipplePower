@@ -170,8 +170,8 @@ public class RPExchangeInputDialog extends JDialog {
 		jLabel3.setFont(font);
 		jLabel3.setText(LangConfig.get(this, "all", "Total price"));
 
-		_okButton.setText(LangConfig.get(this, "ok", "OK"));
-		_okButton.setFont(GraphicsUtils.getFont(14));
+		_okButton.setText(UIMessage.ok);
+		_okButton.setFont(UIRes.getFont());
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
 				getContentPane());

@@ -279,7 +279,7 @@ public class RPHashInfoDialog extends JDialog {
 		getContentPane().setBackground(LSystem.dialogbackground);
 
 		_loadButton.setText(LangConfig.get(this, "load", "Load"));
-		_loadButton.setFont(GraphicsUtils.getFont(14));
+		_loadButton.setFont(UIRes.getFont());
 		getContentPane().add(_loadButton);
 		_loadButton.setBounds(421, 10, 70, 30);
 		_loadButton.addActionListener(new ActionListener() {
@@ -291,7 +291,7 @@ public class RPHashInfoDialog extends JDialog {
 		});
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
-		_exitButton.setFont(GraphicsUtils.getFont(14));
+		_exitButton.setFont(UIRes.getFont());
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(400, 670, 90, 40);
 		_exitButton.addActionListener(new ActionListener() {
@@ -340,6 +340,9 @@ public class RPHashInfoDialog extends JDialog {
 			RPToast.makeText(RPHashInfoDialog.this,
 					"Here only query transaction Hash !", Style.ERROR)
 					.display();
+			return;
+		}
+		if (_hashFindText.getText().trim().equals(hash.trim())) {
 			return;
 		}
 		final WaitDialog wait = WaitDialog.showDialog(this);

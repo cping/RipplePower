@@ -31,7 +31,6 @@ import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TrustSet;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 
@@ -155,7 +154,7 @@ public class RPGatewayDialog extends JDialog {
 		_webText = new RPTextBox();
 		_curList = new RPComboBox();
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 
 		_addGatewayButton = new RPCButton();
 		_manageGatewayButton = new RPCButton();

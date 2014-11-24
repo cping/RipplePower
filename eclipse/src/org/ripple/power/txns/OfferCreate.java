@@ -186,7 +186,7 @@ public class OfferCreate {
 					item.putField(BinaryFormatField.Account,
 							seed.getPublicRippleAddress());
 					if (scale > 0) {
-						src.scale(scale);
+						dst.scale(scale);
 					}
 					item.putField(BinaryFormatField.TakerPays, src);
 					item.putField(BinaryFormatField.TakerGets, dst);

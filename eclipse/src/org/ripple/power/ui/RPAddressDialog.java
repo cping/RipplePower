@@ -491,7 +491,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jSeparator1);
 		jSeparator1.setBounds(0, 230, 0, 2);
 
-		_passwordLabel.setFont(GraphicsUtils.getFont(14));
+		_passwordLabel.setFont(UIRes.getFont());
 		_passwordLabel.setText(LangConfig.get(this, "password", "Password"));
 		add(_passwordLabel);
 		_passwordLabel.setBounds(20, 40, 70, 50);
@@ -523,7 +523,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(passwordText);
 		passwordText.setBounds(90, 50, 500, 30);
 
-		_addressLabel.setFont(GraphicsUtils.getFont(14));
+		_addressLabel.setFont(UIRes.getFont());
 		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
 		add(_addressLabel);
 		_addressLabel.setBounds(20, 80, 70, 50);
@@ -532,7 +532,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(publicAddressText);
 		publicAddressText.setBounds(90, 90, 500, 30);
 
-		_phraseLabel.setFont(GraphicsUtils.getFont(14));
+		_phraseLabel.setFont(UIRes.getFont());
 		_phraseLabel.setText(LangConfig.get(this, "phrase", "Phrase"));
 		add(_phraseLabel);
 		_phraseLabel.setBounds(20, 160, 70, 50);
@@ -549,7 +549,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		add(jScrollPane1);
 		jScrollPane1.setBounds(90, 170, 500, 90);
 
-		_secretLabel.setFont(GraphicsUtils.getFont(14));
+		_secretLabel.setFont(UIRes.getFont());
 		_secretLabel.setText(LangConfig.get(this, "secret", "Secret"));
 		add(_secretLabel);
 		_secretLabel.setBounds(20, 120, 70, 50);

@@ -102,7 +102,7 @@ public class RPRippledMemoDialog extends JDialog {
 
 		addWindowListener(HelperWindow.get());
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_messageList = new RPList();

@@ -29,7 +29,6 @@ import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.table.AddressTable;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPAccountInfoDialog extends JDialog {
@@ -308,7 +307,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_issuedLabel = new RPLabel();
 		_booksLabel = new RPLabel();
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 		_loadButton.setFont(font);
 		_exitButton.setFont(font);
 
@@ -323,7 +322,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
 		_tableOne = new AddressTable(tableModel, columnTypes);
-		_tableOne.setFont(GraphicsUtils.getFont(14));
+		_tableOne.setFont(UIRes.getFont());
 		_tableOne.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		_tableOne.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -335,7 +334,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel2 tableModel2 = new AccountTableModel2(
 				columnNames, columnClasses);
 		_tableTwo = new AddressTable(tableModel2, columnTypes);
-		_tableTwo.setFont(GraphicsUtils.getFont(14));
+		_tableTwo.setFont(UIRes.getFont());
 		_tableTwo.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		_tableTwo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -361,7 +360,7 @@ public class RPAccountInfoDialog extends JDialog {
 		final AccountTableModel3 tableModel3 = new AccountTableModel3(
 				columnNames1, columnClasses1);
 		_tableThree = new AddressTable(tableModel3, columnTypes1);
-		_tableThree.setFont(GraphicsUtils.getFont(14));
+		_tableThree.setFont(UIRes.getFont());
 		_tableThree.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
 		_tableThree.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_tableThree.addMouseListener(new infoMouseListener());

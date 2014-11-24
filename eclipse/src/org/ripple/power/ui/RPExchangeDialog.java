@@ -359,7 +359,7 @@ public class RPExchangeDialog extends JDialog {
 		_priceTipCheckBox = new RPCheckBox();
 
 		Font font = GraphicsUtils.getFont(18);
-		Font font14 = GraphicsUtils.getFont(14);
+		Font font14 = UIRes.getFont();
 
 		getContentPane().setLayout(null);
 
@@ -396,7 +396,7 @@ public class RPExchangeDialog extends JDialog {
 		// 此处会列出网关所有可能的币种交易，所以不允许自行修改
 		_curComboBox.setEditable(false);
 
-		_okButton.setText(LangConfig.get(this, "ok", "OK"));
+		_okButton.setText(UIMessage.ok);
 		_okButton.setFont(font);
 		getContentPane().add(_okButton);
 		_okButton.setBounds(900, 10, 80, 30);
@@ -1053,7 +1053,6 @@ public class RPExchangeDialog extends JDialog {
 						}
 					});
 		}
-
 	}
 
 	private void action_ok(ActionEvent e) {

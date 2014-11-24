@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
@@ -24,8 +23,8 @@ public class RPPasswordDialog extends JDialog {
 	private RPCButton _okButton;
 	private RPTextBox _password1Text;
 	private RPTextBox _password2Text;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
+	private RPLabel _oneLabel;
+	private RPLabel _twoLabel;
 
 	private boolean passwordEntered = false;
 
@@ -42,8 +41,8 @@ public class RPPasswordDialog extends JDialog {
 
 	private void initComponents() {
 
-		jLabel1 = new RPLabel();
-		jLabel2 = new RPLabel();
+		_oneLabel = new RPLabel();
+		_twoLabel = new RPLabel();
 		_password1Text = new RPTextBox();
 		_password2Text = new RPTextBox();
 		_cancelButton = new RPCButton();
@@ -51,17 +50,17 @@ public class RPPasswordDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 
-		jLabel1.setFont(font);
-		jLabel1.setText(LangConfig.get(this, "wpassword", "Wallet Password"));
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(10, 21, 116, 16);
+		_oneLabel.setFont(font);
+		_oneLabel.setText(LangConfig.get(this, "wpassword", "Wallet Password"));
+		getContentPane().add(_oneLabel);
+		_oneLabel.setBounds(10, 21, 116, 16);
 
-		jLabel2.setFont(font);
-		jLabel2.setText(LangConfig.get(this, "rpassword", "Repeat Password"));
-		getContentPane().add(jLabel2);
-		jLabel2.setBounds(10, 61, 116, 16);
+		_twoLabel.setFont(font);
+		_twoLabel.setText(LangConfig.get(this, "rpassword", "Repeat Password"));
+		getContentPane().add(_twoLabel);
+		_twoLabel.setBounds(10, 61, 116, 16);
 
 		_password1Text.setFont(font); // NOI18N
 		getContentPane().add(_password1Text);

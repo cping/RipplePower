@@ -13,7 +13,6 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPSRippledDialog extends JDialog {
@@ -57,7 +56,7 @@ public class RPSRippledDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 
 		_nodeLabel.setFont(font); // NOI18N
 		_nodeLabel.setText(getTitle());

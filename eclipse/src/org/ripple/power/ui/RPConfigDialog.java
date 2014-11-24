@@ -13,7 +13,6 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.RPToast.Style;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
@@ -63,7 +62,7 @@ public class RPConfigDialog extends JDialog {
 
 	private void initComponents() {
 
-		Font font = GraphicsUtils.getFont(14);
+		Font font = UIRes.getFont();
 
 		addWindowListener(HelperWindow.get());
 		_nodeLabel = new RPLabel();

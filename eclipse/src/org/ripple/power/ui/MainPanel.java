@@ -711,9 +711,8 @@ public class MainPanel extends JPanel implements ActionListener {
 													"delete",
 													"Delete the address, which means you will never lose this address, whether you want to continue?"),
 									new Object[] {
-											LangConfig.get(this, "ok", "OK"),
-											LangConfig.get(this, "cancel",
-													"Cancel") });
+											UIMessage.ok,
+											UIMessage.cancel });
 					if (delete_address == 0) {
 						synchronized (this) {
 							WalletCache.get().deleted(row);

@@ -25,7 +25,6 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPPushTool {
@@ -142,7 +141,7 @@ public class RPPushTool {
 
 		_tpDialog.getRootPane().setBorder(
 				BorderFactory.createMatteBorder(1, 1, 1, 1, LColor.gray));
-		_titleLabel.setFont(GraphicsUtils.getFont(14));
+		_titleLabel.setFont(UIRes.getFont());
 		_titleLabel
 				.setPreferredSize(new Dimension(_width - 40, TITLE_SIZE - 4));
 		_titleLabel.setVerticalTextPosition(RPLabel.CENTER);
