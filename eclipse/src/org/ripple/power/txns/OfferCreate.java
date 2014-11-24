@@ -101,7 +101,6 @@ public class OfferCreate {
 		}
 		String[] split = StringUtils.split(StringUtils.rtrim(pair)
 				.toUpperCase(), ",");
-		System.out.println(split[1]);
 		BookOffer offer = new BookOffer(
 				matchOffer(split[1],
 						LSystem.getNumberShort(String.valueOf(amount * price)),

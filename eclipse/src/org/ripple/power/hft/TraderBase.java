@@ -2,19 +2,19 @@ package org.ripple.power.hft;
 
 public abstract class TraderBase {
 
-	public static boolean equals(double value, double other) {
-		return equals(value, other, 0.1);
+	public static boolean equals(float value, float other) {
+		return equals(value, other, 0.01f);
 	}
 
-	public static boolean equals(double value, double other, double delta) {
+	public static boolean equals(float value, float other, float delta) {
 		return Math.abs(value - other) < delta;
 	}
 
-	public static long suggestInterval(double madnessCoef) {
+	public static long suggestInterval(float madnessCoef) {
 		return suggestInterval(madnessCoef, 2000, 11000);
 	}
 
-	public static long suggestInterval(double madnessCoef, long minInterval,
+	public static long suggestInterval(float madnessCoef, long minInterval,
 			long maxInterval) {
 		if (madnessCoef <= 0.0f) {
 			return maxInterval;
@@ -25,8 +25,8 @@ public abstract class TraderBase {
 		return (long) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
 	}
 
-	public static double suggestWallVolume(double minVolume,
-			double maxVolume) {
+	public static float suggestWallVolume(float minVolume,
+			float maxVolume) {
 		return Math.min(minVolume, maxVolume);
 	}
 

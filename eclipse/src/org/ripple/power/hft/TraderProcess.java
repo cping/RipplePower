@@ -1,8 +1,7 @@
 package org.ripple.power.hft;
 
-import java.io.ObjectInputStream.GetField;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.ripple.power.RippleSeedAddress;
@@ -21,13 +20,14 @@ import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.utils.MathUtils;
 
+import com.ripple.core.coretypes.Amount;
 import com.ripple.core.types.known.sle.entries.Offer;
 
 public class TraderProcess extends TraderBase {
 
 	private int analyze_limit = 5;
 
-	private int orders_percent_filter;
+	private int orders_percent_filter = 1;
 
 	private ArrayList<Task> _HFT_tasks = new ArrayList<Task>(10);
 
@@ -122,7 +122,7 @@ public class TraderProcess extends TraderBase {
 						if (i + 1 < size) {
 							long one = (long) arrays.get(i);
 							long two = (long) arrays.get(i + 1);
-				
+
 							if (two >= one) {
 								if (last == Trend.DOWN) {
 									up_coherent_flag--;
@@ -189,12 +189,12 @@ public class TraderProcess extends TraderBase {
 		public String target_currency = "unkown";
 		public String source_currency = "unkown";
 		public String source_issuer = "unkown";
-		public double value = -1;
-		public double real_max_value = -1;
-		public double limit_volume = -1;
-		public double minDifference = 0.1;
+		public float value = -1;
+		public float real_max_value = 0;
+		public float limit_volume = 0;
+		public float minDifference = 0.1f;
 		public int orderId = -1;
-		public double orderAmount = -1;
+		public float orderAmount = -1;
 		public Model model = Model.Spreads;
 		public ArrayList<Swap> swaps = new ArrayList<Swap>(10);
 		public ArrayList<Error> errors = new ArrayList<Error>(10);
@@ -246,7 +246,7 @@ public class TraderProcess extends TraderBase {
 				}
 
 				// get limit trader price
-				final double volumeWall = suggestWallVolume(real_max_value,
+				final float volumeWall = suggestWallVolume(real_max_value,
 						limit_volume);
 
 				// get average price
@@ -258,7 +258,7 @@ public class TraderProcess extends TraderBase {
 					averagePrice = "-1";
 				}
 
-				final double otherPrice = Double.parseDouble(averagePrice);
+				final float otherPrice = Float.valueOf(averagePrice);
 
 				// load exchange data
 				OfferPrice.load(source_issuer, source_currency,
@@ -283,32 +283,9 @@ public class TraderProcess extends TraderBase {
 							public void complete(ArrayList<OfferFruit> buys,
 									ArrayList<OfferFruit> sells,
 									OfferPrice price) {
-
-								// accurate to five decimal places
-								String highBuy = null;
-								if (price.highBuy != null) {
-									if (price.highBuy.indexOf("/") != -1) {
-										highBuy = price.highBuy.split("/")[0];
-									}
-									highBuy = LSystem.getNumberShort(highBuy);
-								}
-								String hightSell = null;
-								if (price.highSell != null) {
-									if (price.highSell.indexOf("/") != -1) {
-										hightSell = price.highSell.split("/")[0];
-									}
-									hightSell = LSystem
-											.getNumberShort(hightSell);
-								}
-
-								log("other:" + otherPrice);
-								log("buy:" + highBuy);
-								log("sell:" + hightSell);
 								// load data completed
 								callCore(volumeWall, otherPrice, Task.this,
-										buys, sells, price,
-										Double.parseDouble(highBuy),
-										Double.parseDouble(hightSell));
+										buys, sells, price);
 							}
 
 							@Override
@@ -321,31 +298,71 @@ public class TraderProcess extends TraderBase {
 		}
 	}
 
-	private static void callCore(double volumeWall, double otherPrice,
-			Task task, ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells,
-			OfferPrice price, double highBuy, double hightSell) {
+	private static void callCore(float volumeWall, float otherPrice, Task task,
+			ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells,
+			OfferPrice price) {
 		// filter the transaction volume
-		double filter = volumeWall / task.process.orders_percent_filter;
-		double avg_buy_value = task.process.averageBuyPrice(buys, filter);
-		double avg_sell_value = task.process.averageSellPrice(sells, filter);
-		double buy_difference = highBuy - avg_buy_value;
-		double sell_difference = hightSell - avg_buy_value;
-		double all_buy_difference = 0;
+		// 获得交易数量过滤条件,少于此交易数量的数据无视
+		float filter = 0;
+		if (volumeWall != 0) {
+			filter = volumeWall / task.process.orders_percent_filter;
+		}
+		ArrayList<OfferFruit> list_buy = task.process.convertBuyPrice(buys,
+				filter);
+		ArrayList<OfferFruit> list_sell = task.process.convertSellPrice(sells,
+				filter);
+		float highBuy = 0;
+		if (list_buy.size() > 0) {
+			Offer buy_price = list_buy.get(0).offer;
+			BigDecimal payForOne = buy_price.askQuality();
+			Amount getsOne = buy_price.getsOne();
+			highBuy = getsOne.divide(payForOne).floatValue();
+		}
+		float highSell = 0;
+		if (list_sell.size() > 0) {
+			Offer sell_price = list_sell.get(0).offer;
+			BigDecimal payForOne = sell_price.askQuality();
+			Amount paysOne = sell_price.paysOne();
+			highSell = paysOne.multiply(payForOne).floatValue();
+		}
+		// 买入平均价
+		float avg_buy_value = task.process.getBuyPrice(list_buy);
+		// 卖出平均价
+		float avg_sell_value = task.process.getSellPrice(list_sell);
+		//
+		float buy_difference = highBuy - avg_buy_value;
+		float sell_difference = highSell - avg_buy_value;
+		float all_buy_difference = 0;
 		if (otherPrice != -1) {
 			all_buy_difference = otherPrice - avg_buy_value;
 		} else {
 			all_buy_difference = buy_difference;
 		}
-		double all_sell_difference = 0;
+		float all_sell_difference = 0;
 		if (otherPrice != -1) {
 			all_sell_difference = otherPrice - avg_sell_value;
 		} else {
 			all_sell_difference = sell_difference;
 		}
-		Trend trend = task.process.getTrend(task.source_currency, 12);
+		float trade_high_spread = highSell - highBuy;
+		float trade_high_avgPrice = (highSell + highBuy) / 2;
+		float trade_high_percentage = trade_high_spread / trade_high_avgPrice;
 
+		System.out.println("highBuy:" + highBuy);
+		System.out.println("highSell:" + highSell);
+		System.out.println("trade_high_spread" + trade_high_spread);
+		System.out.println("trade_high_avgPrice" + trade_high_avgPrice);
+		System.out.println("trade_high_percentage" + trade_high_percentage);
+		System.out.println("buy_difference" + buy_difference);
+		System.out.println("sell_difference" + sell_difference);
+		Trend trend = task.process.getTrend(task.source_currency, 12);
+		System.out.println(otherPrice - highBuy);
+		System.out.println("all_buy_difference:" + all_buy_difference);
+
+		System.out.println(trend);
 		System.out.println("buyd:" + all_buy_difference);
 		System.out.println("selld:" + all_sell_difference);
+		System.out.println("-------------------");
 		switch (task.model) {
 		case CrazyBuyer:
 
@@ -374,53 +391,65 @@ public class TraderProcess extends TraderBase {
 		return this.analyze_limit;
 	}
 
-	private double averageBuyPrice(ArrayList<OfferFruit> bids, double filter) {
-		double sumVolume = 0.0d;
-		List<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
+	private ArrayList<OfferFruit> convertBuyPrice(ArrayList<OfferFruit> bids,
+			float filter) {
+		ArrayList<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
 		for (int i = 0; i < bids.size() && tmp.size() < analyze_limit; i++) {
 			OfferFruit offer = bids.get(i);
-			double v = offer.offer.takerPays().doubleValue();
+			float v = offer.offer.takerPays().floatValue();
 			if (v >= filter || equals(v, filter)) {
 				tmp.add(offer);
 			}
 		}
-		int size = tmp.size();
-		for (OfferFruit bid : tmp) {
-			double sellValue = Double.parseDouble(LSystem.getNumber(
+		return tmp;
+	}
+
+	private float getBuyPrice(ArrayList<OfferFruit> bids) {
+		float sumVolume = 0.0f;
+		int size = bids.size();
+		for (OfferFruit bid : bids) {
+			float sellValue = Float.valueOf(LSystem.getNumber(
 					bid.offer.bidQuality(), false));
 			sumVolume += sellValue;
 		}
-		return sumVolume / size;
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
+				/ size)));
 	}
 
-	private double averageSellPrice(ArrayList<OfferFruit> asks, double filter) {
-		double sumVolume = 0.0d;
-		List<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
+	private ArrayList<OfferFruit> convertSellPrice(ArrayList<OfferFruit> asks,
+			float filter) {
+		ArrayList<OfferFruit> tmp = new ArrayList<OfferFruit>(10);
 		for (int i = 0; i < asks.size() && tmp.size() < analyze_limit; i++) {
 			OfferFruit offer = asks.get(i);
-			double v = offer.offer.takerGets().doubleValue();
+			float v = offer.offer.takerGets().floatValue();
 			if (v >= filter || equals(v, filter)) {
 				tmp.add(offer);
 			}
 		}
-		int size = tmp.size();
-		for (OfferFruit ask : tmp) {
-			double sellValue = Double.parseDouble(LSystem.getNumber(
+		return tmp;
+	}
+
+	private float getSellPrice(ArrayList<OfferFruit> asks) {
+		float sumVolume = 0.0f;
+		int size = asks.size();
+		for (OfferFruit ask : asks) {
+			float sellValue = Float.parseFloat(LSystem.getNumber(
 					ask.offer.askQuality(), false));
 			sumVolume += sellValue;
 		}
-		return sumVolume / size;
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
+				/ size)));
 	}
 
 	private static void log(String mes) {
 		System.out.println(mes);
 	}
 
-	static void callBuy(double srcValue, double dstValue, Task task) {
+	static void callBuy(float srcValue, float dstValue, Task task) {
 		log("testing...");
 	}
 
-	static void callSell(double srcValue, double dstValue, Task task) {
+	static void callSell(float srcValue, float dstValue, Task task) {
 		log("testing...");
 	}
 
@@ -615,7 +644,7 @@ public class TraderProcess extends TraderBase {
 				@Override
 				public void action(Object o) {
 					String balance = info.balance;
-					double srcXrpValue = Double.parseDouble(LSystem
+					float srcXrpValue = Float.parseFloat(LSystem
 							.getNumberShort(balance));
 					task.real_max_value = srcXrpValue;
 					callTask(task);
@@ -634,7 +663,7 @@ public class TraderProcess extends TraderBase {
 							if (task.source_currency.equalsIgnoreCase(line
 									.getCurrency())
 									&& task.equals(line.getIssuer())) {
-								double srcIouValue = Double.parseDouble(line
+								float srcIouValue = Float.parseFloat(line
 										.getAmount());
 								task.real_max_value = srcIouValue;
 							}
