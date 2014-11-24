@@ -127,11 +127,18 @@ public class IssuedCurrency {
 				+ "/" + issuer;
 	}
 
+	public BigDecimal scale(float s) {
+		if (amount == null) {
+			return null;
+		}
+		return amount = new BigDecimal(LSystem.getNumber(
+				amount.multiply(BigDecimal.valueOf(s)), false));
+	}
+
 	public void copyFrom(JSONObject jsonDenomination) {
 		issuer = new RippleAddress(((String) jsonDenomination.get("issuer")));
 		String currencyStr = ((String) jsonDenomination.get("currency"));
 		currency = currencyStr;
-
 		String amountStr = (String) jsonDenomination.get("value");
 		amount = new BigDecimal(amountStr);
 	}

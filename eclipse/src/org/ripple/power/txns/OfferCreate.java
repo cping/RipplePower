@@ -11,14 +11,13 @@ import org.ripple.power.utils.StringUtils;
 import com.ripple.core.enums.TransactionFlag;
 
 public class OfferCreate {
-	
 
 	public static void sell(final RippleSeedAddress seed, final String pair,
 			final String issuer, final double price, final double amount,
 			final String fee, final Rollback back) {
 		set(seed, matchOfferSell(pair, issuer, price, amount), fee, back);
 	}
-	
+
 	public static void buy(final RippleSeedAddress seed, final String pair,
 			final String issuer, final double price, final double amount,
 			final String fee, final Rollback back) {
@@ -161,12 +160,19 @@ public class OfferCreate {
 	public static void set(final RippleSeedAddress seed,
 			final IssuedCurrency src, final IssuedCurrency dst,
 			final String fee, final Rollback back) {
+		OfferCreate.set(seed, src, dst, fee, -1, 1.0001f, back);
+	}
+
+	public static void set(final RippleSeedAddress seed,
+			final IssuedCurrency src, final IssuedCurrency dst,
+			final String fee, float scale, final Rollback back) {
 		OfferCreate.set(seed, src, dst, fee, -1, back);
 	}
 
 	public static void set(final RippleSeedAddress seed,
 			final IssuedCurrency src, final IssuedCurrency dst,
-			final String fee, final long offerSequence, final Rollback back) {
+			final String fee, final long offerSequence, final float scale,
+			final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -179,6 +185,9 @@ public class OfferCreate {
 							(int) TransactionTypes.OFFER_CREATE.byteValue);
 					item.putField(BinaryFormatField.Account,
 							seed.getPublicRippleAddress());
+					if (scale > 0) {
+						src.scale(scale);
+					}
 					item.putField(BinaryFormatField.TakerPays, src);
 					item.putField(BinaryFormatField.TakerGets, dst);
 					item.putField(BinaryFormatField.Fee,

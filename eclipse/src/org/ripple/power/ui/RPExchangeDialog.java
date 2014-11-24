@@ -150,12 +150,9 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return -1;
 		}
-		return RPMessage.showConfirmMessage(
-				RPExchangeDialog.this,
-				"Info",
-				String.format(UIMessage.ydel, mes),
-				new Object[] { LangConfig.get(this, "ok", "OK"),
-						LangConfig.get(this, "cancel", "Cancel") });
+		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
+				String.format(UIMessage.ydel, mes), new Object[] {
+						UIMessage.ok, UIMessage.cancel });
 	}
 
 	private String info_price() {
@@ -184,13 +181,10 @@ public class RPExchangeDialog extends JDialog {
 			};
 			LSystem.postThread(update);
 		}
-		return RPMessage.showConfirmMessage(
-				RPExchangeDialog.this,
-				"Info",
-				"You are ready to use " + srcAmount + "/" + srcCurrency + " Swap " + dstAmount + "/"
-						+ dstCurrency + ", Are you sure ?",
-				new Object[] { LangConfig.get(this, "ok", "OK"),
-						LangConfig.get(this, "cancel", "Cancel") });
+		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
+				UIMessage.you_cancel_tx(srcAmount + "/" + srcCurrency,
+						dstAmount + "/" + dstCurrency), new Object[] {
+						UIMessage.ok, UIMessage.cancel });
 
 	}
 
@@ -630,7 +624,7 @@ public class RPExchangeDialog extends JDialog {
 		_stopautonButton.setText(LangConfig.get(this, "stopauto",
 				"Stop auto trading"));
 		_stopautonButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPToast.playWorking(RPExchangeDialog.this);
@@ -680,7 +674,7 @@ public class RPExchangeDialog extends JDialog {
 		_setautoButton.setText(LangConfig
 				.get(this, "setauto", "Set auto trade"));
 		_setautoButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPToast.playWorking(RPExchangeDialog.this);
@@ -696,7 +690,7 @@ public class RPExchangeDialog extends JDialog {
 		jPanel2.add(_startautobutton);
 		_startautobutton.setBounds(420, 90, 120, 23);
 		_startautobutton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPToast.playWorking(RPExchangeDialog.this);
@@ -712,7 +706,7 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().add(_editHFTButton);
 		_editHFTButton.setBounds(10, 540, 130, 40);
 		_editHFTButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPToast.playWorking(RPExchangeDialog.this);
@@ -725,11 +719,11 @@ public class RPExchangeDialog extends JDialog {
 		getContentPane().add(_autoHFTButton);
 		_autoHFTButton.setBounds(150, 540, 140, 40);
 		_autoHFTButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPToast.playWorking(RPExchangeDialog.this);
-				
+
 			}
 		});
 
@@ -829,7 +823,11 @@ public class RPExchangeDialog extends JDialog {
 
 	private HashMap<String, Boolean> _flags = new HashMap<String, Boolean>(10);
 
-	private synchronized void submitOK() {
+	private void submitOK() {
+		submitOK(true);
+	}
+
+	private synchronized void submitOK(boolean wait) {
 
 		_tradeFlag = false;
 		if (_tradeThread != null) {
@@ -842,8 +840,9 @@ public class RPExchangeDialog extends JDialog {
 			repaint();
 			getContentPane().repaint();
 			final String address = _addressText.getText().trim();
-			final WaitDialog dialog = WaitDialog
-					.showDialog(RPExchangeDialog.this);
+
+			final WaitDialog dialog = WaitDialog.showDialog(
+					RPExchangeDialog.this, wait);
 			OfferPrice.load(address, split[0], split[1], new OfferPrice() {
 
 				@Override
@@ -858,7 +857,9 @@ public class RPExchangeDialog extends JDialog {
 
 				@Override
 				public void error(JSONObject obj) {
-					dialog.closeDialog();
+					if (dialog != null) {
+						dialog.closeDialog();
+					}
 					/*
 					 * if (obj != null) { JSonLog.get().println(obj.toString());
 					 * }
@@ -867,7 +868,9 @@ public class RPExchangeDialog extends JDialog {
 
 				@Override
 				public void empty() {
-					dialog.closeDialog();
+					if (dialog != null) {
+						dialog.closeDialog();
+					}
 					empty_trading(cur);
 
 				}
@@ -941,7 +944,9 @@ public class RPExchangeDialog extends JDialog {
 									+ " Count:" + sells.size());
 						}
 					}
-					dialog.closeDialog();
+					if (dialog != null) {
+						dialog.closeDialog();
+					}
 					_tradeFlag = true;
 					loadTradingList(address, split);
 					loadOtherMarketList(address, split);
@@ -1310,7 +1315,7 @@ public class RPExchangeDialog extends JDialog {
 						RPJSonLog.get().println(res.toString());
 						try {
 							updateMyTrading();
-							submitOK();
+							submitOK(false);
 						} catch (Exception ex) {
 						}
 					}

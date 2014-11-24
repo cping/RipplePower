@@ -177,6 +177,10 @@ public final class LSystem {
 		return result == null ? MIN_AMOUNT : result;
 	}
 
+	public static String getNumberShort(Number value) {
+		return LSystem.getNumberShort(String.valueOf(value));
+	}
+	
 	public static String getNumberShort(String value) {
 		return LSystem.getNumber(new BigDecimal(value), false);
 	}

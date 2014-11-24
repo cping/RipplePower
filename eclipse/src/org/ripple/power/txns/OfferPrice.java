@@ -190,7 +190,6 @@ public abstract class OfferPrice {
 
 	public static void load(String address, String buyCurName,
 			String sellCurName, OfferPrice price, boolean html) {
-
 		AccountID account = AccountID.fromAddress(address);
 		RPClient ripple = RPClient.ripple();
 		if (ripple != null) {
@@ -198,9 +197,8 @@ public abstract class OfferPrice {
 			Issue sell = account.issue(sellCurName);
 			load(ripple.getClinet(), buy, sell, price, html);
 		}
-
 	}
-
+	
 	public static class OrderBooks {
 		public static interface BookEvents {
 			public void onUpdate(OrderBooks book);

@@ -34,18 +34,25 @@ public class WaitDialog {
 				-1, true, LSystem.MINUTE);
 	}
 
-	public static WaitDialog showDialog(Window parent) {
-		synchronized (WaitDialog.class) {
-			if (lock == null) {
-				return (lock = new WaitDialog(parent));
-			} else {
-				if (lock != null) {
-					lock.closeDialog();
-					lock = new WaitDialog(parent);
+	public static WaitDialog showDialog(Window parent, boolean show) {
+		if (show) {
+			synchronized (WaitDialog.class) {
+				if (lock == null) {
+					return (lock = new WaitDialog(parent));
+				} else {
+					if (lock != null) {
+						lock.closeDialog();
+						lock = new WaitDialog(parent);
+					}
+					return lock;
 				}
-				return lock;
 			}
 		}
+		return null;
+	}
+
+	public static WaitDialog showDialog(Window parent) {
+		return showDialog(parent, true);
 	}
 
 	public RPDialogTool get() {
