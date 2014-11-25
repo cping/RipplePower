@@ -275,7 +275,7 @@ public class RPRippledMemoDialog extends JDialog {
 
 									@Override
 									public void success(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 										wait.closeDialog();
 										RPToast.makeText(
 												RPRippledMemoDialog.this,
@@ -285,7 +285,7 @@ public class RPRippledMemoDialog extends JDialog {
 
 									@Override
 									public void error(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 										wait.closeDialog();
 									}
 								});

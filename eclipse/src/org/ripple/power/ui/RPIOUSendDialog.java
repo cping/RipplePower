@@ -180,7 +180,7 @@ public class RPIOUSendDialog extends JDialog {
 
 					@Override
 					public void success(JSONObject res) {
-						RPJSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res);
 						WalletCache.get().reset();
 						RPMessage.showInfoMessage(LSystem.applicationMain,
 								UIMessage.info, UIMessage.completed);
@@ -189,7 +189,7 @@ public class RPIOUSendDialog extends JDialog {
 
 					@Override
 					public void error(JSONObject res) {
-						RPJSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res);
 						dialog.closeDialog();
 					}
 				});

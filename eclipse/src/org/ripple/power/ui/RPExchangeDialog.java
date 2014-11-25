@@ -656,14 +656,14 @@ public class RPExchangeDialog extends JDialog {
 
 									@Override
 									public void success(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 										updateMyTrading();
 										submitOK();
 									}
 
 									@Override
 									public void error(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 
 									}
 								});
@@ -1312,7 +1312,7 @@ public class RPExchangeDialog extends JDialog {
 
 					@Override
 					public void success(JSONObject res) {
-						RPJSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res);
 						try {
 							updateMyTrading();
 							submitOK(false);
@@ -1322,7 +1322,7 @@ public class RPExchangeDialog extends JDialog {
 
 					@Override
 					public void error(JSONObject res) {
-						RPJSonLog.get().println(res.toString());
+						RPJSonLog.get().println(res);
 					}
 				});
 

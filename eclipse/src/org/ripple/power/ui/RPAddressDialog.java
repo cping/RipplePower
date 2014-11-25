@@ -274,7 +274,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 					"This is not a Ripple Address Secret !", UIMessage.error,
 					JOptionPane.ERROR_MESSAGE);
 			return;
-		}  else {
+		} else {
 			try {
 				byte[] buffer = Config.getB58IdentiferCodecs()
 						.decodeFamilySeed(pri);
@@ -289,8 +289,9 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, "Private Key data exception, the import failed !", UIMessage.error,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this,
+						"Private Key data exception, the import failed !",
+						UIMessage.error, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -317,8 +318,10 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this,
-						"Private Key data exception, the import failed !" + ex.getMessage(), UIMessage.error,
+				JOptionPane.showMessageDialog(
+						this,
+						"Private Key data exception, the import failed !"
+								+ ex.getMessage(), UIMessage.error,
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -328,16 +331,20 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pInput = false;
 		String password = passwordText.getText();
 		if (password.length() < 6) {
-			JOptionPane.showMessageDialog(this, "Brain wallet password at least not less than six figures!", UIMessage.error,
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							this,
+							"Brain wallet password at least not less than six figures!",
+							UIMessage.error, JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		} else if (StringUtils.isAlphabet(password)) {
-			JOptionPane.showMessageDialog(this, "All alphabet are not allowed !", UIMessage.error,
+			JOptionPane.showMessageDialog(this,
+					"All alphabet are not allowed !", UIMessage.error,
 					JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		} else if (StringUtils.isNumber(password)) {
-			JOptionPane.showMessageDialog(this, "All number are not allowed !", UIMessage.error,
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "All number are not allowed !",
+					UIMessage.error, JOptionPane.ERROR_MESSAGE);
 			brainError = true;
 		}
 		if (!brainError && password.length() > 5) {
@@ -356,8 +363,10 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this,
-						"Private Key data exception, the import failed !" + ex.getMessage(), UIMessage.error,
+				JOptionPane.showMessageDialog(
+						this,
+						"Private Key data exception, the import failed !"
+								+ ex.getMessage(), UIMessage.error,
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -502,7 +511,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-			
+
 			}
 
 			@Override
@@ -517,7 +526,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-		
+
 			}
 		});
 		add(passwordText);
@@ -583,15 +592,17 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String pub = publicAddressText.getText();
 			String pri = privateAddressText.getText();
 			if (pub.length() > 0 && pri.length() > 0) {
-				int result = RPMessage.showConfirmMessage(this, "Private Key import",
-						"Import the data to current wallet ?", LangConfig.get(this, "ok", "OK"),
-						LangConfig.get(this, "cancel", "Cancel"));
+				int result = RPMessage.showConfirmMessage(this,
+						"Private Key import",
+						LangConfig.get(this, "import", "Import the data to current wallet ?"), UIMessage.ok,
+						UIMessage.cancel);
 				if (result == 0) {
 					WalletCache.get().add(pub, pri);
 					try {
 						WalletCache.saveDefWallet();
 					} catch (Exception e) {
-						RPMessage.showErrorMessage(this, "System exception, wallets save failed !",
+						RPMessage.showErrorMessage(this,
+								"System exception, wallets save failed !",
 								UIMessage.error);
 						return;
 					}
@@ -635,15 +646,19 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String context = copy.toString();
 			if (context.length() > 0) {
 				clip.setClipboardContents(context);
-				JOptionPane.showMessageDialog(this, "Current data has been saved to the clipboard",
+				JOptionPane.showMessageDialog(this,
+						"Current data has been saved to the clipboard",
 						UIMessage.info, JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(this, "No data can be copy",
 						UIMessage.warning, JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Failure, the current data can not be saved to the clipboard !",
-					UIMessage.info, JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							this,
+							"Failure, the current data can not be saved to the clipboard !",
+							UIMessage.info, JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 	}

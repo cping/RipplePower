@@ -442,33 +442,18 @@ public class RPGatewayDialog extends JDialog {
 								new Rollback() {
 									@Override
 									public void success(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 										dialog.closeDialog();
-										String result = res.getJSONObject(
-												"result").getString(
-												"engine_result_message");
-										if (result != null) {
-											RPToast toast = RPToast.makeText(
-													RPGatewayDialog.this,
-													"Rippled Result : "
-															+ result);
-											toast.display();
-											loadTrust(false);
-											RPGatewayDialog.this
+										loadTrust(false);
+										RPGatewayDialog.this
 													.getContentPane().repaint();
-											RPGatewayDialog.this.repaint();
-										}
+										RPGatewayDialog.this.repaint();
 									}
 
 									@Override
 									public void error(JSONObject res) {
-										RPJSonLog.get().println(res.toString());
+										RPJSonLog.get().println(res);
 										dialog.closeDialog();
-										RPMessage
-												.showErrorMessage(
-														LSystem.applicationMain,
-														UIMessage.error,
-														"Trust failed");
 									}
 								});
 					}
@@ -513,30 +498,18 @@ public class RPGatewayDialog extends JDialog {
 
 								@Override
 								public void success(JSONObject res) {
-									RPJSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res);
 									dialog.closeDialog();
-									String result = res.getJSONObject("result")
-											.getString("engine_result_message");
-									if (result != null) {
-										RPToast toast = RPToast.makeText(
-												RPGatewayDialog.this,
-												"Rippled Result : "
-														+ result);
-										toast.display();
-										loadTrust(false);
-										RPGatewayDialog.this
+									loadTrust(false);
+									RPGatewayDialog.this
 												.getContentPane().repaint();
-										RPGatewayDialog.this.repaint();
-									}
+									RPGatewayDialog.this.repaint();
 								}
 
 								@Override
 								public void error(JSONObject res) {
-									RPJSonLog.get().println(res.toString());
+									RPJSonLog.get().println(res);
 									dialog.closeDialog();
-									RPMessage.showErrorMessage(
-											LSystem.applicationMain,
-											UIMessage.error, "Trust failed");
 								}
 							});
 				}
