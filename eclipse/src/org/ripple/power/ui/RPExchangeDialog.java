@@ -39,7 +39,6 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
-import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
@@ -113,11 +112,11 @@ public class RPExchangeDialog extends JDialog {
 	private final AccountInfo _info = new AccountInfo();
 
 	private void warning_noselect() {
-		RPMessage.showWarningMessage(this, "Info", UIMessage.noselect);
+		RPMessage.showWarningMessage(this, UIMessage.info, UIMessage.noselect);
 	}
 
 	private void warning_xrp() {
-		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
+		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				LSystem.nativeCurrency.toUpperCase() + ","
 						+ UIMessage.errNotMoney);
 	}
@@ -126,7 +125,7 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(cur)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
+		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				cur.toUpperCase() + "," + UIMessage.errNotMoney);
 	}
 
@@ -134,7 +133,7 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, "Warning",
+		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				String.format(UIMessage.plasetrust, mes));
 	}
 
@@ -142,15 +141,17 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPMessage.showWarningMessage(LSystem.applicationMain, "Info",
-				String.format(UIMessage.sntr, mes));
+		RPToast toast = RPToast.makeText(this, String.format(UIMessage.sntr, mes));
+		toast.setFrameLengthMultiplier(20);
+		toast.setFrameRadius(25);
+		toast.display();
 	}
 
 	private int cancel_trust(String mes) {
 		if (Strings.isNullOrEmpty(mes)) {
 			return -1;
 		}
-		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
+		return RPMessage.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
 				String.format(UIMessage.ydel, mes), new Object[] {
 						UIMessage.ok, UIMessage.cancel });
 	}
@@ -181,7 +182,7 @@ public class RPExchangeDialog extends JDialog {
 			};
 			LSystem.postThread(update);
 		}
-		return RPMessage.showConfirmMessage(RPExchangeDialog.this, "Info",
+		return RPMessage.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
 				UIMessage.you_cancel_tx(srcAmount + "/" + srcCurrency,
 						dstAmount + "/" + dstCurrency), new Object[] {
 						UIMessage.ok, UIMessage.cancel });
@@ -973,7 +974,7 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void loadOtherMarketList(String address, String[] split) {
-		String srcCurName = split[0];
+		/*String srcCurName = split[0];
 		String dstCurName = split[1];
 		OtherData.CoinmarketcapData cData = null;
 		if ((srcCurName.equalsIgnoreCase("usd") && dstCurName
@@ -1052,7 +1053,7 @@ public class RPExchangeDialog extends JDialog {
 							return list.get(i);
 						}
 					});
-		}
+		}*/
 	}
 
 	private void action_ok(ActionEvent e) {

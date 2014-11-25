@@ -29,6 +29,7 @@ import org.ripple.power.i18n.Language;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.IP46Utils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -180,7 +181,7 @@ public final class LSystem {
 	public static String getNumberShort(Number value) {
 		return LSystem.getNumberShort(String.valueOf(value));
 	}
-	
+
 	public static String getNumberShort(String value) {
 		return LSystem.getNumber(new BigDecimal(value), false);
 	}
@@ -493,6 +494,21 @@ public final class LSystem {
 		return address.getHostAddress();
 	}
 
+	public static String getIPAddressType(){
+		InetAddress address;
+		try {
+			address = InetAddress.getLocalHost();
+			if(IP46Utils.isIPv4Address(address.getHostAddress())){
+				return "IPv4";
+			}else if(IP46Utils.isIPv6Address(address.getHostAddress())){
+				return "IPv6";
+			}
+		} catch (UnknownHostException e) {
+			return "Unkown";
+		}
+		return "Unkown";
+	}
+	
 	public static String getMACAddress() {
 		String macStr = "";
 		try {
@@ -504,7 +520,7 @@ public final class LSystem {
 					macStr = asMACHex(mac);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			return getOtherMACAddress();
 		}
 		return macStr;

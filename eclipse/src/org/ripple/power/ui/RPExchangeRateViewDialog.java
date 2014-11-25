@@ -35,10 +35,10 @@ public class RPExchangeRateViewDialog extends JDialog {
 	private RPCButton _rateButton;
 	private RPComboBox _srcComboBox;
 	private RPComboBox _dstComboBox;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
-	private RPLabel jLabel4;
+	private RPLabel _oneLabel;
+	private RPLabel _twoLabel;
+	private RPLabel _threeLabel;
+	private RPLabel _fourLabel;
 	private RPList _encryptcoinList;
 	private RPList _legalTenderList;
 	private javax.swing.JPanel jPanel1;
@@ -128,11 +128,11 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 		ArrayList<String> curList = Currencies.values();
 
-		jLabel1 = new RPLabel();
+		_oneLabel = new RPLabel();
 		_srcText = new RPTextBox();
 		_srcComboBox = new RPComboBox();
 		_srcComboBox.setEditable(true);
-		jLabel2 = new RPLabel();
+		_twoLabel = new RPLabel();
 		_dstText = new RPTextBox();
 		_dstComboBox = new RPComboBox();
 		_dstComboBox.setEditable(true);
@@ -141,18 +141,18 @@ public class RPExchangeRateViewDialog extends JDialog {
 		_encryptcoinList = new RPList();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		_legalTenderList = new RPList();
-		jLabel3 = new RPLabel();
-		jLabel4 = new RPLabel();
+		_threeLabel = new RPLabel();
+		_fourLabel = new RPLabel();
 		_exitButton = new RPCButton();
 		_rateButton = new RPCButton();
 		jSeparator1 = new javax.swing.JSeparator();
 
 		getContentPane().setLayout(null);
 
-		jLabel1.setFont(UIRes.getFont()); // NOI18N
-		jLabel1.setText(LangConfig.get(this, "src", "Source"));
-		getContentPane().add(jLabel1);
-		jLabel1.setBounds(20, 412, 103, 36);
+		_oneLabel.setFont(UIRes.getFont()); // NOI18N
+		_oneLabel.setText(LangConfig.get(this, "src", "Source"));
+		getContentPane().add(_oneLabel);
+		_oneLabel.setBounds(20, 412, 103, 36);
 
 		_srcText.setFont(UIRes.getFont()); // NOI18N
 		getContentPane().add(_srcText);
@@ -169,10 +169,10 @@ public class RPExchangeRateViewDialog extends JDialog {
 			}
 		});
 
-		jLabel2.setFont(UIRes.getFont()); // NOI18N
-		jLabel2.setText(LangConfig.get(this, "dst", "Target"));
-		getContentPane().add(jLabel2);
-		jLabel2.setBounds(410, 412, 103, 36);
+		_twoLabel.setFont(UIRes.getFont()); // NOI18N
+		_twoLabel.setText(LangConfig.get(this, "dst", "Target"));
+		getContentPane().add(_twoLabel);
+		_twoLabel.setBounds(410, 412, 103, 36);
 
 		_dstText.setFont(UIRes.getFont()); // NOI18N
 		getContentPane().add(_dstText);
@@ -257,19 +257,19 @@ public class RPExchangeRateViewDialog extends JDialog {
 		jPanel1.add(jScrollPane2);
 		jScrollPane2.setBounds(380, 40, 360, 340);
 
-		jLabel3.setFont(UIRes.getFont()); // NOI18N
-		jLabel3.setForeground(LColor.white);
-		jLabel3.setText(LangConfig.get(this, "lt", "Legal tender")
+		_threeLabel.setFont(UIRes.getFont()); // NOI18N
+		_threeLabel.setForeground(LColor.white);
+		_threeLabel.setText(LangConfig.get(this, "lt", "Legal tender")
 				+ "(usd-cny)");
-		jPanel1.add(jLabel3);
-		jLabel3.setBounds(380, 10, 360, 20);
+		jPanel1.add(_threeLabel);
+		_threeLabel.setBounds(380, 10, 360, 20);
 
-		jLabel4.setFont(UIRes.getFont()); // NOI18N
-		jLabel4.setForeground(LColor.white);
-		jLabel4.setText(LangConfig.get(this, "em", "Electronic money")
+		_fourLabel.setFont(UIRes.getFont()); // NOI18N
+		_fourLabel.setForeground(LColor.white);
+		_fourLabel.setText(LangConfig.get(this, "em", "Electronic money")
 				+ "(coinmarketcap)");
-		jPanel1.add(jLabel4);
-		jLabel4.setBounds(10, 10, 360, 20);
+		jPanel1.add(_fourLabel);
+		_fourLabel.setBounds(10, 10, 360, 20);
 
 		getContentPane().add(jPanel1);
 		jPanel1.setBounds(10, 10, 750, 390);

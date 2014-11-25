@@ -126,12 +126,12 @@ public class RPIOUSendDialog extends JDialog {
 				Object o = _curList.getSelectedItem();
 				if (!MathUtils.isNan(amount)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", UIMessage.errMoney);
+							UIMessage.error, UIMessage.errMoney);
 					return;
 				}
 				if (!MathUtils.isNan(fee)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", UIMessage.errFee);
+							UIMessage.error, UIMessage.errFee);
 					return;
 				}
 				IssuedCurrency cur = null;
@@ -147,12 +147,12 @@ public class RPIOUSendDialog extends JDialog {
 					Double b = Double.parseDouble(line.getAmount());
 					if (a > b) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", UIMessage.errNotMoney);
+								UIMessage.warning, UIMessage.errNotMoney);
 						return;
 					}
 				} else {
 					RPMessage.showWarningMessage(LSystem.applicationMain,
-							"Warning", UIMessage.errNotAddress);
+							UIMessage.warning, UIMessage.errNotAddress);
 					return;
 				}
 				if (address.startsWith("~")) {
@@ -160,18 +160,18 @@ public class RPIOUSendDialog extends JDialog {
 						address = NameFind.getAddress(address);
 					} catch (Exception ex) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", UIMessage.errNotAddress);
+								UIMessage.warning, UIMessage.errNotAddress);
 						return;
 					}
 					if (address == null) {
 						RPMessage.showWarningMessage(LSystem.applicationMain,
-								"Warning", UIMessage.errNotAddress);
+								UIMessage.warning, UIMessage.errNotAddress);
 						return;
 					}
 				}
 				if (!AccountFind.isRippleAddress(address)) {
 					RPMessage.showErrorMessage(LSystem.applicationMain,
-							"Error", UIMessage.errAddress);
+							UIMessage.error, UIMessage.errAddress);
 					return;
 				}
 				final WaitDialog dialog = WaitDialog
@@ -183,7 +183,7 @@ public class RPIOUSendDialog extends JDialog {
 						RPJSonLog.get().println(res.toString());
 						WalletCache.get().reset();
 						RPMessage.showInfoMessage(LSystem.applicationMain,
-								"Info", UIMessage.completed);
+								UIMessage.info, UIMessage.completed);
 						dialog.closeDialog();
 					}
 

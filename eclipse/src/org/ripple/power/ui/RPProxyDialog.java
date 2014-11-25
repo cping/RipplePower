@@ -20,8 +20,8 @@ public class RPProxyDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private RPTextBox rippledPath;
 	private RPTextBox rippledPort;
-	private RPCButton jButton1;
-	private RPCButton jButton2;
+	private RPCButton _oneButton;
+	private RPCButton _twoButton;
 	private RPLabel jLabel1;
 	private RPLabel jLabel2;
 	private RPLabel jLabel3;
@@ -64,8 +64,8 @@ public class RPProxyDialog extends JDialog {
 		rippledPath = new RPTextBox();
 		rippledPath.setText("wss://");
 		rippledPort = new RPTextBox();
-		jButton2 = new RPCButton();
-		jButton1 = new RPCButton();
+		_twoButton = new RPCButton();
+		_oneButton = new RPCButton();
 		useProxy = new javax.swing.JCheckBox();
 		useProxy.setForeground(new LColor(255, 255, 255));
 		useProxy.setBackground(new LColor(36, 36, 36));
@@ -80,14 +80,14 @@ public class RPProxyDialog extends JDialog {
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		jLabel1.setText("Rippled Path");
 		jLabel2.setText("Rippled Port");
-		jButton2.setText("Save");
-		jButton2.addActionListener(new java.awt.event.ActionListener() {
+		_twoButton.setText("Save");
+		_twoButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				saveConfig(evt);
 			}
 		});
-		jButton1.setText("Cancel");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		_oneButton.setText("Cancel");
+		_oneButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButton1ActionPerformed(evt);
 			}
@@ -128,13 +128,13 @@ public class RPProxyDialog extends JDialog {
 														javax.swing.GroupLayout.Alignment.TRAILING,
 														layout.createSequentialGroup()
 																.addComponent(
-																		jButton1)
+																		_oneButton)
 																.addPreferredGap(
 																		javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 																		189,
 																		Short.MAX_VALUE)
 																.addComponent(
-																		jButton2))
+																		_twoButton))
 												.addComponent(rippledPort)
 												.addComponent(proxyServer)
 												.addComponent(proxyPort)
@@ -228,11 +228,11 @@ public class RPProxyDialog extends JDialog {
 										layout.createParallelGroup(
 												javax.swing.GroupLayout.Alignment.BASELINE)
 												.addComponent(
-														jButton2,
+														_twoButton,
 														javax.swing.GroupLayout.PREFERRED_SIZE,
 														23,
 														javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(jButton1))
+												.addComponent(_oneButton))
 								.addContainerGap()));
 		getContentPane().setBackground(LSystem.dialogbackground);
 		pack();

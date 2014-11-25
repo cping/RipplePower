@@ -94,26 +94,26 @@ public class RPPasswordDialog extends JDialog {
 				String pass = new String(chars);
 				if (chars.length < 8) {
 					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Not be less than 8 characters !", "Error",
+							"Not be less than 8 characters !", UIMessage.error,
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				if (StringUtils.isAlphabet(pass)) {
 					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Full English is not allowed !", "Error",
+							"Full English is not allowed !", UIMessage.error,
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				if (StringUtils.isNumber(pass)) {
 					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Full Numeric is not allowed !", "Error",
+							"Full Numeric is not allowed !", UIMessage.error,
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 				if (!_password1Text.getText().equals(_password2Text.getText())) {
 					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Two passwords are not the same !", "Error",
+							"Two passwords are not the same !", UIMessage.error,
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}

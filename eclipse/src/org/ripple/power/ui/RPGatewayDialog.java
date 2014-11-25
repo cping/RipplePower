@@ -453,7 +453,7 @@ public class RPGatewayDialog extends JDialog {
 										if (result != null) {
 											RPMessage.showInfoMessage(
 													LSystem.applicationMain,
-													"Info", "Rippled Result : "
+													UIMessage.info, "Rippled Result : "
 															+ result);
 											loadTrust();
 										}
@@ -465,7 +465,7 @@ public class RPGatewayDialog extends JDialog {
 										dialog.closeDialog();
 										RPMessage.showErrorMessage(
 												LSystem.applicationMain,
-												"Error", "Trust failed");
+												UIMessage.error, "Trust failed");
 									}
 								});
 					}
@@ -515,7 +515,7 @@ public class RPGatewayDialog extends JDialog {
 									if (result != null) {
 										RPMessage.showInfoMessage(
 												LSystem.applicationMain,
-												"Info", "Rippled Result : "
+												UIMessage.info, "Rippled Result : "
 														+ result);
 										loadTrust();
 									}
@@ -526,7 +526,7 @@ public class RPGatewayDialog extends JDialog {
 									RPJSonLog.get().println(res.toString());
 									dialog.closeDialog();
 									RPMessage.showErrorMessage(
-											LSystem.applicationMain, "Error",
+											LSystem.applicationMain, UIMessage.error,
 											"Trust failed");
 								}
 							});

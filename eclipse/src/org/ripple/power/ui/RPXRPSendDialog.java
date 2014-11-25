@@ -151,12 +151,12 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 					String feeValue = _feeText.getText().trim();
 					if (!MathUtils.isNan(amountValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", UIMessage.errMoney);
+								UIMessage.error, UIMessage.errMoney);
 						return;
 					}
 					if (!MathUtils.isNan(feeValue)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", UIMessage.errFee);
+								UIMessage.error, UIMessage.errFee);
 						return;
 					}
 					if (address.startsWith("~")) {
@@ -164,20 +164,20 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 							address = NameFind.getAddress(address);
 						} catch (Exception ex) {
 							RPMessage.showWarningMessage(
-									LSystem.applicationMain, "Warning",
+									LSystem.applicationMain, UIMessage.warning,
 									UIMessage.errNotAddress);
 							return;
 						}
 						if (address == null) {
 							RPMessage.showWarningMessage(
-									LSystem.applicationMain, "Warning",
+									LSystem.applicationMain, UIMessage.warning,
 									UIMessage.errNotAddress);
 							return;
 						}
 					}
 					if (!AccountFind.isRippleAddress(address)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", UIMessage.errAddress);
+								UIMessage.error, UIMessage.errAddress);
 						return;
 					}
 					BigDecimal number = new BigDecimal(amountValue);
@@ -186,7 +186,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 					if (number.longValue() >= (maxSend.longValue() - 20)) {
 						RPMessage.showErrorMessage(LSystem.applicationMain,
-								"Error", UIMessage.errNotMoney);
+								UIMessage.error, UIMessage.errNotMoney);
 						return;
 					}
 
@@ -202,7 +202,7 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 									WalletCache.get().reset();
 									dialog.closeDialog();
 									RPMessage.showInfoMessage(
-											LSystem.applicationMain, "Info",
+											LSystem.applicationMain, UIMessage.info,
 											UIMessage.completed);
 								}
 

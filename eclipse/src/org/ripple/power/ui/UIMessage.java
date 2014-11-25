@@ -4,12 +4,20 @@ import org.ripple.power.i18n.LangConfig;
 
 public class UIMessage {
 
-	public final static String ok = LangConfig.get(UIMessage.class,
-			"ok", "OK");
+	public final static String ok = LangConfig.get(UIMessage.class, "ok", "OK");
 
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
-	
+
+	public final static String warning = LangConfig.get(UIMessage.cancel,
+			"warning", "Warning");
+
+	public final static String info = LangConfig.get(UIMessage.cancel, "info",
+			"Info");
+
+	public final static String error = LangConfig.get(UIMessage.cancel,
+			"error", "Error");
+
 	public final static String completed = LangConfig.get(UIMessage.class,
 			"sendc", "Send Completed");
 

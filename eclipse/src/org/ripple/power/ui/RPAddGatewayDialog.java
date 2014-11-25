@@ -76,31 +76,31 @@ public class RPAddGatewayDialog extends JDialog {
 		String name = _addressNameText.getText().trim();
 		String address = _gatewayAddressText.getText().trim();
 		if (name == null || name.length() == 0) {
-			RPMessage.showWarningMessage(this, "Warning", "网关名称不能为空");
+			RPMessage.showWarningMessage(this, UIMessage.warning, "网关名称不能为空");
 			return;
 		}
 		for (Gateway gateway : _gateways) {
 			if (gateway.name.toLowerCase().equals(name.toLowerCase())) {
 				RPMessage
-						.showWarningMessage(this, "Warning", "同名网关已经存在,无法继续添加");
+						.showWarningMessage(this, UIMessage.warning, "同名网关已经存在,无法继续添加");
 				return;
 			}
 		}
 		if (Gateway.getAddress(name) != null) {
-			RPMessage.showWarningMessage(this, "Warning", "该网关名称已被占用,无法继续添加");
+			RPMessage.showWarningMessage(this, UIMessage.warning, "该网关名称已被占用,无法继续添加");
 			return;
 		}
 		if (_ious.size() == 0) {
-			RPMessage.showWarningMessage(this, "Warning", "没有任何IOU数据,无法继续添加");
+			RPMessage.showWarningMessage(this, UIMessage.warning,UIMessage.errAddress);
 			return;
 		}
 		if (address.length() == 0) {
-			RPMessage.showWarningMessage(this, "Warning", "没有输入地址,无法继续添加");
+			RPMessage.showWarningMessage(this, UIMessage.warning, UIMessage.errAddress);
 			return;
 		}
 		if (!address.startsWith("~")) {
 			if (!AccountFind.isRippleAddress(address)) {
-				RPMessage.showErrorMessage(LSystem.applicationMain, "Error",
+				RPMessage.showErrorMessage(LSystem.applicationMain, UIMessage.error,
 						UIMessage.errAddress);
 				return;
 			}
@@ -110,12 +110,12 @@ public class RPAddGatewayDialog extends JDialog {
 				address = NameFind.getAddress(address);
 			} catch (Exception ex) {
 				RPMessage.showWarningMessage(LSystem.applicationMain,
-						"Warning", UIMessage.errNotAddress);
+						UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
 			if (address == null) {
 				RPMessage.showWarningMessage(LSystem.applicationMain,
-						"Warning", UIMessage.errNotAddress);
+						UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
 		}
@@ -254,7 +254,7 @@ public class RPAddGatewayDialog extends JDialog {
 				String iouName = _iouNameText.getText().trim().toUpperCase();
 				if (iouName.length() != 3) {
 					RPMessage.showWarningMessage(RPAddGatewayDialog.this,
-							"Warning", "不允许三个字符以外的IOU数据出现");
+							UIMessage.warning, "char != 3 not allow !");
 					return;
 				}
 				if (!_ious.contains(iouName)) {
@@ -297,7 +297,7 @@ public class RPAddGatewayDialog extends JDialog {
 				if (name.length() > 0) {
 					if (delGateway(name) != -1) {
 						RPMessage.showInfoMessage(RPAddGatewayDialog.this,
-								"Info", "Deleted successfully");
+								UIMessage.info, "Deleted successfully");
 					}
 				}
 			}

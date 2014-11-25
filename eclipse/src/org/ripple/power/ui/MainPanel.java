@@ -456,14 +456,12 @@ public class MainPanel extends JPanel implements ActionListener {
 						"Backup your wallet file.", Style.SUCCESS).display();
 				String path = Backup.create();
 				if (path != null) {
-					RPMessage.showInfoMessage(this, LangConfig.get(this,
-							"info", "Info"), String.format(LangConfig.get(this,
+					RPMessage.showInfoMessage(this, UIMessage.info, String.format(LangConfig.get(this,
 							"back1",
 							"Successful backup, the backup is saved in %s"),
 							path));
 				} else {
-					RPMessage.showErrorMessage(this, LangConfig.get(this,
-							"error", "Error"), LangConfig.get(this, "back2",
+					RPMessage.showErrorMessage(this, UIMessage.error, LangConfig.get(this, "back2",
 							"Backup fails, wallet file does not exist"));
 				}
 				return;
@@ -518,7 +516,7 @@ public class MainPanel extends JPanel implements ActionListener {
 									LangConfig
 											.get(this, "stop_cmd",
 													"You have not selected any address, so the current command can not operate."),
-									"Warning", JOptionPane.WARNING_MESSAGE);
+									UIMessage.warning, JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 			} else if (actionName.equals(CommandFlag.Donation)) {

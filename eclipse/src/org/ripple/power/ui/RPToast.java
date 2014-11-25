@@ -186,4 +186,20 @@ public class RPToast extends JDialog {
 		LSystem.postThread(update);
 	}
 
+	public int getFrameRadius() {
+		return _frame_radius;
+	}
+
+	public void setFrameRadius(int f) {
+		this._frame_radius = f;
+	}
+
+	public int getFrameLengthMultiplier() {
+		return _frame_length_multiplier;
+	}
+
+	public void setFrameLengthMultiplier(int f) {
+		this._frame_length_multiplier = f;
+	}
+
 }
