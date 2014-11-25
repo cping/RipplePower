@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPConfig;
 import org.ripple.power.ui.UIRes;
+import org.ripple.power.utils.StringUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -18,11 +19,11 @@ public class LangConfig {
 
 	private static String fontName = "Dialog";
 
-	public static String getFontName(){
+	public static String getFontName() {
 		init();
 		return fontName;
 	}
-	
+
 	public static ComponentOrientation currentComponentOrientation() {
 		return ComponentOrientation.getOrientation(Language.DEF.getLocale());
 	}
@@ -133,23 +134,32 @@ public class LangConfig {
 
 	public static String get(Object obj, String res, String value) {
 		init();
+		String result = null;
 		if (obj == null) {
-			return _config.getValue(res, value);
+			result = _config.getValue(res, value);
 		}
-		String clazz = null;
-		if (obj instanceof String) {
-			clazz = (String) obj;
-		} else if (obj instanceof Class) {
-			clazz = ((Class<?>) obj).getName();
-		} else {
-			clazz = obj.getClass().getName();
-		}
-		String result = _config.getValue(clazz + "." + res);
 		if (result == null) {
-			return _config.getValue(res, value);
+			String clazz = null;
+			if (obj instanceof String) {
+				clazz = (String) obj;
+			} else if (obj instanceof Class) {
+				clazz = ((Class<?>) obj).getName();
+			} else {
+				clazz = obj.getClass().getName();
+			}
+			result = _config.getValue(clazz + "." + res);
+			if (result == null) {
+				result = _config.getValue(res, value);
+			}
+			if (result == null && _javai18n != null && _javai18n.isDirty()) {
+				result = _javai18n.translate(res, LSystem.applicationLang);
+			}
 		}
-		if (_javai18n != null && _javai18n.isDirty()) {
-			return _javai18n.translate(res, LSystem.applicationLang);
+		if (result != null && result.indexOf("\\n") != -1) {
+			result = StringUtils.replace(result, "\\n", "\n");
+		}
+		if (result != null && result.indexOf("\\r") != -1) {
+			result = StringUtils.replace(result, "\\r", "\r");
 		}
 		return result;
 	}

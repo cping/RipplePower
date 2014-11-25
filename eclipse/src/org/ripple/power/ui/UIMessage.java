@@ -50,6 +50,9 @@ public class UIMessage {
 	public final static String ydel = LangConfig.get(UIMessage.class, "ydel",
 			"You want to delete %s ?");
 
+	public final static String data_error = LangConfig.get(UIMessage.class, "data_error",
+			"Data format error, the operation is invalid !");
+	
 	public final static String you_cancel_tx(String a, String b) {
 		String result = String.format(LangConfig.get(UIMessage.class,
 				"you_cancel_tx",

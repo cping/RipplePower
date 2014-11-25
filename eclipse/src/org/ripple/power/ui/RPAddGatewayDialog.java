@@ -76,32 +76,36 @@ public class RPAddGatewayDialog extends JDialog {
 		String name = _addressNameText.getText().trim();
 		String address = _gatewayAddressText.getText().trim();
 		if (name == null || name.length() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning, "网关名称不能为空");
+			RPMessage.showWarningMessage(this, UIMessage.warning,
+					UIMessage.data_error);
 			return;
 		}
 		for (Gateway gateway : _gateways) {
 			if (gateway.name.toLowerCase().equals(name.toLowerCase())) {
-				RPMessage
-						.showWarningMessage(this, UIMessage.warning, "同名网关已经存在,无法继续添加");
+				RPMessage.showWarningMessage(this, UIMessage.warning,
+						UIMessage.data_error);
 				return;
 			}
 		}
 		if (Gateway.getAddress(name) != null) {
-			RPMessage.showWarningMessage(this, UIMessage.warning, "该网关名称已被占用,无法继续添加");
+			RPMessage.showWarningMessage(this, UIMessage.warning,
+					UIMessage.data_error);
 			return;
 		}
 		if (_ious.size() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning,UIMessage.errAddress);
+			RPMessage.showWarningMessage(this, UIMessage.warning,
+					UIMessage.data_error);
 			return;
 		}
 		if (address.length() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning, UIMessage.errAddress);
+			RPMessage.showWarningMessage(this, UIMessage.warning,
+					UIMessage.errAddress);
 			return;
 		}
 		if (!address.startsWith("~")) {
 			if (!AccountFind.isRippleAddress(address)) {
-				RPMessage.showErrorMessage(LSystem.applicationMain, UIMessage.error,
-						UIMessage.errAddress);
+				RPMessage.showErrorMessage(LSystem.applicationMain,
+						UIMessage.error, UIMessage.errAddress);
 				return;
 			}
 		}
@@ -201,7 +205,8 @@ public class RPAddGatewayDialog extends JDialog {
 		_gatewayNameText.setBounds(20, 10, 100, 27);
 
 		_gatewayAddressLabel.setFont(font); // NOI18N
-		_gatewayAddressLabel.setText(LangConfig.get(this, "gateway_address", "Address"));
+		_gatewayAddressLabel.setText(LangConfig.get(this, "gateway_address",
+				"Address"));
 		getContentPane().add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(20, 60, 100, 27);
 
@@ -285,7 +290,8 @@ public class RPAddGatewayDialog extends JDialog {
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 320, 480, 10);
 
-		_delGatewayButton.setText(LangConfig.get(this, "delgateway", "Delete The Gateway"));
+		_delGatewayButton.setText(LangConfig.get(this, "delgateway",
+				"Delete The Gateway"));
 		_delGatewayButton.setFont(btnfont);
 		getContentPane().add(_delGatewayButton);
 		_delGatewayButton.setBounds(10, 330, 180, 40);

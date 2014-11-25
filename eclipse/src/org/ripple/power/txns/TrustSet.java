@@ -24,8 +24,8 @@ public class TrustSet {
 		} else if (idx == 1) {
 			currency = new IssuedCurrency(split[0]);
 		} else if (idx == 3) {
-			String address = split[2].split(" ")[0];
-			if (address.startsWith("r") && AccountFind.isRippleAddress(address)) {
+			String address = split[2];
+			if (AccountFind.isRippleAddress(address)) {
 				currency = new IssuedCurrency(split[0], address, split[1]);
 			} else {
 				currency = new IssuedCurrency(split[0],

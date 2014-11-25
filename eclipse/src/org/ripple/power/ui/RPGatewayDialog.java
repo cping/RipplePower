@@ -125,10 +125,9 @@ public class RPGatewayDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		
+
 		LColor color = new LColor(255, 255, 255);
-		
-		
+
 		jScrollPane1 = new javax.swing.JScrollPane();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jScrollPane3 = new javax.swing.JScrollPane();
@@ -240,7 +239,7 @@ public class RPGatewayDialog extends JDialog {
 		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
 		_panel.add(_amountLabel);
 		_amountLabel.setBounds(10, 170, 80, 16);
-		
+
 		_webLabel.setFont(font); // NOI18N
 		_webLabel.setForeground(color);
 		_webLabel.setText(LangConfig.get(this, "domain", "Domain"));
@@ -321,8 +320,7 @@ public class RPGatewayDialog extends JDialog {
 						_ioulistTable.updateUI();
 						_curList.setItemModel(_iouList.toArray());
 						if (Gateway.getAddress(name).accounts.size() > 0) {
-							_addressText.setText(gateway.accounts
-									.get(0).address);
+							_addressText.setText(gateway.accounts.get(0).address);
 						}
 
 					}
@@ -427,15 +425,14 @@ public class RPGatewayDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				int idx = _myGateway.getSelectedIndex();
 				if (idx > -1) {
-					IssuedCurrency currency = TrustSet
-							.fromString((String) _myGateway.getSelectedValue());
-					String message = String.format(
-							"You wish to cancel the gateway %s trust ?",
+					IssuedCurrency currency = _trust_list.get(idx);
+					String message = String.format(LangConfig.get(
+							RPGatewayDialog.this, "cancel_trust",
+							"You wish to cancel the gateway %s trust ?"),
 							currency.issuer.toString());
 					int result = RPMessage.showConfirmMessage(
 							LSystem.applicationMain, "Cancel trust", message,
-							LangConfig.get(this, "ok", "OK"),
-							LangConfig.get(this, "cancel", "Cancel"));
+							UIMessage.ok, UIMessage.cancel);
 					if (result == 0) {
 						final WaitDialog dialog = new WaitDialog(
 								RPGatewayDialog.this);
@@ -451,11 +448,15 @@ public class RPGatewayDialog extends JDialog {
 												"result").getString(
 												"engine_result_message");
 										if (result != null) {
-											RPMessage.showInfoMessage(
-													LSystem.applicationMain,
-													UIMessage.info, "Rippled Result : "
+											RPToast toast = RPToast.makeText(
+													RPGatewayDialog.this,
+													"Rippled Result : "
 															+ result);
-											loadTrust();
+											toast.display();
+											loadTrust(false);
+											RPGatewayDialog.this
+													.getContentPane().repaint();
+											RPGatewayDialog.this.repaint();
 										}
 									}
 
@@ -463,9 +464,11 @@ public class RPGatewayDialog extends JDialog {
 									public void error(JSONObject res) {
 										RPJSonLog.get().println(res.toString());
 										dialog.closeDialog();
-										RPMessage.showErrorMessage(
-												LSystem.applicationMain,
-												UIMessage.error, "Trust failed");
+										RPMessage
+												.showErrorMessage(
+														LSystem.applicationMain,
+														UIMessage.error,
+														"Trust failed");
 									}
 								});
 					}
@@ -490,14 +493,16 @@ public class RPGatewayDialog extends JDialog {
 
 				String trustValue = _trustValueText.getText().trim();
 
-				String message = String
-						.format("You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?",
-								address, curName, trustValue);
+				String message = String.format(
+						LangConfig
+								.get(RPGatewayDialog.this,
+										"select_trust",
+										"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?"),
+						address, curName, trustValue);
 
 				int result = RPMessage.showConfirmMessage(
 						LSystem.applicationMain, "Trust Gateway", message,
-						LangConfig.get(this, "ok", "OK"),
-						LangConfig.get(this, "cancel", "Cancel"));
+						UIMessage.ok, UIMessage.cancel);
 				if (result == 0) {
 					final WaitDialog dialog = new WaitDialog(
 							RPGatewayDialog.this);
@@ -513,11 +518,15 @@ public class RPGatewayDialog extends JDialog {
 									String result = res.getJSONObject("result")
 											.getString("engine_result_message");
 									if (result != null) {
-										RPMessage.showInfoMessage(
-												LSystem.applicationMain,
-												UIMessage.info, "Rippled Result : "
+										RPToast toast = RPToast.makeText(
+												RPGatewayDialog.this,
+												"Rippled Result : "
 														+ result);
-										loadTrust();
+										toast.display();
+										loadTrust(false);
+										RPGatewayDialog.this
+												.getContentPane().repaint();
+										RPGatewayDialog.this.repaint();
 									}
 								}
 
@@ -526,8 +535,8 @@ public class RPGatewayDialog extends JDialog {
 									RPJSonLog.get().println(res.toString());
 									dialog.closeDialog();
 									RPMessage.showErrorMessage(
-											LSystem.applicationMain, UIMessage.error,
-											"Trust failed");
+											LSystem.applicationMain,
+											UIMessage.error, "Trust failed");
 								}
 							});
 				}
@@ -572,17 +581,27 @@ public class RPGatewayDialog extends JDialog {
 		});
 	}
 
+	private ArrayList<IssuedCurrency> _trust_list = new ArrayList<IssuedCurrency>(
+			10);
+
 	private void loadTrust() {
+		loadTrust(true);
+	}
+	
+	private void loadTrust(boolean wait) {
 		if (_item != null) {
-			final WaitDialog dialog = WaitDialog
-					.showDialog(RPGatewayDialog.this);
+			final WaitDialog dialog = WaitDialog.showDialog(
+					RPGatewayDialog.this, wait);
 			AccountFind.getTrusts(_item.getPublicKey(), new Updateable() {
+				@SuppressWarnings("unchecked")
 				@Override
 				public void action(Object o) {
 					if (o != null) {
 						if (o instanceof ArrayList) {
-							@SuppressWarnings("unchecked")
-							final ArrayList<IssuedCurrency> lines = (ArrayList<IssuedCurrency>) o;
+
+							_trust_list.clear();
+							_trust_list.addAll((ArrayList<IssuedCurrency>) o);
+
 							_myGateway
 									.setModel(new javax.swing.AbstractListModel<Object>() {
 
@@ -592,24 +611,25 @@ public class RPGatewayDialog extends JDialog {
 										private static final long serialVersionUID = 1L;
 
 										public int getSize() {
-											return lines.size();
+											return _trust_list.size();
 										}
 
 										public Object getElementAt(int i) {
 											String mes = null;
-											IssuedCurrency cur = lines.get(i);
+											IssuedCurrency cur = _trust_list
+													.get(i);
 											if (cur == null) {
 												return "Empty";
 											}
 											if (cur.tag != null) {
-												mes = lines.get(i)
+												mes = _trust_list.get(i)
 														.toGatewayString()
 														+ " Limit:"
-														+ ((AccountLine) lines
+														+ ((AccountLine) _trust_list
 																.get(i).tag)
 																.getLimit();
 											} else {
-												mes = lines.get(i)
+												mes = _trust_list.get(i)
 														.toGatewayString();
 											}
 											return mes;
@@ -618,7 +638,9 @@ public class RPGatewayDialog extends JDialog {
 						}
 
 					}
-					dialog.closeDialog();
+					if (dialog != null) {
+						dialog.closeDialog();
+					}
 				}
 			});
 		}
