@@ -62,14 +62,20 @@ public class TraderNxN {
 		_issuerAddress.add("rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B");
 		// SnapSwap
 		_issuerAddress.add("rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q");
+		// Justcoin
+		_issuerAddress.add("rJHygWcTLVpSXkowott6kzgZU6viQSVYM1");
 		// RippleCN
 		_issuerAddress.add("rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK");
 		// RippleChina
 		_issuerAddress.add("razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA");
+		// RippleFox
+		_issuerAddress.add("rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y");
 		// Ripple Trade Japan
 		_issuerAddress.add("rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6");
 		// TokyoJPY
 		_issuerAddress.add("r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN");
+		// Ripple Market JPY
+		_issuerAddress.add("rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg");
 	}
 
 	/**

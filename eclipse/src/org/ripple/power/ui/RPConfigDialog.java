@@ -35,8 +35,10 @@ public class RPConfigDialog extends JDialog {
 	private RPLabel _feeLabel;
 	private RPLabel _proxyLabel;
 	private RPLabel _blockLabel;
-	private javax.swing.JSeparator jSeparator1;
-	private javax.swing.JSeparator jSeparator2;
+	private RPLabel _rippledFeeLabel;
+	private RPTextBox _rippled_fee_Text;
+	private javax.swing.JSeparator _spOne;
+	private javax.swing.JSeparator _spTwo;
 
 	public static void showDialog(String name, JFrame parent) {
 		try {
@@ -73,14 +75,16 @@ public class RPConfigDialog extends JDialog {
 		_min_amount_text.setText(LSystem.getMinSend());
 		_rippledButton = new RPCButton();
 		_exitButton = new RPCButton();
-		jSeparator1 = new javax.swing.JSeparator();
+		_spOne = new javax.swing.JSeparator();
 		_feeLabel = new RPLabel();
 		_saveButton = new RPCButton();
 		_proxyLabel = new RPLabel();
 		_proxyButton = new RPCButton();
-		jSeparator2 = new javax.swing.JSeparator();
+		_spTwo = new javax.swing.JSeparator();
 		_blockLabel = new RPLabel();
 		_blockchainButton = new RPCButton();
+		_rippledFeeLabel = new RPLabel();
+		_rippled_fee_Text = new RPTextBox();
 
 		getContentPane().setLayout(null);
 
@@ -94,7 +98,7 @@ public class RPConfigDialog extends JDialog {
 		_min_fee_text.setBounds(100, 70, 210, 22);
 
 		_amountLabel.setFont(font); // NOI18N
-		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
+		_amountLabel.setText("Set " + LangConfig.get(this, "amount", "Amount"));
 		getContentPane().add(_amountLabel);
 		_amountLabel.setBounds(10, 21, 90, 16);
 
@@ -127,11 +131,11 @@ public class RPConfigDialog extends JDialog {
 		});
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(240, 360, 70, 30);
-		getContentPane().add(jSeparator1);
-		jSeparator1.setBounds(0, 340, 330, 10);
+		getContentPane().add(_spOne);
+		_spOne.setBounds(0, 340, 330, 10);
 
 		_feeLabel.setFont(font); // NOI18N
-		_feeLabel.setText(LangConfig.get(this, "fee", "Fee"));
+		_feeLabel.setText("Set " + LangConfig.get(this, "fee", "Fee"));
 		getContentPane().add(_feeLabel);
 		_feeLabel.setBounds(10, 72, 90, 16);
 
@@ -170,8 +174,8 @@ public class RPConfigDialog extends JDialog {
 		});
 		getContentPane().add(_proxyButton);
 		_proxyButton.setBounds(110, 220, 200, 30);
-		getContentPane().add(jSeparator2);
-		jSeparator2.setBounds(0, 160, 330, 10);
+		getContentPane().add(_spTwo);
+		_spTwo.setBounds(0, 160, 330, 10);
 
 		_blockLabel.setFont(font); // NOI18N
 		_blockLabel.setText("Blockchain");
@@ -182,6 +186,21 @@ public class RPConfigDialog extends JDialog {
 		_blockchainButton.setText("Update");
 		getContentPane().add(_blockchainButton);
 		_blockchainButton.setBounds(110, 260, 200, 30);
+
+		_rippled_fee_Text.setFont(font); // NOI18N
+		getContentPane().add(_rippled_fee_Text);
+		_rippled_fee_Text.setBounds(100, 120, 210, 22);
+		_rippled_fee_Text.setEnabled(false);
+		if ("Unkown".equalsIgnoreCase(RPClient.ripple().getBaseFee())) {
+			_rippled_fee_Text.setText(LSystem.getFee());
+		} else {
+			_rippled_fee_Text.setText(RPClient.ripple().getBaseFee());
+		}
+
+		_rippledFeeLabel.setFont(font); // NOI18N
+		_rippledFeeLabel.setText("Node " + LangConfig.get(this, "fee", "Fee"));
+		getContentPane().add(_rippledFeeLabel);
+		_rippledFeeLabel.setBounds(10, 120, 90, 16);
 
 		getContentPane().setBackground(LSystem.dialogbackground);
 

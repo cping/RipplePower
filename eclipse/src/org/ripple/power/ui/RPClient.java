@@ -270,6 +270,19 @@ public class RPClient {
 
 	private boolean pLooping;
 
+	public String getBaseFee() {
+		Client client = getClinet();
+		if (client != null) {
+			float fee_unit = client.serverInfo.fee_base
+					/ client.serverInfo.fee_ref;
+			fee_unit *= client.serverInfo.load_factor
+					/ client.serverInfo.load_base;
+			fee_unit *= 10f;
+			return CurrencyUtils.getRippleToValue(String.valueOf(fee_unit));
+		}
+		return "Unkown";
+	}
+
 	public synchronized void threadStop() {
 		if (pThread != null) {
 			this.pLooping = false;
