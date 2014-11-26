@@ -29,6 +29,7 @@ import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPAccountInfoDialog extends JDialog {
@@ -47,6 +48,7 @@ public class RPAccountInfoDialog extends JDialog {
 	private RPLabel _issuedLabel;
 	private RPLabel _booksLabel;
 	private RPTextBox _addressText;
+	private RPTextBox _addressNameText;
 	private AddressTable _tableOne;
 	private AddressTable _tableTwo;
 	private AddressTable _tableThree;
@@ -294,6 +296,7 @@ public class RPAccountInfoDialog extends JDialog {
 		addWindowListener(HelperWindow.get());
 		_addressLabel = new RPLabel();
 		_addressText = new RPTextBox();
+		_addressNameText = new RPTextBox();
 		_loadButton = new RPCButton();
 		_memoButton = new RPCButton();
 		_hashButton = new RPCButton();
@@ -377,19 +380,34 @@ public class RPAccountInfoDialog extends JDialog {
 		getContentPane().add(_addressLabel);
 		_addressLabel.setBounds(20, 25, 80, 15);
 		getContentPane().add(_addressText);
-		_addressText.setBounds(108, 22, 343, 21);
+		_addressText.setBounds(95, 22, 300, 21);
 
-		if (address.trim().length() > 0) {
-			_addressText.setText(address.trim());
-			_accountinfo = call(tableModel, tableModel2, tableModel3);
+		getContentPane().add(_addressNameText);
+		_addressNameText.setBounds(405, 22, 100, 21);
+		_addressNameText.setEditable(false);
+		_addressNameText.setFont(GraphicsUtils.getFont(Font.SANS_SERIF, 0, 12));
 
+		address = address.trim();
+		if (address.length() > 0) {
+			_addressText.setText(address);
+			try {
+				_accountinfo = call(tableModel, tableModel2, tableModel3);
+			} catch (Exception ex) {
+				_accountinfo = new AccountInfo();
+			}
 		} else {
 			_addressText.setText("");
+			_addressNameText.setText("Unkown");
 		}
+
 		_loadButton.setText(LangConfig.get(this, "load", "Load"));
 		_loadButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				_accountinfo = call(tableModel, tableModel2, tableModel3);
+				try {
+					_accountinfo = call(tableModel, tableModel2, tableModel3);
+				} catch (Exception ex) {
+					_accountinfo = new AccountInfo();
+				}
 			}
 		});
 		getContentPane().add(_loadButton);
@@ -525,7 +543,6 @@ public class RPAccountInfoDialog extends JDialog {
 
 			@Override
 			public void action(Object res) {
-
 				if (info.count < 2) {
 					if (info.balance != null) {
 						synchronized (_accountLineItems) {
@@ -537,7 +554,13 @@ public class RPAccountInfoDialog extends JDialog {
 						}
 					}
 				}
-
+				String name = null;
+				try {
+					name = NameFind.getName(address);
+				} catch (Exception ex) {
+					name = "Unkown";
+				}
+				_addressNameText.setText(name);
 			}
 		};
 
