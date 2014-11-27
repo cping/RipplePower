@@ -45,6 +45,15 @@ final public class StringUtils {
 	private StringUtils() {
 	}
 
+	public static String join(String flag, Object... o) {
+		StringBuilder sbr = new StringBuilder();
+		for (int i = 0; i < o.length; i++) {
+			sbr.append(o[i]);
+			sbr.append(flag);
+		}
+		return sbr.toString();
+	}
+
 	public static String toLineBreaks(String[] lines) {
 		final StringBuilder sbr;
 		if (LangConfig.isLeftToRight()) {

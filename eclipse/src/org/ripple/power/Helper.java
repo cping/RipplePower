@@ -13,13 +13,13 @@ public class Helper {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static byte[] quarter(byte[] bytes) {
 		byte[] hash = new byte[16];
 		System.arraycopy(bytes, 0, hash, 0, 16);
 		return hash;
 	}
-	
+
 	public static byte[] quarterSha512(byte[] bytes) {
 		byte[] hash = new byte[16];
 		System.arraycopy(sha512(bytes), 0, hash, 0, 16);
@@ -29,7 +29,7 @@ public class Helper {
 	public static byte[] halfSHA512(byte[] bytesToHash) {
 		try {
 			MessageDigest sha512Digest = MessageDigest.getInstance("SHA-512");
-			byte [] bytesHash = sha512Digest.digest(bytesToHash);
+			byte[] bytesHash = sha512Digest.digest(bytesToHash);
 			byte[] first256BitsOfHash = copyOf(bytesHash, 32);
 			return first256BitsOfHash;
 		} catch (Exception e) {

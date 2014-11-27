@@ -54,6 +54,31 @@ public class Array<T> implements Closed {
 		}
 	}
 
+	public void addAll(Array<T> data) {
+		for (int i = 0; i < data.size(); i++) {
+			add(data.get(i));
+		}
+	}
+
+	public Array<T> concat(Array<T> data) {
+		Array<T> list = new Array<T>();
+		list.addAll(this);
+		list.addAll(data);
+		return list;
+	}
+
+	public Array<T> slice(int start) {
+		return slice(start,this.size());
+	}
+	
+	public Array<T> slice(int start, int end) {
+		Array<T> list = new Array<T>();
+		for (int i = start; i < end; i++) {
+			list.add(get(i));
+		}
+		return list;
+	}
+
 	public void add(T data) {
 		ArrayNode<T> newNode = new ArrayNode<T>();
 		ArrayNode<T> o = this._items.next;

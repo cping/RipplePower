@@ -217,24 +217,6 @@ public class NativeSupport {
 		return publicKeyHash;
 	}
 
-	public static void main(String[] args) {
-		long st = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
-			getNxtKey("DSB");
-		}
-		System.out.println(System.currentTimeMillis() - st);
-		st = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
-			getNxtKey("DSB");
-		}
-		System.out.println(System.currentTimeMillis() - st);
-		st = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++) {
-			getNxtKey("DSB");
-		}
-		System.out.println(System.currentTimeMillis() - st);
-	}
-
 	public static String getBitcoinPrivateKey(String secret) {
 		return getBitcoinPrivateKey(secret, false);
 	}
