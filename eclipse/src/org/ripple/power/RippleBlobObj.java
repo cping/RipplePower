@@ -19,8 +19,10 @@ import javax.script.ScriptEngineManager;
 import org.json.JSONObject;
 import org.ripple.power.collection.Array;
 import org.ripple.power.collection.ArrayByte;
+import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.password.PasswordEasy;
+import org.ripple.power.sjcl.BigNumber;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.HttpRequest;
@@ -185,8 +187,60 @@ public class RippleBlobObj {
 				String url = pakdf.getString("url");
 				String modulus = pakdf.getString("modulus");
 
-				System.out.println(url);
+				System.out.println("pakdf:"+pakdf);
+				System.out.println("host:"+host);
+				System.out.println("exponent:"+exponent);
+				System.out.println("alpha:"+alpha);
+				System.out.println("url:"+url);
+				System.out.println("modulus:"+modulus);
 				try {
+					
+					BigNumber iExponent = new BigNumber(exponent),
+				    	      iModulus  = new BigNumber(modulus),
+				    	      iAlpha    = new BigNumber(alpha);
+					System.out.println("FDF"+iExponent.toBits());
+				    String publicInfo  = StringUtils.join(":", "PAKDF_1_0_0:",host.length(),host,user.length(),
+				    user,purpose.length(),purpose);
+				    
+				    System.out.println(publicInfo);
+				    
+				    long publicSize = (long) Math.ceil(Math.min((7+iModulus.bitLength()) >>> 3, 256)/8);
+				    LongArray publicHash = BigNumber.fdh(publicInfo, publicSize);
+				    System.out.println("dddddddddd"+publicHash);
+				    
+				      String publicHex  = BigNumber.hex_fromBits(publicHash);
+				      BigNumber iPublic    = new BigNumber(publicHex).setBitM(0);
+
+					   // System.out.println("iPublic:"+iPublic.toBits());
+				      String secretInfo = publicInfo+":"+secret.length()+":"+secret+":";
+				      long secretSize = (7+iModulus.bitLength()) >>> 3;
+				      LongArray secretHash = BigNumber.fdh(secretInfo, secretSize);
+				      String secretHex  = BigNumber.hex_fromBits(secretHash);
+				      System.out.println(secretHex.toString());
+				      System.out.println(secretHex==null);
+				      System.out.println(iModulus.limbs==null);
+					    System.out.println("FDFD");
+				      BigNumber iSecret    = new BigNumber(secretHex).mod(iModulus);
+				
+					  if (iSecret.jacobi(iModulus) != 1) {
+				            iSecret = iSecret.mul(iAlpha).mod(iModulus);
+				      }
+					/*  BigNumber iRandom;
+					  for (;;) {
+					    iRandom = BigNumber.random(iModulus, 0);
+					    if (iRandom.jacobi(iModulus) == 1)
+					      break;
+					  }
+					  BigNumber iBlind   = iRandom.powermodMontgomery(iPublic.mul(iExponent), iModulus),
+						      iSignreq = iSecret.mulmod(iBlind, iModulus);
+						  String    signreq  = BigNumber.hex_fromBits(iSignreq.toBits());*/
+				  //  System.out.println(signreq);
+				    	/*	  var publicInfo = "PAKDF_1_0_0:"+host.length+":"+host+
+				    	        ":"+username.length+":"+username+
+				    	        ":"+purpose.length+":"+purpose+
+				    	        ":";
+					
+					
 					String result = loadData(host, exponent, modulus, alpha,
 							purpose, user, secret);
 					String[] split = StringUtils.split(result, ",");
@@ -232,7 +286,7 @@ public class RippleBlobObj {
 								}
 							}
 						}
-					}
+					}*/
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

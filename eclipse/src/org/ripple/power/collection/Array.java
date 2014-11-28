@@ -68,9 +68,9 @@ public class Array<T> implements Closed {
 	}
 
 	public Array<T> slice(int start) {
-		return slice(start,this.size());
+		return slice(start, this.size());
 	}
-	
+
 	public Array<T> slice(int start, int end) {
 		Array<T> list = new Array<T>();
 		for (int i = start; i < end; i++) {
@@ -145,6 +145,7 @@ public class Array<T> implements Closed {
 			return;
 		}
 		int size = _length - 1;
+
 		if (0 <= idx && idx <= size) {
 			ArrayNode<T> o = this._items.next;
 			int count = 0;
@@ -155,6 +156,11 @@ public class Array<T> implements Closed {
 			o.data = v;
 		} else if (idx == size) {
 			_items.data = v;
+		} else if (idx > size) {
+			for (int i = size; i < idx; i++) {
+				add(null);
+			}
+			set(idx, v);
 		}
 	}
 

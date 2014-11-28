@@ -5,45 +5,45 @@ import java.util.Arrays;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
 
-public class IntArray {
-	public int[] items;
+public class LongArray {
+	public long[] items;
 	public int length;
 	public boolean ordered;
 
-	public IntArray() {
-		this(true, 0);
+	public LongArray() {
+		this(true, CollectionUtils.INITIAL_CAPACITY);
 	}
 
-	public IntArray(int capacity) {
+	public LongArray(int capacity) {
 		this(true, capacity);
 	}
 
-	public IntArray(boolean ordered, int capacity) {
+	public LongArray(boolean ordered, int capacity) {
 		this.ordered = ordered;
-		items = new int[capacity];
+		items = new long[capacity];
 	}
 
-	public IntArray(IntArray array) {
+	public LongArray(LongArray array) {
 		this.ordered = array.ordered;
 		length = array.length;
-		items = new int[length];
+		items = new long[length];
 		System.arraycopy(array.items, 0, items, 0, length);
 	}
 
-	public IntArray(int[] array) {
+	public LongArray(long[] array) {
 		this(true, array, 0, array.length);
 	}
 
-	public IntArray(boolean ordered, int[] array, int startIndex, int count) {
+	public LongArray(boolean ordered, long[] array, int startIndex, int count) {
 		this(ordered, count);
 		length = count;
 		System.arraycopy(array, startIndex, items, 0, count);
 	}
 
-	public void unshift(int value) {
+	public void unshift(long value) {
 		if (length > 0) {
-			int[] items = this.items;
-			int[] newItems = new int[length + 1];
+			long[] items = this.items;
+			long[] newItems = new long[length + 1];
 			newItems[0] = value;
 			System.arraycopy(items, 0, newItems, 1, length);
 			this.length = newItems.length;
@@ -53,23 +53,23 @@ public class IntArray {
 		}
 	}
 
-	public void push(int value) {
+	public void push(long value) {
 		add(value);
 	}
 
-	public void add(int value) {
-		int[] items = this.items;
+	public void add(long value) {
+		long[] items = this.items;
 		if (length == items.length) {
 			items = relength(Math.max(8, (int) (length * 1.75f)));
 		}
 		items[length++] = value;
 	}
 
-	public void addAll(IntArray array) {
+	public void addAll(LongArray array) {
 		addAll(array, 0, array.length);
 	}
 
-	public void addAll(IntArray array, int offset, int length) {
+	public void addAll(LongArray array, int offset, int length) {
 		if (offset + length > array.length)
 			throw new IllegalArgumentException(
 					"offset + length must be <= length: " + offset + " + "
@@ -77,27 +77,28 @@ public class IntArray {
 		addAll(array.items, offset, length);
 	}
 
-	public void addAll(int... array) {
+	public void addAll(long... array) {
 		addAll(array, 0, array.length);
 	}
 
-	public void addAll(int[] array, int offset, int length) {
-		int[] items = this.items;
+	public void addAll(long[] array, int offset, int length) {
+		long[] items = this.items;
 		int lengthNeeded = length + length;
-		if (lengthNeeded > items.length)
+		if (lengthNeeded > items.length) {
 			items = relength(Math.max(8, (int) (lengthNeeded * 1.75f)));
+		}
 		System.arraycopy(array, offset, items, length, length);
 		length += length;
 	}
 
-	public int get(int index) {
+	public long get(int index) {
 		if (index >= length) {
 			return -1;
 		}
 		return items[index];
 	}
-	
-	public void set(int index, int value) {
+
+	public void set(int index, long value) {
 		if (index >= length) {
 			int size = length;
 			for (int i = size; i < index + 1; i++) {
@@ -123,11 +124,12 @@ public class IntArray {
 		items[index] *= value;
 	}
 
-	public void insert(int index, int value) {
-		if (index > length)
+	public void insert(int index, long value) {
+		if (index > length) {
 			throw new IndexOutOfBoundsException("index can't be > length: "
 					+ index + " > " + length);
-		int[] items = this.items;
+		}
+		long[] items = this.items;
 		if (length == items.length)
 			items = relength(Math.max(8, (int) (length * 1.75f)));
 		if (ordered)
@@ -145,39 +147,39 @@ public class IntArray {
 		if (second >= length)
 			throw new IndexOutOfBoundsException("second can't be >= length: "
 					+ second + " >= " + length);
-		int[] items = this.items;
-		int firstValue = items[first];
+		long[] items = this.items;
+		long firstValue = items[first];
 		items[first] = items[second];
 		items[second] = firstValue;
 	}
 
-	public boolean contains(int value) {
+	public boolean contains(long value) {
 		int i = length - 1;
-		int[] items = this.items;
+		long[] items = this.items;
 		while (i >= 0)
 			if (items[i--] == value)
 				return true;
 		return false;
 	}
 
-	public int indexOf(int value) {
-		int[] items = this.items;
+	public int indexOf(long value) {
+		long[] items = this.items;
 		for (int i = 0, n = length; i < n; i++)
 			if (items[i] == value)
 				return i;
 		return -1;
 	}
 
-	public int lastIndexOf(int value) {
-		int[] items = this.items;
+	public int lastIndexOf(long value) {
+		long[] items = this.items;
 		for (int i = length - 1; i >= 0; i--)
 			if (items[i] == value)
 				return i;
 		return -1;
 	}
 
-	public boolean removeValue(int value) {
-		int[] items = this.items;
+	public boolean removeValue(long value) {
+		long[] items = this.items;
 		for (int i = 0, n = length; i < n; i++) {
 			if (items[i] == value) {
 				removeIndex(i);
@@ -187,12 +189,12 @@ public class IntArray {
 		return false;
 	}
 
-	public int removeIndex(int index) {
+	public long removeIndex(int index) {
 		if (index >= length)
 			throw new IndexOutOfBoundsException("index can't be >= length: "
 					+ index + " >= " + length);
-		int[] items = this.items;
-		int value = items[index];
+		long[] items = this.items;
+		long value = items[index];
 		length--;
 		if (ordered) {
 			System.arraycopy(items, index + 1, items, index, length - index);
@@ -211,7 +213,7 @@ public class IntArray {
 			throw new IndexOutOfBoundsException("start can't be > end: "
 					+ start + " > " + end);
 		}
-		int[] items = this.items;
+		long[] items = this.items;
 		int count = end - start + 1;
 		if (ordered) {
 			System.arraycopy(items, start + count, items, start, length
@@ -224,12 +226,12 @@ public class IntArray {
 		length -= count;
 	}
 
-	public boolean removeAll(IntArray array) {
+	public boolean removeAll(LongArray array) {
 		int length = this.length;
 		int startlength = length;
-		int[] items = this.items;
+		long[] items = this.items;
 		for (int i = 0, n = array.length; i < n; i++) {
-			int item = array.get(i);
+			long item = array.get(i);
 			for (int ii = 0; ii < length; ii++) {
 				if (item == items[ii]) {
 					removeIndex(ii);
@@ -241,19 +243,19 @@ public class IntArray {
 		return length != startlength;
 	}
 
-	public int pop() {
+	public long pop() {
 		return items[--length];
 	}
 
-	public int shift() {
+	public long shift() {
 		return removeIndex(0);
 	}
 
-	public int peek() {
+	public long peek() {
 		return items[length - 1];
 	}
 
-	public int first() {
+	public long first() {
 		if (length == 0) {
 			throw new IllegalStateException("Array is empty.");
 		}
@@ -264,22 +266,22 @@ public class IntArray {
 		length = 0;
 	}
 
-	public int[] shrink() {
+	public long[] shrink() {
 		if (items.length != length)
 			relength(length);
 		return items;
 	}
 
-	public int[] ensureCapacity(int additionalCapacity) {
+	public long[] ensureCapacity(int additionalCapacity) {
 		int lengthNeeded = length + additionalCapacity;
 		if (lengthNeeded > items.length)
 			relength(Math.max(8, lengthNeeded));
 		return items;
 	}
 
-	protected int[] relength(int newlength) {
-		int[] newItems = new int[newlength];
-		int[] items = this.items;
+	protected long[] relength(int newlength) {
+		long[] newItems = new long[newlength];
+		long[] items = this.items;
 		System.arraycopy(items, 0, newItems, 0,
 				Math.min(length, newItems.length));
 		this.items = newItems;
@@ -291,20 +293,20 @@ public class IntArray {
 	}
 
 	public void reverse() {
-		int[] items = this.items;
+		long[] items = this.items;
 		for (int i = 0, lastIndex = length - 1, n = length / 2; i < n; i++) {
 			int ii = lastIndex - i;
-			int temp = items[i];
+			long temp = items[i];
 			items[i] = items[ii];
 			items[ii] = temp;
 		}
 	}
 
 	public void shuffle() {
-		int[] items = this.items;
+		long[] items = this.items;
 		for (int i = length - 1; i >= 0; i--) {
 			int ii = MathUtils.random(i);
-			int temp = items[i];
+			long temp = items[i];
 			items[i] = items[ii];
 			items[ii] = temp;
 		}
@@ -315,9 +317,10 @@ public class IntArray {
 			length = newlength;
 	}
 
-	public int random() {
-		if (length == 0)
+	public long random() {
+		if (length == 0) {
 			return 0;
+		}
 		return items[MathUtils.random(0, length - 1)];
 	}
 
@@ -330,9 +333,9 @@ public class IntArray {
 	public boolean equals(Object object) {
 		if (object == this)
 			return true;
-		if (!(object instanceof IntArray))
+		if (!(object instanceof LongArray))
 			return false;
-		IntArray array = (IntArray) object;
+		LongArray array = (LongArray) object;
 		int n = length;
 		if (n != array.length)
 			return false;
@@ -345,7 +348,7 @@ public class IntArray {
 	public String toString(String separator) {
 		if (length == 0)
 			return "";
-		int[] items = this.items;
+		long[] items = this.items;
 		StringBuilder buffer = new StringBuilder(32);
 		buffer.append(items[0]);
 		for (int i = 1; i < length; i++) {
@@ -355,11 +358,17 @@ public class IntArray {
 		return buffer.toString();
 	}
 
-	static public IntArray with(int... array) {
-		return new IntArray(array);
+	static public LongArray with(long... array) {
+		return new LongArray(array);
 	}
 
-	public static int[] slice(int[] array, int begin, int end) {
+	public LongArray splice(int begin, int end) {
+		LongArray newLong = new LongArray(LongArray.slice(items, begin, end));
+		removeRange(begin, end);
+		return newLong;
+	}
+
+	public static long[] slice(long[] array, int begin, int end) {
 		if (begin > end) {
 			throw new RuntimeException();
 		}
@@ -370,39 +379,43 @@ public class IntArray {
 			end = array.length + end;
 		}
 		int elements = end - begin;
-		int[] ret = new int[elements];
+		long[] ret = new long[elements];
 		System.arraycopy(array, begin, ret, 0, elements);
 		return ret;
 	}
 
-	public static int[] slice(int[] array, int begin) {
+	public static long[] slice(long[] array, int begin) {
 		return slice(array, begin, array.length);
 	}
 
-	public IntArray slice(int length) {
-		return new IntArray(slice(this.items, length));
+	public LongArray slice(int length) {
+		return new LongArray(slice(this.items, length));
 	}
 
-	public IntArray slice(int begin, int end) {
-		return new IntArray(slice(this.items, begin, end));
+	public LongArray slice(int begin, int end) {
+		return new LongArray(slice(this.items, begin, end));
 	}
 
-	public static int[] concat(int[] array, int[] other) {
-		int[] ret = new int[array.length + other.length];
-		System.arraycopy(array, 0, ret, 0, array.length);
-		System.arraycopy(other, 0, ret, array.length, other.length);
+	public static long[] concat(long[] array, long[] other) {
+		return concat(array, array.length, other, other.length);
+	}
+
+	public static long[] concat(long[] array, int alen, long[] other, int blen) {
+		long[] ret = new long[alen + blen];
+		System.arraycopy(array, 0, ret, 0, alen);
+		System.arraycopy(other, 0, ret, alen, blen);
 		return ret;
 	}
 
-	public IntArray concat(IntArray o) {
-		return new IntArray(concat(this.items, o.items));
+	public LongArray concat(LongArray o) {
+		return new LongArray(concat(this.items, this.length, o.items, o.length));
 	}
 
 	public String toString(char split) {
 		if (length == 0) {
 			return "[]";
 		}
-		int[] items = this.items;
+		long[] items = this.items;
 		StringBuilder buffer = new StringBuilder(
 				CollectionUtils.INITIAL_CAPACITY);
 		buffer.append('[');
