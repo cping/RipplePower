@@ -1,4 +1,4 @@
-package org.ripple.power;
+package org.ripple.power.sjcl;
 
 import java.util.AbstractList;
 

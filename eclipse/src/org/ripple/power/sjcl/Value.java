@@ -1,4 +1,4 @@
-package org.ripple.power;
+package org.ripple.power.sjcl;
 
 public interface Value<A> {
 A get();

@@ -1,5 +1,4 @@
 package org.ripple.power;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -40,6 +39,7 @@ public class RippleBlobObj {
 	private static ScriptEngine engine = null;
 
 	private static void initSjcl() throws Exception {
+
 		if (engine == null) {
 			ScriptEngineManager factory = new ScriptEngineManager();
 			engine = factory.getEngineByName("js");
@@ -92,93 +92,6 @@ public class RippleBlobObj {
 		initSjcl();
 		Invocable inv = (Invocable) engine;
 		return (String) inv.invokeFunction("decrypt", key, data);
-	}
-
-	public static class BitArray {
-
-		public static Array<Integer> bitSlice(Array<Integer> a, int bstart,
-				int bend) {
-			a = _shiftRight(a.slice(bstart / 32), 32 - (bstart & 31), 0, null)
-					.slice(1);
-			return (bend == 0) ? a : clamp(a, bend - bstart);
-		}
-
-		public static int getPartial(int x) {
-			long r = Math.round(x / 0x10000000000l);
-			return (int) (r | 32);
-		}
-
-		public static Array<Integer> _shiftRight(Array<Integer> a, int shift,
-				int carry, Array<Integer> out) {
-			int i, last2 = 0;
-			long shift2;
-			if (out == null) {
-				out = new Array<Integer>();
-			}
-
-			for (; shift >= 32; shift -= 32) {
-				out.add(carry);
-				carry = 0;
-			}
-			if (shift == 0) {
-				return out.concat(a);
-			}
-
-			for (i = 0; i < a.size(); i++) {
-				out.add(carry | a.get(i) >>> shift);
-				carry = a.get(i) << (32 - shift);
-			}
-			last2 = a.size() > 0 ? a.get(a.size() - 1) : 0;
-			shift2 = getPartial(last2);
-			out.add(partial((int) (shift + shift2 & 31),
-					(shift + shift2 > 32) ? carry : out.pop(), true));
-			return out;
-		}
-
-		public static Array<Integer> _xor4(int[] x, int[] y) {
-			Array<Integer> out = new Array<Integer>();
-			out.add(x[0] ^ y[0]);
-			out.add(x[1] ^ y[1]);
-			out.add(x[2] ^ y[2]);
-			out.add(x[3] ^ y[3]);
-
-			return out;
-		}
-
-		public static Array<Integer> clamp(Array<Integer> a, int len) {
-			if (a.size() * 32 < len) {
-				return a;
-			}
-			a = a.slice(0, (int) Math.ceil(len / 32));
-			int l = a.size();
-			len = len & 31;
-			if (l > 0 && len > 0) {
-				a.set(l - 1,
-						partial(len, a.get(l - 1) & 0x80000000 >> (len - 1),
-								true));
-			}
-			return a;
-		}
-
-		public static Array<Integer> concat(Array<Integer> a1, Array<Integer> a2) {
-			if (a1.size() == 0 || a2.size() == 0) {
-				return a1.concat(a2);
-			}
-			int last = a1.get(a1.size() - 1), shift = getPartial(last);
-			if (shift == 32) {
-				return a1.concat(a2);
-			} else {
-				return _shiftRight(a2, shift, last | 0,
-						a1.slice(0, a1.size() - 1));
-			}
-		}
-
-		public static int partial(int len, int x, boolean _end) {
-			if (len == 32) {
-				return x;
-			}
-			return (int) ((_end ? x | 0 : x << (32 - len)) + len * 0x10000000000l);
-		}
 	}
 
 	public static class ExampleData {
