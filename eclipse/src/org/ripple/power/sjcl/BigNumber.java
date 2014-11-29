@@ -1,8 +1,10 @@
 package org.ripple.power.sjcl;
 
+import java.io.ByteArrayInputStream;
 
 import org.ripple.power.CoinUtils;
 import org.ripple.power.collection.Array;
+import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
 import com.ripple.crypto.sjcljson.JSEscape;
@@ -638,7 +640,8 @@ public class BigNumber {
 		BigNumber out = new BigNumber();
 		LongArray words = new LongArray();
 		long l = Math.min(JS.OR(this.bitLength(), 0x100000000l).longValue(),
-				BitArray.bitLength(bits)), e = l % JS.OR(radix ,radix).longValue();
+				BitArray.bitLength(bits)), e = l
+				% JS.OR(radix, radix).longValue();
 		words.set(0, BitArray.extract(bits, 0, (int) e));
 		for (; e < l; e += radix) {
 			words.unshift(BitArray.extract(bits, (int) e, (int) radix));
@@ -764,6 +767,25 @@ public class BigNumber {
 			this.limbs = itArray.slice(0);
 		} else if (it instanceof Number) {
 			this.limbs = new LongArray(new long[] { ((Number) it).intValue() });
+			this.normalize();
+		} else if (it instanceof byte[]) {
+			this.limbs = new LongArray();
+			byte[] buffer = (byte[]) it;
+			ByteArrayInputStream ins = new ByteArrayInputStream(buffer);
+			int c = -1;
+			for (; (c = ins.read()) != -1;) {
+				limbs.add(c);
+			}
+			LSystem.close(ins);
+			this.normalize();
+		} else if (it instanceof ArrayByte) {
+			this.limbs = new LongArray();
+			ArrayByte buffer = (ArrayByte) it;
+			int c = -1;
+			for (; (c = buffer.readByte()) != -1;) {
+				limbs.add(c);
+			}
+			buffer.close();
 			this.normalize();
 		}
 	}
@@ -974,9 +996,12 @@ public class BigNumber {
 			LongArray hash = SHA512.hash(res);
 
 			output = BitArray.concat(output, hash);
+
 			counter++;
+
 		}
 		output = BitArray.clamp(output, bitlen);
+
 		return output;
 	}
 

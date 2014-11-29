@@ -11,7 +11,7 @@ public class LongArray {
 	public boolean ordered;
 
 	public LongArray() {
-		this(true, CollectionUtils.INITIAL_CAPACITY);
+		this(true, 16);
 	}
 
 	public LongArray(int capacity) {
@@ -190,9 +190,10 @@ public class LongArray {
 	}
 
 	public long removeIndex(int index) {
-		if (index >= length)
+		if (index >= length) {
 			throw new IndexOutOfBoundsException("index can't be >= length: "
 					+ index + " >= " + length);
+		}
 		long[] items = this.items;
 		long value = items[index];
 		length--;
@@ -363,9 +364,15 @@ public class LongArray {
 	}
 
 	public LongArray splice(int begin, int end) {
-		LongArray newLong = new LongArray(LongArray.slice(items, begin, end));
-		removeRange(begin, end);
-		return newLong;
+		LongArray longs = new LongArray(slice(begin, end));
+		if (end - begin >= length) {
+			items = new long[0];
+			length = 0;
+			return longs;
+		} else {
+			removeRange(begin, end - 1);
+		}
+		return longs;
 	}
 
 	public static long[] slice(long[] array, int begin, int end) {

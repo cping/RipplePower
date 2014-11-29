@@ -11,10 +11,10 @@ public class BitArray {
 		long x;
 		int sh = (int) Math.floor((-bstart - blength) & 31);
 		if (((bstart + blength - 1 ^ bstart) & -32) > 0) {
-			x = (a.get(bstart / 32 | 0) << (32 - sh))
-					^ (a.get(bstart / 32 + 1 | 0) >>> sh);
+			x = JS.MOVE_LeftShift(a.get(bstart / 32 | 0), (32 - sh))
+					^ JS.MOVE_RightUShift(a.get(bstart / 32 + 1 | 0), sh);
 		} else {
-			x = a.get(bstart / 32 | 0) >>> sh;
+			x = JS.MOVE_LeftShift(a.get(bstart / 32 | 0), sh);
 		}
 		return x & ((1 << blength) - 1);
 	}
@@ -44,12 +44,12 @@ public class BitArray {
 			return a1.concat(a2);
 		}
 		long last = a1.get(a1.length - 1), shift = getPartial(last);
-		//ok
+		// ok
 		if (shift == 32) {
 			return a1.concat(a2);
 		} else {
-			System.out.println(a2);
-			return _shiftRight(a2, shift, last | 0, a1.slice(0, a1.length - 1));
+			return _shiftRight(a2, shift, (int) last | 0,
+					a1.slice(0, a1.length - 1));
 		}
 	}
 
@@ -71,8 +71,8 @@ public class BitArray {
 		if (len == 32) {
 			return x;
 		}
-	
-		return ((_end>0 ? (int)x | 0 : (int)x << (32 - len)) + len * 0x10000000000l);
+
+		return ((_end > 0 ? (int) x | 0 : (int) x << (32 - len)) + len * 0x10000000000l);
 	}
 
 	public static LongArray _shiftRight(LongArray a, int shift) {
@@ -91,23 +91,22 @@ public class BitArray {
 			out.push(carry);
 			carry = 0;
 		}
-	
+
 		if (shift == 0) {
 			return out.concat(a);
 		}
 
 		for (i = 0; i < a.length; i++) {
-			out.push(carry | a.get(i) >>> shift);
+			out.push(carry | JS.MOVE_RightUShift(a.get(i), (int) shift));
 			carry = a.get(i) << (32 - shift);
 		}
 
-		
 		last2 = a.length > 0 ? a.get(a.length - 1) : 0;
-		
+
 		shift2 = getPartial(last2);
 		out.push(partial(shift + shift2 & 31, (shift + shift2 > 32) ? carry
 				: out.pop(), 1));
-		
+
 		return out;
 	}
 
@@ -126,7 +125,9 @@ public class BitArray {
 		long v, m = 0xff00;
 		for (i = 0; i < a.length; ++i) {
 			v = a.get(i);
-			a.set(i, (v >>> 24) | ((v >>> 8) & m) | ((v & m) << 8) | (v << 24));
+			a.set(i, JS.MOVE_RightUShift(v, 24)
+					| (JS.MOVE_RightUShift(v, 8) & m) | ((v & m) << 8)
+					| (v << 24));
 		}
 		return a;
 	}
