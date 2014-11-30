@@ -55,6 +55,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HostnameVerifier;
@@ -69,6 +70,24 @@ import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 
 public class HttpRequest {
+
+	public static boolean isValidRedirectUrl(String url) {
+		return url != null && url.startsWith("/") || isAbsoluteUrl(url);
+	}
+
+	public static boolean isAbsoluteUrl(String url) {
+		final Pattern ABSOLUTE_URL = Pattern.compile("\\A[a-z.+-]+://.*",
+				Pattern.CASE_INSENSITIVE);
+		return ABSOLUTE_URL.matcher(url).matches();
+	}
+
+	public static boolean url(String url) {
+		if (url == null) {
+			return false;
+		}
+		String regex = "^(https?|ftp|wss)://(-\\.)?([^\\s/?\\.#-]+\\.?)+(/[\\S ]*)?$";
+		return Pattern.matches(regex, url);
+	}
 
 	public static final String CHARSET_UTF8 = "UTF-8";
 

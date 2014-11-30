@@ -193,39 +193,30 @@ public class RippleBlobObj {
 				System.out.println("alpha:"+alpha);
 				System.out.println("url:"+url);
 				System.out.println("modulus:"+modulus);
-				try {
-					/*
+			
 					BigNumber iExponent = new BigNumber(exponent),
 				    	      iModulus  = new BigNumber(modulus),
 				    	      iAlpha    = new BigNumber(alpha);
-					System.out.println("FDF"+iExponent.toBits());
+			
 				    String publicInfo  = StringUtils.join(":", "PAKDF_1_0_0:",host.length(),host,user.length(),
 				    user,purpose.length(),purpose);
 				    
-				    System.out.println(publicInfo);
-				    
 				    long publicSize = (long) Math.ceil(Math.min((7+iModulus.bitLength()) >>> 3, 256)/8);
 				    LongArray publicHash = BigNumber.fdh(publicInfo, publicSize);
-				    System.out.println("dddddddddd"+publicHash);
 				    
 				      String publicHex  = BigNumber.hex_fromBits(publicHash);
 				      BigNumber iPublic    = new BigNumber(publicHex).setBitM(0);
 
-					   // System.out.println("iPublic:"+iPublic.toBits());
 				      String secretInfo = publicInfo+":"+secret.length()+":"+secret+":";
 				      long secretSize = (7+iModulus.bitLength()) >>> 3;
 				      LongArray secretHash = BigNumber.fdh(secretInfo, secretSize);
 				      String secretHex  = BigNumber.hex_fromBits(secretHash);
-				      System.out.println(secretHex.toString());
-				      System.out.println(secretHex==null);
-				      System.out.println(iModulus.limbs==null);
-					    System.out.println("FDFD");
 				      BigNumber iSecret    = new BigNumber(secretHex).mod(iModulus);
-				
+		
 					  if (iSecret.jacobi(iModulus) != 1) {
 				            iSecret = iSecret.mul(iAlpha).mod(iModulus);
 				      }
-					/*  BigNumber iRandom;
+					  BigNumber iRandom;
 					  for (;;) {
 					    iRandom = BigNumber.random(iModulus, 0);
 					    if (iRandom.jacobi(iModulus) == 1)
@@ -233,28 +224,22 @@ public class RippleBlobObj {
 					  }
 					  BigNumber iBlind   = iRandom.powermodMontgomery(iPublic.mul(iExponent), iModulus),
 						      iSignreq = iSecret.mulmod(iBlind, iModulus);
-						  String    signreq  = BigNumber.hex_fromBits(iSignreq.toBits());*/
-				  //  System.out.println(signreq);
-				    	/*	  var publicInfo = "PAKDF_1_0_0:"+host.length+":"+host+
-				    	        ":"+username.length+":"+username+
-				    	        ":"+purpose.length+":"+purpose+
-				    	        ":";
+					String    signreq  = BigNumber.hex_fromBits(iSignreq.toBits());
+				  
 					
-					
-					String result = loadData(host, exponent, modulus, alpha,
-							purpose, user, secret);
-					String[] split = StringUtils.split(result, ",");
-					String publicinfo = split[0];
-					String signreq = split[1];
-					String random = split[2];
-					modulus = split[3];
 					HttpRequest post = HttpRequest
 							.post("https://auth1.ripple.com/api/sign");
-					post.send("info=" + publicinfo + "&signreq=" + signreq);
-					if (post.ok()) {
+					post.send("info=" + publicInfo + "&signreq=" + signreq);
+					if(post.ok()){
 						JSONObject json = new JSONObject(post.body());
-						String signres = json.getString("signres");
-						split = StringUtils.split(
+						System.out.println(json);
+					}
+				
+					//if (post.ok()) {
+					//	JSONObject json = new JSONObject(post.body());
+					//	String signres = json.getString("signres");
+						
+					/*	split = StringUtils.split(
 								loadData2("login",signres, random, modulus), ",");
 						String id = split[0];
 						String crypt = split[1];
@@ -286,10 +271,11 @@ public class RippleBlobObj {
 								}
 							}
 						}
-					}*/
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
+				}*/
+					
 
 			}
 

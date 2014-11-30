@@ -3,93 +3,19 @@ package org.ripple.power.sjcl;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.regex.Pattern;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
-import org.ripple.power.CoinUtils;
 import org.ripple.power.collection.Array;
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
+
 import com.ripple.crypto.sjcljson.JSEscape;
 
 public class BigNumber {
 
-	public static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.!~*'()";
-
-	public static String encodeURIComponent(String input) {
-		if (input == null || "".equals(input)) {
-			return input;
-		}
-		int l = input.length();
-		StringBuilder o = new StringBuilder(l * 3);
-		try {
-			for (int i = 0; i < l; i++) {
-				String e = input.substring(i, i + 1);
-				if (ALLOWED_CHARS.indexOf(e) == -1) {
-					byte[] b = e.getBytes(LSystem.encoding);
-					o.append(CoinUtils.toHex(b));
-					continue;
-				}
-				o.append(e);
-			}
-			return o.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return input;
-	}
-
-	public static String decodeURIComponent(String encodedURI) {
-		char actualChar;
-		StringBuffer buffer = new StringBuffer();
-		int bytePattern, sumb = 0;
-		for (int i = 0, more = -1; i < encodedURI.length(); i++) {
-			actualChar = encodedURI.charAt(i);
-			switch (actualChar) {
-			case '%': {
-				actualChar = encodedURI.charAt(++i);
-				int hb = (Character.isDigit(actualChar) ? actualChar - '0'
-						: 10 + Character.toLowerCase(actualChar) - 'a') & 0xF;
-				actualChar = encodedURI.charAt(++i);
-				int lb = (Character.isDigit(actualChar) ? actualChar - '0'
-						: 10 + Character.toLowerCase(actualChar) - 'a') & 0xF;
-				bytePattern = (hb << 4) | lb;
-				break;
-			}
-			case '+': {
-				bytePattern = ' ';
-				break;
-			}
-			default: {
-				bytePattern = actualChar;
-			}
-			}
-			if ((bytePattern & 0xc0) == 0x80) {
-				sumb = (sumb << 6) | (bytePattern & 0x3f);
-				if (--more == 0) {
-					buffer.append((char) sumb);
-				}
-			} else if ((bytePattern & 0x80) == 0x00) {
-				buffer.append((char) bytePattern);
-			} else if ((bytePattern & 0xe0) == 0xc0) {
-				sumb = bytePattern & 0x1f;
-				more = 1;
-			} else if ((bytePattern & 0xf0) == 0xe0) {
-				sumb = bytePattern & 0x0f;
-				more = 2;
-			} else if ((bytePattern & 0xf8) == 0xf0) {
-				sumb = bytePattern & 0x07;
-				more = 3;
-			} else if ((bytePattern & 0xfc) == 0xf8) {
-				sumb = bytePattern & 0x03;
-				more = 4;
-			} else {
-				sumb = bytePattern & 0x01;
-				more = 5;
-			}
-		}
-		return buffer.toString();
-	}
+	private final static String base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 	class Montgomery {
 
@@ -152,6 +78,29 @@ public class BigNumber {
 			return this.reduce(x.copy());
 		};
 
+	}
+
+	public static String encodeURIComponent(String s) {
+		try {
+			return URLEncoder.encode(s, LSystem.encoding)
+					.replaceAll("\\+", "%20").replaceAll("\\%21", "!")
+					.replaceAll("\\%27", "'").replaceAll("\\%28", "(")
+					.replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
+		} catch (Exception e) {
+			return s;
+		}
+	}
+
+	public static String decodeURIComponent(String s) {
+		try {
+			s = s.replaceAll("%20", "\\+").replaceAll("!", "\\%21")
+					.replaceAll("'", "\\%27").replaceAll("(", "\\%28")
+					.replaceAll(")", "\\%29").replaceAll("~", "\\%7E");
+
+			return URLDecoder.decode(s, LSystem.encoding);
+		} catch (Exception e) {
+			return s;
+		}
 	}
 
 	public final static BigNumber ZERO = new BigNumber(0);
@@ -977,18 +926,8 @@ public class BigNumber {
 		return decodeURIComponent(JSEscape.escape(out));
 	}
 
-	static boolean url(String url) {
-		if (url == null) {
-			return false;
-		}
-		String regex = "(?i)^(http://)?(www.)?[a-z0-9-_]+.[a-z]{2,3}(.[a-z]{2,3})?.*";
-		return Pattern.matches(regex, url);
-	}
-
 	public static LongArray utf8_toBits(String str) {
-		if (url(str)) {
-			str = JSEscape.unescape(encodeURIComponent(str));
-		}
+		str = JSEscape.unescape(encodeURIComponent(str));
 		LongArray out = new LongArray();
 		int i, tmp = 0;
 		for (i = 0; i < str.length(); i++) {
@@ -1000,6 +939,101 @@ public class BigNumber {
 		}
 		if ((i & 3) > 0) {
 			out.push(BitArray.partial(8 * (i & 3), tmp));
+		}
+		return out;
+	}
+
+	public static LongArray bytes_fromBits(LongArray arr) {
+		LongArray out = new LongArray();
+		long bl = BitArray.bitLength(arr);
+		int i = 0;
+		long tmp = 0;
+		for (i = 0; i < bl / 8; i++) {
+			if ((i & 3) == 0) {
+				tmp = arr.get(i / 4);
+			}
+			out.push(JS.MOVE_RightUShift(tmp, 24));
+			tmp <<= 8;
+		}
+		return out;
+	}
+
+	public static LongArray bytes_toBits(byte[] bytes) {
+		LongArray out = new LongArray();
+		int i = 0;
+		long tmp = 0;
+		for (i = 0; i < bytes.length; i++) {
+			tmp = tmp << 8 | bytes[i];
+			if ((i & 3) == 3) {
+				out.push(tmp);
+				tmp = 0;
+			}
+		}
+		if ((i & 3) > 0) {
+			out.push(BitArray.partial(8 * (i & 3), tmp));
+		}
+		return out;
+	}
+
+	public static String base64_fromBits(LongArray arr) {
+		return base64_fromBits(arr, true, true);
+	}
+
+	public static String base64_fromBits(LongArray arr, boolean _noEquals, boolean _url) {
+		String out = "";
+		int i, bits = 0;
+		String c = base64_chars;
+		long ta = 0, bl = BitArray.bitLength(arr);
+		if (_url) {
+			c = c.substring(0, 62) + "-_";
+		}
+		for (i = 0; out.length() * 6 < bl;) {
+			out += c.charAt((int) JS.MOVE_RightUShift(
+					JS.MOVE_RightUShift(ta ^ arr.get(i), bits), 26));
+			if (bits < 6) {
+				ta = arr.get(i) << (6 - bits);
+				bits += 26;
+				i++;
+			} else {
+				ta <<= 6;
+				bits -= 6;
+			}
+		}
+		while (((out.length() & 3) > 0) && !_noEquals) {
+			out += "=";
+		}
+		return out;
+	}
+
+	public static LongArray toBits(String str) {
+		return toBits(str, true);
+	}
+
+	public static LongArray toBits(String str, boolean _url) {
+		str = str.replace("=", "");
+		LongArray out = new LongArray();
+		int i, bits = 0;
+		String c = base64_chars;
+		long ta = 0, x;
+		if (_url) {
+			c = c.substring(0, 62) + "-_";
+		}
+		for (i = 0; i < str.length(); i++) {
+			x = c.indexOf(str.charAt(i));
+			if (x < 0) {
+				throw new RuntimeException("this isn't base64!");
+			}
+			if (bits > 26) {
+				bits -= 26;
+				out.push(ta ^ x >>> bits);
+				ta = x << (32 - bits);
+			} else {
+				bits += 6;
+				ta ^= x << (32 - bits);
+			}
+		}
+		if ((bits & 56) > 0) {
+			out.push(BitArray.partial(bits & 56, ta, 1));
 		}
 		return out;
 	}

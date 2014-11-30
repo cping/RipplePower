@@ -200,8 +200,8 @@ public class JS {
 		return (v.intValue() >> pos);
 	}
 
-	public static long get(long v) {
-		return (int) v;
+	public static long get(Number v) {
+		return v.intValue();
 	}
 
 }

@@ -395,8 +395,8 @@ public class IntArray {
 		return slice(array, begin, array.length);
 	}
 
-	public IntArray slice(int length) {
-		return new IntArray(slice(this.items, length));
+	public IntArray slice(int size) {
+		return new IntArray(slice(this.items, size, this.length));
 	}
 
 	public IntArray slice(int begin, int end) {
