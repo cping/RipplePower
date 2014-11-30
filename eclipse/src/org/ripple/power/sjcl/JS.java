@@ -170,34 +170,34 @@ public class JS {
 		return bytes;
 	}
 
-	public static long MOVE_LeftShift(long v, int pos) {
-		return (int) (v << pos);
+	public static long MOVE_LeftShift(Number v, int pos) {
+		return (int) (v.intValue() << pos);
 	}
 
-	public static long MOVE_RightUShift(long v, int pos) {
+	public static long MOVE_RightUShift(Number v, int pos) {
 		if (pos == 0) {
-			String bin = Long.toBinaryString(v >>> pos);
+			String bin = Long.toBinaryString(v.longValue());
 			if (bin.length() > 31) {
 				bin = bin.substring(bin.length() - 32, bin.length());
 			} else {
-				return (v);
+				return (v.intValue());
 			}
 			return new BigInteger(bin, 2).longValue();
 		}
-		return ((int) v >>> pos);
+		return (v.intValue() >>> pos);
 	}
 
-	public static long MOVE_RightShift(long v, int pos) {
+	public static long MOVE_RightShift(Number v, int pos) {
 		if (pos == 0) {
-			String bin = Long.toBinaryString(v >> pos);
+			String bin = Long.toBinaryString(v.longValue());
 			if (bin.length() > 31) {
 				bin = bin.substring(bin.length() - 32, bin.length());
 			} else {
-				return (v);
+				return (v.intValue());
 			}
 			return new BigInteger(bin, 2).longValue();
 		}
-		return ((int) v >> pos);
+		return (v.intValue() >> pos);
 	}
 
 	public static long get(long v) {

@@ -194,7 +194,7 @@ public class RippleBlobObj {
 				System.out.println("url:"+url);
 				System.out.println("modulus:"+modulus);
 				try {
-					
+					/*
 					BigNumber iExponent = new BigNumber(exponent),
 				    	      iModulus  = new BigNumber(modulus),
 				    	      iAlpha    = new BigNumber(alpha);

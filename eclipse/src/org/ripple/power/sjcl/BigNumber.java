@@ -1,6 +1,9 @@
 package org.ripple.power.sjcl;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.regex.Pattern;
 
 import org.ripple.power.CoinUtils;
 import org.ripple.power.collection.Array;
@@ -152,16 +155,18 @@ public class BigNumber {
 	}
 
 	public final static BigNumber ZERO = new BigNumber(0);
+	public final static BigNumber ONE = new BigNumber(1);
+
 	public long radix = 24;
 	public long maxMul = 8;
 	public LongArray limbs;
 	public long placeVal = (long) Math.pow(2, radix);
-	public long ipv = 1 / placeVal;
+	public BigDecimal ipv = new BigDecimal(1d / placeVal);
 	public long radixMask = (1 << radix) - 1;
 	public long exponent;
 
-	public BigNumber(int it) {
-		initWith(it);
+	public static BigNumber bn(Object it) {
+		return new BigNumber(it);
 	}
 
 	public BigNumber(Object it) {
@@ -169,7 +174,7 @@ public class BigNumber {
 	}
 
 	public BigNumber() {
-		initWith(null);
+		initWith(0);
 	}
 
 	public LongArray get() {
@@ -181,13 +186,13 @@ public class BigNumber {
 	}
 
 	public String toString() {
-		this.normalize();
+		this.fullReduce();
 		String out = "";
 		int i;
 		String s;
 		LongArray l = this.limbs;
 		for (i = 0; i < this.limbs.length; i++) {
-			s = Long.toHexString(l.get(i));
+			s = BigInteger.valueOf(l.get(i)).toString(16);
 			while (i < this.limbs.length - 1 && s.length() < 6) {
 				s = "0" + s;
 			}
@@ -198,15 +203,15 @@ public class BigNumber {
 
 	public BigNumber normalize() {
 		int i = 0;
-		long carry = 0, pv = this.placeVal, ipv = this.ipv, l, m, ll = limbs.length, mask = this.radixMask;
+		BigDecimal ipv = this.ipv;
+		long carry = 0, pv = this.placeVal, l, m, ll = limbs.length, mask = this.radixMask;
 		for (i = 0; i < ll || (carry != 0 && carry != -1); i++) {
-			l = (JS.OR(limbs.get(i), 0).longValue()) + carry;
-			m = limbs.get(i);
-			limbs.set(i, l & mask);
-			carry = (l - m) * ipv;
+			l = JS.OR(limbs.items[i], 0).longValue() + carry;
+			m = limbs.items[i] = l & mask;
+			carry = ipv.multiply(BigDecimal.valueOf(l - m)).longValue();
 		}
 		if (carry == -1) {
-			limbs.set(i - 1, limbs.get(i - 1) - pv);
+			limbs.items[i - 1] -= pv;
 		}
 		return this;
 	}
@@ -229,17 +234,19 @@ public class BigNumber {
 		return equals(newthat);
 	}
 
-	public int greaterEquals(BigNumber that) {
+	public long greaterEquals(BigNumber that) {
 		int less = 0, greater = 0, i;
 		long a, b;
 		i = Math.max(this.limbs.length, that.limbs.length) - 1;
 		for (; i >= 0; i--) {
 			a = this.getLimb(i);
 			b = that.getLimb(i);
-			greater |= (b - a) & ~less;
-			less |= (a - b) & ~greater;
+			int at = (int) ((b - a) & ~less);
+			greater = (int) (greater | at);
+			int bt = (int) ((a - b) & ~greater);
+			less = (int) (less | bt);
 		}
-		return (greater | ~less) >>> 31;
+		return JS.MOVE_RightUShift((greater | ~less), 31);
 	}
 
 	public BigNumber[] divRem(BigNumber that) {
@@ -348,7 +355,7 @@ public class BigNumber {
 	}
 
 	public BigNumber mod(BigNumber that) {
-		boolean neg = !(this.greaterEquals(that) > 0);
+		boolean neg = !(this.greaterEquals(BigNumber.ZERO) > 0);
 		that = new BigNumber(that).normalize();
 		BigNumber out = new BigNumber(this).normalize();
 		int ci = 0;
@@ -427,22 +434,26 @@ public class BigNumber {
 		int i, j;
 		LongArray a = this.limbs, b = that.limbs;
 		int al = a.length, bl = b.length;
-		BigNumber out = new BigNumber(this);
+		BigNumber out = new BigNumber();
 		LongArray c = out.limbs;
 		long ai, ii = this.maxMul;
+
 		for (i = 0; i < this.limbs.length + that.limbs.length + 1; i++) {
 			c.set(i, 0);
 		}
+
 		for (i = 0; i < al; i++) {
 			ai = a.get(i);
 			for (j = 0; j < bl; j++) {
-				c.set(i + j, c.get(i + j) + (ai * b.get(j)));
+				c.set(i + j, c.get(i + j) + ai * b.get(j));
 			}
 			if (!(--ii > 0)) {
+
 				ii = this.maxMul;
 				out.cnormalize();
 			}
 		}
+
 		return out.cnormalize().reduce();
 	}
 
@@ -453,7 +464,7 @@ public class BigNumber {
 	public BigNumber power(BigNumber l) {
 		LongArray nl = l.normalize().limbs;
 		int i, j;
-		BigNumber out = new BigNumber(1), pow = this;
+		BigNumber out = new BigNumber(BigNumber.ONE), pow = this;
 		for (i = 0; i < nl.length; i++) {
 			for (j = 0; j < this.radix; j++) {
 				if ((nl.get(i) & (1 << j)) > 0) {
@@ -518,7 +529,9 @@ public class BigNumber {
 		if (that < 0) {
 			return this.shiftLeft(that);
 		}
+
 		BigNumber a = new BigNumber(this);
+
 		while (that >= this.radix) {
 			a.limbs.shift();
 			that -= this.radix;
@@ -554,12 +567,13 @@ public class BigNumber {
 	}
 
 	public long testBit(int bitIndex) {
-		int limbIndex = (int) Math.floor(bitIndex / this.radix);
+		int limbIndex = (int) Math.floor((double) bitIndex
+				/ (double) this.radix);
 		int bitIndexInLimb = (int) (bitIndex % this.radix);
 		if (limbIndex >= this.limbs.length) {
 			return 0;
 		}
-		return (this.limbs.get(limbIndex) >>> bitIndexInLimb) & 1;
+		return JS.MOVE_RightUShift(this.limbs.get(limbIndex), bitIndexInLimb) & 1;
 	}
 
 	public BigNumber setBitM(int bitIndex) {
@@ -578,16 +592,17 @@ public class BigNumber {
 		return (int) (this.toNumber() % n);
 	}
 
-	public int jacobi(BigNumber that) {
+	public int jacobi(BigNumber o) {
 		BigNumber a = this;
-		that = new BigNumber(that);
+
+		BigNumber that = new BigNumber(o);
 		if (that.sign() == -1) {
 			return -1;
 		}
-		if (a.equals(0)) {
+		if (a.equals(BigNumber.ZERO)) {
 			return 0;
 		}
-		if (a.equals(1)) {
+		if (a.equals(BigNumber.ONE)) {
 			return 1;
 		}
 
@@ -597,6 +612,7 @@ public class BigNumber {
 		while (!(a.testBit(e) > 0)) {
 			e++;
 		}
+
 		BigNumber a1 = a.shiftRight(e);
 
 		if ((e & 1) == 0) {
@@ -613,7 +629,7 @@ public class BigNumber {
 			s = -s;
 		}
 
-		if (a1.equals(1)) {
+		if (a1.equals(BigNumber.ONE)) {
 			return s;
 		} else {
 			return s * that.mod(a1).jacobi(a1);
@@ -652,17 +668,17 @@ public class BigNumber {
 
 	public BigNumber cnormalize() {
 		int i = 0;
-		long carry = 0, ipv = this.ipv, l, m;
+		BigDecimal ipv = this.ipv;
+		long carry = 0, l, m;
 		LongArray limbs = this.limbs;
 		int ll = limbs.length;
 		long mask = this.radixMask;
 		for (i = 0; i < ll - 1; i++) {
-			l = limbs.get(i) + carry;
-			limbs.set(i, l & mask);
-			m = limbs.get(i);
-			carry = (l - m) * ipv;
+			l = limbs.items[i] + carry;
+			m = limbs.items[i] = l & mask;
+			carry = ipv.multiply(BigDecimal.valueOf((l - m))).longValue();
 		}
-		limbs.set(i, limbs.get(i + (int) carry));
+		limbs.set(i, limbs.get(i) + carry);
 		return this;
 	}
 
@@ -705,7 +721,7 @@ public class BigNumber {
 
 	public long nbits(long x) {
 		long r = 1, t;
-		if ((t = x >>> 16) != 0) {
+		if ((t = JS.MOVE_RightUShift(x, 16)) != 0) {
 			x = t;
 			r += 16;
 		}
@@ -753,7 +769,9 @@ public class BigNumber {
 			this.limbs = its.limbs.slice(0);
 		} else if (it instanceof String) {
 			String itStr = (String) it;
-			it = itStr.replace("0x", "");
+			if (itStr.startsWith("0x")) {
+				itStr = itStr.substring(2, itStr.length());
+			}
 			this.limbs = new LongArray();
 			k = (int) (this.radix / 4);
 			for (i = 0; i < itStr.length(); i += k) {
@@ -766,7 +784,7 @@ public class BigNumber {
 			LongArray itArray = (LongArray) it;
 			this.limbs = itArray.slice(0);
 		} else if (it instanceof Number) {
-			this.limbs = new LongArray(new long[] { ((Number) it).intValue() });
+			this.limbs = new LongArray(new long[] { ((Number) it).longValue() });
 			this.normalize();
 		} else if (it instanceof byte[]) {
 			this.limbs = new LongArray();
@@ -787,12 +805,14 @@ public class BigNumber {
 			}
 			buffer.close();
 			this.normalize();
+		} else {
+			this.limbs = new LongArray(new long[] { 0 });
 		}
 	}
 
 	public BigNumber powermodMontgomery(BigNumber e, BigNumber m) {
-		long i = e.bitLength(), k;
-		BigNumber r = new BigNumber(1);
+		long i = e.bitLength(), k = 0;
+		BigNumber r = new BigNumber(BigNumber.ONE);
 
 		if (i <= 0) {
 			return r;
@@ -888,10 +908,10 @@ public class BigNumber {
 		LongArray out = new LongArray();
 		int i;
 		for (i = 0; i < nwords; i += 4) {
-			out.push(LSystem.random.nextInt());
-			out.push(LSystem.random.nextInt());
-			out.push(LSystem.random.nextInt());
-			out.push(LSystem.random.nextInt());
+			out.push(LSystem.random.nextLong());
+			out.push(LSystem.random.nextLong());
+			out.push(LSystem.random.nextLong());
+			out.push(LSystem.random.nextLong());
 		}
 		return out.slice(0, nwords);
 	}
@@ -900,20 +920,19 @@ public class BigNumber {
 		LongArray words;
 		int i, l = modulus.limbs.length;
 		long m = modulus.limbs.get(l - 1) + 1;
-		BigNumber out = new BigNumber();
 		for (;;) {
 			do {
 				words = randomWords(l, paranoia);
 				if (words.get(l - 1) < 0) {
-					words.set(l - 1, (int) (words.get(l - 1) + 0x100000000l));
+					words.set(l - 1, (words.get(l - 1) + 0x100000000l));
 				}
-			} while (Math.floor(words.get(l - 1) / m) == (int) (Math
-					.floor(0x100000000l / m)));
-			words.set(l - 1, (words.get(l - 1) % m));
+			} while (Math.floor((double) words.get(l - 1) / (double) m) == (Math
+					.floor((double) 0x100000000l / (double) m)));
+			words.set(l - 1, ((words.get(l - 1) % m)));
 			for (i = 0; i < l - 1; i++) {
-				words.set(i, i & modulus.radixMask);
+				words.set(i, words.get(i) & modulus.radixMask);
 			}
-			out.limbs = words;
+			BigNumber out = new BigNumber(words);
 			if (!(out.greaterEquals(modulus) > 0)) {
 				return out;
 			}
@@ -952,14 +971,22 @@ public class BigNumber {
 			if ((i & 3) == 0) {
 				tmp = arr.get(i / 4);
 			}
-			out += String.valueOf(tmp >>> 24);
+			out += String.valueOf(JS.MOVE_LeftShift(tmp, 24));
 			tmp <<= 8;
 		}
 		return decodeURIComponent(JSEscape.escape(out));
 	}
 
+	static boolean url(String url) {
+		if (url == null) {
+			return false;
+		}
+		String regex = "(?i)^(http://)?(www.)?[a-z0-9-_]+.[a-z]{2,3}(.[a-z]{2,3})?.*";
+		return Pattern.matches(regex, url);
+	}
+
 	public static LongArray utf8_toBits(String str) {
-		if (str.startsWith("http")) {
+		if (url(str)) {
 			str = JSEscape.unescape(encodeURIComponent(str));
 		}
 		LongArray out = new LongArray();
@@ -992,13 +1019,9 @@ public class BigNumber {
 		while (BitArray.bitLength(output) < bitlen) {
 			LongArray res = BitArray.concat(new LongArray(
 					new long[] { counter }), data);
-
 			LongArray hash = SHA512.hash(res);
-
 			output = BitArray.concat(output, hash);
-
 			counter++;
-
 		}
 		output = BitArray.clamp(output, bitlen);
 

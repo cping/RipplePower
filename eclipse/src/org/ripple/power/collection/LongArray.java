@@ -395,8 +395,8 @@ public class LongArray {
 		return slice(array, begin, array.length);
 	}
 
-	public LongArray slice(int length) {
-		return new LongArray(slice(this.items, length));
+	public LongArray slice(int size) {
+		return new LongArray(slice(this.items, size, this.length));
 	}
 
 	public LongArray slice(int begin, int end) {

@@ -11,7 +11,7 @@ public class IntArray {
 	public boolean ordered;
 
 	public IntArray() {
-		this(true, 0);
+		this(true, 16);
 	}
 
 	public IntArray(int capacity) {
@@ -84,8 +84,9 @@ public class IntArray {
 	public void addAll(int[] array, int offset, int length) {
 		int[] items = this.items;
 		int lengthNeeded = length + length;
-		if (lengthNeeded > items.length)
+		if (lengthNeeded > items.length) {
 			items = relength(Math.max(8, (int) (lengthNeeded * 1.75f)));
+		}
 		System.arraycopy(array, offset, items, length, length);
 		length += length;
 	}
@@ -96,7 +97,7 @@ public class IntArray {
 		}
 		return items[index];
 	}
-	
+
 	public void set(int index, int value) {
 		if (index >= length) {
 			int size = length;
@@ -124,9 +125,10 @@ public class IntArray {
 	}
 
 	public void insert(int index, int value) {
-		if (index > length)
+		if (index > length) {
 			throw new IndexOutOfBoundsException("index can't be > length: "
 					+ index + " > " + length);
+		}
 		int[] items = this.items;
 		if (length == items.length)
 			items = relength(Math.max(8, (int) (length * 1.75f)));
@@ -188,9 +190,10 @@ public class IntArray {
 	}
 
 	public int removeIndex(int index) {
-		if (index >= length)
+		if (index >= length) {
 			throw new IndexOutOfBoundsException("index can't be >= length: "
 					+ index + " >= " + length);
+		}
 		int[] items = this.items;
 		int value = items[index];
 		length--;
@@ -316,8 +319,9 @@ public class IntArray {
 	}
 
 	public int random() {
-		if (length == 0)
+		if (length == 0) {
 			return 0;
+		}
 		return items[MathUtils.random(0, length - 1)];
 	}
 
@@ -359,6 +363,18 @@ public class IntArray {
 		return new IntArray(array);
 	}
 
+	public IntArray splice(int begin, int end) {
+		IntArray longs = new IntArray(slice(begin, end));
+		if (end - begin >= length) {
+			items = new int[0];
+			length = 0;
+			return longs;
+		} else {
+			removeRange(begin, end - 1);
+		}
+		return longs;
+	}
+
 	public static int[] slice(int[] array, int begin, int end) {
 		if (begin > end) {
 			throw new RuntimeException();
@@ -388,14 +404,18 @@ public class IntArray {
 	}
 
 	public static int[] concat(int[] array, int[] other) {
-		int[] ret = new int[array.length + other.length];
-		System.arraycopy(array, 0, ret, 0, array.length);
-		System.arraycopy(other, 0, ret, array.length, other.length);
+		return concat(array, array.length, other, other.length);
+	}
+
+	public static int[] concat(int[] array, int alen, int[] other, int blen) {
+		int[] ret = new int[alen + blen];
+		System.arraycopy(array, 0, ret, 0, alen);
+		System.arraycopy(other, 0, ret, alen, blen);
 		return ret;
 	}
 
 	public IntArray concat(IntArray o) {
-		return new IntArray(concat(this.items, o.items));
+		return new IntArray(concat(this.items, this.length, o.items, o.length));
 	}
 
 	public String toString(char split) {
