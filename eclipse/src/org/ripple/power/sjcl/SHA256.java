@@ -5,7 +5,14 @@ import java.math.BigDecimal;
 import org.ripple.power.collection.LongArray;
 
 public class SHA256 {
-
+	
+	public SHA256() {
+		if (_key == null || _key.length == 0) {
+			_precompute();
+			reset();
+		}
+	}
+	
 	public static LongArray hash(LongArray data) {
 		SHA256 sha = new SHA256();
 		if (sha._key == null || sha._key.length == 0) {

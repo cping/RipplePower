@@ -1,117 +1,3610 @@
-var hasOwn=Object.prototype.hasOwnProperty,toString=Object.prototype.toString,isPlainObject=function(a){if(!a||toString.call(a)!=="[object Object]")return!1;var b=hasOwn.call(a,"constructor"),c=a.constructor&&a.constructor.prototype&&hasOwn.call(a.constructor.prototype,"isPrototypeOf");if(a.constructor&&!b&&!c)return!1;for(var d in a);return d===void 0||hasOwn.call(a,d)};
-function extend(){var a,b,c,d,e,f=arguments[0],g=1,h=arguments.length,i=!1;if(typeof f==="boolean")i=f,f=arguments[1]||{},g=2;else if(typeof f!=="object"&&typeof f!=="function"||f==null)f={};for(;g<h;++g)if(a=arguments[g],a!=null)for(b in a)c=f[b],d=a[b],f!==d&&(i&&d&&(isPlainObject(d)||(e=Array.isArray(d)))?(e?(e=!1,c=c&&Array.isArray(c)?c:[]):c=c&&isPlainObject(c)?c:{},f[b]=extend(i,c,d)):d!==void 0&&(f[b]=d));return f}
-var sjcl={cipher:{},hash:{},keyexchange:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a},notReady:function(a){this.toString=function(){return"NOT READY: "+this.message};this.message=a}}};
-if(typeof module!="undefined"&&module.exports)module.exports=sjcl;sjcl.cipher.aes=function(a){this._tables[0][0][0]||this._precompute();var b,c,d;b=this._tables[0][4];var e=a.length,f=1;if(e!==4&&e!==6&&e!==8)throw new sjcl.exception.invalid("invalid aes key size");this._key=[d=a.slice(0),[]];for(a=e;a<4*e+28;a++){c=d[a-1];if(a%e===0||e===8&&a%e===4)c=b[c>>>24]<<24^b[c>>16&255]<<16^b[c>>8&255]<<8^b[c&255],a%e===0&&(c=c<<8^c>>>24^f<<24,f=f<<1^(f>>7)*283);d[a]=d[a-e]^c}for(b=0;a;b++,a--);};
-sjcl.cipher.aes.prototype={encrypt:function(a){return this._crypt(a,0)},decrypt:function(a){return this._crypt(a,1)},_tables:[[[],[],[],[],[]],[[],[],[],[],[]]],_precompute:function(){var a=this._tables[0],b=this._tables[1],c=a[4],d=b[4],e,f,g,h=[],i=[],k,l,m,q;for(e=0;e<256;e++)i[(h[e]=e<<1^(e>>7)*283)^e]=e;for(f=g=0;!c[f];f^=k||1,g=i[g]||1){m=g^g<<1^g<<2^g<<3^g<<4;m=m>>8^m&255^99;c[f]=m;d[m]=f;l=h[e=h[k=h[f]]];q=l*16843009^e*65537^k*257^f*16843008;l=h[m]*257^m*16843008;for(e=0;e<4;e++)a[e][f]=l=
-l<<24^l>>>8,b[e][m]=q=q<<24^q>>>8}for(e=0;e<5;e++)a[e]=a[e].slice(0),b[e]=b[e].slice(0)},_crypt:function(a,b){if(a.length!==4)throw new sjcl.exception.invalid("invalid aes block size");var c=this._key[b],d=a[0]^c[0],e=a[b?3:1]^c[1],f=a[2]^c[2],g=a[b?1:3]^c[3],h,i,k,l=c.length/4-2,m,q=4,t=[0,0,0,0];h=this._tables[b];var z=h[0],B=h[1],D=h[2],p=h[3],u=h[4];for(m=0;m<l;m++)h=z[d>>>24]^B[e>>16&255]^D[f>>8&255]^p[g&255]^c[q],i=z[e>>>24]^B[f>>16&255]^D[g>>8&255]^p[d&255]^c[q+1],k=z[f>>>24]^B[g>>16&255]^
-D[d>>8&255]^p[e&255]^c[q+2],g=z[g>>>24]^B[d>>16&255]^D[e>>8&255]^p[f&255]^c[q+3],q+=4,d=h,e=i,f=k;for(m=0;m<4;m++)t[b?3&-m:m]=u[d>>>24]<<24^u[e>>16&255]<<16^u[f>>8&255]<<8^u[g&255]^c[q++],h=d,d=e,e=f,f=g,g=h;return t}};
-sjcl.bitArray={bitSlice:function(a,b,c){a=sjcl.bitArray._shiftRight(a.slice(b/32),32-(b&31)).slice(1);return c===void 0?a:sjcl.bitArray.clamp(a,c-b)},extract:function(a,b,c){var d=Math.floor(-b-c&31);return((b+c-1^b)&-32?a[b/32|0]<<32-d^a[b/32+1|0]>>>d:a[b/32|0]>>>d)&(1<<c)-1},concat:function(a,b){if(a.length===0||b.length===0)return a.concat(b);var c=a[a.length-1],d=sjcl.bitArray.getPartial(c);return d===32?a.concat(b):sjcl.bitArray._shiftRight(b,d,c|0,a.slice(0,a.length-1))},bitLength:function(a){var b=
-a.length;return b===0?0:(b-1)*32+sjcl.bitArray.getPartial(a[b-1])},clamp:function(a,b){if(a.length*32<b)return a;var a=a.slice(0,Math.ceil(b/32)),c=a.length;b&=31;c>0&&b&&(a[c-1]=sjcl.bitArray.partial(b,a[c-1]&2147483648>>b-1,1));return a},partial:function(a,b,c){return a===32?b:(c?b|0:b<<32-a)+a*1099511627776},getPartial:function(a){return Math.round(a/1099511627776)||32},equal:function(a,b){if(sjcl.bitArray.bitLength(a)!==sjcl.bitArray.bitLength(b))return!1;var c=0,d;for(d=0;d<a.length;d++)c|=a[d]^
-b[d];return c===0},_shiftRight:function(a,b,c,d){var e;e=0;for(d===void 0&&(d=[]);b>=32;b-=32)d.push(c),c=0;if(b===0)return d.concat(a);for(e=0;e<a.length;e++)d.push(c|a[e]>>>b),c=a[e]<<32-b;e=a.length?a[a.length-1]:0;a=sjcl.bitArray.getPartial(e);d.push(sjcl.bitArray.partial(b+a&31,b+a>32?c:d.pop(),1));return d},_xor4:function(a,b){return[a[0]^b[0],a[1]^b[1],a[2]^b[2],a[3]^b[3]]}};
-sjcl.codec.utf8String={fromBits:function(a){var b="",c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++)(d&3)===0&&(e=a[d/4]),b+=String.fromCharCode(e>>>24),e<<=8;return decodeURIComponent(escape(b))},toBits:function(a){var a=unescape(encodeURIComponent(a)),b=[],c,d=0;for(c=0;c<a.length;c++)d=d<<8|a.charCodeAt(c),(c&3)===3&&(b.push(d),d=0);c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};
-sjcl.codec.hex={fromBits:function(a){var b="",c;for(c=0;c<a.length;c++)b+=((a[c]|0)+263882790666240).toString(16).substr(4);return b.substr(0,sjcl.bitArray.bitLength(a)/4)},toBits:function(a){var b,c=[],d,a=a.replace(/\s|0x/g,"");d=a.length;a+="00000000";for(b=0;b<a.length;b+=8)c.push(parseInt(a.substr(b,8),16)^0);return sjcl.bitArray.clamp(c,d*4)}};
-sjcl.codec.base64={_chars:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",fromBits:function(a,b,c){var d="",e=0,f=sjcl.codec.base64._chars,g=0,h=sjcl.bitArray.bitLength(a);c&&(f=f.substr(0,62)+"-_");for(c=0;d.length*6<h;)d+=f.charAt((g^a[c]>>>e)>>>26),e<6?(g=a[c]<<6-e,e+=26,c++):(g<<=6,e-=6);for(;d.length&3&&!b;)d+="=";return d},toBits:function(a,b){var a=a.replace(/\s|=/g,""),c=[],d,e=0,f=sjcl.codec.base64._chars,g=0,h;b&&(f=f.substr(0,62)+"-_");for(d=0;d<a.length;d++){h=f.indexOf(a.charAt(d));
-if(h<0)throw new sjcl.exception.invalid("this isn't base64!");e>26?(e-=26,c.push(g^h>>>e),g=h<<32-e):(e+=6,g^=h<<32-e)}e&56&&c.push(sjcl.bitArray.partial(e&56,g,1));return c}};sjcl.codec.base64url={fromBits:function(a){return sjcl.codec.base64.fromBits(a,1,1)},toBits:function(a){return sjcl.codec.base64.toBits(a,1)}};
-sjcl.codec.bytes={fromBits:function(a){var b=[],c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++)(d&3)===0&&(e=a[d/4]),b.push(e>>>24),e<<=8;return b},toBits:function(a){var b=[],c,d=0;for(c=0;c<a.length;c++)d=d<<8|a[c],(c&3)===3&&(b.push(d),d=0);c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};sjcl.hash.sha256=function(a){this._key[0]||this._precompute();a?(this._h=a._h.slice(0),this._buffer=a._buffer.slice(0),this._length=a._length):this.reset()};sjcl.hash.sha256.hash=function(a){return(new sjcl.hash.sha256).update(a).finalize()};
-sjcl.hash.sha256.prototype={blockSize:512,reset:function(){this._h=this._init.slice(0);this._buffer=[];this._length=0;return this},update:function(a){typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));var b,c=this._buffer=sjcl.bitArray.concat(this._buffer,a);b=this._length;a=this._length=b+sjcl.bitArray.bitLength(a);for(b=512+b&-512;b<=a;b+=512)this._block(c.splice(0,16));return this},finalize:function(){var a,b=this._buffer,c=this._h,b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);for(a=
-b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this._length/4294967296));for(b.push(this._length|0);b.length;)this._block(b.splice(0,16));this.reset();return c},_init:[],_key:[],_precompute:function(){var a=0,b=2,c;a:for(;a<64;b++){for(c=2;c*c<=b;c++)if(b%c===0)continue a;a<8&&(this._init[a]=(Math.pow(b,0.5)-Math.floor(Math.pow(b,0.5)))*4294967296|0);this._key[a]=(Math.pow(b,1/3)-Math.floor(Math.pow(b,1/3)))*4294967296|0;a++}},_block:function(a){for(var b,c,d=a.slice(0),e=this._h,f=this._key,g=e[0],
-h=e[1],i=e[2],k=e[3],l=e[4],m=e[5],q=e[6],t=e[7],a=0;a<64;a++)a<16?b=d[a]:(b=d[a+1&15],c=d[a+14&15],b=d[a&15]=(b>>>7^b>>>18^b>>>3^b<<25^b<<14)+(c>>>17^c>>>19^c>>>10^c<<15^c<<13)+d[a&15]+d[a+9&15]|0),b=b+t+(l>>>6^l>>>11^l>>>25^l<<26^l<<21^l<<7)+(q^l&(m^q))+f[a],t=q,q=m,m=l,l=k+b|0,k=i,i=h,h=g,g=b+(h&i^k&(h^i))+(h>>>2^h>>>13^h>>>22^h<<30^h<<19^h<<10)|0;e[0]=e[0]+g|0;e[1]=e[1]+h|0;e[2]=e[2]+i|0;e[3]=e[3]+k|0;e[4]=e[4]+l|0;e[5]=e[5]+m|0;e[6]=e[6]+q|0;e[7]=e[7]+t|0}};
-sjcl.hash.sha512=function(a){this._key[0]||this._precompute();a?(this._h=a._h.slice(0),this._buffer=a._buffer.slice(0),this._length=a._length):this.reset()};sjcl.hash.sha512.hash=function(a){return(new sjcl.hash.sha512).update(a).finalize()};
-sjcl.hash.sha512.prototype={blockSize:1024,reset:function(){this._h=this._init.slice(0);this._buffer=[];this._length=0;return this},update:function(a){typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));var b,c=this._buffer=sjcl.bitArray.concat(this._buffer,a);b=this._length;a=this._length=b+sjcl.bitArray.bitLength(a);for(b=1024+b&-1024;b<=a;b+=1024)this._block(c.splice(0,32));return this},finalize:function(){var a,b=this._buffer,c=this._h,b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);
-for(a=b.length+4;a&31;a++)b.push(0);b.push(0);b.push(0);b.push(Math.floor(this._length/4294967296));for(b.push(this._length|0);b.length;)this._block(b.splice(0,32));this.reset();return c},_init:[],_initr:[12372232,13281083,9762859,1914609,15106769,4090911,4308331,8266105],_key:[],_keyr:[2666018,15689165,5061423,9034684,4764984,380953,1658779,7176472,197186,7368638,14987916,16757986,8096111,1480369,13046325,6891156,15813330,5187043,9229749,11312229,2818677,10937475,4324308,1135541,6741931,11809296,
-16458047,15666916,11046850,698149,229999,945776,13774844,2541862,12856045,9810911,11494366,7844520,15576806,8533307,15795044,4337665,16291729,5553712,15684120,6662416,7413802,12308920,13816008,4303699,9366425,10176680,13195875,4295371,6546291,11712675,15708924,1519456,15772530,6568428,6495784,8568297,13007125,7492395,2515356,12632583,14740254,7262584,1535930,13146278,16321966,1853211,294276,13051027,13221564,1051980,4080310,6651434,14088940,4675607],_precompute:function(){var a=0,b=2,c;a:for(;a<80;b++){for(c=
-2;c*c<=b;c++)if(b%c===0)continue a;a<8&&(this._init[a*2]=(Math.pow(b,0.5)-Math.floor(Math.pow(b,0.5)))*4294967296|0,this._init[a*2+1]=((Math.pow(b,0.5)-Math.floor(Math.pow(b,0.5)))*1099511627776&255)<<24|this._initr[a]);this._key[a*2]=(Math.pow(b,1/3)-Math.floor(Math.pow(b,1/3)))*4294967296|0;this._key[a*2+1]=((Math.pow(b,1/3)-Math.floor(Math.pow(b,1/3)))*1099511627776&255)<<24|this._keyr[a];a++}},_block:function(a){for(var b,c,d=a.slice(0),e=this._h,f=this._key,g=e[0],h=e[1],i=e[2],k=e[3],l=e[4],
-m=e[5],q=e[6],t=e[7],z=e[8],B=e[9],D=e[10],p=e[11],u=e[12],r=e[13],v=e[14],s=e[15],n=g,j=h,o=i,E=k,G=l,F=m,O=q,H=t,y=z,x=B,M=D,I=p,N=u,J=r,P=v,K=s,a=0;a<80;a++){if(a<16)b=d[a*2],c=d[a*2+1];else{c=d[(a-15)*2];var w=d[(a-15)*2+1];b=(w<<31|c>>>1)^(w<<24|c>>>8)^c>>>7;var C=(c<<31|w>>>1)^(c<<24|w>>>8)^(c<<25|w>>>7);c=d[(a-2)*2];var A=d[(a-2)*2+1],w=(A<<13|c>>>19)^(c<<3|A>>>29)^c>>>6,A=(c<<13|A>>>19)^(A<<3|c>>>29)^(c<<26|A>>>6),Q=d[(a-7)*2],R=d[(a-16)*2],L=d[(a-16)*2+1];c=C+d[(a-7)*2+1];b=b+Q+(c>>>0<C>>>
-0?1:0);c+=A;b+=w+(c>>>0<A>>>0?1:0);c+=L;b+=R+(c>>>0<L>>>0?1:0)}d[a*2]=b|=0;d[a*2+1]=c|=0;var Q=y&M^~y&N,S=x&I^~x&J,A=n&o^n&G^o&G,U=j&E^j&F^E&F,R=(j<<4|n>>>28)^(n<<30|j>>>2)^(n<<25|j>>>7),L=(n<<4|j>>>28)^(j<<30|n>>>2)^(j<<25|n>>>7),V=f[a*2],T=f[a*2+1],w=K+((y<<18|x>>>14)^(y<<14|x>>>18)^(x<<23|y>>>9)),C=P+((x<<18|y>>>14)^(x<<14|y>>>18)^(y<<23|x>>>9))+(w>>>0<K>>>0?1:0);w+=S;C+=Q+(w>>>0<S>>>0?1:0);w+=T;C+=V+(w>>>0<T>>>0?1:0);w+=c;C+=b+(w>>>0<c>>>0?1:0);c=L+U;b=R+A+(c>>>0<L>>>0?1:0);P=N;K=J;N=M;J=I;M=
-y;I=x;x=H+w|0;y=O+C+(x>>>0<H>>>0?1:0)|0;O=G;H=F;G=o;F=E;o=n;E=j;j=w+c|0;n=C+b+(j>>>0<w>>>0?1:0)|0}h=e[1]=h+j|0;e[0]=g+n+(h>>>0<j>>>0?1:0)|0;k=e[3]=k+E|0;e[2]=i+o+(k>>>0<E>>>0?1:0)|0;m=e[5]=m+F|0;e[4]=l+G+(m>>>0<F>>>0?1:0)|0;t=e[7]=t+H|0;e[6]=q+O+(t>>>0<H>>>0?1:0)|0;B=e[9]=B+x|0;e[8]=z+y+(B>>>0<x>>>0?1:0)|0;p=e[11]=p+I|0;e[10]=D+M+(p>>>0<I>>>0?1:0)|0;r=e[13]=r+J|0;e[12]=u+N+(r>>>0<J>>>0?1:0)|0;s=e[15]=s+K|0;e[14]=v+P+(s>>>0<K>>>0?1:0)|0}};
-sjcl.hash.sha1=function(a){a?(this._h=a._h.slice(0),this._buffer=a._buffer.slice(0),this._length=a._length):this.reset()};sjcl.hash.sha1.hash=function(a){return(new sjcl.hash.sha1).update(a).finalize()};
-sjcl.hash.sha1.prototype={blockSize:512,reset:function(){this._h=this._init.slice(0);this._buffer=[];this._length=0;return this},update:function(a){typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));var b,c=this._buffer=sjcl.bitArray.concat(this._buffer,a);b=this._length;a=this._length=b+sjcl.bitArray.bitLength(a);for(b=this.blockSize+b&-this.blockSize;b<=a;b+=this.blockSize)this._block(c.splice(0,16));return this},finalize:function(){var a,b=this._buffer,c=this._h,b=sjcl.bitArray.concat(b,
-[sjcl.bitArray.partial(1,1)]);for(a=b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this._length/4294967296));for(b.push(this._length|0);b.length;)this._block(b.splice(0,16));this.reset();return c},_init:[1732584193,4023233417,2562383102,271733878,3285377520],_key:[1518500249,1859775393,2400959708,3395469782],_f:function(a,b,c,d){if(a<=19)return b&c|~b&d;else if(a<=39)return b^c^d;else if(a<=59)return b&c|b&d|c&d;else if(a<=79)return b^c^d},_S:function(a,b){return b<<a|b>>>32-a},_block:function(a){var b,
-c,d,e,f,g,h=a.slice(0),i=this._h;c=i[0];d=i[1];e=i[2];f=i[3];g=i[4];for(a=0;a<=79;a++)a>=16&&(h[a]=this._S(1,h[a-3]^h[a-8]^h[a-14]^h[a-16])),b=this._S(5,c)+this._f(a,d,e,f)+g+h[a]+this._key[Math.floor(a/20)]|0,g=f,f=e,e=this._S(30,d),d=c,c=b;i[0]=i[0]+c|0;i[1]=i[1]+d|0;i[2]=i[2]+e|0;i[3]=i[3]+f|0;i[4]=i[4]+g|0}};
-sjcl.mode.ccm={name:"ccm",encrypt:function(a,b,c,d,e){var f,g=b.slice(0),h=sjcl.bitArray,i=h.bitLength(c)/8,k=h.bitLength(g)/8,e=e||64,d=d||[];if(i<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(f=2;f<4&&k>>>8*f;f++);f<15-i&&(f=15-i);c=h.clamp(c,8*(15-f));b=sjcl.mode.ccm._computeTag(a,b,c,d,e,f);g=sjcl.mode.ccm._ctrMode(a,g,c,b,e,f);return h.concat(g.data,g.tag)},decrypt:function(a,b,c,d,e){var e=e||64,d=d||[],f=sjcl.bitArray,g=f.bitLength(c)/8,h=f.bitLength(b),i=f.clamp(b,
-h-e),k=f.bitSlice(b,h-e),h=(h-e)/8;if(g<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(b=2;b<4&&h>>>8*b;b++);b<15-g&&(b=15-g);c=f.clamp(c,8*(15-b));i=sjcl.mode.ccm._ctrMode(a,i,c,k,e,b);a=sjcl.mode.ccm._computeTag(a,i.data,c,d,e,b);if(!f.equal(i.tag,a))throw new sjcl.exception.corrupt("ccm: tag doesn't match");return i.data},_computeTag:function(a,b,c,d,e,f){var g=[],h=sjcl.bitArray,i=h._xor4;e/=8;if(e%2||e<4||e>16)throw new sjcl.exception.invalid("ccm: invalid tag length");
-if(d.length>4294967295||b.length>4294967295)throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");f=[h.partial(8,(d.length?64:0)|e-2<<2|f-1)];f=h.concat(f,c);f[3]|=h.bitLength(b)/8;f=a.encrypt(f);if(d.length){c=h.bitLength(d)/8;c<=65279?g=[h.partial(16,c)]:c<=4294967295&&(g=h.concat([h.partial(16,65534)],[c]));g=h.concat(g,d);for(d=0;d<g.length;d+=4)f=a.encrypt(i(f,g.slice(d,d+4).concat([0,0,0])))}for(d=0;d<b.length;d+=4)f=a.encrypt(i(f,b.slice(d,d+4).concat([0,0,0])));return h.clamp(f,
-e*8)},_ctrMode:function(a,b,c,d,e,f){var g,h=sjcl.bitArray;g=h._xor4;var i=b.length,k=h.bitLength(b),c=h.concat([h.partial(8,f-1)],c).concat([0,0,0]).slice(0,4),d=h.bitSlice(g(d,a.encrypt(c)),0,e);if(!i)return{tag:d,data:[]};for(g=0;g<i;g+=4)c[3]++,e=a.encrypt(c),b[g]^=e[0],b[g+1]^=e[1],b[g+2]^=e[2],b[g+3]^=e[3];return{tag:d,data:h.clamp(b,k)}}};
-sjcl.misc.hmac=function(a,b){this._hash=b=b||sjcl.hash.sha256;var c=[[],[]],d,e=b.prototype.blockSize/32;this._baseHash=[new b,new b];a.length>e&&(a=b.hash(a));for(d=0;d<e;d++)c[0][d]=a[d]^909522486,c[1][d]=a[d]^1549556828;this._baseHash[0].update(c[0]);this._baseHash[1].update(c[1])};sjcl.misc.hmac.prototype.encrypt=sjcl.misc.hmac.prototype.mac=function(a){a=(new this._hash(this._baseHash[0])).update(a).finalize();return(new this._hash(this._baseHash[1])).update(a).finalize()};
-sjcl.misc.pbkdf2=function(a,b,c,d,e){c=c||1E3;if(d<0||c<0)throw sjcl.exception.invalid("invalid params to pbkdf2");typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));var e=e||sjcl.misc.hmac,a=new e(a),f,g,h,i,k=[],l=sjcl.bitArray;for(i=1;32*k.length<(d||1);i++){e=f=a.encrypt(l.concat(b,[i]));for(g=1;g<c;g++){f=a.encrypt(f);for(h=0;h<f.length;h++)e[h]^=f[h]}k=k.concat(e)}d&&(k=l.clamp(k,d));return k};
-sjcl.prng=function(a){this._pools=[new sjcl.hash.sha256];this._poolEntropy=[0];this._reseedCount=0;this._robins={};this._eventId=0;this._collectorIds={};this._nextReseed=this._poolStrength=this._strength=this._collectorIdNext=0;this._key=[0,0,0,0,0,0,0,0];this._counter=[0,0,0,0];this._cipher=void 0;this._defaultParanoia=a;this._collectorsStarted=!1;this._callbacks={progress:{},seeded:{}};this._NOT_READY=this._callbackI=0;this._READY=1;this._REQUIRES_RESEED=2;this._MAX_WORDS_PER_BURST=65536;this._PARANOIA_LEVELS=
-[0,48,64,96,128,192,256,384,512,768,1024];this._MILLISECONDS_PER_RESEED=3E4;this._BITS_PER_RESEED=80};
-sjcl.prng.prototype={randomWords:function(a,b){var c=[],d;d=this.isReady(b);var e;if(d===this._NOT_READY)throw new sjcl.exception.notReady("generator isn't seeded");else d&this._REQUIRES_RESEED&&this._reseedFromPools(!(d&this._READY));for(d=0;d<a;d+=4)(d+1)%this._MAX_WORDS_PER_BURST===0&&this._gate(),e=this._gen4words(),c.push(e[0],e[1],e[2],e[3]);this._gate();return c.slice(0,a)},setDefaultParanoia:function(a){this._defaultParanoia=a},addEntropy:function(a,b,c){var c=c||"user",d,e,f=(new Date).valueOf(),
-g=this._robins[c],h=this.isReady(),i=0;d=this._collectorIds[c];d===void 0&&(d=this._collectorIds[c]=this._collectorIdNext++);g===void 0&&(g=this._robins[c]=0);this._robins[c]=(this._robins[c]+1)%this._pools.length;switch(typeof a){case "number":b===void 0&&(b=1);this._pools[g].update([d,this._eventId++,1,b,f,1,a|0]);break;case "object":c=Object.prototype.toString.call(a);if(c==="[object Uint32Array]"){e=[];for(c=0;c<a.length;c++)e.push(a[c]);a=e}else{c!=="[object Array]"&&(i=1);for(c=0;c<a.length&&
-!i;c++)typeof a[c]!="number"&&(i=1)}if(!i){if(b===void 0)for(c=b=0;c<a.length;c++)for(e=a[c];e>0;)b++,e>>>=1;this._pools[g].update([d,this._eventId++,2,b,f,a.length].concat(a))}break;case "string":if(b===void 0)b=a.length;this._pools[g].update([d,this._eventId++,3,b,f,a.length]);this._pools[g].update(a);break;default:i=1}if(i)throw new sjcl.exception.bug("random: addEntropy only supports number, array of numbers or string");this._poolEntropy[g]+=b;this._poolStrength+=b;h===this._NOT_READY&&(this.isReady()!==
-this._NOT_READY&&this._fireEvent("seeded",Math.max(this._strength,this._poolStrength)),this._fireEvent("progress",this.getProgress()))},isReady:function(a){a=this._PARANOIA_LEVELS[a!==void 0?a:this._defaultParanoia];return this._strength&&this._strength>=a?this._poolEntropy[0]>this._BITS_PER_RESEED&&(new Date).valueOf()>this._nextReseed?this._REQUIRES_RESEED|this._READY:this._READY:this._poolStrength>=a?this._REQUIRES_RESEED|this._NOT_READY:this._NOT_READY},getProgress:function(a){a=this._PARANOIA_LEVELS[a?
-a:this._defaultParanoia];return this._strength>=a?1:this._poolStrength>a?1:this._poolStrength/a},startCollectors:function(){if(!this._collectorsStarted){if(window.addEventListener)window.addEventListener("load",this._loadTimeCollector,!1),window.addEventListener("mousemove",this._mouseCollector,!1);else if(document.attachEvent)document.attachEvent("onload",this._loadTimeCollector),document.attachEvent("onmousemove",this._mouseCollector);else throw new sjcl.exception.bug("can't attach event");this._collectorsStarted=
-!0}},stopCollectors:function(){if(this._collectorsStarted)window.removeEventListener?(window.removeEventListener("load",this._loadTimeCollector,!1),window.removeEventListener("mousemove",this._mouseCollector,!1)):window.detachEvent&&(window.detachEvent("onload",this._loadTimeCollector),window.detachEvent("onmousemove",this._mouseCollector)),this._collectorsStarted=!1},addEventListener:function(a,b){this._callbacks[a][this._callbackI++]=b},removeEventListener:function(a,b){var c,d,e=this._callbacks[a],
-f=[];for(d in e)e.hasOwnProperty(d)&&e[d]===b&&f.push(d);for(c=0;c<f.length;c++)d=f[c],delete e[d]},_gen4words:function(){for(var a=0;a<4;a++)if(this._counter[a]=this._counter[a]+1|0,this._counter[a])break;return this._cipher.encrypt(this._counter)},_gate:function(){this._key=this._gen4words().concat(this._gen4words());this._cipher=new sjcl.cipher.aes(this._key)},_reseed:function(a){this._key=sjcl.hash.sha256.hash(this._key.concat(a));this._cipher=new sjcl.cipher.aes(this._key);for(a=0;a<4;a++)if(this._counter[a]=
-this._counter[a]+1|0,this._counter[a])break},_reseedFromPools:function(a){var b=[],c=0,d;this._nextReseed=b[0]=(new Date).valueOf()+this._MILLISECONDS_PER_RESEED;for(d=0;d<16;d++)b.push(Math.random()*4294967296|0);for(d=0;d<this._pools.length;d++)if(b=b.concat(this._pools[d].finalize()),c+=this._poolEntropy[d],this._poolEntropy[d]=0,!a&&this._reseedCount&1<<d)break;this._reseedCount>=1<<this._pools.length&&(this._pools.push(new sjcl.hash.sha256),this._poolEntropy.push(0));this._poolStrength-=c;if(c>
-this._strength)this._strength=c;this._reseedCount++;this._reseed(b)},_mouseCollector:function(a){sjcl.random.addEntropy([a.x||a.clientX||a.offsetX||0,a.y||a.clientY||a.offsetY||0],2,"mouse")},_loadTimeCollector:function(){sjcl.random.addEntropy((new Date).valueOf(),2,"loadtime")},_fireEvent:function(a,b){var c,d=sjcl.random._callbacks[a],e=[];for(c in d)d.hasOwnProperty(c)&&e.push(d[c]);for(c=0;c<e.length;c++)e[c](b)}};sjcl.random=new sjcl.prng(6);
-(function(){try{var a=new Uint32Array(32);crypto.getRandomValues(a);sjcl.random.addEntropy(a,1024,"crypto.getRandomValues")}catch(b){}})();
-sjcl.json={defaults:{v:1,iter:1E3,ks:128,ts:64,mode:"ccm",adata:"",cipher:"aes"},encrypt:function(a,b,c,d){var c=c||{},d=d||{},e=sjcl.json,f=e._add({iv:sjcl.random.randomWords(4,0)},e.defaults),g;e._add(f,c);c=f.adata;if(typeof f.salt==="string")f.salt=sjcl.codec.base64.toBits(f.salt);if(typeof f.iv==="string")f.iv=sjcl.codec.base64.toBits(f.iv);if(!sjcl.mode[f.mode]||!sjcl.cipher[f.cipher]||typeof a==="string"&&f.iter<=100||f.ts!==64&&f.ts!==96&&f.ts!==128||f.ks!==128&&f.ks!==192&&f.ks!==256||f.iv.length<
-2||f.iv.length>4)throw new sjcl.exception.invalid("json encrypt: invalid parameters");if(typeof a==="string")g=sjcl.misc.cachedPbkdf2(a,f),a=g.key.slice(0,f.ks/32),f.salt=g.salt;else if(sjcl.ecc&&a instanceof sjcl.ecc.elGamal.publicKey)g=a.kem(),f.kemtag=g.tag,a=g.key.slice(0,f.ks/32);typeof b==="string"&&(b=sjcl.codec.utf8String.toBits(b));typeof c==="string"&&(c=sjcl.codec.utf8String.toBits(c));g=new sjcl.cipher[f.cipher](a);e._add(d,f);d.key=a;f.ct=sjcl.mode[f.mode].encrypt(g,b,f.iv,c,f.ts);return e.encode(f)},
-decrypt:function(a,b,c,d){var c=c||{},d=d||{},e=sjcl.json,b=e._add(e._add(e._add({},e.defaults),e.decode(b)),c,!0),f,c=b.adata;if(typeof b.salt==="string")b.salt=sjcl.codec.base64.toBits(b.salt);if(typeof b.iv==="string")b.iv=sjcl.codec.base64.toBits(b.iv);if(!sjcl.mode[b.mode]||!sjcl.cipher[b.cipher]||typeof a==="string"&&b.iter<=100||b.ts!==64&&b.ts!==96&&b.ts!==128||b.ks!==128&&b.ks!==192&&b.ks!==256||!b.iv||b.iv.length<2||b.iv.length>4)throw new sjcl.exception.invalid("json decrypt: invalid parameters");
-typeof a==="string"?(f=sjcl.misc.cachedPbkdf2(a,b),a=f.key.slice(0,b.ks/32),b.salt=f.salt):sjcl.ecc&&a instanceof sjcl.ecc.elGamal.secretKey&&(a=a.unkem(sjcl.codec.base64.toBits(b.kemtag)).slice(0,b.ks/32));typeof c==="string"&&(c=sjcl.codec.utf8String.toBits(c));f=new sjcl.cipher[b.cipher](a);c=sjcl.mode[b.mode].decrypt(f,b.ct,b.iv,c,b.ts);e._add(d,b);d.key=a;return sjcl.codec.utf8String.fromBits(c)},encode:function(a){var b,c="{",d="";for(b in a)if(a.hasOwnProperty(b)){if(!b.match(/^[a-z0-9]+$/i))throw new sjcl.exception.invalid("json encode: invalid property name");
-c+=d+'"'+b+'":';d=",";switch(typeof a[b]){case "number":case "boolean":c+=a[b];break;case "string":c+='"'+escape(a[b])+'"';break;case "object":c+='"'+sjcl.codec.base64.fromBits(a[b],0)+'"';break;default:throw new sjcl.exception.bug("json encode: unsupported type");}}return c+"}"},decode:function(a){a=a.replace(/\s/g,"");if(!a.match(/^\{.*\}$/))throw new sjcl.exception.invalid("json decode: this isn't json!");var a=a.replace(/^\{|\}$/g,"").split(/,/),b={},c,d;for(c=0;c<a.length;c++){if(!(d=a[c].match(/^(?:(["']?)([a-z][a-z0-9]*)\1):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i)))throw new sjcl.exception.invalid("json decode: this isn't json!");
-b[d[2]]=d[3]?parseInt(d[3],10):d[2].match(/^(ct|salt|iv)$/)?sjcl.codec.base64.toBits(d[4]):unescape(d[4])}return b},_add:function(a,b,c){a===void 0&&(a={});if(b===void 0)return a;for(var d in b)if(b.hasOwnProperty(d)){if(c&&a[d]!==void 0&&a[d]!==b[d])throw new sjcl.exception.invalid("required parameter overridden");a[d]=b[d]}return a},_subtract:function(a,b){var c={},d;for(d in a)a.hasOwnProperty(d)&&a[d]!==b[d]&&(c[d]=a[d]);return c},_filter:function(a,b){var c={},d;for(d=0;d<b.length;d++)a[b[d]]!==
-void 0&&(c[b[d]]=a[b[d]]);return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc._pbkdf2Cache={};sjcl.misc.cachedPbkdf2=function(a,b){var f;var e;var c=sjcl.misc._pbkdf2Cache,d,b=b||{};d=b.iter||1E3;e=c[a]=c[a]||{},c=e;f=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)},d=f;c=b.salt===void 0?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};sjcl.bn=function(a){this.initWith(a)};
-sjcl.bn.prototype={radix:24,maxMul:8,_class:sjcl.bn,copy:function(){return new this._class(this)},initWith:function(a){var b=0,c;switch(typeof a){case "object":this.limbs=a.limbs.slice(0);break;case "number":this.limbs=[a];this.normalize();break;case "string":a=a.replace(/^0x/,"");this.limbs=[];c=this.radix/4;for(b=0;b<a.length;b+=c)this.limbs.push(parseInt(a.substring(Math.max(a.length-b-c,0),a.length-b),16));break;default:this.limbs=[0]}return this},equals:function(a){typeof a==="number"&&(a=new this._class(a));
-var b=0,c;this.fullReduce();a.fullReduce();for(c=0;c<this.limbs.length||c<a.limbs.length;c++)b|=this.getLimb(c)^a.getLimb(c);return b===0},getLimb:function(a){return a>=this.limbs.length?0:this.limbs[a]},greaterEquals:function(a){typeof a==="number"&&(a=new this._class(a));var b=0,c=0,d,e,f;for(d=Math.max(this.limbs.length,a.limbs.length)-1;d>=0;d--)e=this.getLimb(d),f=a.getLimb(d),c|=f-e&~b,b|=e-f&~c;return(c|~b)>>>31},toString:function(){this.fullReduce();var a="",b,c,d=this.limbs;for(b=0;b<this.limbs.length;b++){for(c=
-d[b].toString(16);b<this.limbs.length-1&&c.length<6;)c="0"+c;a=c+a}return"0x"+a},addM:function(a){typeof a!=="object"&&(a=new this._class(a));for(var b=this.limbs,c=a.limbs,a=b.length;a<c.length;a++)b[a]=0;for(a=0;a<c.length;a++)b[a]+=c[a];return this},doubleM:function(){var a,b=0,c,d=this.radix,e=this.radixMask,f=this.limbs;for(a=0;a<f.length;a++)c=f[a],c=c+c+b,f[a]=c&e,b=c>>d;b&&f.push(b);return this},halveM:function(){var a,b=0,c,d=this.radix,e=this.limbs;for(a=e.length-1;a>=0;a--)c=e[a],e[a]=
-c+b>>1,b=(c&1)<<d;e[e.length-1]||e.pop();return this},subM:function(a){typeof a!=="object"&&(a=new this._class(a));for(var b=this.limbs,c=a.limbs,a=b.length;a<c.length;a++)b[a]=0;for(a=0;a<c.length;a++)b[a]-=c[a];return this},mod:function(a){var b=!this.greaterEquals(new sjcl.bn(0)),a=(new sjcl.bn(a)).normalize(),c=(new sjcl.bn(this)).normalize(),d=0;for(b&&(c=(new sjcl.bn(0)).subM(c).normalize());c.greaterEquals(a);d++)a.doubleM();for(b&&(c=a.sub(c).normalize());d>0;d--)a.halveM(),c.greaterEquals(a)&&
-c.subM(a).normalize();return c.trim()},inverseMod:function(a){var b=new sjcl.bn(1),c=new sjcl.bn(0),d=new sjcl.bn(this),e=new sjcl.bn(a),f,g=1;if(!(a.limbs[0]&1))throw new sjcl.exception.invalid("inverseMod: p must be odd");do{d.limbs[0]&1&&(d.greaterEquals(e)||(f=d,d=e,e=f,f=b,b=c,c=f),d.subM(e),d.normalize(),b.greaterEquals(c)||b.addM(a),b.subM(c));d.halveM();b.limbs[0]&1&&b.addM(a);b.normalize();b.halveM();for(f=g=0;f<d.limbs.length;f++)g|=d.limbs[f]}while(g);if(!e.equals(1))throw new sjcl.exception.invalid("inverseMod: p and x must be relatively prime");
-return c},add:function(a){return this.copy().addM(a)},sub:function(a){return this.copy().subM(a)},mul:function(a){typeof a==="number"&&(a=new this._class(a));var b,c=this.limbs,d=a.limbs,e=c.length,f=d.length,g=new this._class,h=g.limbs,i,k=this.maxMul;for(b=0;b<this.limbs.length+a.limbs.length+1;b++)h[b]=0;for(b=0;b<e;b++){i=c[b];for(a=0;a<f;a++)h[b+a]+=i*d[a];if(!--k)k=this.maxMul,g.cnormalize()}return g.cnormalize().reduce()},square:function(){return this.mul(this)},power:function(a){if(typeof a===
-"number")a=[a];else if(a.limbs!==void 0)a=a.normalize().limbs;var b,c,d=new this._class(1),e=this;for(b=0;b<a.length;b++)for(c=0;c<this.radix;c++)a[b]&1<<c&&(d=d.mul(e)),e=e.square();return d},mulmod:function(a,b){return this.mod(b).mul(a.mod(b)).mod(b)},powermod:function(a,b){for(var c=new sjcl.bn(1),d=new sjcl.bn(this),e=new sjcl.bn(a);;){e.limbs[0]&1&&(c=c.mulmod(d,b));e.halveM();if(e.equals(0))break;d=d.mulmod(d,b)}return c.normalize().reduce()},trim:function(){var a=this.limbs,b;do b=a.pop();
-while(a.length&&b===0);a.push(b);return this},reduce:function(){return this},fullReduce:function(){return this.normalize()},normalize:function(){var a=0,b,c=this.ipv,d,e=this.limbs,f=e.length,g=this.radixMask;for(b=0;b<f||a!==0&&a!==-1;b++)a=(e[b]||0)+a,d=e[b]=a&g,a=(a-d)*c;a===-1&&(e[b-1]-=this.placeVal);return this},cnormalize:function(){var a=0,b,c=this.ipv,d,e=this.limbs,f=e.length,g=this.radixMask;for(b=0;b<f-1;b++)a=e[b]+a,d=e[b]=a&g,a=(a-d)*c;e[b]+=a;return this},toBits:function(a){this.fullReduce();
-var a=a||this.exponent||this.bitLength(),b=Math.floor((a-1)/24),c=sjcl.bitArray,d=[c.partial((a+7&-8)%this.radix||this.radix,this.getLimb(b))];for(b--;b>=0;b--)d=c.concat(d,[c.partial(Math.min(this.radix,a),this.getLimb(b))]),a-=this.radix;return d},bitLength:function(){this.fullReduce();for(var a=this.radix*(this.limbs.length-1),b=this.limbs[this.limbs.length-1];b;b>>>=1)a++;return a+7&-8}};
-sjcl.bn.fromBits=function(a){var b=new this,c=[],d=sjcl.bitArray,e=this.prototype,f=Math.min(this.bitLength||4294967296,d.bitLength(a)),g=f%e.radix||e.radix;for(c[0]=d.extract(a,0,g);g<f;g+=e.radix)c.unshift(d.extract(a,g,e.radix));b.limbs=c;return b};sjcl.bn.prototype.ipv=1/(sjcl.bn.prototype.placeVal=Math.pow(2,sjcl.bn.prototype.radix));sjcl.bn.prototype.radixMask=(1<<sjcl.bn.prototype.radix)-1;
-sjcl.bn.pseudoMersennePrime=function(a,b){function c(a){this.initWith(a)}var d=c.prototype=new sjcl.bn,e,f;e=d.modOffset=Math.ceil(f=a/d.radix);d.exponent=a;d.offset=[];d.factor=[];d.minOffset=e;d.fullMask=0;d.fullOffset=[];d.fullFactor=[];d.modulus=c.modulus=new sjcl.bn(Math.pow(2,a));d.fullMask=0|-Math.pow(2,a%d.radix);for(e=0;e<b.length;e++)d.offset[e]=Math.floor(b[e][0]/d.radix-f),d.fullOffset[e]=Math.ceil(b[e][0]/d.radix-f),d.factor[e]=b[e][1]*Math.pow(0.5,a-b[e][0]+d.offset[e]*d.radix),d.fullFactor[e]=
-b[e][1]*Math.pow(0.5,a-b[e][0]+d.fullOffset[e]*d.radix),d.modulus.addM(new sjcl.bn(Math.pow(2,b[e][0])*b[e][1])),d.minOffset=Math.min(d.minOffset,-d.offset[e]);d._class=c;d.modulus.cnormalize();d.reduce=function(){var a,b,c,d=this.modOffset,e=this.limbs,f=this.offset,q=this.offset.length,t=this.factor,z;for(a=this.minOffset;e.length>d;){c=e.pop();z=e.length;for(b=0;b<q;b++)e[z+f[b]]-=t[b]*c;a--;if(!a)e.push(0),this.cnormalize(),a=this.minOffset}this.cnormalize();return this};d._strongReduce=d.fullMask===
--1?d.reduce:function(){var a=this.limbs,b=a.length-1,c,d;this.reduce();if(b===this.modOffset-1){d=a[b]&this.fullMask;a[b]-=d;for(c=0;c<this.fullOffset.length;c++)a[b+this.fullOffset[c]]-=this.fullFactor[c]*d;this.normalize()}};d.fullReduce=function(){var a,b;this._strongReduce();this.addM(this.modulus);this.addM(this.modulus);this.normalize();this._strongReduce();for(b=this.limbs.length;b<this.modOffset;b++)this.limbs[b]=0;a=this.greaterEquals(this.modulus);for(b=0;b<this.limbs.length;b++)this.limbs[b]-=
-this.modulus.limbs[b]*a;this.cnormalize();return this};d.inverse=function(){return this.power(this.modulus.sub(2))};c.fromBits=sjcl.bn.fromBits;return c};
-sjcl.bn.prime={p127:sjcl.bn.pseudoMersennePrime(127,[[0,-1]]),p25519:sjcl.bn.pseudoMersennePrime(255,[[0,-19]]),p192:sjcl.bn.pseudoMersennePrime(192,[[0,-1],[64,-1]]),p224:sjcl.bn.pseudoMersennePrime(224,[[0,1],[96,-1]]),p256:sjcl.bn.pseudoMersennePrime(256,[[0,-1],[96,1],[192,1],[224,-1]]),p384:sjcl.bn.pseudoMersennePrime(384,[[0,-1],[32,1],[96,-1],[128,-1]]),p521:sjcl.bn.pseudoMersennePrime(521,[[0,-1]])};
-sjcl.bn.random=function(a,b){typeof a!=="object"&&(a=new sjcl.bn(a));for(var c,d,e=a.limbs.length,f=a.limbs[e-1]+1,g=new sjcl.bn;;){do c=sjcl.random.randomWords(e,b),c[e-1]<0&&(c[e-1]+=4294967296);while(Math.floor(c[e-1]/f)===Math.floor(4294967296/f));c[e-1]%=f;for(d=0;d<e-1;d++)c[d]&=a.radixMask;g.limbs=c;if(!g.greaterEquals(a))return g}};sjcl.ecc={};
-sjcl.ecc.point=function(a,b,c){b===void 0?this.isIdentity=!0:(b instanceof sjcl.bn&&(b=new a.field(b)),c instanceof sjcl.bn&&(c=new a.field(c)),this.x=b,this.y=c,this.isIdentity=!1);this.curve=a};
-sjcl.ecc.point.prototype={toJac:function(){return new sjcl.ecc.pointJac(this.curve,this.x,this.y,new this.curve.field(1))},mult:function(a){return this.toJac().mult(a,this).toAffine()},mult2:function(a,b,c){return this.toJac().mult2(a,this,b,c).toAffine()},multiples:function(){var a,b,c;if(this._multiples===void 0){c=this.toJac().doubl();a=this._multiples=[new sjcl.ecc.point(this.curve),this,c.toAffine()];for(b=3;b<16;b++)c=c.add(this),a.push(c.toAffine())}return this._multiples},isValid:function(){return this.y.square().equals(this.curve.b.add(this.x.mul(this.curve.a.add(this.x.square()))))},
-toBits:function(){return sjcl.bitArray.concat(this.x.toBits(),this.y.toBits())}};sjcl.ecc.pointJac=function(a,b,c,d){b===void 0?this.isIdentity=!0:(this.x=b,this.y=c,this.z=d,this.isIdentity=!1);this.curve=a};
-sjcl.ecc.pointJac.prototype={add:function(a){var b,c,d,e;if(this.curve!==a.curve)throw"sjcl.ecc.add(): Points must be on the same curve to add them!";if(this.isIdentity)return a.toJac();else if(a.isIdentity)return this;b=this.z.square();c=a.x.mul(b).subM(this.x);if(c.equals(0))return this.y.equals(a.y.mul(b.mul(this.z)))?this.doubl():new sjcl.ecc.pointJac(this.curve);b=a.y.mul(b.mul(this.z)).subM(this.y);d=c.square();a=b.square();e=c.square().mul(c).addM(this.x.add(this.x).mul(d));a=a.subM(e);b=this.x.mul(d).subM(a).mul(b);
-d=this.y.mul(c.square().mul(c));b=b.subM(d);c=this.z.mul(c);return new sjcl.ecc.pointJac(this.curve,a,b,c)},doubl:function(){if(this.isIdentity)return this;var a=this.y.square(),b=a.mul(this.x.mul(4)),c=a.square().mul(8),a=this.z.square(),d=this.x.sub(a).mul(3).mul(this.x.add(a)),a=d.square().subM(b).subM(b),b=b.sub(a).mul(d).subM(c),c=this.y.add(this.y).mul(this.z);return new sjcl.ecc.pointJac(this.curve,a,b,c)},toAffine:function(){if(this.isIdentity||this.z.equals(0))return new sjcl.ecc.point(this.curve);
-var a=this.z.inverse(),b=a.square();return new sjcl.ecc.point(this.curve,this.x.mul(b).fullReduce(),this.y.mul(b.mul(a)).fullReduce())},mult:function(a,b){if(typeof a==="number")a=[a];else if(a.limbs!==void 0)a=a.normalize().limbs;var c,d,e=(new sjcl.ecc.point(this.curve)).toJac(),f=b.multiples();for(c=a.length-1;c>=0;c--)for(d=sjcl.bn.prototype.radix-4;d>=0;d-=4)e=e.doubl().doubl().doubl().doubl().add(f[a[c]>>d&15]);return e},mult2:function(a,b,c,d){if(typeof a==="number")a=[a];else if(a.limbs!==
-void 0)a=a.normalize().limbs;if(typeof c==="number")c=[c];else if(c.limbs!==void 0)c=c.normalize().limbs;for(var e,f=(new sjcl.ecc.point(this.curve)).toJac(),b=b.multiples(),g=d.multiples(),h,i,d=Math.max(a.length,c.length)-1;d>=0;d--){h=a[d]|0;i=c[d]|0;for(e=sjcl.bn.prototype.radix-4;e>=0;e-=4)f=f.doubl().doubl().doubl().doubl().add(b[h>>e&15]).add(g[i>>e&15])}return f},isValid:function(){var a=this.z.square(),b=a.square(),a=b.mul(a);return this.y.square().equals(this.curve.b.mul(a).add(this.x.mul(this.curve.a.mul(b).add(this.x.square()))))}};
-sjcl.ecc.curve=function(a,b,c,d,e,f){this.field=a;this.r=a.prototype.modulus.sub(b);this.a=new a(c);this.b=new a(d);this.G=new sjcl.ecc.point(this,new a(e),new a(f))};sjcl.ecc.curve.prototype.fromBits=function(a){var b=sjcl.bitArray,c=this.field.prototype.exponent+7&-8,a=new sjcl.ecc.point(this,this.field.fromBits(b.bitSlice(a,0,c)),this.field.fromBits(b.bitSlice(a,c,2*c)));if(!a.isValid())throw new sjcl.exception.corrupt("not on the curve!");return a};
-sjcl.ecc.curves={c192:new sjcl.ecc.curve(sjcl.bn.prime.p192,"0x662107c8eb94364e4b2dd7ce",-3,"0x64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1","0x188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012","0x07192b95ffc8da78631011ed6b24cdd573f977a11e794811"),c224:new sjcl.ecc.curve(sjcl.bn.prime.p224,"0xe95c1f470fc1ec22d6baa3a3d5c4",-3,"0xb4050a850c04b3abf54132565044b0b7d7bfd8ba270b39432355ffb4","0xb70e0cbd6bb4bf7f321390b94a03c1d356c21122343280d6115c1d21","0xbd376388b5f723fb4c22dfe6cd4375a05a07476444d5819985007e34"),
-c256:new sjcl.ecc.curve(sjcl.bn.prime.p256,"0x4319055358e8617b0c46353d039cdaae",-3,"0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b","0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296","0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5"),c384:new sjcl.ecc.curve(sjcl.bn.prime.p384,"0x389cb27e0bc8d21fa7e5f24cb74f58851313e696333ad68c",-3,"0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef","0xaa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c3a545e3872760ab7",
-"0x3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f")};
-sjcl.ecc._dh=function(a){sjcl.ecc[a]={publicKey:function(a,c){this._curve=a;this._curveBitLength=a.r.bitLength();this._point=c instanceof Array?a.fromBits(c):c;this.get=function(){var a=this._point.toBits(),b=sjcl.bitArray.bitLength(a),c=sjcl.bitArray.bitSlice(a,0,b/2),a=sjcl.bitArray.bitSlice(a,b/2);return{x:c,y:a}}},secretKey:function(a,c){this._curve=a;this._curveBitLength=a.r.bitLength();this._exponent=c;this.get=function(){return this._exponent.toBits()}},generateKeys:function(b,c,d){b===void 0&&
-(b=256);if(typeof b==="number"&&(b=sjcl.ecc.curves["c"+b],b===void 0))throw new sjcl.exception.invalid("no such curve");d===void 0&&(d=sjcl.bn.random(b.r,c));c=b.G.mult(d);return{pub:new sjcl.ecc[a].publicKey(b,c),sec:new sjcl.ecc[a].secretKey(b,d)}}}};sjcl.ecc._dh("elGamal");sjcl.ecc.elGamal.publicKey.prototype={kem:function(a){var a=sjcl.bn.random(this._curve.r,a),b=this._curve.G.mult(a).toBits();return{key:sjcl.hash.sha256.hash(this._point.mult(a).toBits()),tag:b}}};
-sjcl.ecc.elGamal.secretKey.prototype={unkem:function(a){return sjcl.hash.sha256.hash(this._curve.fromBits(a).mult(this._exponent).toBits())},dh:function(a){return sjcl.hash.sha256.hash(a._point.mult(this._exponent).toBits())}};sjcl.ecc._dh("ecdsa");
-sjcl.ecc.ecdsa.secretKey.prototype={sign:function(a,b,c,d){sjcl.bitArray.bitLength(a)>this._curveBitLength&&(a=sjcl.bitArray.clamp(a,this._curveBitLength));var e=this._curve.r,f=e.bitLength(),d=d||sjcl.bn.random(e.sub(1),b).add(1),b=this._curve.G.mult(d).x.mod(e),a=sjcl.bn.fromBits(a).add(b.mul(this._exponent)),c=c?a.inverseMod(e).mul(d).mod(e):a.mul(d.inverseMod(e)).mod(e);return sjcl.bitArray.concat(b.toBits(f),c.toBits(f))}};
-sjcl.ecc.ecdsa.publicKey.prototype={verify:function(a,b,c){sjcl.bitArray.bitLength(a)>this._curveBitLength&&(a=sjcl.bitArray.clamp(a,this._curveBitLength));var d=sjcl.bitArray,e=this._curve.r,f=this._curveBitLength,g=sjcl.bn.fromBits(d.bitSlice(b,0,f)),d=sjcl.bn.fromBits(d.bitSlice(b,f,2*f)),h=c?d:d.inverseMod(e),f=sjcl.bn.fromBits(a).mul(h).mod(e),h=g.mul(h).mod(e),f=this._curve.G.mult2(f,h,this._point).x;if(g.equals(0)||d.equals(0)||g.greaterEquals(e)||d.greaterEquals(e)||!f.equals(g))if(c===void 0)return this.verify(a,
-b,!0);else throw new sjcl.exception.corrupt("signature didn't check out");return!0}};sjcl.ecc.point.prototype.isValidPoint=function(){var a=this.curve.field.modulus;return this.isIdentity?!1:(new sjcl.bn(1)).greaterEquals(this.x)&&!this.x.equals(1)||this.x.greaterEquals(a.sub(1))&&!this.x.equals(1)?!1:(new sjcl.bn(1)).greaterEquals(this.y)&&!this.y.equals(1)||this.y.greaterEquals(a.sub(1))&&!this.y.equals(1)?!1:!this.isOnCurve()?!1:!0};
-sjcl.ecc.point.prototype.isOnCurve=function(){var a=this.curve.a,b=this.curve.b,c=this.curve.field.modulus,d=this.y.mul(this.y).mod(c),a=this.x.mul(this.x).mul(this.x).add(a.mul(this.x)).add(b).mod(c);return d.equals(a)};sjcl.ecc.point.prototype.toString=function(){return"("+this.x.toString()+", "+this.y.toString()+")"};sjcl.ecc.pointJac.prototype.toString=function(){return"("+this.x.toString()+", "+this.y.toString()+", "+this.z.toString()+")"};
-sjcl.ecc.curves.c256=new sjcl.ecc.curve(sjcl.bn.pseudoMersennePrime(256,[[0,-1],[4,-1],[6,-1],[7,-1],[8,-1],[9,-1],[32,-1]]),"0x14551231950b75fc4402da1722fc9baee",0,7,"0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798","0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
-sjcl.ecc.pointJac.prototype.add=function(a){if(this.curve!==a.curve)throw"sjcl.ecc.add(): Points must be on the same curve to add them!";if(this.isIdentity)return a.toJac();else if(a.isIdentity)return this;var b=this.z.square(),c=a.x.mul(b).subM(this.x),d=a.y.mul(this.z).mul(b);if(c.equals(0))return this.y.equals(a.y.mul(b.mul(this.z)))?this.doubl():new sjcl.ecc.pointJac(this.curve);var a=c.square(),e=a.copy().doubleM().doubleM(),f=c.mul(e),g=d.sub(this.y).doubleM(),e=this.x.mul(e),d=g.square().subM(f).subM(e.copy().doubleM()),
-f=g.mul(e.sub(d)).subM(this.y.mul(f).doubleM()),b=this.z.add(c).square().subM(b).subM(a);return new sjcl.ecc.pointJac(this.curve,d,f,b)};sjcl.ecc.pointJac.prototype.doubl=function(){if(this.isIdentity)return this;var a=this.x.square(),b=this.y.square(),c=b.square(),b=this.x.add(b).square().subM(a).subM(c).doubleM(),d=a.mul(3),a=d.square().sub(b.copy().doubleM()),c=d.mul(b.sub(a)).subM(c.doubleM().doubleM().doubleM()),b=this.z.mul(this.y).doubleM();return new sjcl.ecc.pointJac(this.curve,a,c,b)};
-sjcl.ecc.point.prototype.toBytesCompressed=function(){return[this.y.mod(2).toString()=="0x0"?2:3].concat(sjcl.codec.bytes.fromBits(this.x.toBits()))};
-(function(){function a(a,b){return a<<b|a>>>32-b}function b(a){return(a&255)<<24|(a&65280)<<8|(a&16711680)>>>8|(a&-16777216)>>>24}function c(b){for(var c=this._h[0],d=this._h[1],g=this._h[2],h=this._h[3],p=this._h[4],u=this._h[0],r=this._h[1],v=this._h[2],s=this._h[3],n=this._h[4],j=0,o;j<16;++j)o=a(c+(d^g^h)+b[i[j]]+e[j],l[j])+p,c=p,p=h,h=a(g,10),g=d,d=o,o=a(u+(r^(v|~s))+b[k[j]]+f[j],m[j])+n,u=n,n=s,s=a(v,10),v=r,r=o;for(;j<32;++j)o=a(c+(d&g|~d&h)+b[i[j]]+e[j],l[j])+p,c=p,p=h,h=a(g,10),g=d,d=o,o=
-a(u+(r&s|v&~s)+b[k[j]]+f[j],m[j])+n,u=n,n=s,s=a(v,10),v=r,r=o;for(;j<48;++j)o=a(c+((d|~g)^h)+b[i[j]]+e[j],l[j])+p,c=p,p=h,h=a(g,10),g=d,d=o,o=a(u+((r|~v)^s)+b[k[j]]+f[j],m[j])+n,u=n,n=s,s=a(v,10),v=r,r=o;for(;j<64;++j)o=a(c+(d&h|g&~h)+b[i[j]]+e[j],l[j])+p,c=p,p=h,h=a(g,10),g=d,d=o,o=a(u+(r&v|~r&s)+b[k[j]]+f[j],m[j])+n,u=n,n=s,s=a(v,10),v=r,r=o;for(;j<80;++j)o=a(c+(d^(g|~h))+b[i[j]]+e[j],l[j])+p,c=p,p=h,h=a(g,10),g=d,d=o,o=a(u+(r^v^s)+b[k[j]]+f[j],m[j])+n,u=n,n=s,s=a(v,10),v=r,r=o;o=this._h[1]+g+s;
-this._h[1]=this._h[2]+h+n;this._h[2]=this._h[3]+p+u;this._h[3]=this._h[4]+c+r;this._h[4]=this._h[0]+d+v;this._h[0]=o}sjcl.hash.ripemd160=function(a){a?(this._h=a._h.slice(0),this._buffer=a._buffer.slice(0),this._length=a._length):this.reset()};sjcl.hash.ripemd160.hash=function(a){return(new sjcl.hash.ripemd160).update(a).finalize()};sjcl.hash.ripemd160.prototype={reset:function(){this._h=d.slice(0);this._buffer=[];this._length=0;return this},update:function(a){typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));
-var d,e=this._buffer=sjcl.bitArray.concat(this._buffer,a);d=this._length;a=this._length=d+sjcl.bitArray.bitLength(a);for(d=512+d&-512;d<=a;d+=512){for(var f=e.splice(0,16),g=0;g<16;++g)f[g]=b(f[g]);c.call(this,f)}return this},finalize:function(){var a=sjcl.bitArray.concat(this._buffer,[sjcl.bitArray.partial(1,1)]),d=(this._length+1)%512,d=(d>448?512:448)-d%448,e=d%32;for(e>0&&(a=sjcl.bitArray.concat(a,[sjcl.bitArray.partial(e,0)]));d>=32;d-=32)a.push(0);a.push(b(this._length|0));for(a.push(b(Math.floor(this._length/
-4294967296)));a.length;){e=a.splice(0,16);for(d=0;d<16;++d)e[d]=b(e[d]);c.call(this,e)}a=this._h;this.reset();for(d=0;d<5;++d)a[d]=b(a[d]);return a}};for(var d=[1732584193,4023233417,2562383102,271733878,3285377520],e=[0,1518500249,1859775393,2400959708,2840853838],f=[1352829926,1548603684,1836072691,2053994217,0],g=4;g>=0;--g)for(var h=1;h<16;++h)e.splice(g,0,e[g]),f.splice(g,0,f[g]);var i=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8,3,10,14,4,9,15,8,1,2,7,0,6,13,
-11,5,12,1,9,11,10,0,8,12,4,13,3,7,15,14,5,6,2,4,0,5,9,7,12,2,10,14,1,3,8,11,6,15,13],k=[5,14,7,0,9,2,11,4,13,6,15,8,1,10,3,12,6,11,3,7,0,13,5,10,14,15,8,12,4,9,1,2,15,5,1,3,7,14,6,9,11,8,12,2,10,0,4,13,8,6,4,1,3,11,15,0,5,12,2,13,9,7,10,14,12,15,10,4,1,5,8,7,6,2,13,14,0,3,9,11],l=[11,14,15,12,5,8,7,9,11,13,14,15,6,7,9,8,7,6,8,13,11,9,7,15,7,12,15,9,11,7,13,12,11,13,6,7,14,9,13,15,14,8,13,6,5,12,7,5,11,12,14,15,14,15,9,8,9,14,5,6,8,6,5,12,9,15,5,11,6,8,13,12,5,12,13,14,11,8,5,6],m=[8,9,9,11,13,15,
-15,5,7,7,8,11,14,14,12,6,9,13,15,7,12,8,9,11,7,7,12,7,6,15,13,11,9,7,15,11,8,6,6,14,12,13,5,14,13,13,7,5,15,5,8,11,14,14,6,14,6,9,12,9,12,5,15,8,8,5,12,9,12,5,14,6,8,13,6,5,15,13,11,11]})();sjcl.bn.ZERO=new sjcl.bn(0);
-sjcl.bn.prototype.divRem=function(a){typeof a!=="object"&&(a=new this._class(a));var b=this.abs(),c=a.abs(),d=new this._class(0),e=0;if(b.greaterEquals(c)){if(b.equals(c))return[new sjcl.bn(1),new sjcl.bn(0)]}else return[new sjcl.bn(0),this.copy()];for(;b.greaterEquals(c);e++)c.doubleM();for(;e>0;e--)d.doubleM(),c.halveM(),b.greaterEquals(c)&&(d.addM(1),b.subM(a).normalize());return[d,b]};
-sjcl.bn.prototype.divRound=function(a){var b=this.divRem(a),c=b[0];b[1].doubleM().greaterEquals(a)&&c.addM(1);return c};sjcl.bn.prototype.div=function(a){return this.divRem(a)[0]};sjcl.bn.prototype.sign=function(){return this.greaterEquals(sjcl.bn.ZERO)?1:-1};sjcl.bn.prototype.neg=function(){return sjcl.bn.ZERO.sub(this)};sjcl.bn.prototype.abs=function(){return this.sign()===-1?this.neg():this};
-sjcl.bn.prototype.shiftRight=function(a){if("number"!==typeof a)throw Error("shiftRight expects a number");a=+a;if(a<0)return this.shiftLeft(a);for(var b=new sjcl.bn(this);a>=this.radix;)b.limbs.shift(),a-=this.radix;for(;a--;)b.halveM();return b};sjcl.bn.prototype.shiftLeft=function(a){if("number"!==typeof a)throw Error("shiftLeft expects a number");a=+a;if(a<0)return this.shiftRight(a);for(var b=new sjcl.bn(this);a>=this.radix;)b.limbs.unshift(0),a-=this.radix;for(;a--;)b.doubleM();return b};
-sjcl.bn.prototype.toNumber=function(){return this.limbs[0]|0};sjcl.bn.prototype.testBit=function(a){var b=Math.floor(a/this.radix);a%=this.radix;return b>=this.limbs.length?0:this.limbs[b]>>>a&1};sjcl.bn.prototype.setBitM=function(a){var b=Math.floor(a/this.radix);for(a%=this.radix;b>=this.limbs.length;)this.limbs.push(0);this.limbs[b]|=1<<a;this.cnormalize();return this};sjcl.bn.prototype.modInt=function(a){return this.toNumber()%a};
-sjcl.bn.prototype.invDigit=function(){var a=1+this.radixMask;if(this.limbs.length<1)return 0;var b=this.limbs[0];if((b&1)==0)return 0;var c=b&3,c=c*(2-(b&15)*c)&15,c=c*(2-(b&255)*c)&255,c=c*(2-((b&65535)*c&65535))&65535,c=c*(2-b*c%a)%a;return c>0?a-c:-c};function nbits(a){var b=1,c;if((c=a>>>16)!=0)a=c,b+=16;if((c=a>>8)!=0)a=c,b+=8;if((c=a>>4)!=0)a=c,b+=4;if((c=a>>2)!=0)a=c,b+=2;a>>1!=0&&(b+=1);return b}
-sjcl.bn.prototype.am=function(a,b,c,d,e,f){var g=b&4095;for(b>>=12;--f>=0;){var h=this.limbs[a]&4095,i=this.limbs[a++]>>12,k=b*h+i*g,h=g*h+((k&4095)<<12)+c.limbs[d]+e,e=(h>>24)+(k>>12)+b*i;c.limbs[d++]=h&16777215}return e};var Montgomery=function(a){this.m=a;this.mt=a.limbs.length;this.mt2=this.mt*2;this.mp=a.invDigit();this.mpl=this.mp&32767;this.mph=this.mp>>15;this.um=(1<<a.radix-15)-1};
-Montgomery.prototype.reduce=function(a){for(var b=a.radixMask+1;a.limbs.length<=this.mt2;)a.limbs[a.limbs.length]=0;for(var c=0;c<this.mt;++c){var d=a.limbs[c]&32767,e=d*this.mpl+((d*this.mph+(a.limbs[c]>>15)*this.mpl&this.um)<<15)&a.radixMask,d=c+this.mt;for(a.limbs[d]+=this.m.am(0,e,a,c,0,this.mt);a.limbs[d]>=b;)a.limbs[d]-=b,a.limbs[++d]++}a.trim();a=a.shiftRight(this.mt*this.m.radix);a.greaterEquals(this.m)&&(a=a.sub(this.m));return a.trim().normalize().reduce()};Montgomery.prototype.square=function(a){return this.reduce(a.square())};
-Montgomery.prototype.multiply=function(a,b){return this.reduce(a.mul(b))};Montgomery.prototype.convert=function(a){return a.abs().shiftLeft(this.mt*this.m.radix).mod(this.m)};Montgomery.prototype.revert=function(a){return this.reduce(a.copy())};
-sjcl.bn.prototype.powermodMontgomery=function(a,b){var c=a.bitLength(),d,e=new this._class(1);if(c<=0)return e;else d=c<18?1:c<48?3:c<144?4:c<768?5:6;if(c<8||!b.testBit(0))return this.powermod(a,b);var f=new Montgomery(b);a.trim().normalize();var g=[],h=3,i=d-1,k=(1<<d)-1;g[1]=f.convert(this);if(d>1)for(c=f.square(g[1]);h<=k;)g[h]=f.multiply(c,g[h-2]),h+=2;for(var l=a.limbs.length-1,m,q=!0,t=new this._class,c=nbits(a.limbs[l])-1;l>=0;){c>=i?m=a.limbs[l]>>c-i&k:(m=(a.limbs[l]&(1<<c+1)-1)<<i-c,l>0&&
-(m|=a.limbs[l-1]>>this.radix+c-i));for(h=d;(m&1)==0;)m>>=1,--h;if((c-=h)<0)c+=this.radix,--l;if(q)e=g[m].copy(),q=!1;else{for(;h>1;)t=f.square(e),e=f.square(t),h-=2;t=h>0?f.square(e):e;e=f.multiply(t,g[m])}for(;l>=0&&(a.limbs[l]&1<<c)==0;)e=t=f.square(e),--c<0&&(c=this.radix-1,--l)}return f.revert(e)};
-sjcl.ecc.ecdsa.secretKey.prototype.sign=function(a,b,c){var d=this._curve.r,e=d.bitLength(),c=typeof c==="object"&&c.length>0&&typeof c[0]==="number"?c:typeof c==="string"&&/^[0-9a-fA-F]+$/.test(c)?sjcl.bn.fromBits(sjcl.codec.hex.toBits(c)):sjcl.bn.random(d.sub(1),b).add(1),b=this._curve.G.mult(c).x.mod(d),a=sjcl.bn.fromBits(a).add(b.mul(this._exponent)).mul(c.inverseMod(d)).mod(d);return sjcl.bitArray.concat(b.toBits(e),a.toBits(e))};var FIELD_MODULUS_PLUS_ONE_DIVIDED_BY_FOUR;
-sjcl.bn.prototype.jacobi=function(a){a=new sjcl.bn(a);if(a.sign()!==-1){if(this.equals(0))return 0;if(this.equals(1))return 1;for(var b=0,c=0;!this.testBit(c);)c++;var d=this.shiftRight(c);if((c&1)===0)b=1;else if(c=a.modInt(8),c===1||c===7)b=1;else if(c===3||c===5)b=-1;a.modInt(4)===3&&d.modInt(4)===3&&(b=-b);return d.equals(1)?b:b*a.mod(d).jacobi(d)}};
-function fdh(a,b){var c=b<<3;typeof a==="string"&&(a=sjcl.codec.utf8String.toBits(a));for(var d=0,e=[];sjcl.bitArray.bitLength(e)<c;){var f=sjcl.hash.sha512.hash(sjcl.bitArray.concat([d],a)),e=sjcl.bitArray.concat(e,f);d++}return e=sjcl.bitArray.clamp(e,c)}function keyHash(a,b){var c=new sjcl.misc.hmac(a,sjcl.hash.sha512);return sjcl.codec.hex.fromBits(sjcl.bitArray.bitSlice(c.encrypt(b),0,256))}function bn(a){return(new sjcl.bn(String(a))).toString()}
-function loadData(a,b,c,d,e,f,g){b=new sjcl.bn(String(b));c=new sjcl.bn(String(c));d=new sjcl.bn(String(d));a="PAKDF_1_0_0:"+a.length+":"+a+":"+f.length+":"+f+":"+e.length+":"+e+":";e=Math.ceil(Math.min(7+c.bitLength()>>>3,256)/8);e=fdh(a,e);e=sjcl.codec.hex.fromBits(e);e=(new sjcl.bn(String(e))).setBitM(0);g=a+":"+g.length+":"+g+":";f=7+c.bitLength()>>>3;g=fdh(g,f);g=sjcl.codec.hex.fromBits(g);g=(new sjcl.bn(String(g))).mod(c);g.jacobi(c)!==1&&(g=g.mul(d).mod(c));for(var h;;)if(h=sjcl.bn.random(c,
-0),h.jacobi(c)===1)break;b=h.powermodMontgomery(e.mul(b),c);b=g.mulmod(b,c);b=sjcl.codec.hex.fromBits(b.toBits());return a+","+b+","+h+","+c}function loadData2(a,b,c,d){var b=new sjcl.bn(String(b)),c=new sjcl.bn(String(c)),d=new sjcl.bn(String(d)),c=c.inverseMod(d),e=b.mulmod(c,d).toBits();if(a==="login"){var a=["id","crypt"],f={};a.forEach(function(a){f[a]=keyHash(e,a)});return f.id+","+f.crypt}else return a=["unlock"],f={},a.forEach(function(a){f[a]=keyHash(e,a)}),f.unlock}
-function keyHash(a,b){var c=new sjcl.misc.hmac(a,sjcl.hash.sha512);return sjcl.codec.hex.fromBits(sjcl.bitArray.bitSlice(c.encrypt(b),0,256))}
-function decrypt(a,b){var a=sjcl.codec.hex.toBits(a),c=sjcl.codec.base64.toBits(b),d=sjcl.bitArray.extract(c,0,8);if(d!==0)throw Error("Unsupported encryption version: "+d);c=extend(!0,{},cryptConfig,{iv:sjcl.codec.base64.fromBits(sjcl.bitArray.bitSlice(c,8,136)),ct:sjcl.codec.base64.fromBits(sjcl.bitArray.bitSlice(c,136))});return sjcl.decrypt(a,JSON.stringify(c))};
+"use strict";
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+
+var isPlainObject = function isPlainObject(obj) {
+	if (!obj || toString.call(obj) !== '[object Object]') {
+		return false;
+	}
+	var has_own_constructor = hasOwn.call(obj, 'constructor');
+	var has_is_property_of_method = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	if (obj.constructor && !has_own_constructor && !has_is_property_of_method) {
+		return false;
+	}
+	var key;
+	for (key in obj) {}
+
+	return key === undefined || hasOwn.call(obj, key);
+};
+
+function extend() {
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0],
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		i = 2;
+	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		target = {};
+	}
+
+	for (; i < length; ++i) {
+		options = arguments[i];
+		if (options != null) {
+			for (name in options) {
+				src = target[name];
+				copy = options[name];
+				if (target === copy) {
+					continue;
+				}
+				if (deep && copy && (isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+					if (copyIsArray) {
+						copyIsArray = false;
+						clone = src && Array.isArray(src) ? src : [];
+					} else {
+						clone = src && isPlainObject(src) ? src : {};
+					}
+					target[name] = extend(deep, clone, copy);
+				} else if (copy !== undefined) {
+					target[name] = copy;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+var sjcl = {
+  cipher: {},
+  hash: {},
+  keyexchange: {},
+  mode: {},
+  misc: {},
+  codec: {},
+  exception: {
+
+    corrupt: function(message) {
+      this.toString = function() { return "CORRUPT: "+this.message; };
+      this.message = message;
+    },
+    invalid: function(message) {
+      this.toString = function() { return "INVALID: "+this.message; };
+      this.message = message;
+    },
+    bug: function(message) {
+      this.toString = function() { return "BUG: "+this.message; };
+      this.message = message;
+    },
+    notReady: function(message) {
+      this.toString = function() { return "NOT READY: "+this.message; };
+      this.message = message;
+    }
+  }
+};
+if(typeof module != 'undefined' && module.exports){
+  module.exports = sjcl;
+}
+sjcl.cipher.aes = function (key) {
+  if (!this._tables[0][0][0]) {
+    this._precompute();
+  }
+  var i, j, tmp,
+    encKey, decKey,
+    sbox = this._tables[0][4], decTable = this._tables[1],
+    keyLen = key.length, rcon = 1;
+  
+  if (keyLen !== 4 && keyLen !== 6 && keyLen !== 8) {
+    throw new sjcl.exception.invalid("invalid aes key size");
+  }
+  this._key = [encKey = key.slice(0), decKey = []];
+  for (i = keyLen; i < 4 * keyLen + 28; i++) {
+    tmp = encKey[i-1];
+    if (i%keyLen === 0 || (keyLen === 8 && i%keyLen === 4)) {
+      tmp = sbox[tmp>>>24]<<24 ^ sbox[tmp>>16&255]<<16 ^ sbox[tmp>>8&255]<<8 ^ sbox[tmp&255];
+      if (i%keyLen === 0) {
+        tmp = tmp<<8 ^ tmp>>>24 ^ rcon<<24;
+        rcon = rcon<<1 ^ (rcon>>7)*283;
+      }
+    }
+    encKey[i] = encKey[i-keyLen] ^ tmp;
+  }
+  for (j = 0; i; j++, i--) {
+    tmp = encKey[j&3 ? i : i - 4];
+    if (i<=4 || j<4) {
+      decKey[j] = tmp;
+    } else {
+      decKey[j] = decTable[0][sbox[tmp>>>24      ]] ^
+                  decTable[1][sbox[tmp>>16  & 255]] ^
+                  decTable[2][sbox[tmp>>8   & 255]] ^
+                  decTable[3][sbox[tmp      & 255]];
+    }
+  }
+};
+sjcl.cipher.aes.prototype = {
+  encrypt:function (data) { return this._crypt(data,0); },
+  decrypt:function (data) { return this._crypt(data,1); },
+  _tables: [[[],[],[],[],[]],[[],[],[],[],[]]],
+  _precompute: function () {
+   var encTable = this._tables[0], decTable = this._tables[1],
+       sbox = encTable[4], sboxInv = decTable[4],
+       i, x, xInv, d=[], th=[], x2, x4, x8, s, tEnc, tDec;
+   for (i = 0; i < 256; i++) {
+     th[( d[i] = i<<1 ^ (i>>7)*283 )^i]=i;
+   }
+   
+   for (x = xInv = 0; !sbox[x]; x ^= x2 || 1, xInv = th[xInv] || 1) {
+     // Compute sbox
+     s = xInv ^ xInv<<1 ^ xInv<<2 ^ xInv<<3 ^ xInv<<4;
+     s = s>>8 ^ s&255 ^ 99;
+     sbox[x] = s;
+     sboxInv[s] = x;
+     
+     // Compute MixColumns
+     x8 = d[x4 = d[x2 = d[x]]];
+     tDec = x8*0x1010101 ^ x4*0x10001 ^ x2*0x101 ^ x*0x1010100;
+     tEnc = d[s]*0x101 ^ s*0x1010100;
+     
+     for (i = 0; i < 4; i++) {
+       encTable[i][x] = tEnc = tEnc<<24 ^ tEnc>>>8;
+       decTable[i][s] = tDec = tDec<<24 ^ tDec>>>8;
+     }
+   }
+   
+   // Compactify.  Considerable speedup on Firefox.
+   for (i = 0; i < 5; i++) {
+     encTable[i] = encTable[i].slice(0);
+     decTable[i] = decTable[i].slice(0);
+   }
+  },
+  
+  _crypt:function (input, dir) {
+    if (input.length !== 4) {
+      throw new sjcl.exception.invalid("invalid aes block size");
+    }
+    
+    var key = this._key[dir],
+        // state variables a,b,c,d are loaded with pre-whitened data
+        a = input[0]           ^ key[0],
+        b = input[dir ? 3 : 1] ^ key[1],
+        c = input[2]           ^ key[2],
+        d = input[dir ? 1 : 3] ^ key[3],
+        a2, b2, c2,
+        
+        nInnerRounds = key.length/4 - 2,
+        i,
+        kIndex = 4,
+        out = [0,0,0,0],
+        table = this._tables[dir],
+        
+        // load up the tables
+        t0    = table[0],
+        t1    = table[1],
+        t2    = table[2],
+        t3    = table[3],
+        sbox  = table[4];
+ 
+    // Inner rounds.  Cribbed from OpenSSL.
+    for (i = 0; i < nInnerRounds; i++) {
+      a2 = t0[a>>>24] ^ t1[b>>16 & 255] ^ t2[c>>8 & 255] ^ t3[d & 255] ^ key[kIndex];
+      b2 = t0[b>>>24] ^ t1[c>>16 & 255] ^ t2[d>>8 & 255] ^ t3[a & 255] ^ key[kIndex + 1];
+      c2 = t0[c>>>24] ^ t1[d>>16 & 255] ^ t2[a>>8 & 255] ^ t3[b & 255] ^ key[kIndex + 2];
+      d  = t0[d>>>24] ^ t1[a>>16 & 255] ^ t2[b>>8 & 255] ^ t3[c & 255] ^ key[kIndex + 3];
+      kIndex += 4;
+      a=a2; b=b2; c=c2;
+    }
+        
+    // Last round.
+    for (i = 0; i < 4; i++) {
+      out[dir ? 3&-i : i] =
+        sbox[a>>>24      ]<<24 ^ 
+        sbox[b>>16  & 255]<<16 ^
+        sbox[c>>8   & 255]<<8  ^
+        sbox[d      & 255]     ^
+        key[kIndex++];
+      a2=a; a=b; b=c; c=d; d=a2;
+    }
+    
+    return out;
+  }
+};
+
+sjcl.bitArray = {
+  bitSlice: function (a, bstart, bend) {
+    a = sjcl.bitArray._shiftRight(a.slice(bstart/32), 32 - (bstart & 31)).slice(1);
+    return (bend === undefined) ? a : sjcl.bitArray.clamp(a, bend-bstart);
+  },
+  extract: function(a, bstart, blength) {
+    // FIXME: this Math.floor is not necessary at all, but for some reason
+    // seems to suppress a bug in the Chromium JIT.
+    var x, sh = Math.floor((-bstart-blength) & 31);
+    if ((bstart + blength - 1 ^ bstart) & -32) {
+      // it crosses a boundary
+      x = (a[bstart/32|0] << (32 - sh)) ^ (a[bstart/32+1|0] >>> sh);
+    } else {
+      // within a single word
+      x = a[bstart/32|0] >>> sh;
+    }
+    return x & ((1<<blength) - 1);
+  },
+  concat: function (a1, a2) {
+    if (a1.length === 0 || a2.length === 0) {
+      return a1.concat(a2);
+    }
+    
+    var out, i, last = a1[a1.length-1], shift = sjcl.bitArray.getPartial(last);
+    if (shift === 32) {
+      return a1.concat(a2);
+    } else {
+      return sjcl.bitArray._shiftRight(a2, shift, last|0, a1.slice(0,a1.length-1));
+    }
+  },
+  bitLength: function (a) {
+    var l = a.length, x;
+    if (l === 0) { return 0; }
+    x = a[l - 1];
+    return (l-1) * 32 + sjcl.bitArray.getPartial(x);
+  },
+  clamp: function (a, len) {
+    if (a.length * 32 < len) { return a; }
+    a = a.slice(0, Math.ceil(len / 32));
+    var l = a.length;
+    len = len & 31;
+    if (l > 0 && len) {
+      a[l-1] = sjcl.bitArray.partial(len, a[l-1] & 0x80000000 >> (len-1), 1);
+    }
+    return a;
+  },
+  partial: function (len, x, _end) {
+    if (len === 32) { return x; }
+    return (_end ? x|0 : x << (32-len)) + len * 0x10000000000;
+  },
+  getPartial: function (x) {
+    return Math.round(x/0x10000000000) || 32;
+  },
+  equal: function (a, b) {
+    if (sjcl.bitArray.bitLength(a) !== sjcl.bitArray.bitLength(b)) {
+      return false;
+    }
+    var x = 0, i;
+    for (i=0; i<a.length; i++) {
+      x |= a[i]^b[i];
+    }
+    return (x === 0);
+  },
+  _shiftRight: function (a, shift, carry, out) {
+    var i, last2=0, shift2;
+    if (out === undefined) { out = []; }
+    
+    for (; shift >= 32; shift -= 32) {
+      out.push(carry);
+      carry = 0;
+    }
+    if (shift === 0) {
+      return out.concat(a);
+    }
+    
+    for (i=0; i<a.length; i++) {
+      out.push(carry | a[i]>>>shift);
+      carry = a[i] << (32-shift);
+    }
+    last2 = a.length ? a[a.length-1] : 0;
+    shift2 = sjcl.bitArray.getPartial(last2);
+    out.push(sjcl.bitArray.partial(shift+shift2 & 31, (shift + shift2 > 32) ? carry : out.pop(),1));
+    return out;
+  },
+  _xor4: function(x,y) {
+    return [x[0]^y[0],x[1]^y[1],x[2]^y[2],x[3]^y[3]];
+  }
+};
+sjcl.codec.utf8String = {
+  fromBits: function (arr) {
+    var out = "", bl = sjcl.bitArray.bitLength(arr), i, tmp;
+    for (i=0; i<bl/8; i++) {
+      if ((i&3) === 0) {
+        tmp = arr[i/4];
+      }
+      out += String.fromCharCode(tmp >>> 24);
+      tmp <<= 8;
+    }
+    return decodeURIComponent(escape(out));
+  },
+  toBits: function (str) {
+    str = unescape(encodeURIComponent(str));
+    var out = [], i, tmp=0;
+    for (i=0; i<str.length; i++) {
+      tmp = tmp << 8 | str.charCodeAt(i);
+      if ((i&3) === 3) {
+        out.push(tmp);
+        tmp = 0;
+      }
+    }
+    if (i&3) {
+      out.push(sjcl.bitArray.partial(8*(i&3), tmp));
+    }
+    return out;
+  }
+};
+sjcl.codec.hex = {
+  fromBits: function (arr) {
+    var out = "", i, x;
+    for (i=0; i<arr.length; i++) {
+      out += ((arr[i]|0)+0xF00000000000).toString(16).substr(4);
+    }
+    return out.substr(0, sjcl.bitArray.bitLength(arr)/4);
+  },
+  toBits: function (str) {
+    var i, out=[], len;
+    str = str.replace(/\s|0x/g, "");
+    len = str.length;
+    str = str + "00000000";
+    for (i=0; i<str.length; i+=8) {
+      out.push(parseInt(str.substr(i,8),16)^0);
+    }
+    return sjcl.bitArray.clamp(out, len*4);
+  }
+};
+sjcl.codec.base64 = {
+  _chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+  fromBits: function (arr, _noEquals, _url) {
+    var out = "", i, bits=0, c = sjcl.codec.base64._chars, ta=0, bl = sjcl.bitArray.bitLength(arr);
+    if (_url) c = c.substr(0,62) + '-_';
+    for (i=0; out.length * 6 < bl; ) {
+      out += c.charAt((ta ^ arr[i]>>>bits) >>> 26);
+      if (bits < 6) {
+        ta = arr[i] << (6-bits);
+        bits += 26;
+        i++;
+      } else {
+        ta <<= 6;
+        bits -= 6;
+      }
+    }
+    while ((out.length & 3) && !_noEquals) { out += "="; }
+    return out;
+  },
+  toBits: function(str, _url) {
+    str = str.replace(/\s|=/g,'');
+    var out = [], i, bits=0, c = sjcl.codec.base64._chars, ta=0, x;
+    if (_url) c = c.substr(0,62) + '-_';
+    for (i=0; i<str.length; i++) {
+      x = c.indexOf(str.charAt(i));
+      if (x < 0) {
+        throw new sjcl.exception.invalid("this isn't base64!");
+      }
+      if (bits > 26) {
+        bits -= 26;
+        out.push(ta ^ x>>>bits);
+        ta  = x << (32-bits);
+      } else {
+        bits += 6;
+        ta ^= x << (32-bits);
+      }
+    }
+    if (bits&56) {
+      out.push(sjcl.bitArray.partial(bits&56, ta, 1));
+    }
+    return out;
+  }
+};
+sjcl.codec.base64url = {
+  fromBits: function (arr) { return sjcl.codec.base64.fromBits(arr,1,1); },
+  toBits: function (str) { return sjcl.codec.base64.toBits(str,1); }
+};
+sjcl.codec.bytes = {
+  fromBits: function (arr) {
+    var out = [], bl = sjcl.bitArray.bitLength(arr), i, tmp;
+    for (i=0; i<bl/8; i++) {
+      if ((i&3) === 0) {
+        tmp = arr[i/4];
+      }
+      out.push(tmp >>> 24);
+      tmp <<= 8;
+    }
+    return out;
+  },
+  toBits: function (bytes) {
+    var out = [], i, tmp=0;
+    for (i=0; i<bytes.length; i++) {
+      tmp = tmp << 8 | bytes[i];
+      if ((i&3) === 3) {
+        out.push(tmp);
+        tmp = 0;
+      }
+    }
+    if (i&3) {
+      out.push(sjcl.bitArray.partial(8*(i&3), tmp));
+    }
+    return out;
+  }
+};
+sjcl.hash.sha256 = function (hash) {
+  if (!this._key[0]) { this._precompute(); }
+  if (hash) {
+    this._h = hash._h.slice(0);
+    this._buffer = hash._buffer.slice(0);
+    this._length = hash._length;
+  } else {
+    this.reset();
+  }
+};
+sjcl.hash.sha256.hash = function (data) {
+  return (new sjcl.hash.sha256()).update(data).finalize();
+};
+
+sjcl.hash.sha256.prototype = {
+  blockSize: 512,
+  reset:function () {
+    this._h = this._init.slice(0);
+    this._buffer = [];
+    this._length = 0;
+    return this;
+  },
+  update: function (data) {
+    if (typeof data === "string") {
+      data = sjcl.codec.utf8String.toBits(data);
+    }
+    var i, b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
+        ol = this._length,
+        nl = this._length = ol + sjcl.bitArray.bitLength(data);
+    for (i = 512+ol & -512; i <= nl; i+= 512) {
+      this._block(b.splice(0,16));
+    }
+    return this;
+  },
+  finalize:function () {
+    var i, b = this._buffer, h = this._h;
+    b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1,1)]);
+    for (i = b.length + 2; i & 15; i++) {
+      b.push(0);
+    }
+    b.push(Math.floor(this._length / 0x100000000));
+    b.push(this._length | 0);
+
+    while (b.length) {
+      this._block(b.splice(0,16));
+    }
+
+    this.reset();
+    return h;
+  },
+  _init:[],
+  _key:[],
+  _precompute: function () {
+    var i = 0, prime = 2, factor;
+
+    function frac(x) { return (x-Math.floor(x)) * 0x100000000 | 0; }
+
+    outer: for (; i<64; prime++) {
+      for (factor=2; factor*factor <= prime; factor++) {
+        if (prime % factor === 0) {
+          // not a prime
+          continue outer;
+        }
+      }
+      
+      if (i<8) {
+        this._init[i] = frac(Math.pow(prime, 1/2));
+      }
+      this._key[i] = frac(Math.pow(prime, 1/3));
+      i++;
+    }
+  },
+  
+  _block:function (words) {  
+    var i, tmp, a, b,
+      w = words.slice(0),
+      h = this._h,
+      k = this._key,
+      h0 = h[0], h1 = h[1], h2 = h[2], h3 = h[3],
+      h4 = h[4], h5 = h[5], h6 = h[6], h7 = h[7];
+
+    for (i=0; i<64; i++) {
+      // load up the input word for this round
+      if (i<16) {
+        tmp = w[i];
+      } else {
+        a   = w[(i+1 ) & 15];
+        b   = w[(i+14) & 15];
+        tmp = w[i&15] = ((a>>>7  ^ a>>>18 ^ a>>>3  ^ a<<25 ^ a<<14) + 
+                         (b>>>17 ^ b>>>19 ^ b>>>10 ^ b<<15 ^ b<<13) +
+                         w[i&15] + w[(i+9) & 15]) | 0;
+      }
+      
+      tmp = (tmp + h7 + (h4>>>6 ^ h4>>>11 ^ h4>>>25 ^ h4<<26 ^ h4<<21 ^ h4<<7) +  (h6 ^ h4&(h5^h6)) + k[i]); // | 0;
+      
+      // shift register
+      h7 = h6; h6 = h5; h5 = h4;
+      h4 = h3 + tmp | 0;
+      h3 = h2; h2 = h1; h1 = h0;
+
+      h0 = (tmp +  ((h1&h2) ^ (h3&(h1^h2))) + (h1>>>2 ^ h1>>>13 ^ h1>>>22 ^ h1<<30 ^ h1<<19 ^ h1<<10)) | 0;
+    }
+
+    h[0] = h[0]+h0 | 0;
+    h[1] = h[1]+h1 | 0;
+    h[2] = h[2]+h2 | 0;
+    h[3] = h[3]+h3 | 0;
+    h[4] = h[4]+h4 | 0;
+    h[5] = h[5]+h5 | 0;
+    h[6] = h[6]+h6 | 0;
+    h[7] = h[7]+h7 | 0;
+  }
+};
+
+
+sjcl.hash.sha512 = function (hash) {
+  if (!this._key[0]) { this._precompute(); }
+  if (hash) {
+    this._h = hash._h.slice(0);
+    this._buffer = hash._buffer.slice(0);
+    this._length = hash._length;
+  } else {
+    this.reset();
+  }
+};
+
+
+sjcl.hash.sha512.hash = function (data) {
+  return (new sjcl.hash.sha512()).update(data).finalize();
+};
+
+sjcl.hash.sha512.prototype = {
+
+  blockSize: 1024,
+   
+  reset:function () {
+    this._h = this._init.slice(0);
+    this._buffer = [];
+    this._length = 0;
+    return this;
+  },
+
+  update: function (data) {
+    if (typeof data === "string") {
+      data = sjcl.codec.utf8String.toBits(data);
+    }
+    var i, b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
+        ol = this._length,
+        nl = this._length = ol + sjcl.bitArray.bitLength(data);
+    for (i = 1024+ol & -1024; i <= nl; i+= 1024) {
+      this._block(b.splice(0,32));
+    }
+    return this;
+  },
+  
+  finalize:function () {
+    var i, b = this._buffer, h = this._h;
+
+    b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1,1)]);
+
+    for (i = b.length + 4; i & 31; i++) {
+      b.push(0);
+    }
+
+    b.push(0);
+    b.push(0);
+    b.push(Math.floor(this._length / 0x100000000));
+    b.push(this._length | 0);
+
+    while (b.length) {
+      this._block(b.splice(0,32));
+    }
+
+    this.reset();
+    return h;
+  },
+
+  _init:[],
+
+  _initr: [ 0xbcc908, 0xcaa73b, 0x94f82b, 0x1d36f1, 0xe682d1, 0x3e6c1f, 0x41bd6b, 0x7e2179 ],
+
+  _key:[],
+
+  _keyr:
+  [0x28ae22, 0xef65cd, 0x4d3b2f, 0x89dbbc, 0x48b538, 0x05d019, 0x194f9b, 0x6d8118,
+   0x030242, 0x706fbe, 0xe4b28c, 0xffb4e2, 0x7b896f, 0x1696b1, 0xc71235, 0x692694,
+   0xf14ad2, 0x4f25e3, 0x8cd5b5, 0xac9c65, 0x2b0275, 0xa6e483, 0x41fbd4, 0x1153b5,
+   0x66dfab, 0xb43210, 0xfb213f, 0xef0ee4, 0xa88fc2, 0x0aa725, 0x03826f, 0x0e6e70,
+   0xd22ffc, 0x26c926, 0xc42aed, 0x95b3df, 0xaf63de, 0x77b2a8, 0xedaee6, 0x82353b,
+   0xf10364, 0x423001, 0xf89791, 0x54be30, 0xef5218, 0x65a910, 0x71202a, 0xbbd1b8,
+   0xd2d0c8, 0x41ab53, 0x8eeb99, 0x9b48a8, 0xc95a63, 0x418acb, 0x63e373, 0xb2b8a3,
+   0xefb2fc, 0x172f60, 0xf0ab72, 0x6439ec, 0x631e28, 0x82bde9, 0xc67915, 0x72532b,
+   0x26619c, 0xc0c207, 0xe0eb1e, 0x6ed178, 0x176fba, 0xc898a6, 0xf90dae, 0x1c471b,
+   0x047d84, 0xc72493, 0xc9bebc, 0x100d4c, 0x3e42b6, 0x657e2a, 0xd6faec, 0x475817],
+
+  _precompute: function () {
+    // XXX: This code is for precomputing the SHA256 constants, change for
+    //      SHA512 and re-enable.
+    var i = 0, prime = 2, factor;
+
+    function frac(x)  { return (x-Math.floor(x)) * 0x100000000 | 0; }
+    function frac2(x) { return (x-Math.floor(x)) * 0x10000000000 & 0xff; }
+
+    outer: for (; i<80; prime++) {
+      for (factor=2; factor*factor <= prime; factor++) {
+        if (prime % factor === 0) {
+          // not a prime
+          continue outer;
+        }
+      }
+
+      if (i<8) {
+        this._init[i*2] = frac(Math.pow(prime, 1/2));
+        this._init[i*2+1] = (frac2(Math.pow(prime, 1/2)) << 24) | this._initr[i];
+      }
+      this._key[i*2] = frac(Math.pow(prime, 1/3));
+      this._key[i*2+1] = (frac2(Math.pow(prime, 1/3)) << 24) | this._keyr[i];
+      i++;
+    }
+  },
+
+  /**
+   * Perform one cycle of SHA-512.
+   * @param {bitArray} words one block of words.
+   * @private
+   */
+  _block:function (words) {
+    var i, wrh, wrl,
+        w = words.slice(0),
+        h = this._h,
+        k = this._key,
+        h0h = h[ 0], h0l = h[ 1], h1h = h[ 2], h1l = h[ 3],
+        h2h = h[ 4], h2l = h[ 5], h3h = h[ 6], h3l = h[ 7],
+        h4h = h[ 8], h4l = h[ 9], h5h = h[10], h5l = h[11],
+        h6h = h[12], h6l = h[13], h7h = h[14], h7l = h[15];
+
+    // Working variables
+    var ah = h0h, al = h0l, bh = h1h, bl = h1l,
+        ch = h2h, cl = h2l, dh = h3h, dl = h3l,
+        eh = h4h, el = h4l, fh = h5h, fl = h5l,
+        gh = h6h, gl = h6l, hh = h7h, hl = h7l;
+
+    for (i=0; i<80; i++) {
+      // load up the input word for this round
+      if (i<16) {
+        wrh = w[i * 2];
+        wrl = w[i * 2 + 1];
+      } else {
+        // Gamma0
+        var gamma0xh = w[(i-15) * 2];
+        var gamma0xl = w[(i-15) * 2 + 1];
+        var gamma0h =
+          ((gamma0xl << 31) | (gamma0xh >>> 1)) ^
+          ((gamma0xl << 24) | (gamma0xh >>> 8)) ^
+           (gamma0xh >>> 7);
+        var gamma0l =
+          ((gamma0xh << 31) | (gamma0xl >>> 1)) ^
+          ((gamma0xh << 24) | (gamma0xl >>> 8)) ^
+          ((gamma0xh << 25) | (gamma0xl >>> 7));
+
+        // Gamma1
+        var gamma1xh = w[(i-2) * 2];
+        var gamma1xl = w[(i-2) * 2 + 1];
+        var gamma1h =
+          ((gamma1xl << 13) | (gamma1xh >>> 19)) ^
+          ((gamma1xh << 3)  | (gamma1xl >>> 29)) ^
+           (gamma1xh >>> 6);
+        var gamma1l =
+          ((gamma1xh << 13) | (gamma1xl >>> 19)) ^
+          ((gamma1xl << 3)  | (gamma1xh >>> 29)) ^
+          ((gamma1xh << 26) | (gamma1xl >>> 6));
+
+        // Shortcuts
+        var wr7h = w[(i-7) * 2];
+        var wr7l = w[(i-7) * 2 + 1];
+
+        var wr16h = w[(i-16) * 2];
+        var wr16l = w[(i-16) * 2 + 1];
+
+        // W(round) = gamma0 + W(round - 7) + gamma1 + W(round - 16)
+        wrl = gamma0l + wr7l;
+        wrh = gamma0h + wr7h + ((wrl >>> 0) < (gamma0l >>> 0) ? 1 : 0);
+        wrl += gamma1l;
+        wrh += gamma1h + ((wrl >>> 0) < (gamma1l >>> 0) ? 1 : 0);
+        wrl += wr16l;
+        wrh += wr16h + ((wrl >>> 0) < (wr16l >>> 0) ? 1 : 0);
+      }
+
+      w[i*2]     = wrh |= 0;
+      w[i*2 + 1] = wrl |= 0;
+
+      // Ch
+      var chh = (eh & fh) ^ (~eh & gh);
+      var chl = (el & fl) ^ (~el & gl);
+
+      // Maj
+      var majh = (ah & bh) ^ (ah & ch) ^ (bh & ch);
+      var majl = (al & bl) ^ (al & cl) ^ (bl & cl);
+
+      // Sigma0
+      var sigma0h = ((al << 4) | (ah >>> 28)) ^ ((ah << 30) | (al >>> 2)) ^ ((ah << 25) | (al >>> 7));
+      var sigma0l = ((ah << 4) | (al >>> 28)) ^ ((al << 30) | (ah >>> 2)) ^ ((al << 25) | (ah >>> 7));
+
+      // Sigma1
+      var sigma1h = ((el << 18) | (eh >>> 14)) ^ ((el << 14) | (eh >>> 18)) ^ ((eh << 23) | (el >>> 9));
+      var sigma1l = ((eh << 18) | (el >>> 14)) ^ ((eh << 14) | (el >>> 18)) ^ ((el << 23) | (eh >>> 9));
+
+      // K(round)
+      var krh = k[i*2];
+      var krl = k[i*2+1];
+
+      // t1 = h + sigma1 + ch + K(round) + W(round)
+      var t1l = hl + sigma1l;
+      var t1h = hh + sigma1h + ((t1l >>> 0) < (hl >>> 0) ? 1 : 0);
+      t1l += chl;
+      t1h += chh + ((t1l >>> 0) < (chl >>> 0) ? 1 : 0);
+      t1l += krl;
+      t1h += krh + ((t1l >>> 0) < (krl >>> 0) ? 1 : 0);
+      t1l += wrl;
+      t1h += wrh + ((t1l >>> 0) < (wrl >>> 0) ? 1 : 0);
+
+      // t2 = sigma0 + maj
+      var t2l = sigma0l + majl;
+      var t2h = sigma0h + majh + ((t2l >>> 0) < (sigma0l >>> 0) ? 1 : 0);
+
+      // Update working variables
+      hh = gh;
+      hl = gl;
+      gh = fh;
+      gl = fl;
+      fh = eh;
+      fl = el;
+      el = (dl + t1l) | 0;
+      eh = (dh + t1h + ((el >>> 0) < (dl >>> 0) ? 1 : 0)) | 0;
+      dh = ch;
+      dl = cl;
+      ch = bh;
+      cl = bl;
+      bh = ah;
+      bl = al;
+      al = (t1l + t2l) | 0;
+      ah = (t1h + t2h + ((al >>> 0) < (t1l >>> 0) ? 1 : 0)) | 0;
+    }
+
+    // Intermediate hash
+    h0l = h[1] = (h0l + al) | 0;
+    h[0] = (h0h + ah + ((h0l >>> 0) < (al >>> 0) ? 1 : 0)) | 0;
+    h1l = h[3] = (h1l + bl) | 0;
+    h[2] = (h1h + bh + ((h1l >>> 0) < (bl >>> 0) ? 1 : 0)) | 0;
+    h2l = h[5] = (h2l + cl) | 0;
+    h[4] = (h2h + ch + ((h2l >>> 0) < (cl >>> 0) ? 1 : 0)) | 0;
+    h3l = h[7] = (h3l + dl) | 0;
+    h[6] = (h3h + dh + ((h3l >>> 0) < (dl >>> 0) ? 1 : 0)) | 0;
+    h4l = h[9] = (h4l + el) | 0;
+    h[8] = (h4h + eh + ((h4l >>> 0) < (el >>> 0) ? 1 : 0)) | 0;
+    h5l = h[11] = (h5l + fl) | 0;
+    h[10] = (h5h + fh + ((h5l >>> 0) < (fl >>> 0) ? 1 : 0)) | 0;
+    h6l = h[13] = (h6l + gl) | 0;
+    h[12] = (h6h + gh + ((h6l >>> 0) < (gl >>> 0) ? 1 : 0)) | 0;
+    h7l = h[15] = (h7l + hl) | 0;
+    h[14] = (h7h + hh + ((h7l >>> 0) < (hl >>> 0) ? 1 : 0)) | 0;
+  }
+};
+
+
+
+/** @fileOverview Javascript SHA-1 implementation.
+ *
+ * Based on the implementation in RFC 3174, method 1, and on the SJCL
+ * SHA-256 implementation.
+ *
+ * @author Quinn Slack
+ */
+
+/**
+ * Context for a SHA-1 operation in progress.
+ * @constructor
+ * @class Secure Hash Algorithm, 160 bits.
+ */
+sjcl.hash.sha1 = function (hash) {
+  if (hash) {
+    this._h = hash._h.slice(0);
+    this._buffer = hash._buffer.slice(0);
+    this._length = hash._length;
+  } else {
+    this.reset();
+  }
+};
+
+/**
+ * Hash a string or an array of words.
+ * @static
+ * @param {bitArray|String} data the data to hash.
+ * @return {bitArray} The hash value, an array of 5 big-endian words.
+ */
+sjcl.hash.sha1.hash = function (data) {
+  return (new sjcl.hash.sha1()).update(data).finalize();
+};
+
+sjcl.hash.sha1.prototype = {
+  /**
+   * The hash's block size, in bits.
+   * @constant
+   */
+  blockSize: 512,
+   
+  /**
+   * Reset the hash state.
+   * @return this
+   */
+  reset:function () {
+    this._h = this._init.slice(0);
+    this._buffer = [];
+    this._length = 0;
+    return this;
+  },
+  
+  /**
+   * Input several words to the hash.
+   * @param {bitArray|String} data the data to hash.
+   * @return this
+   */
+  update: function (data) {
+    if (typeof data === "string") {
+      data = sjcl.codec.utf8String.toBits(data);
+    }
+    var i, b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
+        ol = this._length,
+        nl = this._length = ol + sjcl.bitArray.bitLength(data);
+    for (i = this.blockSize+ol & -this.blockSize; i <= nl;
+         i+= this.blockSize) {
+      this._block(b.splice(0,16));
+    }
+    return this;
+  },
+  
+  /**
+   * Complete hashing and output the hash value.
+   * @return {bitArray} The hash value, an array of 5 big-endian words. TODO
+   */
+  finalize:function () {
+    var i, b = this._buffer, h = this._h;
+
+    // Round out and push the buffer
+    b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1,1)]);
+    // Round out the buffer to a multiple of 16 words, less the 2 length words.
+    for (i = b.length + 2; i & 15; i++) {
+      b.push(0);
+    }
+
+    // append the length
+    b.push(Math.floor(this._length / 0x100000000));
+    b.push(this._length | 0);
+
+    while (b.length) {
+      this._block(b.splice(0,16));
+    }
+
+    this.reset();
+    return h;
+  },
+
+  /**
+   * The SHA-1 initialization vector.
+   * @private
+   */
+  _init:[0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0],
+
+  /**
+   * The SHA-1 hash key.
+   * @private
+   */
+  _key:[0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6],
+
+  /**
+   * The SHA-1 logical functions f(0), f(1), ..., f(79).
+   * @private
+   */
+  _f:function(t, b, c, d) {
+    if (t <= 19) {
+      return (b & c) | (~b & d);
+    } else if (t <= 39) {
+      return b ^ c ^ d;
+    } else if (t <= 59) {
+      return (b & c) | (b & d) | (c & d);
+    } else if (t <= 79) {
+      return b ^ c ^ d;
+    }
+  },
+
+  /**
+   * Circular left-shift operator.
+   * @private
+   */
+  _S:function(n, x) {
+    return (x << n) | (x >>> 32-n);
+  },
+  
+  /**
+   * Perform one cycle of SHA-1.
+   * @param {bitArray} words one block of words.
+   * @private
+   */
+  _block:function (words) {  
+    var t, tmp, a, b, c, d, e,
+    w = words.slice(0),
+    h = this._h,
+    k = this._key;
+   
+    a = h[0]; b = h[1]; c = h[2]; d = h[3]; e = h[4]; 
+
+    for (t=0; t<=79; t++) {
+      if (t >= 16) {
+        w[t] = this._S(1, w[t-3] ^ w[t-8] ^ w[t-14] ^ w[t-16]);
+      }
+      tmp = (this._S(5, a) + this._f(t, b, c, d) + e + w[t] +
+             this._key[Math.floor(t/20)]) | 0;
+      e = d;
+      d = c;
+      c = this._S(30, b);
+      b = a;
+      a = tmp;
+   }
+
+   h[0] = (h[0]+a) |0;
+   h[1] = (h[1]+b) |0;
+   h[2] = (h[2]+c) |0;
+   h[3] = (h[3]+d) |0;
+   h[4] = (h[4]+e) |0;
+  }
+};
+
+/** @fileOverview CCM mode implementation.
+ *
+ * Special thanks to Roy Nicholson for pointing out a bug in our
+ * implementation.
+ *
+ * @author Emily Stark
+ * @author Mike Hamburg
+ * @author Dan Boneh
+ */
+
+/** @namespace CTR mode with CBC MAC. */
+sjcl.mode.ccm = {
+  /** The name of the mode.
+   * @constant
+   */
+  name: "ccm",
+  
+  /** Encrypt in CCM mode.
+   * @static
+   * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
+   * @param {bitArray} plaintext The plaintext data.
+   * @param {bitArray} iv The initialization value.
+   * @param {bitArray} [adata=[]] The authenticated data.
+   * @param {Number} [tlen=64] the desired tag length, in bits.
+   * @return {bitArray} The encrypted data, an array of bytes.
+   */
+  encrypt: function(prf, plaintext, iv, adata, tlen) {
+    var L, i, out = plaintext.slice(0), tag, w=sjcl.bitArray, ivl = w.bitLength(iv) / 8, ol = w.bitLength(out) / 8;
+    tlen = tlen || 64;
+    adata = adata || [];
+    
+    if (ivl < 7) {
+      throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
+    }
+    
+    // compute the length of the length
+    for (L=2; L<4 && ol >>> 8*L; L++) {}
+    if (L < 15 - ivl) { L = 15-ivl; }
+    iv = w.clamp(iv,8*(15-L));
+    
+    // compute the tag
+    tag = sjcl.mode.ccm._computeTag(prf, plaintext, iv, adata, tlen, L);
+    
+    // encrypt
+    out = sjcl.mode.ccm._ctrMode(prf, out, iv, tag, tlen, L);
+    
+    return w.concat(out.data, out.tag);
+  },
+  
+  /** Decrypt in CCM mode.
+   * @static
+   * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
+   * @param {bitArray} ciphertext The ciphertext data.
+   * @param {bitArray} iv The initialization value.
+   * @param {bitArray} [[]] adata The authenticated data.
+   * @param {Number} [64] tlen the desired tag length, in bits.
+   * @return {bitArray} The decrypted data.
+   */
+  decrypt: function(prf, ciphertext, iv, adata, tlen) {
+    tlen = tlen || 64;
+    adata = adata || [];
+    var L, i, 
+        w=sjcl.bitArray,
+        ivl = w.bitLength(iv) / 8,
+        ol = w.bitLength(ciphertext), 
+        out = w.clamp(ciphertext, ol - tlen),
+        tag = w.bitSlice(ciphertext, ol - tlen), tag2;
+    
+
+    ol = (ol - tlen) / 8;
+        
+    if (ivl < 7) {
+      throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
+    }
+    
+    // compute the length of the length
+    for (L=2; L<4 && ol >>> 8*L; L++) {}
+    if (L < 15 - ivl) { L = 15-ivl; }
+    iv = w.clamp(iv,8*(15-L));
+    
+    // decrypt
+    out = sjcl.mode.ccm._ctrMode(prf, out, iv, tag, tlen, L);
+    
+    // check the tag
+    tag2 = sjcl.mode.ccm._computeTag(prf, out.data, iv, adata, tlen, L);
+    if (!w.equal(out.tag, tag2)) {
+      throw new sjcl.exception.corrupt("ccm: tag doesn't match");
+    }
+    
+    return out.data;
+  },
+
+  /* Compute the (unencrypted) authentication tag, according to the CCM specification
+   * @param {Object} prf The pseudorandom function.
+   * @param {bitArray} plaintext The plaintext data.
+   * @param {bitArray} iv The initialization value.
+   * @param {bitArray} adata The authenticated data.
+   * @param {Number} tlen the desired tag length, in bits.
+   * @return {bitArray} The tag, but not yet encrypted.
+   * @private
+   */
+  _computeTag: function(prf, plaintext, iv, adata, tlen, L) {
+    // compute B[0]
+    var q, mac, field = 0, offset = 24, tmp, i, macData = [], w=sjcl.bitArray, xor = w._xor4;
+
+    tlen /= 8;
+  
+    // check tag length and message length
+    if (tlen % 2 || tlen < 4 || tlen > 16) {
+      throw new sjcl.exception.invalid("ccm: invalid tag length");
+    }
+  
+    if (adata.length > 0xFFFFFFFF || plaintext.length > 0xFFFFFFFF) {
+      // I don't want to deal with extracting high words from doubles.
+      throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
+    }
+
+    // mac the flags
+    mac = [w.partial(8, (adata.length ? 1<<6 : 0) | (tlen-2) << 2 | L-1)];
+
+    // mac the iv and length
+    mac = w.concat(mac, iv);
+    mac[3] |= w.bitLength(plaintext)/8;
+    mac = prf.encrypt(mac);
+    
+  
+    if (adata.length) {
+      // mac the associated data.  start with its length...
+      tmp = w.bitLength(adata)/8;
+      if (tmp <= 0xFEFF) {
+        macData = [w.partial(16, tmp)];
+      } else if (tmp <= 0xFFFFFFFF) {
+        macData = w.concat([w.partial(16,0xFFFE)], [tmp]);
+      } // else ...
+    
+      // mac the data itself
+      macData = w.concat(macData, adata);
+      for (i=0; i<macData.length; i += 4) {
+        mac = prf.encrypt(xor(mac, macData.slice(i,i+4).concat([0,0,0])));
+      }
+    }
+  
+    // mac the plaintext
+    for (i=0; i<plaintext.length; i+=4) {
+      mac = prf.encrypt(xor(mac, plaintext.slice(i,i+4).concat([0,0,0])));
+    }
+
+    return w.clamp(mac, tlen * 8);
+  },
+
+  /** CCM CTR mode.
+   * Encrypt or decrypt data and tag with the prf in CCM-style CTR mode.
+   * May mutate its arguments.
+   * @param {Object} prf The PRF.
+   * @param {bitArray} data The data to be encrypted or decrypted.
+   * @param {bitArray} iv The initialization vector.
+   * @param {bitArray} tag The authentication tag.
+   * @param {Number} tlen The length of th etag, in bits.
+   * @param {Number} L The CCM L value.
+   * @return {Object} An object with data and tag, the en/decryption of data and tag values.
+   * @private
+   */
+  _ctrMode: function(prf, data, iv, tag, tlen, L) {
+    var enc, i, w=sjcl.bitArray, xor = w._xor4, ctr, b, l = data.length, bl=w.bitLength(data);
+
+    // start the ctr
+    ctr = w.concat([w.partial(8,L-1)],iv).concat([0,0,0]).slice(0,4);
+    
+    // en/decrypt the tag
+    tag = w.bitSlice(xor(tag,prf.encrypt(ctr)), 0, tlen);
+  
+    // en/decrypt the data
+    if (!l) { return {tag:tag, data:[]}; }
+    
+    for (i=0; i<l; i+=4) {
+      ctr[3]++;
+      enc = prf.encrypt(ctr);
+      data[i]   ^= enc[0];
+      data[i+1] ^= enc[1];
+      data[i+2] ^= enc[2];
+      data[i+3] ^= enc[3];
+    }
+    return { tag:tag, data:w.clamp(data,bl) };
+  }
+};
+
+/** @fileOverview HMAC implementation.
+ *
+ * @author Emily Stark
+ * @author Mike Hamburg
+ * @author Dan Boneh
+ */
+
+/** HMAC with the specified hash function.
+ * @constructor
+ * @param {bitArray} key the key for HMAC.
+ * @param {Object} [hash=sjcl.hash.sha256] The hash function to use.
+ */
+sjcl.misc.hmac = function (key, Hash) {
+  this._hash = Hash = Hash || sjcl.hash.sha256;
+  var exKey = [[],[]], i,
+      bs = Hash.prototype.blockSize / 32;
+  this._baseHash = [new Hash(), new Hash()];
+
+  if (key.length > bs) {
+    key = Hash.hash(key);
+  }
+  
+  for (i=0; i<bs; i++) {
+    exKey[0][i] = key[i]^0x36363636;
+    exKey[1][i] = key[i]^0x5C5C5C5C;
+  }
+  
+  this._baseHash[0].update(exKey[0]);
+  this._baseHash[1].update(exKey[1]);
+};
+
+/** HMAC with the specified hash function.  Also called encrypt since it's a prf.
+ * @param {bitArray|String} data The data to mac.
+ */
+sjcl.misc.hmac.prototype.encrypt = sjcl.misc.hmac.prototype.mac = function (data) {
+  var w = new (this._hash)(this._baseHash[0]).update(data).finalize();
+  return new (this._hash)(this._baseHash[1]).update(w).finalize();
+};
+
+
+/** @fileOverview Password-based key-derivation function, version 2.0.
+ *
+ * @author Emily Stark
+ * @author Mike Hamburg
+ * @author Dan Boneh
+ */
+
+/** Password-Based Key-Derivation Function, version 2.0.
+ *
+ * Generate keys from passwords using PBKDF2-HMAC-SHA256.
+ *
+ * This is the method specified by RSA's PKCS #5 standard.
+ *
+ * @param {bitArray|String} password  The password.
+ * @param {bitArray} salt The salt.  Should have lots of entropy.
+ * @param {Number} [count=1000] The number of iterations.  Higher numbers make the function slower but more secure.
+ * @param {Number} [length] The length of the derived key.  Defaults to the
+                            output size of the hash function.
+ * @param {Object} [Prff=sjcl.misc.hmac] The pseudorandom function family.
+ * @return {bitArray} the derived key.
+ */
+sjcl.misc.pbkdf2 = function (password, salt, count, length, Prff) {
+  count = count || 1000;
+  
+  if (length < 0 || count < 0) {
+    throw sjcl.exception.invalid("invalid params to pbkdf2");
+  }
+  
+  if (typeof password === "string") {
+    password = sjcl.codec.utf8String.toBits(password);
+  }
+  
+  Prff = Prff || sjcl.misc.hmac;
+  
+  var prf = new Prff(password),
+      u, ui, i, j, k, out = [], b = sjcl.bitArray;
+
+  for (k = 1; 32 * out.length < (length || 1); k++) {
+    u = ui = prf.encrypt(b.concat(salt,[k]));
+    
+    for (i=1; i<count; i++) {
+      ui = prf.encrypt(ui);
+      for (j=0; j<ui.length; j++) {
+        u[j] ^= ui[j];
+      }
+    }
+    
+    out = out.concat(u);
+  }
+
+  if (length) { out = b.clamp(out, length); }
+
+  return out;
+};
+
+sjcl.prng = function(defaultParanoia) {
+  
+  /* private */
+  this._pools                   = [new sjcl.hash.sha256()];
+  this._poolEntropy             = [0];
+  this._reseedCount             = 0;
+  this._robins                  = {};
+  this._eventId                 = 0;
+  
+  this._collectorIds            = {};
+  this._collectorIdNext         = 0;
+  
+  this._strength                = 0;
+  this._poolStrength            = 0;
+  this._nextReseed              = 0;
+  this._key                     = [0,0,0,0,0,0,0,0];
+  this._counter                 = [0,0,0,0];
+  this._cipher                  = undefined;
+  this._defaultParanoia         = defaultParanoia;
+  
+  /* event listener stuff */
+  this._collectorsStarted       = false;
+  this._callbacks               = {progress: {}, seeded: {}};
+  this._callbackI               = 0;
+  
+  /* constants */
+  this._NOT_READY               = 0;
+  this._READY                   = 1;
+  this._REQUIRES_RESEED         = 2;
+
+  this._MAX_WORDS_PER_BURST     = 65536;
+  this._PARANOIA_LEVELS         = [0,48,64,96,128,192,256,384,512,768,1024];
+  this._MILLISECONDS_PER_RESEED = 30000;
+  this._BITS_PER_RESEED         = 80;
+}
+ 
+sjcl.prng.prototype = {
+  /** Generate several random words, and return them in an array
+   * @param {Number} nwords The number of words to generate.
+   */
+  randomWords: function (nwords, paranoia) {
+    var out = [], i, g;
+
+    for (i=0; i<nwords; i+= 4) {
+      if ((i+1) % this._MAX_WORDS_PER_BURST === 0) {
+        this._gate();
+      }
+   
+      g = this._gen4words();
+      out.push(g[0],g[1],g[2],g[3]);
+    }
+    this._gate();
+  
+    return out.slice(0,nwords);
+  },
+  
+  setDefaultParanoia: function (paranoia) {
+    this._defaultParanoia = paranoia;
+  },
+  
+  /**
+   * Add entropy to the pools.
+   * @param data The entropic value.  Should be a 32-bit integer, array of 32-bit integers, or string
+   * @param {Number} estimatedEntropy The estimated entropy of data, in bits
+   * @param {String} source The source of the entropy, eg "mouse"
+   */
+  addEntropy: function (data, estimatedEntropy, source) {
+    source = source || "user";
+  
+    var id,
+      i, tmp,
+      t = (new Date()).valueOf(),
+      robin = this._robins[source],
+      oldReady = this.isReady(), err = 0;
+      
+    id = this._collectorIds[source];
+    if (id === undefined) { id = this._collectorIds[source] = this._collectorIdNext ++; }
+      
+    if (robin === undefined) { robin = this._robins[source] = 0; }
+    this._robins[source] = ( this._robins[source] + 1 ) % this._pools.length;
+  
+    switch(typeof(data)) {
+      
+    case "number":
+      if (estimatedEntropy === undefined) {
+        estimatedEntropy = 1;
+      }
+      this._pools[robin].update([id,this._eventId++,1,estimatedEntropy,t,1,data|0]);
+      break;
+      
+    case "object":
+      var objName = Object.prototype.toString.call(data);
+      if (objName === "[object Uint32Array]") {
+        tmp = [];
+        for (i = 0; i < data.length; i++) {
+          tmp.push(data[i]);
+        }
+        data = tmp;
+      } else {
+        if (objName !== "[object Array]") {
+          err = 1;
+        }
+        for (i=0; i<data.length && !err; i++) {
+          if (typeof(data[i]) != "number") {
+            err = 1;
+          }
+        }
+      }
+      if (!err) {
+        if (estimatedEntropy === undefined) {
+          /* horrible entropy estimator */
+          estimatedEntropy = 0;
+          for (i=0; i<data.length; i++) {
+            tmp= data[i];
+            while (tmp>0) {
+              estimatedEntropy++;
+              tmp = tmp >>> 1;
+            }
+          }
+        }
+        this._pools[robin].update([id,this._eventId++,2,estimatedEntropy,t,data.length].concat(data));
+      }
+      break;
+      
+    case "string":
+      if (estimatedEntropy === undefined) {
+       /* English text has just over 1 bit per character of entropy.
+        * But this might be HTML or something, and have far less
+        * entropy than English...  Oh well, let's just say one bit.
+        */
+       estimatedEntropy = data.length;
+      }
+      this._pools[robin].update([id,this._eventId++,3,estimatedEntropy,t,data.length]);
+      this._pools[robin].update(data);
+      break;
+      
+    default:
+      err=1;
+    }
+    if (err) {
+      throw new sjcl.exception.bug("random: addEntropy only supports number, array of numbers or string");
+    }
+  
+    /* record the new strength */
+    this._poolEntropy[robin] += estimatedEntropy;
+    this._poolStrength += estimatedEntropy;
+  
+    /* fire off events */
+    if (oldReady === this._NOT_READY) {
+      if (this.isReady() !== this._NOT_READY) {
+        this._fireEvent("seeded", Math.max(this._strength, this._poolStrength));
+      }
+      this._fireEvent("progress", this.getProgress());
+    }
+  },
+  
+  /** Is the generator ready? */
+  isReady: function (paranoia) {
+    var entropyRequired = this._PARANOIA_LEVELS[ (paranoia !== undefined) ? paranoia : this._defaultParanoia ];
+  
+    if (this._strength && this._strength >= entropyRequired) {
+      return (this._poolEntropy[0] > this._BITS_PER_RESEED && (new Date()).valueOf() > this._nextReseed) ?
+        this._REQUIRES_RESEED | this._READY :
+        this._READY;
+    } else {
+      return (this._poolStrength >= entropyRequired) ?
+        this._REQUIRES_RESEED | this._NOT_READY :
+        this._NOT_READY;
+    }
+  },
+  
+  /** Get the generator's progress toward readiness, as a fraction */
+  getProgress: function (paranoia) {
+    var entropyRequired = this._PARANOIA_LEVELS[ paranoia ? paranoia : this._defaultParanoia ];
+  
+    if (this._strength >= entropyRequired) {
+      return 1.0;
+    } else {
+      return (this._poolStrength > entropyRequired) ?
+        1.0 :
+        this._poolStrength / entropyRequired;
+    }
+  },
+  
+  /** start the built-in entropy collectors */
+  startCollectors: function () {
+    if (this._collectorsStarted) { return; }
+  
+    if (window.addEventListener) {
+      window.addEventListener("load", this._loadTimeCollector, false);
+      window.addEventListener("mousemove", this._mouseCollector, false);
+    } else if (document.attachEvent) {
+      document.attachEvent("onload", this._loadTimeCollector);
+      document.attachEvent("onmousemove", this._mouseCollector);
+    }
+    else {
+      throw new sjcl.exception.bug("can't attach event");
+    }
+  
+    this._collectorsStarted = true;
+  },
+  
+  /** stop the built-in entropy collectors */
+  stopCollectors: function () {
+    if (!this._collectorsStarted) { return; }
+  
+    if (window.removeEventListener) {
+      window.removeEventListener("load", this._loadTimeCollector, false);
+      window.removeEventListener("mousemove", this._mouseCollector, false);
+    } else if (window.detachEvent) {
+      window.detachEvent("onload", this._loadTimeCollector);
+      window.detachEvent("onmousemove", this._mouseCollector);
+    }
+    this._collectorsStarted = false;
+  },
+  
+  /* use a cookie to store entropy.
+  useCookie: function (all_cookies) {
+      throw new sjcl.exception.bug("random: useCookie is unimplemented");
+  },*/
+  
+  /** add an event listener for progress or seeded-ness. */
+  addEventListener: function (name, callback) {
+    this._callbacks[name][this._callbackI++] = callback;
+  },
+  
+  /** remove an event listener for progress or seeded-ness */
+  removeEventListener: function (name, cb) {
+    var i, j, cbs=this._callbacks[name], jsTemp=[];
+  
+    /* I'm not sure if this is necessary; in C++, iterating over a
+     * collection and modifying it at the same time is a no-no.
+     */
+  
+    for (j in cbs) {
+	if (cbs.hasOwnProperty(j) && cbs[j] === cb) {
+        jsTemp.push(j);
+      }
+    }
+  
+    for (i=0; i<jsTemp.length; i++) {
+      j = jsTemp[i];
+      delete cbs[j];
+    }
+  },
+  
+  /** Generate 4 random words, no reseed, no gate.
+   * @private
+   */
+  _gen4words: function () {
+    for (var i=0; i<4; i++) {
+      this._counter[i] = this._counter[i]+1 | 0;
+      if (this._counter[i]) { break; }
+    }
+    return this._cipher.encrypt(this._counter);
+  },
+  
+  /* Rekey the AES instance with itself after a request, or every _MAX_WORDS_PER_BURST words.
+   * @private
+   */
+  _gate: function () {
+    this._key = this._gen4words().concat(this._gen4words());
+    this._cipher = new sjcl.cipher.aes(this._key);
+  },
+  
+  /** Reseed the generator with the given words
+   * @private
+   */
+  _reseed: function (seedWords) {
+    this._key = sjcl.hash.sha256.hash(this._key.concat(seedWords));
+    this._cipher = new sjcl.cipher.aes(this._key);
+    for (var i=0; i<4; i++) {
+      this._counter[i] = this._counter[i]+1 | 0;
+      if (this._counter[i]) { break; }
+    }
+  },
+  
+  /** reseed the data from the entropy pools
+   * @param full If set, use all the entropy pools in the reseed.
+   */
+  _reseedFromPools: function (full) {
+    var reseedData = [], strength = 0, i;
+  
+    this._nextReseed = reseedData[0] =
+      (new Date()).valueOf() + this._MILLISECONDS_PER_RESEED;
+    
+    for (i=0; i<16; i++) {
+      /* On some browsers, this is cryptographically random.  So we might
+       * as well toss it in the pot and stir...
+       */
+      reseedData.push(Math.random()*0x100000000|0);
+    }
+    
+    for (i=0; i<this._pools.length; i++) {
+     reseedData = reseedData.concat(this._pools[i].finalize());
+     strength += this._poolEntropy[i];
+     this._poolEntropy[i] = 0;
+   
+     if (!full && (this._reseedCount & (1<<i))) { break; }
+    }
+  
+    /* if we used the last pool, push a new one onto the stack */
+    if (this._reseedCount >= 1 << this._pools.length) {
+     this._pools.push(new sjcl.hash.sha256());
+     this._poolEntropy.push(0);
+    }
+  
+    /* how strong was this reseed? */
+    this._poolStrength -= strength;
+    if (strength > this._strength) {
+      this._strength = strength;
+    }
+  
+    this._reseedCount ++;
+    this._reseed(reseedData);
+  },
+  
+  _mouseCollector: function (ev) {
+    var x = ev.x || ev.clientX || ev.offsetX || 0, y = ev.y || ev.clientY || ev.offsetY || 0;
+    sjcl.random.addEntropy([x,y], 2, "mouse");
+  },
+  
+  _loadTimeCollector: function (ev) {
+    sjcl.random.addEntropy((new Date()).valueOf(), 2, "loadtime");
+  },
+  
+  _fireEvent: function (name, arg) {
+    var j, cbs=sjcl.random._callbacks[name], cbsTemp=[];
+    /* TODO: there is a race condition between removing collectors and firing them */ 
+
+    /* I'm not sure if this is necessary; in C++, iterating over a
+     * collection and modifying it at the same time is a no-no.
+     */
+  
+    for (j in cbs) {
+     if (cbs.hasOwnProperty(j)) {
+        cbsTemp.push(cbs[j]);
+     }
+    }
+  
+    for (j=0; j<cbsTemp.length; j++) {
+     cbsTemp[j](arg);
+    }
+  }
+};
+
+sjcl.random = new sjcl.prng(6);
+
+(function(){
+  try {
+    // get cryptographically strong entropy in Webkit
+    var ab = new Uint32Array(32);
+    crypto.getRandomValues(ab);
+    sjcl.random.addEntropy(ab, 1024, "crypto.getRandomValues");
+  } catch (e) {
+    // no getRandomValues :-(
+  }
+})();
+
+/** @fileOverview Convenince functions centered around JSON encapsulation.
+ *
+ * @author Emily Stark
+ * @author Mike Hamburg
+ * @author Dan Boneh
+ */
+ 
+ /** @namespace JSON encapsulation */
+ sjcl.json = {
+  /** Default values for encryption */
+  defaults: { v:1, iter:1000, ks:128, ts:64, mode:"ccm", adata:"", cipher:"aes" },
+
+  /** Simple encryption function.
+   * @param {String|bitArray} password The password or key.
+   * @param {String} plaintext The data to encrypt.
+   * @param {Object} [params] The parameters including tag, iv and salt.
+   * @param {Object} [rp] A returned version with filled-in parameters.
+   * @return {String} The ciphertext.
+   * @throws {sjcl.exception.invalid} if a parameter is invalid.
+   */
+  encrypt: function (password, plaintext, params, rp) {
+    params = params || {};
+    rp = rp || {};
+    
+    var j = sjcl.json, p = j._add({ iv: sjcl.random.randomWords(4,0) },
+                                  j.defaults), tmp, prp, adata;
+    j._add(p, params);
+    adata = p.adata;
+    if (typeof p.salt === "string") {
+      p.salt = sjcl.codec.base64.toBits(p.salt);
+    }
+    if (typeof p.iv === "string") {
+      p.iv = sjcl.codec.base64.toBits(p.iv);
+    }
+    
+    if (!sjcl.mode[p.mode] ||
+        !sjcl.cipher[p.cipher] ||
+        (typeof password === "string" && p.iter <= 100) ||
+        (p.ts !== 64 && p.ts !== 96 && p.ts !== 128) ||
+        (p.ks !== 128 && p.ks !== 192 && p.ks !== 256) ||
+        (p.iv.length < 2 || p.iv.length > 4)) {
+      throw new sjcl.exception.invalid("json encrypt: invalid parameters");
+    }
+    
+    if (typeof password === "string") {
+      tmp = sjcl.misc.cachedPbkdf2(password, p);
+      password = tmp.key.slice(0,p.ks/32);
+      p.salt = tmp.salt;
+    } else if (sjcl.ecc && password instanceof sjcl.ecc.elGamal.publicKey) {
+      tmp = password.kem();
+      p.kemtag = tmp.tag;
+      password = tmp.key.slice(0,p.ks/32);
+    }
+    if (typeof plaintext === "string") {
+      plaintext = sjcl.codec.utf8String.toBits(plaintext);
+    }
+    if (typeof adata === "string") {
+      adata = sjcl.codec.utf8String.toBits(adata);
+    }
+    prp = new sjcl.cipher[p.cipher](password);
+    
+    /* return the json data */
+    j._add(rp, p);
+    rp.key = password;
+    
+    /* do the encryption */
+    p.ct = sjcl.mode[p.mode].encrypt(prp, plaintext, p.iv, adata, p.ts);
+    
+    //return j.encode(j._subtract(p, j.defaults));
+    return j.encode(p);
+  },
+  
+  /** Simple decryption function.
+   * @param {String|bitArray} password The password or key.
+   * @param {String} ciphertext The ciphertext to decrypt.
+   * @param {Object} [params] Additional non-default parameters.
+   * @param {Object} [rp] A returned object with filled parameters.
+   * @return {String} The plaintext.
+   * @throws {sjcl.exception.invalid} if a parameter is invalid.
+   * @throws {sjcl.exception.corrupt} if the ciphertext is corrupt.
+   */
+  decrypt: function (password, ciphertext, params, rp) {
+    params = params || {};
+    rp = rp || {};
+    
+    var j = sjcl.json, p = j._add(j._add(j._add({},j.defaults),j.decode(ciphertext)), params, true), ct, tmp, prp, adata=p.adata;
+    if (typeof p.salt === "string") {
+      p.salt = sjcl.codec.base64.toBits(p.salt);
+    }
+    if (typeof p.iv === "string") {
+      p.iv = sjcl.codec.base64.toBits(p.iv);
+    }
+    
+    if (!sjcl.mode[p.mode] ||
+        !sjcl.cipher[p.cipher] ||
+        (typeof password === "string" && p.iter <= 100) ||
+        (p.ts !== 64 && p.ts !== 96 && p.ts !== 128) ||
+        (p.ks !== 128 && p.ks !== 192 && p.ks !== 256) ||
+        (!p.iv) ||
+        (p.iv.length < 2 || p.iv.length > 4)) {
+      throw new sjcl.exception.invalid("json decrypt: invalid parameters");
+    }
+    
+    if (typeof password === "string") {
+      tmp = sjcl.misc.cachedPbkdf2(password, p);
+      password = tmp.key.slice(0,p.ks/32);
+      p.salt  = tmp.salt;
+    } else if (sjcl.ecc && password instanceof sjcl.ecc.elGamal.secretKey) {
+      password = password.unkem(sjcl.codec.base64.toBits(p.kemtag)).slice(0,p.ks/32);
+    }
+    if (typeof adata === "string") {
+      adata = sjcl.codec.utf8String.toBits(adata);
+    }
+    prp = new sjcl.cipher[p.cipher](password);
+    
+    /* do the decryption */
+    ct = sjcl.mode[p.mode].decrypt(prp, p.ct, p.iv, adata, p.ts);
+    
+    /* return the json data */
+    j._add(rp, p);
+    rp.key = password;
+    
+    return sjcl.codec.utf8String.fromBits(ct);
+  },
+  
+  /** Encode a flat structure into a JSON string.
+   * @param {Object} obj The structure to encode.
+   * @return {String} A JSON string.
+   * @throws {sjcl.exception.invalid} if obj has a non-alphanumeric property.
+   * @throws {sjcl.exception.bug} if a parameter has an unsupported type.
+   */
+  encode: function (obj) {
+    var i, out='{', comma='';
+    for (i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        if (!i.match(/^[a-z0-9]+$/i)) {
+          throw new sjcl.exception.invalid("json encode: invalid property name");
+        }
+        out += comma + '"' + i + '":';
+        comma = ',';
+        
+        switch (typeof obj[i]) {
+        case 'number':
+        case 'boolean':
+          out += obj[i];
+          break;
+          
+        case 'string':
+          out += '"' + escape(obj[i]) + '"';
+          break;
+        
+        case 'object':
+          out += '"' + sjcl.codec.base64.fromBits(obj[i],0) + '"';
+          break;
+        
+        default:
+          throw new sjcl.exception.bug("json encode: unsupported type");
+        }
+      }
+    }
+    return out+'}';
+  },
+  
+  /** Decode a simple (flat) JSON string into a structure.  The ciphertext,
+   * adata, salt and iv will be base64-decoded.
+   * @param {String} str The string.
+   * @return {Object} The decoded structure.
+   * @throws {sjcl.exception.invalid} if str isn't (simple) JSON.
+   */
+  decode: function (str) {
+    str = str.replace(/\s/g,'');
+    if (!str.match(/^\{.*\}$/)) { 
+      throw new sjcl.exception.invalid("json decode: this isn't json!");
+    }
+    var a = str.replace(/^\{|\}$/g, '').split(/,/), out={}, i, m;
+    for (i=0; i<a.length; i++) {
+      if (!(m=a[i].match(/^(?:(["']?)([a-z][a-z0-9]*)\1):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i))) {
+        throw new sjcl.exception.invalid("json decode: this isn't json!");
+      }
+      if (m[3]) {
+        out[m[2]] = parseInt(m[3],10);
+      } else {
+        out[m[2]] = m[2].match(/^(ct|salt|iv)$/) ? sjcl.codec.base64.toBits(m[4]) : unescape(m[4]);
+      }
+    }
+    return out;
+  },
+  
+  /** Insert all elements of src into target, modifying and returning target.
+   * @param {Object} target The object to be modified.
+   * @param {Object} src The object to pull data from.
+   * @param {boolean} [requireSame=false] If true, throw an exception if any field of target differs from corresponding field of src.
+   * @return {Object} target.
+   * @private
+   */
+  _add: function (target, src, requireSame) {
+    if (target === undefined) { target = {}; }
+    if (src === undefined) { return target; }
+    var i;
+    for (i in src) {
+      if (src.hasOwnProperty(i)) {
+        if (requireSame && target[i] !== undefined && target[i] !== src[i]) {
+          throw new sjcl.exception.invalid("required parameter overridden");
+        }
+        target[i] = src[i];
+      }
+    }
+    return target;
+  },
+  
+  /** Remove all elements of minus from plus.  Does not modify plus.
+   * @private
+   */
+  _subtract: function (plus, minus) {
+    var out = {}, i;
+    
+    for (i in plus) {
+      if (plus.hasOwnProperty(i) && plus[i] !== minus[i]) {
+        out[i] = plus[i];
+      }
+    }
+    
+    return out;
+  },
+  
+  /** Return only the specified elements of src.
+   * @private
+   */
+  _filter: function (src, filter) {
+    var out = {}, i;
+    for (i=0; i<filter.length; i++) {
+      if (src[filter[i]] !== undefined) {
+        out[filter[i]] = src[filter[i]];
+      }
+    }
+    return out;
+  }
+};
+
+/** Simple encryption function; convenient shorthand for sjcl.json.encrypt.
+ * @param {String|bitArray} password The password or key.
+ * @param {String} plaintext The data to encrypt.
+ * @param {Object} [params] The parameters including tag, iv and salt.
+ * @param {Object} [rp] A returned version with filled-in parameters.
+ * @return {String} The ciphertext.
+ */
+sjcl.encrypt = sjcl.json.encrypt;
+
+/** Simple decryption function; convenient shorthand for sjcl.json.decrypt.
+ * @param {String|bitArray} password The password or key.
+ * @param {String} ciphertext The ciphertext to decrypt.
+ * @param {Object} [params] Additional non-default parameters.
+ * @param {Object} [rp] A returned object with filled parameters.
+ * @return {String} The plaintext.
+ */
+sjcl.decrypt = sjcl.json.decrypt;
+
+/** The cache for cachedPbkdf2.
+ * @private
+ */
+sjcl.misc._pbkdf2Cache = {};
+
+/** Cached PBKDF2 key derivation.
+ * @param {String} password The password.
+ * @param {Object} [params] The derivation params (iteration count and optional salt).
+ * @return {Object} The derived data in key, the salt in salt.
+ */
+sjcl.misc.cachedPbkdf2 = function (password, obj) {
+  var cache = sjcl.misc._pbkdf2Cache, c, cp, str, salt, iter;
+  
+  obj = obj || {};
+  iter = obj.iter || 1000;
+  
+  /* open the cache for this password and iteration count */
+  cp = cache[password] = cache[password] || {};
+  c = cp[iter] = cp[iter] || { firstSalt: (obj.salt && obj.salt.length) ?
+                     obj.salt.slice(0) : sjcl.random.randomWords(2,0) };
+          
+  salt = (obj.salt === undefined) ? c.firstSalt : obj.salt;
+  
+  c[salt] = c[salt] || sjcl.misc.pbkdf2(password, salt, obj.iter);
+  return { key: c[salt].slice(0), salt:salt.slice(0) };
+};
+
+
+
+/**
+ * @constructor
+ * Constructs a new bignum from another bignum, a number or a hex string.
+ */
+sjcl.bn = function(it) {
+  this.initWith(it);
+};
+
+sjcl.bn.prototype = {
+  radix: 24,
+  maxMul: 8,
+  _class: sjcl.bn,
+  
+  copy: function() {
+    return new this._class(this);
+  },
+
+  /**
+   * Initializes this with it, either as a bn, a number, or a hex string.
+   */
+  initWith: function(it) {
+    var i=0, k, n, l;
+    switch(typeof it) {
+    case "object":
+      this.limbs = it.limbs.slice(0);
+      break;
+      
+    case "number":
+      this.limbs = [it];
+      this.normalize();
+      break;
+      
+    case "string":
+      it = it.replace(/^0x/, '');
+      this.limbs = [];
+      // hack
+      k = this.radix / 4;
+      for (i=0; i < it.length; i+=k) {
+        this.limbs.push(parseInt(it.substring(Math.max(it.length - i - k, 0), it.length - i),16));
+      }
+      break;
+
+    default:
+      this.limbs = [0];
+    }
+    return this;
+  },
+
+  /**
+   * Returns true if "this" and "that" are equal.  Calls fullReduce().
+   * Equality test is in constant time.
+   */
+  equals: function(that) {
+    if (typeof that === "number") { that = new this._class(that); }
+    var difference = 0, i;
+    this.fullReduce();
+    that.fullReduce();
+    for (i = 0; i < this.limbs.length || i < that.limbs.length; i++) {
+      difference |= this.getLimb(i) ^ that.getLimb(i);
+    }
+    return (difference === 0);
+  },
+  
+  /**
+   * Get the i'th limb of this, zero if i is too large.
+   */
+  getLimb: function(i) {
+    return (i >= this.limbs.length) ? 0 : this.limbs[i];
+  },
+  
+  /**
+   * Constant time comparison function.
+   * Returns 1 if this >= that, or zero otherwise.
+   */
+  greaterEquals: function(that) {
+    if (typeof that === "number") { that = new this._class(that); }
+    var less = 0, greater = 0, i, a, b;
+    i = Math.max(this.limbs.length, that.limbs.length) - 1;
+    for (; i>= 0; i--) {
+      a = this.getLimb(i);
+      b = that.getLimb(i);
+      greater |= (b - a) & ~less;
+      less |= (a - b) & ~greater;
+    }
+    return (greater | ~less) >>> 31;
+  },
+  
+  /**
+   * Convert to a hex string.
+   */
+  toString: function() {
+    this.fullReduce();
+    var out="", i, s, l = this.limbs;
+    for (i=0; i < this.limbs.length; i++) {
+      s = l[i].toString(16);
+      while (i < this.limbs.length - 1 && s.length < 6) {
+        s = "0" + s;
+      }
+      out = s + out;
+    }
+    return "0x"+out;
+  },
+  
+  /** this += that.  Does not normalize. */
+  addM: function(that) {
+    if (typeof(that) !== "object") { that = new this._class(that); }
+    var i, l=this.limbs, ll=that.limbs;
+    for (i=l.length; i<ll.length; i++) {
+      l[i] = 0;
+    }
+    for (i=0; i<ll.length; i++) {
+      l[i] += ll[i];
+    }
+    return this;
+  },
+  
+  /** this *= 2.  Requires normalized; ends up normalized. */
+  doubleM: function() {
+    var i, carry=0, tmp, r=this.radix, m=this.radixMask, l=this.limbs;
+    for (i=0; i<l.length; i++) {
+      tmp = l[i];
+      tmp = tmp+tmp+carry;
+      l[i] = tmp & m;
+      carry = tmp >> r;
+    }
+    if (carry) {
+      l.push(carry);
+    }
+    return this;
+  },
+  
+  /** this /= 2, rounded down.  Requires normalized; ends up normalized. */
+  halveM: function() {
+    var i, carry=0, tmp, r=this.radix, l=this.limbs;
+    for (i=l.length-1; i>=0; i--) {
+      tmp = l[i];
+      l[i] = (tmp+carry)>>1;
+      carry = (tmp&1) << r;
+    }
+    if (!l[l.length-1]) {
+      l.pop();
+    }
+    return this;
+  },
+
+  /** this -= that.  Does not normalize. */
+  subM: function(that) {
+    if (typeof(that) !== "object") { that = new this._class(that); }
+    var i, l=this.limbs, ll=that.limbs;
+    for (i=l.length; i<ll.length; i++) {
+      l[i] = 0;
+    }
+    for (i=0; i<ll.length; i++) {
+      l[i] -= ll[i];
+    }
+    return this;
+  },
+  
+  mod: function(that) {
+    var neg = !this.greaterEquals(new sjcl.bn(0));
+    
+    that = new sjcl.bn(that).normalize(); // copy before we begin
+    var out = new sjcl.bn(this).normalize(), ci=0;
+    
+    if (neg) out = (new sjcl.bn(0)).subM(out).normalize();
+    
+    for (; out.greaterEquals(that); ci++) {
+      that.doubleM();
+    }
+    
+    if (neg) out = that.sub(out).normalize();
+    
+    for (; ci > 0; ci--) {
+      that.halveM();
+      if (out.greaterEquals(that)) {
+        out.subM(that).normalize();
+      }
+    }
+    return out.trim();
+  },
+  
+  /** return inverse mod prime p.  p must be odd. Binary extended Euclidean algorithm mod p. */
+  inverseMod: function(p) {
+    var a = new sjcl.bn(1), b = new sjcl.bn(0), x = new sjcl.bn(this), y = new sjcl.bn(p), tmp, i, nz=1;
+    
+    if (!(p.limbs[0] & 1)) {
+      throw (new sjcl.exception.invalid("inverseMod: p must be odd"));
+    }
+    
+    // invariant: y is odd
+    do {
+      if (x.limbs[0] & 1) {
+        if (!x.greaterEquals(y)) {
+          // x < y; swap everything
+          tmp = x; x = y; y = tmp;
+          tmp = a; a = b; b = tmp;
+        }
+        x.subM(y);
+        x.normalize();
+        
+        if (!a.greaterEquals(b)) {
+          a.addM(p);
+        }
+        a.subM(b);
+      }
+      
+      // cut everything in half
+      x.halveM();
+      if (a.limbs[0] & 1) {
+        a.addM(p);
+      }
+      a.normalize();
+      a.halveM();
+      
+      // check for termination: x ?= 0
+      for (i=nz=0; i<x.limbs.length; i++) {
+        nz |= x.limbs[i];
+      }
+    } while(nz);
+    
+    if (!y.equals(1)) {
+      throw (new sjcl.exception.invalid("inverseMod: p and x must be relatively prime"));
+    }
+    
+    return b;
+  },
+  
+  /** this + that.  Does not normalize. */
+  add: function(that) {
+    return this.copy().addM(that);
+  },
+
+  /** this - that.  Does not normalize. */
+  sub: function(that) {
+    return this.copy().subM(that);
+  },
+  
+  /** this * that.  Normalizes and reduces. */
+  mul: function(that) {
+    if (typeof(that) === "number") { that = new this._class(that); }
+    var i, j, a = this.limbs, b = that.limbs, al = a.length, bl = b.length, out = new this._class(), c = out.limbs, ai, ii=this.maxMul;
+
+    for (i=0; i < this.limbs.length + that.limbs.length + 1; i++) {
+      c[i] = 0;
+    }
+    for (i=0; i<al; i++) {
+      ai = a[i];
+      for (j=0; j<bl; j++) {
+        c[i+j] += ai * b[j];
+      }
+     
+      if (!--ii) {
+        ii = this.maxMul;
+        out.cnormalize();
+      }
+    }
+    return out.cnormalize().reduce();
+  },
+
+  /** this ^ 2.  Normalizes and reduces. */
+  square: function() {
+    return this.mul(this);
+  },
+
+  /** this ^ n.  Uses square-and-multiply.  Normalizes and reduces. */
+  power: function(l) {
+    if (typeof(l) === "number") {
+      l = [l];
+    } else if (l.limbs !== undefined) {
+      l = l.normalize().limbs;
+    }
+    var i, j, out = new this._class(1), pow = this;
+
+    for (i=0; i<l.length; i++) {
+      for (j=0; j<this.radix; j++) {
+        if (l[i] & (1<<j)) {
+          out = out.mul(pow);
+        }
+        pow = pow.square();
+      }
+    }
+    
+    return out;
+  },
+
+  /** this * that mod N */
+  mulmod: function(that, N) {
+    return this.mod(N).mul(that.mod(N)).mod(N);
+  },
+
+  /** this ^ x mod N */
+  powermod: function(x, N) {
+    var result = new sjcl.bn(1), a = new sjcl.bn(this), k = new sjcl.bn(x);
+    while (true) {
+      if (k.limbs[0] & 1) { result = result.mulmod(a, N); }
+      k.halveM();
+      if (k.equals(0)) { break; }
+      a = a.mulmod(a, N);
+    }
+    return result.normalize().reduce();
+  },
+
+  trim: function() {
+    var l = this.limbs, p;
+    do {
+      p = l.pop();
+    } while (l.length && p === 0);
+    l.push(p);
+    return this;
+  },
+  
+  /** Reduce mod a modulus.  Stubbed for subclassing. */
+  reduce: function() {
+    return this;
+  },
+
+  /** Reduce and normalize. */
+  fullReduce: function() {
+    return this.normalize();
+  },
+  
+  /** Propagate carries. */
+  normalize: function() {
+    var carry=0, i, pv = this.placeVal, ipv = this.ipv, l, m, limbs = this.limbs, ll = limbs.length, mask = this.radixMask;
+    for (i=0; i < ll || (carry !== 0 && carry !== -1); i++) {
+      l = (limbs[i]||0) + carry;
+      m = limbs[i] = l & mask;
+      carry = (l-m)*ipv;
+    }
+    if (carry === -1) {
+      limbs[i-1] -= this.placeVal;
+    }
+    return this;
+  },
+
+  /** Constant-time normalize. Does not allocate additional space. */
+  cnormalize: function() {
+    var carry=0, i, ipv = this.ipv, l, m, limbs = this.limbs, ll = limbs.length, mask = this.radixMask;
+    for (i=0; i < ll-1; i++) {
+      l = limbs[i] + carry;
+      m = limbs[i] = l & mask;
+      carry = (l-m)*ipv;
+    }
+    limbs[i] += carry;
+    return this;
+  },
+  
+  /** Serialize to a bit array */
+  toBits: function(len) {
+    this.fullReduce();
+    len = len || this.exponent || this.bitLength();
+    var i = Math.floor((len-1)/24), w=sjcl.bitArray, e = (len + 7 & -8) % this.radix || this.radix,
+        out = [w.partial(e, this.getLimb(i))];
+    for (i--; i >= 0; i--) {
+      out = w.concat(out, [w.partial(Math.min(this.radix,len), this.getLimb(i))]);
+      len -= this.radix;
+    }
+    return out;
+  },
+  
+  /** Return the length in bits, rounded up to the nearest byte. */
+  bitLength: function() {
+    this.fullReduce();
+    var out = this.radix * (this.limbs.length - 1),
+        b = this.limbs[this.limbs.length - 1];
+    for (; b; b >>>= 1) {
+      out ++;
+    }
+    return out+7 & -8;
+  }
+};
+
+/** @this { sjcl.bn } */
+sjcl.bn.fromBits = function(bits) {
+  var Class = this, out = new Class(), words=[], w=sjcl.bitArray, t = this.prototype,
+      l = Math.min(this.bitLength || 0x100000000, w.bitLength(bits)), e = l % t.radix || t.radix;
+  
+  words[0] = w.extract(bits, 0, e);
+  for (; e < l; e += t.radix) {
+    words.unshift(w.extract(bits, e, t.radix));
+  }
+
+  out.limbs = words;
+  return out;
+};
+
+
+
+sjcl.bn.prototype.ipv = 1 / (sjcl.bn.prototype.placeVal = Math.pow(2,sjcl.bn.prototype.radix));
+sjcl.bn.prototype.radixMask = (1 << sjcl.bn.prototype.radix) - 1;
+
+/**
+ * Creates a new subclass of bn, based on reduction modulo a pseudo-Mersenne prime,
+ * i.e. a prime of the form 2^e + sum(a * 2^b),where the sum is negative and sparse.
+ */
+sjcl.bn.pseudoMersennePrime = function(exponent, coeff) {
+  /** @constructor */
+  function p(it) {
+    this.initWith(it);
+    /*if (this.limbs[this.modOffset]) {
+      this.reduce();
+    }*/
+  }
+
+  var ppr = p.prototype = new sjcl.bn(), i, tmp, mo;
+  mo = ppr.modOffset = Math.ceil(tmp = exponent / ppr.radix);
+  ppr.exponent = exponent;
+  ppr.offset = [];
+  ppr.factor = [];
+  ppr.minOffset = mo;
+  ppr.fullMask = 0;
+  ppr.fullOffset = [];
+  ppr.fullFactor = [];
+  ppr.modulus = p.modulus = new sjcl.bn(Math.pow(2,exponent));
+  
+  ppr.fullMask = 0|-Math.pow(2, exponent % ppr.radix);
+
+  for (i=0; i<coeff.length; i++) {
+    ppr.offset[i] = Math.floor(coeff[i][0] / ppr.radix - tmp);
+    ppr.fullOffset[i] = Math.ceil(coeff[i][0] / ppr.radix - tmp);
+    ppr.factor[i] = coeff[i][1] * Math.pow(1/2, exponent - coeff[i][0] + ppr.offset[i] * ppr.radix);
+    ppr.fullFactor[i] = coeff[i][1] * Math.pow(1/2, exponent - coeff[i][0] + ppr.fullOffset[i] * ppr.radix);
+    ppr.modulus.addM(new sjcl.bn(Math.pow(2,coeff[i][0])*coeff[i][1]));
+    ppr.minOffset = Math.min(ppr.minOffset, -ppr.offset[i]); // conservative
+  }
+  ppr._class = p;
+  ppr.modulus.cnormalize();
+
+  /** Approximate reduction mod p.  May leave a number which is negative or slightly larger than p.
+   * @this {sjcl.bn}
+   */
+  ppr.reduce = function() {
+    var i, k, l, mo = this.modOffset, limbs = this.limbs, aff, off = this.offset, ol = this.offset.length, fac = this.factor, ll;
+
+    i = this.minOffset;
+    while (limbs.length > mo) {
+      l = limbs.pop();
+      ll = limbs.length;
+      for (k=0; k<ol; k++) {
+        limbs[ll+off[k]] -= fac[k] * l;
+      }
+      
+      i--;
+      if (!i) {
+        limbs.push(0);
+        this.cnormalize();
+        i = this.minOffset;
+      }
+    }
+    this.cnormalize();
+
+    return this;
+  };
+  
+  /** @this {sjcl.bn} */
+  ppr._strongReduce = (ppr.fullMask === -1) ? ppr.reduce : function() {
+    var limbs = this.limbs, i = limbs.length - 1, k, l;
+    this.reduce();
+    if (i === this.modOffset - 1) {
+      l = limbs[i] & this.fullMask;
+      limbs[i] -= l;
+      for (k=0; k<this.fullOffset.length; k++) {
+        limbs[i+this.fullOffset[k]] -= this.fullFactor[k] * l;
+      }
+      this.normalize();
+    }
+  };
+
+  /** mostly constant-time, very expensive full reduction.
+   * @this {sjcl.bn}
+   */
+  ppr.fullReduce = function() {
+    var greater, i;
+    // massively above the modulus, may be negative
+    
+    this._strongReduce();
+    // less than twice the modulus, may be negative
+
+    this.addM(this.modulus);
+    this.addM(this.modulus);
+    this.normalize();
+    // probably 2-3x the modulus
+    
+    this._strongReduce();
+    // less than the power of 2.  still may be more than
+    // the modulus
+
+    // HACK: pad out to this length
+    for (i=this.limbs.length; i<this.modOffset; i++) {
+      this.limbs[i] = 0;
+    }
+    
+    // constant-time subtract modulus
+    greater = this.greaterEquals(this.modulus);
+    for (i=0; i<this.limbs.length; i++) {
+      this.limbs[i] -= this.modulus.limbs[i] * greater;
+    }
+    this.cnormalize();
+
+    return this;
+  };
+
+
+  /** @this {sjcl.bn} */
+  ppr.inverse = function() {
+    return (this.power(this.modulus.sub(2)));
+  };
+
+  p.fromBits = sjcl.bn.fromBits;
+
+  return p;
+};
+
+// a small Mersenne prime
+sjcl.bn.prime = {
+  p127: sjcl.bn.pseudoMersennePrime(127, [[0,-1]]),
+
+  // Bernstein's prime for Curve25519
+  p25519: sjcl.bn.pseudoMersennePrime(255, [[0,-19]]),
+
+  // NIST primes
+  p192: sjcl.bn.pseudoMersennePrime(192, [[0,-1],[64,-1]]),
+  p224: sjcl.bn.pseudoMersennePrime(224, [[0,1],[96,-1]]),
+  p256: sjcl.bn.pseudoMersennePrime(256, [[0,-1],[96,1],[192,1],[224,-1]]),
+  p384: sjcl.bn.pseudoMersennePrime(384, [[0,-1],[32,1],[96,-1],[128,-1]]),
+  p521: sjcl.bn.pseudoMersennePrime(521, [[0,-1]])
+};
+
+sjcl.bn.random = function(modulus, paranoia) {
+  if (typeof modulus !== "object") { modulus = new sjcl.bn(modulus); }
+  var words, i, l = modulus.limbs.length, m = modulus.limbs[l-1]+1, out = new sjcl.bn();
+  while (true) {
+    // get a sequence whose first digits make sense
+    do {
+      words = sjcl.random.randomWords(l, paranoia);
+      if (words[l-1] < 0) { words[l-1] += 0x100000000; }
+    } while (Math.floor(words[l-1] / m) === Math.floor(0x100000000 / m));
+    words[l-1] %= m;
+
+    // mask off all the limbs
+    for (i=0; i<l-1; i++) {
+      words[i] &= modulus.radixMask;
+    }
+
+    // check the rest of the digitssj
+    out.limbs = words;
+    if (!out.greaterEquals(modulus)) {
+      return out;
+    }
+  }
+};
+
+
+sjcl.ecc = {};
+
+/**
+ * Represents a point on a curve in affine coordinates.
+ * @constructor
+ * @param {sjcl.ecc.curve} curve The curve that this point lies on.
+ * @param {bigInt} x The x coordinate.
+ * @param {bigInt} y The y coordinate.
+ */
+sjcl.ecc.point = function(curve,x,y) {
+  if (x === undefined) {
+    this.isIdentity = true;
+  } else {
+    if (x instanceof sjcl.bn) {
+      x = new curve.field(x);
+    }
+    if (y instanceof sjcl.bn) {
+      y = new curve.field(y);
+    }
+
+    this.x = x;
+    this.y = y;
+
+    this.isIdentity = false;
+  }
+  this.curve = curve;
+};
+
+
+
+sjcl.ecc.point.prototype = {
+  toJac: function() {
+    return new sjcl.ecc.pointJac(this.curve, this.x, this.y, new this.curve.field(1));
+  },
+
+  mult: function(k) {
+    return this.toJac().mult(k, this).toAffine();
+  },
+  
+  /**
+   * Multiply this point by k, added to affine2*k2, and return the answer in Jacobian coordinates.
+   * @param {bigInt} k The coefficient to multiply this by.
+   * @param {bigInt} k2 The coefficient to multiply affine2 this by.
+   * @param {sjcl.ecc.point} affine The other point in affine coordinates.
+   * @return {sjcl.ecc.pointJac} The result of the multiplication and addition, in Jacobian coordinates.
+   */
+  mult2: function(k, k2, affine2) {
+    return this.toJac().mult2(k, this, k2, affine2).toAffine();
+  },
+  
+  multiples: function() {
+    var m, i, j;
+    if (this._multiples === undefined) {
+      j = this.toJac().doubl();
+      m = this._multiples = [new sjcl.ecc.point(this.curve), this, j.toAffine()];
+      for (i=3; i<16; i++) {
+        j = j.add(this);
+        m.push(j.toAffine());
+      }
+    }
+    return this._multiples;
+  },
+
+  isValid: function() {
+    return this.y.square().equals(this.curve.b.add(this.x.mul(this.curve.a.add(this.x.square()))));
+  },
+
+  toBits: function() {
+    return sjcl.bitArray.concat(this.x.toBits(), this.y.toBits());
+  }
+};
+
+/**
+ * Represents a point on a curve in Jacobian coordinates. Coordinates can be specified as bigInts or strings (which
+ * will be converted to bigInts).
+ *
+ * @constructor
+ * @param {bigInt/string} x The x coordinate.
+ * @param {bigInt/string} y The y coordinate.
+ * @param {bigInt/string} z The z coordinate.
+ * @param {sjcl.ecc.curve} curve The curve that this point lies on.
+ */
+sjcl.ecc.pointJac = function(curve, x, y, z) {
+  if (x === undefined) {
+    this.isIdentity = true;
+  } else {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.isIdentity = false;
+  }
+  this.curve = curve;
+};
+
+sjcl.ecc.pointJac.prototype = {
+  /**
+   * Adds S and T and returns the result in Jacobian coordinates. Note that S must be in Jacobian coordinates and T must be in affine coordinates.
+   * @param {sjcl.ecc.pointJac} S One of the points to add, in Jacobian coordinates.
+   * @param {sjcl.ecc.point} T The other point to add, in affine coordinates.
+   * @return {sjcl.ecc.pointJac} The sum of the two points, in Jacobian coordinates. 
+   */
+  add: function(T) {
+    var S = this, sz2, c, d, c2, x1, x2, x, y1, y2, y, z;
+    if (S.curve !== T.curve) {
+      throw("sjcl.ecc.add(): Points must be on the same curve to add them!");
+    }
+
+    if (S.isIdentity) {
+      return T.toJac();
+    } else if (T.isIdentity) {
+      return S;
+    }
+
+    sz2 = S.z.square();
+    c = T.x.mul(sz2).subM(S.x);
+
+    if (c.equals(0)) {
+      if (S.y.equals(T.y.mul(sz2.mul(S.z)))) {
+        // same point
+        return S.doubl();
+      } else {
+        // inverses
+        return new sjcl.ecc.pointJac(S.curve);
+      }
+    }
+    
+    d = T.y.mul(sz2.mul(S.z)).subM(S.y);
+    c2 = c.square();
+
+    x1 = d.square();
+    x2 = c.square().mul(c).addM( S.x.add(S.x).mul(c2) );
+    x  = x1.subM(x2);
+
+    y1 = S.x.mul(c2).subM(x).mul(d);
+    y2 = S.y.mul(c.square().mul(c));
+    y  = y1.subM(y2);
+
+    z  = S.z.mul(c);
+
+    return new sjcl.ecc.pointJac(this.curve,x,y,z);
+  },
+  
+  /**
+   * doubles this point.
+   * @return {sjcl.ecc.pointJac} The doubled point.
+   */
+  doubl: function() {
+    if (this.isIdentity) { return this; }
+
+    var
+      y2 = this.y.square(),
+      a  = y2.mul(this.x.mul(4)),
+      b  = y2.square().mul(8),
+      z2 = this.z.square(),
+      c  = this.x.sub(z2).mul(3).mul(this.x.add(z2)),
+      x  = c.square().subM(a).subM(a),
+      y  = a.sub(x).mul(c).subM(b),
+      z  = this.y.add(this.y).mul(this.z);
+    return new sjcl.ecc.pointJac(this.curve, x, y, z);
+  },
+
+  /**
+   * Returns a copy of this point converted to affine coordinates.
+   * @return {sjcl.ecc.point} The converted point.
+   */  
+  toAffine: function() {
+    if (this.isIdentity || this.z.equals(0)) {
+      return new sjcl.ecc.point(this.curve);
+    }
+    var zi = this.z.inverse(), zi2 = zi.square();
+    return new sjcl.ecc.point(this.curve, this.x.mul(zi2).fullReduce(), this.y.mul(zi2.mul(zi)).fullReduce());
+  },
+  
+  /**
+   * Multiply this point by k and return the answer in Jacobian coordinates.
+   * @param {bigInt} k The coefficient to multiply by.
+   * @param {sjcl.ecc.point} affine This point in affine coordinates.
+   * @return {sjcl.ecc.pointJac} The result of the multiplication, in Jacobian coordinates.
+   */
+  mult: function(k, affine) {
+    if (typeof(k) === "number") {
+      k = [k];
+    } else if (k.limbs !== undefined) {
+      k = k.normalize().limbs;
+    }
+    
+    var i, j, out = new sjcl.ecc.point(this.curve).toJac(), multiples = affine.multiples();
+
+    for (i=k.length-1; i>=0; i--) {
+      for (j=sjcl.bn.prototype.radix-4; j>=0; j-=4) {
+        out = out.doubl().doubl().doubl().doubl().add(multiples[k[i]>>j & 0xF]);
+      }
+    }
+    
+    return out;
+  },
+  
+  /**
+   * Multiply this point by k, added to affine2*k2, and return the answer in Jacobian coordinates.
+   * @param {bigInt} k The coefficient to multiply this by.
+   * @param {sjcl.ecc.point} affine This point in affine coordinates.
+   * @param {bigInt} k2 The coefficient to multiply affine2 this by.
+   * @param {sjcl.ecc.point} affine The other point in affine coordinates.
+   * @return {sjcl.ecc.pointJac} The result of the multiplication and addition, in Jacobian coordinates.
+   */
+  mult2: function(k1, affine, k2, affine2) {
+    if (typeof(k1) === "number") {
+      k1 = [k1];
+    } else if (k1.limbs !== undefined) {
+      k1 = k1.normalize().limbs;
+    }
+    
+    if (typeof(k2) === "number") {
+      k2 = [k2];
+    } else if (k2.limbs !== undefined) {
+      k2 = k2.normalize().limbs;
+    }
+    
+    var i, j, out = new sjcl.ecc.point(this.curve).toJac(), m1 = affine.multiples(),
+        m2 = affine2.multiples(), l1, l2;
+
+    for (i=Math.max(k1.length,k2.length)-1; i>=0; i--) {
+      l1 = k1[i] | 0;
+      l2 = k2[i] | 0;
+      for (j=sjcl.bn.prototype.radix-4; j>=0; j-=4) {
+        out = out.doubl().doubl().doubl().doubl().add(m1[l1>>j & 0xF]).add(m2[l2>>j & 0xF]);
+      }
+    }
+    
+    return out;
+  },
+
+  isValid: function() {
+    var z2 = this.z.square(), z4 = z2.square(), z6 = z4.mul(z2);
+    return this.y.square().equals(
+             this.curve.b.mul(z6).add(this.x.mul(
+               this.curve.a.mul(z4).add(this.x.square()))));
+  }
+};
+
+/**
+ * Construct an elliptic curve. Most users will not use this and instead start with one of the NIST curves defined below.
+ *
+ * @constructor
+ * @param {bigInt} p The prime modulus.
+ * @param {bigInt} r The prime order of the curve.
+ * @param {bigInt} a The constant a in the equation of the curve y^2 = x^3 + ax + b (for NIST curves, a is always -3).
+ * @param {bigInt} x The x coordinate of a base point of the curve.
+ * @param {bigInt} y The y coordinate of a base point of the curve.
+ */
+sjcl.ecc.curve = function(Field, r, a, b, x, y) {
+  this.field = Field;
+  this.r = Field.prototype.modulus.sub(r);
+  this.a = new Field(a);
+  this.b = new Field(b);
+  this.G = new sjcl.ecc.point(this, new Field(x), new Field(y));
+};
+
+sjcl.ecc.curve.prototype.fromBits = function (bits) {
+  var w = sjcl.bitArray, l = this.field.prototype.exponent + 7 & -8,
+      p = new sjcl.ecc.point(this, this.field.fromBits(w.bitSlice(bits, 0, l)),
+                             this.field.fromBits(w.bitSlice(bits, l, 2*l)));
+  if (!p.isValid()) {
+    throw new sjcl.exception.corrupt("not on the curve!");
+  }
+  return p;
+};
+
+sjcl.ecc.curves = {
+  c192: new sjcl.ecc.curve(
+    sjcl.bn.prime.p192,
+    "0x662107c8eb94364e4b2dd7ce",
+    -3,
+    "0x64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1",
+    "0x188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012",
+    "0x07192b95ffc8da78631011ed6b24cdd573f977a11e794811"),
+
+  c224: new sjcl.ecc.curve(
+    sjcl.bn.prime.p224,
+    "0xe95c1f470fc1ec22d6baa3a3d5c4",
+    -3,
+    "0xb4050a850c04b3abf54132565044b0b7d7bfd8ba270b39432355ffb4",
+    "0xb70e0cbd6bb4bf7f321390b94a03c1d356c21122343280d6115c1d21",
+    "0xbd376388b5f723fb4c22dfe6cd4375a05a07476444d5819985007e34"),
+
+  c256: new sjcl.ecc.curve(
+    sjcl.bn.prime.p256,
+    "0x4319055358e8617b0c46353d039cdaae",
+    -3,
+    "0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b",
+    "0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296",
+    "0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5"),
+
+  c384: new sjcl.ecc.curve(
+    sjcl.bn.prime.p384,
+    "0x389cb27e0bc8d21fa7e5f24cb74f58851313e696333ad68c",
+    -3,
+    "0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef",
+    "0xaa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c3a545e3872760ab7",
+    "0x3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f")
+};
+
+
+/* Diffie-Hellman-like public-key system */
+sjcl.ecc._dh = function(cn) {
+  sjcl.ecc[cn] = {
+    /** @constructor */
+    publicKey: function(curve, point) {
+      this._curve = curve;
+      this._curveBitLength = curve.r.bitLength();
+      if (point instanceof Array) {
+        this._point = curve.fromBits(point);
+      } else {
+        this._point = point;
+      }
+
+      this.get = function() {
+        var pointbits = this._point.toBits();
+        var len = sjcl.bitArray.bitLength(pointbits);
+        var x = sjcl.bitArray.bitSlice(pointbits, 0, len/2);
+        var y = sjcl.bitArray.bitSlice(pointbits, len/2);
+        return { x: x, y: y };
+      }
+    },
+
+    /** @constructor */
+    secretKey: function(curve, exponent) {
+      this._curve = curve;
+      this._curveBitLength = curve.r.bitLength();
+      this._exponent = exponent;
+
+      this.get = function() {
+        return this._exponent.toBits();
+      }
+    },
+
+    /** @constructor */
+    generateKeys: function(curve, paranoia, sec) {
+      if (curve === undefined) {
+        curve = 256;
+      }
+      if (typeof curve === "number") {
+        curve = sjcl.ecc.curves['c'+curve];
+        if (curve === undefined) {
+          throw new sjcl.exception.invalid("no such curve");
+        }
+      }
+      if (sec === undefined) {
+        var sec = sjcl.bn.random(curve.r, paranoia);
+      }
+      var pub = curve.G.mult(sec);
+      return { pub: new sjcl.ecc[cn].publicKey(curve, pub),
+               sec: new sjcl.ecc[cn].secretKey(curve, sec) };
+    }
+  }; 
+};
+
+sjcl.ecc._dh("elGamal");
+
+sjcl.ecc.elGamal.publicKey.prototype = {
+  kem: function(paranoia) {
+    var sec = sjcl.bn.random(this._curve.r, paranoia),
+        tag = this._curve.G.mult(sec).toBits(),
+        key = sjcl.hash.sha256.hash(this._point.mult(sec).toBits());
+    return { key: key, tag: tag };
+  }
+};
+
+sjcl.ecc.elGamal.secretKey.prototype = {
+  unkem: function(tag) {
+    return sjcl.hash.sha256.hash(this._curve.fromBits(tag).mult(this._exponent).toBits());
+  },
+
+  dh: function(pk) {
+    return sjcl.hash.sha256.hash(pk._point.mult(this._exponent).toBits());
+  }
+};
+
+sjcl.ecc._dh("ecdsa");
+
+sjcl.ecc.ecdsa.secretKey.prototype = {
+  sign: function(hash, paranoia, fakeLegacyVersion, fixedKForTesting) {
+    if (sjcl.bitArray.bitLength(hash) > this._curveBitLength) {
+      hash = sjcl.bitArray.clamp(hash, this._curveBitLength);
+    }
+    var R  = this._curve.r,
+        l  = R.bitLength(),
+        k  = fixedKForTesting || sjcl.bn.random(R.sub(1), paranoia).add(1),
+        r  = this._curve.G.mult(k).x.mod(R),
+        ss = sjcl.bn.fromBits(hash).add(r.mul(this._exponent)),
+        s  = fakeLegacyVersion ? ss.inverseMod(R).mul(k).mod(R)
+             : ss.mul(k.inverseMod(R)).mod(R);
+    return sjcl.bitArray.concat(r.toBits(l), s.toBits(l));
+  }
+};
+
+sjcl.ecc.ecdsa.publicKey.prototype = {
+  verify: function(hash, rs, fakeLegacyVersion) {
+    if (sjcl.bitArray.bitLength(hash) > this._curveBitLength) {
+      hash = sjcl.bitArray.clamp(hash, this._curveBitLength);
+    }
+    var w = sjcl.bitArray,
+        R = this._curve.r,
+        l = this._curveBitLength,
+        r = sjcl.bn.fromBits(w.bitSlice(rs,0,l)),
+        ss = sjcl.bn.fromBits(w.bitSlice(rs,l,2*l)),
+        s = fakeLegacyVersion ? ss : ss.inverseMod(R),
+        hG = sjcl.bn.fromBits(hash).mul(s).mod(R),
+        hA = r.mul(s).mod(R),
+        r2 = this._curve.G.mult2(hG, hA, this._point).x;
+    if (r.equals(0) || ss.equals(0) || r.greaterEquals(R) || ss.greaterEquals(R) || !r2.equals(r)) {
+      if (fakeLegacyVersion === undefined) {
+        return this.verify(hash, rs, true);
+      } else {
+        throw (new sjcl.exception.corrupt("signature didn't check out"));
+      }
+    }
+    return true;
+  }
+};
+
+sjcl.ecc.point.prototype.isValidPoint = function() {
+
+  var self = this;
+
+  var field_modulus = self.curve.field.modulus;
+
+  if (self.isIdentity) {
+    return false;
+  }
+
+  // Check that coordinatres are in bounds
+  // Return false if x < 1 or x > (field_modulus - 1)
+  if (((new sjcl.bn(1).greaterEquals(self.x)) &&
+    !self.x.equals(1)) ||
+    (self.x.greaterEquals(field_modulus.sub(1))) &&
+    !self.x.equals(1)) {
+
+    return false;
+  }
+
+  // Return false if y < 1 or y > (field_modulus - 1)
+  if (((new sjcl.bn(1).greaterEquals(self.y)) &&
+    !self.y.equals(1)) ||
+    (self.y.greaterEquals(field_modulus.sub(1))) &&
+    !self.y.equals(1)) {
+
+    return false;
+  }
+
+  if (!self.isOnCurve()) {
+    return false;
+  }
+
+  // TODO check to make sure point is a scalar multiple of base_point
+
+  return true;
+
+};
+
+/**
+ *  Check that the point is on the curve
+ *
+ *  @returns {Boolean}
+ */
+sjcl.ecc.point.prototype.isOnCurve = function() {
+
+  var self = this;
+
+  var field_order = self.curve.r;
+  var component_a = self.curve.a;
+  var component_b = self.curve.b;
+  var field_modulus = self.curve.field.modulus;
+
+  var left_hand_side = self.y.mul(self.y).mod(field_modulus);
+  var right_hand_side = self.x.mul(self.x).mul(self.x).add(component_a.mul(self.x)).add(component_b).mod(field_modulus);
+
+  return left_hand_side.equals(right_hand_side);
+
+};
+
+
+sjcl.ecc.point.prototype.toString = function() {
+  return '(' + 
+    this.x.toString() + ', ' +
+    this.y.toString() +
+    ')';
+};
+
+sjcl.ecc.pointJac.prototype.toString = function() {
+  return '(' + 
+    this.x.toString() + ', ' +
+    this.y.toString() + ', ' +
+    this.z.toString() +
+    ')';
+};
+
+// ----- for secp256k1 ------
+
+// Overwrite NIST-P256 with secp256k1
+sjcl.ecc.curves.c256 = new sjcl.ecc.curve(
+    sjcl.bn.pseudoMersennePrime(256, [[0,-1],[4,-1],[6,-1],[7,-1],[8,-1],[9,-1],[32,-1]]),
+    "0x14551231950b75fc4402da1722fc9baee",
+    0,
+    7,
+    "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"
+);
+
+// Replace point addition and doubling algorithms
+// NIST-P256 is a=-3, we need algorithms for a=0
+sjcl.ecc.pointJac.prototype.add = function(T) {
+  var S = this;
+  if (S.curve !== T.curve) {
+    throw("sjcl.ecc.add(): Points must be on the same curve to add them!");
+  }
+
+  if (S.isIdentity) {
+    return T.toJac();
+  } else if (T.isIdentity) {
+    return S;
+  }
+
+  var z1z1 = S.z.square();
+  var h = T.x.mul(z1z1).subM(S.x);
+  var s2 = T.y.mul(S.z).mul(z1z1);
+
+  if (h.equals(0)) {
+    if (S.y.equals(T.y.mul(z1z1.mul(S.z)))) {
+      // same point
+      return S.doubl();
+    } else {
+      // inverses
+      return new sjcl.ecc.pointJac(S.curve);
+    }
+  }
+
+  var hh = h.square();
+  var i = hh.copy().doubleM().doubleM();
+  var j = h.mul(i);
+  var r = s2.sub(S.y).doubleM();
+  var v = S.x.mul(i);
+  
+  var x = r.square().subM(j).subM(v.copy().doubleM());
+  var y = r.mul(v.sub(x)).subM(S.y.mul(j).doubleM());
+  var z = S.z.add(h).square().subM(z1z1).subM(hh);
+
+  return new sjcl.ecc.pointJac(this.curve,x,y,z);
+};
+
+sjcl.ecc.pointJac.prototype.doubl = function () {
+  if (this.isIdentity) { return this; }
+
+  var a = this.x.square();
+  var b = this.y.square();
+  var c = b.square();
+  var d = this.x.add(b).square().subM(a).subM(c).doubleM();
+  var e = a.mul(3);
+  var f = e.square();
+  var x = f.sub(d.copy().doubleM());
+  var y = e.mul(d.sub(x)).subM(c.doubleM().doubleM().doubleM());
+  var z = this.z.mul(this.y).doubleM();
+  return new sjcl.ecc.pointJac(this.curve, x, y, z);
+};
+
+sjcl.ecc.point.prototype.toBytesCompressed = function () {
+  var header = this.y.mod(2).toString() == "0x0" ? 0x02 : 0x03;
+  return [header].concat(sjcl.codec.bytes.fromBits(this.x.toBits()))
+};
+
+/** @fileOverview Javascript RIPEMD-160 implementation.
+ *
+ * @author Artem S Vybornov <vybornov@gmail.com>
+ */
+(function() {
+
+/**
+ * Context for a RIPEMD-160 operation in progress.
+ * @constructor
+ * @class RIPEMD, 160 bits.
+ */
+sjcl.hash.ripemd160 = function (hash) {
+    if (hash) {
+        this._h = hash._h.slice(0);
+        this._buffer = hash._buffer.slice(0);
+        this._length = hash._length;
+    } else {
+        this.reset();
+    }
+};
+
+/**
+ * Hash a string or an array of words.
+ * @static
+ * @param {bitArray|String} data the data to hash.
+ * @return {bitArray} The hash value, an array of 5 big-endian words.
+ */
+sjcl.hash.ripemd160.hash = function (data) {
+  return (new sjcl.hash.ripemd160()).update(data).finalize();
+};
+
+sjcl.hash.ripemd160.prototype = {
+    /**
+     * Reset the hash state.
+     * @return this
+     */
+    reset: function () {
+        this._h = _h0.slice(0);
+        this._buffer = [];
+        this._length = 0;
+        return this;
+    },
+
+    /**
+     * Reset the hash state.
+     * @param {bitArray|String} data the data to hash.
+     * @return this
+     */
+    update: function (data) {
+        if ( typeof data === "string" )
+            data = sjcl.codec.utf8String.toBits(data);
+
+        var i, b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
+            ol = this._length,
+            nl = this._length = ol + sjcl.bitArray.bitLength(data);
+        for (i = 512+ol & -512; i <= nl; i+= 512) {
+            var words = b.splice(0,16);
+            for ( var w = 0; w < 16; ++w )
+                words[w] = _cvt(words[w]);
+
+            _block.call( this, words );
+        }
+
+        return this;
+    },
+
+    /**
+     * Complete hashing and output the hash value.
+     * @return {bitArray} The hash value, an array of 5 big-endian words.
+     */
+    finalize: function () {
+        var b = sjcl.bitArray.concat( this._buffer, [ sjcl.bitArray.partial(1,1) ] ),
+            l = ( this._length + 1 ) % 512,
+            z = ( l > 448 ? 512 : 448 ) - l % 448,
+            zp = z % 32;
+
+        if ( zp > 0 )
+            b = sjcl.bitArray.concat( b, [ sjcl.bitArray.partial(zp,0) ] )
+        for ( ; z >= 32; z -= 32 )
+            b.push(0);
+
+        b.push( _cvt( this._length | 0 ) );
+        b.push( _cvt( Math.floor(this._length / 0x100000000) ) );
+
+        while ( b.length ) {
+            var words = b.splice(0,16);
+            for ( var w = 0; w < 16; ++w )
+                words[w] = _cvt(words[w]);
+
+            _block.call( this, words );
+        }
+
+        var h = this._h;
+        this.reset();
+
+        for ( var w = 0; w < 5; ++w )
+            h[w] = _cvt(h[w]);
+
+        return h;
+    }
+};
+
+var _h0 = [ 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 ];
+
+var _k1 = [ 0x00000000, 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xa953fd4e ];
+var _k2 = [ 0x50a28be6, 0x5c4dd124, 0x6d703ef3, 0x7a6d76e9, 0x00000000 ];
+for ( var i = 4; i >= 0; --i ) {
+    for ( var j = 1; j < 16; ++j ) {
+        _k1.splice(i,0,_k1[i]);
+        _k2.splice(i,0,_k2[i]);
+    }
+}
+
+var _r1 = [  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+             7,  4, 13,  1, 10,  6, 15,  3, 12,  0,  9,  5,  2, 14, 11,  8,
+             3, 10, 14,  4,  9, 15,  8,  1,  2,  7,  0,  6, 13, 11,  5, 12,
+             1,  9, 11, 10,  0,  8, 12,  4, 13,  3,  7, 15, 14,  5,  6,  2,
+             4,  0,  5,  9,  7, 12,  2, 10, 14,  1,  3,  8, 11,  6, 15, 13 ];
+var _r2 = [  5, 14,  7,  0,  9,  2, 11,  4, 13,  6, 15,  8,  1, 10,  3, 12,
+             6, 11,  3,  7,  0, 13,  5, 10, 14, 15,  8, 12,  4,  9,  1,  2,
+            15,  5,  1,  3,  7, 14,  6,  9, 11,  8, 12,  2, 10,  0,  4, 13,
+             8,  6,  4,  1,  3, 11, 15,  0,  5, 12,  2, 13,  9,  7, 10, 14,
+            12, 15, 10,  4,  1,  5,  8,  7,  6,  2, 13, 14,  0,  3,  9, 11 ];
+
+var _s1 = [ 11, 14, 15, 12,  5,  8,  7,  9, 11, 13, 14, 15,  6,  7,  9,  8,
+             7,  6,  8, 13, 11,  9,  7, 15,  7, 12, 15,  9, 11,  7, 13, 12,
+            11, 13,  6,  7, 14,  9, 13, 15, 14,  8, 13,  6,  5, 12,  7,  5,
+            11, 12, 14, 15, 14, 15,  9,  8,  9, 14,  5,  6,  8,  6,  5, 12,
+             9, 15,  5, 11,  6,  8, 13, 12,  5, 12, 13, 14, 11,  8,  5,  6 ];
+var _s2 = [  8,  9,  9, 11, 13, 15, 15,  5,  7,  7,  8, 11, 14, 14, 12,  6,
+             9, 13, 15,  7, 12,  8,  9, 11,  7,  7, 12,  7,  6, 15, 13, 11,
+             9,  7, 15, 11,  8,  6,  6, 14, 12, 13,  5, 14, 13, 13,  7,  5,
+            15,  5,  8, 11, 14, 14,  6, 14,  6,  9, 12,  9, 12,  5, 15,  8,
+             8,  5, 12,  9, 12,  5, 14,  6,  8, 13,  6,  5, 15, 13, 11, 11 ];
+
+function _f0(x,y,z) {
+    return x ^ y ^ z;
+};
+
+function _f1(x,y,z) {
+    return (x & y) | (~x & z);
+};
+
+function _f2(x,y,z) {
+    return (x | ~y) ^ z;
+};
+
+function _f3(x,y,z) {
+    return (x & z) | (y & ~z);
+};
+
+function _f4(x,y,z) {
+    return x ^ (y | ~z);
+};
+
+function _rol(n,l) {
+    return (n << l) | (n >>> (32-l));
+}
+
+function _cvt(n) {
+    return ( (n & 0xff <<  0) <<  24 )
+         | ( (n & 0xff <<  8) <<   8 )
+         | ( (n & 0xff << 16) >>>  8 )
+         | ( (n & 0xff << 24) >>> 24 );
+}
+
+function _block(X) {
+    var A1 = this._h[0], B1 = this._h[1], C1 = this._h[2], D1 = this._h[3], E1 = this._h[4],
+        A2 = this._h[0], B2 = this._h[1], C2 = this._h[2], D2 = this._h[3], E2 = this._h[4];
+
+    var j = 0, T;
+
+    for ( ; j < 16; ++j ) {
+        T = _rol( A1 + _f0(B1,C1,D1) + X[_r1[j]] + _k1[j], _s1[j] ) + E1;
+        A1 = E1; E1 = D1; D1 = _rol(C1,10); C1 = B1; B1 = T;
+        T = _rol( A2 + _f4(B2,C2,D2) + X[_r2[j]] + _k2[j], _s2[j] ) + E2;
+        A2 = E2; E2 = D2; D2 = _rol(C2,10); C2 = B2; B2 = T; }
+    for ( ; j < 32; ++j ) {
+        T = _rol( A1 + _f1(B1,C1,D1) + X[_r1[j]] + _k1[j], _s1[j] ) + E1;
+        A1 = E1; E1 = D1; D1 = _rol(C1,10); C1 = B1; B1 = T;
+        T = _rol( A2 + _f3(B2,C2,D2) + X[_r2[j]] + _k2[j], _s2[j] ) + E2;
+        A2 = E2; E2 = D2; D2 = _rol(C2,10); C2 = B2; B2 = T; }
+    for ( ; j < 48; ++j ) {
+        T = _rol( A1 + _f2(B1,C1,D1) + X[_r1[j]] + _k1[j], _s1[j] ) + E1;
+        A1 = E1; E1 = D1; D1 = _rol(C1,10); C1 = B1; B1 = T;
+        T = _rol( A2 + _f2(B2,C2,D2) + X[_r2[j]] + _k2[j], _s2[j] ) + E2;
+        A2 = E2; E2 = D2; D2 = _rol(C2,10); C2 = B2; B2 = T; }
+    for ( ; j < 64; ++j ) {
+        T = _rol( A1 + _f3(B1,C1,D1) + X[_r1[j]] + _k1[j], _s1[j] ) + E1;
+        A1 = E1; E1 = D1; D1 = _rol(C1,10); C1 = B1; B1 = T;
+        T = _rol( A2 + _f1(B2,C2,D2) + X[_r2[j]] + _k2[j], _s2[j] ) + E2;
+        A2 = E2; E2 = D2; D2 = _rol(C2,10); C2 = B2; B2 = T; }
+    for ( ; j < 80; ++j ) {
+        T = _rol( A1 + _f4(B1,C1,D1) + X[_r1[j]] + _k1[j], _s1[j] ) + E1;
+        A1 = E1; E1 = D1; D1 = _rol(C1,10); C1 = B1; B1 = T;
+        T = _rol( A2 + _f0(B2,C2,D2) + X[_r2[j]] + _k2[j], _s2[j] ) + E2;
+        A2 = E2; E2 = D2; D2 = _rol(C2,10); C2 = B2; B2 = T; }
+
+    T = this._h[1] + C1 + D2;
+    this._h[1] = this._h[2] + D1 + E2;
+    this._h[2] = this._h[3] + E1 + A2;
+    this._h[3] = this._h[4] + A1 + B2;
+    this._h[4] = this._h[0] + B1 + C2;
+    this._h[0] = T;
+}
+
+})();
+
+sjcl.bn.ZERO = new sjcl.bn(0);
+
+/** [ this / that , this % that ] */
+sjcl.bn.prototype.divRem = function (that) {
+  if (typeof(that) !== "object") { that = new this._class(that); }
+  var thisa = this.abs(), thata = that.abs(), quot = new this._class(0),
+      ci = 0;
+  if (!thisa.greaterEquals(thata)) {
+    return [new sjcl.bn(0), this.copy()];
+  } else if (thisa.equals(thata)) {
+    return [new sjcl.bn(1), new sjcl.bn(0)];
+  }
+
+  for (; thisa.greaterEquals(thata); ci++) {
+    thata.doubleM();
+  }
+  for (; ci > 0; ci--) {
+    quot.doubleM();
+    thata.halveM();
+    if (thisa.greaterEquals(thata)) {
+      quot.addM(1);
+      thisa.subM(that).normalize();
+    }
+  }
+  return [quot, thisa];
+};
+
+/** this /= that (rounded to nearest int) */
+sjcl.bn.prototype.divRound = function (that) {
+  var dr = this.divRem(that), quot = dr[0], rem = dr[1];
+
+  if (rem.doubleM().greaterEquals(that)) {
+    quot.addM(1);
+  }
+
+  return quot;
+};
+
+/** this /= that (rounded down) */
+sjcl.bn.prototype.div = function (that) {
+  var dr = this.divRem(that);
+  return dr[0];
+};
+
+sjcl.bn.prototype.sign = function () {
+  return this.greaterEquals(sjcl.bn.ZERO) ? 1 : -1;
+};
+
+/** -this */
+sjcl.bn.prototype.neg = function () {
+  return sjcl.bn.ZERO.sub(this);
+};
+
+/** |this| */
+sjcl.bn.prototype.abs = function () {
+  if (this.sign() === -1) {
+    return this.neg();
+  } else return this;
+};
+
+/** this >> that */
+sjcl.bn.prototype.shiftRight = function (that) {
+  if ("number" !== typeof that) {
+    throw new Error("shiftRight expects a number");
+  }
+
+  that = +that;
+
+  if (that < 0) {
+    return this.shiftLeft(that);
+  }
+
+  var a = new sjcl.bn(this);
+
+  while (that >= this.radix) {
+    a.limbs.shift();
+    that -= this.radix;
+  }
+
+  while (that--) {
+    a.halveM();
+  }
+
+  return a;
+};
+
+/** this >> that */
+sjcl.bn.prototype.shiftLeft = function (that) {
+  if ("number" !== typeof that) {
+    throw new Error("shiftLeft expects a number");
+  }
+
+  that = +that;
+
+  if (that < 0) {
+    return this.shiftRight(that);
+  }
+
+  var a = new sjcl.bn(this);
+
+  while (that >= this.radix) {
+    a.limbs.unshift(0);
+    that -= this.radix;
+  }
+
+  while (that--) {
+    a.doubleM();
+  }
+
+  return a;
+};
+
+/** (int)this */
+// NOTE Truncates to 32-bit integer
+sjcl.bn.prototype.toNumber = function () {
+  return this.limbs[0] | 0;
+};
+
+/** find n-th bit, 0 = LSB */
+sjcl.bn.prototype.testBit = function (bitIndex) {
+  var limbIndex = Math.floor(bitIndex / this.radix);
+  var bitIndexInLimb = bitIndex % this.radix;
+
+  if (limbIndex >= this.limbs.length) return 0;
+
+  return (this.limbs[limbIndex] >>> bitIndexInLimb) & 1;
+};
+
+/** set n-th bit, 0 = LSB */
+sjcl.bn.prototype.setBitM = function (bitIndex) {
+  var limbIndex = Math.floor(bitIndex / this.radix);
+  var bitIndexInLimb = bitIndex % this.radix;
+
+  while (limbIndex >= this.limbs.length) this.limbs.push(0);
+
+  this.limbs[limbIndex] |= 1 << bitIndexInLimb;
+
+  this.cnormalize();
+
+  return this;
+};
+
+sjcl.bn.prototype.modInt = function (n) {
+  return this.toNumber() % n;
+};
+
+sjcl.bn.prototype.invDigit = function ()
+{
+  var radixMod = 1 + this.radixMask;
+
+  if (this.limbs.length < 1) return 0;
+  var x = this.limbs[0];
+  if ((x&1) == 0) return 0;
+  var y = x&3;		// y == 1/x mod 2^2
+  y = (y*(2-(x&0xf)*y))&0xf;	// y == 1/x mod 2^4
+  y = (y*(2-(x&0xff)*y))&0xff;	// y == 1/x mod 2^8
+  y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff;	// y == 1/x mod 2^16
+  // last step - calculate inverse mod DV directly;
+  // assumes 16 < radixMod <= 32 and assumes ability to handle 48-bit ints
+  y = (y*(2-x*y%radixMod))%radixMod;		// y == 1/x mod 2^dbits
+  // we really want the negative inverse, and -DV < y < DV
+  return (y>0)?radixMod-y:-y;
+};
+
+// returns bit length of the integer x
+function nbits(x) {
+  var r = 1, t;
+  if((t=x>>>16) != 0) { x = t; r += 16; }
+  if((t=x>>8) != 0) { x = t; r += 8; }
+  if((t=x>>4) != 0) { x = t; r += 4; }
+  if((t=x>>2) != 0) { x = t; r += 2; }
+  if((t=x>>1) != 0) { x = t; r += 1; }
+  return r;
+}
+
+// JSBN-style add and multiply for SJCL w/ 24 bit radix
+sjcl.bn.prototype.am = function (i,x,w,j,c,n) {
+  var xl = x&0xfff, xh = x>>12;
+  while (--n >= 0) {
+    var l = this.limbs[i]&0xfff;
+    var h = this.limbs[i++]>>12;
+    var m = xh*l+h*xl;
+    l = xl*l+((m&0xfff)<<12)+w.limbs[j]+c;
+    c = (l>>24)+(m>>12)+xh*h;
+    w.limbs[j++] = l&0xffffff;
+  }
+  return c;
+}
+
+var Montgomery = function (m)
+{
+  this.m = m;
+  this.mt = m.limbs.length;
+  this.mt2 = this.mt * 2;
+  this.mp = m.invDigit();
+  this.mpl = this.mp&0x7fff;
+  this.mph = this.mp>>15;
+  this.um = (1<<(m.radix-15))-1;
+};
+
+Montgomery.prototype.reduce = function (x)
+{
+  var radixMod = x.radixMask + 1;
+  while (x.limbs.length <= this.mt2)	// pad x so am has enough room later
+    x.limbs[x.limbs.length] = 0;
+  for (var i = 0; i < this.mt; ++i) {
+    // faster way of calculating u0 = x[i]*mp mod 2^radix
+    var j = x.limbs[i]&0x7fff;
+    var u0 = (j*this.mpl+(((j*this.mph+(x.limbs[i]>>15)*this.mpl)&this.um)<<15))&x.radixMask;
+    // use am to combine the multiply-shift-add into one call
+    j = i+this.mt;
+    x.limbs[j] += this.m.am(0,u0,x,i,0,this.mt);
+    // propagate carry
+    while (x.limbs[j] >= radixMod) { x.limbs[j] -= radixMod; x.limbs[++j]++; }
+  }
+  x.trim();
+  x = x.shiftRight(this.mt * this.m.radix);
+  if (x.greaterEquals(this.m)) x = x.sub(this.m);
+  return x.trim().normalize().reduce();
+};
+
+Montgomery.prototype.square = function (x)
+{
+  return this.reduce(x.square());
+};
+
+Montgomery.prototype.multiply = function (x, y)
+{
+  return this.reduce(x.mul(y));
+};
+
+Montgomery.prototype.convert = function (x)
+{
+  return x.abs().shiftLeft(this.mt * this.m.radix).mod(this.m);
+};
+
+Montgomery.prototype.revert = function (x)
+{
+  return this.reduce(x.copy());
+};
+
+sjcl.bn.prototype.powermodMontgomery = function (e, m)
+{
+  var i = e.bitLength(), k, r = new this._class(1);
+
+  if (i <= 0) return r;
+  else if (i < 18) k = 1;
+  else if (i < 48) k = 3;
+  else if (i < 144) k = 4;
+  else if (i < 768) k = 5;
+  else k = 6;
+
+  if (i < 8 || !m.testBit(0)) {
+    // For small exponents and even moduli, use a simple square-and-multiply
+    // algorithm.
+    return this.powermod(e, m);
+  }
+
+  var z = new Montgomery(m);
+
+  e.trim().normalize();
+
+  // precomputation
+  var g = new Array(), n = 3, k1 = k-1, km = (1<<k)-1;
+  g[1] = z.convert(this);
+  if (k > 1) {
+    var g2 = z.square(g[1]);
+
+    while (n <= km) {
+      g[n] = z.multiply(g2, g[n-2]);
+      n += 2;
+    }
+  }
+
+  var j = e.limbs.length-1, w, is1 = true, r2 = new this._class(), t;
+  i = nbits(e.limbs[j])-1;
+  while (j >= 0) {
+    if (i >= k1) w = (e.limbs[j]>>(i-k1))&km;
+    else {
+      w = (e.limbs[j]&((1<<(i+1))-1))<<(k1-i);
+      if (j > 0) w |= e.limbs[j-1]>>(this.radix+i-k1);
+    }
+
+    n = k;
+    while ((w&1) == 0) { w >>= 1; --n; }
+    if ((i -= n) < 0) { i += this.radix; --j; }
+    if (is1) {	// ret == 1, don't bother squaring or multiplying it
+      r = g[w].copy();
+      is1 = false;
+    } else {
+      while (n > 1) { r2 = z.square(r); r = z.square(r2); n -= 2; }
+      if (n > 0) r2 = z.square(r); else { t = r; r = r2; r2 = t; }
+      r = z.multiply(r2,g[w]);
+    }
+
+    while (j >= 0 && (e.limbs[j]&(1<<i)) == 0) {
+      r2 = z.square(r); t = r; r = r2; r2 = t;
+      if (--i < 0) { i = this.radix-1; --j; }
+    }
+  }
+  return z.revert(r);
+}
+
+sjcl.ecc.ecdsa.secretKey.prototype.sign = function(hash, paranoia, k_for_testing) {
+  var R = this._curve.r,
+      l = R.bitLength();
+
+  // k_for_testing should ONLY BE SPECIFIED FOR TESTING
+  // specifying it will make the signature INSECURE
+  var k;
+  if (typeof k_for_testing === 'object' && k_for_testing.length > 0 && typeof k_for_testing[0] === 'number') {
+    k = k_for_testing;
+  } else if (typeof k_for_testing === 'string' && /^[0-9a-fA-F]+$/.test(k_for_testing)) {
+    k = sjcl.bn.fromBits(sjcl.codec.hex.toBits(k_for_testing));        
+  } else {
+    // This is the only option that should be used in production
+    k = sjcl.bn.random(R.sub(1), paranoia).add(1);
+  }
+
+  var r = this._curve.G.mult(k).x.mod(R);
+  var s = sjcl.bn.fromBits(hash).add(r.mul(this._exponent)).mul(k.inverseMod(R)).mod(R);
+
+  return sjcl.bitArray.concat(r.toBits(l), s.toBits(l));
+};
+
+
+
+
+var FIELD_MODULUS_PLUS_ONE_DIVIDED_BY_FOUR;
+
+
+sjcl.bn.prototype.jacobi = function (that) {
+  var a = this;
+  that = new sjcl.bn(that);
+
+  if (that.sign() === -1) return;
+
+  // 1. If a = 0 then return(0).
+  if (a.equals(0)) { return 0; }
+
+  // 2. If a = 1 then return(1).
+  if (a.equals(1)) { return 1; }
+
+  var s = 0;
+
+  // 3. Write a = 2^e * a1, where a1 is odd.
+  var e = 0;
+  while (!a.testBit(e)) e++;
+  var a1 = a.shiftRight(e);
+
+  // 4. If e is even then set s ← 1.
+  if ((e & 1) === 0) {
+    s = 1;
+  } else {
+    var residue = that.modInt(8);
+
+    if (residue === 1 || residue === 7) {
+      // Otherwise set s ← 1 if n ≡ 1 or 7 (mod 8)
+      s = 1;
+    } else if (residue === 3 || residue === 5) {
+      // Or set s ← −1 if n ≡ 3 or 5 (mod 8).
+      s = -1;
+    }
+  }
+
+  // 5. If n ≡ 3 (mod 4) and a1 ≡ 3 (mod 4) then set s ← −s.
+  if (that.modInt(4) === 3 && a1.modInt(4) === 3) {
+    s = -s;
+  }
+
+  if (a1.equals(1)) {
+    return s;
+  } else {
+    return s * that.mod(a1).jacobi(a1);
+  }
+};
+
+function keyHash(res, token) {
+  var iSigned    = new sjcl.bn(String(res));
+  var key        = iSigned.toBits();
+  var hmac = new sjcl.misc.hmac(key, sjcl.hash.sha512);
+  return sjcl.codec.hex.fromBits(sjcl.bitArray.bitSlice(hmac.encrypt(token), 0, 256));
+}
+
+function decrypt(key, data) {
+  key = sjcl.codec.hex.toBits(key);
+  var encryptedBits = sjcl.codec.base64.toBits(data);
+  var version = sjcl.bitArray.extract(encryptedBits, 0, 8);
+  if (version !== 0) {
+    throw new Error('Unsupported encryption version: '+version);
+  }
+  var encrypted = extend(true, {}, cryptConfig, {
+    iv: sjcl.codec.base64.fromBits(sjcl.bitArray.bitSlice(encryptedBits, 8, 8+128)),
+    ct: sjcl.codec.base64.fromBits(sjcl.bitArray.bitSlice(encryptedBits, 8+128))
+  });
+  return sjcl.decrypt(key, JSON.stringify(encrypted));
+}

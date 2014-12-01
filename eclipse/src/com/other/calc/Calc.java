@@ -28,7 +28,7 @@ import javax.swing.JFrame;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.RPAccountInfoDialog;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.utils.BigDecimalUtil;
+import org.ripple.power.utils.BiglUtil;
 
 /**
  * Java swing calculator.
@@ -1025,7 +1025,7 @@ public class Calc extends javax.swing.JDialog {
         } else if("sqrt".equals(command)) {
                 currentValue = new BigDecimal(getText().replace(',', '.'));
                 try {
-                    currentValue = BigDecimalUtil.sqrt(currentValue);
+                    currentValue = BiglUtil.sqrt(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1064,7 +1064,7 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.ln(currentValue, 32);
+                    currentValue = BiglUtil.ln(currentValue, 32);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1084,7 +1084,7 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.log10(currentValue);
+                    currentValue = BiglUtil.log10(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1099,10 +1099,10 @@ public class Calc extends javax.swing.JDialog {
                 currentValue = new BigDecimal(getText().replace(',', '.'));
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_180);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_180);
                         break;
                     case 'G':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_200);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_200);
                         break;
                     default:
                         break;
@@ -1113,7 +1113,7 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.sine(currentValue);
+                    currentValue = BiglUtil.sine(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1128,10 +1128,10 @@ public class Calc extends javax.swing.JDialog {
                 currentValue = new BigDecimal(getText().replace(',', '.'));
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_180);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_180);
                         break;
                     case 'G':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_200);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_200);
                         break;
                     default:
                         break;
@@ -1142,7 +1142,7 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.cosine(currentValue);
+                    currentValue = BiglUtil.cosine(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1157,10 +1157,10 @@ public class Calc extends javax.swing.JDialog {
                 currentValue = new BigDecimal(getText().replace(',', '.'));
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_180);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_180);
                         break;
                     case 'G':
-                        currentValue = currentValue.multiply(BigDecimalUtil.PI_DIV_200);
+                        currentValue = currentValue.multiply(BiglUtil.PI_DIV_200);
                         break;
                     default:
                         break;
@@ -1171,7 +1171,7 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.tangent(currentValue);
+                    currentValue = BiglUtil.tangent(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
@@ -1210,7 +1210,7 @@ public class Calc extends javax.swing.JDialog {
                     setText("Error.");
                     return;
                 }
-                currentValue = BigDecimalUtil.cuberoot(currentValue);
+                currentValue = BiglUtil.cuberoot(currentValue);
             } catch (ArithmeticException ex) {
                 ex.getMessage();
             }
@@ -1224,7 +1224,7 @@ public class Calc extends javax.swing.JDialog {
         } else if ("pow".equals(command)) {
             if (commandCode != '=' && !initValue) {
                 BigDecimal value = new BigDecimal(getText().replace(',', '.'));
-                BigDecimal result = BigDecimalUtil.pow(savedValue, value);
+                BigDecimal result = BiglUtil.pow(savedValue, value);
                 setText(result.toString().replace('.', ','));
                 savedValue = result;
                 currentValue = BigDecimal.ZERO;
@@ -1234,7 +1234,7 @@ public class Calc extends javax.swing.JDialog {
         } else if ("yroot".equals(command)) {
             if (commandCode != '=' && !initValue) {
                 BigDecimal value = new BigDecimal(getText().replace(',', '.'));
-                BigDecimal result = BigDecimalUtil.pow(savedValue, BigDecimal.ONE.divide(value, 32, BigDecimal.ROUND_HALF_UP));
+                BigDecimal result = BiglUtil.pow(savedValue, BigDecimal.ONE.divide(value, 32, BigDecimal.ROUND_HALF_UP));
                 setText(result.toString().replace('.', ','));
                 savedValue = result;
                 currentValue = BigDecimal.ZERO;
@@ -1249,16 +1249,16 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.asin(currentValue);
+                    currentValue = BiglUtil.asin(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     case 'G':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     default:
                         break;
@@ -1278,16 +1278,16 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.acos(currentValue);
+                    currentValue = BiglUtil.acos(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     case 'G':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     default:
                         break;
@@ -1307,16 +1307,16 @@ public class Calc extends javax.swing.JDialog {
                         setText("Error.");
                         return;
                     }
-                    currentValue = BigDecimalUtil.atan(currentValue);
+                    currentValue = BiglUtil.atan(currentValue);
                 } catch (ArithmeticException ex) {
                     ex.getMessage();
                 }
                 switch (buttonGroup1.getSelection().getMnemonic()) {
                     case 'D':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_180, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     case 'G':
-                        currentValue = currentValue.divide(BigDecimalUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
+                        currentValue = currentValue.divide(BiglUtil.PI_DIV_200, 32, BigDecimal.ROUND_HALF_UP);
                         break;
                     default:
                         break;
@@ -1812,7 +1812,7 @@ public class Calc extends javax.swing.JDialog {
                 break;
             case '^':
                 try {
-                    result = BigDecimalUtil.pow(savedValue, value);
+                    result = BiglUtil.pow(savedValue, value);
                 } catch (ArithmeticException ex) {
                     initCalc();
                     setText("Error.");
@@ -1821,7 +1821,7 @@ public class Calc extends javax.swing.JDialog {
                 break;
             case 'r':
                 try {
-                    result = BigDecimalUtil.pow(savedValue, BigDecimal.ONE.divide(value, 32, BigDecimal.ROUND_HALF_UP));
+                    result = BiglUtil.pow(savedValue, BigDecimal.ONE.divide(value, 32, BigDecimal.ROUND_HALF_UP));
                 } catch (ArithmeticException ex) {
                     initCalc();
                     setText("Error.");

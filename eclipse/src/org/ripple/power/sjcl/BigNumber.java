@@ -1,6 +1,5 @@
 package org.ripple.power.sjcl;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -367,7 +366,7 @@ public class BigNumber {
 			a.halveM();
 
 			for (i = nz = 0; i < x.limbs.length; i++) {
-				nz |= x.limbs.get(i);
+				nz = (int) (nz | x.limbs.get(i));
 			}
 		} while (nz > 0);
 
@@ -738,12 +737,11 @@ public class BigNumber {
 		} else if (it instanceof byte[]) {
 			this.limbs = new LongArray();
 			byte[] buffer = (byte[]) it;
-			ByteArrayInputStream ins = new ByteArrayInputStream(buffer);
-			int c = -1;
-			for (; (c = ins.read()) != -1;) {
-				limbs.add(c);
+			ArrayByte ins = new ArrayByte(buffer);
+			for (int j = 0; j < buffer.length; j += 4) {
+				limbs.add(ins.readInt());
 			}
-			LSystem.close(ins);
+			ins.close();
 			this.normalize();
 		} else if (it instanceof ArrayByte) {
 			this.limbs = new LongArray();
@@ -857,10 +855,10 @@ public class BigNumber {
 		LongArray out = new LongArray();
 		int i;
 		for (i = 0; i < nwords; i += 4) {
-			out.push(LSystem.random.nextLong());
-			out.push(LSystem.random.nextLong());
-			out.push(LSystem.random.nextLong());
-			out.push(LSystem.random.nextLong());
+			out.push(LSystem.random.nextInt());
+			out.push(LSystem.random.nextInt());
+			out.push(LSystem.random.nextInt());
+			out.push(LSystem.random.nextInt());
 		}
 		return out.slice(0, nwords);
 	}
@@ -892,7 +890,7 @@ public class BigNumber {
 		String out = "";
 		int i;
 		for (i = 0; i < arr.length; i++) {
-			out += Long.toHexString(((arr.get(i) | 0) + 0xF00000000000l))
+			out += Long.toHexString(((int)(arr.get(i) | 0) + 0xF00000000000l))
 					.substring(4);
 		}
 		return out.substring(0, (int) BitArray.bitLength(arr) / 4);
@@ -979,7 +977,8 @@ public class BigNumber {
 		return base64_fromBits(arr, true, true);
 	}
 
-	public static String base64_fromBits(LongArray arr, boolean _noEquals, boolean _url) {
+	public static String base64_fromBits(LongArray arr, boolean _noEquals,
+			boolean _url) {
 		String out = "";
 		int i, bits = 0;
 		String c = base64_chars;

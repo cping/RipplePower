@@ -1,10 +1,11 @@
 package org.ripple.power.collection;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
-
+//
 public class LongArray {
 	public long[] items;
 	public int length;
@@ -93,7 +94,7 @@ public class LongArray {
 
 	public long get(int index) {
 		if (index >= length) {
-			return -1;
+			return 0;
 		}
 		return items[index];
 	}
@@ -416,6 +417,15 @@ public class LongArray {
 
 	public LongArray concat(LongArray o) {
 		return new LongArray(concat(this.items, this.length, o.items, o.length));
+	}
+
+	public byte[] getBytes() {
+		long[] items = this.items;
+		byte[] bytes = new byte[this.length];
+		for (int i = 0; i < bytes.length; i++) {
+			bytes[i] = BigInteger.valueOf(items[i]).byteValue();
+		}
+		return bytes;
 	}
 
 	public String toString(char split) {

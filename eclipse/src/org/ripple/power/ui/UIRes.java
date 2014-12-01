@@ -3,6 +3,9 @@ package org.ripple.power.ui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -70,19 +73,23 @@ public class UIRes {
 		return imageIcons.get(path);
 	}
 
-	public static ArrayByte getDataSource(String path) throws IOException{
-		return new ArrayByte(getStream(path),ArrayByte.BIG_ENDIAN);
+	public static ArrayByte getDataSource(String path) throws IOException {
+		return new ArrayByte(getStream(path), ArrayByte.BIG_ENDIAN);
 	}
-	
+
 	public static InputStream getStream(String path) throws IOException {
 		path = computePath(path);
 		InputStream is = classLoader.getResourceAsStream(path);
 		if (is == null) {
+			File file = new File(path);
+			if (file.exists()) {
+				return new BufferedInputStream(new FileInputStream(file));
+			}
 			throw new IOException("File not found: " + path);
 		}
 		return is;
 	}
-	
+
 	public static URL getUrl(String path) {
 		path = computePath(path);
 		URL url = classLoader.getResource(path);

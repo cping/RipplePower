@@ -6,6 +6,13 @@ import org.ripple.power.collection.LongArray;
 
 public class SHA512 {
 
+	public SHA512() {
+		if (_key == null || _key.length == 0) {
+			_precompute();
+			reset();
+		}
+	}
+
 	public static LongArray hash(LongArray data) {
 		SHA512 sha = new SHA512();
 		if (sha._key == null || sha._key.length == 0) {
@@ -33,7 +40,7 @@ public class SHA512 {
 	int[] _initr = new int[] { 0xbcc908, 0xcaa73b, 0x94f82b, 0x1d36f1,
 			0xe682d1, 0x3e6c1f, 0x41bd6b, 0x7e2179 };
 
-	int blockSize = 1024;
+	final static int blockSize = 1024;
 
 	LongArray _init = new LongArray();
 
@@ -56,6 +63,8 @@ public class SHA512 {
 		LongArray data = null;
 		if (d instanceof String) {
 			data = BigNumber.utf8_toBits((String) d);
+		} else if (d instanceof long[]) {
+			data = new LongArray((long[]) d);
 		} else {
 			data = (LongArray) d;
 		}
@@ -94,7 +103,6 @@ public class SHA512 {
 
 		while (b.length > 0) {
 			LongArray as = b.splice(0, 32);
-
 			this._block(as);
 		}
 
@@ -173,8 +181,6 @@ public class SHA512 {
 						.MOVE_LeftShift(gamma0xh, 25) | JS.MOVE_RightUShift(
 						gamma0xl, 7)));
 
-				
-				
 				// 434469372,2038397261,16
 
 				long gamma1xh = w.items[(i - 2) * 2];
@@ -223,16 +229,13 @@ public class SHA512 {
 			wrl = (int) (wrl | 0);
 			w.set(i * 2, JS.get(wrh));
 			w.set(i * 2 + 1, JS.get(wrl));
-			
-	
-			
+
 			long chh = (eh & fh) ^ (~eh & gh);
 			long chl = (el & fl) ^ (~el & gl);
 
-	
 			long majh = (ah & bh) ^ (ah & ch) ^ (bh & ch);
 			long majl = (al & bl) ^ (al & cl) ^ (bl & cl);
-		
+
 			long sigma0h = (JS.MOVE_LeftShift(al, 4) | JS.MOVE_RightUShift(ah,
 					28))
 					^ (JS.MOVE_LeftShift(ah, 30) | JS.MOVE_RightUShift(al, 2))
@@ -241,7 +244,6 @@ public class SHA512 {
 					28))
 					^ (JS.MOVE_LeftShift(al, 30) | JS.MOVE_RightUShift(ah, 2))
 					^ (JS.MOVE_LeftShift(al, 25) | JS.MOVE_RightUShift(ah, 7));
-	
 
 			long sigma1h = (JS.MOVE_LeftShift(el, 18) | JS.MOVE_RightUShift(eh,
 					14))
@@ -251,8 +253,6 @@ public class SHA512 {
 					14))
 					^ (JS.MOVE_LeftShift(eh, 14) | JS.MOVE_RightUShift(el, 18))
 					^ (JS.MOVE_LeftShift(el, 23) | JS.MOVE_RightUShift(eh, 9));
-			
-			
 
 			long krh = k.get(i * 2);
 			long krl = k.get(i * 2 + 1);
@@ -267,26 +267,22 @@ public class SHA512 {
 			t1h += chh
 					+ (JS.MOVE_RightUShift(t1l, 0) < JS
 							.MOVE_RightUShift(chl, 0) ? 1 : 0);
-		
+
 			t1l += krl;
 			t1h += krh
 					+ (JS.MOVE_RightUShift(t1l, 0) < JS
 							.MOVE_RightUShift(krl, 0) ? 1 : 0);
-		
+
 			t1l += wrl;
 			t1h += wrh
 					+ (JS.MOVE_RightUShift(t1l, 0) < JS
 							.MOVE_RightUShift(wrl, 0) ? 1 : 0);
-			
 
-		
-			
 			long t2l = sigma0l + majl;
 			long t2h = sigma0h
 					+ majh
 					+ (JS.MOVE_RightUShift(t2l, 0) < JS.MOVE_RightUShift(
 							sigma0l, 0) ? 1 : 0);
-	
 
 			hh = gh;
 			hl = gl;
@@ -299,7 +295,6 @@ public class SHA512 {
 			eh = (int) ((dh + t1h + (JS.MOVE_RightUShift(el, 0) < JS
 					.MOVE_RightUShift(dl, 0) ? 1 : 0)) | 0);
 
-			
 			dh = ch;
 			dl = cl;
 			ch = bh;
@@ -309,8 +304,7 @@ public class SHA512 {
 			al = (int) ((t1l + t2l) | 0);
 			ah = (int) ((t1h + t2h + (JS.MOVE_RightUShift(al, 0) < JS
 					.MOVE_RightUShift(t1l, 0) ? 1 : 0)) | 0);
-		
-				
+
 		}
 
 		h0l = h.items[1] = (int) ((h0l + al) | 0);
