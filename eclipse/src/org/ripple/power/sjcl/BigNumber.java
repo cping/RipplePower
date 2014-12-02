@@ -890,21 +890,22 @@ public class BigNumber {
 		String out = "";
 		int i;
 		for (i = 0; i < arr.length; i++) {
-			out += Long.toHexString(((int)(arr.get(i) | 0) + 0xF00000000000l))
+			out += Long.toHexString(((int) (arr.get(i) | 0) + 0xF00000000000l))
 					.substring(4);
 		}
 		return out.substring(0, (int) BitArray.bitLength(arr) / 4);
 	}
 
 	public static LongArray hex_toBits(String str) {
-		int i;
+		int i = 0;
 		LongArray out = new LongArray();
 		int len;
 		str = str.replace("0x", "");
 		len = str.length();
 		str = str + "00000000";
 		for (i = 0; i < str.length(); i += 8) {
-			out.push(Integer.parseInt(str.substring(i, 8), 16) ^ 0);
+			String res = str.substring(i, i + 8);
+			out.push(new BigInteger(res, 16).intValue() ^ 0);
 		}
 		return BitArray.clamp(out, len * 4);
 	}
@@ -961,7 +962,7 @@ public class BigNumber {
 		int i = 0;
 		long tmp = 0;
 		for (i = 0; i < bytes.length; i++) {
-			tmp = tmp << 8 | bytes[i];
+			tmp = (int) (tmp << 8 | bytes[i]);
 			if ((i & 3) == 3) {
 				out.push(tmp);
 				tmp = 0;
@@ -974,7 +975,7 @@ public class BigNumber {
 	}
 
 	public static String base64_fromBits(LongArray arr) {
-		return base64_fromBits(arr, true, true);
+		return base64_fromBits(arr, false, false);
 	}
 
 	public static String base64_fromBits(LongArray arr, boolean _noEquals,
@@ -987,8 +988,8 @@ public class BigNumber {
 			c = c.substring(0, 62) + "-_";
 		}
 		for (i = 0; out.length() * 6 < bl;) {
-			out += c.charAt((int) JS.MOVE_RightUShift(
-					JS.MOVE_RightUShift(ta ^ arr.get(i), bits), 26));
+			out += c.charAt((int) (JS.MOVE_RightUShift(
+					(ta ^ JS.MOVE_RightUShift(arr.get(i), bits)), 26)));
 			if (bits < 6) {
 				ta = arr.get(i) << (6 - bits);
 				bits += 26;
@@ -1004,11 +1005,11 @@ public class BigNumber {
 		return out;
 	}
 
-	public static LongArray toBits(String str) {
-		return toBits(str, true);
+	public static LongArray base64_toBits(String str) {
+		return base64_toBits(str, false);
 	}
 
-	public static LongArray toBits(String str, boolean _url) {
+	public static LongArray base64_toBits(String str, boolean _url) {
 		str = str.replace("=", "");
 		LongArray out = new LongArray();
 		int i, bits = 0;
@@ -1024,11 +1025,11 @@ public class BigNumber {
 			}
 			if (bits > 26) {
 				bits -= 26;
-				out.push(ta ^ x >>> bits);
-				ta = x << (32 - bits);
+				out.push(ta ^ JS.MOVE_RightUShift(x, bits));
+				ta = (int) (x << (32 - bits));
 			} else {
 				bits += 6;
-				ta ^= x << (32 - bits);
+				ta ^= (int) (x << (32 - bits));
 			}
 		}
 		if ((bits & 56) > 0) {

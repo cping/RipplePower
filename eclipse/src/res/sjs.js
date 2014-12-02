@@ -3,6 +3,16 @@
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
+
+var cryptConfig = {
+  cipher : 'aes',
+  mode   : 'ccm',
+  ts     : 64,  
+  ks     : 256,  
+  iter   : 1000
+};
+
+
 var isPlainObject = function isPlainObject(obj) {
 	if (!obj || toString.call(obj) !== '[object Object]') {
 		return false;

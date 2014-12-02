@@ -11,10 +11,11 @@ public class BitArray {
 		long x;
 		int sh = (int) Math.floor((-bstart - blength) & 31);
 		if (((bstart + blength - 1 ^ bstart) & -32) > 0) {
-			x = JS.MOVE_LeftShift(a.get(bstart / 32 | 0), (32 - sh))
-					^ JS.MOVE_RightUShift(a.get(bstart / 32 + 1 | 0), sh);
+			x = JS.MOVE_LeftShift(a.get(bstart / (int) (32 | 0)), (32 - sh))
+					^ JS.MOVE_RightUShift(a.get(bstart / 32 + (int) (1 | 0)),
+							sh);
 		} else {
-			x = JS.MOVE_LeftShift(a.get(bstart / 32 | 0), sh);
+			x = JS.MOVE_LeftShift(a.get(bstart / (int) (32 | 0)), sh);
 		}
 		return x & ((1 << blength) - 1);
 	}
@@ -31,6 +32,10 @@ public class BitArray {
 					partial(len, a.get(l - 1) & 0x80000000 >> (len - 1), 1));
 		}
 		return a;
+	}
+
+	public static LongArray bitSlice(LongArray a, int bend) {
+		return bitSlice(a, bend, bend * 32);
 	}
 
 	public static LongArray bitSlice(LongArray a, int bstart, int bend) {
@@ -97,7 +102,7 @@ public class BitArray {
 		}
 
 		for (i = 0; i < a.length; i++) {
-			out.push(carry | JS.MOVE_RightUShift(a.get(i), (int) shift));
+			out.push((int) (carry | JS.MOVE_RightUShift(a.get(i), (int) shift)));
 			carry = a.get(i) << (32 - shift);
 		}
 
