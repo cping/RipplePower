@@ -9,14 +9,17 @@ public class UIMessage {
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 
-	public final static String warning = LangConfig.get(UIMessage.cancel,
+	public final static String warning = LangConfig.get(UIMessage.class,
 			"warning", "Warning");
 
-	public final static String info = LangConfig.get(UIMessage.cancel, "info",
+	public final static String info = LangConfig.get(UIMessage.class, "info",
 			"Info");
 
-	public final static String error = LangConfig.get(UIMessage.cancel,
+	public final static String error = LangConfig.get(UIMessage.class,
 			"error", "Error");
+
+	public final static String notExist = LangConfig.get(UIMessage.class,
+			"noexist", "This account or password does not exist !");
 
 	public final static String completed = LangConfig.get(UIMessage.class,
 			"sendc", "Send Completed");

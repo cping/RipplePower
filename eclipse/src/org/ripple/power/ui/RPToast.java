@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,7 @@ import javax.swing.Timer;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LFont;
 
 public class RPToast extends JDialog {
 
@@ -71,7 +73,11 @@ public class RPToast extends JDialog {
 		setUndecorated(true);
 		setFocusableWindowState(false);
 		setModalityType(ModalityType.MODELESS);
-		setSize(mText.length() * _frame_length_multiplier, 25);
+		Font font = getFont();
+		int font_size = LFont.getFont(font.getName(), font.getStyle(),
+				font.getSize()).stringWidth(mText)
+				+ (_frame_length_multiplier * 10);
+		setSize(font_size, 30);
 		getContentPane().setBackground(mBackgroundColor);
 		JLabel label = new JLabel(mText);
 		label.setForeground(mForegroundColor);

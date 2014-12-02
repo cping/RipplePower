@@ -78,7 +78,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		addWindowListener(HelperWindow.get());
 		setLayout(new FlowLayout());
 		setResizable(false);
-		Dimension dim = new Dimension(615, 365);
+		Dimension dim = new Dimension(610, 365);
 		setPreferredSize(dim);
 		setSize(dim);
 		initUI();
@@ -421,7 +421,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pBrainButton);
-		pBrainButton.setBounds(15, 10, 100, 23);
+		pBrainButton.setBounds(15, 10, 100, 28);
 
 		pRandButton.setText(LangConfig.get(this, "random_secret",
 				"Random Secret"));
@@ -431,7 +431,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pRandButton);
-		pRandButton.setBounds(110, 10, 115, 23);
+		pRandButton.setBounds(110, 10, 115, 28);
 
 		pMyButton.setText(LangConfig.get(this, "use_secret", "Use Secret"));
 		pMyButton.addActionListener(new java.awt.event.ActionListener() {
@@ -440,7 +440,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pMyButton);
-		pMyButton.setBounds(220, 10, 90, 23);
+		pMyButton.setBounds(220, 10, 90, 28);
 
 		pPassButton.setText(LangConfig.get(this, "use_phrase", "Use Phrase"));
 		pPassButton.addActionListener(new java.awt.event.ActionListener() {
@@ -449,7 +449,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pPassButton);
-		pPassButton.setBounds(310, 10, 100, 23);
+		pPassButton.setBounds(310, 10, 100, 28);
 
 		pPaperButton.setText(LangConfig.get(this, "use_paperwallet",
 				"Use Paper Wallet"));
@@ -459,7 +459,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(pPaperButton);
-		pPaperButton.setBounds(405, 10, 130, 23);
+		pPaperButton.setBounds(405, 10, 130, 28);
 
 		_copyButton.setText(LangConfig.get(this, "copy", "Copy"));
 		_copyButton.addActionListener(new java.awt.event.ActionListener() {
@@ -468,7 +468,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(_copyButton);
-		_copyButton.setBounds(100, 300, 81, 23);
+		_copyButton.setBounds(100, 300, 81, 28);
 
 		_loadButton.setText(LangConfig.get(this, "load", "Load"));
 		_loadButton.addActionListener(new java.awt.event.ActionListener() {
@@ -477,7 +477,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(_loadButton);
-		_loadButton.setBounds(410, 300, 81, 23);
+		_loadButton.setBounds(410, 300, 81, 28);
 
 		_resetButton.setText(LangConfig.get(this, "reset", "Reset"));
 		_resetButton.addActionListener(new java.awt.event.ActionListener() {
@@ -486,7 +486,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(_resetButton);
-		_resetButton.setBounds(10, 300, 81, 23);
+		_resetButton.setBounds(10, 300, 81, 28);
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -495,7 +495,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			}
 		});
 		add(_exitButton);
-		_exitButton.setBounds(510, 300, 81, 23);
+		_exitButton.setBounds(510, 300, 81, 28);
 
 		add(_sp);
 		_sp.setBounds(0, 230, 0, 2);
@@ -593,20 +593,21 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String pri = privateAddressText.getText();
 			if (pub.length() > 0 && pri.length() > 0) {
 				int result = RPMessage.showConfirmMessage(this,
-						"Private Key import",
-						LangConfig.get(this, "import", "Import the data to current wallet ?"), UIMessage.ok,
-						UIMessage.cancel);
+						"Private Key import", LangConfig.get(this, "import",
+								"Import the data to current wallet ?"),
+						UIMessage.ok, UIMessage.cancel);
 				if (result == 0) {
 					WalletCache.get().add(pub, pri);
 					try {
 						WalletCache.saveDefWallet();
 					} catch (Exception e) {
 						RPMessage.showErrorMessage(this,
-								"System exception, wallets save failed !",
-								UIMessage.error);
+
+						UIMessage.error,
+								"System exception, wallets save failed !");
 						return;
 					}
-					this.dispose();
+					SwingUtils.close(this);
 					MainForm form = LSystem.applicationMain;
 					if (form != null) {
 						MainPanel panel = form.getMainPanel();

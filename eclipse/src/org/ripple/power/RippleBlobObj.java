@@ -3,11 +3,11 @@ package org.ripple.power;
 import org.json.JSONObject;
 import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.nodejs.BigNumber;
+import org.ripple.power.nodejs.BitArray;
+import org.ripple.power.nodejs.HMAC;
+import org.ripple.power.nodejs.JSCrypt;
 import org.ripple.power.password.PasswordEasy;
-import org.ripple.power.sjcl.BigNumber;
-import org.ripple.power.sjcl.BitArray;
-import org.ripple.power.sjcl.HMAC;
-import org.ripple.power.sjcl.JSCrypt;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.StringUtils;
 
@@ -101,6 +101,7 @@ public class RippleBlobObj {
 		if (info != null && info.success) {
 			String result = JSCrypt.decrypt(info.key, info.blob);
 			JSONObject json = new JSONObject(result);
+			
 			UnlockInfoRes res = new UnlockInfoRes();
 			res.account_id = json.getString("account_id");
 			res.auth_secret = json.getString("auth_secret");
@@ -137,7 +138,6 @@ public class RippleBlobObj {
 				HttpRequest request = HttpRequest.get(url);
 				if (request.ok()) {
 					JSONObject json = new JSONObject(request.body());
-					System.out.println(json);
 					res.success = "success".equalsIgnoreCase(json
 							.getString("result"));
 					if (res.success) {

@@ -48,6 +48,7 @@ public class RPPasswordDialog extends JDialog {
 		_cancelButton = new RPCButton();
 		_okButton = new RPCButton();
 
+		 
 		getContentPane().setLayout(null);
 
 		Font font = UIRes.getFont();

@@ -1,32 +1,3 @@
-package org.ripple.power.utils;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.ripple.power.collection.ArrayByte;
-import org.ripple.power.config.LSystem;
-import org.ripple.power.ui.UIRes;
 
 /**
  * Copyright 2008 - 2012
@@ -48,6 +19,37 @@ import org.ripple.power.ui.UIRes;
  * @email：javachenpeng@yahoo.com
  * @version 0.3.3
  */
+package org.ripple.power.utils;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.ripple.power.collection.ArrayByte;
+import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.UIRes;
+
 final public class FileUtils {
 
 	/**
@@ -542,6 +544,28 @@ final public class FileUtils {
 		} catch (FileNotFoundException e) {
 			return null;
 		}
+	}
+
+	public static final String readAsText(InputStream input, String charset)
+			throws IOException {
+		Reader rd;
+		if (null == charset) {
+			rd = new InputStreamReader(input);
+		} else {
+			rd = new InputStreamReader(input, charset);
+		}
+		StringBuilder buf = new StringBuilder();
+		int c = rd.read();
+		for (; c != -1;) {
+			buf.append((char) c);
+			c = rd.read();
+		}
+		rd.close();
+		return buf.toString();
+	}
+
+	public static final String readAsText(InputStream input) throws IOException {
+		return readAsText(input, "UTF-8");
 	}
 
 	/**

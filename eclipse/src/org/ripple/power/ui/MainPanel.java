@@ -445,10 +445,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"Here import or create your Ripple address.",
-						Style.SUCCESS).display();
-				RPAddressDialog.showDialog(LSystem.applicationMain);
+				RPSelectAddressDialog.showDialog("Select Wallet Mode", LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.Backup)) {
