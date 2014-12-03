@@ -6,11 +6,13 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import org.ripple.power.RippleBlobObj;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPToast.Style;
+import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class RPSelectAddressDialog extends JPanel {
@@ -58,20 +60,27 @@ public class RPSelectAddressDialog extends JPanel {
 		}
 	}
 
+	private final static ImageIcon iconLocal = new ImageIcon(new LImage(
+			"icons/home.png").scaledInstance(48, 48).getBufferedImage());
+
+	private final static ImageIcon iconWeb = new ImageIcon(new LImage(
+			"icons/web.png").scaledInstance(48, 48).getBufferedImage());
+
 	public RPSelectAddressDialog(String text, Window parent) {
 		Dimension dim = new Dimension(375, 190);
 		setPreferredSize(dim);
 		setSize(dim);
-		_localButton = new RPCButton();
-		_onlineButton = new RPCButton();
+		_localButton = new RPCButton(iconLocal);
+		_onlineButton = new RPCButton(iconWeb);
 		Font font = GraphicsUtils.getFont(Font.SANS_SERIF, 1, 20);
 		setLayout(null);
+
 		_localButton.setText("Local Wallet");
 		_localButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				closeDialog();
+				//closeDialog();
 				RPToast.makeText(LSystem.applicationMain,
 						"Here import or create your Ripple address.",
 						Style.SUCCESS).display();
@@ -89,7 +98,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				closeDialog();
+				//closeDialog();
 				RPToast.makeText(
 						LSystem.applicationMain,
 						"Here import or create your "

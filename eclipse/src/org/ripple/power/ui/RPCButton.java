@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -20,7 +21,35 @@ public class RPCButton extends JButton {
 	private static final long serialVersionUID = 1L;
 
 	public RPCButton() {
-		this(null);
+		this("");
+	}
+
+	public RPCButton(ImageIcon icon) {
+		super(icon);
+		setForeground(LColor.black);
+		setBackground(LColor.white);
+		setContentAreaFilled(true);
+		setFocusPainted(false);
+		Border line = BorderFactory.createLineBorder(new LColor(80, 80, 80));
+		Border empty = new EmptyBorder(4, 4, 4, 4);
+		CompoundBorder border = new CompoundBorder(line, empty);
+		setBorder(border);
+		
+		getModel().addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (model.isRollover()) {
+					setBackground(LColor.lightSkyBlue);
+				} else if (model.isArmed() || model.isPressed()) {
+					setBackground(LColor.lightSkyBlue);
+				} else if (model.isSelected()) {
+					setBackground(LColor.white);
+				} else {
+					setBackground(LColor.white);
+				}
+			}
+		});
 	}
 	
 	public RPCButton(String name) {

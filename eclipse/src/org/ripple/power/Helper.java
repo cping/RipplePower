@@ -5,7 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Helper {
+
 	private static final MessageDigest digest;
+
 	static {
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
@@ -58,18 +60,10 @@ public class Helper {
 		}
 	}
 
-	/**
-	 * See {@link Helper#doubleDigest(byte[], int, int)}.
-	 */
 	public static byte[] doubleDigest(byte[] input) {
 		return doubleDigest(input, 0, input.length);
 	}
 
-	/**
-	 * Calculates the SHA-256 hash of the given byte range, and then hashes the
-	 * resulting hash again. This is standard procedure in Bitcoin. The
-	 * resulting hash is in big endian form.
-	 */
 	public static byte[] doubleDigest(byte[] input, int offset, int length) {
 		synchronized (digest) {
 			digest.reset();
@@ -145,16 +139,6 @@ public class Helper {
 		return true;
 	}
 
-	/**
-	 * A constant time equals comparison - does not terminate early if test will
-	 * fail.
-	 * 
-	 * @param a
-	 *            first array
-	 * @param b
-	 *            second array
-	 * @return true if arrays equal, false otherwise.
-	 */
 	public static boolean constantTimeAreEqual(byte[] a, byte[] b) {
 		if (a == b) {
 			return true;

@@ -126,7 +126,7 @@ public class WalletCache {
 		}
 		synchronized (pCaches) {
 			StringBuilder sbr = new StringBuilder();
-			WalletSeed seed = new WalletSeed(LSystem.applicationPassword);
+			WalletSeed seed = new WalletSeed(LSystem.getAppPassword());
 			for (int i = 0; i < size; i++) {
 				WalletItem item = (WalletItem) pCaches.getEntry(i).getValue();
 				if (!item.isOnline()) {
@@ -153,7 +153,7 @@ public class WalletCache {
 
 	public String load(File file) throws Exception {
 		synchronized (pCaches) {
-			WalletSeed seed = new WalletSeed(LSystem.applicationPassword);
+			WalletSeed seed = new WalletSeed(LSystem.getAppPassword());
 			String text = seed.load(file);
 			StringTokenizer tokenizer = new StringTokenizer(text, LSystem.LS);
 			String result = null;

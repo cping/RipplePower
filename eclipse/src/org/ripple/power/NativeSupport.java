@@ -92,7 +92,7 @@ public class NativeSupport {
 			dirName = sourceCrc;
 		}
 		File extractedDir = new File(System.getProperty("java.io.tmpdir")
-				+ "/loon" + System.getProperty("user.name") + "/" + dirName);
+				+ "/loon" + LSystem.getUserName() + "/" + dirName);
 		File extractedFile = new File(extractedDir,
 				new File(sourcePath).getName());
 		String extractedCrc = null;

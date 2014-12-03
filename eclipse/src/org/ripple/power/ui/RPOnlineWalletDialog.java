@@ -188,7 +188,7 @@ public class RPOnlineWalletDialog extends JDialog {
 		_importWalletButton.setBounds(320, 165, 110, 40);
 		
 
-        _createWalletButton.setText("创建账户");
+        _createWalletButton.setText("Create Account");
         _createWalletButton.setFont(UIRes.getFont());
         getContentPane().add(_createWalletButton);
         _createWalletButton.setBounds(10, 160, 110, 40);

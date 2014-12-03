@@ -83,12 +83,12 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 		switch (modelFlag) {
 		case 0:
 			addWindowListener(HelperWindow.get());
-			this.setTitle(LangConfig.get(this, "title1", "Export Ripple Paper Wallet"));
+			this.setTitle(LangConfig.get(this, "title1",
+					"Export Ripple Paper Wallet"));
 			title = LangConfig.get(this, "export", "Export");
 			try {
 				EncoderDecoder encode = new EncoderDecoder(320, 320);
-				byte[] buffer = WalletCryptos.encrypt(
-						LSystem.applicationPassword,
+				byte[] buffer = WalletCryptos.encrypt(LSystem.getAppPassword(),
 						address.getBytes(LSystem.encoding));
 				String hex = CoinUtils.toHex(buffer);
 				this.pImage = encode.encode(hex);
@@ -97,7 +97,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 			}
 			break;
 		case 1:
-			this.setTitle(LangConfig.get(this, "title2", "Import Ripple Paper Wallet"));
+			this.setTitle(LangConfig.get(this, "title2",
+					"Import Ripple Paper Wallet"));
 			title = LangConfig.get(this, "import", "Import");
 			break;
 		default:
@@ -169,8 +170,9 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 		if (modelFlag == 0) {
-			int select = RPMessage.showConfirmMessage(this, "导出纸钱包",
-					"请选择您的导出方式", "导出图像文件", "直接导出到打印机");
+			int select = RPMessage.showConfirmMessage(this,
+					"Export paper wallet", "Please choose your way to export",
+					"Exporting an image file", "Export to printer");
 			if (select == -1) {
 				return;
 			}
@@ -184,15 +186,19 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		if (modelFlag == 0) {
 
-			jFileChooser.setDialogTitle("导出纸钱包");
+			jFileChooser.setDialogTitle("Export paper wallet");
 			int ret = jFileChooser.showSaveDialog(this);
 			if (ret != JFileChooser.APPROVE_OPTION) {
 				//
 			} else {
 				File file = jFileChooser.getSelectedFile();
 				if (file.exists()) {
-					int result = RPMessage.showConfirmMessage(this, "发现同名文件",
-							"指定文件已存在,是否继续操作?", "是", "否");
+					int result = RPMessage
+							.showConfirmMessage(
+									this,
+									"Find the same file",
+									"Specify the file already exists, whether or not to continue?",
+									UIMessage.ok, UIMessage.cancel);
 					if (result == 0) {
 						String ext = FileUtils.getExtension(file.getName());
 						if ("png".equals(ext) || "jpg".equals(ext)
@@ -206,7 +212,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 										file.getAbsolutePath() + ".png", "png");
 							}
 						}
-						RPMessage.showInfoMessage(this, "纸钱包导出", "文件已成功导出.");
+						RPMessage.showInfoMessage(this, "Export",
+								"Successfully exported file.");
 					}
 				} else {
 					String ext = FileUtils.getExtension(file.getName());
@@ -221,12 +228,13 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 									file.getAbsolutePath() + ".png", "png");
 						}
 					}
-					RPMessage.showInfoMessage(this, "纸钱包导出", "文件已成功导出.");
+					RPMessage.showInfoMessage(this, "Export",
+							"Successfully exported file.");
 				}
 
 			}
 		} else {
-			jFileChooser.setDialogTitle("导入纸钱包");
+			jFileChooser.setDialogTitle("Import paper wallet");
 			int ret = jFileChooser.showOpenDialog(this);
 			if (ret != JFileChooser.APPROVE_OPTION) {
 				//
@@ -240,16 +248,20 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 						String result = decoder.decode(image);
 						byte[] buffer = CoinUtils.fromHex(result);
 						buffer = WalletCryptos.decrypt(
-								LSystem.applicationPassword, buffer);
+								LSystem.getAppPassword(), buffer);
 						this.pAddress = new String(buffer, LSystem.encoding);
 					} catch (Exception ex) {
 						this.pAddress = null;
-						RPMessage.showErrorMessage(this, "纸钱包导入",
-								"文件导入失败,默认密码不匹配或者纸钱包图像异常!");
+						RPMessage
+								.showErrorMessage(
+										this,
+										"Import",
+										"File import fails, the default password does not match the image or paper wallet error !");
 					}
 				} else {
 					RPMessage
-							.showErrorMessage(this, "纸钱包导入", "文件导入失败,指定文件不存在!");
+							.showErrorMessage(this, "Import",
+									"File import fails, the specified file does not exist !");
 				}
 
 			}

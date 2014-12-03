@@ -10,6 +10,7 @@ import org.ripple.power.blockchain.RippleMemoDecode;
 import org.ripple.power.blockchain.RippleMemoDecodes;
 import org.ripple.power.txns.TransactionTx.Memo;
 import org.ripple.power.ui.RPClient;
+import org.ripple.power.utils.Base58Coder;
 
 import com.google.common.base.Strings;
 import com.ripple.client.enums.Command;
@@ -27,6 +28,18 @@ public class AccountFind {
 	public JSONObject _offer;
 
 	public JSONObject _subscribe;
+
+	public final static boolean isBitcoinAddress(String address) {
+		if (Strings.isNullOrEmpty(address)) {
+			return true;
+		}
+		if (!address.startsWith("1")) {
+			return false;
+		}
+		String reg = String.format("^[13][%s]{26,34}$", Base58Coder.ALPHABET);
+		boolean match = Pattern.matches(reg, address);
+		return match && Base58Coder.isValidChecksum(address);
+	}
 
 	public final static boolean isRippleAddress(String address) {
 		if (Strings.isNullOrEmpty(address)) {

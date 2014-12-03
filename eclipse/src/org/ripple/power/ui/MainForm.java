@@ -18,14 +18,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
-import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
-import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
+
 
 public class MainForm extends JFrame implements ActionListener {
 
@@ -50,24 +49,14 @@ public class MainForm extends JFrame implements ActionListener {
 			dialog.setVisible(true);
 			if (dialog.wasPasswordEntered() && dialog.getPassword().length > 0) {
 				password = new String(dialog.getPassword());
-				LSystem.applicationPassword = password.trim();
-				byte[] buffer = password.getBytes(LSystem.encoding);
-				OpenSSL ssl = new OpenSSL();
-				buffer = ssl.encrypt(buffer, System.getProperty("user.name")
-						+ LSystem.applicationName + LSystem.getMACAddress());
 				LSystem.session("system").set("password",
-						CoinUtils.toHex(buffer));
+						LSystem.setPassword(password));
 				LSystem.session("system").save();
 			} else {
 				System.exit(0);
 			}
 		} else {
-			OpenSSL ssl = new OpenSSL();
-			byte[] buffer = CoinUtils.fromHex(password);
-			buffer = ssl.decrypt(buffer, System.getProperty("user.name")
-					+ LSystem.applicationName + LSystem.getMACAddress());
-			password = new String(buffer, LSystem.encoding);
-			LSystem.applicationPassword = password.trim();
+			LSystem.getPassword(password);
 		}
 	}
 
@@ -233,7 +222,7 @@ public class MainForm extends JFrame implements ActionListener {
 		mainPanel = new MainPanel(this);
 
 		addWindowListener(new ApplicationWindowListener(this));
-	
+
 		RPClient.ripple();
 
 	}
@@ -249,14 +238,8 @@ public class MainForm extends JFrame implements ActionListener {
 				if (dialog.wasPasswordEntered()
 						&& dialog.getPassword().length > 0) {
 					String password = new String(dialog.getPassword());
-					LSystem.applicationPassword = password.trim();
-					byte[] buffer = password.getBytes(LSystem.encoding);
-					OpenSSL ssl = new OpenSSL();
-					buffer = ssl.encrypt(buffer,
-							System.getProperty("user.name")
-									+ LSystem.applicationName);
 					LSystem.session("system").set("password",
-							CoinUtils.toHex(buffer));
+							LSystem.setPassword(password));
 					LSystem.session("system").save();
 				}
 				break;
@@ -344,10 +327,10 @@ public class MainForm extends JFrame implements ActionListener {
 				LSystem.applicationName, LSystem.applicationVersion));
 
 		info.append("<br>User name: ");
-		info.append((String) System.getProperty("user.name"));
+		info.append((String) LSystem.getUserName());
 
 		info.append("<br>Home directory: ");
-		info.append((String) System.getProperty("user.home"));
+		info.append((String) LSystem.getUserHome());
 
 		info.append("<br><br>OS: ");
 		info.append((String) System.getProperty("os.name"));
@@ -390,7 +373,7 @@ public class MainForm extends JFrame implements ActionListener {
 		public ApplicationWindowListener(JFrame window) {
 
 		}
-	
+
 		@Override
 		public void windowIconified(WindowEvent we) {
 			windowMinimized = true;

@@ -77,6 +77,7 @@ public class RPProxyDialog extends JDialog {
 		proxyUsername = new RPTextBox();
 		jLabel6 = new RPLabel();
 		proxyPassword = new RPTextBox();
+		setResizable(false);
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		jLabel1.setText("Rippled Path");
 		jLabel2.setText("Rippled Port");

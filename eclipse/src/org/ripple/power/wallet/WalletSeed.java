@@ -84,7 +84,7 @@ public class WalletSeed {
 			FileUtils.makedirs(file);
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(
 					file, false));
-			String pass = LSystem.applicationPassword.trim();
+			String pass = LSystem.getAppPassword();
 			byte[] buffer = context.getBytes(LSystem.encoding);
 			byte[] keyChars = pass.getBytes(LSystem.encoding);
 			for (int i = 0; i < buffer.length; i++) {
@@ -106,7 +106,7 @@ public class WalletSeed {
 		if (!file.exists()) {
 			return null;
 		}
-		String pass = LSystem.applicationPassword.trim();
+		String pass = LSystem.getAppPassword();
 		byte[] buffer = FileUtils.readBytesFromFile(file);
 		buffer = WalletCryptos.decrypt(pass, buffer);
 		int size = buffer.length;
@@ -121,4 +121,5 @@ public class WalletSeed {
 		}
 		return new String(buffer, LSystem.encoding);
 	}
+
 }

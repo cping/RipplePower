@@ -22,6 +22,8 @@
 package org.ripple.power.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -647,6 +649,163 @@ final public class StringUtils {
 
 	public static String getAsciiString(byte[] data) {
 		return getAsciiString(data, 0, data.length);
+	}
+
+	public static final boolean contains(String input, String pattern) {
+		return contains(input, pattern, false);
+	}
+
+	public static final boolean contains(String input, String pattern,
+			boolean ignoreCase) {
+		final int n = pattern.length();
+		int last = 0;
+		for (int i = 0; i < n;) {
+			char c = ' ';
+			int j = i;
+			for (; j < n; j++) {
+				char c2 = pattern.charAt(j);
+				if (c2 == ' ' || c2 == '+' || c2 == '*') {
+					c = c2;
+					break;
+				}
+			}
+			int k = subset(pattern, i, j, input, last, ignoreCase);
+			if (k < 0) {
+				return false;
+			}
+			if (c == ' ' || c == '+') {
+				last = 0;
+			} else if (c == '*') {
+				last = k + j - i;
+			}
+			i = j + 1;
+		}
+		return true;
+	}
+
+	public static boolean containsCharacters(String input, char[] chars) {
+		char[] inputChars = input.toCharArray();
+		Arrays.sort(inputChars);
+		for (int i = 0; i < chars.length; i++) {
+			if (Arrays.binarySearch(inputChars, chars[i]) >= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static final int subset(String little, int littleStart,
+			int littleStop, String big, int bigStart, boolean ignoreCase) {
+		if (ignoreCase) {
+			final int n = big.length() - (littleStop - littleStart) + 1;
+			outerLoop: for (int i = bigStart; i < n; i++) {
+				final int n2 = littleStop - littleStart;
+				for (int j = 0; j < n2; j++) {
+					char c1 = big.charAt(i + j);
+					char c2 = little.charAt(littleStart + j);
+					if (c1 != c2 && c1 != toOtherCase(c2)) {
+						continue outerLoop;
+					}
+				}
+				return i;
+			}
+			return -1;
+		} else {
+			final int n = big.length() - (littleStop - littleStart) + 1;
+			outerLoop: for (int i = bigStart; i < n; i++) {
+				final int n2 = littleStop - littleStart;
+				for (int j = 0; j < n2; j++) {
+					char c1 = big.charAt(i + j);
+					char c2 = little.charAt(littleStart + j);
+					if (c1 != c2) {
+						continue outerLoop;
+					}
+				}
+				return i;
+			}
+			return -1;
+		}
+	}
+
+	public static final char toOtherCase(char c) {
+		int i = c;
+		final int A = 'A';
+		final int Z = 'Z';
+		final int a = 'a';
+		final int z = 'z';
+		final int SHIFT = a - A;
+		if (i < A) {
+			return c;
+		} else if (i <= Z) {
+			return (char) (i + SHIFT);
+		} else if (i < a) {
+			return c;
+		} else if (i <= z) {
+			return (char) (i - SHIFT);
+		} else {
+			return c;
+		}
+	}
+
+	public static String[] splitNoCoalesce(String s, char delimiter) {
+		return splitNoCoalesce(s, Character.toString(delimiter));
+	}
+
+	public static String[] splitNoCoalesce(String s, String delimiters) {
+		StringTokenizer tokenizer = new StringTokenizer(s, delimiters, true);
+		ArrayList<String> tokens = new ArrayList<String>();
+		boolean gotDelimiter = true;
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.length() == 1 && delimiters.indexOf(token) >= 0) {
+				if (gotDelimiter) {
+					tokens.add("");
+				}
+				gotDelimiter = true;
+			} else {
+				tokens.add(token);
+				gotDelimiter = false;
+			}
+		}
+		if (gotDelimiter && !tokens.isEmpty()) {
+			tokens.add("");
+		}
+		return tokens.toArray(new String[0]);
+	}
+
+	public static boolean startsWithIgnoreCase(String s, String prefix) {
+		final int pl = prefix.length();
+		if (s.length() < pl) {
+			return false;
+		}
+		for (int i = 0; i < pl; i++) {
+			char sc = s.charAt(i);
+			char pc = prefix.charAt(i);
+			if (sc != pc) {
+				sc = Character.toUpperCase(sc);
+				pc = Character.toUpperCase(pc);
+				if (sc != pc) {
+					sc = Character.toLowerCase(sc);
+					pc = Character.toLowerCase(pc);
+					if (sc != pc) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public static String truncate(final String string, final int maxLen) {
+		if (string.length() <= maxLen) {
+			return string;
+		} else {
+			return string.substring(0, maxLen);
+		}
+	}
+
+	public static String removeDoubleSpaces(String s) {
+		return s != null ? s.replaceAll("\\s+", " ") : null;
 	}
 
 }

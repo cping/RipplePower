@@ -13,7 +13,6 @@ import javax.swing.table.TableModel;
 
 import org.ripple.power.utils.GraphicsUtils;
 
-
 public final class AddressTable extends ColorTable {
 
 	/**
@@ -35,16 +34,15 @@ public final class AddressTable extends ColorTable {
 
 	public static final int CUR = 7;
 
-	
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
 
-			JTableHeader header = getTableHeader();
-			
-			header.setBackground(new Color(70, 70, 70));
-			header.setForeground(Color.WHITE);
-			header.setFont(GraphicsUtils.getFont(14));
+		JTableHeader header = getTableHeader();
+
+		header.setBackground(new Color(70, 70, 70));
+		header.setForeground(Color.WHITE);
+		header.setFont(GraphicsUtils.getFont(14));
 
 		Component component;
 		TableCellRenderer renderer;

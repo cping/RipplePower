@@ -7,6 +7,11 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.AccountFind;
+import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.utils.GraphicsUtils;
+
 public class RowColorTableCellRenderer extends JLabel implements
 		TableCellRenderer {
 
@@ -15,10 +20,15 @@ public class RowColorTableCellRenderer extends JLabel implements
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private final Font defFont;
+	
+	private final Font font = GraphicsUtils.getFont(Font.SANS_SERIF,1,14);
+	
 	public RowColorTableCellRenderer() {
 		super();
 		setOpaque(true);
-		setFont(new Font(getFont().getName(), Font.PLAIN, 12));
+		defFont = new Font(getFont().getName(), Font.PLAIN, 14);
+		setFont(defFont);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
@@ -27,6 +37,14 @@ public class RowColorTableCellRenderer extends JLabel implements
 			RowColorModel model = (RowColorModel) table;
 			setBackground(model.getBackground(row, isSelected, table));
 			setForeground(model.getForeground(row, isSelected, table));
+			if(value instanceof String){
+				String address = (String)value;
+				if(AccountFind.isRippleAddress(address)){
+					setFont(font);
+				}else{
+					setFont(defFont);
+				}
+			}
 		}
 		if (value instanceof Icon) {
 			setIcon((Icon) value);

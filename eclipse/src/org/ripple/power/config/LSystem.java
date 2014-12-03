@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
 
+import org.ripple.power.CoinUtils;
 import org.ripple.power.NativeSupport;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.txns.Updateable;
@@ -31,7 +32,9 @@ import org.ripple.power.ui.MainForm;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.IP46Utils;
 import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
+import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
@@ -78,7 +81,7 @@ public final class LSystem {
 
 	private static String applicationDataDirectory = null;
 
-	public static String applicationPassword = "mynameiscping0o5498^%1032%%76!7*(%$.com%.~";
+	private static String applicationPassword = "mynameiscping0o5498^%1032%%76!7*(%$.com%.~";
 
 	public static ProxySettings applicationProxy = null;
 
@@ -145,8 +148,9 @@ public final class LSystem {
 		if (os.indexOf("Windows 98") != -1) {
 			_isWindows98 = true;
 		}
-		if (_isWindows)
+		if (_isWindows) {
 			_supportsTray = true;
+		}
 		_isSolaris = (os.indexOf("Solaris") != -1)
 				|| (os.indexOf("SunOS") != -1);
 		_isLinux = os.indexOf("Linux") != -1;
@@ -265,7 +269,7 @@ public final class LSystem {
 	}
 
 	public static String getOS() {
-		return getProperty("os.name", "Windows XP");
+		return getProperty("os.name", "Windows");
 	}
 
 	public static String getOSVersion() {
@@ -278,6 +282,18 @@ public final class LSystem {
 
 	public static String getCurrentDirectory() {
 		return getProperty("user.dir", "");
+	}
+
+	public static File getUserHomeDir() {
+		return new File(getUserHome());
+	}
+
+	public static String getUserHome() {
+		return getProperty("user.home", "");
+	}
+
+	public static String getUserName() {
+		return getProperty("user.name", "");
 	}
 
 	public static boolean supportsTray() {
@@ -494,13 +510,13 @@ public final class LSystem {
 		return address.getHostAddress();
 	}
 
-	public static String getIPAddressType(){
+	public static String getIPAddressType() {
 		InetAddress address;
 		try {
 			address = InetAddress.getLocalHost();
-			if(IP46Utils.isIPv4Address(address.getHostAddress())){
+			if (IP46Utils.isIPv4Address(address.getHostAddress())) {
 				return "IPv4";
-			}else if(IP46Utils.isIPv6Address(address.getHostAddress())){
+			} else if (IP46Utils.isIPv6Address(address.getHostAddress())) {
 				return "IPv6";
 			}
 		} catch (UnknownHostException e) {
@@ -508,7 +524,7 @@ public final class LSystem {
 		}
 		return "Unkown";
 	}
-	
+
 	public static String getMACAddress() {
 		String macStr = "";
 		try {
@@ -850,4 +866,38 @@ public final class LSystem {
 		}
 	}
 
+	public static String setPassword(String password) throws Exception {
+		if(StringUtils.isEmpty(password)){
+			return null;
+		}
+		password = password.trim();
+		byte[] buffer = null;
+		try {
+			buffer = password.getBytes(LSystem.encoding);
+		} catch (Exception ex) {
+			buffer = password.getBytes();
+		}
+		OpenSSL ssl = new OpenSSL();
+		buffer = ssl.encrypt(buffer, LSystem.getUserName()
+				+ LSystem.applicationName + LSystem.getMACAddress());
+		return CoinUtils.toHex(buffer);
+	}
+
+	public static String getPassword(String password) throws Exception {
+		if(StringUtils.isEmpty(password)){
+			return null;
+		}
+		password = password.trim();
+		OpenSSL ssl = new OpenSSL();
+		byte[] buffer = CoinUtils.fromHex(password);
+		buffer = ssl.decrypt(buffer, LSystem.getUserName()
+				+ LSystem.applicationName + LSystem.getMACAddress());
+		password = new String(buffer, LSystem.encoding);
+		LSystem.applicationPassword = password.trim();
+		return LSystem.applicationPassword;
+	}
+
+	public static String getAppPassword() {
+		return applicationPassword.trim();
+	}
 }
