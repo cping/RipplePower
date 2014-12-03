@@ -22,13 +22,13 @@ public class RippleBlobObj {
 	}
 
 	public static class Missing {
-		public String phone_2fa;
 		public String region;
 		public String phone_verified;
 		public String phone;
 		public String auth_id_2fa;
 		public String country_code_2fa;
 		public String enabled_2fa;
+		public String phone_2fa;
 		public String city;
 		public String country;
 	}
@@ -44,6 +44,7 @@ public class RippleBlobObj {
 		public String email;
 		public String identity_id;
 		public Missing missing_fields;
+		public AuthInfoRes auth;
 	}
 
 	public static class AuthInfoRes {
@@ -59,6 +60,7 @@ public class RippleBlobObj {
 		public boolean success;
 		public String signreq;
 		public String[] result = new String[0];
+
 	}
 
 	public static class UnlockInfoRes {
@@ -67,6 +69,34 @@ public class RippleBlobObj {
 		public String account_id;
 		public String email;
 		public String created;
+		public BlobInfoRes blob;
+
+		public String toString() {
+			StringBuilder sbr = new StringBuilder();
+			if (blob != null && blob.auth != null) {
+				sbr.append("version:");
+				sbr.append(blob.auth.version);
+				sbr.append(' ');
+				sbr.append("exists:");
+				sbr.append(blob.auth.exists);
+				sbr.append('\n');
+				sbr.append("username:");
+				sbr.append(blob.auth.username);
+				sbr.append('\n');
+				sbr.append("address:");
+				sbr.append(blob.auth.address);
+				sbr.append('\n');
+				sbr.append("email:");
+				sbr.append(blob.email);
+				sbr.append('\n');
+				sbr.append("identity");
+				sbr.append(blob.identity_id);
+				sbr.append('\n');
+				sbr.append("created:");
+				sbr.append(created);
+			}
+			return sbr.toString();
+		}
 	}
 
 	public static String def_pakdf_name = "PAKDF_1_0_0";
@@ -101,8 +131,8 @@ public class RippleBlobObj {
 		if (info != null && info.success) {
 			String result = JSCrypt.decrypt(info.key, info.blob);
 			JSONObject json = new JSONObject(result);
-			
 			UnlockInfoRes res = new UnlockInfoRes();
+			res.blob = info;
 			res.account_id = json.getString("account_id");
 			res.auth_secret = json.getString("auth_secret");
 			res.email = json.getString("email");
@@ -133,6 +163,7 @@ public class RippleBlobObj {
 				String url = baseUrl + "v1/blob/" + result[0];
 				url += "?device_id=" + createSecret(32);
 				BlobInfoRes res = new BlobInfoRes();
+				res.auth = info;
 				res.id = result[0];
 				res.key = result[1];
 				HttpRequest request = HttpRequest.get(url);
@@ -292,6 +323,10 @@ public class RippleBlobObj {
 		PasswordEasy pass = new PasswordEasy();
 		pass.setPassMatrix(LSystem.hex16);
 		return pass.pass(size);
+	}
+
+	public String unescapeToken(String str) {
+		return str.replace("~0", "~").replace("~1", "/");
 	}
 
 }

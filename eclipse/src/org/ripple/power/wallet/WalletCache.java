@@ -44,6 +44,10 @@ public class WalletCache {
 	private ArrayMap pCaches = new ArrayMap(1000);
 
 	public void add(String pubKey, String priKey) {
+		add(pubKey, priKey, false);
+	}
+
+	public void add(String pubKey, String priKey, boolean online) {
 		String key = pubKey.concat(priKey);
 		if (!pCaches.containsKey(key)) {
 			GregorianCalendar cal = new GregorianCalendar();
@@ -53,6 +57,7 @@ public class WalletCache {
 					cal.get(Calendar.DAY_OF_MONTH));
 			WalletItem walletItem = new WalletItem(date, priKey, "0.000000",
 					"none");
+			walletItem.setOnline(online);
 			pCaches.put(key, walletItem);
 		}
 	}
@@ -124,20 +129,22 @@ public class WalletCache {
 			WalletSeed seed = new WalletSeed(LSystem.applicationPassword);
 			for (int i = 0; i < size; i++) {
 				WalletItem item = (WalletItem) pCaches.getEntry(i).getValue();
-				RPAddress address = new RPAddress(item.getPublicKey(),
-						item.getPrivateKey());
-				sbr.append(item.getDate());
-				sbr.append(',');
-				sbr.append(address.getPublic());
-				sbr.append(',');
-				sbr.append(address.getPrivate());
-				sbr.append(',');
-				sbr.append(item.getAmount());
-				sbr.append(',');
-				sbr.append(item.getStatus());
-				idx++;
-				if (idx < size) {
-					sbr.append(LSystem.LS);
+				if (!item.isOnline()) {
+					RPAddress address = new RPAddress(item.getPublicKey(),
+							item.getPrivateKey());
+					sbr.append(item.getDate());
+					sbr.append(',');
+					sbr.append(address.getPublic());
+					sbr.append(',');
+					sbr.append(address.getPrivate());
+					sbr.append(',');
+					sbr.append(item.getAmount());
+					sbr.append(',');
+					sbr.append(item.getStatus());
+					idx++;
+					if (idx < size) {
+						sbr.append(LSystem.LS);
+					}
 				}
 			}
 			seed.save(file, sbr.toString());

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 
+import org.ripple.power.RippleBlobObj;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
@@ -89,10 +90,13 @@ public class RPSelectAddressDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();
-				RPToast.makeText(LSystem.applicationMain,
-						"Here import or create your RippleTrade account data.",
-						Style.SUCCESS).display();
-				RPOnlineWalletDialog.showDialog("Online Wallet(RippleTrade Service)",
+				RPToast.makeText(
+						LSystem.applicationMain,
+						"Here import or create your "
+								+ RippleBlobObj.def_authinfo_url
+								+ " account data.", Style.SUCCESS).display();
+				RPOnlineWalletDialog.showDialog("Online Wallet("
+						+ RippleBlobObj.def_authinfo_url + " Service)",
 						LSystem.applicationMain);
 
 			}

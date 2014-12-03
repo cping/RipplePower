@@ -13,6 +13,8 @@ public class WalletItem {
 	private String pAmount;
 
 	private String pStatus;
+	
+	private boolean online;
 
 	public WalletItem(String date, String seed, String amount, String status) {
 		this(date, new RippleSeedAddress(seed), amount, status);
@@ -74,6 +76,14 @@ public class WalletItem {
 
 	public void setTip(boolean t) {
 		this.pTip = t;
+	}
+
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
 	}
 
 }

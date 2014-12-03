@@ -386,12 +386,12 @@ final public class DateUtils {
 		startDate.setTime(start.getTime());
 		endDate.setTime(end.getTime());
 		if ((startDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) <= 1) {
-			startDate.add(GregorianCalendar.DATE, 2 - (startDate
-					.get(GregorianCalendar.DAY_OF_WEEK) % 7));
+			startDate.add(GregorianCalendar.DATE,
+					2 - (startDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
 		}
 		if ((endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) <= 1) {
-			endDate.add(GregorianCalendar.DATE, -1
-					- (endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
+			endDate.add(GregorianCalendar.DATE,
+					-1 - (endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
 		}
 		long totaldays = toDayInterval(startDate, endDate);
 		int s = endDate.get(GregorianCalendar.DAY_OF_WEEK)
@@ -670,8 +670,8 @@ final public class DateUtils {
 	public static String toDayOfWeekName(Calendar cal) {
 		int dayofweek = 0;
 		String tmp = cal.toString();
-		tmp = tmp.substring(tmp.indexOf("DAY_OF_WEEK=") + 12, tmp
-				.indexOf("DAY_OF_WEEK=") + 13);
+		tmp = tmp.substring(tmp.indexOf("DAY_OF_WEEK=") + 12,
+				tmp.indexOf("DAY_OF_WEEK=") + 13);
 		dayofweek = Integer.parseInt(tmp);
 		String dayName = "";
 		switch (dayofweek) {
@@ -724,7 +724,7 @@ final public class DateUtils {
 				} else {
 					return null;
 				}
-			} 
+			}
 		} catch (Exception e) {
 			return null;
 		}
@@ -770,13 +770,14 @@ final public class DateUtils {
 		try {
 			if (!year.equals("") && !month.equals("") && !day.equals("")) {
 				Calendar tmpData = Calendar.getInstance();
-				tmpData.set(Integer.valueOf(year).intValue(), Integer.valueOf(
-						month).intValue() - 1, Integer.valueOf(day).intValue());
+				tmpData.set(Integer.valueOf(year).intValue(),
+						Integer.valueOf(month).intValue() - 1,
+						Integer.valueOf(day).intValue());
 				return tmpData;
 			} else if (!year.equals("") && !month.equals("") && day.equals("")) {
 				Calendar tmpData1 = Calendar.getInstance();
-				tmpData1.set(Integer.valueOf(year).intValue(), Integer.valueOf(
-						month).intValue() - 1, 1);
+				tmpData1.set(Integer.valueOf(year).intValue(),
+						Integer.valueOf(month).intValue() - 1, 1);
 				return tmpData1;
 			} else if (!year.equals("") && month.equals("") && day.equals("")) {
 				Calendar tmpData2 = Calendar.getInstance();
@@ -814,21 +815,23 @@ final public class DateUtils {
 			timeperiodMSEL[0] = timeperiodMSEL[0] - (7 * 24 * 60 * 60 * 1000);
 			timeperiodMSEL[1] = timeperiodMSEL[1] - (24 * 60 * 60 * 1000);
 		} else if (timeperiodType == TimeState.THISMONTH) { // 日期时段为“本月”
-			calendar.set(calendar.get(Calendar.YEAR), calendar
-					.get(Calendar.MONTH), calendar
-					.getActualMinimum(Calendar.DAY_OF_MONTH), 0, 0, 0);
+			calendar.set(calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH),
+					calendar.getActualMinimum(Calendar.DAY_OF_MONTH), 0, 0, 0);
 			timeperiodMSEL[0] = calendar.getTime().getTime();
-			calendar.set(calendar.get(Calendar.YEAR), calendar
-					.get(Calendar.MONTH), calendar
-					.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+			calendar.set(calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH),
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59,
+					59);
 			timeperiodMSEL[1] = calendar.getTime().getTime();
 		} else if (timeperiodType == TimeState.LASTMONTH) { // 日期时段为“上月”
-			calendar.set(calendar.get(Calendar.YEAR), calendar
-					.get(Calendar.MONTH) - 1, 1, 0, 0, 0);
+			calendar.set(calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH) - 1, 1, 0, 0, 0);
 			timeperiodMSEL[0] = calendar.getTime().getTime();
-			calendar.set(calendar.get(Calendar.YEAR), calendar
-					.get(Calendar.MONTH), calendar
-					.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+			calendar.set(calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH),
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59,
+					59);
 			timeperiodMSEL[1] = calendar.getTime().getTime();
 		} else if (timeperiodType == TimeState.ALLTIME) { // 所有时间
 			timeperiodMSEL[0] = originalMSEL;
@@ -930,5 +933,69 @@ final public class DateUtils {
 
 		public static final int ALLTIME = 5;
 
+	}
+
+	public static String getTimeDiff(long tStart, long tEnd) {
+		long sec = 1000;
+		long min = sec * 60;
+		long hour = min * 60;
+		long day = hour * 24;
+		long month = day * 30;
+		long year = 365 * day;
+		long diffInMills = tEnd - tStart;
+		if (diffInMills < sec) {
+			return String.valueOf(diffInMills) + " [ms]";
+		} else if (diffInMills < min) {
+			return String.valueOf(diffInMills / sec) + " [s]";
+		} else if (diffInMills < hour) {
+			long lmin = diffInMills / min;
+			long lsec = (diffInMills - lmin * min) / sec;
+			return String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
+					+ " [s]";
+		} else if (diffInMills < day) {
+			long lhour = diffInMills / hour;
+			long lmin = (diffInMills - lhour * hour) / min;
+			long lsec = (diffInMills - lhour * hour - lmin * min) / sec;
+			return String.valueOf(lhour) + " [h] " + String.valueOf(lmin)
+					+ " [min] " + String.valueOf(lsec) + " [s]";
+		} else if (diffInMills < month) {
+			long lday = diffInMills / day;
+			long lhour = (diffInMills - lday * day) / hour;
+			long lmin = (diffInMills - lday * day - lhour * hour) / min;
+			long lsec = (diffInMills - lday * day - lhour * hour - lmin * min)
+					/ sec;
+			return String.valueOf(lday) + " [d] " + String.valueOf(lhour)
+					+ " [h] " + String.valueOf(lmin) + " [min] "
+					+ String.valueOf(lsec) + " [s]";
+		} else if (diffInMills < year) {
+			long mn = diffInMills / month;
+			long lday = (diffInMills - mn * month) / day;
+			long lhour = (diffInMills - mn * month - lday * day) / hour;
+			long lmin = (diffInMills - mn * month - lday * day - lhour * hour)
+					/ min;
+			long lsec = (diffInMills - mn * month - lday * day - lhour * hour - lmin
+					* min)
+					/ sec;
+			return String.valueOf(mn) + " [m] " + String.valueOf(lday)
+					+ " [d] " + String.valueOf(lhour) + " [h] "
+					+ String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
+					+ " [s]";
+		} else { 
+			long lyear = diffInMills / year;
+			long mn = (diffInMills - lyear * year) / month;
+			long lday = (diffInMills - lyear * year - mn * month) / day;
+			long lhour = (diffInMills - lyear * year - mn * month - lday * day)
+					/ hour;
+			long lmin = (diffInMills - lyear * year - mn * month - lday * day - lhour
+					* hour)
+					/ min;
+			long lsec = (diffInMills - lyear * year - mn * month - lday * day
+					- lhour * hour - lmin * min)
+					/ sec;
+			return String.valueOf(lyear) + " [y] " + String.valueOf(mn)
+					+ " [m] " + String.valueOf(lday) + " [d] "
+					+ String.valueOf(lhour) + " [h] " + String.valueOf(lmin)
+					+ " [min] " + String.valueOf(lsec) + " [s]";
+		}
 	}
 }

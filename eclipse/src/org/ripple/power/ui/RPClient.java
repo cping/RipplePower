@@ -273,6 +273,10 @@ public class RPClient {
 	public String getBaseFee() {
 		Client client = getClinet();
 		if (client != null) {
+			if (client.serverInfo.fee_ref == 0
+					|| client.serverInfo.load_base == 0) {
+				return "0.01";
+			}
 			float fee_unit = client.serverInfo.fee_base
 					/ client.serverInfo.fee_ref;
 			fee_unit *= client.serverInfo.load_factor

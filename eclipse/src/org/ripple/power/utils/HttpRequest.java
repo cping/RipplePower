@@ -68,8 +68,17 @@ import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
+
+	public static String getHttps(String url) {
+		ResponseResult result = HttpsUtils.getSSL(url);
+		if (result.ok()) {
+			return result.getResult();
+		}
+		return null;
+	}
 
 	public static boolean isValidRedirectUrl(String url) {
 		return url != null && url.startsWith("/") || isAbsoluteUrl(url);

@@ -16,6 +16,9 @@ public class NameFind {
 	public static String getAddress(String name) throws Exception {
 		String result = _caches.get(name);
 		if (result == null) {
+			if (name.startsWith("~")) {
+				name = name.substring(1, name.length());
+			}
 			HttpRequest request = HttpRequest.get(page + "/user/" + name);
 			if (request.ok()) {
 				String jsonResult = request.body();
@@ -27,7 +30,9 @@ public class NameFind {
 			}
 		}
 		if (result == null) {
-			name = name.replace("~", "");
+			if (name.startsWith("~")) {
+				name = name.substring(1, name.length());
+			}
 			if (Gateway.getAddress(name) != null) {
 				ArrayList<Gateway.Item> items = Gateway.getAddress(name).accounts;
 				if (items.size() > 0) {

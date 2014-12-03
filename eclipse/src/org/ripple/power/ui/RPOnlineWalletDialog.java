@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import org.ripple.power.RippleBlobObj;
 import org.ripple.power.RippleBlobObj.UnlockInfoRes;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Session;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.NameFind;
@@ -27,6 +28,7 @@ public class RPOnlineWalletDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private RPCButton _importWalletButton;
+    private RPCButton _createWalletButton;
 	private RPLabel _accountLabel;
 	private RPTextBox _accountText;
 	private RPLabel _passwordLabel;
@@ -57,6 +59,8 @@ public class RPOnlineWalletDialog extends JDialog {
 		_passwordLabel = new RPLabel();
 		_passwordText = new RPPasswordText();
 		_importWalletButton = new RPCButton();
+	     _createWalletButton = new RPCButton();
+		
 		_sp = new javax.swing.JSeparator();
 
 		getContentPane().setLayout(null);
@@ -124,14 +128,16 @@ public class RPOnlineWalletDialog extends JDialog {
 								if (pub.length() > 0 && pri.length() > 0) {
 									int result = RPMessage.showConfirmMessage(
 											LSystem.applicationMain,
-											"Private Key import",
-											LangConfig
-													.get(RPAddressDialog.class,
-															"import",
-															"Import the data to current wallet ?"),
+											"Import(Not saved locally)",
+											res.toString()
+													+ "\n"
+													+ LangConfig
+															.get(RPAddressDialog.class,
+																	"import",
+																	"Import the data to current wallet ?"),
 											UIMessage.ok, UIMessage.cancel);
 									if (result == 0) {
-										WalletCache.get().add(pub, pri);
+										WalletCache.get().add(pub, pri, true);
 										try {
 											WalletCache.saveDefWallet();
 										} catch (Exception e) {
@@ -142,6 +148,10 @@ public class RPOnlineWalletDialog extends JDialog {
 															"System exception, wallets save failed !");
 											return;
 										}
+										Session session = LSystem
+												.session("system");
+										session.set("online_account", username);
+										session.save();
 										SwingUtils
 												.close(RPOnlineWalletDialog.this);
 										MainForm form = LSystem.applicationMain;
@@ -176,10 +186,23 @@ public class RPOnlineWalletDialog extends JDialog {
 			}
 		});
 		_importWalletButton.setBounds(320, 165, 110, 40);
+		
+
+        _createWalletButton.setText("创建账户");
+        _createWalletButton.setFont(UIRes.getFont());
+        getContentPane().add(_createWalletButton);
+        _createWalletButton.setBounds(10, 160, 110, 40);
+        getContentPane().add(_sp);
+        _sp.setBounds(0, 130, 450, 2);
+		
 		getContentPane().add(_sp);
 		_sp.setBounds(0, 135, 450, 10);
 		getContentPane().setBackground(LSystem.dialogbackground);
-
+		Session session = LSystem.session("system");
+		String account_res = session.get("online_account");
+		if (account_res != null) {
+			_accountText.setText(account_res);
+		}
 		pack();
 	}
 }
