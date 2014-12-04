@@ -1,5 +1,6 @@
 package org.ripple.power.txns;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.ripple.core.enums.TransactionFlag;
@@ -47,6 +48,7 @@ public class TransactionFlagMap {
 		_flags.put(TransactionFlag.TrustSetMask, "TrustSetMask");
 		// Special flags:
 		_flags.put(0x30000L, "Cheater");
+		_flags.put(0L, "Empty");
 	}
 
 	public final static String getString(long flag) {
@@ -54,4 +56,12 @@ public class TransactionFlagMap {
 		return result == null ? "Unkown" : result;
 	}
 
+	public final static ArrayList<String> values() {
+		ArrayList<String> list = new ArrayList<String>(_flags.size());
+		for (String v : _flags.values()) {
+			list.add(v);
+		}
+		return list;
+	}
+	
 }

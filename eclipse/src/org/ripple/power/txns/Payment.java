@@ -1,5 +1,7 @@
 package org.ripple.power.txns;
 
+import java.io.UnsupportedEncodingException;
+
 import org.ripple.power.CoinUtils;
 import org.ripple.power.RippleObject;
 import org.ripple.power.RippleSeedAddress;
@@ -18,8 +20,10 @@ import org.json.JSONObject;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
+import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.STArray;
 import com.ripple.core.coretypes.STObject;
+import com.ripple.core.coretypes.hash.Hash256;
 import com.ripple.core.fields.Field;
 import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.types.known.tx.Transaction;
@@ -63,6 +67,99 @@ public class Payment {
 					arrays.add(memo);
 				}
 				txn.putTranslated(Field.Memos, arrays);
+				try {
+					TransactionUtils.submitBlob(seed, txn, fee, sequence, back);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void error(JSONObject message) {
+				if (back != null) {
+					back.error(message);
+				}
+
+			}
+		});
+
+	}
+
+	public static void send(final RippleSeedAddress seed, final Amount amount,
+			final Amount sendMax, final Amount deliveredAmount,
+			final String dstAddress, final long flags, final long dt,
+			final String invoiceID, final RippleMemoEncode memo,
+			final String fee, final Rollback back) {
+		RippleMemoEncodes memos = null;
+		if (memo != null) {
+			memos = new RippleMemoEncodes();
+			memos.add(memo);
+		}
+		send(seed, amount, sendMax, deliveredAmount, dstAddress, flags, dt,
+				invoiceID, memos, fee, back);
+	}
+
+	public static void send(final RippleSeedAddress seed, final Amount amount,
+			final Amount sendMax, final Amount deliveredAmount,
+			final String dstAddress, final long flags, final long dt,
+			final String invoiceID, final RippleMemoEncodes list,
+			final String fee, final Rollback back) {
+		final String address = seed.getPublicRippleAddress().toString();
+		AccountFind find = new AccountFind();
+		
+		find.info(address, new Rollback() {
+			@Override
+			public void success(JSONObject message) {
+				long sequence = TransactionUtils.getSequence(message);
+				Transaction txn = new Transaction(TransactionType.Payment);
+				txn.putTranslated(Field.Account, seed.getPublicKey());
+				txn.putTranslated(Field.Flags, flags);
+				txn.putTranslated(Field.Destination, dstAddress);
+				txn.putTranslated(Field.Amount, amount);
+				if (sendMax != null) {
+					txn.putTranslated(Field.SendMax, sendMax);
+				}
+				txn.putTranslated(Field.DestinationTag, dt);
+				if (invoiceID != null) {
+					byte[] id = null;
+					if (!AccountFind.is256hash(invoiceID)) {
+						try {
+							id = CoinUtils.toHex(
+									invoiceID.getBytes(LSystem.encoding))
+									.getBytes(LSystem.encoding);
+						} catch (UnsupportedEncodingException e) {
+							id = CoinUtils.toHex(invoiceID.getBytes())
+									.getBytes();
+						}
+					} else {
+						id = CoinUtils.fromHex(invoiceID);
+					}
+					txn.putTranslated(Field.InvoiceID, new Hash256(id));
+				}
+				if (list != null) {
+					STArray arrays = new STArray();
+					for (int i = 0; i < list.size(); i++) {
+						RippleMemoEncode rpmemo = list.get(i);
+						STObject obj = new STObject();
+						obj.putTranslated(Field.MemoType, rpmemo.getType());
+						obj.putTranslated(Field.MemoData, rpmemo.getData());
+						if (rpmemo.getFormat() != null) {
+							obj.putTranslated(Field.MemoFormat,
+									rpmemo.getFormat());
+						}
+						STObject memo = new STObject();
+						memo.put(Field.Memo, obj);
+						arrays.add(memo);
+					}
+					txn.putTranslated(Field.Memos, arrays);
+				}
+				if (deliveredAmount != null) {
+					STObject delivered = new STObject();
+					delivered.putTranslated(Field.DeliveredAmount,
+							deliveredAmount);
+					delivered.putTranslated(Field.TransactionIndex, 0);
+					txn.put(Field.TransactionMetaData, delivered);
+				}
 				try {
 					TransactionUtils.submitBlob(seed, txn, fee, sequence, back);
 				} catch (Exception e) {

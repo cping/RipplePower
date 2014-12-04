@@ -17,6 +17,17 @@ import java.util.Hashtable;
 
 public class EncoderDecoder {
 
+	public static BufferedImage getEncoder(String address, int w, int h) {
+		EncoderDecoder encoder = new EncoderDecoder(w, h);
+		return encoder.encode(address);
+	}
+
+	public static String getDecoder(BufferedImage image, int w, int h)
+			throws IOException {
+		EncoderDecoder decoder = new EncoderDecoder(w, h);
+		return decoder.decode(image);
+	}
+
 	private int width;
 	private int height;
 

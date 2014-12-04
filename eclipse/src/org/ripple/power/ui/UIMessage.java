@@ -6,6 +6,8 @@ public class UIMessage {
 
 	public final static String ok = LangConfig.get(UIMessage.class, "ok", "OK");
 
+	public final static String send = LangConfig.get(UIMessage.class, "send", "Send");
+	
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 

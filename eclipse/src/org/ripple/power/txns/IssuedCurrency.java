@@ -7,6 +7,10 @@ import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.StringUtils;
 
+import com.ripple.core.coretypes.AccountID;
+import com.ripple.core.coretypes.Amount;
+import com.ripple.core.coretypes.Currency;
+
 public class IssuedCurrency {
 	public BigDecimal amount;
 	public RippleAddress issuer;
@@ -200,4 +204,13 @@ public class IssuedCurrency {
 			return false;
 		return true;
 	}
+
+	public Amount getAmount() {
+		if (issuer != null && currency != null) {
+			return new Amount(amount, Currency.fromString(currency),
+					AccountID.fromAddress(issuer.toString()));
+		}
+		return new Amount(amount);
+	}
+
 }

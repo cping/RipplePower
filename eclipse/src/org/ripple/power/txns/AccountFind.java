@@ -278,6 +278,8 @@ public class AccountFind {
 						transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
 						transactionTx.flagsName = TransactionFlagMap
 								.getString(transactionTx.flags);
+					}else{
+						transactionTx.flagsName = "Empty";
 					}
 					if (result.has("SendMax")) {
 						transactionTx.sendMax = CurrencyUtils.getAmount(result
@@ -474,6 +476,8 @@ public class AccountFind {
 												transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
 												transactionTx.flagsName = TransactionFlagMap
 														.getString(transactionTx.flags);
+											}else{
+												transactionTx.flagsName = "Empty";
 											}
 											if (tx.has("SendMax")) {
 												transactionTx.sendMax = CurrencyUtils.getAmount(tx

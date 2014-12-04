@@ -181,11 +181,17 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		} else if ("memo".equalsIgnoreCase(eve)) {
 			RPToast.makeText(LSystem.applicationMain, "Memo Send/Receive.",
 					Style.SUCCESS).display();
-			RPRippledMemoDialog.showDialog(LangConfig.get(MainPanel.class,
-					"send_memo", "Memo Send/Receive"), LSystem.applicationMain,
-					_item);
+			RPRippledMemoDialog.showDialog(
+					LangConfig.get(MainPanel.class, "send_memo",
+							"Memo Send/Receive")
+							+ " "
+							+ _item.getPublicKey(),
+					LSystem.applicationMain, _item);
 		} else if ("flag".equalsIgnoreCase(eve)) {
-			
+			RPToast.makeText(LSystem.applicationMain, "Send Flags.",
+					Style.SUCCESS).display();
+			RPSendFlagsDialog.showDialog(_item.getPublicKey() + " Send Flags",
+					LSystem.applicationMain, _item);
 		} else if ("exit".equalsIgnoreCase(eve)) {
 			closeDialog();
 		}

@@ -46,7 +46,17 @@ public class Currencies {
 		}
 		return list;
 	}
-
+	
+	public static ArrayList<String> keys() {
+		ArrayList<Item> items = load();
+		int size = items.size();
+		ArrayList<String> list = new ArrayList<String>(size);
+		for (Item item : items) {
+			list.add(item.name);
+		}
+		return list;
+	}
+	
 	public static String name(String name) {
 		if (Strings.isNullOrEmpty(name)) {
 			return null;
