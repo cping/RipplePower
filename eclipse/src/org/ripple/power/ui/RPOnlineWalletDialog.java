@@ -28,7 +28,7 @@ public class RPOnlineWalletDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private RPCButton _importWalletButton;
-    private RPCButton _createWalletButton;
+	private RPCButton _createWalletButton;
 	private RPLabel _accountLabel;
 	private RPTextBox _accountText;
 	private RPLabel _passwordLabel;
@@ -59,8 +59,8 @@ public class RPOnlineWalletDialog extends JDialog {
 		_passwordLabel = new RPLabel();
 		_passwordText = new RPPasswordText();
 		_importWalletButton = new RPCButton();
-	     _createWalletButton = new RPCButton();
-		
+		_createWalletButton = new RPCButton();
+
 		_sp = new javax.swing.JSeparator();
 
 		getContentPane().setLayout(null);
@@ -186,15 +186,21 @@ public class RPOnlineWalletDialog extends JDialog {
 			}
 		});
 		_importWalletButton.setBounds(320, 165, 110, 40);
-		
 
-        _createWalletButton.setText("Create Account");
-        _createWalletButton.setFont(UIRes.getFont());
-        getContentPane().add(_createWalletButton);
-        _createWalletButton.setBounds(10, 160, 110, 40);
-        getContentPane().add(_sp);
-        _sp.setBounds(0, 130, 450, 2);
-		
+		_createWalletButton.setText(UIMessage.create);
+		_createWalletButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://www.rippletrade.com/#/register");
+			}
+		});
+		_createWalletButton.setFont(UIRes.getFont());
+		getContentPane().add(_createWalletButton);
+		_createWalletButton.setBounds(10, 160, 110, 40);
+		getContentPane().add(_sp);
+		_sp.setBounds(0, 130, 450, 2);
+
 		getContentPane().add(_sp);
 		_sp.setBounds(0, 135, 450, 10);
 		getContentPane().setBackground(LSystem.dialogbackground);

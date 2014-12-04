@@ -1,6 +1,7 @@
 package com.ripple.client.requests;
 
 import com.ripple.client.Client;
+import com.ripple.client.ClientLogger;
 import com.ripple.client.responses.Response;
 import com.ripple.client.enums.Command;
 import com.ripple.client.pubsub.Publisher;
@@ -109,7 +110,7 @@ public class Request extends Publisher<Request.events> {
 			response = new Response(this, msg);
 		} catch (Exception e) {
 			try {
-				System.out.println(msg.toString(4));
+				ClientLogger.fine(msg.toString(4));
 			} catch (JSONException ignored) {
 			}
 			throw new RuntimeException(e);

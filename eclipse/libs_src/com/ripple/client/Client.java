@@ -43,6 +43,14 @@ import static com.ripple.client.requests.Request.Manager;
 public class Client extends Publisher<Client.events> implements
 		TransportEventHandler {
 
+	private long timer;
+	
+	private long speed;
+	
+	public long getSpeed(){
+		return speed;
+	}
+
 	private int reconnectDormantAfter = 20000; // ms
 
 	public void setReconnectDormantAfter(int reconnectDormantAfter) {
@@ -332,7 +340,7 @@ public class Client extends Publisher<Client.events> implements
 
 				if (!manuallyDisconnected) {
 					if (connected && lastConnection != defaultValue) {
-						long time = new Date().getTime();
+						long time = System.currentTimeMillis();
 						long msSince = time - lastConnection;
 						if (msSince > ms) {
 							// we don't call disconnect, cause that will set the
@@ -695,6 +703,7 @@ public class Client extends Publisher<Client.events> implements
 			break;
 		}
 		request.handleResponse(msg);
+		speed = System.currentTimeMillis() - timer;
 	}
 
 	private void updateServerInfo(JSONObject msg) {
@@ -800,6 +809,7 @@ public class Client extends Publisher<Client.events> implements
 
 	public void sendMessage(JSONObject object) {
 
+		timer = System.currentTimeMillis();
 		log("Send: {0}", prettyJSON(object));
 
 		emit(OnSendMessage.class, object);

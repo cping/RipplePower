@@ -1060,4 +1060,12 @@ public class BigNumber {
 		return output;
 	}
 
+	public static String signature(String secret, LongArray data) {
+		HMAC hmac = new HMAC(hex_toBits(secret));
+		return hex_fromBits(hmac.mac(data));
+	}
+
+	public static String hashSha512(LongArray data) {
+		return hex_fromBits(SHA512.hash(data));
+	}
 }

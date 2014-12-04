@@ -240,6 +240,14 @@ public class RPClient {
 				_rippleClient = new RPClient();
 				if (!testing) {
 					_rippleClient.threadLoop();
+				} else {
+					MainForm form = LSystem.applicationMain;
+					if (form != null) {
+						MainPanel panel = form.getMainPanel();
+						if (panel != null) {
+							panel.setSpeedIcon("empty");
+						}
+					}
 				}
 			}
 		}
@@ -316,6 +324,21 @@ public class RPClient {
 										panel.walletChanged(client.serverInfo.server_status);
 									} else {
 										panel.walletChanged("none");
+									}
+									if (client.getSpeed() <= 10) {
+										panel.setSpeedIcon("all");
+									} else if (client.getSpeed() <= 500) {
+										panel.setSpeedIcon("lv5");
+									} else if (client.getSpeed() <= 1000) {
+										panel.setSpeedIcon("lv4");
+									} else if (client.getSpeed() <= 2000) {
+										panel.setSpeedIcon("lv3");
+									} else if (client.getSpeed() <= 3000) {
+										panel.setSpeedIcon("lv3");
+									} else if (client.getSpeed() <= 4000) {
+										panel.setSpeedIcon("lv3");
+									} else {
+										panel.setSpeedIcon("lv0");
 									}
 								}
 							}

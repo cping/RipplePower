@@ -849,14 +849,18 @@ public class LImage {
 		hashCode = LSystem.unite(hashCode, h);
 		LImage img = (LImage) subs.get(hashCode);
 		if (img == null) {
-			subs.put(hashCode, img = new LImage(bufferedImage.getSubimage(x, y,
-					w, h)));
+			subs.put(hashCode,
+					img = new LImage(bufferedImage.getSubimage(x, y, w, h)));
 		}
 		return img;
 	}
 
 	public LImage getSubImage(int x, int y, int w, int h) {
 		return new LImage(bufferedImage.getSubimage(x, y, w, h));
+	}
+
+	public LImage getSubImageSize(int x, int y, int w, int h) {
+		return new LImage(bufferedImage.getSubimage(x, y, w - x, h - y));
 	}
 
 	public LImage scaledInstance(int w, int h) {

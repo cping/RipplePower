@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -77,7 +78,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	protected String getWalletText(String s1, String s2) {
 		return String
-				.format("<html><h3><strong><font color=white>Wallet </font><font color=yellow>%s</font><font color=white> XRP </font><font size=3 color=yellow>(Rippled Node:%s Status:%s)</font></strong></h3> </html>",
+				.format("<html><h3><strong><font color=white> Wallet </font><font color=yellow>%s</font><font color=white> XRP </font><font size=3 color=yellow>(Rippled Node:%s Status:%s)</font></strong></h3> </html>",
 						s1, RPClient.ripple().getNodePath(), s2);
 	}
 
@@ -110,6 +111,17 @@ public class MainPanel extends JPanel implements ActionListener {
 			}
 		});
 		popMenu.add(tempMenu);
+	}
+
+	private String speedFlag = "black";
+
+	public void setSpeedIcon(String name) {
+		if (walletLabel != null) {
+			if (!speedFlag.equalsIgnoreCase(name)) {
+				walletLabel
+						.setIcon(OtherImages.getSpeedImage(speedFlag = name));
+			}
+		}
 	}
 
 	public MainPanel(final JFrame parentFrame) {
@@ -159,8 +171,10 @@ public class MainPanel extends JPanel implements ActionListener {
 		statusPane.setOpaque(true);
 		statusPane.setBackground(LSystem.background);
 
-		walletLabel = new JLabel(getWalletText(WalletCache.get().getAmounts(),
+		walletLabel = new JLabel();
+		walletLabel.setText(getWalletText(WalletCache.get().getAmounts(),
 				"none"));
+		setSpeedIcon("empty");
 		statusPane.add(walletLabel);
 
 		FontStyleIcon iconStar = new FontStyleIcon(FontStyle.Icon.STAR, 24,
@@ -445,7 +459,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				return;
 			}
 			if (actionName.equals(CommandFlag.AddAddress)) {
-				RPSelectAddressDialog.showDialog("Select Wallet Mode", LSystem.applicationMain);
+				RPSelectAddressDialog.showDialog("Select Wallet Mode",
+						LSystem.applicationMain);
 				return;
 			}
 			if (actionName.equals(CommandFlag.Backup)) {
@@ -453,13 +468,23 @@ public class MainPanel extends JPanel implements ActionListener {
 						"Backup your wallet file.", Style.SUCCESS).display();
 				String path = Backup.create();
 				if (path != null) {
-					RPMessage.showInfoMessage(this, UIMessage.info, String.format(LangConfig.get(this,
-							"back1",
-							"Successful backup, the backup is saved in %s"),
-							path));
+					RPMessage
+							.showInfoMessage(
+									this,
+									UIMessage.info,
+									String.format(
+											LangConfig
+													.get(this, "back1",
+															"Successful backup, the backup is saved in %s"),
+											path));
 				} else {
-					RPMessage.showErrorMessage(this, UIMessage.error, LangConfig.get(this, "back2",
-							"Backup fails, wallet file does not exist"));
+					RPMessage
+							.showErrorMessage(
+									this,
+									UIMessage.error,
+									LangConfig
+											.get(this, "back2",
+													"Backup fails, wallet file does not exist"));
 				}
 				return;
 			}
@@ -513,7 +538,8 @@ public class MainPanel extends JPanel implements ActionListener {
 									LangConfig
 											.get(this, "stop_cmd",
 													"You have not selected any address, so the current command can not operate."),
-									UIMessage.warning, JOptionPane.WARNING_MESSAGE);
+									UIMessage.warning,
+									JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 			} else if (actionName.equals(CommandFlag.Donation)) {
@@ -705,8 +731,7 @@ public class MainPanel extends JPanel implements ActionListener {
 											.get(this,
 													"delete",
 													"Delete the address, which means you will never lose this address, whether you want to continue?"),
-									new Object[] {
-											UIMessage.ok,
+									new Object[] { UIMessage.ok,
 											UIMessage.cancel });
 					if (delete_address == 0) {
 						synchronized (this) {

@@ -15,8 +15,11 @@ public class UIMessage {
 	public final static String info = LangConfig.get(UIMessage.class, "info",
 			"Info");
 
-	public final static String error = LangConfig.get(UIMessage.class,
-			"error", "Error");
+	public final static String error = LangConfig.get(UIMessage.class, "error",
+			"Error");
+
+	public final static String create = LangConfig.get(UIMessage.class,
+			"create", "Create");
 
 	public final static String notExist = LangConfig.get(UIMessage.class,
 			"noexist", "This account or password does not exist !");
@@ -53,9 +56,9 @@ public class UIMessage {
 	public final static String ydel = LangConfig.get(UIMessage.class, "ydel",
 			"You want to delete %s ?");
 
-	public final static String data_error = LangConfig.get(UIMessage.class, "data_error",
-			"Data format error, the operation is invalid !");
-	
+	public final static String data_error = LangConfig.get(UIMessage.class,
+			"data_error", "Data format error, the operation is invalid !");
+
 	public final static String you_cancel_tx(String a, String b) {
 		String result = String.format(LangConfig.get(UIMessage.class,
 				"you_cancel_tx",

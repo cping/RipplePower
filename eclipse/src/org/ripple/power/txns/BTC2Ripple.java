@@ -37,8 +37,4 @@ public class BTC2Ripple {
 	public String getBaseUrl() {
 		return _baseUrl;
 	}
-	
-	public static void main(String[]args){
-		new BTC2Ripple("1GLnWVBpadWnHpxf8KpXTQdwMdHAWtzNEw");
-	}
 }

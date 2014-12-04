@@ -7,9 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.AccountFind;
-import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class RowColorTableCellRenderer extends JLabel implements
