@@ -325,18 +325,18 @@ public class RPClient {
 									} else {
 										panel.walletChanged("none");
 									}
-									if (client.getSpeed() <= 10) {
+									if (client.getSpeed() <= 100) {
 										panel.setSpeedIcon("all");
-									} else if (client.getSpeed() <= 500) {
-										panel.setSpeedIcon("lv5");
 									} else if (client.getSpeed() <= 1000) {
+										panel.setSpeedIcon("lv5");
+									} else if (client.getSpeed() <= 1500) {
 										panel.setSpeedIcon("lv4");
-									} else if (client.getSpeed() <= 2000) {
+									} else if (client.getSpeed() <= 2500) {
 										panel.setSpeedIcon("lv3");
-									} else if (client.getSpeed() <= 3000) {
-										panel.setSpeedIcon("lv3");
-									} else if (client.getSpeed() <= 4000) {
-										panel.setSpeedIcon("lv3");
+									} else if (client.getSpeed() <= 3500) {
+										panel.setSpeedIcon("lv2");
+									} else if (client.getSpeed() <= 4500) {
+										panel.setSpeedIcon("lv1");
 									} else {
 										panel.setSpeedIcon("lv0");
 									}

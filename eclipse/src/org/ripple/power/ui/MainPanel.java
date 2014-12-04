@@ -18,10 +18,8 @@ import java.math.BigDecimal;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -532,14 +530,12 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, null);
 					return;
 				} else {
-					JOptionPane
-							.showMessageDialog(
-									this,
-									LangConfig
-											.get(this, "stop_cmd",
-													"You have not selected any address, so the current command can not operate."),
-									UIMessage.warning,
-									JOptionPane.WARNING_MESSAGE);
+					RPToast.makeText(
+							LSystem.applicationMain,
+							LangConfig
+									.get(this, "stop_cmd",
+											"You have not selected any address, so the command can not complete !"),
+							Style.ERROR).display();
 					return;
 				}
 			} else if (actionName.equals(CommandFlag.Donation)) {
@@ -569,67 +565,9 @@ public class MainPanel extends JPanel implements ActionListener {
 				String action = actionName;
 				switch (action) {
 				case CommandFlag.SendCoin:
-					int result = JOptionPane
-							.showOptionDialog(
-									this,
-									LangConfig
-											.get(this, "send",
-													"Please select the currency you want to send"),
-									LangConfig.get(this, "selcur",
-											"Select Currency"),
-									JOptionPane.YES_NO_CANCEL_OPTION,
-									JOptionPane.QUESTION_MESSAGE,
-									null,
-									new Object[] {
-											LangConfig.get(this, "send_xrp",
-													"Send XRP"),
-											LangConfig.get(this, "send_iou",
-													"Send IOU"),
-											LangConfig.get(this, "send_memo",
-													"Memo Send/Receive"),
-											LangConfig.get(this, "cancel",
-													"Cancel") },
-									JOptionPane.NO_OPTION);
-					switch (result) {
-					case 0:
-						BigDecimal number = new BigDecimal(item.getAmount());
-						if (number.compareTo(BigDecimal.ZERO) < 1) {
-							RPMessage
-									.showWarningMessage(
-											this,
-											LangConfig.get(this, "txfails",
-													"Transaction fails"),
-											LangConfig
-													.get(this, "stop",
-															"Sorry, currently the address  XRP not send XRP"));
-						} else {
-							RPToast.makeText(LSystem.applicationMain,
-									"Send XRP.", Style.SUCCESS).display();
-							RPXRPSendDialog.showDialog(
-									item.getPublicKey()
-											+ " "
-											+ LangConfig.get(this, "send_xrp",
-													"Send XRP"),
-									LSystem.applicationMain, item);
-						}
-						break;
-					case 1:
-						RPToast.makeText(LSystem.applicationMain, "Send IOU.",
-								Style.SUCCESS).display();
-						RPIOUSendDialog.showDialog(item.getPublicKey() + " "
-								+ LangConfig.get(this, "send_iou", "Send IOU"),
-								LSystem.applicationMain, item);
-						break;
-					case 2:
-						RPToast.makeText(LSystem.applicationMain,
-								"Memo Send/Receive.", Style.SUCCESS).display();
-						RPRippledMemoDialog.showDialog(LangConfig.get(this,
-								"send_memo", "Memo Send/Receive"),
-								LSystem.applicationMain, item);
-						break;
-					default:
-						break;
-					}
+					RPSelectMoneyDialog.showDialog(LangConfig.get(this, "send",
+							"Please select the currency you want to send"),
+							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Exchange:
 					RPToast.makeText(LSystem.applicationMain,

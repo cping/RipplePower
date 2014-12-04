@@ -620,7 +620,7 @@ final public class GraphicsUtils {
 		AffineTransform tx = new AffineTransform();
 		tx.scale((double) w / width, (double) h / height);
 		AffineTransformOp op = new AffineTransformOp(tx,
-				AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				AffineTransformOp.TYPE_BILINEAR);
 		img = op.filter(image, null);
 		return img;
 	}

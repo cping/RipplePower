@@ -18,6 +18,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LFont;
+import org.ripple.power.utils.GraphicsUtils;
 
 public class RPToast extends JDialog {
 
@@ -73,14 +74,15 @@ public class RPToast extends JDialog {
 		setUndecorated(true);
 		setFocusableWindowState(false);
 		setModalityType(ModalityType.MODELESS);
-		Font font = getFont();
-		int font_size = LFont.getFont(font.getName(), font.getStyle(),
+		Font font = GraphicsUtils.getFont(14);
+		int font_size = LFont.getFont(font.getFontName(), font.getStyle(),
 				font.getSize()).stringWidth(mText)
 				+ (_frame_length_multiplier * 10);
 		setSize(font_size, 30);
 		getContentPane().setBackground(mBackgroundColor);
 		JLabel label = new JLabel(mText);
 		label.setForeground(mForegroundColor);
+		label.setFont(font);
 		add(label);
 		setLocationRelativeTo(mOwner);
 	}

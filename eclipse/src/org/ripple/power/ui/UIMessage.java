@@ -9,6 +9,9 @@ public class UIMessage {
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 
+	public final static String exit = LangConfig.get(UIMessage.class,
+			"exit", "Exit");
+	
 	public final static String warning = LangConfig.get(UIMessage.class,
 			"warning", "Warning");
 
