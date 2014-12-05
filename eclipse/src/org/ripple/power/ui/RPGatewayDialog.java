@@ -116,6 +116,7 @@ public class RPGatewayDialog extends JDialog {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		this._item = item;
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(780, 610);
 		setPreferredSize(dim);

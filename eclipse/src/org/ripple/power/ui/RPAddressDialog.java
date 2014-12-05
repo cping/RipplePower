@@ -76,6 +76,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				"Import or create a public key and a secret key"),
 				Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setLayout(new FlowLayout());
 		setResizable(false);
 		Dimension dim = new Dimension(610, 365);

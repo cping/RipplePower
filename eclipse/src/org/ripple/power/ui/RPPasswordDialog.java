@@ -31,6 +31,7 @@ public class RPPasswordDialog extends JDialog {
 	public RPPasswordDialog(JFrame owner) {
 		super(owner, "Please enter the wallet file password", true);
 		setLayout(new FlowLayout());
+		setIconImage(UIRes.getIcon());
 		Dimension dim = new Dimension(390, 180);
 		setPreferredSize(dim);
 		setSize(dim);

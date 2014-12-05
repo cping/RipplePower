@@ -63,6 +63,7 @@ public class RPConfigDialog extends JDialog {
 	public RPConfigDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(445, 535);
 		setPreferredSize(dim);

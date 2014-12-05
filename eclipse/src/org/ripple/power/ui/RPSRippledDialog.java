@@ -41,6 +41,7 @@ public class RPSRippledDialog extends JDialog {
 	public RPSRippledDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(460, 170);
 		setPreferredSize(dim);

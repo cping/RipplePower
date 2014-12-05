@@ -308,6 +308,7 @@ public class RPExchangeDialog extends JDialog {
 		if (_item != null) {
 			_item.setTip(false);
 		}
+		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
 		Dimension dim = new Dimension(992, 620);
 		this.setPreferredSize(dim);

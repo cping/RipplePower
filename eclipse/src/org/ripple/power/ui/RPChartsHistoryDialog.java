@@ -96,6 +96,7 @@ public class RPChartsHistoryDialog extends JDialog {
 		super(parent, LangConfig.get(RPChartsHistoryDialog.class, "hp",
 				"Historical Prices Charts"), Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(755, 625);
 		setPreferredSize(dim);

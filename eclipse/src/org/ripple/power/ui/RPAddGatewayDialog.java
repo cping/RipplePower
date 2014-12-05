@@ -61,6 +61,7 @@ public class RPAddGatewayDialog extends JDialog {
 	public RPAddGatewayDialog(String text, RPGatewayDialog parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		_superDialog = parent;
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(482, 410);
 		setPreferredSize(dim);

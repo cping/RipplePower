@@ -60,6 +60,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 	public RPExchangeRateViewDialog(String text, JFrame parent) {
 		super(parent, text, false);
+		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
 		Dimension dim = new Dimension(774, 565);
 		this.setPreferredSize(dim);

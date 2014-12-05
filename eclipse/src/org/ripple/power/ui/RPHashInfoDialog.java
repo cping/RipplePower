@@ -83,6 +83,7 @@ public class RPHashInfoDialog extends JDialog {
 		super(parent, "Transaction Hash", Dialog.ModalityType.DOCUMENT_MODAL);
 		this._trTx = tx;
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(505, 750);
 		setPreferredSize(dim);

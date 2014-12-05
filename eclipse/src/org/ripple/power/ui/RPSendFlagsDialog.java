@@ -84,6 +84,7 @@ public class RPSendFlagsDialog extends JDialog {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this._item = item;
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(815, 565);
 		setPreferredSize(dim);

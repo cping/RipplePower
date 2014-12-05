@@ -37,6 +37,7 @@ public class RPProxyDialog extends JDialog {
 	public RPProxyDialog(String text, JFrame parent) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		initComponents();
 	}
 

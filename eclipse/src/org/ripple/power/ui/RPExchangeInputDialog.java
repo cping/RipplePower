@@ -42,6 +42,7 @@ public class RPExchangeInputDialog extends JDialog {
 		super(parent, name, Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setIconImage(UIRes.getIcon());
 		Dimension dim = new Dimension(380, 200);
 		setResizable(false);
 		setPreferredSize(dim);

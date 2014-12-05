@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,7 @@ import javax.swing.border.TitledBorder;
 
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
 import org.spongycastle.util.encoders.Hex;
 
@@ -36,7 +38,9 @@ public class UIRes {
 
 	public static String PATH = "res/";
 	private static Map<String, ImageIcon> imageIcons = new HashMap<String, ImageIcon>();
-
+	
+	private final static BufferedImage icon;
+	
 	private static ClassLoader classLoader;
 
 	static {
@@ -45,6 +49,12 @@ public class UIRes {
 		} catch (Exception e) {
 			classLoader = Thread.currentThread().getContextClassLoader();
 		}
+		icon = LImage.createImage(
+				"icons/ripple.png").getBufferedImage();
+	}
+	
+	public static BufferedImage getIcon(){
+		return icon;
 	}
 
 	private static Font _font;

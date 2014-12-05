@@ -282,7 +282,7 @@ public class RPAccountInfoDialog extends JDialog {
 
 	public RPAccountInfoDialog(JFrame parent, String text, String address) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(668, 620);
 		setPreferredSize(dim);

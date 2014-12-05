@@ -91,6 +91,7 @@ public class RPRippledMemoDialog extends JDialog {
 		}
 		this._item = item;
 		this.addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		this.setResizable(false);
 		Dimension dim = new Dimension(518, 580);
 		this.setPreferredSize(dim);

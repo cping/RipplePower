@@ -78,6 +78,7 @@ public class RPIOUSendDialog extends JDialog {
 			String address, String amount, String fee) {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(575, 270);
 		setPreferredSize(dim);

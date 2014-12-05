@@ -82,7 +82,8 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 		_jSeparator = new javax.swing.JSeparator();
 		_sendButton = new RPCButton();
 		_exitButton = new RPCButton();
-
+		
+		setIconImage(UIRes.getIcon());
 		setResizable(false);
 		Dimension dim = new Dimension(395, 230);
 		setPreferredSize(dim);

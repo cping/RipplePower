@@ -42,7 +42,6 @@ public class HelperWindow implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent e) {
 		_objs.add(e.getSource());
-		update();
 	}
 
 	@Override
