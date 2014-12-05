@@ -258,5 +258,12 @@
         }],
        "hotwallets": ["rUR5QVHqFxRa8TSQawc1M6jKj7BvKzbHek"],
        "domain": "ripula.co.uk"
+    }, {
+	"name": "ice3x",
+	"accounts": [{
+	"address": "rLpKwneVStAVwPhgCgNJVFCePq5J3xaNpN",
+	"currencies": ["ZAR"]
+	}],
+	"domain": "www.ice3x.co.za"
     }
 ]

@@ -2,6 +2,10 @@ package org.ripple.power.txns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.ripple.core.enums.TransactionFlag;
 
@@ -56,6 +60,18 @@ public class TransactionFlagMap {
 		return result == null ? "Unkown" : result;
 	}
 
+	public final static long getFlag(String name) {
+		Set<Map.Entry<Long, String>> set = _flags.entrySet();
+		for (Iterator<Map.Entry<Long, String>> it = set.iterator(); it
+				.hasNext();) {
+			Entry<Long, String> result = it.next();
+			if (result.getValue().equalsIgnoreCase(name)) {
+				return result.getKey();
+			}
+		}
+		return 0;
+	}
+
 	public final static ArrayList<String> values() {
 		ArrayList<String> list = new ArrayList<String>(_flags.size());
 		for (String v : _flags.values()) {
@@ -63,5 +79,5 @@ public class TransactionFlagMap {
 		}
 		return list;
 	}
-	
+
 }

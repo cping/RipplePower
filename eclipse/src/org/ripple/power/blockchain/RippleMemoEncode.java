@@ -3,6 +3,7 @@ package org.ripple.power.blockchain;
 import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.Base64Coder;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.OpenSSL;
 
 public class RippleMemoEncode {
@@ -39,7 +40,7 @@ public class RippleMemoEncode {
 				modeName = "ENCODE";
 				type = mtype.getBytes(LSystem.encoding);
 				data = mdata.getBytes(LSystem.encoding);
-				if (password != null) {
+				if (!StringUtils.isEmpty(password)) {
 					OpenSSL ssl = new OpenSSL();
 					type = ssl.encrypt(type, password);
 					data = ssl.encrypt(data, password);

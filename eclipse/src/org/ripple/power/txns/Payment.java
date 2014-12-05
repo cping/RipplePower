@@ -13,6 +13,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -120,7 +121,7 @@ public class Payment {
 					txn.putTranslated(Field.SendMax, sendMax);
 				}
 				txn.putTranslated(Field.DestinationTag, dt);
-				if (invoiceID != null) {
+				if (StringUtils.isEmpty(invoiceID)) {
 					byte[] id = null;
 					if (!AccountFind.is256hash(invoiceID)) {
 						try {
