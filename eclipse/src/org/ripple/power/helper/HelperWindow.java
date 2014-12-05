@@ -4,6 +4,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
+import org.ripple.power.config.LSystem;
+
 public class HelperWindow implements WindowListener {
 
 	private static HelperWindow _instance;
@@ -14,14 +16,14 @@ public class HelperWindow implements WindowListener {
 		return new ArrayList<Object>(_objs);
 	}
 
-	public static boolean addObject(Object o){
+	public static boolean addObject(Object o) {
 		return _objs.add(o);
 	}
 
-	public static boolean removeObject(Object o){
+	public static boolean removeObject(Object o) {
 		return _objs.remove(o);
 	}
-	
+
 	public static HelperWindow get() {
 		if (_instance == null) {
 			_instance = new HelperWindow();
@@ -29,19 +31,30 @@ public class HelperWindow implements WindowListener {
 		return _instance;
 	}
 
+	private void update() {
+		if (LSystem.applicationMain != null) {
+			LSystem.applicationMain.repaint();
+			LSystem.applicationMain.getContentPane().revalidate();
+			LSystem.applicationMain.getContentPane().repaint();
+		}
+	}
+
 	@Override
 	public void windowOpened(WindowEvent e) {
-			_objs.add(e.getSource());
+		_objs.add(e.getSource());
+		update();
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-			_objs.remove(e.getSource());
+		_objs.remove(e.getSource());
+		update();
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-			_objs.remove(e.getSource());
+		_objs.remove(e.getSource());
+		update();
 	}
 
 	@Override

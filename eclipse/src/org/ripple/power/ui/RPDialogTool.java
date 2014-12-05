@@ -67,6 +67,7 @@ public class RPDialogTool {
 			this.setBackground(LColor.black);
 		}
 
+
 		public void setFadeClose(boolean f) {
 			fadeclose = f;
 		}
@@ -199,11 +200,11 @@ public class RPDialogTool {
 			Updateable update = new Updateable() {
 				@Override
 				public void action(Object o) {
-					try {
-						Thread.sleep(closeTime < 1 ? 1 : closeTime);
-					} catch (InterruptedException e) {
-					}
-					_baseDialog.close();
+						try {
+							Thread.sleep(closeTime < 1 ? 1 : closeTime);
+						} catch (InterruptedException e) {
+						}
+						_baseDialog.close();
 				}
 			};
 			LSystem.postThread(update);
@@ -217,11 +218,11 @@ public class RPDialogTool {
 	public void setFadeClose(boolean f) {
 		_baseDialog.setFadeClose(f);
 	}
-	
+
 	public boolean isFadeClose() {
 		return _baseDialog.isFadeClose();
 	}
-	
+
 	public void setVisible(boolean v) {
 		_baseDialog.setVisible(v);
 	}

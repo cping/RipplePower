@@ -19,4 +19,12 @@ public class RPTextBox extends JTextField{
 		setAlignmentX(0);
 	}
 
+	public RPTextBox(int number){
+		super(number);
+		setCaretColor(LColor.WHITE);
+		setBackground(new LColor(70, 70, 70));
+		setForeground(LColor.WHITE);
+		setHorizontalAlignment(JTextField.LEFT); 
+		setAlignmentX(0);
+	}
 }

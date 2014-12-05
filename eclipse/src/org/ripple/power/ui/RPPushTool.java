@@ -65,7 +65,7 @@ public class RPPushTool {
 			}
 			initComponents();
 		}
-
+		
 		public void run() {
 			for (int i = 0; i <= endTop; i += 10) {
 				try {
@@ -88,7 +88,7 @@ public class RPPushTool {
 			int ybottom = (int) dim.getHeight() - screenInsets.bottom;
 			for (int i = 0; i <= ybottom - y; i += 10) {
 				try {
-					setLocation(x, y + i);
+					this.setLocation(x, y + i);
 					Thread.sleep(5);
 				} catch (InterruptedException ex) {
 				}
@@ -251,6 +251,7 @@ public class RPPushTool {
 		}
 	}
 
+	
 	public boolean isClose() {
 		return _tpDialog.closed;
 	}

@@ -1,14 +1,20 @@
 package org.ripple.power.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.UUID;
 
+import org.spongycastle.util.encoders.Hex;
 
 public class ByteUtils {
 
+	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
 	private ByteUtils() {
 	}
@@ -413,11 +419,12 @@ public class ByteUtils {
 
 	private static int readByte(InputStream is) throws IOException {
 		int ret = is.read();
-		if (ret == -1){
+		if (ret == -1) {
 			throw new EOFException();
 		}
 		return ret;
 	}
+
 	public static byte[] smallIntToByteArray(int v) {
 		if (v > 65535) {
 			throw new IllegalArgumentException("value is too big");
@@ -472,11 +479,17 @@ public class ByteUtils {
 		return c;
 	}
 
+	public static byte[] appendByte(byte[] bytes, byte b) {
+		byte[] result = Arrays.copyOf(bytes, bytes.length + 1);
+		result[result.length - 1] = b;
+		return result;
+	}
+
 	public static byte[] uuidToByteArray(UUID uuid) {
 		long msb = uuid.getMostSignificantBits();
 		long lsb = uuid.getLeastSignificantBits();
 		byte[] buffer = new byte[16];
-		
+
 		for (int i = 0; i < 8; i++) {
 			buffer[i] = (byte) (msb >>> 8 * (7 - i));
 		}
@@ -486,4 +499,215 @@ public class ByteUtils {
 
 		return buffer;
 	}
+
+	public static byte[] bigIntegerToBytes(BigInteger b, int numBytes) {
+		if (b == null)
+			return null;
+		byte[] bytes = new byte[numBytes];
+		byte[] biBytes = b.toByteArray();
+		int start = (biBytes.length == numBytes + 1) ? 1 : 0;
+		int length = Math.min(biBytes.length, numBytes);
+		System.arraycopy(biBytes, start, bytes, numBytes - length, length);
+		return bytes;
+	}
+
+	public static byte[] bigIntegerToBytes(BigInteger value) {
+		if (value == null)
+			return null;
+
+		byte[] data = value.toByteArray();
+
+		if (data.length != 1 && data[0] == 0) {
+			byte[] tmp = new byte[data.length - 1];
+			System.arraycopy(data, 1, tmp, 0, tmp.length);
+			data = tmp;
+		}
+		return data;
+	}
+
+	public static int matchingNibbleLength(byte[] a, byte[] b) {
+		int i = 0;
+		int length = a.length < b.length ? a.length : b.length;
+		while (i < length) {
+			if (a[i] != b[i])
+				break;
+			i++;
+		}
+		return i;
+	}
+
+	public static byte[] longToBytes(long val) {
+		return ByteBuffer.allocate(8).putLong(val).array();
+	}
+
+	public static String toHexString(byte[] data) {
+		return data == null ? "" : Hex.toHexString(data);
+	}
+
+	public static byte[] calcPacketLength(byte[] msg) {
+		int msgLen = msg.length;
+		byte[] len = { (byte) ((msgLen >> 24) & 0xFF),
+				(byte) ((msgLen >> 16) & 0xFF), (byte) ((msgLen >> 8) & 0xFF),
+				(byte) ((msgLen) & 0xFF) };
+		return len;
+	}
+
+	public static int byteArrayToInt(byte[] b) {
+		if (b == null || b.length == 0) {
+			return 0;
+		}
+		return new BigInteger(1, b).intValue();
+	}
+
+	public static String nibblesToPrettyString(byte[] nibbles) {
+		StringBuffer buffer = new StringBuffer();
+		for (byte nibble : nibbles) {
+			String nibleString = oneByteToHexString(nibble);
+			buffer.append("\\x" + nibleString);
+		}
+		return buffer.toString();
+	}
+
+	public static String oneByteToHexString(byte value) {
+		String retVal = Integer.toString(value & 0xFF, 16);
+		if (retVal.length() == 1)
+			retVal = "0" + retVal;
+		return retVal;
+	}
+
+	public static int numBytes(String val) {
+		BigInteger bInt = new BigInteger(val);
+		int bytes = 0;
+
+		while (!bInt.equals(BigInteger.ZERO)) {
+			bInt = bInt.shiftRight(8);
+			++bytes;
+		}
+		if (bytes == 0)
+			++bytes;
+		return bytes;
+	}
+
+	public static byte[] encodeValFor32Bits(Object arg) {
+		byte[] data;
+		if (arg.toString().trim().matches("-?\\d+(\\.\\d+)?")) {
+			data = new BigInteger(arg.toString().trim()).toByteArray();
+		} else if (arg.toString().trim().matches("0[xX][0-9a-fA-F]+")) {
+			data = new BigInteger(arg.toString().trim().substring(2), 16)
+					.toByteArray();
+		} else {
+			data = arg.toString().trim().getBytes();
+		}
+		if (data.length > 32) {
+			throw new RuntimeException("values can't be more than 32 byte");
+		}
+		byte[] val = new byte[32];
+		int j = 0;
+		for (int i = data.length; i > 0; --i) {
+			val[31 - j] = data[i - 1];
+			++j;
+		}
+		return val;
+	}
+
+	public static byte[] encodeDataList(Object... args) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		for (Object arg : args) {
+			byte[] val = encodeValFor32Bits(arg);
+			try {
+				baos.write(val);
+			} catch (IOException e) {
+				throw new Error("Happen something that should never happen ", e);
+			}
+		}
+		return baos.toByteArray();
+	}
+
+	public static int firstNonZeroByte(byte[] data) {
+		int firstNonZero = -1;
+		int i = 0;
+		for (; i < data.length; ++i) {
+			if (data[i] != 0) {
+				firstNonZero = i;
+				break;
+			}
+		}
+		return firstNonZero;
+	}
+
+	public static byte[] stripLeadingZeroes(byte[] data) {
+
+		if (data == null) {
+			return null;
+		}
+
+		int firstNonZero = firstNonZeroByte(data);
+		int i = 0;
+		for (; i < data.length; ++i) {
+			if (data[i] != 0) {
+				firstNonZero = i;
+				break;
+			}
+		}
+		if (i == data.length) {
+			return new byte[1];
+		}
+		if (firstNonZero == 0) {
+			return data;
+		}
+
+		byte[] result = new byte[data.length - firstNonZero];
+		System.arraycopy(data, firstNonZero, result, 0, data.length
+				- firstNonZero);
+
+		return result;
+	}
+
+	public static byte[] setBit(byte[] data, int pos, int val) {
+		if ((data.length * 8) - 1 < pos) {
+			throw new Error("outside byte array limit, pos: " + pos);
+		}
+		int posByte = data.length - 1 - (pos) / 8;
+		int posBit = (pos) % 8;
+		byte setter = (byte) (1 << (posBit));
+		byte toBeSet = data[posByte];
+		byte result;
+		if (val == 1) {
+			result = (byte) (toBeSet | setter);
+		} else {
+			result = (byte) (toBeSet & ~setter);
+		}
+		data[posByte] = result;
+		return data;
+	}
+
+	public static int getBit(byte[] data, int pos) {
+		if ((data.length * 8) - 1 < pos) {
+			throw new Error("outside byte array limit, pos: " + pos);
+		}
+		int posByte = data.length - 1 - pos / 8;
+		int posBit = pos % 8;
+		byte dataByte = data[posByte];
+		return Math.min(1, (dataByte & (1 << (posBit))));
+	}
+
+	public static boolean increment(byte[] bytes) {
+		final int startIndex = 0;
+		int i;
+		for (i = bytes.length - 1; i >= startIndex; i--) {
+			bytes[i]++;
+			if (bytes[i] != 0) {
+				break;
+			}
+		}
+		return (i >= startIndex || bytes[startIndex] != 0);
+	}
+
+	public static byte[] copyToArray(BigInteger value) {
+		byte[] src = ByteUtils.bigIntegerToBytes(value);
+		byte[] dest = ByteBuffer.allocate(32).array();
+		System.arraycopy(src, 0, dest, dest.length - src.length, src.length);
+		return dest;
+	}
+
 }

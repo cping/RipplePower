@@ -2,7 +2,7 @@ package com.ripple.core.enums;
 
 // Transaction Specific Flags
 public class TransactionFlag {
-	public static long FullyCanonicalSig = 0x80000000,
+	public static long FullyCanonicalSig = 0x80000000L,
 			Universal = FullyCanonicalSig,
 			UniversalMask = ~Universal,
 

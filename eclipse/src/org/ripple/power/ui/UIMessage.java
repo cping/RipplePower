@@ -1,6 +1,11 @@
 package org.ripple.power.ui;
 
+import java.awt.Window;
+
+import javax.swing.SwingUtilities;
+
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.ui.RPToast.Style;
 
 public class UIMessage {
 
@@ -69,5 +74,25 @@ public class UIMessage {
 				"you_cancel_tx",
 				"You are ready to use %s Swap %s, Are you sure ?"), a, b);
 		return result;
+	}
+	
+	public final static void infoMessage(final Window parent ,final String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				RPToast.makeText(parent, text, Style.SUCCESS).display();
+				parent.revalidate();
+				parent.repaint();
+			}
+		});
+	}
+
+	public final static  void alertMessage(final Window parent ,final String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				RPToast.makeText(parent, text, Style.ERROR).display();
+				parent.revalidate();
+				parent.repaint();
+			}
+		});
 	}
 }

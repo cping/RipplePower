@@ -1,8 +1,8 @@
 package org.ripple.power.ui.table;
 
-import java.awt.Color;
-
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.ripple.power.ui.graphics.LColor;
 
 public class StringRenderer extends DefaultTableCellRenderer {
 
@@ -24,9 +24,9 @@ public class StringRenderer extends DefaultTableCellRenderer {
 		}
 		String text = (String) value;
 		if (text.equalsIgnoreCase("none")) {
-			setForeground(Color.red);
+			setForeground(LColor.red.darker().darker());
 		}else{
-			setForeground(Color.blue);
+			setForeground(LColor.blue.darker().darker());
 		}
 		setText(text);
 	}

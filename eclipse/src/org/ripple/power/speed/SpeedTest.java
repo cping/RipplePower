@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.ripple.power.config.LSystem;
-
 public class SpeedTest {
 
 	public static InputStream getSyncUrlRangeInputStream(URL url,

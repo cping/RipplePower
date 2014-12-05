@@ -1,19 +1,131 @@
 package org.ripple.power;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
+
+import org.ripple.power.blockchain.list.RP;
+import org.ripple.power.collection.ByteArrayWrapper;
+import org.ripple.power.collection.LRUMap;
+import org.ripple.power.utils.ByteUtils;
+import org.spongycastle.crypto.Digest;
+import org.spongycastle.crypto.digests.RIPEMD160Digest;
+import org.spongycastle.util.encoders.Hex;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Helper {
 
-	private static final MessageDigest digest;
+	private static final Map<Class<?>, Boolean> _customEquals = new ConcurrentHashMap<Class<?>, Boolean>();
+	private static final Map<Class<?>, Boolean> _customHash = new ConcurrentHashMap<Class<?>, Boolean>();
+	private static final Map<Class<?>, Collection<Field>> _reflectedFields = new ConcurrentHashMap<Class<?>, Collection<Field>>();
+
+	private static final int MAX_ENTRIES = 100;
+	private static LRUMap<ByteArrayWrapper, byte[]> sha3Cache = new LRUMap<>(0,
+			MAX_ENTRIES);
+	public static final byte[] EMPTY_DATA_HASH = sha3(ByteUtils.EMPTY_BYTE_ARRAY);
+	public static final byte[] EMPTY_LIST_HASH = sha3(RP.encodeList());
+	public static final byte[] EMPTY_TRIE_HASH = sha3(RP
+			.encodeElement(ByteUtils.EMPTY_BYTE_ARRAY));
+
+	private static final MessageDigest sha256digest;
+
+	private static SecureRandom random = new SecureRandom();
+
+	private static BigInteger _1000_ = new BigInteger("1000");
 
 	static {
 		try {
-			digest = MessageDigest.getInstance("SHA-256");
+			sha256digest = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static byte[] sha256(byte[] input) {
+		return sha256digest.digest(input);
+	}
+
+	public static byte[] sha3(byte[] input) {
+		ByteArrayWrapper inputByteArray = new ByteArrayWrapper(input);
+		byte[] result = sha3Cache.get(inputByteArray);
+		if (result != null) {
+			return result;
+		}
+		result = SHA3.sha3(input);
+		sha3Cache.put(inputByteArray, result);
+		return result;
+	}
+
+	public static byte[] ripemd160(byte[] message) {
+		Digest digest = new RIPEMD160Digest();
+		if (message != null) {
+			byte[] resBuf = new byte[digest.getDigestSize()];
+			digest.update(message, 0, message.length);
+			digest.doFinal(resBuf, 0);
+			return resBuf;
+		}
+		throw new NullPointerException("Can't hash a null");
+	}
+
+	public static byte[] sha3omit12(byte[] input) {
+		byte[] hash = sha3(input);
+		return copyOfRange(hash, 12, hash.length);
+	}
+
+	public static byte[] calcNewAddr(byte[] addr, byte[] nonce) {
+
+		byte[] encSender = RP.encodeElement(addr);
+		byte[] encNonce = RP.encodeBigInteger(new BigInteger(1, nonce));
+		byte[] newAddress = sha3omit12(RP.encodeList(encSender, encNonce));
+
+		return newAddress;
+	}
+
+	public static byte[] doubleDigest(byte[] input) {
+		return doubleDigest(input, 0, input.length);
+	}
+
+	public static byte[] doubleDigest(byte[] input, int offset, int length) {
+		synchronized (sha256digest) {
+			sha256digest.reset();
+			sha256digest.update(input, offset, length);
+			byte[] first = sha256digest.digest();
+			return sha256digest.digest(first);
+		}
+	}
+
+	public static byte[] randomPeerId() {
+		byte[] peerIdBytes = new BigInteger(512, getRandom()).toByteArray();
+		String peerId = null;
+		if (peerIdBytes.length > 64) {
+			peerId = Hex.toHexString(peerIdBytes, 1, 64);
+		} else {
+			peerId = Hex.toHexString(peerIdBytes);
+		}
+		return Hex.decode(peerId);
 	}
 
 	public static byte[] quarter(byte[] bytes) {
@@ -53,23 +165,10 @@ public class Helper {
 	}
 
 	public static byte[] update(byte[] input) {
-		synchronized (digest) {
-			digest.reset();
-			digest.update(input);
-			return digest.digest();
-		}
-	}
-
-	public static byte[] doubleDigest(byte[] input) {
-		return doubleDigest(input, 0, input.length);
-	}
-
-	public static byte[] doubleDigest(byte[] input, int offset, int length) {
-		synchronized (digest) {
-			digest.reset();
-			digest.update(input, offset, length);
-			byte[] first = digest.digest();
-			return digest.digest(first);
+		synchronized (sha256digest) {
+			sha256digest.reset();
+			sha256digest.update(input);
+			return sha256digest.digest();
 		}
 	}
 
@@ -555,6 +654,368 @@ public class Helper {
 		return tmp;
 	}
 
+	private static class DualKey {
+		private final Object _key1;
+		private final Object _key2;
+
+		private DualKey(Object k1, Object k2) {
+			_key1 = k1;
+			_key2 = k2;
+		}
+
+		public boolean equals(Object other) {
+			if (other == null) {
+				return false;
+			}
+
+			if (!(other instanceof DualKey)) {
+				return false;
+			}
+
+			DualKey that = (DualKey) other;
+			return _key1 == that._key1 && _key2 == that._key2;
+		}
+
+		public int hashCode() {
+			int h1 = _key1 != null ? _key1.hashCode() : 0;
+			int h2 = _key2 != null ? _key2.hashCode() : 0;
+			return h1 + h2;
+		}
+	}
+
+	public static boolean deepEquals(Object a, Object b) {
+		Set<DualKey> visited = new HashSet<DualKey>();
+		LinkedList<DualKey> stack = new LinkedList<DualKey>();
+		stack.addFirst(new DualKey(a, b));
+		while (!stack.isEmpty()) {
+			DualKey dualKey = stack.removeFirst();
+			visited.add(dualKey);
+
+			if (dualKey._key1 == dualKey._key2) {
+				continue;
+			}
+
+			if (dualKey._key1 == null || dualKey._key2 == null) {
+				return false;
+			}
+
+			if (!dualKey._key1.getClass().equals(dualKey._key2.getClass())) {
+				return false;
+			}
+
+			if (dualKey._key1.getClass().isArray()) {
+				if (!compareArrays(dualKey._key1, dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (dualKey._key1 instanceof SortedSet) {
+				if (!compareOrderedCollection((Collection) dualKey._key1,
+						(Collection) dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (dualKey._key1 instanceof Set) {
+				if (!compareUnorderedCollection((Collection) dualKey._key1,
+						(Collection) dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (dualKey._key1 instanceof Collection) {
+				if (!compareOrderedCollection((Collection) dualKey._key1,
+						(Collection) dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (dualKey._key1 instanceof SortedMap) {
+				if (!compareSortedMap((SortedMap) dualKey._key1,
+						(SortedMap) dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (dualKey._key1 instanceof Map) {
+				if (!compareUnorderedMap((Map) dualKey._key1,
+						(Map) dualKey._key2, stack, visited)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (hasCustomEquals(dualKey._key1.getClass())) {
+				if (!dualKey._key1.equals(dualKey._key2)) {
+					return false;
+				}
+				continue;
+			}
+
+			Collection<Field> fields = getDeepDeclaredFields(dualKey._key1
+					.getClass());
+
+			for (Field field : fields) {
+				try {
+					DualKey dk = new DualKey(field.get(dualKey._key1),
+							field.get(dualKey._key2));
+					if (!visited.contains(dk)) {
+						stack.addFirst(dk);
+					}
+				} catch (Exception ignored) {
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private static boolean compareArrays(Object array1, Object array2,
+			LinkedList<DualKey> stack, Set<DualKey> visited) {
+		int len = Array.getLength(array1);
+		if (len != Array.getLength(array2)) {
+			return false;
+		}
+		for (int i = 0; i < len; i++) {
+			DualKey dk = new DualKey(Array.get(array1, i), Array.get(array2, i));
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+		}
+		return true;
+	}
+
+	private static boolean compareOrderedCollection(Collection col1,
+			Collection col2, LinkedList stack, Set visited) {
+
+		if (col1.size() != col2.size()) {
+			return false;
+		}
+
+		Iterator i1 = col1.iterator();
+		Iterator i2 = col2.iterator();
+
+		while (i1.hasNext()) {
+			DualKey dk = new DualKey(i1.next(), i2.next());
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+		}
+		return true;
+	}
+
+	private static boolean compareUnorderedCollection(Collection col1,
+			Collection col2, LinkedList stack, Set visited) {
+		if (col1.size() != col2.size()) {
+			return false;
+		}
+
+		Map fastLookup = new HashMap();
+		for (Object o : col2) {
+			fastLookup.put(deepHashCode(o), o);
+		}
+
+		for (Object o : col1) {
+			Object other = fastLookup.get(deepHashCode(o));
+			if (other == null) {
+				return false;
+			}
+
+			DualKey dk = new DualKey(o, other);
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+		}
+		return true;
+	}
+
+	private static boolean compareSortedMap(SortedMap map1, SortedMap map2,
+			LinkedList stack, Set visited) {
+		if (map1.size() != map2.size()) {
+			return false;
+		}
+
+		Iterator i1 = map1.entrySet().iterator();
+		Iterator i2 = map2.entrySet().iterator();
+
+		while (i1.hasNext()) {
+			Map.Entry entry1 = (Map.Entry) i1.next();
+			Map.Entry entry2 = (Map.Entry) i2.next();
+
+			DualKey dk = new DualKey(entry1.getKey(), entry2.getKey());
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+
+			dk = new DualKey(entry1.getValue(), entry2.getValue());
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+		}
+		return true;
+	}
+
+	private static boolean compareUnorderedMap(Map map1, Map map2,
+			LinkedList stack, Set visited) {
+		if (map1.size() != map2.size()) {
+			return false;
+		}
+
+		Map fastLookup = new HashMap();
+
+		for (Map.Entry entry : (Set<Map.Entry>) map2.entrySet()) {
+			fastLookup.put(deepHashCode(entry.getKey()), entry);
+		}
+
+		for (Map.Entry entry : (Set<Map.Entry>) map1.entrySet()) {
+			Map.Entry other = (Map.Entry) fastLookup.get(deepHashCode(entry
+					.getKey()));
+			if (other == null) {
+				return false;
+			}
+
+			DualKey dk = new DualKey(entry.getKey(), other.getKey());
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+
+			dk = new DualKey(entry.getValue(), other.getValue());
+			if (!visited.contains(dk)) {
+				stack.addFirst(dk);
+			}
+		}
+
+		return true;
+	}
+
+	public static boolean hasCustomEquals(Class c) {
+		Class origClass = c;
+		if (_customEquals.containsKey(c)) {
+			return _customEquals.get(c);
+		}
+
+		while (!Object.class.equals(c)) {
+			try {
+				c.getDeclaredMethod("equals", Object.class);
+				_customEquals.put(origClass, true);
+				return true;
+			} catch (Exception ignored) {
+			}
+			c = c.getSuperclass();
+		}
+		_customEquals.put(origClass, false);
+		return false;
+	}
+
+	public static int deepHashCode(Object obj) {
+		Set visited = new HashSet();
+		LinkedList<Object> stack = new LinkedList<Object>();
+		stack.addFirst(obj);
+		int hash = 0;
+
+		while (!stack.isEmpty()) {
+			obj = stack.removeFirst();
+			if (obj == null || visited.contains(obj)) {
+				continue;
+			}
+
+			visited.add(obj);
+
+			if (obj.getClass().isArray()) {
+				int len = Array.getLength(obj);
+				for (int i = 0; i < len; i++) {
+					stack.addFirst(Array.get(obj, i));
+				}
+				continue;
+			}
+
+			if (obj instanceof Collection) {
+				stack.addAll(0, (Collection) obj);
+				continue;
+			}
+
+			if (obj instanceof Map) {
+				stack.addAll(0, ((Map) obj).keySet());
+				stack.addAll(0, ((Map) obj).values());
+				continue;
+			}
+
+			if (hasCustomHashCode(obj.getClass())) {
+				hash += obj.hashCode();
+				continue;
+			}
+
+			Collection<Field> fields = getDeepDeclaredFields(obj.getClass());
+			for (Field field : fields) {
+				try {
+					stack.addFirst(field.get(obj));
+				} catch (Exception ignored) {
+				}
+			}
+		}
+		return hash;
+	}
+
+	public static boolean hasCustomHashCode(Class<?> c) {
+		Class<?> origClass = c;
+		if (_customHash.containsKey(c)) {
+			return _customHash.get(c);
+		}
+		while (!Object.class.equals(c)) {
+			try {
+				c.getDeclaredMethod("hashCode");
+				_customHash.put(origClass, true);
+				return true;
+			} catch (Exception ignored) {
+			}
+			c = c.getSuperclass();
+		}
+		_customHash.put(origClass, false);
+		return false;
+	}
+
+	public static Collection<Field> getDeepDeclaredFields(Class<?> c) {
+		if (_reflectedFields.containsKey(c)) {
+			return _reflectedFields.get(c);
+		}
+		Collection<Field> fields = new ArrayList<Field>();
+		Class<?> curr = c;
+
+		while (curr != null) {
+			try {
+				Field[] local = curr.getDeclaredFields();
+
+				for (Field field : local) {
+					if (!field.isAccessible()) {
+						try {
+							field.setAccessible(true);
+						} catch (Exception ignored) {
+						}
+					}
+
+					int modifiers = field.getModifiers();
+					if (!Modifier.isStatic(modifiers)
+							&& !field.getName().startsWith("this$")
+							&& !Modifier.isTransient(modifiers)) {
+						fields.add(field);
+					}
+				}
+			} catch (ThreadDeath t) {
+				throw t;
+			} catch (Throwable ignored) {
+			}
+
+			curr = curr.getSuperclass();
+		}
+		_reflectedFields.put(c, fields);
+		return fields;
+	}
+
 	private static int getLength(int from, int to) {
 		int newLength = to - from;
 		if (newLength < 0) {
@@ -615,5 +1076,53 @@ public class Helper {
 		} else {
 			return concatenate(b, c, d);
 		}
+	}
+
+	public static String hexStringToDecimalString(String hexNum) {
+		boolean match = Pattern.matches("0[xX][0-9a-fA-F]+", hexNum);
+		if (!match) {
+			throw new Error(
+					"The string doesn't conains hex num in form 0x.. : ["
+							+ hexNum + "]");
+		}
+		byte[] numberBytes = Hex.decode(hexNum.substring(2));
+		return (new BigInteger(1, numberBytes)).toString();
+	}
+
+	public static String longToDateTime(long timestamp) {
+		Date date = new Date(timestamp * 1000);
+		DateFormat formatter = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+		return formatter.format(date);
+	}
+
+	public static ImageIcon getImageIcon(String resource) {
+		URL imageURL = ClassLoader.getSystemResource(resource);
+		ImageIcon image = new ImageIcon(imageURL);
+		return image;
+	}
+
+	public static String getValueShortString(BigInteger number) {
+		BigInteger result = number;
+		int pow = 0;
+		while (result.compareTo(_1000_) == 1 || result.compareTo(_1000_) == 0) {
+			result = result.divide(_1000_);
+			pow += 3;
+		}
+		return result.toString() + "·(" + "10^" + pow + ")";
+	}
+
+	public static SecureRandom getRandom() {
+		return random;
+	}
+
+	public static StringBuffer getHashlistShort(List<byte[]> blockHashes) {
+		StringBuffer sb = new StringBuffer();
+		if (blockHashes.isEmpty()) {
+			return sb.append("[]");
+		}
+		String firstHash = Hex.toHexString(blockHashes.get(0));
+		String lastHash = Hex
+				.toHexString(blockHashes.get(blockHashes.size() - 1));
+		return sb.append(" ").append(firstHash).append("...").append(lastHash);
 	}
 }
