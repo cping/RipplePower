@@ -83,6 +83,7 @@ public class UIMessage {
 		return result;
 	}
 
+	
 	public final static void infoMessage(final Window parent, final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

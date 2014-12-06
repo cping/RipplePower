@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -30,17 +31,28 @@ import javax.swing.border.TitledBorder;
 
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
 import org.spongycastle.util.encoders.Hex;
 
 public class UIRes {
 
-	public static String PATH = "res/";
-	private static Map<String, ImageIcon> imageIcons = new HashMap<String, ImageIcon>();
-	
+	private final static LColor fontColorTitle = LColor.black;
+
+	private final static LColor fontColor = new LColor(
+			LColor.lightSkyBlue.darker());
+
 	private final static BufferedImage icon;
-	
+
+	public final static ImageIcon postIcon;
+
+	public final static ImageIcon exitIcon;
+
+	public final static String PATH = "res/";
+
+	private final static Map<String, ImageIcon> imageIcons = new HashMap<String, ImageIcon>();
+
 	private static ClassLoader classLoader;
 
 	static {
@@ -49,11 +61,14 @@ public class UIRes {
 		} catch (Exception e) {
 			classLoader = Thread.currentThread().getContextClassLoader();
 		}
-		icon = LImage.createImage(
-				"icons/ripple.png").getBufferedImage();
+		icon = LImage.createImage("icons/ripple.png").getBufferedImage();
+		postIcon = new ImageIcon(new LImage("icons/post.png").scaledInstance(
+				48, 48).getBufferedImage());
+		exitIcon = new ImageIcon(new LImage("icons/down.png").scaledInstance(
+				48, 48).getBufferedImage());
 	}
-	
-	public static BufferedImage getIcon(){
+
+	public static BufferedImage getIcon() {
 		return icon;
 	}
 
@@ -127,62 +142,96 @@ public class UIRes {
 		}
 		return PATH + path;
 	}
+
+	public static void addStyle(JTextField textField, String labelName) {
+		addStyle(textField, labelName, true);
+	}
+
+	public static void addStyle(JTextField textField, String labelName,
+			boolean bottom) {
+		textField.setHorizontalAlignment(SwingConstants.RIGHT);
+		Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+		TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
+		titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
+		titled.setTitleColor(fontColorTitle);
+		Border empty = null;
+		if (bottom) {
+			empty = new EmptyBorder(5, 8, 5, 8);
+		} else {
+			empty = new EmptyBorder(5, 8, 0, 8);
+		}
+		CompoundBorder border = new CompoundBorder(titled, empty);
+		textField.setBorder(border);
+		textField.setForeground(fontColor);
+		textField.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
+	}
+
+	public static void addStyle(JComboBox<Object> textField, String labelName) {
+		Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+		TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
+		titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
+		titled.setTitleColor(fontColorTitle);
+		Border empty =  new EmptyBorder(0, 8, 0, 8);
+		CompoundBorder border = new CompoundBorder(titled, empty);
+		textField.setBorder(border);
+		textField.setForeground(fontColor);
+		textField.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
+	}
 	
+	public static void addStyle(JTextArea textArea, String labelName,
+			boolean isBorder) {
+		Border border = null;
+		if (isBorder) {
+			Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+			TitledBorder titled = BorderFactory.createTitledBorder(line,
+					labelName);
+			titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
+			titled.setTitleColor(fontColorTitle);
+		}
+		textArea.setBorder(border);
+		textArea.setForeground(fontColor);
+		textArea.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
+	}
 
-    public static void addStyle(JTextField textField, String labelName) {
-        textField.setHorizontalAlignment(SwingConstants.RIGHT);
-        Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
-        TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
-        titled.setTitleFont(new Font("Verdana", 0, 13));
-        titled.setTitleColor(new Color(213, 225, 185));
-        Border empty = new EmptyBorder(5, 8, 5, 8);
-        CompoundBorder border = new CompoundBorder(titled, empty);
-        textField.setBorder(border);
-        textField.setForeground(new Color(143, 170, 220));
-        textField.setFont(new Font("Monospaced", 0, 13));
-    }
+	public static void addStyle(JScrollPane jScrollPane, String labelName) {
+		addStyle(jScrollPane, labelName, false);
+	}
 
-    public static void addStyle(JTextArea textArea, String labelName, boolean isBorder) {
-        Border border = null;
-        if (isBorder) {
-            Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
-            TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
-            titled.setTitleFont(new Font("Verdana", 0, 13));
-            titled.setTitleColor(new Color(213, 225, 185));
-        }
-        textArea.setBorder(border);
-        textArea.setForeground(new Color(143, 170, 220));
-        textArea.setFont(new Font("Monospaced", 0, 13));
-    }
+	public static void addStyle(JScrollPane jScrollPane, String labelName,
+			boolean bottom) {
+		Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+		TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
+		titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
+		titled.setTitleColor(fontColorTitle);
+		Border empty = null;
+		if (bottom) {
+			empty = new EmptyBorder(5, 8, 5, 8);
+		} else {
+			empty = new EmptyBorder(5, 8, 0, 8);
+		}
+		CompoundBorder border = new CompoundBorder(titled, empty);
+		jScrollPane.setBorder(border);
+		jScrollPane.setForeground(fontColor);
+		jScrollPane.setBackground(Color.WHITE);
+		jScrollPane.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
+		jScrollPane.setHorizontalScrollBar(null);
+	}
 
-    public static void addStyle(JScrollPane jScrollPane, String labelName) {
-        Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
-        TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
-        titled.setTitleFont(new Font("Verdana", 0, 13));
-        titled.setTitleColor(new Color(213, 225, 185));
-        Border empty = new EmptyBorder(5, 8, 5, 8);
-        CompoundBorder border = new CompoundBorder(titled, empty);
-        jScrollPane.setBorder(border);
-        jScrollPane.setForeground(new Color(143, 170, 220));
-        jScrollPane.setBackground(Color.WHITE);
-        jScrollPane.setFont(new Font("Monospaced", 0, 13));
-        jScrollPane.setHorizontalScrollBar(null);
-    }
+	public static void addStyle(JTable jTable) {
+		jTable.setForeground(fontColor);
+		jTable.setBackground(Color.WHITE);
+		jTable.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
+	}
 
-    public static void addStyle(JTable jTable) {
-        jTable.setForeground(new Color(143, 170, 220));
-        jTable.setBackground(Color.WHITE);
-        jTable.setFont(new Font("Monospaced", 0, 13));
-    }
+	public static String getHexStyledText(byte[] data) {
+		String[] dataHex = Hex.toHexString(data).split("(?<=\\G.{2})");
+		StringBuffer sb = new StringBuffer();
 
-    public static String getHexStyledText(byte[] data) {
-        String[] dataHex = Hex.toHexString(data).split("(?<=\\G.{2})");
-        StringBuffer sb = new StringBuffer();
-
-        for (int i = 0; i < dataHex.length; ++i) {
-            sb.append(dataHex[i]).append(" ");
-            if ((i + 1) % 8 == 0 && i != 0) sb.append("\n");
-        }
-        return sb.toString();
-    }
+		for (int i = 0; i < dataHex.length; ++i) {
+			sb.append(dataHex[i]).append(" ");
+			if ((i + 1) % 8 == 0 && i != 0)
+				sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

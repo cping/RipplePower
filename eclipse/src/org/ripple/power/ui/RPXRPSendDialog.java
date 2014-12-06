@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -20,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
@@ -30,7 +28,6 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.ui.graphics.LColor;
-import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -43,11 +40,6 @@ public class RPXRPSendDialog extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static ImageIcon postIcon = new ImageIcon(new LImage(
-			"icons/post.png").scaledInstance(48, 48).getBufferedImage());
-
-	private static ImageIcon exitIcon = new ImageIcon(new LImage(
-			"icons/down.png").scaledInstance(48, 48).getBufferedImage());
 
 	private final JTextField _addressText;
 	private final JTextField _amountText;
@@ -124,7 +116,7 @@ public class RPXRPSendDialog extends JPanel {
 
 		_addressText = new JTextField(34);
 		_addressText.setText(address);
-		UIRes.addStyle(_addressText, "Pay to:");
+		UIRes.addStyle(_addressText, "Pay to: ",false);
 
 		_amountText = new JTextField(18);
 		_amountText.addKeyListener(new KeyListener() {
@@ -162,15 +154,9 @@ public class RPXRPSendDialog extends JPanel {
 		_feeText.setBounds(330, 80, 90, 45);
 		add(_feeText);
 
-		JLabel exitLabel = new JLabel(exitIcon);
+		JLabel exitLabel = new JLabel(UIRes.exitIcon);
 		exitLabel.setToolTipText("Cancel");
 		exitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-		JLabel statusMessage = new JLabel("");
-		statusMessage.setBounds(50, 180, 400, 50);
-		statusMessage.setHorizontalAlignment(SwingConstants.CENTER);
-
-		add(statusMessage);
 
 		exitLabel.setBounds(260, 145, 45, 45);
 		add(exitLabel);
@@ -182,7 +168,7 @@ public class RPXRPSendDialog extends JPanel {
 			}
 		});
 
-		JLabel submitLabel = new JLabel(postIcon);
+		JLabel submitLabel = new JLabel(UIRes.postIcon);
 		submitLabel.setToolTipText("Submit transaction");
 		submitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -217,7 +203,8 @@ public class RPXRPSendDialog extends JPanel {
 									UIMessage.errNotAddress);
 							return;
 						}
-						if (StringUtils.isEmpty(address)) {
+						if (StringUtils.isEmpty(address)
+								|| !AccountFind.isRippleAddress(address)) {
 							UIMessage.alertMessage(get().getDialog(),
 									UIMessage.errNotAddress);
 							return;
@@ -241,17 +228,17 @@ public class RPXRPSendDialog extends JPanel {
 
 								@Override
 								public void success(JSONObject res) {
+									dialog.closeDialog();
 									RPJSonLog.get().println(res, false);
 									WalletCache.get().reset();
-									dialog.closeDialog();
 									UIMessage.infoMessage(get().getDialog(),
 											UIMessage.completed);
 								}
 
 								@Override
 								public void error(JSONObject res) {
-									RPJSonLog.get().println(res);
 									dialog.closeDialog();
+									RPJSonLog.get().println(res);
 								}
 							});
 

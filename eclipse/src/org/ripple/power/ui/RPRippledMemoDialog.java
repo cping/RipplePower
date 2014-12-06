@@ -35,6 +35,7 @@ public class RPRippledMemoDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Font font = UIRes.getFont();
 	private RPTextBox _amountText;
 	private RPCheckBox _encodeCheckBox;
 	private RPTextBox _feeAmount;
@@ -102,8 +103,6 @@ public class RPRippledMemoDialog extends JDialog {
 	private void initComponents() {
 
 		addWindowListener(HelperWindow.get());
-
-		Font font = UIRes.getFont();
 
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_messageList = new RPList();
@@ -207,7 +206,7 @@ public class RPRippledMemoDialog extends JDialog {
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 480, 520, 10);
 
-		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_exitButton.setText(UIMessage.exit);
 		_exitButton.setFont(font);
 		getContentPane().add(_exitButton);
 		_exitButton.setBounds(420, 500, 81, 40);
@@ -220,7 +219,7 @@ public class RPRippledMemoDialog extends JDialog {
 			}
 		});
 
-		_submitButton.setText(LangConfig.get(this, "send", "Send"));
+		_submitButton.setText(UIMessage.send);
 		_submitButton.setFont(font);
 		getContentPane().add(_submitButton);
 		_submitButton.setBounds(320, 500, 81, 40);
@@ -328,46 +327,58 @@ public class RPRippledMemoDialog extends JDialog {
 		}
 		if (_item == null) {
 			_submitButton.setEnabled(false);
-			//_resetButton.setEnabled(false);
+			// _resetButton.setEnabled(false);
 		}
 		pack();
 	}
 
-	private void loadMessages(String address, int min, int max) {
-		if (address != null && AccountFind.isRippleAddress(address)) {
-			AccountFind find = new AccountFind();
-			String password = null;
-			if (_encodeCheckBox.isSelected()) {
-				password = _passwordText.getText();
-				if (password.length() == 0) {
-					password = null;
-				}
-			}
-			final WaitDialog wait = WaitDialog.showDialog(this);
-			find.message(address, password, min, max, new Updateable() {
+	private void loadMessages(final String address, final int min, final int max) {
 
-				@Override
-				public void action(Object o) {
-					if (o != null && o instanceof RippleMemoDecodes) {
-						final RippleMemoDecodes decodes = (RippleMemoDecodes) o;
-						if (decodes.size() > 0) {
-							_messageList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
-										private static final long serialVersionUID = 1L;
+		Updateable update = new Updateable() {
 
-										public int getSize() {
-											return decodes.size();
-										}
+			@Override
+			public void action(Object o) {
 
-										public Object getElementAt(int i) {
-											return decodes.get(i).toHTML();
-										}
-									});
+				if (address != null && AccountFind.isRippleAddress(address)) {
+					AccountFind find = new AccountFind();
+					String password = null;
+					if (_encodeCheckBox.isSelected()) {
+						password = _passwordText.getText();
+						if (password.length() == 0) {
+							password = null;
 						}
 					}
-					wait.closeDialog();
+					final WaitDialog wait = WaitDialog
+							.showDialog(RPRippledMemoDialog.this);
+					find.message(address, password, min, max, new Updateable() {
+
+						@Override
+						public void action(Object o) {
+							if (o != null && o instanceof RippleMemoDecodes) {
+								final RippleMemoDecodes decodes = (RippleMemoDecodes) o;
+								if (decodes.size() > 0) {
+									_messageList
+											.setModel(new javax.swing.AbstractListModel<Object>() {
+												private static final long serialVersionUID = 1L;
+
+												public int getSize() {
+													return decodes.size();
+												}
+
+												public Object getElementAt(int i) {
+													return decodes.get(i)
+															.toHTML();
+												}
+											});
+								}
+							}
+							wait.closeDialog();
+						}
+					});
 				}
-			});
-		}
+
+			}
+		};
+		LSystem.postThread(update);
 	}
 }
