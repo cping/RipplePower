@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -433,17 +432,8 @@ public class RPClient {
 	}
 
 	private static void popXRP(String address, String flag, double amount) {
-		String result = String.valueOf(amount);
-		if (result.toLowerCase().indexOf("e") != -1
-				|| result.toLowerCase().indexOf("+") != -1
-				|| result.toLowerCase().indexOf("-") != -1) {
-			RPBubbleDialog.pop(time() + address + flag + " "
-					+ LSystem.getNumber(new BigDecimal(result))
-					+ LSystem.nativeCurrency);
-		} else {
-			RPBubbleDialog.pop(time() + address + flag + " " + result
-					+ LSystem.nativeCurrency);
-		}
+		RPBubbleDialog.pop(time() + address + flag + " "
+				+ LSystem.getNumberShort(amount) + LSystem.nativeCurrency);
 	}
 
 	public Client getClinet() {

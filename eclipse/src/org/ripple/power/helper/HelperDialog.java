@@ -49,6 +49,18 @@ public class HelperDialog extends Canvas {
 						"Ripple Wizard"), helper);
 	}
 
+	public static void hideDialog() {
+		if (instance != null) {
+			instance.setVisible(false);
+		}
+	}
+	
+	public static void showDialog() {
+		if (instance != null) {
+			instance.setVisible(true);
+		}
+	}
+	
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();
@@ -88,7 +100,7 @@ public class HelperDialog extends Canvas {
 	}
 
 	public void update(Graphics g) {
-			paint(g);
+		paint(g);
 	}
 
 	public void paint(Graphics g) {

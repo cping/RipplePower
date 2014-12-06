@@ -17,15 +17,30 @@ public class JConsole extends JScrollPane {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private final JLabel imageLabel = new JLabel();
 	private OutputStream fromConsoleStream;
 	private InputStream in;
 	private PrintStream out, err;
 	private AttributeSet attrOut, attrError;
 	private PipePump outPump, errPump;
 
+	public void setImageIcon(ImageIcon icon) {
+		clear();
+		imageLabel.setIcon(icon);
+		imageLabel.setVisible(true);
+	}
+	
+	public void imageShow() {
+		imageLabel.setVisible(true);
+	}
+	
+	public void imageHide() {
+		imageLabel.setVisible(false);
+	}
+	
 	public void uiprint(String mes) {
 		if (attrOut != null) {
+			imageHide();
 			print(mes, attrOut);
 		}
 	}
@@ -58,9 +73,20 @@ public class JConsole extends JScrollPane {
 		final Font lFont = new Font("Monospaced", Font.PLAIN, 12);
 		text.setText("");
 		text.setFont(lFont);
-		text.setMargin(new Insets(5, 3, 5, 3));
+		text.setMargin(new Insets(1, 1, 1, 1));
 		text.addKeyListener(new MyKeyListener());
 		setViewportView(text);
+
+		int size = 128;
+
+		imageLabel.setForeground(LColor.white);
+		imageLabel.setBackground(LColor.white);
+		imageLabel.setBounds(RPJSonLog.WIDTH / 2 - size / 2, RPJSonLog.HEIGHT
+				/ 2 - size / 2 - 10, size, size);
+		imageLabel.setVisible(false);
+
+		text.setLayout(null);
+		text.add(imageLabel);
 
 		contextMenu = new JPopupMenu();
 		final ActionListener lActionListener = new MyActionListener();
@@ -276,6 +302,7 @@ public class JConsole extends JScrollPane {
 	 * Clear the console.
 	 */
 	public void clear() {
+		imageHide();
 		text.setText("");
 		text.repaint();
 	}

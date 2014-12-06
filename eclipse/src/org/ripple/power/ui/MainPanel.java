@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,10 +32,9 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPClipboard;
-import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
-import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.LColor;
@@ -86,6 +86,15 @@ public class MainPanel extends JPanel implements ActionListener {
 		public void mousePressed(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 				popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			} else {
+				int row = table.getSelectedRow();
+				if (row > -1 && row < WalletCache.get().size()) {
+					row = table.convertRowIndexToModel(row);
+					WalletItem item = WalletCache.get().readRow(row);
+					RPJSonLog.get().setImageIcon("Public Key",
+							new ImageIcon(EncoderDecoder.getEncoder(
+									item.getPublicKey(), 128, 128)));
+				}
 			}
 		}
 
@@ -326,33 +335,6 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		showTrayIcon();
 
-		Updateable update = new Updateable() {
-
-			@Override
-			public void action(Object o) {
-				try {
-					Thread.sleep(LSystem.SECOND * 3);
-				} catch (InterruptedException e) {
-				}
-				HelperDialog.get();
-				try {
-					Thread.sleep(LSystem.SECOND);
-				} catch (InterruptedException e) {
-				}
-				RPJSonLog.get();
-				try {
-					Thread.sleep(LSystem.SECOND);
-				} catch (InterruptedException e) {
-				}
-				HoldXRP.get();
-				try {
-					Thread.sleep(LSystem.SECOND);
-				} catch (InterruptedException e) {
-				}
-				RPOtherServicesDialog.get();
-			}
-		};
-		LSystem.postThread(update);
 
 	}
 

@@ -27,7 +27,19 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _script_editor;
 
 	private static RPPushTool instance = null;
-
+	
+	public static void hideDialog() {
+		if (instance != null) {
+			instance.setVisible(false);
+		}
+	}
+	
+	public static void showDialog() {
+		if (instance != null) {
+			instance.setVisible(true);
+		}
+	}
+	
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();

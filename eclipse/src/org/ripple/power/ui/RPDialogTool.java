@@ -222,6 +222,10 @@ public class RPDialogTool {
 	public boolean isFadeClose() {
 		return _baseDialog.isFadeClose();
 	}
+	
+	public void setTitle(String title){
+		_titleLabel.setText(title);
+	}
 
 	public void setVisible(boolean v) {
 		_baseDialog.setVisible(v);

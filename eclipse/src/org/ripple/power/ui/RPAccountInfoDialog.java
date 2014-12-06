@@ -523,9 +523,12 @@ public class RPAccountInfoDialog extends JDialog {
 
 			@Override
 			public void action(Object o) {
-
+				revalidate();
+				repaint();
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPAccountInfoDialog.this);
+				revalidate();
+				repaint();
 				String addressTmp = _addressText.getText().trim();
 				if (addressTmp.startsWith("~")) {
 					try {
@@ -644,7 +647,8 @@ public class RPAccountInfoDialog extends JDialog {
 				find.processInfo(address, info, update_info);
 				find.processLines(address, info, update_line);
 				find.processTx(address, info, update_tx);
-
+				revalidate();
+				repaint();
 			}
 		};
 		LSystem.postThread(updateAll);

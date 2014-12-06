@@ -255,6 +255,10 @@ public class RPPushTool {
 	public boolean isClose() {
 		return _tpDialog.closed;
 	}
+	
+	public void setTitle(String title){
+		_titleLabel.setText(title);
+	}
 
 	public void setVisible(boolean v) {
 		_tpDialog.setVisible(v);

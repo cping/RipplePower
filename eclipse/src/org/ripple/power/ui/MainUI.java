@@ -15,7 +15,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
 
@@ -112,6 +114,16 @@ public class MainUI {
 
 		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel,
 				welcomePanel);
+		welcomeLink.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				HelperDialog.hideDialog();
+				RPJSonLog.hideDialog();
+				HoldXRP.hideDialog();
+				RPOtherServicesDialog.hideDialog();
+			}
+		});
 		welcomeLink.setForeground(UIConfig.getBrandColor());
 		welcomeLink.setFont(navLinkFont);
 		welcomeLink.route();
@@ -121,6 +133,43 @@ public class MainUI {
 		Icon iconXRP = UIRes.getImage("icons/ripple.png");
 		RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
 				form.getMainPanel());
+		xrpLink.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Updateable update = new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						HelperDialog.showDialog();
+						RPJSonLog.showDialog();
+						HoldXRP.showDialog();
+						RPOtherServicesDialog.showDialog();
+						try {
+							Thread.sleep(LSystem.SECOND * 3);
+						} catch (InterruptedException e) {
+						}
+						HelperDialog.get();
+						try {
+							Thread.sleep(LSystem.SECOND);
+						} catch (InterruptedException e) {
+						}
+						RPJSonLog.get();
+						try {
+							Thread.sleep(LSystem.SECOND);
+						} catch (InterruptedException e) {
+						}
+						HoldXRP.get();
+						try {
+							Thread.sleep(LSystem.SECOND);
+						} catch (InterruptedException e) {
+						}
+						RPOtherServicesDialog.get();
+					}
+				};
+				LSystem.postThread(update);
+			}
+		});
 		xrpLink.setIcon(iconXRP);
 		xrpLink.setForeground(UIConfig.getBrandColor());
 		xrpLink.setFont(navLinkFont);

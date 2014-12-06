@@ -40,7 +40,6 @@ public class RPXRPSendDialog extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	private final JTextField _addressText;
 	private final JTextField _amountText;
 	private final JTextField _feeText;
@@ -113,10 +112,10 @@ public class RPXRPSendDialog extends JPanel {
 		InputMap inputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		inputMap.put(stroke, esc);
 		this.getActionMap().put(esc, actionListener);
-
+		
 		_addressText = new JTextField(34);
 		_addressText.setText(address);
-		UIRes.addStyle(_addressText, "Pay to: ",false);
+		UIRes.addStyle(_addressText, "Pay to: ", false);
 
 		_amountText = new JTextField(18);
 		_amountText.addKeyListener(new KeyListener() {

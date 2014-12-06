@@ -287,6 +287,8 @@ public class RPIOUSendDialog extends JPanel {
 						} else {
 							calldisable();
 						}
+						revalidate();
+						repaint();
 						dialog.closeDialog();
 						revalidate();
 						repaint();
