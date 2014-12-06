@@ -11,14 +11,21 @@ public class UIMessage {
 
 	public final static String ok = LangConfig.get(UIMessage.class, "ok", "OK");
 
-	public final static String send = LangConfig.get(UIMessage.class, "send", "Send");
-	
+	public final static String send = LangConfig.get(UIMessage.class, "send",
+			"Send");
+
+	public final static String open = LangConfig.get(UIMessage.class, "open",
+			"Open");
+
+	public final static String save = LangConfig.get(UIMessage.class, "save",
+			"Save");
+
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 
-	public final static String exit = LangConfig.get(UIMessage.class,
-			"exit", "Exit");
-	
+	public final static String exit = LangConfig.get(UIMessage.class, "exit",
+			"Exit");
+
 	public final static String warning = LangConfig.get(UIMessage.class,
 			"warning", "Warning");
 
@@ -75,8 +82,8 @@ public class UIMessage {
 				"You are ready to use %s Swap %s, Are you sure ?"), a, b);
 		return result;
 	}
-	
-	public final static void infoMessage(final Window parent ,final String text) {
+
+	public final static void infoMessage(final Window parent, final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.SUCCESS).display();
@@ -86,7 +93,7 @@ public class UIMessage {
 		});
 	}
 
-	public final static  void alertMessage(final Window parent ,final String text) {
+	public final static void alertMessage(final Window parent, final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.ERROR).display();

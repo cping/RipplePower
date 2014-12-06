@@ -6,8 +6,11 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -22,7 +25,11 @@ import org.ripple.power.txns.RippleMacros;
 import org.ripple.power.ui.JConsole;
 import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.RPList;
+import org.ripple.power.ui.UIMessage;
+import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
+import org.ripple.power.utils.StringUtils;
 
 public class EditorDialog extends JDialog {
 	/**
@@ -30,6 +37,22 @@ public class EditorDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ROCScript _script;
+
+	private static ImageIcon compileIcon = new ImageIcon(LImage
+			.createImage("icons/compile.png").scaledInstance(24, 24)
+			.getBufferedImage());
+
+	private static ImageIcon saveIcon = new ImageIcon(LImage
+			.createImage("icons/save.png").scaledInstance(24, 24)
+			.getBufferedImage());
+
+	private static ImageIcon openIcon = new ImageIcon(LImage
+			.createImage("icons/open.png").scaledInstance(24, 24)
+			.getBufferedImage());
+
+	private static ImageIcon exitIcon = new ImageIcon(LImage
+			.createImage("icons/stop.png").scaledInstance(24, 24)
+			.getBufferedImage());
 
 	class Console implements IScriptLog {
 
@@ -116,10 +139,12 @@ public class EditorDialog extends JDialog {
 	}
 	private RPCButton _exitButton;
 	private RPCButton _callButton;
-	private RPList jList1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JScrollPane jScrollPane3;
+	private RPCButton _saveButton;
+	private RPCButton _openButton;
+	private RPList _list;
+	private javax.swing.JScrollPane _sp1;
+	private javax.swing.JScrollPane _sp2;
+	private javax.swing.JScrollPane _sp3;
 	private ROCScriptEditor _editorText;
 	private JConsole _log;
 
@@ -187,7 +212,7 @@ public class EditorDialog extends JDialog {
 			sbr.append("}");
 			sbr.append(LSystem.LS);
 			sbr.append("print \"Hello World!\"+ripple.ping.id");
-		}else if ("server_info".equals(name)) {
+		} else if ("server_info".equals(name)) {
 			sbr.append("#Server_info");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -198,7 +223,7 @@ public class EditorDialog extends JDialog {
 			sbr.append("}");
 			sbr.append(LSystem.LS);
 			sbr.append("print ripple.server_info.load_factor");
-		}else if ("server_state".equals(name)) {
+		} else if ("server_state".equals(name)) {
 			sbr.append("#Server_state");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -209,7 +234,7 @@ public class EditorDialog extends JDialog {
 			sbr.append("}");
 			sbr.append(LSystem.LS);
 			sbr.append("print ripple.server_state.load_base");
-		}else if ("account_info".equals(name)) {
+		} else if ("account_info".equals(name)) {
 			sbr.append("#Account_info");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -220,7 +245,7 @@ public class EditorDialog extends JDialog {
 			sbr.append("}");
 			sbr.append(LSystem.LS);
 			sbr.append("print roc.xrp_to_val(ripple.account_info.Balance)");
-		}else if ("account_lines".equals(name)) {
+		} else if ("account_lines".equals(name)) {
 			sbr.append("#Account_lines");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -230,7 +255,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("account_offers".equals(name)) {
+		} else if ("account_offers".equals(name)) {
 			sbr.append("#Account_offers");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -240,7 +265,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("account_tx".equals(name)) {
+		} else if ("account_tx".equals(name)) {
 			sbr.append("#Account_tx");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -250,7 +275,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("send".equals(name)) {
+		} else if ("send".equals(name)) {
 			sbr.append("#Send");
 			sbr.append(LSystem.LS);
 			sbr.append("#[secret] location write secret or address (address need to add to \n#RipplePower)\n");
@@ -264,7 +289,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("offer_create".equals(name)) {
+		} else if ("offer_create".equals(name)) {
 			sbr.append("#Offer_create");
 			sbr.append(LSystem.LS);
 			sbr.append("#[secret] location write secret or address (address need to add to \n#RipplePower)\n");
@@ -278,7 +303,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("offer_cancel".equals(name)) {
+		} else if ("offer_cancel".equals(name)) {
 			sbr.append("#Offer_cancel");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -288,7 +313,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("offer_price".equals(name)) {
+		} else if ("offer_price".equals(name)) {
 			sbr.append("#Offer_price");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -298,7 +323,7 @@ public class EditorDialog extends JDialog {
 			sbr.append(LSystem.LS);
 			sbr.append("}");
 			sbr.append(LSystem.LS);
-		}else if ("convert_price".equals(name)) {
+		} else if ("convert_price".equals(name)) {
 			sbr.append("#Convert_price");
 			sbr.append(LSystem.LS);
 			sbr.append("{");
@@ -336,18 +361,20 @@ public class EditorDialog extends JDialog {
 
 	private void initComponents() {
 
-		jScrollPane1 = new javax.swing.JScrollPane();
-		jList1 = new RPList();
-		jScrollPane2 = new javax.swing.JScrollPane();
+		_sp1 = new javax.swing.JScrollPane();
+		_list = new RPList();
+		_sp2 = new javax.swing.JScrollPane();
 		_editorText = new ROCScriptEditor();
-		jScrollPane3 = new javax.swing.JScrollPane();
+		_sp3 = new javax.swing.JScrollPane();
 		_log = new JConsole();
 		_exitButton = new RPCButton();
 		_callButton = new RPCButton();
+		_saveButton = new RPCButton();
+		_openButton = new RPCButton();
 
 		setLayout(null);
 
-		jList1.setModel(new javax.swing.AbstractListModel<Object>() {
+		_list.setModel(new javax.swing.AbstractListModel<Object>() {
 			/**
 			 * 
 			 */
@@ -361,41 +388,97 @@ public class EditorDialog extends JDialog {
 				return samples.get(i);
 			}
 		});
-		jScrollPane1.setViewportView(jList1);
-		jList1.addListSelectionListener(new ListSelectionListener() {
+		_sp1.setViewportView(_list);
+		_list.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				int idx = jList1.getSelectedIndex();
+				int idx = _list.getSelectedIndex();
 				if (idx > -1) {
-					_editorText.setText(getContext((String) jList1
+					_editorText.setText(getContext((String) _list
 							.getSelectedValue()));
 				}
 			}
 		});
 
-		add(jScrollPane1);
-		jScrollPane1.setBounds(10, 10, 108, 545);
+		add(_sp1);
+		_sp1.setBounds(10, 10, 108, 545);
 
-		jScrollPane2.setViewportView(_editorText);
+		_sp2.setViewportView(_editorText);
 
-		add(jScrollPane2);
-		jScrollPane2.setBounds(128, 10, 670, 320);
+		add(_sp2);
+		_sp2.setBounds(128, 10, 670, 320);
 
-		jScrollPane3.setViewportView(_log);
+		_sp3.setViewportView(_log);
 
-		add(jScrollPane3);
-		jScrollPane3.setBounds(130, 340, 670, 160);
+		add(_sp3);
+		_sp3.setBounds(130, 340, 670, 160);
 
 		Font font = GraphicsUtils.getFont(14);
 
-		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
+		_saveButton.setText(UIMessage.save);
+		_saveButton.setFont(font);
+		_saveButton.setIcon(saveIcon);
+		_saveButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jFileChooser = new JFileChooser(LSystem
+						.getDirectory());
+				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
+				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jFileChooser.setDialogTitle("Save ROC Script");
+				int ret = jFileChooser.showSaveDialog(EditorDialog.this);
+				if (ret == JFileChooser.APPROVE_OPTION) {
+					File file = jFileChooser.getSelectedFile();
+					String ext = FileUtils.getExtension(file.getName());
+					if (StringUtils.isEmpty(ext)) {
+						file = new File(file.getAbsolutePath() + ".roc");
+					}
+					_editorText.setFile(file);
+					_editorText.saveFile();
+					UIMessage.infoMessage(EditorDialog.this, "Save Completed");
+				}
+			}
+		});
+		add(_saveButton);
+		_saveButton.setBounds(130, 510, 90, 40);
+
+		_openButton.setText(UIMessage.open);
+		_openButton.setFont(font);
+		_openButton.setIcon(openIcon);
+		_openButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jFileChooser = new JFileChooser(LSystem
+						.getDirectory());
+				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
+				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jFileChooser.setDialogTitle("Open ROC Script");
+				int ret = jFileChooser.showSaveDialog(EditorDialog.this);
+				if (ret == JFileChooser.APPROVE_OPTION) {
+					File file = jFileChooser.getSelectedFile();
+					if (file.exists()) {
+						_editorText.setFile(file);
+						_editorText.openFile();
+						UIMessage.infoMessage(EditorDialog.this, "Open Completed");
+					}
+				}
+			}
+		});
+		add(_openButton);
+		_openButton.setBounds(230, 510, 90, 40);
+
+		_exitButton.setText(UIMessage.exit);
 		_exitButton.setFont(font);
+		_exitButton.setIcon(exitIcon);
 		add(_exitButton);
 		_exitButton.setBounds(710, 510, 90, 40);
 
 		_callButton.setText(LangConfig.get(this, "run", "Run"));
 		_callButton.setFont(font);
+		_callButton.setIcon(compileIcon);
 		_callButton.addActionListener(new ActionListener() {
 
 			@Override

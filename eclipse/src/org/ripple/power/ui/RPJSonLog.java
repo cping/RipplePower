@@ -68,6 +68,10 @@ public class RPJSonLog {
 	}
 
 	public void println(JSONObject o) {
+		println(o, true);
+	}
+
+	public void println(JSONObject o, boolean show) {
 		if (o != null && o.has("result")) {
 			JSONObject result = o.getJSONObject("result");
 			if (lConsole != null) {
@@ -78,20 +82,21 @@ public class RPJSonLog {
 				lConsole.uiprint(result + LSystem.LS);
 				_count++;
 			}
-			int engine_result_code = -1;
-			if (result.has("engine_result_code")) {
-				engine_result_code = result.getInt("engine_result_code");
-			}
-			if (result.has("engine_result_message")) {
-				String engine_result_message = result
-						.getString("engine_result_message");
-				RPToast toast = RPToast
-						.makeText(LSystem.applicationMain, "Result_message:"
-								+ engine_result_message,
-								(engine_result_code == 0 ? Style.SUCCESS
-										: Style.ERROR));
-				toast.setDuration(6000);
-				toast.display();
+			if (show) {
+				int engine_result_code = -1;
+				if (result.has("engine_result_code")) {
+					engine_result_code = result.getInt("engine_result_code");
+				}
+				if (result.has("engine_result_message")) {
+					String engine_result_message = result
+							.getString("engine_result_message");
+					RPToast toast = RPToast.makeText(LSystem.applicationMain,
+							"Result_message:" + engine_result_message,
+							(engine_result_code == 0 ? Style.SUCCESS
+									: Style.ERROR));
+					toast.setDuration(6000);
+					toast.display();
+				}
 			}
 		}
 	}

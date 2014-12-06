@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -26,6 +27,24 @@ import javax.swing.undo.UndoManager;
 import org.ripple.power.ui.graphics.LColor;
 
 public class ROCScriptEditor extends JPanel {
+	
+	
+	public final static ROCFileFilter FILTER = new ROCFileFilter();
+	
+	private static class ROCFileFilter extends FileFilter {
+		public boolean accept(File f) {
+			if (f.isDirectory()) {
+				return true;
+			}
+			return f.getName().endsWith(".txt") || f.getName().endsWith(".roc")
+					|| f.getName().endsWith(".script");
+		}
+
+		public String getDescription() {
+			return ".txt|.roc|.script";
+		}
+	}
+
 
 	/**
 	 * 

@@ -33,7 +33,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private javax.swing.JButton jButton1;
+	private javax.swing.JButton _button;
 
 	private BufferedImage pImage = null;
 
@@ -41,7 +41,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 
 	private int modelFlag = 0;
 
-	private AddressPanel jPanel1;
+	private AddressPanel _panel;
 
 	class AddressPanel extends JPanel {
 
@@ -113,11 +113,11 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 
 		setPreferredSize(new Dimension(400, 400));
 		setResizable(false);
-		jButton1 = new javax.swing.JButton();
-		jPanel1 = new AddressPanel();
-		jButton1.setText(title);
+		_button = new javax.swing.JButton();
+		_panel = new AddressPanel();
+		_button.setText(title);
 
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		_button.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButton1ActionPerformed(evt);
 			}
@@ -130,12 +130,12 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(
 						layout.createSequentialGroup().addGap(152, 152, 152)
-								.addComponent(jButton1)
+								.addComponent(_button)
 								.addContainerGap(155, Short.MAX_VALUE))
 				.addGroup(
 						layout.createSequentialGroup()
 								.addContainerGap()
-								.addComponent(jPanel1,
+								.addComponent(_panel,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										Short.MAX_VALUE).addContainerGap()));
@@ -144,10 +144,10 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 				.addGroup(
 						layout.createSequentialGroup()
 								.addContainerGap()
-								.addComponent(jButton1)
+								.addComponent(_button)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jPanel1,
+								.addComponent(_panel,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										251, Short.MAX_VALUE).addContainerGap()));
 

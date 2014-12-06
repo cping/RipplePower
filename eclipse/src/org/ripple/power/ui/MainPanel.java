@@ -550,7 +550,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 				} else {
 					RPXRPSendDialog.showDialog(item.getPublicKey()
-							+ " XRP Send", LSystem.applicationMain, item,
+							+ " XRP Donation", LSystem.applicationMain, item,
 							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10",
 							LSystem.getFee());
 				}
@@ -600,7 +600,7 @@ public class MainPanel extends JPanel implements ActionListener {
 													"showsecret",
 													"Show the secret key of the current address? (may be exposed to you the secret info)"),
 									LangConfig.get(this, "show", "Show"),
-									LangConfig.get(this, "cancel", "Cancel"));
+									UIMessage.cancel);
 
 					if (index == 0) {
 

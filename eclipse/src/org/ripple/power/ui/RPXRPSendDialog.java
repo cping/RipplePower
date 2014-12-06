@@ -1,120 +1,132 @@
 package org.ripple.power.ui;
 
-import java.awt.Dialog;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 
-import javax.swing.JDialog;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.helper.HelperWindow;
-import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.CurrencyUtils;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
+import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.MathUtils;
-import org.ripple.power.utils.SwingUtils;
+import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPXRPSendDialog extends JDialog implements ActionListener {
+public class RPXRPSendDialog extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private RPCButton _sendButton;
-	private RPCButton _exitButton;
-	private RPLabel _feeLabel;
-	private RPLabel _addressLabel;
-	private RPLabel _amountLabel;
-	private javax.swing.JSeparator _jSeparator;
-	private RPTextBox _addressText;
-	private RPTextBox _amountText;
-	private RPTextBox _feeText;
+	private static ImageIcon postIcon = new ImageIcon(new LImage(
+			"icons/post.png").scaledInstance(48, 48).getBufferedImage());
 
-	public static void showDialog(String name, JFrame parent, WalletItem item) {
-		try {
-			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
-					"", LSystem.getMinSend(), LSystem.getFee());
-			dialog.pack();
-			dialog.setLocationRelativeTo(parent);
-			dialog.setVisible(true);
-		} catch (Exception exc) {
-			exc.printStackTrace();
+	private static ImageIcon exitIcon = new ImageIcon(new LImage(
+			"icons/down.png").scaledInstance(48, 48).getBufferedImage());
 
+	private final JTextField _addressText;
+	private final JTextField _amountText;
+	private final JTextField _feeText;
+	private static RPXRPSendDialog lock = null;
+
+	private RPDialogTool tool;
+
+	public static RPXRPSendDialog showDialog(String text, Window parent,
+			WalletItem item, String address, String amount, String fee,
+			boolean show) {
+		if (show) {
+			synchronized (RPXRPSendDialog.class) {
+				if (lock == null) {
+					return (lock = new RPXRPSendDialog(text, parent, item,
+							address, amount, fee));
+				} else {
+					if (lock != null) {
+						lock.closeDialog();
+						lock = new RPXRPSendDialog(text, parent, item, address,
+								amount, fee);
+					}
+					return lock;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static RPXRPSendDialog showDialog(String text, Window parent,
+			WalletItem item, String address, String amount, String fee) {
+		return showDialog(text, parent, item, address, amount, fee, true);
+	}
+
+	public static RPXRPSendDialog showDialog(String name, JFrame parent,
+			WalletItem item) {
+		return new RPXRPSendDialog(name, parent, item, "",
+				LSystem.getMinSend(), LSystem.getFee());
+	}
+
+	public RPDialogTool get() {
+		return tool;
+	}
+
+	public void closeDialog() {
+		synchronized (WaitDialog.class) {
+			tool.close();
+			lock = null;
 		}
 	}
 
-	public static void showDialog(String name, JFrame parent, WalletItem item,
+	public RPXRPSendDialog(String text, Window parent, final WalletItem item,
 			String address, String amount, String fee) {
-		try {
-			RPXRPSendDialog dialog = new RPXRPSendDialog(name, parent, item,
-					address, amount, fee);
-			dialog.pack();
-			dialog.setLocationRelativeTo(parent);
-			dialog.setVisible(true);
-		} catch (Exception exc) {
-			exc.printStackTrace();
 
-		}
-	}
-
-	public RPXRPSendDialog(String text, JFrame parent, final WalletItem item,
-			String address, String amount, String fee) {
-		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
-		addWindowListener(HelperWindow.get());
-		_feeLabel = new RPLabel();
-		_addressLabel = new RPLabel();
-		_amountLabel = new RPLabel();
-		_addressText = new RPTextBox();
-		_amountText = new RPTextBox();
-		_feeText = new RPTextBox();
-		_jSeparator = new javax.swing.JSeparator();
-		_sendButton = new RPCButton();
-		_exitButton = new RPCButton();
-		
-		setIconImage(UIRes.getIcon());
-		setResizable(false);
-		Dimension dim = new Dimension(395, 230);
+		Dimension dim = new Dimension(500, 215);
 		setPreferredSize(dim);
 		setSize(dim);
 
-		getContentPane().setLayout(null);
+		final String esc = "ESCAPE";
+		KeyStroke stroke = KeyStroke.getKeyStroke(esc);
+		Action actionListener = new AbstractAction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
-		java.awt.Font font = UIRes.getFont();
+			public void actionPerformed(ActionEvent actionEvent) {
+				closeDialog();
+			}
+		};
+		InputMap inputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		inputMap.put(stroke, esc);
+		this.getActionMap().put(esc, actionListener);
 
-		_addressLabel.setText(LangConfig.get(this, "address", "Address"));
-		_addressLabel.setFont(font);
-		getContentPane().add(_addressLabel);
-		_addressLabel.setBounds(10, 22, 54, 15);
-
-		_amountLabel.setText(LangConfig.get(this, "amount", "Amount"));
-		_amountLabel.setFont(font);
-		getContentPane().add(_amountLabel);
-		_amountLabel.setBounds(10, 55, 54, 24);
-
-		_feeLabel.setText(LangConfig.get(this, "fee", "Fee"));
-		_feeLabel.setFont(font);
-		getContentPane().add(_feeLabel);
-		_feeLabel.setBounds(10, 93, 54, 24);
-
+		_addressText = new JTextField(34);
 		_addressText.setText(address);
-		getContentPane().add(_addressText);
-		_addressText.setBounds(82, 19, 297, 21);
+		UIRes.addStyle(_addressText, "Pay to:");
 
-		_amountText.setText(amount);
-		getContentPane().add(_amountText);
-		_amountText.setBounds(82, 57, 297, 21);
+		_amountText = new JTextField(18);
 		_amountText.addKeyListener(new KeyListener() {
 
 			@Override
@@ -133,17 +145,54 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 			}
 		});
+		UIRes.addStyle(_amountText, "Amount: ");
 
-		_feeText.setText(fee);
-		getContentPane().add(_feeText);
-		_feeText.setBounds(82, 95, 152, 21);
-		getContentPane().add(_jSeparator);
-		_jSeparator.setBounds(0, 135, 389, 18);
+		_feeText = new JTextField(5);
+		UIRes.addStyle(_feeText, "Fee: ");
 
-		_sendButton.setText(LangConfig.get(this, "send", "Send"));
-		_sendButton.setFont(font);
-		_sendButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+		setBackground(LColor.white);
+		setLayout(null);
+
+		_addressText.setBounds(70, 30, 350, 45);
+		add(_addressText);
+
+		_amountText.setBounds(70, 80, 250, 45);
+		add(_amountText);
+
+		_feeText.setBounds(330, 80, 90, 45);
+		add(_feeText);
+
+		JLabel exitLabel = new JLabel(exitIcon);
+		exitLabel.setToolTipText("Cancel");
+		exitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		JLabel statusMessage = new JLabel("");
+		statusMessage.setBounds(50, 180, 400, 50);
+		statusMessage.setHorizontalAlignment(SwingConstants.CENTER);
+
+		add(statusMessage);
+
+		exitLabel.setBounds(260, 145, 45, 45);
+		add(exitLabel);
+		exitLabel.setVisible(true);
+		exitLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				closeDialog();
+			}
+		});
+
+		JLabel submitLabel = new JLabel(postIcon);
+		submitLabel.setToolTipText("Submit transaction");
+		submitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		submitLabel.setBounds(200, 145, 45, 45);
+		add(submitLabel);
+		submitLabel.setVisible(true);
+
+		submitLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 
 				try {
 					String address = _addressText.getText().trim();
@@ -151,59 +200,51 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 					String feeValue = _feeText.getText().trim();
 					if (!MathUtils.isNan(amountValue)) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								UIMessage.error, UIMessage.errMoney);
+						UIMessage.alertMessage(get().getDialog(),
+								UIMessage.errMoney);
 						return;
 					}
 					if (!MathUtils.isNan(feeValue)) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								UIMessage.error, UIMessage.errFee);
+						UIMessage.alertMessage(get().getDialog(),
+								UIMessage.errFee);
 						return;
 					}
-					if (address.startsWith("~")) {
+					if (!AccountFind.isRippleAddress(address)) {
 						try {
 							address = NameFind.getAddress(address);
 						} catch (Exception ex) {
-							RPMessage.showWarningMessage(
-									LSystem.applicationMain, UIMessage.warning,
+							UIMessage.alertMessage(get().getDialog(),
 									UIMessage.errNotAddress);
 							return;
 						}
-						if (address == null) {
-							RPMessage.showWarningMessage(
-									LSystem.applicationMain, UIMessage.warning,
+						if (StringUtils.isEmpty(address)) {
+							UIMessage.alertMessage(get().getDialog(),
 									UIMessage.errNotAddress);
 							return;
 						}
 					}
-					if (!AccountFind.isRippleAddress(address)) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								UIMessage.error, UIMessage.errAddress);
-						return;
-					}
-					BigDecimal number = new BigDecimal(amountValue);
 
+					BigDecimal number = new BigDecimal(amountValue);
 					BigDecimal maxSend = new BigDecimal(item.getAmount());
 
 					if (number.longValue() >= (maxSend.longValue() - 20)) {
-						RPMessage.showErrorMessage(LSystem.applicationMain,
-								UIMessage.error, UIMessage.errNotMoney);
+						UIMessage.alertMessage(get().getDialog(),
+								UIMessage.errNotMoney);
 						return;
 					}
 
-					final WaitDialog dialog = WaitDialog
-							.showDialog(RPXRPSendDialog.this);
+					final WaitDialog dialog = WaitDialog.showDialog(get()
+							.getDialog());
 
 					Payment.sendXRP(item.getSeed(), address, amountValue,
 							feeValue, new Rollback() {
 
 								@Override
 								public void success(JSONObject res) {
-									RPJSonLog.get().println(res);
+									RPJSonLog.get().println(res, false);
 									WalletCache.get().reset();
 									dialog.closeDialog();
-									RPMessage.showInfoMessage(
-											LSystem.applicationMain, UIMessage.info,
+									UIMessage.infoMessage(get().getDialog(),
 											UIMessage.completed);
 								}
 
@@ -220,23 +261,14 @@ public class RPXRPSendDialog extends JDialog implements ActionListener {
 
 			}
 		});
-		getContentPane().add(_sendButton);
-		_sendButton.setBounds(187, 159, 105, 28);
 
-		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
-		_exitButton.setFont(font);
-		_exitButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				SwingUtils.close(RPXRPSendDialog.this);
-			}
-		});
-		getContentPane().add(_exitButton);
-		_exitButton.setBounds(302, 159, 77, 28);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		_feeText.setText(fee);
+		_amountText.setText(amount);
+
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
+				LSystem.MINUTE);
+		revalidate();
+		repaint();
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		SwingUtils.close(this);
-	}
 }
