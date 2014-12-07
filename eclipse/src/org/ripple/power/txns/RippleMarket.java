@@ -1,4 +1,4 @@
-package org.ripple.power.hft;
+package org.ripple.power.txns;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.ripple.power.utils.HttpRequest;
 
 import com.ripple.core.coretypes.RippleDate;
 
-public class Market {
+public class RippleMarket {
 
 	// 用于获取指定类型的历史交易记录（比如24小时交易等）
 	private final static String CHARTS_URL = "http://api.ripplecharts.com/api/";
@@ -163,7 +163,8 @@ public class Market {
 		}
 	}
 
-	public static Object getExchangeRates(final String currency, final String issuer) {
+	public static Object getExchangeRates(final String currency,
+			final String issuer) {
 		SimpleDateFormat iso8601 = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 		iso8601.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -178,14 +179,13 @@ public class Market {
 		data.put("timeMultiple", 1);
 		data.put("descending", false);
 		JSONObject base = new JSONObject();
-		base.put("currency", "XRP");
+		base.put("currency", LSystem.nativeCurrency);
 		JSONObject trade = new JSONObject();
 		trade.put("currency", currency);
 		trade.put("issuer", issuer);
 		data.put("base", base);
 		data.put("counter", trade);
-		HttpRequest request = HttpRequest
-				.post(CHARTS_URL + "offers_exercised");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "offers_exercised");
 		String result = request.send(data);
 		if (result.startsWith("[")) {
 			return new JSONArray(result);
@@ -195,7 +195,6 @@ public class Market {
 			return result;
 		}
 	}
-	
 
 	public static Object markettraders() {
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "markettraders");
@@ -208,7 +207,7 @@ public class Market {
 			return result;
 		}
 	}
-	
+
 	public static Object accountscreated() {
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "accountscreated");
 		String result = request.body();
@@ -220,6 +219,39 @@ public class Market {
 			return result;
 		}
 	}
+
+	public static Object getExchange(IssuedCurrency cur) {
+		ArrayList<IssuedCurrency> issueds = new ArrayList<IssuedCurrency>();
+		issueds.add(cur);
+		return getExchange(issueds);
+	}
 	
-	
+	public static Object getExchange(ArrayList<IssuedCurrency> curs) {
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "exchange_rates");
+		JSONObject obj = new JSONObject();
+		JSONArray arrays = new JSONArray();
+		if (curs != null) {
+			for (IssuedCurrency currency : curs) {
+				JSONObject item = new JSONObject();
+				JSONObject base = new JSONObject();
+				base.put("currency", currency.currency);
+				base.put("issuer", currency.issuer.toString());
+				JSONObject counter = new JSONObject();
+				counter.put("currency", LSystem.nativeCurrency);
+				item.put("base", base);
+				item.put("counter", counter);
+				arrays.put(item);
+			}
+		}
+		obj.put("pairs", arrays);
+		String result = request.send(obj);
+		if (result.startsWith("[")) {
+			return new JSONArray(result);
+		} else if (result.startsWith("{")) {
+			return new JSONObject(result);
+		} else {
+			return result;
+		}
+	}
+
 }

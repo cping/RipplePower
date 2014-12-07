@@ -307,7 +307,9 @@ public class OtherData {
 		String s = "http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
 				+ name + "-" + limit + "d.json";
 		HttpRequest request = HttpRequest.get(s);
+		request.acceptGzipEncoding();
 		if (request.ok()) {
+			request.uncompress(true);
 			if (jsonKey == null) {
 				return new JSONObject(request.body());
 			} else {

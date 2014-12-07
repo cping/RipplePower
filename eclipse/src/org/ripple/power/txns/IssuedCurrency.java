@@ -60,6 +60,10 @@ public class IssuedCurrency {
 		}
 	}
 
+	public IssuedCurrency(String issuerStr, String currencyStr) {
+		this("0", new RippleAddress(issuerStr), currencyStr);
+	}
+
 	public IssuedCurrency(String amountStr, String issuerStr, String currencyStr) {
 		this(amountStr, new RippleAddress(issuerStr), currencyStr);
 	}

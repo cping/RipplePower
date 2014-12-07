@@ -840,8 +840,8 @@ public class HttpRequest {
 				}
 			}
 			connection.setRequestMethod(requestMethod);
-			connection.setConnectTimeout(9000);
-			connection.setReadTimeout(9000);
+			connection.setConnectTimeout(15000);
+			connection.setReadTimeout(15000);
 			if (LSystem.applicationProxy != null
 					&& LSystem.applicationProxy.isProxyWithAuthentication()) {
 				connection.setRequestProperty("Proxy-Authorization", "Basic "
