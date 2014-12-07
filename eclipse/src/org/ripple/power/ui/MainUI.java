@@ -115,7 +115,7 @@ public class MainUI {
 		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel,
 				welcomePanel);
 		welcomeLink.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				HelperDialog.hideDialog();
@@ -134,7 +134,7 @@ public class MainUI {
 		RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
 				form.getMainPanel());
 		xrpLink.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Updateable update = new Updateable() {
@@ -179,6 +179,16 @@ public class MainUI {
 		Icon iconBtc = UIRes.getImage("icons/btc.png");
 		RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel,
 				new NullPanel());
+		btcLink.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				HelperDialog.hideDialog();
+				RPJSonLog.hideDialog();
+				HoldXRP.hideDialog();
+				RPOtherServicesDialog.hideDialog();
+			}
+		});
 		btcLink.setIcon(iconBtc);
 		btcLink.setForeground(UIConfig.getBrandColor());
 		btcLink.setFont(navLinkFont);
@@ -194,7 +204,8 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPConfigDialog.showDialog("Configuration", LSystem.applicationMain);
+				RPConfigDialog.showDialog("Configuration",
+						LSystem.applicationMain);
 			}
 		});
 		navLinkList.add(configLink);
