@@ -257,9 +257,9 @@ public class MainUI {
 
 	private RPSplash loadSplash(Updateable update) {
 		return new RPSplash(UIConfig.getBrandColor(), "images/splash.png",
-				LSystem.applicationName, UIConfig.getBrandColor(), 30, 70,
+				LSystem.applicationName, UIConfig.getBrandColor(), 30, 80,
 				"version " + LSystem.applicationVersion,
-				UIConfig.getBrandColor(), 40, 120, true, update);
+				UIConfig.getBrandColor(), 40, 130, true, update);
 	}
 
 }
