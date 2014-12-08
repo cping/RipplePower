@@ -236,7 +236,7 @@ public class RPProxyDialog extends JDialog {
 														javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addComponent(_oneButton))
 								.addContainerGap()));
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		pack();
 	}
 

@@ -25,7 +25,7 @@ public class WaitDialog {
 	public WaitDialog(Window parent) {
 		Dimension dim = new Dimension(400, 128);
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBackground(LSystem.dialogbackground);
+		panel.setBackground(UIConfig.dialogbackground);
 		panel.setPreferredSize(dim);
 		panel.setSize(dim);
 		isRunning = true;
@@ -75,7 +75,7 @@ public class WaitDialog {
 		ShowPanel(final JPanel panel, final int w, final int h) {
 			final String message = "Broadcasting transaction .... please wait";
 			image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			setBackground(LSystem.dialogbackground);
+			setBackground(UIConfig.dialogbackground);
 			Updateable update = new Updateable() {
 				public void action(Object o) {
 					int width = w / 2;
@@ -89,7 +89,7 @@ public class WaitDialog {
 					LFont font = LFont.getFont(18);
 					for (; isRunning;) {
 						synchronized (image) {
-							g.setColor(LSystem.dialogbackground);
+							g.setColor(UIConfig.dialogbackground);
 							g.fillRect(0, 0, getWidth(), getHeight());
 							if (cycle != null) {
 								switch (index) {

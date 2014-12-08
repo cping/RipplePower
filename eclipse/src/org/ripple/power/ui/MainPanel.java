@@ -134,7 +134,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	public MainPanel(final JFrame parentFrame) {
 		super(new BorderLayout());
 		setOpaque(true);
-		setBackground(LSystem.background);
+		setBackground(UIConfig.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
@@ -166,7 +166,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		// Create the table pane
 		//
 		JPanel tablePane = new JPanel();
-		tablePane.setBackground(LSystem.background);
+		tablePane.setBackground(UIConfig.background);
 		tablePane.add(Box.createGlue());
 		tablePane.add(scrollPane);
 		tablePane.add(Box.createGlue());
@@ -176,7 +176,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		//
 		JPanel statusPane = new JPanel();
 		statusPane.setOpaque(true);
-		statusPane.setBackground(LSystem.background);
+		statusPane.setBackground(UIConfig.background);
 
 		walletLabel = new JLabel();
 		walletLabel.setText(getWalletText(WalletCache.get().getAmounts(),
@@ -185,11 +185,11 @@ public class MainPanel extends JPanel implements ActionListener {
 		statusPane.add(walletLabel);
 
 		FontStyleIcon iconStar = new FontStyleIcon(FontStyle.Icon.STAR, 24,
-				LSystem.background);
+				UIConfig.background);
 		FontStyleIcon iconMale = new FontStyleIcon(FontStyle.Icon.MALE, 24,
-				LSystem.background);
+				UIConfig.background);
 		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24,
-				LSystem.background);
+				UIConfig.background);
 
 		RPButton btn = new RPButton(
 				LangConfig.get(this, "donation", "Donation"), iconStar);
@@ -239,10 +239,10 @@ public class MainPanel extends JPanel implements ActionListener {
 								.addGap(8, 8, 8)));
 
 		JPanel buttonPane = new JPanel();
-		buttonPane.setBackground(LSystem.background);
+		buttonPane.setBackground(UIConfig.background);
 
 		FontStyleIcon iconLeaf = new FontStyleIcon(FontStyle.Icon.LEAF, 24,
-				LSystem.background);
+				UIConfig.background);
 		RPButton button = new RPButton(LangConfig.get(this, "add_address",
 				"Add Address"), iconLeaf);
 		button.setActionCommand(CommandFlag.AddAddress);
@@ -252,7 +252,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		buttonPane.add(Box.createHorizontalStrut(15));
 
 		FontStyleIcon iconEye = new FontStyleIcon(FontStyle.Icon.EYE, 24,
-				LSystem.background);
+				UIConfig.background);
 		button = new RPButton(LangConfig.get(this, "control_gateway",
 				"Control Gateway"), iconEye);
 		button.setActionCommand(CommandFlag.Gateway);
@@ -262,7 +262,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		buttonPane.add(Box.createHorizontalStrut(15));
 
 		FontStyleIcon iconRoad = new FontStyleIcon(FontStyle.Icon.ROAD, 24,
-				LSystem.background);
+				UIConfig.background);
 		button = new RPButton(LangConfig.get(this, "send_money", "Send Money"),
 				iconRoad);
 		button.setActionCommand(CommandFlag.SendCoin);
@@ -272,7 +272,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		buttonPane.add(Box.createHorizontalStrut(15));
 
 		FontStyleIcon iconTag = new FontStyleIcon(FontStyle.Icon.TAG, 24,
-				LSystem.background);
+				UIConfig.background);
 		button = new RPButton(
 				LangConfig.get(this, "to_exchange", "To Exchange"), iconTag);
 		button.setActionCommand(CommandFlag.Exchange);
@@ -283,7 +283,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		buttonPane.add(Box.createHorizontalStrut(15));
 
 		FontStyleIcon iconTable = new FontStyleIcon(FontStyle.Icon.TABLE, 24,
-				LSystem.background);
+				UIConfig.background);
 		button = new RPButton(LangConfig.get(this, "details_address",
 				"Details Address"), iconTable);
 		button.setFont(font);
@@ -294,7 +294,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		buttonPane.add(Box.createHorizontalStrut(15));
 
 		FontStyleIcon iconUser = new FontStyleIcon(FontStyle.Icon.USER, 24,
-				LSystem.background);
+				UIConfig.background);
 		button = new RPButton(LangConfig.get(this, "secret_key", "Secret Key"),
 				iconUser);
 		button.setActionCommand(CommandFlag.Secret);

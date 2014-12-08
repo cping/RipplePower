@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.RPPushTool;
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
 import org.ripple.power.utils.GraphicsUtils;
@@ -93,7 +94,7 @@ public class HelperDialog extends Canvas {
 		faceImage = GraphicsUtils.getSplitImages("icons/face.png", 96, 96);
 		GraphicTool tools = new GraphicTool();
 		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
-				LSystem.background, true);
+				UIConfig.background, true);
 		_faceimage = tools.getTable(faceImage[0].getWidth(this),
 				faceImage[0].getHeight(this));
 		NowSerif = new Message(0, 0,

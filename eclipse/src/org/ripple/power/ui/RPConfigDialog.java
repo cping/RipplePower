@@ -249,7 +249,7 @@ public class RPConfigDialog extends JDialog {
         _historyText.setText(History.def_historyApi);
         getContentPane().add(_historyText);
         _historyText.setBounds(130, 60, 300, 22);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 
 		pack();
 	}

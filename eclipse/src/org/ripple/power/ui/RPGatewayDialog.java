@@ -528,7 +528,7 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		emptyAddress();
 		loadTrust();
 		pack();

@@ -117,7 +117,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_passwordLabel = new RPLabel();
 		_feeAmount = new RPTextBox();
 		_encodeCheckBox = new RPCheckBox();
-		_encodeCheckBox.setBackground(LSystem.dialogbackground);
+		_encodeCheckBox.setBackground(UIConfig.dialogbackground);
 		_encodeCheckBox.setFont(font);
 		_feeLabel = new RPLabel();
 		_amountText = new RPTextBox();
@@ -321,7 +321,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_amountLabel.setBounds(10, 400, 70, 20);
 		getContentPane().add(_recipientText);
 		_recipientText.setBounds(80, 360, 420, 21);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		if (_address != null) {
 			loadMessages(_address, -1, 200);
 		}

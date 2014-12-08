@@ -335,7 +335,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 		});
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 460, 770, 10);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		pack();
 	}
 }

@@ -88,7 +88,7 @@ public class RPSRippledDialog extends JDialog {
 		getContentPane().add(_saveButton);
 		_saveButton.setBounds(350, 90, 90, 40);
 		_nodeList.setItemModel(RPClient.getRLNodes(false).toArray());
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		LSystem.postThread(new Updateable() {
 
 			@Override

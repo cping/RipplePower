@@ -390,7 +390,7 @@ public class RPSendFlagsDialog extends JDialog {
 
 		_amountText.setText(LSystem.getMinSend());
 		_feeText.setText(LSystem.getFee());
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 
 		pack();
 	}

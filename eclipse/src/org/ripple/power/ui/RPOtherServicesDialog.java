@@ -169,6 +169,6 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		setBackground(LSystem.dialogbackground);
+		setBackground(UIConfig.dialogbackground);
 	}
 }

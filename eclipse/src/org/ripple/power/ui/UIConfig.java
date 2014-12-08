@@ -22,6 +22,10 @@ public class UIConfig {
 
 	private static LColor brandColor = new LColor(86, 61, 124);
 
+	public final static  LColor background = new LColor(86, 61, 124);
+
+	public final static  LColor dialogbackground = new LColor(36, 36, 36);
+	
 	private static boolean cursorOff = false;
 
 	private static Image defaultAppIcon = null;

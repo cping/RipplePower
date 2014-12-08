@@ -129,10 +129,10 @@ public class RPPushTool {
 		_backagePane = new JPanel(new BorderLayout());
 
 		((JPanel) _tpDialog.getContentPane())
-				.setBackground(LSystem.dialogbackground);
-		_headPane.setBackground(LSystem.dialogbackground);
-		_backPane.setBackground(LSystem.dialogbackground);
-		_btnPane.setBackground(LSystem.dialogbackground);
+				.setBackground(UIConfig.dialogbackground);
+		_headPane.setBackground(UIConfig.dialogbackground);
+		_backPane.setBackground(UIConfig.dialogbackground);
+		_btnPane.setBackground(UIConfig.dialogbackground);
 
 		Dimension dim = new Dimension(_width, TITLE_SIZE);
 

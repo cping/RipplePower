@@ -784,7 +784,7 @@ public class RPExchangeDialog extends JDialog {
 			_oksellButton.setEnabled(false);
 			_canceltradingButton.setEnabled(false);
 		}
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		addWindowListener(new windowListener());
 		pack();
 	}// </editor-fold>

@@ -274,7 +274,7 @@ public class RPExchangeInputDialog extends JDialog {
 								.addComponent(_okButton,
 										javax.swing.GroupLayout.DEFAULT_SIZE,
 										41, Short.MAX_VALUE).addContainerGap()));
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 
 		pack();
 	}

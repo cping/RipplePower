@@ -45,7 +45,7 @@ public class HoldXRP {
 
 		canvas.setYLabelFlag("%");
 		canvas.setGridAA(false);
-		canvas.setBackground(LSystem.background);
+		canvas.setBackground(UIConfig.background);
 		canvas.addSerie(c);
 		canvas.setBottom(28);
 		canvas.setLeft(2);

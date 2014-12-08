@@ -203,7 +203,7 @@ public class RPOnlineWalletDialog extends JDialog {
 
 		getContentPane().add(_sp);
 		_sp.setBounds(0, 135, 450, 10);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		Session session = LSystem.session("system");
 		String account_res = session.get("online_account");
 		if (account_res != null) {

@@ -8,9 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.ripple.power.config.LSystem;
-
-
 import net.miginfocom.swing.MigLayout;
 
 public class NullPanel extends JPanel {
@@ -24,7 +21,7 @@ public class NullPanel extends JPanel {
 		setLayout(new MigLayout("gap 0, insets 0", "[100%]", "[300]70[800]"));
 
 		JPanel brandPanel = new JPanel();
-		brandPanel.setBackground(LSystem.background);
+		brandPanel.setBackground(UIConfig.background);
 		brandPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]", "50[100]170[100]50"));
 		add(brandPanel, "cell 0 0 1 1, grow");
 

@@ -110,7 +110,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 			}
 		});
-		this.setBackground(LSystem.dialogbackground);
+		this.setBackground(UIConfig.dialogbackground);
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
 	}

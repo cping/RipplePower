@@ -61,7 +61,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 				g.drawImage(pImage, 0, 0, getWidth(), getHeight(), this);
 			} else {
 				java.awt.Color color = g.getColor();
-				g.setColor(LSystem.background);
+				g.setColor(UIConfig.background);
 				g.fillRect(0, 0, getWidth(), getHeight() - 10);
 				g.setColor(color);
 			}

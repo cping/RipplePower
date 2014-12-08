@@ -117,7 +117,7 @@ public class RPNewsDialog extends JDialog {
 			}
 		});
 
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		String query = _wordText.getText().trim();
 		if (query.length() > 0) {
 			loadNews(query);

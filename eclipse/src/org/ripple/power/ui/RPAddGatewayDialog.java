@@ -165,7 +165,7 @@ public class RPAddGatewayDialog extends JDialog {
 		if (tmp != null) {
 			_gateways.addAll(tmp);
 		}
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		_iouNameLabel = new RPLabel();
 		_gatewayAddressText = new RPTextBox();
 		_addressNameText = new RPTextBox();

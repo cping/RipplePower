@@ -118,7 +118,7 @@ public class MainUI {
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
 
 		JPanel emptyPanel = new JPanel();
-		mainPanel.setBackground(LSystem.background);
+		mainPanel.setBackground(UIConfig.background);
 		emptyPanel.setLayout(new MigLayout("gap 0, ins 0", "[100%]", "[fill]"));
 		mainPanel.add(emptyPanel, "cell 0 1 1 1, grow");
 

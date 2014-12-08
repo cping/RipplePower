@@ -136,7 +136,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		_sendFlagButton.setBounds(30, 230, 338, 55);
 		_sendFlagButton.addActionListener(this);
 
-		setBackground(LSystem.dialogbackground);
+		setBackground(UIConfig.dialogbackground);
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
 	}

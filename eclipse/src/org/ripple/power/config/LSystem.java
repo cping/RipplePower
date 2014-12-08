@@ -29,7 +29,6 @@ import org.ripple.power.NativeSupport;
 import org.ripple.power.i18n.Language;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
-import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.IP46Utils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
@@ -56,9 +55,6 @@ public final class LSystem {
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
 
-	final static public LColor background = new LColor(88, 63, 126);
-
-	final static public LColor dialogbackground = new LColor(36, 36, 36);
 
 	final static public long SECOND = 1000;
 	final static public long MINUTE = SECOND * 60;

@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
@@ -277,7 +276,7 @@ public class RPHashInfoDialog extends JDialog {
 		getContentPane().add(_TagText);
 		_TagText.setBounds(110, 620, 380, 30);
 
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 
 		_loadButton.setText(LangConfig.get(this, "load", "Load"));
 		_loadButton.setFont(UIRes.getFont());

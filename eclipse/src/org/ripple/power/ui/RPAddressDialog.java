@@ -374,7 +374,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 	}
 
 	private void initUI() {
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		pBrainButton = new RPRadioButton();
 		pPassButton = new RPRadioButton();
 		pPaperButton = new RPRadioButton();

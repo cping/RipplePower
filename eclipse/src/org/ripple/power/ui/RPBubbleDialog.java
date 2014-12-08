@@ -116,10 +116,10 @@ public class RPBubbleDialog {
 		_updateLabel = new RPLabel();
 
 		((JPanel) _tpDialog.getContentPane())
-				.setBackground(LSystem.dialogbackground);
-		_headPane.setBackground(LSystem.dialogbackground);
-		_backPane.setBackground(LSystem.dialogbackground);
-		_btnPane.setBackground(LSystem.dialogbackground);
+				.setBackground(UIConfig.dialogbackground);
+		_headPane.setBackground(UIConfig.dialogbackground);
+		_backPane.setBackground(UIConfig.dialogbackground);
+		_btnPane.setBackground(UIConfig.dialogbackground);
 
 		_headPane.setPreferredSize(new Dimension(300, 30));
 

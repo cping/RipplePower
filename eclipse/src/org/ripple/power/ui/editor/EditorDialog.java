@@ -25,6 +25,7 @@ import org.ripple.power.txns.RippleMacros;
 import org.ripple.power.ui.JConsole;
 import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.RPList;
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.FileUtils;
@@ -500,6 +501,6 @@ public class EditorDialog extends JDialog {
 		});
 		add(_callButton);
 		_callButton.setBounds(600, 510, 90, 40);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 	}
 }

@@ -67,7 +67,7 @@ public class RPChartsHistoryDialog extends JDialog {
 			canvas = new LineChartCanvas(panel.getWidth(), panel.getHeight());
 			canvas.setTextVis(false, false, false, false);
 			canvas.setAxisVis(false);
-			canvas.setBackground(LSystem.background);
+			canvas.setBackground(UIConfig.background);
 			canvas.addSerie(my);
 			panel.add(canvas);
 			LineChartCanvas chart = new LineChartCanvas(panel.getWidth(),
@@ -244,13 +244,13 @@ public class RPChartsHistoryDialog extends JDialog {
 		_autoRefreshCheckBox.setText(LangConfig.get(this, "autor",
 				"Auto Refresh"));
 		getContentPane().add(_autoRefreshCheckBox);
-		_autoRefreshCheckBox.setBackground(LSystem.dialogbackground);
+		_autoRefreshCheckBox.setBackground(UIConfig.dialogbackground);
 		_autoRefreshCheckBox.setBounds(640, 490, 100, 23);
 
 		_matchBTCCheckBox.setText(LangConfig.get(this, "mbtc", "Match BTC"));
 		getContentPane().add(_matchBTCCheckBox);
 		_matchBTCCheckBox.setBounds(540, 490, 90, 23);
-		_matchBTCCheckBox.setBackground(LSystem.dialogbackground);
+		_matchBTCCheckBox.setBackground(UIConfig.dialogbackground);
 
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 520, 760, 10);
@@ -267,7 +267,7 @@ public class RPChartsHistoryDialog extends JDialog {
 		getContentPane().add(jLabel3);
 		jLabel3.setBounds(10, 162, 130, 15);
 
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		addWindowListener(new WindowListener() {
 
 			@Override

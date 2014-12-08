@@ -479,7 +479,7 @@ public class RPAccountInfoDialog extends JDialog {
 		_issuedLabel.setText(LangConfig.get(this, "issued", "Currency issued"));
 		getContentPane().add(_issuedLabel);
 		_issuedLabel.setBounds(20, 220, 190, 20);
-		getContentPane().setBackground(LSystem.dialogbackground);
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		final String ddata = LangConfig.get(this, "ddata", "Detailed data");
 		UIRes.addPopMenu(_popMenu, ddata, new Updateable() {
 
