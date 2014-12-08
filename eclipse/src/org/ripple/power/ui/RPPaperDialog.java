@@ -170,7 +170,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 		if (modelFlag == 0) {
-			int select = RPMessage.showConfirmMessage(this,
+			int select = UIRes.showConfirmMessage(this,
 					"Export paper wallet", "Please choose your way to export",
 					"Exporting an image file", "Export to printer");
 			if (select == -1) {
@@ -193,7 +193,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 			} else {
 				File file = jFileChooser.getSelectedFile();
 				if (file.exists()) {
-					int result = RPMessage
+					int result = UIRes
 							.showConfirmMessage(
 									this,
 									"Find the same file",
@@ -212,7 +212,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 										file.getAbsolutePath() + ".png", "png");
 							}
 						}
-						RPMessage.showInfoMessage(this, "Export",
+						UIRes.showInfoMessage(this, "Export",
 								"Successfully exported file.");
 					}
 				} else {
@@ -228,7 +228,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 									file.getAbsolutePath() + ".png", "png");
 						}
 					}
-					RPMessage.showInfoMessage(this, "Export",
+					UIRes.showInfoMessage(this, "Export",
 							"Successfully exported file.");
 				}
 
@@ -252,14 +252,14 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 						this.pAddress = new String(buffer, LSystem.encoding);
 					} catch (Exception ex) {
 						this.pAddress = null;
-						RPMessage
+						UIRes
 								.showErrorMessage(
 										this,
 										"Import",
 										"File import fails, the default password does not match the image or paper wallet error !");
 					}
 				} else {
-					RPMessage
+					UIRes
 							.showErrorMessage(this, "Import",
 									"File import fails, the specified file does not exist !");
 				}

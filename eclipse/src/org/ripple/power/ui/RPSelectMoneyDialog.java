@@ -150,7 +150,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		if ("xrp".equalsIgnoreCase(eve)) {
 			BigDecimal number = new BigDecimal(_item.getAmount());
 			if (number.compareTo(BigDecimal.ZERO) < 1) {
-				RPMessage
+				UIRes
 						.showWarningMessage(
 								this,
 								LangConfig.get(MainPanel.class, "txfails",

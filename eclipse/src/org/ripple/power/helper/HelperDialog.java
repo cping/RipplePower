@@ -54,13 +54,13 @@ public class HelperDialog extends Canvas {
 			instance.setVisible(false);
 		}
 	}
-	
+
 	public static void showDialog() {
 		if (instance != null) {
 			instance.setVisible(true);
 		}
 	}
-	
+
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();
@@ -94,9 +94,10 @@ public class HelperDialog extends Canvas {
 		GraphicTool tools = new GraphicTool();
 		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
 				LSystem.background, true);
-		_faceimage = tools.getTable(faceImage[0].getWidth(null),
-				faceImage[0].getHeight(null));
-		NowSerif = new Message(0, 0, "Hello,Ripple World!");
+		_faceimage = tools.getTable(faceImage[0].getWidth(this),
+				faceImage[0].getHeight(this));
+		NowSerif = new Message(0, 0,
+				"Hello, Ripple World ! Right and Justice are on our side !");
 	}
 
 	public void update(Graphics g) {
@@ -113,7 +114,7 @@ public class HelperDialog extends Canvas {
 			offscreenG.setColor(getBackground());
 			offscreenG.clearRect(0, 0, getWidth(), getHeight());
 			draw(offscreenG);
-			g.drawImage(offscreenImg, 0, 0, null);
+			g.drawImage(offscreenImg, 0, 0, this);
 		}
 	}
 
@@ -124,7 +125,7 @@ public class HelperDialog extends Canvas {
 		}
 	}
 
-	private Font deffont = new Font("Dialog", 1, 20);
+	private Font deffont = GraphicsUtils.getFont(Font.SANS_SERIF,1,20);
 
 	private void draw(Graphics g) {
 		if (NowSerif == null) {
@@ -135,7 +136,7 @@ public class HelperDialog extends Canvas {
 		g.setColor(Color.white);
 		g.setFont(deffont);
 		GraphicsUtils.setAntialias(g, true);
-		String MessageArray[] = changeArray(NowSerif.Message, 23, fwidth);
+		String MessageArray[] = changeArray(NowSerif.Message, 12, fwidth);
 		for (int i = 0; i < MessageArray.length; i++) {
 			g.drawString(MessageArray[i],
 					(int) Math.round(fx + 0.029D * fwidth),
@@ -146,16 +147,18 @@ public class HelperDialog extends Canvas {
 	private String[] changeArray(String str, int f, int w) {
 		int line = (int) Math.round((1.0D * w) / f);
 		int size = str.length();
-		if (size == 0)
+		if (size == 0) {
 			return new String[0];
+		}
 		int R = (size - 1) / line + 1;
 		String strs[] = new String[R];
 		for (int i = 0; i < R; i++) {
 			int last;
-			if (i == R - 1)
+			if (i == R - 1) {
 				last = size;
-			else
+			} else {
 				last = (i + 1) * line;
+			}
 			strs[i] = str.substring(i * line, last);
 		}
 

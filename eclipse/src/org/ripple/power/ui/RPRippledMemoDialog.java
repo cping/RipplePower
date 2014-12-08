@@ -235,7 +235,7 @@ public class RPRippledMemoDialog extends JDialog {
 					try {
 						address = NameFind.getAddress(address);
 					} catch (Exception ex) {
-						RPMessage.showWarningMessage(LSystem.applicationMain,
+						UIRes.showWarningMessage(LSystem.applicationMain,
 								UIMessage.warning, UIMessage.errNotAddress);
 						return;
 					}

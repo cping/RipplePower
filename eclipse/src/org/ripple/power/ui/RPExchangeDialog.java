@@ -112,11 +112,11 @@ public class RPExchangeDialog extends JDialog {
 	private final AccountInfo _info = new AccountInfo();
 
 	private void warning_noselect() {
-		RPMessage.showWarningMessage(this, UIMessage.info, UIMessage.noselect);
+		UIRes.showWarningMessage(this, UIMessage.info, UIMessage.noselect);
 	}
 
 	private void warning_xrp() {
-		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
+		UIRes.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				LSystem.nativeCurrency.toUpperCase() + ","
 						+ UIMessage.errNotMoney);
 	}
@@ -125,7 +125,7 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(cur)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
+		UIRes.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				cur.toUpperCase() + "," + UIMessage.errNotMoney);
 	}
 
@@ -133,7 +133,7 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPMessage.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
+		UIRes.showWarningMessage(RPExchangeDialog.this, UIMessage.warning,
 				String.format(UIMessage.plasetrust, mes));
 	}
 
@@ -151,7 +151,7 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return -1;
 		}
-		return RPMessage.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
+		return UIRes.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
 				String.format(UIMessage.ydel, mes), new Object[] {
 						UIMessage.ok, UIMessage.cancel });
 	}
@@ -182,7 +182,7 @@ public class RPExchangeDialog extends JDialog {
 			};
 			LSystem.postThread(update);
 		}
-		return RPMessage.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
+		return UIRes.showConfirmMessage(RPExchangeDialog.this, UIMessage.info,
 				UIMessage.you_cancel_tx(srcAmount + "/" + srcCurrency,
 						dstAmount + "/" + dstCurrency), new Object[] {
 						UIMessage.ok, UIMessage.cancel });

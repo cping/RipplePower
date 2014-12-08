@@ -431,7 +431,7 @@ public class RPGatewayDialog extends JDialog {
 							RPGatewayDialog.this, "cancel_trust",
 							"You wish to cancel the gateway %s trust ?"),
 							currency.issuer.toString());
-					int result = RPMessage.showConfirmMessage(
+					int result = UIRes.showConfirmMessage(
 							LSystem.applicationMain, "Cancel trust", message,
 							UIMessage.ok, UIMessage.cancel);
 					if (result == 0) {
@@ -486,7 +486,7 @@ public class RPGatewayDialog extends JDialog {
 										"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?"),
 						address, curName, trustValue);
 
-				int result = RPMessage.showConfirmMessage(
+				int result = UIRes.showConfirmMessage(
 						LSystem.applicationMain, "Trust Gateway", message,
 						UIMessage.ok, UIMessage.cancel);
 				if (result == 0) {

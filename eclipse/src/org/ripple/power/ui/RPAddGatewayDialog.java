@@ -77,35 +77,35 @@ public class RPAddGatewayDialog extends JDialog {
 		String name = _addressNameText.getText().trim();
 		String address = _gatewayAddressText.getText().trim();
 		if (name == null || name.length() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning,
+			UIRes.showWarningMessage(this, UIMessage.warning,
 					UIMessage.data_error);
 			return;
 		}
 		for (Gateway gateway : _gateways) {
 			if (gateway.name.toLowerCase().equals(name.toLowerCase())) {
-				RPMessage.showWarningMessage(this, UIMessage.warning,
+				UIRes.showWarningMessage(this, UIMessage.warning,
 						UIMessage.data_error);
 				return;
 			}
 		}
 		if (Gateway.getAddress(name) != null) {
-			RPMessage.showWarningMessage(this, UIMessage.warning,
+			UIRes.showWarningMessage(this, UIMessage.warning,
 					UIMessage.data_error);
 			return;
 		}
 		if (_ious.size() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning,
+			UIRes.showWarningMessage(this, UIMessage.warning,
 					UIMessage.data_error);
 			return;
 		}
 		if (address.length() == 0) {
-			RPMessage.showWarningMessage(this, UIMessage.warning,
+			UIRes.showWarningMessage(this, UIMessage.warning,
 					UIMessage.errAddress);
 			return;
 		}
 		if (!address.startsWith("~")) {
 			if (!AccountFind.isRippleAddress(address)) {
-				RPMessage.showErrorMessage(LSystem.applicationMain,
+				UIRes.showErrorMessage(LSystem.applicationMain,
 						UIMessage.error, UIMessage.errAddress);
 				return;
 			}
@@ -114,12 +114,12 @@ public class RPAddGatewayDialog extends JDialog {
 			try {
 				address = NameFind.getAddress(address);
 			} catch (Exception ex) {
-				RPMessage.showWarningMessage(LSystem.applicationMain,
+				UIRes.showWarningMessage(LSystem.applicationMain,
 						UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
 			if (address == null) {
-				RPMessage.showWarningMessage(LSystem.applicationMain,
+				UIRes.showWarningMessage(LSystem.applicationMain,
 						UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
@@ -259,7 +259,7 @@ public class RPAddGatewayDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				String iouName = _iouNameText.getText().trim().toUpperCase();
 				if (iouName.length() != 3) {
-					RPMessage.showWarningMessage(RPAddGatewayDialog.this,
+					UIRes.showWarningMessage(RPAddGatewayDialog.this,
 							UIMessage.warning, "char != 3 not allow !");
 					return;
 				}
@@ -303,7 +303,7 @@ public class RPAddGatewayDialog extends JDialog {
 				String name = _addressNameText.getText().trim();
 				if (name.length() > 0) {
 					if (delGateway(name) != -1) {
-						RPMessage.showInfoMessage(RPAddGatewayDialog.this,
+						UIRes.showInfoMessage(RPAddGatewayDialog.this,
 								UIMessage.info, "Deleted successfully");
 					}
 				}

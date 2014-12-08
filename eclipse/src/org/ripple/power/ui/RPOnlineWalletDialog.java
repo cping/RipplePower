@@ -126,7 +126,7 @@ public class RPOnlineWalletDialog extends JDialog {
 								String pub = res.account_id;
 								String pri = res.ripple_secret;
 								if (pub.length() > 0 && pri.length() > 0) {
-									int result = RPMessage.showConfirmMessage(
+									int result = UIRes.showConfirmMessage(
 											LSystem.applicationMain,
 											"Import(Not saved locally)",
 											res.toString()
@@ -141,7 +141,7 @@ public class RPOnlineWalletDialog extends JDialog {
 										try {
 											WalletCache.saveDefWallet();
 										} catch (Exception e) {
-											RPMessage
+											UIRes
 													.showErrorMessage(
 															RPOnlineWalletDialog.this,
 															UIMessage.error,
@@ -166,7 +166,7 @@ public class RPOnlineWalletDialog extends JDialog {
 								}
 
 							} else {
-								RPMessage.showErrorMessage(
+								UIRes.showErrorMessage(
 										RPOnlineWalletDialog.this,
 										UIMessage.error, UIMessage.notExist);
 								return;

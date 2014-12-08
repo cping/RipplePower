@@ -103,7 +103,8 @@ public class IssuedCurrency {
 	}
 
 	public boolean isNative() {
-		return issuer == null;
+		return issuer == null
+				|| LSystem.nativeCurrency.equalsIgnoreCase(currency);
 	}
 
 	public boolean isNegative() {

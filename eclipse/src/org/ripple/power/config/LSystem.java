@@ -449,6 +449,28 @@ public final class LSystem {
 				.compareVersion(majorVersion, minorVersion, build) <= 0;
 	}
 
+	public static boolean isMinJavaVersion(int major, int minor) {
+		String version = System.getProperty("java.version");
+		String installedVersion = version;
+		int index = version.indexOf("_");
+		if (index > 0) {
+			installedVersion = version.substring(0, index);
+		}
+		String[] installed = StringUtils.split(installedVersion, ".");
+		if (installed.length < 2) {
+			return false;
+		}
+		int _version = Integer.parseInt(installed[0]);
+		if (_version < major) {
+			return false;
+		}
+		_version = Integer.parseInt(installed[1]);
+		if (_version < minor) {
+			return false;
+		}
+		return true;
+	}
+
 	public static void sendRESTCoin(String address, String name, String label,
 			long amount) {
 		LSystem.sendRESTCoin(address, name, label, amount,
@@ -705,6 +727,18 @@ public final class LSystem {
 	// 文件分割符
 	final static public String FS = System.getProperty("file.separator", "\\");
 
+	final static public String EMPTY = "";
+
+	final static public String QUOTE_STRING = "'";
+	
+	final static public  char QUOTE_CHAR = '\'';
+	
+	final static public char NEW_LINE_CHAR = '\n';
+	
+	final static public char TAB_CHAR = '\t';
+	
+	final static public char COMMA_CHAR = ',';
+	
 	/**
 	 * 写入整型数据到OutputStream
 	 * 
@@ -775,6 +809,10 @@ public final class LSystem {
 
 	public static int unite(int hashCode, int value) {
 		return 31 * hashCode + value;
+	}
+
+	public static ApplicationVersion getVersion() {
+		return new ApplicationVersion(applicationVersion, applicationName);
 	}
 
 	public static class JavaVersion {
@@ -867,7 +905,7 @@ public final class LSystem {
 	}
 
 	public static String setPassword(String password) throws Exception {
-		if(StringUtils.isEmpty(password)){
+		if (StringUtils.isEmpty(password)) {
 			return null;
 		}
 		password = password.trim();
@@ -884,7 +922,7 @@ public final class LSystem {
 	}
 
 	public static String getPassword(String password) throws Exception {
-		if(StringUtils.isEmpty(password)){
+		if (StringUtils.isEmpty(password)) {
 			return null;
 		}
 		password = password.trim();

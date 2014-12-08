@@ -131,7 +131,7 @@ public class BigNumber {
 		return new BigNumber(this);
 	}
 
-	public String toString() {
+	public String toString(boolean flag) {
 		this.fullReduce();
 		String out = "";
 		int i;
@@ -144,7 +144,11 @@ public class BigNumber {
 			}
 			out = s + out;
 		}
-		return "0x" + out;
+		return flag ? "0x" + out : out;
+	}
+
+	public String toString() {
+		return toString(true);
 	}
 
 	public BigNumber normalize() {

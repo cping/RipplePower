@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -30,6 +31,19 @@ public class MainUI {
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException {
+		if (!LSystem.isMinJavaVersion(1, 6)) {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"The minimum required Java version is 1.6.\n"
+									+ "The reported version is "
+									+ System.getProperty("java.vm.version")
+									+ ".\n\nPlease download and install the latest Java "
+									+ "version\nfrom http://java.sun.com and try again.\n\n",
+							"Java Version Error", JOptionPane.ERROR_MESSAGE);
+
+			System.exit(1);
+		}
 		try {
 			System.setProperty("java.net.preferIPv4Stack", "true");
 			System.setProperty("jsse.enableSNIExtension", "false");
@@ -69,12 +83,21 @@ public class MainUI {
 	}
 
 	public MainUI() {
-		initialize();
+		Updateable update = new Updateable() {
+
+			@Override
+			public void action(Object o) {
+				initialize();
+			}
+		};
+		loadSplash(update);
 	}
 
 	private void initialize() {
+
 		UIConfig.loadConfig();
 		LangConfig.init();
+
 		form = new MainForm();
 		form.getContentPane().setLayout(
 				new MigLayout("fill", "[fill]", "[fill]"));
@@ -230,6 +253,13 @@ public class MainUI {
 		form.pack();
 		form.setVisible(true);
 
+	}
+
+	private RPSplash loadSplash(Updateable update) {
+		return new RPSplash(UIConfig.getBrandColor(), "images/splash.png",
+				LSystem.applicationName, UIConfig.getBrandColor(), 30, 70,
+				"version " + LSystem.applicationVersion,
+				UIConfig.getBrandColor(), 40, 120, true, update);
 	}
 
 }

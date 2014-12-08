@@ -226,7 +226,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				pInput = true;
 			}
 		} catch (IOException e) {
-			RPMessage.showErrorMessage(this, "Import failed",
+			UIRes.showErrorMessage(this, "Import failed",
 					"Paper wallet import fails !" + e.getMessage());
 		}
 
@@ -593,7 +593,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String pub = publicAddressText.getText();
 			String pri = privateAddressText.getText();
 			if (pub.length() > 0 && pri.length() > 0) {
-				int result = RPMessage.showConfirmMessage(this,
+				int result = UIRes.showConfirmMessage(this,
 						"Private Key import", LangConfig.get(this, "import",
 								"Import the data to current wallet ?"),
 						UIMessage.ok, UIMessage.cancel);
@@ -602,7 +602,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 					try {
 						WalletCache.saveDefWallet();
 					} catch (Exception e) {
-						RPMessage.showErrorMessage(this,
+						UIRes.showErrorMessage(this,
 
 						UIMessage.error,
 								"System exception, wallets save failed !");

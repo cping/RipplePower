@@ -13,10 +13,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.UIManager;
 
+import org.ripple.power.ui.graphics.LColor;
+
 public class UIConfig {
+	
 	private static Font basicFont = null;
 
-	private static Color brandColor = Color.decode("#563D7C");
+	private static LColor brandColor = new LColor(86,61,124);
 
 	private static boolean cursorOff = false;
 
@@ -59,11 +62,11 @@ public class UIConfig {
 		UIConfig.defaultAppIcon = defaultAppIcon;
 	}
 
-	public static Color getBrandColor() {
+	public static LColor getBrandColor() {
 		return brandColor;
 	}
 
-	public static void setBrandColor(Color color) {
+	public static void setBrandColor(LColor color) {
 		UIConfig.brandColor = color;
 	}
 

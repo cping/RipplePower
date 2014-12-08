@@ -448,7 +448,7 @@ public class MainPanel extends JPanel implements ActionListener {
 						"Backup your wallet file.", Style.SUCCESS).display();
 				String path = Backup.create();
 				if (path != null) {
-					RPMessage
+					UIRes
 							.showInfoMessage(
 									this,
 									UIMessage.info,
@@ -458,7 +458,7 @@ public class MainPanel extends JPanel implements ActionListener {
 															"Successful backup, the backup is saved in %s"),
 											path));
 				} else {
-					RPMessage
+					UIRes
 							.showErrorMessage(
 									this,
 									UIMessage.error,
@@ -525,7 +525,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				WalletItem item = WalletCache.get().readRow(row);
 				BigDecimal number = new BigDecimal(item.getAmount());
 				if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
-					RPMessage.showWarningMessage(this, LangConfig.get(this,
+					UIRes.showWarningMessage(this, LangConfig.get(this,
 							"txfails", "Transaction fails"), LangConfig.get(
 							this, "stop1",
 							"XRP little amount, not suitable for donation-_-"));
@@ -571,7 +571,7 @@ public class MainPanel extends JPanel implements ActionListener {
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Secret:
-					int index = RPMessage
+					int index = UIRes
 							.showConfirmMessage(
 									LSystem.applicationMain,
 									LangConfig.get(this, "show", "Show")
@@ -586,7 +586,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 					if (index == 0) {
 
-						index = RPMessage
+						index = UIRes
 								.showConfirmMessage(
 										LSystem.applicationMain,
 										LangConfig.get(this, "show", "Show")
@@ -642,7 +642,7 @@ public class MainPanel extends JPanel implements ActionListener {
 									.getPublicKey());
 					break;
 				case CommandFlag.DelAddress:
-					int delete_address = RPMessage
+					int delete_address = UIRes
 							.showConfirmMessage(
 									LSystem.applicationMain,
 									LangConfig.get(this, "del_address",
