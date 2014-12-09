@@ -191,11 +191,11 @@ public final class LSystem {
 	}
 
 	public static String getNumber(BigDecimal big, boolean flag) {
-		StringBuffer sbr = null;
+		StringBuilder sbr = null;
 		if (flag) {
-			sbr = new StringBuffer(NUMBER_8_FORMAT.format(big));
+			sbr = new StringBuilder(NUMBER_8_FORMAT.format(big));
 		} else {
-			sbr = new StringBuffer(NUMBER_6_FORMAT.format(big));
+			sbr = new StringBuilder(NUMBER_6_FORMAT.format(big));
 		}
 		if (sbr.toString().indexOf('.') != -1) {
 			int size = sbr.length();

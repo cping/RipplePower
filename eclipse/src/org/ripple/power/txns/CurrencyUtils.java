@@ -16,7 +16,7 @@ public class CurrencyUtils {
 			amount.copyFrom((JSONObject) jsonDenominatedAmount);
 			return amount;
 		} else {
-			return new IssuedCurrency((String) jsonDenominatedAmount);
+			return new IssuedCurrency(LSystem.getNumberShort((String) jsonDenominatedAmount));
 		}
 	}
 	

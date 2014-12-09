@@ -124,12 +124,12 @@ public class WaitDialog {
 								cycle.createUI(g);
 								g.restore();
 							}
-							g.setAntialiasAll(true);
+							g.setAntiAlias(true);
 							g.setFont(font);
 							g.drawString(message,
 									(w - font.stringWidth(message)) / 2 - 5,
 									(h - font.getHeight()) / 2 + 15);
-							g.setAntialiasAll(false);
+							g.setAntiAlias(false);
 						}
 						if (panel != null && isRunning
 								&& panel.getGraphics() != null) {
@@ -137,7 +137,7 @@ public class WaitDialog {
 						}
 						repaint();
 						try {
-							Thread.sleep(30);
+							Thread.sleep(60);
 						} catch (InterruptedException e) {
 						}
 					}

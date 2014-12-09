@@ -387,42 +387,46 @@ public class RPClient {
 	}
 
 	public void xrp(final WalletItem item) {
-		Request req = pClinet.newRequest(Command.account_info);
-		req.json("account", item.getPublicKey());
-		req.once(Request.OnSuccess.class, new Request.OnSuccess() {
-			@Override
-			public void called(Response response) {
-				JSONObject arrays = response.result;
-				JSONObject result = arrays.getJSONObject("account_data");
-				String number = CurrencyUtils.getRippleToValue(result
-						.getString("Balance"));
-				if (item.isTip()) {
-					double new_amount = Double.parseDouble(number);
-					double old_amount = Double.parseDouble(item.getAmount());
-					if (old_amount > new_amount) {
-						popXRP(item.getPublicKey(), LangConfig.get(
-								RPClient.class, "lower", "Lower"), old_amount
-								- new_amount);
-					} else if (new_amount > old_amount) {
-						popXRP(item.getPublicKey(), LangConfig.get(
-								RPClient.class, "heighten", "Heighten"),
-								new_amount - old_amount);
+		try {
+			Request req = pClinet.newRequest(Command.account_info);
+			req.json("account", item.getPublicKey());
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
+					JSONObject arrays = response.result;
+					JSONObject result = arrays.getJSONObject("account_data");
+					String number = CurrencyUtils.getRippleToValue(result
+							.getString("Balance"));
+					if (item.isTip()) {
+						double new_amount = Double.parseDouble(number);
+						double old_amount = Double.parseDouble(item.getAmount());
+						if (old_amount > new_amount) {
+							popXRP(item.getPublicKey(), LangConfig.get(
+									RPClient.class, "lower", "Lower"),
+									old_amount - new_amount);
+						} else if (new_amount > old_amount) {
+							popXRP(item.getPublicKey(), LangConfig.get(
+									RPClient.class, "heighten", "Heighten"),
+									new_amount - old_amount);
+						}
 					}
+					item.setAmount(number);
+					item.setStatus("full");
 				}
-				item.setAmount(number);
-				item.setStatus("full");
-			}
 
-		});
+			});
 
-		req.once(Request.OnError.class, new Request.OnError() {
-			@Override
-			public void called(Response response) {
-				item.setStatus("none");
-			}
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					item.setStatus("none");
+				}
 
-		});
-		req.request();
+			});
+			req.request();
+		} catch (Exception ex) {
+			// null
+		}
 	}
 
 	private final static String time() {

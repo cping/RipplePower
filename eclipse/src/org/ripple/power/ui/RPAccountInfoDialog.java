@@ -515,21 +515,119 @@ public class RPAccountInfoDialog extends JDialog {
 		}
 	}
 
+	private final static ArrayList<Store> _storage = new ArrayList<Store>();
+
+	private static class Store {
+		public AccountInfo info;
+		public String name;
+		public long date = 0;
+
+		public Store(String n, AccountInfo i) {
+			this.name = n;
+			this.info = i;
+			this.date = System.currentTimeMillis();
+		}
+
+	}
+
+	private static AccountInfo reset(String name) {
+		for (Store s : _storage) {
+			if (s.name.equals(name)
+					&& (System.currentTimeMillis() - s.date) <= (LSystem.MINUTE / 2)) {
+				return s.info;
+			} else if (s.name.equals(name)) {
+				_storage.remove(s);
+				return null;
+			}
+		}
+		return null;
+	}
+
+	private static void addStorage(Store s) {
+		_storage.add(s);
+		if (_storage.size() > 100) {
+			_storage.remove(0);
+		}
+	}
+
 	public void call(final AccountInfo info,
 			final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
+
+		String address = _addressText.getText().trim();
+
+		AccountInfo info_tmp = reset(address);
+
+		if (info_tmp != null) {
+			info.copy(info_tmp);
+			if (info.balance != null) {
+				synchronized (_accountLineItems) {
+					_accountLineItems.clear();
+					_accountLineItems
+							.add(new AccountLine("RippleLabels",
+									LSystem.nativeCurrency.toUpperCase(),
+									info.balance));
+					tableModel.update();
+				}
+			}
+			_addressNameText.setText(info.address);
+			if (info.lines.size() > 0) {
+				synchronized (_accountLineItems) {
+					_accountLineItems.clear();
+					_accountLineItems
+							.add(new AccountLine("RippleLabels",
+									LSystem.nativeCurrency.toUpperCase(),
+									info.balance));
+					_accountLineItems.addAll(info.lines);
+				}
+				tableModel.update();
+			}
+			if (info.debt.size() > 0) {
+				synchronized (_accountLineItems2) {
+					_accountLineItems2.clear();
+					for (String cur : info.debt.keySet()) {
+						AccountLine line = new AccountLine(address, cur,
+								String.valueOf(info.debt.get(cur)));
+						_accountLineItems2.add(line);
+					}
+				}
+				tableModel2.update();
+			}
+			if (info.transactions.size() > 0) {
+				synchronized (_accountLineItems3) {
+					_accountLineItems3.clear();
+					for (TransactionTx tx : info.transactions) {
+						if ("Payment".equals(tx.clazz)) {
+							if (tx.counterparty != null) {
+								_accountLineItems3.add(tx.date + " " + tx.mode
+										+ " " + tx.counterparty + " "
+										+ tx.currency.toGatewayString()
+										+ ",Fee:" + tx.fee);
+							} else {
+								_accountLineItems3.add(tx.date + " " + tx.mode
+										+ " " + tx.currency.toGatewayString()
+										+ ",Fee:" + tx.fee);
+							}
+						}
+					}
+				}
+				tableModel3.update();
+			}
+			return;
+		}
+
 		Updateable updateAll = new Updateable() {
 
 			@Override
 			public void action(Object o) {
+				String addressTmp = _addressText.getText().trim();
 				revalidate();
 				repaint();
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPAccountInfoDialog.this);
 				revalidate();
 				repaint();
-				String addressTmp = _addressText.getText().trim();
 				if (addressTmp.startsWith("~")) {
 					try {
 						addressTmp = NameFind.getAddress(addressTmp);
@@ -572,6 +670,8 @@ public class RPAccountInfoDialog extends JDialog {
 							name = "Unkown";
 						}
 						_addressNameText.setText(name);
+						RPAccountInfoDialog.this.revalidate();
+						RPAccountInfoDialog.this.repaint();
 					}
 				};
 
@@ -601,6 +701,8 @@ public class RPAccountInfoDialog extends JDialog {
 							}
 							tableModel2.update();
 						}
+						RPAccountInfoDialog.this.revalidate();
+						RPAccountInfoDialog.this.repaint();
 					}
 				};
 
@@ -636,6 +738,8 @@ public class RPAccountInfoDialog extends JDialog {
 								}
 							}
 							tableModel3.update();
+							addStorage(new Store(address,
+									new AccountInfo().copy(info)));
 							dialog.closeDialog();
 						}
 						RPAccountInfoDialog.this.revalidate();

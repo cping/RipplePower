@@ -39,4 +39,47 @@ public class AccountInfo {
 	public HashMap<String, Long> debtCount = new HashMap<String, Long>(10);
 	public HashMap<String, Integer> trustCount = new HashMap<String, Integer>(
 			10);
+
+	public AccountInfo copy(AccountInfo info) {
+
+		marker = info.marker;
+		count = info.count;
+		error = info.error;
+		address = info.address;
+		balance = info.balance;
+		faceURL = info.faceURL;
+		sequence = info.sequence;
+		domain = info.domain;
+		fee = info.fee;
+		txPreLgrSeq = info.txPreLgrSeq;
+
+		accountlinks.clear();
+		accountlinks.addAll(info.accountlinks);
+
+		lines.clear();
+		lines.addAll(info.lines);
+
+		zero_lines.clear();
+		zero_lines.addAll(info.zero_lines);
+
+		transactions.clear();
+		transactions.addAll(info.transactions);
+
+		bookOffers.clear();
+		bookOffers.addAll(info.bookOffers);
+
+		debt.clear();
+		debt.putAll(info.debt);
+
+		debtCount.clear();
+		debtCount.putAll(info.debtCount);
+
+		trustCount.clear();
+		trustCount.putAll(info.trustCount);
+
+		cntTrust = info.cntTrust;
+		
+		return this;
+
+	}
 }

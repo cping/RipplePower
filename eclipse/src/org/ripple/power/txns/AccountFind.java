@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.blockchain.RippleMemoDecode;
 import org.ripple.power.blockchain.RippleMemoDecodes;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.TransactionTx.Memo;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base58Coder;
@@ -278,7 +279,7 @@ public class AccountFind {
 						transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
 						transactionTx.flagsName = TransactionFlagMap
 								.getString(transactionTx.flags);
-					}else{
+					} else {
 						transactionTx.flagsName = "Empty";
 					}
 					if (result.has("SendMax")) {
@@ -374,11 +375,11 @@ public class AccountFind {
 			final AccountInfo accountinfo, final Updateable update) {
 		return processTx(address, -1, 200, accountinfo, update);
 	}
-
+	
 	public AccountInfo processTx(final String address, final long txPreLgrSeq,
 			final long max, final AccountInfo accountinfo,
 			final Updateable update) {
-		final ArrayList<IssuedCurrency> issues = new ArrayList<>(10);
+		final ArrayList<IssuedCurrency> issues = new ArrayList<IssuedCurrency>(10);
 		Updateable updateable = new Updateable() {
 
 			@Override
@@ -476,7 +477,7 @@ public class AccountFind {
 												transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
 												transactionTx.flagsName = TransactionFlagMap
 														.getString(transactionTx.flags);
-											}else{
+											} else {
 												transactionTx.flagsName = "Empty";
 											}
 											if (tx.has("SendMax")) {
@@ -663,7 +664,7 @@ public class AccountFind {
 								AccountLine line = new AccountLine();
 								line.issuer = account;
 								line.currency = currency;
-								line.amount = amount;
+								line.amount = LSystem.getNumberShort(amount);
 								line.limit = limit;
 								line.quality_in = quality_in;
 								line.quality_out = quality_out;
@@ -676,11 +677,17 @@ public class AccountFind {
 									double n = debt.get(currency) == null ? 0
 											: debt.get(currency);
 									if (debt.containsKey(currency)) {
-										debt.put(currency, n + number);
+										debt.put(currency, Double
+												.parseDouble(LSystem
+														.getNumberShort(n
+																+ number)));
 										debtCount.put(currency,
 												debtCount.get(currency) + 1l);
 									} else {
-										debt.put(currency, n + number);
+										debt.put(currency, Double
+												.parseDouble(LSystem
+														.getNumberShort(n
+																+ number)));
 										debtCount.put(currency, 1l);
 									}
 								}
