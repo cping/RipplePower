@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2005-2006 Sun Microsystems, Inc. All rights reserved. Use is
- * subject to license terms.
- */ 
-
 package org.jdesktop.layout;
 
 import java.awt.Container;
@@ -10,10 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JComponent;
 
-/**
- *
- * @author sky
- */
 class SwingLayoutStyle extends LayoutStyle {
     private static final Method SWING_GET_LAYOUT_STYLE_METHOD;
     
@@ -32,8 +23,8 @@ class SwingLayoutStyle extends LayoutStyle {
         Object unrelatedType = null;
         Object indentType = null;
         try {
-            Class swingLayoutStyleClass;
-            Class swingComponentPlacementClass;
+            Class<?> swingLayoutStyleClass;
+            Class<?> swingComponentPlacementClass;
             
             swingLayoutStyleClass = Class.forName("javax.swing.LayoutStyle");
             swingComponentPlacementClass = Class.forName(

@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2005-2006 Sun Microsystems, Inc. All rights reserved. Use is
- * subject to license terms.
- */ 
-
 package org.jdesktop.layout;
 
 import javax.swing.border.EmptyBorder;
@@ -10,15 +5,6 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 
-/**
- * An implementation of <code>LayoutStyle</code> for Mac OS X Tiger.
- * <p>
- * The information used for this layout style comes from:
- * http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/
- *
- * @author  Werner Randelshofer
- * @version $Revision: 1.4 $
- */
 class AquaLayoutStyle extends LayoutStyle {
     private static final Insets EMPTY_INSETS = new Insets(0, 0, 0, 0);
     /** Mini size style. */

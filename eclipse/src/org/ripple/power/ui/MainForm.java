@@ -117,6 +117,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
 		menu.setFont(font);
+		menu.setIcon(UIRes.getImage("images/file.gif"));
 
 		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
 				"Wallet Password"));
@@ -202,6 +203,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "help", "Help"));
+		menu.setIcon(UIRes.getImage("images/help.gif"));
 		menu.setFont(font);
 		menuItem = new JMenuItem(LangConfig.get(this, "donation", "Donation"));
 		menuItem.setFont(font);

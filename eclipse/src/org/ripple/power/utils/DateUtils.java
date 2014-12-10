@@ -215,6 +215,17 @@ final public class DateUtils {
 			return str_Date;
 		}
 	}
+	
+	public static long convert(String timeout){
+	    long later = 0L;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    try {
+            later = format.parse(timeout).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+	    return later;
+	}
 
 	/**
 	 * 返回时间的毫秒格式

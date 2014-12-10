@@ -35,6 +35,7 @@ import org.ripple.power.config.RPClipboard;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.LColor;
@@ -91,7 +92,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				if (row > -1 && row < WalletCache.get().size()) {
 					row = table.convertRowIndexToModel(row);
 					WalletItem item = WalletCache.get().readRow(row);
-					RPJSonLog.get().setImageIcon("Public Key",
+					RPJSonLog.get().setImageIcon(
+							"Public Key",
 							new ImageIcon(EncoderDecoder.getEncoder(
 									item.getPublicKey(), 128, 128)));
 				}
@@ -306,6 +308,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
+		addPopMenu(LangConfig.get(this, "todo", "Encrypt Todo"),
+				CommandFlag.Todo);
 		addPopMenu(LangConfig.get(this, "editor", "Editor Script"),
 				CommandFlag.Editor);
 		addPopMenu(LangConfig.get(this, "update_node", "Rippled Node"),
@@ -334,7 +338,6 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Donation);
 
 		showTrayIcon();
-
 
 	}
 
@@ -415,6 +418,16 @@ public class MainPanel extends JPanel implements ActionListener {
 				RPToast.playWorking(LSystem.applicationMain);
 				return;
 			}
+			if (actionName.equals(CommandFlag.Todo)) {
+				LSystem.postThread(new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						RPTodoFrame.get();
+					}
+				});
+				return;
+			}
 			if (actionName.equals(CommandFlag.Editor)) {
 				RPToast.makeText(LSystem.applicationMain,
 						"Edit Ripple script and running.", Style.SUCCESS)
@@ -448,23 +461,18 @@ public class MainPanel extends JPanel implements ActionListener {
 						"Backup your wallet file.", Style.SUCCESS).display();
 				String path = Backup.create();
 				if (path != null) {
-					UIRes
-							.showInfoMessage(
-									this,
-									UIMessage.info,
-									String.format(
-											LangConfig
-													.get(this, "back1",
-															"Successful backup, the backup is saved in %s"),
-											path));
-				} else {
-					UIRes
-							.showErrorMessage(
-									this,
-									UIMessage.error,
+					UIRes.showInfoMessage(
+							this,
+							UIMessage.info,
+							String.format(
 									LangConfig
-											.get(this, "back2",
-													"Backup fails, wallet file does not exist"));
+											.get(this, "back1",
+													"Successful backup, the backup is saved in %s"),
+									path));
+				} else {
+					UIRes.showErrorMessage(this, UIMessage.error, LangConfig
+							.get(this, "back2",
+									"Backup fails, wallet file does not exist"));
 				}
 				return;
 			}

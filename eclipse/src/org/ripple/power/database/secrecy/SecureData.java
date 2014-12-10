@@ -23,7 +23,8 @@ public class SecureData implements IndexedTableEntry {
 	public SecureData(String title, String message) {
 		this.title = title;
 		try {
-			this.message = Passphrase.encodeToHex(message, LSystem.getAppPassword());
+			this.message = Passphrase.encodeToHex(message,
+					LSystem.getAppPassword());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,7 +62,8 @@ public class SecureData implements IndexedTableEntry {
 	public void setMessage(String message) {
 		updateTime();
 		try {
-			this.message = Passphrase.encodeToHex(message, LSystem.getAppPassword());
+			this.message = Passphrase.encodeToHex(message,
+					LSystem.getAppPassword());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -143,6 +145,10 @@ public class SecureData implements IndexedTableEntry {
 	@Override
 	public int hashCode() {
 		return new Long(this.id).hashCode();
+	}
+
+	public JSONObject getMessageJSON() {
+		return new JSONObject(getMessage());
 	}
 
 	public JSONObject toJSON() {

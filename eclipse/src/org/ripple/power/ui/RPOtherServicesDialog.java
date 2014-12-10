@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
 
@@ -157,7 +158,7 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		_btc2ripple_co.setText("Btc2Ripple(coinist)");
+		_btc2ripple_co.setText("Encryp Todo");
 		_btc2ripple_co.setFont(font);
 		add(_btc2ripple_co);
 		_btc2ripple_co.setBounds(10, 110, 224, 34);
@@ -165,7 +166,15 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://coinist.co/ripple/assets/btc-btc2ripple");
+			
+				LSystem.postThread(new Updateable() {
+					
+					@Override
+					public void action(Object o) {
+						RPTodoFrame.get();
+					}
+				});
+				
 			}
 		});
 

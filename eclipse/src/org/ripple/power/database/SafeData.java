@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.database.secrecy.BaseTable;
 import org.ripple.power.database.secrecy.BaseTableEntry;
@@ -20,7 +21,7 @@ public class SafeData {
 
 	private SecureDataBase secureDatabase;
 	private static final String DEFAULT_FILE_NAME = "safe.data";
-	private static final String NOTES = "NOTES";
+	private static final String DATAS = "DATAS";
 	private static final String PASSWORDS = "PASSWORDS";
 
 	private static final String TABLE = "SAFE_TABLE";
@@ -37,7 +38,7 @@ public class SafeData {
 		if (this.secureDatabase.isEmpty()) {
 			SecureIndex masterIndex = new SecureIndex();
 			masterIndex.putIndexedMapTable(new IndexedMapTable<>(
-					new SecureTable<SecureData>(NOTES)));
+					new SecureTable<SecureData>(DATAS)));
 			masterIndex.putIndexedMapTable(new IndexedMapTable<>(
 					new SecureTable<PasswordSecureData>(PASSWORDS)));
 			masterIndex.putFileTable(new BaseTable(TABLE));
@@ -67,38 +68,56 @@ public class SafeData {
 		this.init();
 	}
 
-	public void putNote(SecureData dataToSave) throws Exception {
+	public void putJSON(String name, JSONObject dataToSave) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> noteTable = masterIndex
-				.getIndexedMapTable(NOTES);
-		noteTable.putEntry(dataToSave);
+		IndexedMapTable<SecureData> dataTable = masterIndex
+				.getIndexedMapTable(DATAS);
+		dataTable.putEntry(new SecureData(name, dataToSave.toString()));
 		this.secureDatabase.commitMasterIndex(masterIndex);
 	}
 
-	public SecureData getNote(String title) throws Exception {
+	public JSONObject getJSON(String name) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> noteTable = masterIndex
-				.getIndexedMapTable(NOTES);
-		return noteTable.getEntry(title);
+		IndexedMapTable<SecureData> dataTable = masterIndex
+				.getIndexedMapTable(DATAS);
+		SecureData data = dataTable.getEntry(name);
+		return data == null ? null : data.getMessageJSON();
 	}
 
-	public void putPasswordNote(PasswordSecureData dataToSave) throws Exception {
+	public void putData(SecureData dataToSave) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<PasswordSecureData> passwordNoteTable = masterIndex
-				.getIndexedMapTable(PASSWORDS);
-		passwordNoteTable.putEntry(dataToSave);
+		IndexedMapTable<SecureData> dataTable = masterIndex
+				.getIndexedMapTable(DATAS);
+		dataTable.putEntry(dataToSave);
 		this.secureDatabase.commitMasterIndex(masterIndex);
 	}
 
-	public PasswordSecureData getPasswordNote(String title) throws Exception {
+	public SecureData getData(String title) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<PasswordSecureData> passwordNoteTable = masterIndex
+		IndexedMapTable<SecureData> dataTable = masterIndex
+				.getIndexedMapTable(DATAS);
+		return dataTable.getEntry(title);
+	}
+
+	public void putPasswordData(PasswordSecureData dataToSave) throws Exception {
+		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
+		@SuppressWarnings("unchecked")
+		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex
 				.getIndexedMapTable(PASSWORDS);
-		return passwordNoteTable.getEntry(title);
+		passwordDataTable.putEntry(dataToSave);
+		this.secureDatabase.commitMasterIndex(masterIndex);
+	}
+
+	public PasswordSecureData getPasswordData(String title) throws Exception {
+		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
+		@SuppressWarnings("unchecked")
+		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex
+				.getIndexedMapTable(PASSWORDS);
+		return passwordDataTable.getEntry(title);
 	}
 
 	public void putFile(File selectedFile) throws Exception {

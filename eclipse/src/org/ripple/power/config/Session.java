@@ -157,8 +157,8 @@ public class Session {
 		if (name == null) {
 			throw new RuntimeException("session name can not exist !");
 		}
-		this._tempFile = new File(LSystem.getDirectory(),
-				STORE_FILENAME_PREFIX + name + STORE_FILENAME_SUFFIX);
+		this._tempFile = new File(LSystem.getDirectory(), STORE_FILENAME_PREFIX
+				+ name + STORE_FILENAME_SUFFIX);
 		this._properties = makeProperties();
 		this.name = name;
 		this.records = new HashMap<String, Record>(10);
@@ -241,7 +241,7 @@ public class Session {
 	public void set(String name, int index, float value) {
 		set(name, index, String.valueOf(value));
 	}
-	
+
 	public void set(String name, long value) {
 		set(name, 0, value);
 	}
@@ -249,7 +249,7 @@ public class Session {
 	public void set(String name, int index, long value) {
 		set(name, index, String.valueOf(value));
 	}
-	
+
 	public void set(String name, boolean value) {
 		set(name, 0, value ? "1" : "0");
 	}
@@ -294,11 +294,22 @@ public class Session {
 		}
 	}
 
+	public String getString(String name, String back) {
+		synchronized (recordsList) {
+			Record record = records.get(name);
+			if (record == null) {
+				return back;
+			} else {
+				return record.get(0);
+			}
+		}
+	}
+
 	public long getLong(String name, int index) {
 		String res = get(name, index);
 		return res != null ? Long.parseLong(res) : -1;
 	}
-	
+
 	public int getInt(String name, int index) {
 		String res = get(name, index);
 		return res != null ? Integer.parseInt(res) : -1;
