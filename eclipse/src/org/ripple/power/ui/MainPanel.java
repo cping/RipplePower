@@ -312,6 +312,8 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Todo);
 		addPopMenu(LangConfig.get(this, "editor", "Editor Script"),
 				CommandFlag.Editor);
+		addPopMenu(LangConfig.get(this, "download", "Download"),
+				CommandFlag.Download);
 		addPopMenu(LangConfig.get(this, "update_node", "Rippled Node"),
 				CommandFlag.RippledNodeS);
 		addPopMenu(LangConfig.get(this, "secret_key", "Secret Key"),
@@ -424,6 +426,16 @@ public class MainPanel extends JPanel implements ActionListener {
 					@Override
 					public void action(Object o) {
 						RPTodoFrame.get();
+					}
+				});
+				return;
+			}
+			if (actionName.equals(CommandFlag.Download)) {
+				LSystem.postThread(new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						RPDownloadDialog.showDialog(LSystem.applicationMain);
 					}
 				});
 				return;

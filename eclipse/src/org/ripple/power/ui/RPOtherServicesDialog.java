@@ -23,24 +23,25 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _btc2ripple_sn;
 	private RPCButton _rippleTrade;
 	private RPCButton _activeRipple;
+	private RPCButton _downloader;
 	private RPCButton _xrp2vpn;
 	private RPCButton _ripple_bitcoin_news;
 	private RPCButton _script_editor;
 
 	private static RPPushTool instance = null;
-	
+
 	public static void hideDialog() {
 		if (instance != null) {
 			instance.setVisible(false);
 		}
 	}
-	
+
 	public static void showDialog() {
 		if (instance != null) {
 			instance.setVisible(true);
 		}
 	}
-	
+
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();
@@ -58,12 +59,12 @@ public class RPOtherServicesDialog extends JPanel {
 		RPOtherServicesDialog services = new RPOtherServicesDialog();
 		return RPPushTool.pop(new Point(
 				(size.width - services.getWidth()) - 10, size.getHeight()),
-				(int) (screenInsets.bottom + services.getHeight() + 230),
+				(int) (screenInsets.bottom + services.getHeight() + 200),
 				"Other Apps/Services", services);
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 375);
+		Dimension dim = new Dimension(246, 415);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -80,6 +81,7 @@ public class RPOtherServicesDialog extends JPanel {
 		_btc2ripple_co = new RPCButton();
 		_ripple_bitcoin_news = new RPCButton();
 		_script_editor = new RPCButton();
+		_downloader = new RPCButton();
 
 		setLayout(null);
 
@@ -133,7 +135,7 @@ public class RPOtherServicesDialog extends JPanel {
 				EditorDialog.showDialog(LSystem.applicationMain);
 			}
 		});
-		
+
 		_activeRipple.setText("Activating Wallet");
 		_activeRipple.setFont(font);
 		add(_activeRipple);
@@ -145,7 +147,19 @@ public class RPOtherServicesDialog extends JPanel {
 				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202964876-Activating-Your-Wallet");
 			}
 		});
-		
+
+		_downloader.setText("Downloader");
+		_downloader.setFont(font);
+		add(_downloader);
+		_downloader.setBounds(10, 360, 224, 34);
+		_downloader.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPDownloadDialog.showDialog(LSystem.applicationMain);
+			}
+		});
+
 		_btc2ripple_sn.setText("Btc2Ripple(~snapswap)");
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
@@ -166,15 +180,15 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			
+
 				LSystem.postThread(new Updateable() {
-					
+
 					@Override
 					public void action(Object o) {
 						RPTodoFrame.get();
 					}
 				});
-				
+
 			}
 		});
 

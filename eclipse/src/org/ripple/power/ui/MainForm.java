@@ -117,7 +117,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 		menu = new JMenu(LangConfig.get(this, "encrypt", "Encrypt"));
 		menu.setFont(font);
-		menu.setIcon(UIRes.getImage("images/file.gif"));
+		menu.setIcon(UIRes.getImage("images/zip.png"));
 
 		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
 				"Wallet Password"));
@@ -132,6 +132,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "view", "View"));
+		menu.setIcon(UIRes.getImage("images/view.png"));
 		menu.setFont(font);
 		menuItem = new JMenuItem("RPC");
 		menuItem.setFont(font);
@@ -158,15 +159,18 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "transaction", "Transaction"));
+		menu.setIcon(UIRes.getImage("images/tr.png"));
 		menu.setFont(font);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "wallet", "Wallet"));
+		menu.setIcon(UIRes.getImage("images/wallet.png"));
 		menu.setFont(font);
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "rippled_config",
 				"Rippled Config"));
+		menu.setIcon(UIRes.getImage("images/node.png"));
 		menu.setFont(font);
 
 		menuItem = new JMenuItem(LangConfig.get(this, "server_settings",
@@ -186,6 +190,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
+		menu.setIcon(UIRes.getImage("images/server.png"));
 		menu.setFont(font);
 		menuItem = new JMenuItem(LangConfig.get(this, "automation",
 				"Automation"));
@@ -203,7 +208,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menuBar.add(menu);
 
 		menu = new JMenu(LangConfig.get(this, "help", "Help"));
-		menu.setIcon(UIRes.getImage("images/help.gif"));
+		menu.setIcon(UIRes.getImage("images/help.png"));
 		menu.setFont(font);
 		menuItem = new JMenuItem(LangConfig.get(this, "donation", "Donation"));
 		menuItem.setFont(font);

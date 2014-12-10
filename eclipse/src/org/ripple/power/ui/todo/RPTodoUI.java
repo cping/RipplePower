@@ -1,6 +1,7 @@
 package org.ripple.power.ui.todo;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.ABaseDialog;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.SwingUtils;
@@ -10,7 +11,6 @@ import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -24,7 +24,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ToolTipManager;
 
-public class RPTodoUI extends JDialog {
+public class RPTodoUI extends ABaseDialog {
 
 	/**
 	 * 
@@ -285,7 +285,7 @@ public class RPTodoUI extends JDialog {
 		});
 
 		JMenuItem exit = new JMenuItem("Exit",
-				UIRes.getImage("images/Exit.png"));
+				UIRes.getImage("images/exit.png"));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
 				InputEvent.ALT_MASK));
 		exit.addActionListener(new ActionListener() {
@@ -387,7 +387,9 @@ public class RPTodoUI extends JDialog {
 
 		getContentPane().add(toolbar, BorderLayout.NORTH);
 		getContentPane().add(scroller);
-		setSize(400, 650);
+		Dimension dim = new Dimension(400, 650);
+		setPreferredSize(dim);
+		setSize(dim);
 
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -415,7 +417,7 @@ public class RPTodoUI extends JDialog {
 		}
 
 		if (!res) {
-			UIMessage.infoMessage(this, ds.getMessage());
+			info(ds.getMessage());
 		}
 	}
 
