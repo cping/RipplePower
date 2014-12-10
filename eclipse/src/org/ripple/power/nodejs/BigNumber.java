@@ -171,7 +171,7 @@ public class BigNumber {
 		this.fullReduce();
 		that.fullReduce();
 		for (i = 0; i < this.limbs.length || i < that.limbs.length; i++) {
-			difference |= this.getLimb(i) ^ that.getLimb(i);
+			difference = (int) (difference | this.getLimb(i) ^ that.getLimb(i));
 		}
 		return (difference == 0);
 	}

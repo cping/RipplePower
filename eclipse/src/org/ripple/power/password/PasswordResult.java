@@ -2,6 +2,8 @@ package org.ripple.power.password;
 
 import java.util.regex.Pattern;
 
+import org.ripple.power.wallet.Passphrase;
+
 public class PasswordResult {
 
 	public enum Expression {
@@ -43,6 +45,10 @@ public class PasswordResult {
 
 	public void setPassword(String p) {
 		this._passwordString = p;
+	}
+
+	public Passphrase getPassphrase() throws Exception {
+		return new Passphrase(this._passwordString);
 	}
 
 	public void cleanPassword() {

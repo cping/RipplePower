@@ -51,6 +51,12 @@ public class BigInteger {
 
 	long _T, _S;
 
+	public final static BigInteger ZERO = new BigInteger("0");
+
+	public BigInteger(Object o) {
+
+	}
+
 	long am1(int i, long x, long[] w, int j, long c, long n) {
 		while (--n >= 0) {
 			long v = x * this.limbs.get(i++) + w[j] + c;
@@ -75,68 +81,68 @@ public class BigInteger {
 		return c;
 	}
 
-	long am3(int i, long x, long[] w, int j, long c, long n) {
+	long am3(long i, long x, BigInteger w, long j, long c, long n) {
 		long xl = x & 0x3fff, xh = x >> 14;
 		while (--n >= 0) {
-			long l = this.limbs.get(i) & 0x3fff;
-			long h = this.limbs.get(i++) >> 14;
+			long l = this.limbs.get((int) i) & 0x3fff;
+			long h = this.limbs.get((int) (i++)) >> 14;
 			long m = xh * l + h * xl;
-			l = xl * l + ((m & 0x3fff) << 14) + w[j] + c;
+			l = xl * l + ((m & 0x3fff) << 14) + w.limbs.items[(int) j] + c;
 			c = (l >> 28) + (m >> 14) + xh * h;
-			w[j++] = l & 0xfffffff;
+			w.limbs.items[(int) (j++)] = l & 0xfffffff;
 		}
 		return c;
 	}
-	
-	public void bnpFromString(String s,Number b) {
-		  long k = 0;
-		  if(b.intValue() == 16) k = 4;
-		  else if(b.intValue() == 8) k = 3;
-		  else if(b.intValue() == 256) k = 8; 
-		  else if(b.intValue() == 2) k = 1;
-		  else if(b.intValue() == 32) k = 5;
-		  else if(b.intValue() == 4) k = 2;
-		  //else { this.fromRadix(s,b); return; }
-		  this._T = 0;
-		  this._S = 0;
-		  int i = s.length();
-		  boolean mi = false;
-		  long sh = 0;
-		  while(--i >= 0) {
-		    long x = (k==8)?s.charAt(i)&0xff:intAt(s,i);
-		    if(x < 0) {
-		      if(s.charAt(i) == '-'){
-		    	  mi = true;
-		      }
-		      continue;
-		    }
-		    mi = false;
-		    if(sh == 0){
-		      this.limbs.set((int)(this._T++), x);
-		    }
-		    else if(sh+k > DB) {
-		      this.limbs.items[(int)this._T-1] |= (x&((1<<(DB-sh))-1))<<sh;
-		      this.limbs.items[(int)this._T++] = (x>>(DB-sh));
-		    }
-		    else{
-		      this.limbs.items[(int)this._T-1] |= x<<sh;
-		    }
-		    sh += k;
-		    if(sh >= DB){
-		    	sh -= DB;
-		    }
-		  }
-		  if(k == 8 && (s.charAt(0)&0x80) != 0) {
-		    this._S = -1;
-		    if(sh > 0) this.limbs.items[(int)this._T-1] |= ((1<<(DB-sh))-1)<<sh;
-		  }
-		  this.bnpClamp();
-		//  if(mi) BigInteger.ZERO.subTo(this,this);
-		}
 
-	
-	public static void main(String[] args) {
-		new BigInteger();
+	public void bnpFromString(String s, Number b) {
+		long k = 0;
+		if (b.intValue() == 16)
+			k = 4;
+		else if (b.intValue() == 8)
+			k = 3;
+		else if (b.intValue() == 256)
+			k = 8;
+		else if (b.intValue() == 2)
+			k = 1;
+		else if (b.intValue() == 32)
+			k = 5;
+		else if (b.intValue() == 4)
+			k = 2;
+		// else { this.fromRadix(s,b); return; }
+		this._T = 0;
+		this._S = 0;
+		int i = s.length();
+		boolean mi = false;
+		long sh = 0;
+		while (--i >= 0) {
+			long x = (k == 8) ? s.charAt(i) & 0xff : intAt(s, i);
+			if (x < 0) {
+				if (s.charAt(i) == '-') {
+					mi = true;
+				}
+				continue;
+			}
+			mi = false;
+			if (sh == 0) {
+				this.limbs.set((int) (this._T++), x);
+			} else if (sh + k > DB) {
+				this.limbs.items[(int) this._T - 1] |= (x & ((1 << (DB - sh)) - 1)) << sh;
+				this.limbs.items[(int) this._T++] = (x >> (DB - sh));
+			} else {
+				this.limbs.items[(int) this._T - 1] |= x << sh;
+			}
+			sh += k;
+			if (sh >= DB) {
+				sh -= DB;
+			}
+		}
+		if (k == 8 && (s.charAt(0) & 0x80) != 0) {
+			this._S = -1;
+			if (sh > 0)
+				this.limbs.items[(int) this._T - 1] |= ((1 << (DB - sh)) - 1) << sh;
+		}
+		this.bnpClamp();
+		// if(mi) BigInteger.ZERO.subTo(this,this);
 	}
 
 	public char int2char(int n) {
@@ -151,12 +157,55 @@ public class BigInteger {
 		return -1;
 	}
 
+	public void clamp() {
+		long c = this._S & DM;
+		while (this._T > 0 && this.limbs.get((int) this._T - 1) == c) {
+			--this._T;
+		}
+	}
+
+	public BigInteger negate() {
+		return bnNegate();
+	}
+
+	public BigInteger bnNegate() {
+		BigInteger r = nbi();
+		BigInteger.ZERO.subTo(this, r);
+		return r;
+	}
+
+	public BigInteger abs() {
+		return bnAbs();
+	}
+
+	public BigInteger bnAbs() {
+		return (this._S < 0) ? this.negate() : this;
+	}
+
+	public void copyTo(BigInteger r) {
+		bnpCopyTo(r);
+	}
+
 	public void bnpCopyTo(BigInteger r) {
 		for (int i = (int) (this._T - 1); i >= 0; --i) {
 			r.limbs.set(i, this.limbs.get(i));
 		}
 		r._T = this._T;
 		r._S = this._S;
+	}
+
+	public BigInteger nbv(long i) {
+		BigInteger r = nbi();
+		r.fromInt(i);
+		return r;
+	}
+
+	public BigInteger nbi() {
+		return new BigInteger(null);
+	}
+
+	public void fromInt(long x) {
+		bnpFromInt(x);
 	}
 
 	public void bnpFromInt(long x) {
@@ -243,11 +292,117 @@ public class BigInteger {
 		r._S = this._S;
 	}
 
+	public void bnpLShiftTo(int n, BigInteger r) {
+		long bs = n % DB;
+		long cbs = DB - bs;
+		long bm = (1 << cbs) - 1;
+		long ds = new BigDecimal(Math.floor((double) n / (double) DB))
+				.longValue();
+		long c = (this._S << bs) & DM;
+		int i;
+		for (i = (int) this._T - 1; i >= 0; --i) {
+			long res = (int) ((this.limbs.get(i) >> cbs) | c);
+			r.limbs.set((int) (i + ds + 1), res);
+			c = (this.limbs.get(i) & bm) << bs;
+		}
+		for (i = (int) ds - 1; i >= 0; --i) {
+			r.limbs.set(i, 0);
+		}
+		r.limbs.set((int) ds, c);
+		r._T = this._T + ds + 1;
+		r._S = this._S;
+		r.bnpClamp();
+	}
+
 	public void bnpClamp() {
 		long c = this._S & DM;
 		while (this._S > 0 && this.limbs.get((int) this._T - 1) == c) {
 			--this._T;
 		}
+	}
+
+	public void bnpRShiftTo(int n, BigInteger r) {
+		r._S = this._S;
+		long ds = new BigDecimal(Math.floor((double) n / (double) DB))
+				.longValue();
+		if (ds >= this._T) {
+			r._T = 0;
+			return;
+		}
+		long bs = n % DB;
+		long cbs = DB - bs;
+		long bm = (1 << bs) - 1;
+		r.limbs.set(0, this.limbs.get((int) ds) >> bs);
+		for (int i = (int) ds + 1; i < this._T; ++i) {
+			r.limbs.items[(int) (i - ds - 1)] |= (int) ((this.limbs.items[i] & bm) << cbs);
+			r.limbs.items[(int) (i - ds)] = this.limbs.items[i] >> bs;
+		}
+		if (bs > 0) {
+			r.limbs.items[(int) (this._T - ds - 1)] |= (int) ((this._S & bm) << cbs);
+		}
+		r._T = this._T - ds;
+		r.bnpClamp();
+	}
+
+	public void subTo(BigInteger a, BigInteger r) {
+		bnpSubTo(a, r);
+	}
+
+	public void bnpSubTo(BigInteger a, BigInteger r) {
+		int i = 0, c = 0;
+		int m = (int) Math.min(a._T, this._T);
+		while (i < m) {
+			c += this.limbs.items[i] - a.limbs.items[i];
+			r.limbs.items[i++] = c & DM;
+			c >>= DB;
+		}
+		if (a._T < this._T) {
+			c -= a._S;
+			while (i < this._T) {
+				c += this.limbs.items[i];
+				r.limbs.items[i++] = c & DM;
+				c >>= DB;
+			}
+			c += this._S;
+		} else {
+			c += this._S;
+			while (i < a._T) {
+				c -= a.limbs.items[i];
+				r.limbs.items[i++] = c & DM;
+				c >>= DB;
+			}
+			c -= a._S;
+		}
+		r._S = (c < 0) ? -1 : 0;
+		if (c < -1) {
+			r.limbs.items[i++] = DV + c;
+		} else if (c > 0) {
+			r.limbs.items[i++] = c;
+		}
+		r._T = i;
+		r.bnpClamp();
+	}
+
+	public void bnpSquareTo(BigInteger r) {
+		BigInteger x = this.abs();
+		long i = r._T = 2 * x._T;
+		while (--i >= 0) {
+			r.limbs.items[(int) i] = 0;
+		}
+		for (i = 0; i < x._T - 1; ++i) {
+			long c = x.am3(i, x.limbs.items[(int) i], r, 2 * i, 0, 1);
+			if ((r.limbs.items[(int) (i + x._T)] += x.am3(i + 1,
+					2 * x.limbs.items[(int) i], r, 2 * i + 1, c, x._T - i - 1)) >= DV) {
+				r.limbs.items[(int) (i + x._T)] -= DV;
+				r.limbs.items[(int) (i + x._T + 1)] = 1;
+			}
+		}
+		if (r._T > 0) {
+			r.limbs.items[(int) r._T - 1] += x.am3(i, x.limbs.items[(int) i],
+					r, 2 * i, 0, 1);
+		}
+		r._S = 0;
+		r.clamp();
 	}
 
 	public long lbit(long x) {

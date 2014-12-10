@@ -1724,6 +1724,7 @@ public class ScriptRuntime {
         Scriptable parent = scope.getParentScope();
         if (parent == null) {
             Object result = topScopeName(cx, scope, name);
+
             if (result == Scriptable.NOT_FOUND) {
                 throw notFoundError(scope, name);
             }
@@ -1788,7 +1789,8 @@ public class ScriptRuntime {
             scope = parentScope;
             parentScope = parentScope.getParentScope();
             if (parentScope == null) {
-                result = topScopeName(cx, scope, name);
+    
+            	result = topScopeName(cx, scope, name);
                 if (result == Scriptable.NOT_FOUND) {
                     if (firstXMLObject == null || asFunctionCall) {
                         throw notFoundError(scope, name);

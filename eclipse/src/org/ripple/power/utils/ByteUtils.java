@@ -1,18 +1,25 @@
 package org.ripple.power.utils;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.spongycastle.util.encoders.Hex;
-
 public class ByteUtils {
+
+	private final static int SIZE_IN_BITS = 8;
+
+	private static final String hexChars = "0123456789ABCDEF";
 
 	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
@@ -540,10 +547,6 @@ public class ByteUtils {
 		return ByteBuffer.allocate(8).putLong(val).array();
 	}
 
-	public static String toHexString(byte[] data) {
-		return data == null ? "" : Hex.toHexString(data);
-	}
-
 	public static byte[] calcPacketLength(byte[] msg) {
 		int msgLen = msg.length;
 		byte[] len = { (byte) ((msgLen >> 24) & 0xFF),
@@ -710,4 +713,89 @@ public class ByteUtils {
 		return dest;
 	}
 
+	public static String toHexString(byte[] byteArray) {
+		if (byteArray == null) {
+			return null;
+		}
+		final StringBuilder sb = new StringBuilder(2 + 2 * byteArray.length);
+		for (final byte b : byteArray) {
+			sb.append(hexChars.charAt((b & 0xF0) >> 4)).append(
+					hexChars.charAt((b & 0x0F)));
+		}
+		return sb.toString();
+	}
+
+	public static String toHexString0x(byte[] byteArray) {
+		if (byteArray == null) {
+			return null;
+		}
+		return "0x" + toHexString(byteArray);
+	}
+
+	public static String toBinString0b(byte[] byteArray) {
+		if (byteArray == null) {
+			return null;
+		}
+		return "0b" + toBinString(byteArray);
+	}
+
+	public static String toBinString(byte[] byteArray) {
+		StringBuilder sb = new StringBuilder();
+		for (int byteNum = byteArray.length - 1; byteNum >= 0; byteNum--) {
+			for (int bitNum = SIZE_IN_BITS - 1; bitNum >= 0; bitNum--) {
+				if (bitAt(bitNum, byteArray[byteNum])) {
+					sb.append("1");
+				} else {
+					sb.append("0");
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	public static byte[] concatenate(byte[] a, byte[] b) {
+		return appendByteArrays(a, b);
+	}
+
+	public static boolean bitAt(int offset, byte aByte) {
+		return (aByte & (1 << offset)) != 0;
+	}
+
+	public static byte setBitAt(int offset, boolean bitValue, byte aByte) {
+		return (byte) ((bitValue) ? (aByte | (1 << offset))
+				: (aByte & ~(1 << offset)));
+	}
+
+	public static byte[] readFully(Path filePath) throws FileNotFoundException,
+			IOException {
+		return readFully(new FileInputStream(filePath.toFile()));
+	}
+
+	public static byte[] readFully(InputStream inputStream) throws IOException {
+		byte[] buffer = new byte[131072];
+		int bytesRead;
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		while ((bytesRead = inputStream.read(buffer)) != -1) {
+			output.write(buffer, 0, bytesRead);
+		}
+		return output.toByteArray();
+	}
+
+	public static void writeFully(Path filePath, byte[] bytes)
+			throws IOException {
+		writeFully(new FileOutputStream(filePath.toFile()), bytes);
+	}
+
+	public static void writeFully(OutputStream outputStream, byte[] bytes)
+			throws IOException {
+		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+				outputStream)) {
+			bufferedOutputStream.write(bytes);
+			bufferedOutputStream.flush();
+		}
+	}
+
+	public static byte[] copy(byte[] aByte) {
+		return Arrays.copyOf(aByte, aByte.length);
+	}
 }

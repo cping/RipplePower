@@ -106,11 +106,11 @@ public class RhinoEngine {
 			public Object run(Context cx) {
 				Object wrapper = RhinoUtils.wrapJavaObj(object, _scope);
 				ScriptableObject.putProperty(_scope, varName, wrapper);
-				return null;
+				return ScriptableObject.getProperty(_scope, varName);
 			}
 		});
 	}
-
+	
 	public void removeObject(final String varName) {
 		RhinoUtils.runWithCtx(new ContextRunner() {
 			public Object run(Context cx) {
@@ -168,5 +168,4 @@ public class RhinoEngine {
 		});
 		return RhinoUtils.unwrapJsObj(jsObj, _scope);
 	}
-
 }

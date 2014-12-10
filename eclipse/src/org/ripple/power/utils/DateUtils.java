@@ -17,149 +17,157 @@ final public class DateUtils {
 	private static final TimeZone timeZone = TimeZone.getTimeZone("GMT+08:00");
 
 	final static private String flag = ":";
-	
 
-    private Calendar calendar;
-    private static TimeZone timezone;
-    private static Locale locale;
-    
-    private SimpleDateFormat dateFormat;
-    
-    private static final String DASH = "-";
-    private static final String COLON = ":";
-    private static final String SPACE = " ";
-    private static final String ZERO = "0";
-    
-    public DateUtils() {
-        if (timezone == null) {
-            timezone = TimeZone.getTimeZone(
-                            System.getProperty("user.country"));
-        }
-        if (locale == null) {
-            locale = new Locale(System.getProperty("user.language"),
-                                System.getProperty("user.timezone"));
-        }
-        calendar = Calendar.getInstance();
-    }
-    
-    public DateUtils(String format) {
-        this();
-        dateFormat = new SimpleDateFormat(format);
-    }
-    
-    public void reset() {
-        calendar = Calendar.getInstance(timezone, locale);
-    }
+	public static final String STANDARD_DATE_REGEX = "20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,3})?";
+	public static final String STANDARD_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String FILENAME_DATE_PATTERN = "yyyyMMdd'T'HHmmss";
 
-    public long getTimeInMillis() {
-        return calendar.getTimeInMillis();
-    }
-    
-    public String getFormattedDate() {
-        return dateFormat.format(calendar.getTime());
-    }
-    
-    public void resetTimeZone(String timezoneString, String language, String country) {
-        timezone = TimeZone.getTimeZone(timezoneString);
-        locale = new Locale(language, country);
-    }
-    
-    public int getYear() {
-        return calendar.get(Calendar.YEAR);
-    }
-    
-    public String getMonth() {
-        int m = getMonthInt();
-        String[] months = new String [] { "Jan", "Feb", "Mar",
-                                          "Apr", "May", "Jun",
-                                          "Jul", "Aug", "Sep",
-                                          "Oct", "Nov", "Dec" };
-        if (m > 12) {
-            return "Unknown to Man";
-        }
-        
-        return months[m - 1];
-    }
-    
-    public String getDay() {
-        int x = getDayOfWeek();
-        String[] days = new String[] {"Sunday", "Monday", "Tuesday", "Wednesday",
-                                        "Thursday", "Friday", "Saturday"};
-    
-        if (x > 7) {
-            return "Unknown to Man";
-        }
-        
-        return days[x - 1];
-    }
-    
-    public int getMonthInt() {
-        return 1 + calendar.get(Calendar.MONTH);
-    }
-    
-    public String getDate() {
-        String year = Integer.toString(getYear());
-        return getDayOfMonth() + DASH + getMonth() + DASH + year.substring(2);
-    }
-    
-    public String getDate(char delimeter) {
-        String year = Integer.toString(getYear());
-        return getDayOfMonth() + delimeter + getMonth() +
-               delimeter + year.substring(2);
-    }
-    
-    public String getDateInt(String delimeter) {
-        String year = Integer.toString(getYear());
-        return getDayOfMonth() + delimeter + getMonthInt() +
-               delimeter + year.substring(2);
-    }
-    
-    public String getTime() {
-        return getHour() + COLON + getMinute();
-    }
-    
-    public String getLongTime() {
-        return getHour() + COLON + getMinute() + COLON + getSecond();
-    }
-    
-    public String getDateTime() {
-        return getDate() + SPACE + getTime();
-    }
-    
-    public String getLongDateTime() {
-        return getDayOfMonth() + DASH + getMonth() + DASH +
-        getYear() + SPACE + getLongTime();
-    }
-    
-    public int getDayOfMonth() {
-        return calendar.get(Calendar.DAY_OF_MONTH);
-    }
-    
-    public int getDayOfWeek() {
-        return calendar.get(Calendar.DAY_OF_WEEK);
-    }
-    
-    public int getWeekOfMonth() {
-        return calendar.get(Calendar.WEEK_OF_MONTH);
-    }
-    
-    public int getHour() {
-        return calendar.get(Calendar.HOUR_OF_DAY);
-    }
-    
-    public String getSecond() {
-        int tempSecond = calendar.get(Calendar.SECOND);
-        return tempSecond < 10 ? ZERO + tempSecond : Integer.toString(tempSecond);
-    }
-    
-    public String getMinute() {
-        int tempMinute = calendar.get(Calendar.MINUTE);
-        return tempMinute < 10 ? ZERO + tempMinute : Integer.toString(tempMinute);
-    }
-    
-    public int getMinuteForCalc() {
-        return calendar.get(Calendar.MINUTE);
-    }
+	public static final SimpleDateFormat standardDateFormat = new SimpleDateFormat(
+			STANDARD_DATE_PATTERN);
+	public static final SimpleDateFormat fileNameDateFormat = new SimpleDateFormat(
+			FILENAME_DATE_PATTERN);
+
+	private Calendar calendar;
+	private static TimeZone timezone;
+	private static Locale locale;
+
+	private SimpleDateFormat dateFormat;
+
+	private static final String DASH = "-";
+	private static final String COLON = ":";
+	private static final String SPACE = " ";
+	private static final String ZERO = "0";
+
+	public DateUtils() {
+		if (timezone == null) {
+			timezone = TimeZone.getTimeZone(System.getProperty("user.country"));
+		}
+		if (locale == null) {
+			locale = new Locale(System.getProperty("user.language"),
+					System.getProperty("user.timezone"));
+		}
+		calendar = Calendar.getInstance();
+	}
+
+	public DateUtils(String format) {
+		this();
+		dateFormat = new SimpleDateFormat(format);
+	}
+
+	public void reset() {
+		calendar = Calendar.getInstance(timezone, locale);
+	}
+
+	public long getTimeInMillis() {
+		return calendar.getTimeInMillis();
+	}
+
+	public String getFormattedDate() {
+		return dateFormat.format(calendar.getTime());
+	}
+
+	public void resetTimeZone(String timezoneString, String language,
+			String country) {
+		timezone = TimeZone.getTimeZone(timezoneString);
+		locale = new Locale(language, country);
+	}
+
+	public int getYear() {
+		return calendar.get(Calendar.YEAR);
+	}
+
+	public String getMonth() {
+		int m = getMonthInt();
+		String[] months = new String[] { "Jan", "Feb", "Mar", "Apr", "May",
+				"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+		if (m > 12) {
+			return "Unknown to Man";
+		}
+
+		return months[m - 1];
+	}
+
+	public String getDay() {
+		int x = getDayOfWeek();
+		String[] days = new String[] { "Sunday", "Monday", "Tuesday",
+				"Wednesday", "Thursday", "Friday", "Saturday" };
+
+		if (x > 7) {
+			return "Unknown to Man";
+		}
+
+		return days[x - 1];
+	}
+
+	public int getMonthInt() {
+		return 1 + calendar.get(Calendar.MONTH);
+	}
+
+	public String getDate() {
+		String year = Integer.toString(getYear());
+		return getDayOfMonth() + DASH + getMonth() + DASH + year.substring(2);
+	}
+
+	public String getDate(char delimeter) {
+		String year = Integer.toString(getYear());
+		return getDayOfMonth() + delimeter + getMonth() + delimeter
+				+ year.substring(2);
+	}
+
+	public String getDateInt(String delimeter) {
+		String year = Integer.toString(getYear());
+		return getDayOfMonth() + delimeter + getMonthInt() + delimeter
+				+ year.substring(2);
+	}
+
+	public String getTime() {
+		return getHour() + COLON + getMinute();
+	}
+
+	public String getLongTime() {
+		return getHour() + COLON + getMinute() + COLON + getSecond();
+	}
+
+	public String getDateTime() {
+		return getDate() + SPACE + getTime();
+	}
+
+	public String getLongDateTime() {
+		return getDayOfMonth() + DASH + getMonth() + DASH + getYear() + SPACE
+				+ getLongTime();
+	}
+
+	public int getDayOfMonth() {
+		return calendar.get(Calendar.DAY_OF_MONTH);
+	}
+
+	public int getDayOfWeek() {
+		return calendar.get(Calendar.DAY_OF_WEEK);
+	}
+
+	public int getWeekOfMonth() {
+		return calendar.get(Calendar.WEEK_OF_MONTH);
+	}
+
+	public int getHour() {
+		return calendar.get(Calendar.HOUR_OF_DAY);
+	}
+
+	public String getSecond() {
+		int tempSecond = calendar.get(Calendar.SECOND);
+		return tempSecond < 10 ? ZERO + tempSecond : Integer
+				.toString(tempSecond);
+	}
+
+	public String getMinute() {
+		int tempMinute = calendar.get(Calendar.MINUTE);
+		return tempMinute < 10 ? ZERO + tempMinute : Integer
+				.toString(tempMinute);
+	}
+
+	public int getMinuteForCalc() {
+		return calendar.get(Calendar.MINUTE);
+	}
 
 	/**
 	 * 获得指定ms的时、分、秒字符串信息
@@ -1123,7 +1131,7 @@ final public class DateUtils {
 					+ " [d] " + String.valueOf(lhour) + " [h] "
 					+ String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
 					+ " [s]";
-		} else { 
+		} else {
 			long lyear = diffInMills / year;
 			long mn = (diffInMills - lyear * year) / month;
 			long lday = (diffInMills - lyear * year - mn * month) / day;
@@ -1140,5 +1148,113 @@ final public class DateUtils {
 					+ String.valueOf(lhour) + " [h] " + String.valueOf(lmin)
 					+ " [min] " + String.valueOf(lsec) + " [s]";
 		}
+	}
+
+	public static Date stdString2date(String dateString) throws ParseException {
+		return standardDateFormat.parse(dateString);
+	}
+
+	public static String date2StdString(Date aDate) {
+		return standardDateFormat.format(aDate);
+	}
+
+	public static String date2FmtString(Date aDate, String dateFormatString) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+				dateFormatString);
+		return simpleDateFormat.format(aDate);
+	}
+
+	public static Date fileNameString2date(String dateString)
+			throws ParseException {
+		return fileNameDateFormat.parse(dateString);
+	}
+
+	public static String date2FileNameString(Date aDate) {
+		return fileNameDateFormat.format(aDate);
+	}
+
+	public static Long timeDifferenceInSeconds(Date startDate, Date endDate) {
+		if (startDate == null || endDate == null) {
+			return null;
+		}
+		return (endDate.getTime() - startDate.getTime()) / (1000L);
+	}
+
+	public static Date addTime(Date aDate, int timeToAdd, int timeUnits) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(aDate);
+		cal.add(timeUnits, timeToAdd);
+		return cal.getTime();
+	}
+
+	public static Date addDays(Date aDate, int days) {
+		return addTime(aDate, (24 * days), Calendar.HOUR);
+	}
+
+	public static Date addHours(Date aDate, int hours) {
+		return addTime(aDate, hours, Calendar.HOUR);
+	}
+
+	public static Date addSeconds(Date aDate, int seconds) {
+		return addTime(aDate, seconds, Calendar.SECOND);
+	}
+
+	public static long hoursBetween(Calendar startDate, Calendar endDate) {
+		Calendar date = (Calendar) startDate.clone();
+		long hoursBetween = -1;
+		while (date.before(endDate) || date.equals(endDate)) {
+			date.add(Calendar.HOUR, 1);
+			hoursBetween++;
+		}
+		return hoursBetween;
+	}
+
+	public static boolean dateCompare(Date d1, Date d2) {
+		Calendar c1 = GregorianCalendar.getInstance();
+		Calendar c2 = GregorianCalendar.getInstance();
+		c1.setTime(d1);
+		c2.setTime(d2);
+		boolean sameDate = c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR);
+		sameDate = sameDate
+				&& c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+		return sameDate;
+	}
+
+	public static Date endOfDay(Date aDate) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(aDate);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 24);
+		Date midnight = cal.getTime();
+		return midnight;
+	}
+
+	public static Long secondsToEndOfDay(Date aDate) {
+		Date midnight = endOfDay(aDate);
+		return timeDifferenceInSeconds(aDate, midnight);
+	}
+
+	public static Date startOfDay(Date aDate) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(aDate);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		Date dayBreak = cal.getTime();
+		return dayBreak;
+	}
+
+	public static Long secondsFromStartOfDay(Date aDate) {
+		Date dayBreak = startOfDay(aDate);
+		return timeDifferenceInSeconds(dayBreak, aDate);
+	}
+
+	public static int hourOfDay(Date aDate) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(aDate);
+		return cal.get(Calendar.HOUR_OF_DAY);
 	}
 }

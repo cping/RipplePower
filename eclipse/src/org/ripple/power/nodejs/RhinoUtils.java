@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ImporterTopLevel;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
@@ -25,8 +26,10 @@ public class RhinoUtils {
 				}
 				Scriptable blankScope = cx.newObject(_standardScope);
 				blankScope.setPrototype(_standardScope);
-				blankScope.setParentScope(null);
-				return blankScope;
+				Scriptable scope = new ImporterTopLevel(cx);
+				blankScope.setParentScope(scope);
+				_standardScope.setParentScope(blankScope);
+				return _standardScope;
 			}
 		});
 	}
@@ -35,6 +38,8 @@ public class RhinoUtils {
 		Context cx = null;
 		try {
 			cx = Context.enter();
+			cx.setOptimizationLevel(-1);
+
 			Object res = runner.run(cx);
 			return res;
 		} finally {
