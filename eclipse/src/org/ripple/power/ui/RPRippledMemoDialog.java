@@ -3,11 +3,11 @@ package org.ripple.power.ui;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.json.JSONObject;
 import org.ripple.power.blockchain.RippleMemoDecodes;
@@ -56,21 +56,22 @@ public class RPRippledMemoDialog extends JDialog {
 	private RPTextArea _messageText;
 	private RPTextBox _recipientText;
 	private WalletItem _item;
-	private String _address;
+	private String _address, _message;
 
-	public static void showDialog(String name, JFrame parent, String address) {
-		showDialog(name, parent, address, null);
+	public static void showDialog(String name, Window parent, String address,
+			String message) {
+		showDialog(name, parent, address, message, null);
 	}
 
-	public static void showDialog(String name, JFrame parent, WalletItem item) {
-		showDialog(name, parent, null, item);
+	public static void showDialog(String name, Window parent, WalletItem item) {
+		showDialog(name, parent, null, null, item);
 	}
 
-	public static void showDialog(String name, JFrame parent, String address,
-			WalletItem item) {
+	public static void showDialog(String name, Window parent, String address,
+			String message, WalletItem item) {
 		try {
 			RPRippledMemoDialog dialog = new RPRippledMemoDialog(name, parent,
-					address, item);
+					address, message, item);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -79,8 +80,8 @@ public class RPRippledMemoDialog extends JDialog {
 		}
 	}
 
-	public RPRippledMemoDialog(String text, JFrame parent, String address,
-			WalletItem item) {
+	public RPRippledMemoDialog(String text, Window parent, String address,
+			String message, WalletItem item) {
 		super(parent, text
 				+ (item == null ? (address == null ? "" : "(" + address + ")")
 						: "(" + item.getPublicKey() + ")"),
@@ -90,6 +91,7 @@ public class RPRippledMemoDialog extends JDialog {
 		} else {
 			this._address = item.getPublicKey();
 		}
+		this._message = message;
 		this._item = item;
 		this.addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
@@ -152,7 +154,11 @@ public class RPRippledMemoDialog extends JDialog {
 		_messageText.setColumns(20);
 		_messageText.setRows(5);
 		jScrollPane2.setViewportView(_messageText);
-		_messageText.setText("Hello Rippled Message!");
+		if (_message != null) {
+			_messageText.setText(_message);
+		} else {
+			_messageText.setText("Hello Rippled Message!");
+		}
 
 		getContentPane().add(jScrollPane2);
 		jScrollPane2.setBounds(10, 233, 494, 110);

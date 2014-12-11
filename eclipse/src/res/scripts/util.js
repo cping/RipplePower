@@ -31,27 +31,6 @@ function log(message){
 	println(prefix+message);
 }
 
-/*
- * parse time by English style of description, like:
- * tomorrw,
- * today +3 hours,
- * yesterday,
- * last April,
- * +10 min,
- * etc
- */
-function parseTimeout(input){
-	input = input || "now +5 min";
-	var standard = Date.parse(input);
-	standard = standard || new Date();
-	var date = standard.toString("yyyy-MM-dd HH:mm:ss");
-	return date;
-}
-
-//parseTimeout("tomorrow +3 hours");
-//parseTimeout("today +30 min");
-//parseTimeout("1/7 10 pm");
-
 var jQuery = jQuery || {};
 jQuery.extend = function() {
 	// copy reference to target object

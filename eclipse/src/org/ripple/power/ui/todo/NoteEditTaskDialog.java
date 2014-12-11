@@ -1,8 +1,5 @@
 package org.ripple.power.ui.todo;
 
-import org.ripple.power.nodejs.JSPlugin;
-
-import org.ripple.power.nodejs.SimplePluginManager;
 import org.ripple.power.ui.UIRes;
 
 import javax.swing.*;
@@ -181,8 +178,7 @@ public class NoteEditTaskDialog extends javax.swing.JDialog{
 				data.setType(cboxType.getSelectedItem().toString());
 				data.setStatus(cboxStatus.getSelectedItem().toString());
 				
-				JSPlugin plUtil = SimplePluginManager.getInstance().getPlugin("util");
-		    	String date = (String)plUtil.execute("parseTimeout", tfTimeout.getText());
+		    	String date = tfTimeout.getText();
 
 		    	data.setTimeout(date);
 		    	

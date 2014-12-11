@@ -2,6 +2,7 @@ package org.ripple.power.wallet;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
@@ -99,6 +100,21 @@ public class WalletCache {
 		}
 	}
 
+	public WalletItem findItem(String address) {
+		synchronized (pCaches) {
+			int size = pCaches.size();
+			if (size > 0) {
+				for (int i = 0; i < size; i++) {
+					WalletItem item = (WalletItem) pCaches.get(i);
+					if (item.getPublicKey().equals(address)) {
+						return item;
+					}
+				}
+			}
+			return null;
+		}
+	}
+	
 	public String findSecret(String address) {
 		synchronized (pCaches) {
 			int size = pCaches.size();
@@ -197,6 +213,14 @@ public class WalletCache {
 
 	public WalletItem readRow(int index) {
 		return (WalletItem) pCaches.get(index);
+	}
+
+	public ArrayList<WalletItem> all() {
+		ArrayList<WalletItem> list = new ArrayList<WalletItem>(pCaches.size());
+		for (int i = 0; i < pCaches.size(); i++) {
+			list.add((WalletItem) pCaches.get(i));
+		}
+		return list;
 	}
 
 }

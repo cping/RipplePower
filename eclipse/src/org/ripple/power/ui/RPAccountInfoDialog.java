@@ -435,7 +435,7 @@ public class RPAccountInfoDialog extends JDialog {
 				}
 				RPRippledMemoDialog.showDialog(
 						LangConfig.get(this, "send_memo", "Memo Send/Receive"),
-						LSystem.applicationMain, address);
+						LSystem.applicationMain, address, null);
 			}
 		});
 		getContentPane().add(_memoButton);

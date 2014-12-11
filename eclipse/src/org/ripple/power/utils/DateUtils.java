@@ -18,6 +18,7 @@ final public class DateUtils {
 
 	final static private String flag = ":";
 
+	public static final String DEFAULT_DATE_FORMATE = "yyyy-MM-dd HH:mm:ss";
 	public static final String STANDARD_DATE_REGEX = "20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,3})?";
 	public static final String STANDARD_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String FILENAME_DATE_PATTERN = "yyyyMMdd'T'HHmmss";
@@ -210,7 +211,7 @@ final public class DateUtils {
 			return "";
 		else {
 			SimpleDateFormat sdFormat = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+					DEFAULT_DATE_FORMATE, Locale.getDefault());
 			String str_Date = sdFormat.format(date);
 			return str_Date;
 		}
@@ -218,7 +219,7 @@ final public class DateUtils {
 	
 	public static long convert(String timeout){
 	    long later = 0L;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
 	    try {
             later = format.parse(timeout).getTime();
         } catch (ParseException e) {
@@ -296,7 +297,7 @@ final public class DateUtils {
 	 */
 	public static String toLocalDate() {
 		java.util.Date dt = new java.util.Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
 		df.setTimeZone(TimeZone.getDefault());
 		return df.format(dt);
 	}
@@ -413,12 +414,15 @@ final public class DateUtils {
 	 * @return
 	 */
 	public static String toDate() {
-		Date dt = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return toDate(new Date());
+	}
+	
+	public static String toDate(Date dt) {
+		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
 		df.setTimeZone(TimeZone.getDefault());
 		return df.format(dt);
 	}
-
+	
 	/**
 	 * 返回中文时间
 	 * 

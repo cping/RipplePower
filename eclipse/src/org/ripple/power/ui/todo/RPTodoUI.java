@@ -1,16 +1,22 @@
 package org.ripple.power.ui.todo;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.ABaseDialog;
+import org.ripple.power.ui.RPRippledMemoDialog;
+import org.ripple.power.ui.RPSelectWalletDialog;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.ui.UIRes;
+import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.SwingUtils;
+import org.ripple.power.wallet.WalletItem;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -68,7 +74,7 @@ public class RPTodoUI extends ABaseDialog {
 	public Window getWindow() {
 		return this;
 	}
-	
+
 	public RPTodoUI(String title) {
 		super(LSystem.applicationMain, title, ModalityType.MODELESS);
 	}
@@ -132,10 +138,11 @@ public class RPTodoUI extends ABaseDialog {
 
 			JList<?> list = (JList<?>) selected;
 			int index = list.locationToIndex(point);
-			TodoItem item = (TodoItem) list.getModel().getElementAt(index);
+			final TodoItem item = (TodoItem) list.getModel()
+					.getElementAt(index);
 
 			if (command.equals("Delete item")) {
-				if (UIRes.showConfirmMessage(RPTodoUI.this, "Delete Note",
+				if (UIRes.showConfirmMessage(RPTodoUI.this, "Delete item",
 						"Are you sure you want to delete item?", UIMessage.ok,
 						UIMessage.cancel) == 0) {
 					deleteItem(item);
@@ -150,6 +157,22 @@ public class RPTodoUI extends ABaseDialog {
 						RPTodoUI.this, "Send this item ", item);
 				newMailDialog.setLocationRelativeTo(null);
 				newMailDialog.setVisible(true);
+			} else if (command.equals("Ripple this item")) {
+				RPSelectWalletDialog.showDialog("Ripple this item",
+						RPTodoUI.this, new Updateable() {
+
+							@Override
+							public void action(Object o) {
+								if (o != null && o instanceof WalletItem) {
+									WalletItem wallet_item = (WalletItem) o;
+									RPRippledMemoDialog.showDialog(
+											"Ripple TODO",
+											RPTodoUI.this,
+											wallet_item.getPublicKey(),
+											item.toText());
+								}
+							}
+						});
 			}
 		}
 	}
@@ -369,11 +392,15 @@ public class RPTodoUI extends ABaseDialog {
 				UIRes.getImage("images/edit2.gif"));
 		JMenuItem mailMenuItem = new JMenuItem("Mail this item",
 				UIRes.getImage("images/mail.gif"));
+		JMenuItem rippleMenuItem = new JMenuItem("Ripple this item",
+				new ImageIcon(LImage.createImage("icons/ripple.png")
+						.scaledInstance(16, 16).getBufferedImage()));
 
 		pmOnItem = new JPopupMenu("Edit menu");
 		pmOnItem.add(delMenuItem);
 		pmOnItem.add(editMenuItem);
 		pmOnItem.add(mailMenuItem);
+		pmOnItem.add(rippleMenuItem);
 
 		popupListener = new PopupListener(pmOnItem);
 	}
