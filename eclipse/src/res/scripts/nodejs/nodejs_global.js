@@ -1,20 +1,19 @@
-//Agregamos el objeto process
 global.process = {
-	stdout : Shareppy.stdout(),
-	stderr : Shareppy.stderr()
+	stdout : nodejs.stdout(),
+	stderr : nodejs.stderr()
 };
 
 global.require = function(mod){
-	var module = Shareppy.find_module(mod);
+	var module = nodejs.find_module(mod);
 	if(module){
 		module.exports = {};
-		return Shareppy.run_module(module);
+		return nodejs.run_module(module);
 	}
 	throw "Cannot find module '" + mod + "'";
 }
 
 global.require.resolve = function(mod){
-	var module = Shareppy.find_module(mod);
+	var module = nodejs.find_module(mod);
 	if(module){
 		return module.resolve;
 	}

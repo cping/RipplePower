@@ -152,7 +152,7 @@ public class UIRes {
 	public static ArrayByte getDataSource(String path) throws IOException {
 		return new ArrayByte(getStream(path), ArrayByte.BIG_ENDIAN);
 	}
-
+	
 	public static InputStream getStream(String path) throws IOException {
 		path = computePath(path);
 		InputStream is = classLoader.getResourceAsStream(path);
