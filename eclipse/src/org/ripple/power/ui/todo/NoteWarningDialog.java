@@ -191,18 +191,4 @@ public class NoteWarningDialog extends JDialog{
         private javax.swing.ButtonGroup radiosGroup;	
     }
     
-    public static void main(String[] args){
-    	TodoItem item = new TodoItem();
-    	item.setId("id");
-    	item.setDesc("desc");
-    	item.setNote("note");
-    	item.setPeriod("none");
-    	item.setStatus("new");
-    	item.setTimeout("timeout");
-    	item.setType("node");
-    	
-    	NoteWarningDialog dialog = new NoteWarningDialog(item);
-    	dialog.setSize(386, 174);
-    	dialog.setVisible(true);
-    }
 }

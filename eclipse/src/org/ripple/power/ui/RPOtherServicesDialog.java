@@ -27,6 +27,7 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _xrp2vpn;
 	private RPCButton _ripple_bitcoin_news;
 	private RPCButton _script_editor;
+	private RPCButton _p2pchat;
 
 	private static RPPushTool instance = null;
 
@@ -59,12 +60,12 @@ public class RPOtherServicesDialog extends JPanel {
 		RPOtherServicesDialog services = new RPOtherServicesDialog();
 		return RPPushTool.pop(new Point(
 				(size.width - services.getWidth()) - 10, size.getHeight()),
-				(int) (screenInsets.bottom + services.getHeight() + 200),
+				(int) (screenInsets.bottom + services.getHeight() + 150),
 				"Other Apps/Services", services);
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 415);
+		Dimension dim = new Dimension(246, 465);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -82,6 +83,7 @@ public class RPOtherServicesDialog extends JPanel {
 		_ripple_bitcoin_news = new RPCButton();
 		_script_editor = new RPCButton();
 		_downloader = new RPCButton();
+		_p2pchat = new RPCButton();
 
 		setLayout(null);
 
@@ -157,6 +159,19 @@ public class RPOtherServicesDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPDownloadDialog.showDialog(LSystem.applicationMain);
+			}
+		});
+
+		_p2pchat.setText("Ripple P2P Chat");
+		_p2pchat.setFont(font);
+		add(_p2pchat);
+		_p2pchat.setBounds(10, 410, 224, 34);
+		_p2pchat.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPSelectChatDialog.showDialog("P2P Chat",
+						LSystem.applicationMain);
 			}
 		});
 

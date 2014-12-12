@@ -185,25 +185,6 @@ public class NoteNewMailDialog extends JDialog {
     	
     	return content.toString();
     }
-    
-    
-    public static void main(String[] args){
-    	JFrame frame = new JFrame();
-    	
-    	JButton btnShowMail = new JButton("new a mail");
-    	btnShowMail.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-		    	NoteNewMailDialog mailDlg = new NoteNewMailDialog(null, "send mail", null);
-		    	mailDlg.setVisible(true);		
-			}
-    	});
-    	
-    	frame.add(btnShowMail, BorderLayout.CENTER);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	frame.setSize(200,200);
-    	frame.setVisible(true);
-    	
-    }
 
 	public Window getWindow() {
 		return parent;

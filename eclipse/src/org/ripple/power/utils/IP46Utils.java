@@ -1,9 +1,13 @@
 package org.ripple.power.utils;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -271,4 +275,46 @@ public class IP46Utils {
 		return LSystem.random.nextBoolean() ? randomInet4Address()
 				: randomInet6Address();
 	}
+
+	public static String getLocalIP() {
+		String result = "";
+		String html = "";
+		html = getIpCheckReps("http://1111.ip138.com/ic.asp");
+		if (!"".equals(html)) {
+			result = html.substring(html.indexOf("[") + 1, html.indexOf("]"));
+		} else {
+			html = getIpCheckReps("http://ip.blueera.net/api?type=text");
+			result = parseIpAddr(html, 2);
+		}
+		return result;
+	}
+
+	static String parseIpAddr(String html, int which) {
+		String ip = "";
+		if (which == 1) {
+			Pattern pt = Pattern.compile("<code>(.*?)</code>");
+			Matcher m = pt.matcher(html);
+			if (m.find()) {
+				ip = m.group(1);
+			}
+		}
+		if (which == 2) {
+			ip = html.split(" ")[0];
+		}
+		return ip.trim();
+	}
+
+	public static String getIpCheckReps(String url) {
+		HttpRequest request = HttpRequest.get(url);
+		String result = "";
+		try {
+			if (request.ok()) {
+				result = request.body();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }

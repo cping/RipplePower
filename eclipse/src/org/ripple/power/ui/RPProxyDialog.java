@@ -22,12 +22,12 @@ public class RPProxyDialog extends JDialog {
 	private RPTextBox rippledPort;
 	private RPCButton _oneButton;
 	private RPCButton _twoButton;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
-	private RPLabel jLabel4;
-	private RPLabel jLabel5;
-	private RPLabel jLabel6;
+	private RPLabel _aLabel;
+	private RPLabel _bLabel;
+	private RPLabel _cLabel;
+	private RPLabel _dLabel;
+	private RPLabel _eLabel;
+	private RPLabel _fLabel;
 	private RPTextBox proxyPassword;
 	private RPTextBox proxyPort;
 	private RPTextBox proxyServer;
@@ -60,8 +60,8 @@ public class RPProxyDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		jLabel1 = new RPLabel();
-		jLabel2 = new RPLabel();
+		_aLabel = new RPLabel();
+		_bLabel = new RPLabel();
 		rippledPath = new RPTextBox();
 		rippledPath.setText("wss://");
 		rippledPort = new RPTextBox();
@@ -70,18 +70,18 @@ public class RPProxyDialog extends JDialog {
 		useProxy = new javax.swing.JCheckBox();
 		useProxy.setForeground(new LColor(255, 255, 255));
 		useProxy.setBackground(new LColor(36, 36, 36));
-		jLabel3 = new RPLabel();
-		jLabel4 = new RPLabel();
+		_cLabel = new RPLabel();
+		_dLabel = new RPLabel();
 		proxyServer = new RPTextBox();
 		proxyPort = new RPTextBox();
-		jLabel5 = new RPLabel();
+		_eLabel = new RPLabel();
 		proxyUsername = new RPTextBox();
-		jLabel6 = new RPLabel();
+		_fLabel = new RPLabel();
 		proxyPassword = new RPTextBox();
 		setResizable(false);
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		jLabel1.setText("Rippled Path");
-		jLabel2.setText("Rippled Port");
+		_aLabel.setText("Rippled Path");
+		_bLabel.setText("Rippled Port");
 		_twoButton.setText("Save");
 		_twoButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,13 +100,13 @@ public class RPProxyDialog extends JDialog {
 				useProxyItemStateChanged(evt);
 			}
 		});
-		jLabel3.setText("Proxy Server");
-		jLabel4.setText("Proxy Port");
+		_cLabel.setText("Proxy Server");
+		_dLabel.setText("Proxy Port");
 		proxyServer.setEnabled(false);
 		proxyPort.setEnabled(false);
-		jLabel5.setText("Proxy Username");
+		_eLabel.setText("Proxy Username");
 		proxyUsername.setEnabled(false);
-		jLabel6.setText("Proxy Password");
+		_fLabel.setText("Proxy Password");
 		proxyPassword.setEnabled(false);
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
 				getContentPane());
@@ -147,17 +147,17 @@ public class RPProxyDialog extends JDialog {
 																		layout.createParallelGroup(
 																				javax.swing.GroupLayout.Alignment.LEADING)
 																				.addComponent(
-																						jLabel1)
+																						_aLabel)
 																				.addComponent(
-																						jLabel2)
+																						_bLabel)
 																				.addComponent(
-																						jLabel3)
+																						_cLabel)
 																				.addComponent(
-																						jLabel4)
+																						_dLabel)
 																				.addComponent(
-																						jLabel5)
+																						_eLabel)
 																				.addComponent(
-																						jLabel6))
+																						_fLabel))
 																.addGap(0,
 																		0,
 																		Short.MAX_VALUE))
@@ -168,7 +168,7 @@ public class RPProxyDialog extends JDialog {
 				.addGroup(
 						layout.createSequentialGroup()
 								.addContainerGap()
-								.addComponent(jLabel1)
+								.addComponent(_aLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(rippledPath,
@@ -177,7 +177,7 @@ public class RPProxyDialog extends JDialog {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-								.addComponent(jLabel2)
+								.addComponent(_bLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(rippledPort,
@@ -189,7 +189,7 @@ public class RPProxyDialog extends JDialog {
 								.addComponent(useProxy)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jLabel3)
+								.addComponent(_cLabel)
 								.addGap(4, 4, 4)
 								.addComponent(proxyServer,
 										javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -197,7 +197,7 @@ public class RPProxyDialog extends JDialog {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jLabel4)
+								.addComponent(_dLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(proxyPort,
@@ -206,7 +206,7 @@ public class RPProxyDialog extends JDialog {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jLabel5)
+								.addComponent(_eLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(proxyUsername,
@@ -215,7 +215,7 @@ public class RPProxyDialog extends JDialog {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jLabel6)
+								.addComponent(_fLabel)
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(proxyPassword,

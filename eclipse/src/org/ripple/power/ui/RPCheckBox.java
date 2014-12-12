@@ -18,5 +18,10 @@ public class RPCheckBox extends JCheckBox{
 		setBackground(new LColor(70, 70, 70));
 		setForeground(Color.WHITE);
 	}
-	
+
+	public RPCheckBox(String title){
+		super(title);
+		setBackground(new LColor(70, 70, 70));
+		setForeground(Color.WHITE);
+	}
 }

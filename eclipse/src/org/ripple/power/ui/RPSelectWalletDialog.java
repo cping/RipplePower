@@ -69,6 +69,7 @@ public class RPSelectWalletDialog extends ABaseDialog {
 		_label.setBounds(10, 10, 116, 23);
 
 		_btnSelect.setText(UIMessage.ok);
+		_btnSelect.setFont(UIRes.getFont());
 		_btnSelect.addActionListener(new ActionListener() {
 
 			@Override

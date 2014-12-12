@@ -71,8 +71,13 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 		public void initialize() {
 			try {
 				url = new URL(urlString);
-				connection = (HttpURLConnection) url.openConnection();
-
+				if (LSystem.applicationProxy != null) {
+					connection = (HttpURLConnection) url
+							.openConnection(LSystem.applicationProxy.getProxy());
+				} else {
+					connection = (HttpURLConnection) url
+							.openConnection();
+				}
 				connection.setRequestProperty("Range", "bytes=" + downloaded
 						+ "-");
 
@@ -461,7 +466,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 		getContentPane().add(addPanel, BorderLayout.NORTH);
 		getContentPane().add(downloadsPanel, BorderLayout.CENTER);
 		getContentPane().add(buttonsPanel, BorderLayout.SOUTH);
-		
+
 		downloadsPanel.setBackground(UIConfig.dialogbackground);
 		buttonsPanel.setBackground(UIConfig.dialogbackground);
 		addPanel.setBackground(UIConfig.dialogbackground);
