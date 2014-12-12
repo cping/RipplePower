@@ -276,22 +276,18 @@ public class RippleMarket {
 
 	public static double getXRPtoUSD() {
 		double snapswap_xrp = -1, bitstamp_xrp = -1;
-		Object result = RippleMarket.getExchange(IssuedCurrency.SNAPSWAP_USD);
+		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
+		list.add(IssuedCurrency.SNAPSWAP_USD);
+		list.add(IssuedCurrency.BITSTAMP_USD);
+		Object result = RippleMarket.getExchange(list);
 		if (result != null) {
 			if (result instanceof JSONArray) {
 				snapswap_xrp = ((JSONArray) result).getJSONObject(0).getDouble(
 						"rate");
-			} else if (result instanceof JSONObject) {
-				snapswap_xrp = ((JSONObject) result).getDouble("rate");
-			}
-		}
-		result = RippleMarket.getExchange(IssuedCurrency.BITSTAMP_USD);
-		if (result != null) {
-			if (result instanceof JSONArray) {
-				bitstamp_xrp = ((JSONArray) result).getJSONObject(0).getDouble(
+				bitstamp_xrp = ((JSONArray) result).getJSONObject(1).getDouble(
 						"rate");
 			} else if (result instanceof JSONObject) {
-				bitstamp_xrp = ((JSONObject) result).getDouble("rate");
+				snapswap_xrp = ((JSONObject) result).getDouble("rate");
 			}
 		}
 		double real = Math.min(snapswap_xrp, bitstamp_xrp);

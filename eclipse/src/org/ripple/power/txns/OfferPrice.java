@@ -20,6 +20,26 @@ import java.util.ArrayList;
 
 public abstract class OfferPrice {
 
+	public static boolean isSellOrder(long flag) {
+		return (flag & 0x00020000) > 0;
+	}
+
+	private final static double LOG10 = Math.log(10.0d);
+
+	public static double adjustValueFloor(double value, double digit) {
+		double n = Math.pow(10d, digit);
+		return Math.floor(value * n) / n;
+	}
+
+	public static double adjustValueCeil(double value, double digit) {
+		double n = Math.pow(10d, digit);
+		return Math.ceil(value * n) / n;
+	}
+
+	public static double numberOfDigits(double value) {
+		return Math.floor(Math.log(value) / LOG10) + 1;
+	}
+
 	protected static ArrayList<Store> _storage = new ArrayList<Store>();
 
 	private static class Store {
@@ -198,7 +218,7 @@ public abstract class OfferPrice {
 			load(ripple.getClinet(), buy, sell, price, html);
 		}
 	}
-	
+
 	public static class OrderBooks {
 		public static interface BookEvents {
 			public void onUpdate(OrderBooks book);
