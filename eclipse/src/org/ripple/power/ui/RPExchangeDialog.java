@@ -39,6 +39,7 @@ import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
+import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
@@ -975,7 +976,7 @@ public class RPExchangeDialog extends JDialog {
 	}
 
 	private void loadOtherMarketList(String address, String[] split) {
-		/*String srcCurName = split[0];
+		String srcCurName = split[0];
 		String dstCurName = split[1];
 		OtherData.CoinmarketcapData cData = null;
 		if ((srcCurName.equalsIgnoreCase("usd") && dstCurName
@@ -1054,7 +1055,7 @@ public class RPExchangeDialog extends JDialog {
 							return list.get(i);
 						}
 					});
-		}*/
+		}
 	}
 
 	private void action_ok(ActionEvent e) {
