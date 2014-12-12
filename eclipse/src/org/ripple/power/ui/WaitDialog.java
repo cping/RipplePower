@@ -137,7 +137,7 @@ public class WaitDialog {
 						}
 						repaint();
 						try {
-							Thread.sleep(60);
+							Thread.sleep(40);
 						} catch (InterruptedException e) {
 						}
 					}

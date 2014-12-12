@@ -27,6 +27,11 @@ public class RippleMarket {
 	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
 			"yyyy-MM-dd");
 
+	public static Object offers_exercised24hour(IssuedCurrency issued) {
+		return offers_exercised24hour(LSystem.nativeCurrency, issued.currency,
+				issued.issuer.toString());
+	}
+
 	public static Object offers_exercised24hour(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -36,6 +41,11 @@ public class RippleMarket {
 		caltwo.setTime(RippleDate.now());
 		String day = dateformat.format(caltwo.getTime());
 		return offers_exercised(basecur, cur, issuer, yesterday, day, true);
+	}
+	
+	public static Object offers_exercisedYear(IssuedCurrency issued) {
+		return offers_exercisedYear(LSystem.nativeCurrency, issued.currency,
+				issued.issuer.toString());
 	}
 
 	public static Object offers_exercisedYear(String basecur, String cur,
@@ -48,7 +58,12 @@ public class RippleMarket {
 		String day = dateformat.format(caltwo.getTime());
 		return offers_exercised(basecur, cur, issuer, yesterday, day, false);
 	}
-
+	
+	public static Object offers_exercisedMonth(IssuedCurrency issued) {
+		return offers_exercisedMonth(LSystem.nativeCurrency, issued.currency,
+				issued.issuer.toString());
+	}
+	
 	public static Object offers_exercisedMonth(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -60,6 +75,11 @@ public class RippleMarket {
 		return offers_exercised(basecur, cur, issuer, yesterday, day, false);
 	}
 
+	public static Object offers_exercisedWeek(IssuedCurrency issued) {
+		return offers_exercisedWeek(LSystem.nativeCurrency, issued.currency,
+				issued.issuer.toString());
+	}
+	
 	public static Object offers_exercisedWeek(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -225,7 +245,7 @@ public class RippleMarket {
 		issueds.add(cur);
 		return getExchange(issueds);
 	}
-	
+
 	public static Object getExchange(ArrayList<IssuedCurrency> curs) {
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "exchange_rates");
 		JSONObject obj = new JSONObject();

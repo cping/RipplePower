@@ -23,19 +23,19 @@ public class RPJSonLog {
 	private final static String _def_name = "RPC";
 
 	static int WIDTH = 180, HEIGHT = 220;
-	
+
 	public static void hideDialog() {
 		if (instance != null) {
 			instance.setVisible(false);
 		}
 	}
-	
+
 	public static void showDialog() {
 		if (instance != null) {
 			instance.setVisible(true);
 		}
 	}
-	
+
 	public synchronized static RPJSonLog get() {
 		if (instance == null) {
 			instance = new RPJSonLog();
@@ -126,7 +126,7 @@ public class RPJSonLog {
 					String engine_result_message = result
 							.getString("engine_result_message");
 					RPToast toast = RPToast.makeText(LSystem.applicationMain,
-							"Result_message:" + engine_result_message,
+							engine_result_message,
 							(engine_result_code == 0 ? Style.SUCCESS
 									: Style.ERROR));
 					toast.setDuration(6000);
