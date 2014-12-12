@@ -274,11 +274,17 @@ public class OtherData {
 			HttpRequest request = HttpRequest
 					.get("http://coinmarketcap.northpole.ro/api/" + name
 							+ ".json");
-
 			if (request.ok()) {
 				JSONObject a = new JSONObject(request.body());
 				if (a.has("price")) {
 					double result = a.getDouble("price");
+					double realprice = -1;
+					//Prevent coinmarketcap price fixing
+					if (LSystem.nativeCurrency.equalsIgnoreCase(name)
+							|| "ripple".equalsIgnoreCase(name)) {
+						realprice = RippleMarket.getXRPtoUSD();
+					}
+					result = Math.max(result, realprice);
 					addStorage(new Store(result, name + "coin"));
 					return LSystem.getNumber(new BigDecimal(result));
 				}
@@ -573,6 +579,7 @@ public class OtherData {
 		return getCharacterDataFromElement((Element) parent
 				.getElementsByTagName(label).item(0));
 	}
+	
 
 	public static String converterMoney(String src, String cur)
 			throws Exception {

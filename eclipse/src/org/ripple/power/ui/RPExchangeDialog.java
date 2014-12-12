@@ -40,6 +40,7 @@ import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
+import org.ripple.power.txns.RippleMarket;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
@@ -142,7 +143,8 @@ public class RPExchangeDialog extends JDialog {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPToast toast = RPToast.makeText(this, String.format(UIMessage.sntr, mes));
+		RPToast toast = RPToast.makeText(this,
+				String.format(UIMessage.sntr, mes));
 		toast.setFrameLengthMultiplier(20);
 		toast.setFrameRadius(25);
 		toast.display();
@@ -1006,6 +1008,15 @@ public class RPExchangeDialog extends JDialog {
 		}
 		try {
 			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
+			// fix Coinmarketcap not update
+			if (cData != null
+					&& (LSystem.nativeCurrency.equalsIgnoreCase(cData.name) || "ripple"
+							.equalsIgnoreCase(cData.name))) {
+				double price = Double.parseDouble(cData.price);
+				double realPrice = RippleMarket.getXRPtoUSD();
+				price = Math.max(price, realPrice);
+				cData.price = LSystem.getNumberShort(price);
+			}
 			if (cData == null) {
 				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
 			}
