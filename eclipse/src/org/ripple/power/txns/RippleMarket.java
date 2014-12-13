@@ -274,24 +274,46 @@ public class RippleMarket {
 		}
 	}
 
-	public static double getXRPtoUSD() {
-		double snapswap_xrp = -1, bitstamp_xrp = -1;
-		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
-		list.add(IssuedCurrency.SNAPSWAP_USD);
-		list.add(IssuedCurrency.BITSTAMP_USD);
+	public static double getXRPto(ArrayList<IssuedCurrency> list) {
+		double a = -1, b = -1;
 		Object result = RippleMarket.getExchange(list);
 		if (result != null) {
 			if (result instanceof JSONArray) {
-				snapswap_xrp = ((JSONArray) result).getJSONObject(0).getDouble(
-						"rate");
-				bitstamp_xrp = ((JSONArray) result).getJSONObject(1).getDouble(
-						"rate");
+				a = ((JSONArray) result).getJSONObject(0).getDouble("rate");
+				b = ((JSONArray) result).getJSONObject(1).getDouble("rate");
 			} else if (result instanceof JSONObject) {
-				snapswap_xrp = ((JSONObject) result).getDouble("rate");
+				a = ((JSONObject) result).getDouble("rate");
 			}
 		}
-		double real = Math.min(snapswap_xrp, bitstamp_xrp);
+		double real = Math.min(a, b);
 		return 1d / real;
 	}
 
+	public static double getXRPtoUSD() {
+		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
+		list.add(IssuedCurrency.SNAPSWAP_USD);
+		list.add(IssuedCurrency.BITSTAMP_USD);
+		return getXRPto(list);
+	}
+
+	public static double getXRPtoBTC() {
+		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
+		list.add(IssuedCurrency.SNAPSWAP_BTC);
+		list.add(IssuedCurrency.BITSTAMP_BTC);
+		return getXRPto(list);
+	}
+
+	public static double getXRPtoJPY() {
+		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
+		list.add(IssuedCurrency.RTJ_JPY);
+		list.add(IssuedCurrency.TOKYOJPY_JPY);
+		return getXRPto(list);
+	}
+
+	public static double getXRPtoCNY() {
+		ArrayList<IssuedCurrency> list = new ArrayList<IssuedCurrency>(2);
+		list.add(IssuedCurrency.RIPPLECHINA_CNY);
+		list.add(IssuedCurrency.RIPPLECN_CNY);
+		return getXRPto(list);
+	}
 }

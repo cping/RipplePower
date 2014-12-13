@@ -393,7 +393,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 				});
 		UIRes.addStyle(table);
 
-		table.getTableHeader().setBackground(LColor.black);
+		table.getTableHeader().setBackground(UIConfig.dialogbackground);
 		table.getTableHeader().setForeground(LColor.white);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 

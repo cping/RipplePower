@@ -19,7 +19,7 @@ import java.math.MathContext;
 import java.util.ArrayList;
 
 public abstract class OfferPrice {
-
+	
 	public static boolean isSellOrder(long flag) {
 		return (flag & 0x00020000) > 0;
 	}
