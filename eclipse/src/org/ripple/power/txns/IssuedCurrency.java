@@ -1,8 +1,10 @@
 package org.ripple.power.txns;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 
 import org.json.JSONObject;
+import org.ripple.power.CoinUtils;
 import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.StringUtils;
@@ -12,7 +14,10 @@ import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.Currency;
 
 public class IssuedCurrency {
-	
+
+	// enter an account with a trust line containing XAU (-0.5%pa) -> hex:
+	private final static String XAU_05PA = "0158415500000000C1F76FF6ECB0BAC600000000";
+
 	// Bitstamp
 	public final static IssuedCurrency BITSTAMP_USD = new IssuedCurrency(
 			"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "USD");
@@ -75,6 +80,14 @@ public class IssuedCurrency {
 					amountStr, "/");
 			amount = new BigDecimal(split[0]).stripTrailingZeros();
 			currency = split[1];
+			if ("XAU (-0.5%pa)".equals(currency)
+					|| "XAU(-0.5%pa)".equals(currency)) {
+				this.currency = XAU_05PA;
+			} else if (currency.length() > 3
+					&& AccountFind.is256hash(currency)) {
+				byte[] buffer = CoinUtils.fromHex(currency);
+				this.currency = CoinUtils.toHex(buffer);
+			}
 			issuer = new RippleAddress(split[2]);
 			int oldScale = amount.scale();
 			if (oldScale < MIN_SCALE || oldScale > MAX_SCALE) {
@@ -120,7 +133,16 @@ public class IssuedCurrency {
 		}
 		this.amount = amount;
 		this.issuer = issuer;
-		this.currency = currencyStr;
+		if ("XAU (-0.5%pa)".equals(currencyStr)
+				|| "XAU(-0.5%pa)".equals(currencyStr)) {
+			this.currency = XAU_05PA;
+		} else if (currencyStr.length() > 3
+				&& AccountFind.is256hash(currencyStr)) {
+			byte[] buffer = CoinUtils.fromHex(currencyStr);
+			this.currency = CoinUtils.toHex(buffer);
+		} else {
+			this.currency = currencyStr;
+		}
 	}
 
 	public IssuedCurrency(BigDecimal xrpAmount) {
@@ -176,7 +198,19 @@ public class IssuedCurrency {
 	public void copyFrom(JSONObject jsonDenomination) {
 		issuer = new RippleAddress(((String) jsonDenomination.get("issuer")));
 		String currencyStr = ((String) jsonDenomination.get("currency"));
-		currency = currencyStr;
+		if (XAU_05PA.equals(currencyStr)) {
+			currency = "XAU (-0.5%pa)";
+		} else if (currencyStr.length() > 3
+				&& AccountFind.is256hash(currencyStr)) {
+			byte[] buffer = CoinUtils.fromHex(currencyStr);
+			try {
+				currency = new String(buffer, LSystem.encoding);
+			} catch (UnsupportedEncodingException e) {
+				currency = new String(buffer);
+			}
+		} else {
+			currency = currencyStr;
+		}
 		String amountStr = LSystem.getNumberShort((String) jsonDenomination
 				.get("value"));
 		amount = new BigDecimal(amountStr);

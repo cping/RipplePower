@@ -446,10 +446,11 @@ public class RPAccountInfoDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_accountinfo.transactions.size() > 0
-						&& _tableThree.getSelectedRow() > -1) {
-					TransactionTx tx = _accountinfo.transactions
-							.get(_tableThree.getSelectedRow());
+				int size = _tableThree.getSelectedRow();
+				if (_accountinfo.transactions.size() > 0 && size > -1) {
+					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:"
+							+ size);
+					TransactionTx tx = _accountinfo.getTxs("Payment").get(size);
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
 				} else {
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this);
@@ -485,10 +486,11 @@ public class RPAccountInfoDialog extends JDialog {
 
 			@Override
 			public void action(Object o) {
-				if (_accountinfo.transactions.size() > 0
-						&& _tableThree.getSelectedRow() > -1) {
-					TransactionTx tx = _accountinfo.transactions
-							.get(_tableThree.getSelectedRow());
+				int size = _tableThree.getSelectedRow();
+				if (_accountinfo.transactions.size() > 0 && size > -1) {
+					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:"
+							+ size);
+					TransactionTx tx = _accountinfo.getTxs("Payment").get(size);
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
 				} else {
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this);
@@ -713,10 +715,13 @@ public class RPAccountInfoDialog extends JDialog {
 						if (info.transactions.size() > 0) {
 							synchronized (_accountLineItems3) {
 								_accountLineItems3.clear();
+								int count = 0;
 								for (TransactionTx tx : info.transactions) {
 									if ("Payment".equals(tx.clazz)) {
 										if (tx.counterparty != null) {
-											_accountLineItems3.add(tx.date
+											_accountLineItems3.add(count
+													+ ","
+													+ tx.date
 													+ " "
 													+ tx.mode
 													+ " "
@@ -726,7 +731,9 @@ public class RPAccountInfoDialog extends JDialog {
 															.toGatewayString()
 													+ ",Fee:" + tx.fee);
 										} else {
-											_accountLineItems3.add(tx.date
+											_accountLineItems3.add(count
+													+ ","
+													+ tx.date
 													+ " "
 													+ tx.mode
 													+ " "
@@ -734,6 +741,7 @@ public class RPAccountInfoDialog extends JDialog {
 															.toGatewayString()
 													+ ",Fee:" + tx.fee);
 										}
+										count++;
 									}
 								}
 							}

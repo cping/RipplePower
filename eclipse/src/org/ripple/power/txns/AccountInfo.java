@@ -78,8 +78,21 @@ public class AccountInfo {
 		trustCount.putAll(info.trustCount);
 
 		cntTrust = info.cntTrust;
-		
+
 		return this;
 
 	}
+
+	public ArrayList<TransactionTx> getTxs(String flag) {
+		ArrayList<TransactionTx> list = new ArrayList<TransactionTx>();
+		if (transactions != null) {
+			for (TransactionTx tx : transactions) {
+				if (tx.clazz.equalsIgnoreCase(flag)) {
+					list.add(tx);
+				}
+			}
+		}
+		return list;
+	}
+
 }
