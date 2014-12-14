@@ -83,13 +83,14 @@ public class UIMessage {
 		return result;
 	}
 
-	
 	public final static void infoMessage(final Window parent, final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.SUCCESS).display();
-				parent.revalidate();
-				parent.repaint();
+				if (parent != null) {
+					parent.revalidate();
+					parent.repaint();
+				}
 			}
 		});
 	}
@@ -98,8 +99,10 @@ public class UIMessage {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.ERROR).display();
-				parent.revalidate();
-				parent.repaint();
+				if (parent != null) {
+					parent.revalidate();
+					parent.repaint();
+				}
 			}
 		});
 	}

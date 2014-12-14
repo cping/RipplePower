@@ -340,7 +340,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Donation);
 
 		showTrayIcon();
-
+	
 	}
 
 	private boolean isTray;

@@ -55,7 +55,6 @@ public final class LSystem {
 	final public static ArrayList<String> send_addresses = new ArrayList<String>(
 			1000);
 
-
 	final static public long SECOND = 1000;
 	final static public long MINUTE = SECOND * 60;
 	final static public long MSEC = 1L;
@@ -670,6 +669,7 @@ public final class LSystem {
 			if (LSystem.applicationMain != null) {
 				SwingUtils.close(LSystem.applicationMain);
 			}
+			ApplicationInfo.unlock();
 			System.exit(-1);
 		}
 	}
@@ -726,15 +726,15 @@ public final class LSystem {
 	final static public String EMPTY = "";
 
 	final static public String QUOTE_STRING = "'";
-	
-	final static public  char QUOTE_CHAR = '\'';
-	
+
+	final static public char QUOTE_CHAR = '\'';
+
 	final static public char NEW_LINE_CHAR = '\n';
-	
+
 	final static public char TAB_CHAR = '\t';
-	
+
 	final static public char COMMA_CHAR = ',';
-	
+
 	/**
 	 * 写入整型数据到OutputStream
 	 * 

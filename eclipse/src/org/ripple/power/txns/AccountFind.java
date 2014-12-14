@@ -22,6 +22,15 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
+	private static AccountFind instance = null;
+
+	public final static AccountFind get() {
+		if (instance == null) {
+			instance = new AccountFind();
+		}
+		return instance;
+	}
+
 	public JSONObject _balanceXRP;
 
 	public JSONObject _balanceIOU;
@@ -375,11 +384,29 @@ public class AccountFind {
 			final AccountInfo accountinfo, final Updateable update) {
 		return processTx(address, -1, 200, accountinfo, update);
 	}
-	
+
+	public AccountInfo processTxAffectedNodes(final String address,
+			final AccountInfo accountinfo, final Updateable update) {
+		return processTx(address, -1, 200, accountinfo, update, true);
+	}
+
+	public AccountInfo processTxAffectedNodes(final String address,
+			final long txPreLgrSeq, final long max,
+			final AccountInfo accountinfo, final Updateable update) {
+		return processTx(address, txPreLgrSeq, max, accountinfo, update, true);
+	}
+
 	public AccountInfo processTx(final String address, final long txPreLgrSeq,
 			final long max, final AccountInfo accountinfo,
 			final Updateable update) {
-		final ArrayList<IssuedCurrency> issues = new ArrayList<IssuedCurrency>(10);
+		return processTx(address, txPreLgrSeq, max, accountinfo, update, false);
+	}
+
+	public AccountInfo processTx(final String address, final long txPreLgrSeq,
+			final long max, final AccountInfo accountinfo,
+			final Updateable update, final boolean loadAffectedNodes) {
+		final ArrayList<IssuedCurrency> issues = new ArrayList<IssuedCurrency>(
+				10);
 		Updateable updateable = new Updateable() {
 
 			@Override
@@ -390,223 +417,378 @@ public class AccountFind {
 
 							@Override
 							public void success(JSONObject res) {
-								JSONObject result = getJsonObject(res, "result");
-								if (result != null) {
-									if (result.has("marker")) {
-										JSONObject marker = result
-												.getJSONObject("marker");
-										long ledger = getLong(marker, "ledger");
-										if (accountinfo.marker != ledger) {
-											if (accountinfo.marker == ledger) {
-												accountinfo.marker = ledger - 1;
-											} else {
-												accountinfo.marker = ledger;
+								try {
+									JSONObject result = getJsonObject(res,
+											"result");
+									if (result != null) {
+										if (result.has("marker")) {
+											JSONObject marker = result
+													.getJSONObject("marker");
+											long ledger = getLong(marker,
+													"ledger");
+											if (accountinfo.marker != ledger) {
+												if (accountinfo.marker == ledger) {
+													accountinfo.marker = ledger - 1;
+												} else {
+													accountinfo.marker = ledger;
+												}
+												AccountInfo newInfo = new AccountInfo();
+												newInfo.marker = accountinfo.marker;
+												processTx(address,
+														accountinfo.marker,
+														ledger, newInfo, null);
+												accountinfo.accountlinks
+														.add(newInfo);
 											}
-											AccountInfo newInfo = new AccountInfo();
-											newInfo.marker = accountinfo.marker;
-											processTx(address,
-													accountinfo.marker, ledger,
-													newInfo, null);
-											accountinfo.accountlinks
-													.add(newInfo);
 										}
-									}
 
-									if (result.has("transactions")) {
-										JSONArray arrays = getArray(result,
-												"transactions");
+										if (result.has("transactions")) {
+											JSONArray arrays = getArray(result,
+													"transactions");
 
-										for (int i = 0; i < arrays.length(); i++) {
+											for (int i = 0; i < arrays.length(); i++) {
 
-											TransactionTx transactionTx = new TransactionTx();
+												TransactionTx transactionTx = new TransactionTx();
 
-											JSONObject transaction = arrays
-													.getJSONObject(i);
-											JSONObject tx = getJsonObject(
-													transaction, "tx");
-											JSONObject meta = getJsonObject(
-													transaction, "meta");
-											String type = getStringObject(tx,
-													"TransactionType");
+												JSONObject transaction = arrays
+														.getJSONObject(i);
+												JSONObject tx = getJsonObject(
+														transaction, "tx");
+												JSONObject meta = getJsonObject(
+														transaction, "meta");
+												String type = getStringObject(
+														tx, "TransactionType");
 
-											if (meta != null) {
-												transactionTx.meda = meta
-														.toString();
-											}
+												transactionTx.account = getStringObject(
+														tx, "Account");
+												transactionTx.destination = getStringObject(
+														tx, "Destination");
 
-											transactionTx.account = getStringObject(
-													tx, "Account");
-											transactionTx.destination = getStringObject(
-													tx, "Destination");
+												long date = getLong(tx, "date");
 
-											long date = getLong(tx, "date");
+												transactionTx.date_number = date;
+												transactionTx.date = getDateTime(
+														date).getTimeString();
 
-											transactionTx.date_number = date;
-											transactionTx.date = getDateTime(
-													date).getTimeString();
-
-											if (tx.has("Memos")) {
-												JSONArray list = tx
-														.getJSONArray("Memos");
-												for (int m = 0; m < list
-														.length(); m++) {
-													transactionTx.memos.add(new Memo(
-															list.getJSONObject(m),
-															date));
-												}
-											}
-
-											String fee = CurrencyUtils.getRippleToValue(String
-													.valueOf(getLong(tx, "Fee")));
-
-											transactionTx.fee = fee;
-											transactionTx.hash = getStringObject(
-													tx, "hash");
-											transactionTx.sequence = getLong(
-													tx, "Sequence");
-											transactionTx.offersSequence = getLong(
-													tx, "OfferSequence");
-											transactionTx.inLedger = getLong(
-													tx, "inLedger");
-											transactionTx.ledgerIndex = getLong(
-													tx, "ledger_index");
-											transactionTx.flags = getLong(tx,
-													"Flags");
-											transactionTx.clazz = type;
-											if (transactionTx.flags != 0) {
-												transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
-												transactionTx.flagsName = TransactionFlagMap
-														.getString(transactionTx.flags);
-											} else {
-												transactionTx.flagsName = "Empty";
-											}
-											if (tx.has("SendMax")) {
-												transactionTx.sendMax = CurrencyUtils.getAmount(tx
-														.get("SendMax"));
-											}
-											transactionTx.signingPubKey = getStringObject(
-													tx, "SigningPubKey");
-											transactionTx.txnSignature = getStringObject(
-													tx, "TxnSignature");
-
-											switch (type) {
-											case "Payment":
-
-												transactionTx.destinationTag = getLong(
-														tx, "DestinationTag");
-												transactionTx.invoiceID = getStringObject(
-														tx, "InvoiceID");
-
-												IssuedCurrency currency = null;
-												String counterparty = null;
-												if (meta != null
-														&& meta.has("DeliveredAmount")) {
-													currency = CurrencyUtils
-															.getAmount(getObject(
-																	meta,
-																	"DeliveredAmount"));
-												} else {
-													currency = CurrencyUtils
-															.getAmount(getObject(
-																	tx,
-																	"Amount"));
-												}
-												transactionTx.currency = currency;
-												String flagType;
-												if (address
-														.equals(transactionTx.account)) {
-													if (address
-															.equals(transactionTx.destination)) {
-														flagType = "Exchange";
-													} else {
-														flagType = "Send";
-														counterparty = transactionTx.destination;
-														int index = inCredits(
-																issues,
-																currency);
-														if (index >= 0) {
-
-														} else {
-															issues.add(currency);
-														}
+												if (tx.has("Memos")) {
+													JSONArray list = tx
+															.getJSONArray("Memos");
+													for (int m = 0; m < list
+															.length(); m++) {
+														transactionTx.memos.add(new Memo(
+																list.getJSONObject(m),
+																date));
 													}
-												} else if (address
-														.equals(transactionTx.destination)) {
-													flagType = "Receive";
-													counterparty = transactionTx.account;
+												}
+
+												String fee = CurrencyUtils
+														.getRippleToValue(String
+																.valueOf(getLong(
+																		tx,
+																		"Fee")));
+
+												transactionTx.fee = fee;
+												transactionTx.hash = getStringObject(
+														tx, "hash");
+												transactionTx.sequence = getLong(
+														tx, "Sequence");
+												transactionTx.offersSequence = getLong(
+														tx, "OfferSequence");
+												transactionTx.inLedger = getLong(
+														tx, "inLedger");
+												transactionTx.ledgerIndex = getLong(
+														tx, "ledger_index");
+												transactionTx.flags = getLong(
+														tx, "Flags");
+												transactionTx.clazz = type;
+												if (transactionTx.flags != 0) {
+													transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
+													transactionTx.flagsName = TransactionFlagMap
+															.getString(transactionTx.flags);
 												} else {
-													flagType = "Convert";
+													transactionTx.flagsName = "Empty";
 												}
-												transactionTx.mode = flagType;
-												transactionTx.counterparty = counterparty;
-												break;
-											case "TrustSet":
-												Object limitAmount = getObject(
-														tx, "LimitAmount");
-												if (limitAmount != null) {
-													transactionTx.currency = CurrencyUtils
-															.getAmount(limitAmount);
-													transactionTx.trusted = transactionTx.currency.issuer
+												if (tx.has("SendMax")) {
+													transactionTx.sendMax = CurrencyUtils.getAmount(tx
+															.get("SendMax"));
+												}
+												transactionTx.signingPubKey = getStringObject(
+														tx, "SigningPubKey");
+												transactionTx.txnSignature = getStringObject(
+														tx, "TxnSignature");
+
+												if (meta != null) {
+													transactionTx.meda = meta
 															.toString();
-												}
-												break;
-											case "OfferCreate":
-												transactionTx.get = CurrencyUtils
-														.getAmount(getObject(
-																tx, "TakerGets"));
-												transactionTx.pay = CurrencyUtils
-														.getAmount(getObject(
-																tx, "TakerPays"));
-												break;
-											case "OfferCancel":
-												JSONArray affectedNodes = getArray(
-														meta, "AffectedNodes");
-												for (int n = 0; n < affectedNodes
-														.length(); n++) {
-													JSONObject obj = affectedNodes
-															.getJSONObject(n);
-													if (obj.has("DeletedNode")) {
-														JSONObject deleted = obj
-																.getJSONObject("DeletedNode");
-														String ledgerEntryType = getStringObject(
-																deleted,
-																"LedgerEntryType");
-														if ("Offer"
-																.equals(ledgerEntryType)) {
-															JSONObject ff = getJsonObject(
-																	deleted,
-																	"FinalFields");
-															String ffactount = getStringObject(
-																	ff,
-																	"Account");
-															if (ffactount
-																	.equals(transactionTx.account)) {
-																transactionTx.get = CurrencyUtils
-																		.getAmount(getObject(
-																				ff,
-																				"TakerGets"));
-																transactionTx.pay = CurrencyUtils
-																		.getAmount(getObject(
-																				ff,
-																				"TakerPays"));
+
+													if (loadAffectedNodes
+															&& meta.has("AffectedNodes")) {
+														JSONArray affectedNodes = meta
+																.getJSONArray("AffectedNodes");
+														int size = affectedNodes
+																.length();
+
+														for (int j = 0; j < size; j++) {
+															JSONObject affectedNode = affectedNodes
+																	.getJSONObject(j);
+															JSONArray names = affectedNode
+																	.names();
+															for (int n = 0; n < names
+																	.length(); n++) {
+																String key = names
+																		.getString(n);
+
+																TransactionTx.AffectedNode node = new TransactionTx.AffectedNode();
+																transactionTx.affectedNodeList
+																		.add(node);
+
+																node.name = key;
+																JSONObject ledger_node = affectedNode
+																		.getJSONObject(key);
+																node.ledgerEntryType = getStringObject(
+																		ledger_node,
+																		"LedgerEntryType");
+																if (node.ledgerEntryType != null) {
+
+																	node.previousTxnID = getStringObject(
+																			ledger_node,
+																			"PreviousTxnID");
+																	node.txid = node.previousTxnID != null ? node.previousTxnID
+																			: transactionTx.hash;
+																	node.ledgerIndex = getStringObject(
+																			ledger_node,
+																			"LedgerIndex");
+																	node.previousTxnLgrSeq = getLong(
+																			ledger_node,
+																			"PreviousTxnLgrSeq");
+
+																	JSONObject fields = null;
+																	if (ledger_node
+																			.has("FinalFields")) {
+																		fields = getJsonObject(
+																				ledger_node,
+																				"FinalFields");
+																	} else if (ledger_node
+																			.has("NewFields")) {
+																		fields = getJsonObject(
+																				ledger_node,
+																				"NewFields");
+																	}
+																	if (fields != null) {
+
+																		node.account = getStringObject(
+																				fields,
+																				"Account");
+																		node.regularKey = getStringObject(
+																				fields,
+																				"RegularKey");
+
+																		node.takerGetsIssuer = getStringObject(
+																				fields,
+																				"TakerGetsIssuer");
+																		node.takerPaysIssuer = getStringObject(
+																				fields,
+																				"TakerPaysIssuer");
+																		node.exchangeRate = getStringObject(
+																				fields,
+																				"ExchangeRate");
+																		node.takerPaysCurrency = getStringObject(
+																				fields,
+																				"TakerPaysCurrency");
+																		node.takerGetsCurrency = getStringObject(
+																				fields,
+																				"TakerGetsCurrency");
+
+																		node.balance = CurrencyUtils
+																				.getAmount(getObject(
+																						fields,
+																						"Balance"));
+																		node.highLimit = CurrencyUtils
+																				.getAmount(getObject(
+																						fields,
+																						"HighLimit"));
+																		node.lowLimit = CurrencyUtils
+																				.getAmount(getObject(
+																						fields,
+																						"LowLimit"));
+
+																		node.owner = getStringObject(
+																				fields,
+																				"Owner");
+																		node.rootIndex = getStringObject(
+																				fields,
+																				"RootIndex");
+																		node.indexPrevious = getStringObject(
+																				fields,
+																				"IndexPrevious");
+																		node.indexNext = getStringObject(
+																				fields,
+																				"IndexNext");
+																		node.sequence = getLong(
+																				fields,
+																				"Sequence");
+																		node.ownerCount = getLong(
+																				fields,
+																				"OwnerCount");
+																		node.transferRate = getLong(
+																				fields,
+																				"TransferRate");
+
+																		node.takerGets = CurrencyUtils
+																				.getAmount(getObject(
+																						fields,
+																						"TakerGets"));
+																		node.takerPays = CurrencyUtils
+																				.getAmount(getObject(
+																						fields,
+																						"TakerPays"));
+																		if (fields
+																				.has("Flags")) {
+																			node.flags = getLong(
+																					fields,
+																					"Flags");
+																		} else {
+																			node.flags = transactionTx.flags;
+																		}
+																		node.sell = OfferPrice
+																				.isSellOrder(node.flags);
+																		node.sellOrBuy = node.sell ? "sell"
+																				: "buy";
+																	}
+
+																}
 															}
 														}
+
 													}
 
 												}
-												break;
-											}
-											accountinfo.transactions
-													.add(transactionTx);
 
+												switch (type) {
+												case "Payment":
+
+													transactionTx.destinationTag = getLong(
+															tx,
+															"DestinationTag");
+													transactionTx.invoiceID = getStringObject(
+															tx, "InvoiceID");
+
+													IssuedCurrency currency = null;
+													String counterparty = null;
+													if (meta != null
+															&& meta.has("DeliveredAmount")) {
+														currency = CurrencyUtils
+																.getAmount(getObject(
+																		meta,
+																		"DeliveredAmount"));
+													} else {
+														currency = CurrencyUtils
+																.getAmount(getObject(
+																		tx,
+																		"Amount"));
+													}
+													transactionTx.currency = currency;
+													String flagType;
+													if (address
+															.equals(transactionTx.account)) {
+														if (address
+																.equals(transactionTx.destination)) {
+															flagType = "Exchange";
+														} else {
+															flagType = "Send";
+															counterparty = transactionTx.destination;
+															int index = inCredits(
+																	issues,
+																	currency);
+															if (index >= 0) {
+
+															} else {
+																issues.add(currency);
+															}
+														}
+													} else if (address
+															.equals(transactionTx.destination)) {
+														flagType = "Receive";
+														counterparty = transactionTx.account;
+													} else {
+														flagType = "Convert";
+													}
+													transactionTx.mode = flagType;
+													transactionTx.counterparty = counterparty;
+													break;
+												case "TrustSet":
+													Object limitAmount = getObject(
+															tx, "LimitAmount");
+													if (limitAmount != null) {
+														transactionTx.currency = CurrencyUtils
+																.getAmount(limitAmount);
+														transactionTx.trusted = transactionTx.currency.issuer
+																.toString();
+													}
+													break;
+												case "OfferCreate":
+													transactionTx.get = CurrencyUtils
+															.getAmount(getObject(
+																	tx,
+																	"TakerGets"));
+													transactionTx.pay = CurrencyUtils
+															.getAmount(getObject(
+																	tx,
+																	"TakerPays"));
+													break;
+												case "OfferCancel":
+													JSONArray affectedNodes = getArray(
+															meta,
+															"AffectedNodes");
+													for (int n = 0; n < affectedNodes
+															.length(); n++) {
+														JSONObject obj = affectedNodes
+																.getJSONObject(n);
+														if (obj.has("DeletedNode")) {
+															JSONObject deleted = obj
+																	.getJSONObject("DeletedNode");
+															String ledgerEntryType = getStringObject(
+																	deleted,
+																	"LedgerEntryType");
+															if ("Offer"
+																	.equals(ledgerEntryType)) {
+																JSONObject ff = getJsonObject(
+																		deleted,
+																		"FinalFields");
+																String ffactount = getStringObject(
+																		ff,
+																		"Account");
+																if (ffactount
+																		.equals(transactionTx.account)) {
+																	transactionTx.get = CurrencyUtils
+																			.getAmount(getObject(
+																					ff,
+																					"TakerGets"));
+																	transactionTx.pay = CurrencyUtils
+																			.getAmount(getObject(
+																					ff,
+																					"TakerPays"));
+																}
+															}
+														}
+
+													}
+													break;
+												}
+												accountinfo.transactions
+														.add(transactionTx);
+
+											}
 										}
+
 									}
 
-								}
-
-								accountinfo.count++;
-								if (update != null) {
-									update.action(res);
+									accountinfo.count++;
+									if (update != null) {
+										update.action(res);
+									}
+								} catch (Exception ex) {
+									ex.printStackTrace();
 								}
 
 							}

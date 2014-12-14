@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import org.ripple.power.config.ApplicationInfo;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
@@ -31,6 +32,10 @@ public class MainUI {
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException {
+		if(ApplicationInfo.lock()){
+			UIMessage.alertMessage(null, "Not start multiple instances !");
+			return;
+		}
 		if (!LSystem.isMinJavaVersion(1, 6)) {
 			JOptionPane
 					.showMessageDialog(
