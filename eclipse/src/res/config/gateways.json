@@ -265,5 +265,12 @@
 	"currencies": ["ZAR"]
 	}],
 	"domain": "www.ice3x.co.za"
+    }, {
+	"name": "Ripple Central 24",
+	"accounts": [{
+	"address": "rB1ggHi4fMhXpMYWcjBpLUJGFDTz7j5QZn",
+	"currencies": ["JPY"]
+	}],
+	"domain": "ripplecentral24.jp"
     }
 ]

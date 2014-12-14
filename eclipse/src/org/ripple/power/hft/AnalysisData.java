@@ -65,8 +65,7 @@ public class AnalysisData {
 
 	public static Double createRSI(List<Double> values, int period) {
 		if (period <= 0) {
-			throw new IllegalArgumentException(
-					"period must be greater than 0");
+			throw new IllegalArgumentException("period must be greater than 0");
 		}
 		final int size = values.size();
 		final Core core = new Core();
@@ -87,7 +86,37 @@ public class AnalysisData {
 	}
 
 	public static double getTypicalPrice(double high, double low, double last) {
-		return (high + low + last) / 3.0;
+		return (high + low + last) / 3.0d;
+	}
+
+	public static double getTypicalPrice(Coin coin) {
+		return (coin.getHighPrice() + coin.getLowPrice() + coin.getLastPrice()) / 3.0d;
+	}
+
+	public static MACD.Result createMACDFix(List<Double> values, int period) {
+		if (period <= 0) {
+			throw new IllegalArgumentException("period must be greater than 0");
+		}
+		final int size = values.size();
+		final Core core = new Core();
+		final int allocationSize = size - core.macdFixLookback(period);
+		if (allocationSize <= 0) {
+			return null;
+		}
+		final double[] outMACD = new double[allocationSize];
+		final double[] outMACDSignal = new double[allocationSize];
+		final double[] outMACDHist = new double[allocationSize];
+		final MInteger outBegIdx = new MInteger();
+		final MInteger outNbElement = new MInteger();
+		double[] _values = ArrayUtils
+				.toPrimitive(values.toArray(new Double[0]));
+
+		core.macdFix(0, values.size() - 1, _values, period, outBegIdx,
+				outNbElement, outMACD, outMACDSignal, outMACDHist);
+
+		return MACD.Result.newInstance(outMACD[outNbElement.value - 1],
+				outMACDSignal[outNbElement.value - 1],
+				outMACDHist[outNbElement.value - 1]);
 	}
 
 }
