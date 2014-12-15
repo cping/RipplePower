@@ -400,7 +400,7 @@ public class RPChartsHistoryDialog extends JDialog {
 						}
 					}
 					try {
-						Thread.sleep(120);
+						Thread.sleep(40);
 					} catch (InterruptedException e) {
 					}
 

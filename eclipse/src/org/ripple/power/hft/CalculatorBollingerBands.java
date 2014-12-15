@@ -38,14 +38,14 @@ public class CalculatorBollingerBands {
 				optInTimePeriod, optInNbDevUp, optInNbDevDn, optInMAType,
 				outBegIdx, outNBElement, outRealUpperBand, outRealMiddleBand,
 				outRealLowerBand);
-		boolean wtf = true;
+		//boolean wtf = true;
 		for (int i = 0; i <= endIndex; i++) {
 			upperBandList.add(outRealUpperBand[i]);
 			middleBandList.add(outRealMiddleBand[i]);
 			lowerBandList.add(outRealLowerBand[i]);
-			if (!(outRealLowerBand[i] == outRealMiddleBand[i] && outRealLowerBand[i] == outRealMiddleBand[i])) {
+			/*if (!(outRealLowerBand[i] == outRealMiddleBand[i] && outRealLowerBand[i] == outRealMiddleBand[i])) {
 				wtf = false;
-			}
+			}*/
 		}
 		return retCode;
 	}

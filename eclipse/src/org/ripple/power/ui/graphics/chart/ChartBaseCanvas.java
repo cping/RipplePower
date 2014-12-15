@@ -73,6 +73,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	
 	public void repaint(){
 		bRedraw = true;
+		update(getGraphics());
 		super.repaint();
 	}
 

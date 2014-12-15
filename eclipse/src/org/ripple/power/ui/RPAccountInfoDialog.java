@@ -314,12 +314,11 @@ public class RPAccountInfoDialog extends JDialog {
 		_loadButton.setFont(font);
 		_exitButton.setFont(font);
 
-		Class<?>[] columnClasses = { String.class, String.class,
-				String.class };
-		String[] columnNames = {  UIMessage.currency,
-				UIMessage.gateway, UIMessage.amount };
-		int[] columnTypes = { AddressTable.ICON,
-				AddressTable.ADDRESS, AddressTable.AMOUNT };
+		Class<?>[] columnClasses = { String.class, String.class, String.class };
+		String[] columnNames = { UIMessage.currency, UIMessage.gateway,
+				UIMessage.amount };
+		int[] columnTypes = { AddressTable.ICON, AddressTable.ADDRESS,
+				AddressTable.AMOUNT };
 
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
@@ -551,6 +550,26 @@ public class RPAccountInfoDialog extends JDialog {
 		}
 	}
 
+	private static void addList(ArrayList<String> list, TransactionTx tx,
+			int count) {
+		if ("Payment".equals(tx.clazz)) {
+			if (tx.counterparty != null) {
+				list.add("No:" + count + " in " + tx.date + "<br>"
+						+ "<font size=4 color=red>" + tx.mode + "</font>" + " "
+						+ "<font size=4 color=blue>" + tx.counterparty
+						+ "</font>" + "<br>" + tx.currency.toGatewayString()
+						+ "<br>" + "Fee:" + tx.fee);
+			} else {
+				list.add("No:" + count + " in " + tx.date + "<br>"
+						+ "<font size=4 color=red>" + tx.mode + "</font>" + " "
+						+ tx.currency.toGatewayString() + "<br>" + "Fee:"
+						+ tx.fee);
+			}
+			count++;
+		}
+
+	}
+
 	public void call(final AccountInfo info,
 			final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
@@ -598,18 +617,10 @@ public class RPAccountInfoDialog extends JDialog {
 			if (info.transactions.size() > 0) {
 				synchronized (_accountLineItems3) {
 					_accountLineItems3.clear();
+					int count = 0;
 					for (TransactionTx tx : info.transactions) {
 						if ("Payment".equals(tx.clazz)) {
-							if (tx.counterparty != null) {
-								_accountLineItems3.add(tx.date + " " + tx.mode
-										+ " " + tx.counterparty + " "
-										+ tx.currency.toGatewayString()
-										+ ",Fee:" + tx.fee);
-							} else {
-								_accountLineItems3.add(tx.date + " " + tx.mode
-										+ " " + tx.currency.toGatewayString()
-										+ ",Fee:" + tx.fee);
-							}
+							addList(_accountLineItems3, tx, count++);
 						}
 					}
 				}
@@ -717,38 +728,7 @@ public class RPAccountInfoDialog extends JDialog {
 								int count = 0;
 								for (TransactionTx tx : info.transactions) {
 									if ("Payment".equals(tx.clazz)) {
-										if (tx.counterparty != null) {
-											_accountLineItems3.add("No:"
-													+ count
-													+ " in "
-													+ tx.date
-													+ "<br>"
-													+ "<font size=4 color=red>"
-													+ tx.mode
-													+ "</font>"
-													+ " "
-													+ "<font size=4 color=blue>"
-													+ tx.counterparty
-													+ "</font>"
-													+ "<br>"
-													+ tx.currency
-															.toGatewayString()
-													+ "<br>" + "Fee:" + tx.fee);
-										} else {
-											_accountLineItems3.add("No:"
-													+ count
-													+ " in "
-													+ tx.date
-													+ "<br>"
-													+ "<font size=4 color=red>"
-													+ tx.mode
-													+ "</font>"
-													+ " "
-													+ tx.currency
-															.toGatewayString()
-													+ "<br>" + "Fee:" + tx.fee);
-										}
-										count++;
+										addList(_accountLineItems3, tx, count++);
 									}
 								}
 							}
@@ -759,6 +739,10 @@ public class RPAccountInfoDialog extends JDialog {
 						}
 						RPAccountInfoDialog.this.revalidate();
 						RPAccountInfoDialog.this.repaint();
+						if (LSystem.applicationMain != null) {
+							LSystem.applicationMain.revalidate();
+							LSystem.applicationMain.repaint();
+						}
 					}
 
 				};
