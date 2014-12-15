@@ -21,7 +21,7 @@ import com.ripple.core.coretypes.RippleDate;
 import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
-	
+
 	public static int LIMIT_MAX_TX = 200;
 
 	private static AccountFind instance = null;
@@ -61,6 +61,17 @@ public class AccountFind {
 			return false;
 		}
 		String reg = "^r[1-9A-HJ-NP-Za-km-z]{25,33}$";
+		return Pattern.matches(reg, address);
+	}
+
+	public final static boolean isStellarAddress(String address) {
+		if (Strings.isNullOrEmpty(address)) {
+			return false;
+		}
+		if (!address.startsWith("g")) {
+			return false;
+		}
+		String reg = "^g[1-9A-HJ-NP-Za-km-z]{25,33}$";
 		return Pattern.matches(reg, address);
 	}
 
@@ -775,6 +786,9 @@ public class AccountFind {
 														}
 
 													}
+													break;
+												case "AccountSet":
+													//Ignore
 													break;
 												}
 												accountinfo.transactions

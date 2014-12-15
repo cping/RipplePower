@@ -29,7 +29,7 @@ public class RegularKey {
 					long sequence = TransactionUtils.getSequence(message);
 					RippleObject item = new RippleObject();
 					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.TRUST_SET.byteValue);
+							(int) TransactionTypes.REGULAR_KEY_SET.byteValue);
 					item.putField(BinaryFormatField.Account,
 							seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.LimitAmount, currency);
