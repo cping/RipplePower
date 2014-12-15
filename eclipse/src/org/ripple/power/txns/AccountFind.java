@@ -21,6 +21,8 @@ import com.ripple.core.coretypes.RippleDate;
 import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
+	
+	public static int LIMIT_MAX_TX = 200;
 
 	private static AccountFind instance = null;
 
@@ -173,7 +175,7 @@ public class AccountFind {
 
 	public RippleMemoDecodes message(final String address,
 			final String password, final Updateable update) {
-		return message(address, password, -1, 200, update);
+		return message(address, password, -1, LIMIT_MAX_TX, update);
 	}
 
 	/**
@@ -382,12 +384,12 @@ public class AccountFind {
 
 	public AccountInfo processTx(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, -1, 200, accountinfo, update);
+		return processTx(address, -1, LIMIT_MAX_TX, accountinfo, update);
 	}
 
 	public AccountInfo processTxAffectedNodes(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, -1, 200, accountinfo, update, true);
+		return processTx(address, -1, LIMIT_MAX_TX, accountinfo, update, true);
 	}
 
 	public AccountInfo processTxAffectedNodes(final String address,

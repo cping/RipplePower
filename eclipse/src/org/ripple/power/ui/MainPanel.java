@@ -57,8 +57,8 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private static final String[] columnNames = {
 			LangConfig.get(MainPanel.class, "create_date", "Create Date"),
-			LangConfig.get(MainPanel.class, "address", "Address"),
-			LangConfig.get(MainPanel.class, "amount", "Amount"),
+			UIMessage.address,
+			UIMessage.amount,
 			LangConfig.get(MainPanel.class, "status", "Status") };
 
 	private static final int[] columnTypes = { AddressTable.DATE,
@@ -340,7 +340,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Donation);
 
 		showTrayIcon();
-	
+
 	}
 
 	private boolean isTray;

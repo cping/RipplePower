@@ -9,6 +9,18 @@ import org.ripple.power.ui.RPToast.Style;
 
 public class UIMessage {
 
+	public final static String icon = LangConfig.get(UIMessage.class, "icon",
+			"Icon");
+
+	public final static String currency = LangConfig.get(UIMessage.class,
+			"currency", "Currency");
+	
+	public final static String gateway = LangConfig.get(UIMessage.class, "gateway", "Gateway");
+	
+	public final static String amount = LangConfig.get(UIMessage.class, "amount", "Amount");
+	
+	public final static String address = LangConfig.get(UIMessage.class, "address", "Address");
+
 	public final static String ok = LangConfig.get(UIMessage.class, "ok", "OK");
 
 	public final static String send = LangConfig.get(UIMessage.class, "send",

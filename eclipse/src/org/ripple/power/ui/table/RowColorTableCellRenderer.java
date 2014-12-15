@@ -19,9 +19,9 @@ public class RowColorTableCellRenderer extends JLabel implements
 	private static final long serialVersionUID = 1L;
 
 	private final Font defFont;
-	
-	private final Font font = GraphicsUtils.getFont(Font.SANS_SERIF,1,14);
-	
+
+	private final Font font = GraphicsUtils.getFont(Font.SANS_SERIF, 1, 14);
+
 	public RowColorTableCellRenderer() {
 		super();
 		setOpaque(true);
@@ -31,25 +31,30 @@ public class RowColorTableCellRenderer extends JLabel implements
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
+		boolean flag = false;
 		if (table instanceof RowColorModel) {
 			RowColorModel model = (RowColorModel) table;
 			setBackground(model.getBackground(row, isSelected, table));
 			setForeground(model.getForeground(row, isSelected, table));
-			if(value instanceof String){
-				String address = (String)value;
-				if(AccountFind.isRippleAddress(address)){
+			if (value instanceof String) {
+				String address = (String) value;
+				if (AccountFind.isRippleAddress(address)) {
 					setFont(font);
-				}else{
+				} else {
 					setFont(defFont);
 				}
+				flag = true;
 			}
 		}
-		if (value instanceof Icon) {
-			setIcon((Icon) value);
-		} else {
-			setIcon(null);
+		if (!flag) {
+			if (value instanceof Icon) {
+				setIcon((Icon) value);
+			} else {
+				setIcon(null);
+			}
 		}
 		setText(value == null ? "" : value.toString());
+
 		return this;
 	}
 }

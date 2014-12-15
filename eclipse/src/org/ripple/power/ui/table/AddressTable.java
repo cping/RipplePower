@@ -34,6 +34,10 @@ public final class AddressTable extends ColorTable {
 
 	public static final int CUR = 7;
 
+	public static final int ICON = 8;
+
+	public static final int INFO = 9;
+	
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
@@ -95,6 +99,12 @@ public final class AddressTable extends ColorTable {
 			case CUR: // 地址长度(max length 34)
 				column.setCellRenderer(new StringRenderer(JLabel.CENTER));
 				value = "XRP";
+				break;
+			case ICON: // 图片
+				column.setCellRenderer(new ImageRenderer(JLabel.CENTER));
+				break;
+			case INFO: 
+				column.setCellRenderer(new InfoRenderer(JLabel.LEFT));
 				break;
 			default:
 				throw new IllegalArgumentException("Unsupported column type "

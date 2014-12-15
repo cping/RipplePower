@@ -314,13 +314,12 @@ public class RPAccountInfoDialog extends JDialog {
 		_loadButton.setFont(font);
 		_exitButton.setFont(font);
 
-		Class<?>[] columnClasses = { String.class, String.class, String.class };
-		String[] columnNames = { LangConfig.get(this, "currency", "Currency"),
-				LangConfig.get(this, "gateway", "Gateway"),
-				LangConfig.get(this, "amount", "Amount") };
-
-		int[] columnTypes = { AddressTable.CUR, AddressTable.ADDRESS,
-				AddressTable.AMOUNT };
+		Class<?>[] columnClasses = { String.class, String.class,
+				String.class };
+		String[] columnNames = {  UIMessage.currency,
+				UIMessage.gateway, UIMessage.amount };
+		int[] columnTypes = { AddressTable.ICON,
+				AddressTable.ADDRESS, AddressTable.AMOUNT };
 
 		final AccountTableModel tableModel = new AccountTableModel(columnNames,
 				columnClasses);
@@ -358,7 +357,7 @@ public class RPAccountInfoDialog extends JDialog {
 		String[] columnNames1 = { LangConfig.get(this, "tx",
 				"Transaction Records") };
 
-		int[] columnTypes1 = { AddressTable.NAME };
+		int[] columnTypes1 = { AddressTable.INFO };
 
 		final AccountTableModel3 tableModel3 = new AccountTableModel3(
 				columnNames1, columnClasses1);
@@ -719,27 +718,35 @@ public class RPAccountInfoDialog extends JDialog {
 								for (TransactionTx tx : info.transactions) {
 									if ("Payment".equals(tx.clazz)) {
 										if (tx.counterparty != null) {
-											_accountLineItems3.add(count
-													+ ","
+											_accountLineItems3.add("No:"
+													+ count
+													+ " in "
 													+ tx.date
-													+ " "
+													+ "<br>"
+													+ "<font size=4 color=red>"
 													+ tx.mode
+													+ "</font>"
 													+ " "
+													+ "<font size=4 color=blue>"
 													+ tx.counterparty
-													+ " "
+													+ "</font>"
+													+ "<br>"
 													+ tx.currency
 															.toGatewayString()
-													+ ",Fee:" + tx.fee);
+													+ "<br>" + "Fee:" + tx.fee);
 										} else {
-											_accountLineItems3.add(count
-													+ ","
+											_accountLineItems3.add("No:"
+													+ count
+													+ " in "
 													+ tx.date
-													+ " "
+													+ "<br>"
+													+ "<font size=4 color=red>"
 													+ tx.mode
+													+ "</font>"
 													+ " "
 													+ tx.currency
 															.toGatewayString()
-													+ ",Fee:" + tx.fee);
+													+ "<br>" + "Fee:" + tx.fee);
 										}
 										count++;
 									}
