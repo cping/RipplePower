@@ -727,9 +727,9 @@ public final class LSystem {
 
 	final static public String QUOTE_STRING = "'";
 
-	final static public char QUOTE_CHAR = '\'';
+	final static public char QUOTE_CHAR = QUOTE_STRING.charAt(0);
 
-	final static public char NEW_LINE_CHAR = '\n';
+	final static public char NEW_LINE_CHAR = LS.charAt(0);
 
 	final static public char TAB_CHAR = '\t';
 
