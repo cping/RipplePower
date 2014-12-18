@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import java.awt.Component;
 import java.awt.Graphics;
+
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
@@ -22,7 +23,7 @@ public class RPCScrollPane extends JScrollPane {
 	private static final long serialVersionUID = 1L;
 
 	private Gradation _gradation;
-
+	
 	private LColor _colorStart, _colorEnd;
 
 	private int _alpha;
@@ -36,6 +37,8 @@ public class RPCScrollPane extends JScrollPane {
 	private LGraphics _graphics;
 
 	private MP4Player _player;
+
+	private LImage _background;
 
 	public RPCScrollPane(Component view, LColor start, LColor end, int alpha) {
 		super(view);
@@ -100,11 +103,17 @@ public class RPCScrollPane extends JScrollPane {
 			_player.drawUI(_graphics, 0, 0, getWidth(), getHeight());
 			g.drawImage(_image.getBufferedImage(), 0, 0, this);
 		} else {
+			if (_background == null) {
+				_background = LImage.createImage("images/bgi.png");
+			}
 			if (_gradation == null) {
 				_gradation = Gradation.getInstance(_colorStart, _colorEnd,
 						getWidth(), getHeight(), _alpha);
 			}
 			_gradation.drawHeight(g, 0, 0);
+			g.drawImage(_background.getBufferedImage(), getWidth() / 2
+					- _background.getWidth() / 2,
+					getHeight() / 2 - _background.getHeight() / 2, this);
 			g.setColor(LColor.white.brighter());
 			g.drawRoundRect(0, 0, getWidth(), getHeight(), 0, 0);
 			g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 2, 0, 0);
