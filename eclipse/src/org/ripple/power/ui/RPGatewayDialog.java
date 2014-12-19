@@ -404,7 +404,7 @@ public class RPGatewayDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202847686-Gateway-Information");
+				LSystem.openURL("https://ripple.com/knowledge_center/gateway-information");
 			}
 		});
 

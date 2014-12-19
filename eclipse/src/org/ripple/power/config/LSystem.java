@@ -1,5 +1,6 @@
 package org.ripple.power.config;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,8 +29,17 @@ import javax.swing.SwingUtilities;
 import org.ripple.power.CoinUtils;
 import org.ripple.power.NativeSupport;
 import org.ripple.power.i18n.Language;
+import org.ripple.power.timer.NanoTimer;
+import org.ripple.power.timer.SystemTimer;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.MainForm;
+import org.ripple.power.ui.graphics.geom.RectBox;
+import org.ripple.power.ui.projector.UIContext;
+import org.ripple.power.ui.projector.UIView;
+import org.ripple.power.ui.projector.Resources;
+import org.ripple.power.ui.projector.core.LHandler;
+import org.ripple.power.ui.projector.core.graphics.Screen;
+import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.IP46Utils;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
@@ -37,6 +48,317 @@ import org.ripple.power.wallet.OpenSSL;
 import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
+
+	final static public String FRAMEWORK_IMG_NAME = "assets/loon_";
+
+	public static boolean AUTO_REPAINT;
+
+	public static int DEFAULT_MAX_FPS = 60;
+
+	public static float EMULATOR_BUTTIN_SCALE = 1f;
+
+	public static RectBox screenRect;
+
+	public static boolean isPaused;
+	/**
+	 * 返回一个Random对象
+	 * 
+	 * @return
+	 */
+	public static Random getRandomObject() {
+		return random;
+	}
+
+	/**
+	 * 返回一个随机数
+	 * 
+	 * @param i
+	 * @param j
+	 * @return
+	 */
+	public static int getRandom(int i, int j) {
+		if (j < i) {
+			int tmp = j;
+			i = tmp;
+			j = i;
+		}
+		return i + random.nextInt((j - i) + 1);
+	}
+
+	/**
+	 * 返回一个随机数
+	 * 
+	 * @param i
+	 * @param j
+	 * @return
+	 */
+	public static int getRandomBetWeen(int i, int j) {
+		if (j < i) {
+			int tmp = j;
+			i = tmp;
+			j = i;
+		}
+		return LSystem.random.nextInt(j + 1 - i) + i;
+	}
+	public static void repaint() {
+		UIContext context = getInstance().getContext();
+		if (context != null) {
+			context.getView().update();
+		}
+	}
+
+	public static void repaint(BufferedImage buffer) {
+		UIContext context = getInstance().getContext();
+		if (context != null) {
+			context.getView().update(buffer);
+		}
+	}
+
+	public static void repaintLocation(BufferedImage buffer, int x, int y) {
+		UIContext context = getInstance().getContext();
+		if (context != null) {
+			context.getView().updateLocation(buffer, x, y);
+		}
+	}
+
+	public static void repaint(BufferedImage buffer, int w, int h) {
+		UIContext context = getInstance().getContext();
+		if (context != null) {
+			context.getView().update(buffer, w, h);
+		}
+	}
+
+	public static void repaintFull(BufferedImage buffer, int w, int h) {
+		UIContext context = getInstance().getContext();
+		if (context != null) {
+			context.getView().updateFull(buffer, w, h);
+		}
+	}
+
+	public static SystemTimer getSystemTimer() {
+		return new SystemTimer();
+	}
+
+	/**
+	 * 清空系统缓存资源
+	 * 
+	 */
+	public static void destroy() {
+		GraphicsUtils.destroyImages();
+		Resources.destroy();
+	}
+
+	/**
+	 * 退出游戏引擎
+	 * 
+	 */
+	public static void exit() {
+		LSystem.destroy();
+		System.exit(0);
+	}
+
+	public static class GameManager {
+
+		private SystemTimer timer;
+
+		private UIContext mainContext, initContext;
+
+		private List<UIContext> allContexts;
+
+		private Thread initContextThread;
+
+		private GameManager() {
+			try {
+				timer = new NanoTimer();
+				return;
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+
+		public UIContext getContext() {
+
+			if (allContexts == null) {
+				return mainContext;
+			}
+
+			synchronized (this) {
+				if (allContexts == null) {
+					return mainContext;
+				}
+
+				ThreadGroup currentThreadGroup = Thread.currentThread()
+						.getThreadGroup();
+				for (int i = 0; i < allContexts.size(); i++) {
+					UIContext context = (UIContext) allContexts.get(i);
+					ThreadGroup contextThreadGroup = context.getThreadGroup();
+					if (contextThreadGroup == currentThreadGroup
+							|| contextThreadGroup.parentOf(currentThreadGroup)) {
+						return context;
+					}
+				}
+
+				if (initContext != null
+						&& Thread.currentThread() == initContextThread) {
+					return initContext;
+				}
+
+				return (UIContext) (allContexts
+						.get(UIContext.nextContextID - 1));
+
+			}
+		}
+
+		private synchronized UIContext getAppContext(UIView app) {
+			if (mainContext != null && mainContext.getView() == app) {
+				return mainContext;
+			}
+
+			if (allContexts != null) {
+				for (int i = 0; i < allContexts.size(); i++) {
+					UIContext context = (UIContext) allContexts.get(i);
+					if (context.getView() == app) {
+						return context;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		public synchronized boolean isRegistered(UIView app) {
+			return (getAppContext(app) != null);
+		}
+
+		private synchronized int getNumRegisteredApps() {
+			if (allContexts == null) {
+				if (mainContext == null) {
+					return 0;
+				} else {
+					return 1;
+				}
+			} else {
+				return allContexts.size();
+			}
+		}
+
+		public synchronized UIContext registerApp(UIView app) {
+
+			if (app == null) {
+				return null;
+			}
+
+			UIContext context = getAppContext(app);
+			if (context != null) {
+				return context;
+			}
+
+			boolean wasEmpty = (getNumRegisteredApps() == 0);
+
+			UIContext newContext = new UIContext(app, timer);
+			if (mainContext == null) {
+				mainContext = newContext;
+			} else {
+				if (allContexts == null) {
+					allContexts = new ArrayList<UIContext>();
+					allContexts.add(mainContext);
+				}
+				allContexts.add(newContext);
+			}
+			initContext = newContext;
+			initContextThread = Thread.currentThread();
+			initContext = null;
+			initContextThread = null;
+			if (wasEmpty) {
+				timer.start();
+			}
+
+			return newContext;
+		}
+
+		public synchronized void unregisterApp(UIView app) {
+			if (app == null || !isRegistered(app)) {
+				return;
+			}
+
+			if (mainContext != null && mainContext.getView() == app) {
+				mainContext = null;
+			}
+
+			if (allContexts != null) {
+				for (int i = 0; i < allContexts.size(); i++) {
+					UIContext context = (UIContext) allContexts.get(i);
+					if (context.getView() == app) {
+						allContexts.remove(i);
+						break;
+					}
+				}
+
+				if (mainContext == null) {
+					mainContext = (UIContext) allContexts.get(0);
+				}
+
+				if (allContexts.size() == 1) {
+					allContexts = null;
+				}
+			}
+
+			if (getNumRegisteredApps() == 0) {
+				timer.stop();
+			}
+		}
+
+		public long getTimeMillis() {
+			return timer.getTimeMillis();
+		}
+
+		public long getTimeMicros() {
+			return timer.getTimeMicros();
+		}
+
+		public LHandler getSystemHandler(int id) {
+			if (allContexts != null) {
+				if (id > 0 && id < allContexts.size()) {
+					return ((UIContext) allContexts.get(id)).getView()
+							.getHandler();
+				}
+			}
+			return null;
+		}
+
+	}
+
+	final static private GameManager INSTANCE = new GameManager();
+
+	public static GameManager getInstance() {
+		return INSTANCE;
+	}
+
+	public static LHandler getSystemHandler() {
+		UIContext context = INSTANCE.getContext();
+		if (context != null) {
+			return context.getView().getHandler();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 执行一个位于Screen线程中的Runnable
+	 * 
+	 * @param runnable
+	 */
+	public final static void callScreenRunnable(Runnable runnable) {
+		LHandler process = getSystemHandler();
+		if (process != null) {
+			Screen screen = process.getScreen();
+			if (screen != null) {
+				synchronized (screen) {
+					screen.callEvent(runnable);
+				}
+			}
+		}
+	}
 
 	final static public ClassLoader classLoader;
 

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ripple.power.ui.projector.action.map.Field2D;
+
 
 public class Vector2D implements Serializable {
 
@@ -35,6 +37,14 @@ public class Vector2D implements Serializable {
 	public void move(Vector2D vector2D) {
 		this.x += vector2D.x;
 		this.y += vector2D.y;
+	}
+
+	public void move_multiples(int direction, int multiples) {
+		if (multiples <= 0) {
+			multiples = 1;
+		}
+		Vector2D v = Field2D.getDirection(direction);
+		move(v.x() * multiples, v.y() * multiples);
 	}
 
 	public void moveX(int x) {

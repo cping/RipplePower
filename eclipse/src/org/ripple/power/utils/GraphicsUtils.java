@@ -73,6 +73,8 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LGraphics;
+import org.ripple.power.ui.graphics.LImage;
 
 final public class GraphicsUtils {
 
@@ -162,10 +164,19 @@ final public class GraphicsUtils {
 	private GraphicsUtils() {
 	}
 
-	public static Image createLImage(int width, int height, Color c) {
+	public static Image createImage(int width, int height, Color c) {
 		BufferedImage image = new BufferedImage(width, height,
 				BufferedImage.TYPE_4BYTE_ABGR_PRE);
 		Graphics g = image.getGraphics();
+		g.setColor(c);
+		g.fillRect(0, 0, width, height);
+		g.dispose();
+		return image;
+	}
+
+	public static LImage createLImage(int width, int height, Color c) {
+		LImage image = new LImage(width, height, false);
+		LGraphics g = image.getLGraphics();
 		g.setColor(c);
 		g.fillRect(0, 0, width, height);
 		g.dispose();
@@ -1934,6 +1945,30 @@ final public class GraphicsUtils {
 	 */
 	public static void saveImage(BufferedImage image, String fileName) {
 		saveImage(image, new File(fileName), "png");
+	}
+
+	public static LImage[] getSplitLImages(LImage image, int row, int col) {
+		int width = image.getWidth(), height = image.getHeight();
+		if (row == width && col == height) {
+			return new LImage[] { image };
+		}
+		int frame = 0;
+		int wlength = image.getWidth() / row;
+		int hlength = image.getHeight() / col;
+		int total = wlength * hlength;
+		boolean transparency = image.hasAlpha();
+		LImage[] images = LImage.createImage(total, row, col, transparency);
+		for (int y = 0; y < hlength; y++) {
+			for (int x = 0; x < wlength; x++) {
+				LGraphics g = images[frame].getLGraphics();
+				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row
+						+ (x * row), col + (y * col));
+				g.dispose();
+				g = null;
+				frame++;
+			}
+		}
+		return images;
 	}
 
 	/**
