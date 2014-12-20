@@ -25,7 +25,6 @@ import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 
-
 public class MainForm extends JFrame implements ActionListener {
 
 	/**
@@ -35,7 +34,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 	private boolean windowMinimized = false;
 
-	private final MainPanel mainPanel;
+	private MainPanel mainPanel;
 
 	/**
 	 * 检测用户是否设置了钱包密码，如果没有，要求设定一个密码。
@@ -66,7 +65,10 @@ public class MainForm extends JFrame implements ActionListener {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setIconImage(UIConfig.getDefaultAppIcon());
 		getContentPane().setBackground(LColor.WHITE);
+		loadRipplePower();
+	}
 
+	private void loadRipplePower() {
 		LSystem.applicationMain = this;
 		try {
 			checkWalletPassword();
@@ -231,7 +233,6 @@ public class MainForm extends JFrame implements ActionListener {
 		addWindowListener(new ApplicationWindowListener(this));
 
 		RPClient.ripple();
-
 	}
 
 	@Override

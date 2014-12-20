@@ -17,6 +17,7 @@ import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.projector.UIView;
 import org.ripple.power.ui.projector.core.graphics.Screen;
 
 public class LHandler implements MouseListener, MouseMotionListener,
@@ -39,6 +40,8 @@ public class LHandler implements MouseListener, MouseMotionListener,
 	private boolean waitTransition;
 	
 	private long fps;
+	
+	private UIView view;
 
 	public LHandler(Window scene, int width, int height) {
 		this.width = width;
@@ -53,6 +56,14 @@ public class LHandler implements MouseListener, MouseMotionListener,
 		this.height = height;
 		this.textOrigin = new Point(0, 0);
 		this.screens = new LinkedList<Screen>();
+	}
+	
+	public UIView getView(){
+		return view;
+	}
+	
+	public void setView(UIView view){
+		this.view = view;
 	}
 
 	public void setID(int id) {

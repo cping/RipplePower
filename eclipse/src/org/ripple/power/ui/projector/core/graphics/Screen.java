@@ -36,9 +36,8 @@ import org.ripple.power.ui.projector.core.LTransition;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
 
-
-public abstract class Screen implements MouseListener,
-		MouseMotionListener, KeyListener, FocusListener, LInput, LRelease {
+public abstract class Screen implements MouseListener, MouseMotionListener,
+		KeyListener, FocusListener, LInput, LRelease {
 
 	public void sleep(long time) {
 		try {
@@ -241,8 +240,10 @@ public abstract class Screen implements MouseListener,
 		LSystem.AUTO_REPAINT = true;
 		this.handler = LSystem.getSystemHandler();
 		this.runnables = new ArrayList<Runnable>(1);
-		this.width = LSystem.screenRect.width;
-		this.height = LSystem.screenRect.height;
+		if (LSystem.screenRect != null) {
+			this.width = LSystem.screenRect.width;
+			this.height = LSystem.screenRect.height;
+		}
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;
 		this.setFPS(getMaxFPS());
@@ -688,6 +689,18 @@ public abstract class Screen implements MouseListener,
 		}
 		return false;
 	}
+	
+	private void initHandler(){
+		if (handler == null) {
+			this.handler = LSystem.getSystemHandler();
+			if (LSystem.screenRect != null) {
+				this.width = LSystem.screenRect.width;
+				this.height = LSystem.screenRect.height;
+				this.halfWidth = width / 2;
+				this.halfHeight = height / 2;
+			}
+		}
+	}
 
 	/**
 	 * 设定游戏句柄
@@ -702,8 +715,10 @@ public abstract class Screen implements MouseListener,
 	 * @return
 	 */
 	public synchronized LHandler getHandler() {
+		initHandler();
 		return handler;
 	}
+	
 
 	/**
 	 * 设定游戏屏幕
@@ -711,6 +726,7 @@ public abstract class Screen implements MouseListener,
 	 * @param screen
 	 */
 	public synchronized void setScreen(Screen screen) {
+		initHandler();
 		if (handler != null) {
 			screen.setupHandler(handler);
 			this.handler.setScreen(screen);
@@ -723,6 +739,7 @@ public abstract class Screen implements MouseListener,
 	 * @param fps
 	 */
 	public void setFPS(long fps) {
+		initHandler();
 		if (handler != null) {
 			handler.setFPS(fps);
 		}
@@ -732,6 +749,7 @@ public abstract class Screen implements MouseListener,
 	 * 返回刷新率
 	 */
 	public long getFPS() {
+		initHandler();
 		if (handler != null) {
 			return handler.getFPS();
 		}
@@ -742,6 +760,7 @@ public abstract class Screen implements MouseListener,
 	 * 返回最大刷新率
 	 */
 	public long getMaxFPS() {
+		initHandler();
 		if (handler != null) {
 			return handler.getMaxFPS();
 		}
@@ -1184,7 +1203,6 @@ public abstract class Screen implements MouseListener,
 				bounds.width - (insets.left + insets.top), bounds.height
 						- (insets.top + insets.bottom));
 	}
-
 
 	/**
 	 * 检查窗体默认对象中是否包含指定精灵

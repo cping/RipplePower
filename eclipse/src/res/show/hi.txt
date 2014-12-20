@@ -1,0 +1,21 @@
+set back = "show/background.png"
+set ro1 = "show/r0.png"
+set ro2 = "show/r1.png"
+set ro3 = "show/r2.png"
+fadein black
+gb print(back) 
+cg print(ro3) 220
+mes Hi,&welcome&to&Ripple&network～
+cg del
+cg print(ro1) 40
+mes Why&Use&Ripple&Trade&and&buy&XRP?
+mes 1:Home&of&XRP&-&the&best&place&to&buy&and&sell&XRP.
+mes 2:Free&-&no&fees&to&sign&up&and&use&Ripple&Trade.
+mes 3:No&Middlemen&-&When&you&submit&orders,&Ripple&automatically&finds&the&best&available&match,&without&a&clearinghouse&or&broker.
+cg print(ro1) 220
+mes Deposit,&trade&and&withdraw&money&on&Ripple&via&gateways.
+flash 255,255,255
+cg show/gateway2.png 40
+mes Use&Ripple's&growing&gateway&network.&Users&can&complete&all&transactions.
+mes Now&,well&let's&start&the&use&of&Ripple,&to&make&the&world&a&better&place!
+exit

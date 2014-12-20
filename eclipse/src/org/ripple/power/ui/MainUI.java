@@ -1,7 +1,9 @@
 package org.ripple.power.ui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,22 +19,94 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ripple.power.config.ApplicationInfo;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.GraphicTool;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.LGraphics;
+import org.ripple.power.ui.projector.UIScene;
+import org.ripple.power.ui.projector.action.avg.AVGScreen;
+import org.ripple.power.ui.projector.action.avg.command.Command;
+import org.ripple.power.ui.projector.core.graphics.component.LMessage;
+import org.ripple.power.ui.projector.core.graphics.component.LSelect;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
 
 public class MainUI {
 
+	class HIRipple extends AVGScreen {
+
+		int type;
+
+		UIScene scene;
+
+		public HIRipple(Image image) {
+			super(true, "show/hi.txt", image);
+
+		}
+
+		public void onLoading() {
+
+		}
+
+		public void drawScreen(LGraphics g) {
+
+		}
+
+		public void initCommandConfig(Command command) {
+
+		}
+
+		public void initMessageConfig(LMessage message) {
+
+		}
+
+		public void initSelectConfig(LSelect select) {
+		}
+
+		public boolean nextScript(String mes) {
+			return true;
+		}
+
+		public void onExit() {
+			if (scene != null) {
+				scene.closeDialog();
+				for (; !scene.get().isClose();) {
+					try {
+						Thread.sleep(30);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			Updateable update = new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					initialize();
+				}
+			};
+			loadSplash(update);
+		}
+
+		public void onSelect(String message, int type) {
+
+		}
+
+		public void alter(LTimerContext timer) {
+
+		}
+
+	}
+
 	private MainForm form;
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException {
-		if(ApplicationInfo.lock()){
+		if (ApplicationInfo.lock()) {
 			UIMessage.alertMessage(null, "Not start multiple instances !");
 			return;
 		}
@@ -88,14 +162,39 @@ public class MainUI {
 	}
 
 	public MainUI() {
-		Updateable update = new Updateable() {
+		String password = LSystem.session("system").get("password");
+		if (password == null) {
+			GraphicTool tools = new GraphicTool();
+			Image backimage = tools.getWinTable(460, 130, Color.white,
+					UIConfig.background, true);
+			HIRipple ripple = new HIRipple(backimage);
+			ripple.scene = UIScene.showDialog("Hi,Ripple", 480, 320, ripple,
+					null, null);
+			ripple.scene.setExit(new Updateable() {
 
-			@Override
-			public void action(Object o) {
-				initialize();
-			}
-		};
-		loadSplash(update);
+				@Override
+				public void action(Object o) {
+					Updateable update = new Updateable() {
+
+						@Override
+						public void action(Object o) {
+							initialize();
+						}
+					};
+					loadSplash(update);
+
+				}
+			});
+		} else {
+			Updateable update = new Updateable() {
+
+				@Override
+				public void action(Object o) {
+					initialize();
+				}
+			};
+			loadSplash(update);
+		}
 	}
 
 	private void initialize() {

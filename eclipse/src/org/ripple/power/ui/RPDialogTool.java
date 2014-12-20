@@ -36,6 +36,8 @@ public class RPDialogTool {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		private Updateable closeCall;
+
 		private final int width, height;
 
 		private final int x, y;
@@ -67,7 +69,6 @@ public class RPDialogTool {
 			this.setBackground(LColor.black);
 		}
 
-
 		public void setFadeClose(boolean f) {
 			fadeclose = f;
 		}
@@ -76,7 +77,14 @@ public class RPDialogTool {
 			return fadeclose;
 		}
 
+		public void setClose(Updateable close) {
+			this.closeCall = close;
+		}
+
 		public void close() {
+			if (closeCall != null) {
+				closeCall.action(this);
+			}
 			closed = true;
 			if (fadeclose) {
 				SwingUtils.fadeOut(this, true);
@@ -200,11 +208,11 @@ public class RPDialogTool {
 			Updateable update = new Updateable() {
 				@Override
 				public void action(Object o) {
-						try {
-							Thread.sleep(closeTime < 1 ? 1 : closeTime);
-						} catch (InterruptedException e) {
-						}
-						_baseDialog.close();
+					try {
+						Thread.sleep(closeTime < 1 ? 1 : closeTime);
+					} catch (InterruptedException e) {
+					}
+					_baseDialog.close();
 				}
 			};
 			LSystem.postThread(update);
@@ -222,8 +230,12 @@ public class RPDialogTool {
 	public boolean isFadeClose() {
 		return _baseDialog.isFadeClose();
 	}
-	
-	public void setTitle(String title){
+
+	public void setClose(Updateable close) {
+		_baseDialog.closeCall = close;
+	}
+
+	public void setTitle(String title) {
 		_titleLabel.setText(title);
 	}
 

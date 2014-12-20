@@ -1,11 +1,10 @@
 package org.ripple.power.ui.projector.core.graphics.component;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 
-import org.ripple.power.config.LSystem;
-import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
@@ -17,7 +16,7 @@ public class LMessage extends LContainer {
 
 	private Animation animation;
 
-	private LFont messageFont = LFont.getFont(LangConfig.getFontName(), 0, 20);
+	private LFont messageFont = LFont.getFont(Font.MONOSPACED, Font.BOLD,20);
 
 	private Color fontColor = Color.white;
 
@@ -63,7 +62,7 @@ public class LMessage extends LContainer {
 			}
 		}
 		this.print = new Print(getLocation(), messageFont, width, height);
-		this.setTipIcon(LSystem.FRAMEWORK_IMG_NAME + "creese.png");
+		this.setTipIcon("icons/ripple.png");
 		this.totalDuration = 80;
 		this.customRendering = true;
 		this.setWait(false);
@@ -109,7 +108,7 @@ public class LMessage extends LContainer {
 	}
 
 	public void setTipIcon(String fileName) {
-		print.setCreeseIcon(new LImage(fileName));
+		print.setCreeseIcon(new LImage(fileName).scaledInstance(24, 24));
 	}
 
 	public void setNotTipIcon() {

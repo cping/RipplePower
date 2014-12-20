@@ -29,7 +29,6 @@ import org.ripple.power.ui.projector.core.graphics.component.LSelect;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 
-
 public abstract class AVGScreen extends Screen implements Runnable {
 
 	private Object synch = new Object();
@@ -64,18 +63,23 @@ public abstract class AVGScreen extends Screen implements Runnable {
 
 	private String dialogFileName;
 
-	public AVGScreen(final String initscript, final String initdialog) {
-		this(initscript, new LImage(initdialog));
+	private boolean isEnglish;
+
+	public AVGScreen(boolean isEnglish, final String initscript,
+			final String initdialog) {
+		this(isEnglish, initscript, new LImage(initdialog));
 	}
 
-	public AVGScreen(final String initscript, final Image img) {
-		this(initscript, new LImage(img));
+	public AVGScreen(boolean isEnglish, final String initscript, final Image img) {
+		this(isEnglish, initscript, new LImage(img));
 	}
 
-	public AVGScreen(final String initscript, final LImage img) {
+	public AVGScreen(boolean isEnglish, final String initscript,
+			final LImage img) {
 		if (initscript == null) {
 			return;
 		}
+		this.isEnglish = isEnglish;
 		this.scriptName = initscript;
 		if (img != null) {
 			this.dialogFileName = img.getPath();
@@ -83,10 +87,11 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		}
 	}
 
-	public AVGScreen(final String initscript) {
+	public AVGScreen(boolean isEnglish, final String initscript) {
 		if (initscript == null) {
 			return;
 		}
+		this.isEnglish = isEnglish;
 		this.scriptName = initscript;
 	}
 
@@ -110,7 +115,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		this.avgThread.start();
 	}
 
-	private synchronized void initDesktop() {
+	private synchronized void initDesktop(boolean isEnglish) {
 		if (desktop != null && sprites != null) {
 			return;
 		}
@@ -127,16 +132,27 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		}
 		this.message = new LMessage(dialog, 0, 0);
 		this.message.setFontColor(Color.white);
-		int size = message.getWidth() / (message.getMessageFont().getSize());
-		if (size % 2 != 0) {
-			size = size - 3;
+		this.message.setEnglish(isEnglish);
+		if (isEnglish) {
+			int size = 35;
+			this.message.setMessageLength(size);
+			this.message.setLocation((getWidth() - message.getWidth()) / 2,
+					getHeight() - message.getHeight() - 10);
+			this.message.setTopOffset(+5);
+
 		} else {
-			size = size - 4;
+			int size = message.getWidth()
+					/ (message.getMessageFont().getSize());
+			if (size % 2 != 0) {
+				size = size - 3;
+			} else {
+				size = size - 4;
+			}
+			this.message.setMessageLength(size);
+			this.message.setLocation((getWidth() - message.getWidth()) / 2,
+					getHeight() - message.getHeight() - 10);
+			this.message.setTopOffset(-5);
 		}
-		this.message.setMessageLength(size);
-		this.message.setLocation((getWidth() - message.getWidth()) / 2,
-				getHeight() - message.getHeight() - 10);
-		this.message.setTopOffset(-5);
 		this.message.setVisible(false);
 		this.select = new LSelect(dialog, 0, 0);
 		this.select.setLocation(message.x(), message.y());
@@ -172,7 +188,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 
 	public void add(LComponent c) {
 		if (desktop == null) {
-			initDesktop();
+			initDesktop(isEnglish);
 		}
 		desktop.add(c);
 
@@ -180,7 +196,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 
 	public void add(ISprite s) {
 		if (sprites == null) {
-			initDesktop();
+			initDesktop(isEnglish);
 		}
 		sprites.add(s);
 
@@ -211,8 +227,10 @@ public abstract class AVGScreen extends Screen implements Runnable {
 			try {
 				if (scrCG.getBackgroundCG() != null) {
 					if (shakeNumber > 0) {
-						g.drawImage(scrCG.getBackgroundCG(), shakeNumber / 2
-								- LSystem.random.nextInt(shakeNumber),
+						g.drawImage(
+								scrCG.getBackgroundCG(),
+								shakeNumber / 2
+										- LSystem.random.nextInt(shakeNumber),
 								shakeNumber / 2
 										- LSystem.random.nextInt(shakeNumber));
 					} else {
@@ -425,9 +443,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_MESLEFT)) {
 						if (mesFlag != null) {
 							if (MathUtils.isNan(mesFlag)) {
-								message
-										.setLeftOffset(Integer
-												.parseInt(mesFlag));
+								message.setLeftOffset(Integer.parseInt(mesFlag));
 							}
 						}
 						continue;
@@ -608,11 +624,11 @@ public abstract class AVGScreen extends Screen implements Runnable {
 			if (!scrFlag) {
 				scrFlag = true;
 			}
-			if (message.isVisible()) {
+			/*if (message.isVisible()) {
 				isNext = message.intersects(getTouchX(), getTouchY());
-			} else {
+			} else {*/
 				isNext = true;
-			}
+			//}
 		} else if (scrFlag && select.getResultIndex() != -1) {
 			onSelect(selectMessage, select.getResultIndex());
 			isNext = select.intersects(getTouchX(), getTouchY());
@@ -654,8 +670,8 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		return selectMessage;
 	}
 
-	private void initAVG() {
-		this.initDesktop();
+	private void initAVG(boolean isEnglish) {
+		this.initDesktop(isEnglish);
 		this.initMessageConfig(message);
 		this.initSelectConfig(select);
 		this.initCommandConfig(scriptName);
@@ -666,7 +682,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 	}
 
 	public void run() {
-		initAVG();
+		initAVG(isEnglish);
 		onLoading();
 		for (; running;) {
 			if (desktop != null) {

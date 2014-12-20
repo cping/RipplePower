@@ -11,7 +11,7 @@
         "name": "RippleChina",
         "accounts": [{
             "address": "razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA",
-            "currencies": ["CNY"]
+            "currencies": ["CNY","BTC","LTC"]
             }],
         "hotwallets": ["r45dBj4S3VvMMYXxr9vHX4Z4Ma6ifPMCkK"],
 	"domain": "trade.ripplechina.net"

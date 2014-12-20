@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.ui.graphics.LFont;
@@ -80,7 +79,7 @@ public class LSelect extends LContainer {
 		this.delay = new LTimer(150);
 		this.autoAlpha = 0.25F;
 		this.isAutoAlpha = true;
-		this.setCursor(LSystem.FRAMEWORK_IMG_NAME + "creese.png");
+		this.setCursor("icons/ripple.png");
 		this.setElastic(true);
 		this.setLocked(true);
 		this.setLayer(100);
@@ -307,7 +306,7 @@ public class LSelect extends LContainer {
 	}
 
 	public void setCursor(String fileName) {
-		setCursor(new LImage(fileName));
+		setCursor(new LImage(fileName).scaledInstance(16, 16));
 	}
 
 	public LImage getBuoyage() {

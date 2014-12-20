@@ -7,23 +7,23 @@ import org.ripple.power.utils.GraphicsUtils;
 
 public class GraphicTool {
 
-    public static final int Width_MaidSystem = 886;
-    public static final int Height_MaidSystem = 158;
-    public static final int defaultFrameSize = 0;
-    public static int frameTop = 0;
-    public static int frameLeft = 0;
-    private static ImageSet Image_BOX;
+	public static final int Width_MaidSystem = 886;
+	public static final int Height_MaidSystem = 158;
+	public static final int defaultFrameSize = 0;
+	public static int frameTop = 0;
+	public static int frameLeft = 0;
+	private static ImageSet Image_BOX;
 
-    public static ImageSet get()
-    {
-    	if(Image_BOX==null){
-        Image_BOX = new ImageSet();
-        Image image =  GraphicsUtils.loadImage("icons/win.png");
-        image = GraphicsUtils.transparencyBlackColor(image);
-        Image_BOX.SplitWindow(GraphicsUtils.getBufferImage(image));
-    	}
-    	return Image_BOX;
-    }
+	public static ImageSet get() {
+		if (Image_BOX == null) {
+			Image_BOX = new ImageSet();
+			Image image = GraphicsUtils.loadImage("icons/win.png");
+			image = GraphicsUtils.transparencyBlackColor(image);
+			Image_BOX.SplitWindow(GraphicsUtils.getBufferImage(image));
+		}
+		return Image_BOX;
+	}
+
 	public GraphicTool() {
 		MenuItemColor = Color.yellow;
 	}
@@ -77,8 +77,8 @@ public class GraphicTool {
 		drawTable(g, con, x, y, width, height, strs, true);
 	}
 
-	public BufferedImage getWinTable(int width, int height, 
-			Color start, Color end, boolean drawHeigth) {
+	public BufferedImage getWinTable(int width, int height, Color start,
+			Color end, boolean drawHeigth) {
 		BufferedImage image = GraphicsUtils.createImage(width, height, true);
 		Gradation gradation = Gradation.getInstance(start, end, width, height,
 				125);
@@ -93,7 +93,7 @@ public class GraphicTool {
 
 		return image;
 	}
-	
+
 	public BufferedImage getTable(int width, int height) {
 		BufferedImage image = GraphicsUtils.createImage(width, height, true);
 		Graphics g = image.getGraphics();
@@ -106,9 +106,8 @@ public class GraphicTool {
 			int height) {
 		BufferedImage corners[] = new BufferedImage[4];
 		for (int i = 0; i < corners.length; i++) {
-			corners[i] = GraphicTool.get()
-					.getBufferdImage((new StringBuilder("win")).append(i + 4)
-							.toString());
+			corners[i] = GraphicTool.get().getBufferdImage(
+					(new StringBuilder("win")).append(i + 4).toString());
 		}
 		int CornerSize = corners[0].getWidth();
 		for (int a = 0; a < 4; a++) {

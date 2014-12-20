@@ -39,7 +39,7 @@ public class UIView extends Canvas implements Runnable {
 
 	private String actionName;
 
-	final static private Font fpsFont = GraphicsUtils.getFont("Dialog", 0, 20);
+	final static private Font fpsFont = GraphicsUtils.getFont(Font.SANS_SERIF, 0, 20);
 
 	private transient long remainderMicros;
 
@@ -80,6 +80,9 @@ public class UIView extends Canvas implements Runnable {
 	 */
 	public void format(LHandler handler) {
 		this.handler = handler;
+		if(handler != null){
+			handler.setView(this);
+		}
 		this.context = LSystem.getInstance().registerApp(this);
 		this.setFPS(LSystem.DEFAULT_MAX_FPS);
 		this.setBackground(Color.BLACK);
@@ -248,12 +251,14 @@ public class UIView extends Canvas implements Runnable {
 		long currTimeMicros, goalTimeMicros, elapsedTimeMicros;
 		Thread currentThread = Thread.currentThread();
 		do {
+		
 			if (LSystem.isPaused) {
 				GraphicsUtils.wait(300);
 				lastTimeMicros = timer.getTimeMicros();
 				elapsedTime = 0;
 				remainderMicros = 0;
 			}
+
 			if (!isStart) {
 				Thread.yield();
 				continue;
@@ -266,7 +271,7 @@ public class UIView extends Canvas implements Runnable {
 				continue;
 			}
 			handler.calls();
-
+			
 			goalTimeMicros = lastTimeMicros + 1000000L / maxFrames;
 			currTimeMicros = timer.sleepTimeMicros(goalTimeMicros);
 			elapsedTimeMicros = currTimeMicros - lastTimeMicros

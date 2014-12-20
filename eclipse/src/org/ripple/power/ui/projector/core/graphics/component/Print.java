@@ -2,14 +2,12 @@ package org.ripple.power.ui.projector.core.graphics.component;
 
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.RenderingHints;
 
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.graphics.geom.Vector2D;
 import org.ripple.power.ui.projector.core.LRelease;
-import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 
 public class Print implements LRelease {
@@ -132,7 +130,7 @@ public class Print implements LRelease {
 		}
 		synchronized (showMessages) {
 			this.size = showMessages.length;
-			this.fontSize = isEnglish ? deffont.getSize() / 2 : g.getFont()
+			this.fontSize = isEnglish ? deffont.getSize() / 2 + 2 : deffont
 					.getSize();
 			this.fontHeight = deffont.getHeight();
 			this.tmp_left = isLeft ? 0 : (width - (fontSize * messageLength))
@@ -141,8 +139,7 @@ public class Print implements LRelease {
 			int index = 0, offset = 0, font = 0, tmp_font = 0;
 			int fontSizeDouble = fontSize * 2;
 			char charString;
-			RenderingHints oldrHints = g.getRenderingHints();
-			GraphicsUtils.setExcellentRenderingHints(g);
+			g.setAntiAlias(true);
 			for (int i = 0; i < size; i++) {
 				charString = showMessages[i];
 				if (interceptCount < interceptMaxString) {
@@ -201,22 +198,24 @@ public class Print implements LRelease {
 					font = fontSize;
 				}
 				left += font;
-				if (font <= 10 && StringUtils.isSingle(charString)) {
-					left += 12;
+				if (!isEnglish) {
+					if (font <= 10 && StringUtils.isSingle(charString)) {
+						left += 12;
+					}
 				}
 				if (i != size - 1) {
 					g.drawString(mes, (int) (vector.x + left + leftOffset),
 							(int) ((offset * fontHeight) + vector.y
 									+ fontSizeDouble + topOffset));
 				} else if (!newLine && !onComplete) {
-					g.drawImage(creeseIcon,
+					g.drawImage(
+							creeseIcon,
 							(int) (vector.x + left + leftOffset + iconWidth),
-							(int) ((offset * fontHeight) + vector.y + fontSize
-									+ topOffset + deffont.getAscent()));
+							(int) ((offset * fontHeight) + vector.y + fontSize + topOffset));
 				}
 				index++;
 			}
-			g.setRenderingHints(oldrHints);
+			g.setAntiAlias(false);
 			if (messageCount == next) {
 				onComplete = true;
 			}
