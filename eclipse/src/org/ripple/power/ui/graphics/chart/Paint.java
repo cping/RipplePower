@@ -12,7 +12,9 @@ import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LFont;
 
 class Paint {
-
+	
+	public int alpha = 255;
+	
 	private boolean _antiAlias;
 
 	Align _align;
@@ -79,7 +81,18 @@ class Paint {
 	private float[] strokeDasharray;
 	private float strokeWidth;
 	private float textSize;
-
+	
+	
+	
+	public void set(Paint src)
+	{
+		this.color = src.color;
+		this._antiAlias = src._antiAlias;
+		this.textSize = src.textSize;
+		this.style = src.style;
+		this.strokeWidth = src.strokeWidth;
+	}
+	
 	Paint() {
 		this.cap = getCap(Cap.ROUND);
 		this.color = java.awt.Color.WHITE;

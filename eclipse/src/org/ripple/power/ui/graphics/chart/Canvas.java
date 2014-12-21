@@ -48,6 +48,25 @@ class Canvas {
 		_graphics.save();
 	}
 
+	public void rotate(double angle, double cx, double cy) {
+		_graphics.rotate(angle, cx, cy);
+	}
+
+	public void setAlpha(int alpha) {
+		float a = 0;
+		if (alpha <= 0) {
+			a = 0;
+		} else if (alpha > 255) {
+			a = 1.0f;
+		} else {
+			a = (float) alpha / 255f;
+			if (a > 1.0f) {
+				a = 1.0f;
+			}
+		}
+		_graphics.setAlpha(a);
+	}
+
 	public void drawBitmap(Bitmap bitmap, int left, int top, Paint p) {
 		if (p != null) {
 			setColorAndStroke(p);
@@ -94,6 +113,8 @@ class Canvas {
 			this._graphics.drawOval((int) (x - radius), (int) (y - radius),
 					(int) doubleRadius, (int) doubleRadius);
 			return;
+		default:
+			break;
 		}
 
 		throw new IllegalArgumentException(UNKNOWN_STYLE + style);
@@ -138,6 +159,8 @@ class Canvas {
 		case STROKE:
 			this._graphics.fill(new Rectangle2D.Float(w, h, x, y));
 			return;
+		default:
+			break;
 		}
 
 		throw new IllegalArgumentException(UNKNOWN_STYLE + style);
@@ -178,6 +201,8 @@ class Canvas {
 		case STROKE:
 			this._graphics.draw(awtPath.path2D);
 			return;
+		default:
+			break;
 		}
 
 		throw new IllegalArgumentException(UNKNOWN_STYLE + style);
