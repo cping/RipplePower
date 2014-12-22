@@ -1,8 +1,11 @@
 package org.ripple.power.ui.projector.action.avg;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.projector.action.sprite.ISprite;
 import org.ripple.power.ui.projector.core.LRelease;
+import org.ripple.power.utils.StringUtils;
 
 public class AVGChara implements LRelease {
 
@@ -12,15 +15,21 @@ public class AVGChara implements LRelease {
 
 	private int height;
 
-	private float old_alpha;
+	int x;
 
-	private int x;
+	int y;
 
-	private int y;
+	int flag = -1;
 
-	private boolean isMove;
+	float time;
 
-	private int maxWidth;
+	float currentFrame;
+
+	float opacity;
+
+	protected boolean isMove, isVisible = true;
+
+	int maxWidth, maxHeight;
 
 	private int moveX;
 
@@ -40,12 +49,47 @@ public class AVGChara implements LRelease {
 	 * @param height
 	 */
 	public AVGChara(LImage image, final int x, final int y, int width,
-			int height, int w) {
+			int height) {
+		this.load(image, x, y, width, height, LSystem.screenRect.width,
+				LSystem.screenRect.height);
+	}
+
+	public AVGChara(LImage image, final int x, final int y) {
+		this.load(image, x, y);
+	}
+
+	public AVGChara(final String resName, final int x, final int y) {
+		this(resName, x, y, LSystem.screenRect.width, LSystem.screenRect.height);
+	}
+
+	public AVGChara(final String resName, final int x, final int y,
+			final int w, final int h) {
+		String path = resName;
+		if (StringUtils.startsWith(path, '"')) {
+			path = resName.replaceAll("\"", "");
+		}
+		this.load(LImage.createImage(path), x, y);
+	}
+
+	String tmp_path;
+
+	void update(String path) {
+		this.tmp_path = path;
+	}
+
+	private void load(LImage image, final int x, final int y) {
+		this.load(image, x, y, image.getWidth(), image.getHeight(),
+				LSystem.screenRect.width, LSystem.screenRect.height);
+	}
+
+	private void load(LImage image, final int x, final int y, int width,
+			int height, final int w, final int h) {
+		this.maxWidth = w;
+		this.maxHeight = h;
 		this.characterCG = image;
 		this.isMove = true;
 		this.width = width;
 		this.height = height;
-		this.maxWidth = w;
 		this.x = x;
 		this.y = y;
 		this.moveX = 0;
@@ -53,20 +97,30 @@ public class AVGChara implements LRelease {
 		if (direction == 0) {
 			this.moveX = -(width / 2);
 		} else {
-			this.moveX = w;
+			this.moveX = maxWidth;
 		}
 	}
 
-	public AVGChara(LImage image, final int x, final int y, int w) {
-		this(image, x, y, image.getWidth(), image.getHeight(), w);
-	}
-
-	public AVGChara(final String fileName, final int x, final int y, int w) {
-		this(new LImage(fileName), x, y, w);
+	public void setFlag(int f, float delay) {
+		this.flag = f;
+		this.time = delay;
+		if (flag == ISprite.TYPE_FADE_IN) {
+			this.currentFrame = this.time;
+		} else {
+			this.currentFrame = 0;
+		}
 	}
 
 	public void finalize() {
 		flush();
+	}
+
+	public int getScreenWidth() {
+		return maxWidth;
+	}
+
+	public int getScreenHeight() {
+		return maxHeight;
 	}
 
 	private int getDirection() {
@@ -83,38 +137,9 @@ public class AVGChara implements LRelease {
 	}
 
 	public void flush() {
-		old_alpha = 0;
 		characterCG = null;
 		x = 0;
 		y = 0;
-	}
-
-	public float getNextAlpha() {
-		float value = 1.0f;
-		float start = getNext();
-		float goal = getMaxNext();
-		if (start < 0) {
-			start += maxWidth;
-		}
-		if (goal < 0) {
-			goal += maxWidth;
-		}
-		if (goal < start) {
-			goal += start;
-		}
-		value = (float) ((start / goal) * 1.0);
-		if (value < 0.1) {
-			value = 0.1f;
-		}
-		if (value > 0.9) {
-			value = 1.0f;
-		}
-		if (old_alpha < value) {
-			old_alpha = value;
-		} else {
-			value = old_alpha;
-		}
-		return value;
 	}
 
 	public int getNext() {
@@ -125,7 +150,7 @@ public class AVGChara implements LRelease {
 		return x;
 	}
 
-	public synchronized boolean next() {
+	public boolean next() {
 		moving = false;
 		if (moveX != x) {
 			for (int sleep = 0; sleep < moveSleep; sleep++) {
@@ -148,23 +173,18 @@ public class AVGChara implements LRelease {
 					}
 				} else {
 					moveX = x;
-					old_alpha = 0;
 				}
 			}
 		}
 		return moving;
 	}
 
-	public synchronized void draw(LGraphics g) {
+	void update(long t) {
+
+	}
+
+	void draw(LGraphics g) {
 		g.drawImage(characterCG, moveX, y);
-	}
-
-	public LImage getCharacterCG() {
-		return characterCG;
-	}
-
-	public void setCharacterCG(LImage characterCG) {
-		this.characterCG = characterCG;
 	}
 
 	public int getX() {
@@ -224,8 +244,21 @@ public class AVGChara implements LRelease {
 	public int getMoveX() {
 		return moveX;
 	}
+	
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
+
+	public LImage getTexture() {
+		return characterCG;
+	}
 
 	public void dispose() {
+		this.isVisible = false;
 		if (characterCG != null) {
 			characterCG.dispose();
 			characterCG = null;

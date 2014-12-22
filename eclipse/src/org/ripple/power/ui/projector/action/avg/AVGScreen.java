@@ -35,7 +35,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 
 	private boolean isSelectMessage, scrFlag, isRunning, running;
 
-	private int shakeNumber, delay, sleep, sleepMax;
+	private int delay, sleep, sleepMax;
 
 	private String scriptName;
 
@@ -220,59 +220,40 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		if (!running || !isOnLoadComplete() || isClose()) {
 			return;
 		}
-		if (sleep == 0) {
-			if (scrCG == null) {
-				return;
+		if (scrCG == null) {
+			return;
+		}
+		if (scrCG.sleep == 0) {
+			scrCG.paint(g);
+			drawScreen(g);
+			if (desktop != null) {
+				desktop.createUI(g);
 			}
-			try {
-				if (scrCG.getBackgroundCG() != null) {
-					if (shakeNumber > 0) {
-						g.drawImage(
-								scrCG.getBackgroundCG(),
-								shakeNumber / 2
-										- LSystem.random.nextInt(shakeNumber),
-								shakeNumber / 2
-										- LSystem.random.nextInt(shakeNumber));
-					} else {
-						g.drawImage(scrCG.getBackgroundCG(), 0, 0);
-					}
-				}
-				for (int i = 0; i < scrCG.getCharas().size(); i++) {
-					AVGChara chara = (AVGChara) scrCG.getCharas().get(i);
-					float value = 1.0f;
-					if (chara.next()) {
-						value = chara.getNextAlpha();
-					}
-					g.setAlpha(value);
-					chara.draw(g);
-					g.setAlpha(1.0F);
-				}
-				drawScreen(g);
-				if (desktop != null) {
-					desktop.createUI(g);
-				}
-				if (sprites != null) {
-					sprites.createUI(g);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (sprites != null) {
+				sprites.createUI(g);
 			}
 		} else {
-			sleep--;
+			scrCG.sleep--;
 			if (color != null) {
-				float alpha = (float) (sleepMax - sleep) / sleepMax;
-				if (alpha < 1.0) {
+				float alpha = (float) (scrCG.sleepMax - scrCG.sleep)
+						/ scrCG.sleepMax;
+				if (alpha > 0.1f && alpha < 1.0f) {
 					if (scrCG.getBackgroundCG() != null) {
 						g.drawImage(scrCG.getBackgroundCG(), 0, 0);
 					}
-					g.setAlpha(alpha);
+					LColor c = g.getLColor();
 					g.setColor(color);
 					g.fillRect(0, 0, getWidth(), getHeight());
-					g.setAlpha(1.0f);
+					g.setColor(c);
+				} else {
+					LColor c = g.getLColor();
+					g.setColor(color);
+					g.fillRect(0, 0, getWidth(), getHeight());
+					g.setColor(c);
 				}
 			}
-			if (sleep <= 0) {
-				sleep = 0;
+			if (scrCG.sleep <= 0) {
+				scrCG.sleep = 0;
 				color = null;
 			}
 			g.setAlpha(1.0f);
@@ -503,7 +484,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						break;
 					}
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_SHAKE)) {
-						shakeNumber = Integer.valueOf(mesFlag).intValue();
+						scrCG.shakeNumber = Integer.valueOf(mesFlag).intValue();
 						continue;
 					}
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_CGWAIT)) {
@@ -525,8 +506,8 @@ public abstract class AVGScreen extends Screen implements Runnable {
 									.intValue(), Integer.valueOf(colors[1])
 									.intValue(), Integer.valueOf(colors[2])
 									.intValue());
-							sleep = 20;
-							sleepMax = sleep;
+							scrCG.sleep = 20;
+							scrCG.sleepMax = scrCG.sleep;
 							scrFlag = false;
 						} else {
 							color = null;
@@ -548,36 +529,19 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						if (mesFlag == null) {
 							return;
 						}
-						if (scrCG.count() > LSystem.DEFAULT_MAX_CACHE_SIZE) {
+						if (scrCG != null
+								&& scrCG.count() > LSystem.DEFAULT_MAX_CACHE_SIZE) {
 							scrCG.dispose();
 						}
 						if (mesFlag.equalsIgnoreCase(CommandType.L_DEL)) {
 							if (orderFlag != null) {
-								AVGChara chara = scrCG.removeImage(orderFlag);
-								if (chara != null) {
-									chara.dispose();
-									chara = null;
-								}
+								scrCG.remove(orderFlag);
 							} else {
 								scrCG.dispose();
 							}
 						} else if (lastFlag != null
 								&& CommandType.L_TO.equalsIgnoreCase(orderFlag)) {
-							AVGChara chara = scrCG.removeImage(mesFlag);
-							if (chara != null) {
-								int x = chara.getX();
-								int y = chara.getY();
-								AVGChara tmp = chara;
-								chara = new AVGChara(lastFlag, 0, 0, getWidth());
-								chara.setMove(false);
-								chara.setX(x);
-								chara.setY(y);
-								scrCG.addChara(lastFlag, chara);
-								if (tmp != null) {
-									tmp.dispose();
-									tmp = null;
-								}
-							}
+							scrCG.replace(mesFlag, lastFlag);
 						} else {
 							int x = 0, y = 0;
 							if (orderFlag != null) {
@@ -586,7 +550,10 @@ public abstract class AVGScreen extends Screen implements Runnable {
 							if (size >= 4) {
 								y = Integer.parseInt((String) commands.get(3));
 							}
-							scrCG.addImage(mesFlag, x, y, getWidth());
+							final int tx = x;
+							final int ty = y;
+							final String name = mesFlag;
+							scrCG.add(name, tx, ty, getWidth(), getHeight());
 						}
 						continue;
 					}
@@ -624,11 +591,12 @@ public abstract class AVGScreen extends Screen implements Runnable {
 			if (!scrFlag) {
 				scrFlag = true;
 			}
-			/*if (message.isVisible()) {
-				isNext = message.intersects(getTouchX(), getTouchY());
-			} else {*/
-				isNext = true;
-			//}
+			/*
+			 * if (message.isVisible()) { isNext =
+			 * message.intersects(getTouchX(), getTouchY()); } else {
+			 */
+			isNext = true;
+			// }
 		} else if (scrFlag && select.getResultIndex() != -1) {
 			onSelect(selectMessage, select.getResultIndex());
 			isNext = select.intersects(getTouchX(), getTouchY());
