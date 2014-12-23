@@ -1,5 +1,6 @@
 package org.ripple.power.password;
 
+import org.ripple.power.config.Alphabet;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
@@ -7,7 +8,8 @@ public class PasswordEasy {
 
 	private final static Integer LENGTH_PASS = 9;
 
-	private final static char[] DEFAULT_PASS_MAP = "qwertyuiopasdfghjklzxcvbnm!@$&0123456789".toCharArray();
+	private final static char[] DEFAULT_PASS_MAP = Alphabet.ENGLISH
+			.getAlphabet();
 
 	public final static char[] getDefaultMap() {
 		return DEFAULT_PASS_MAP;
@@ -32,13 +34,12 @@ public class PasswordEasy {
 		return new String(buffer);
 	}
 
-	public  String pass() {
+	public String pass() {
 		return pass(LENGTH_PASS);
 	}
 
-	public  String pass(int min, int max) {
+	public String pass(int min, int max) {
 		return pass(MathUtils.random(min, max));
 	}
-
 
 }

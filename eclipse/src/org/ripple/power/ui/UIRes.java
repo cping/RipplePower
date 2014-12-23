@@ -107,6 +107,7 @@ public class UIRes {
 				48, 48).getBufferedImage());
 	}
 
+
 	public static BufferedImage getIcon() {
 		return icon;
 	}
@@ -120,6 +121,20 @@ public class UIRes {
 		return _font;
 	}
 
+	public static Font getFont(String fontName, int type, int style, int size) {
+		try {
+			Font font = Font.createFont(type, UIRes.getStream(fontName));
+			font = font.deriveFont(style, size);
+			final GraphicsEnvironment ge = GraphicsEnvironment
+					.getLocalGraphicsEnvironment();
+			ge.registerFont(font);
+			return font;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new Font(Font.DIALOG, style, size);
+	}
+	
 	public static void addPopMenu(final JPopupMenu menu, final String name,
 			final Updateable update) {
 		JMenuItem tempMenu = new JMenuItem(name);
@@ -152,7 +167,7 @@ public class UIRes {
 	public static ArrayByte getDataSource(String path) throws IOException {
 		return new ArrayByte(getStream(path), ArrayByte.BIG_ENDIAN);
 	}
-	
+
 	public static InputStream getStream(String path) throws IOException {
 		path = computePath(path);
 		InputStream is = classLoader.getResourceAsStream(path);
@@ -268,7 +283,7 @@ public class UIRes {
 
 		for (int i = 0; i < dataHex.length; ++i) {
 			sb.append(dataHex[i]).append(" ");
-			if ((i + 1) % 8 == 0 && i != 0){
+			if ((i + 1) % 8 == 0 && i != 0) {
 				sb.append("\n");
 			}
 		}
