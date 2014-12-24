@@ -266,6 +266,8 @@ public class Coin {
 		this.timestamp = coin.timestamp;
 	}
 
+
+
 	public Code getCode() {
 		return code;
 	}

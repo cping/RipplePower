@@ -166,10 +166,11 @@ public class TraderNxN {
 						}
 					}
 
-					final String name = source_currency + target_currency;
+					final String name = source_currency + "," + target_currency;
 
-					final String rname = target_currency+source_currency;
-					if (cache.contains(name)||cache.contains(rname)) {
+					final String rname = target_currency + ","
+							+ source_currency;
+					if (cache.contains(name) || cache.contains(rname)) {
 						continue;
 					}
 					cache.add(name);
@@ -184,6 +185,10 @@ public class TraderNxN {
 							synchroing = true;
 							OfferPrice.load(source_issuer, source_currency,
 									target_currency, new OfferPrice() {
+
+										ArrayList<double[]> buy_list = new ArrayList<double[]>();
+
+										ArrayList<double[]> sell_list = new ArrayList<double[]>();
 
 										private float buy_price = 0;
 
@@ -210,12 +215,12 @@ public class TraderNxN {
 											if (v >= filter
 													|| TraderBase.equals(v,
 															filter)) {
-											
+
 												BigDecimal payForOne = offer
 														.askQuality();
 												Amount getsOne = offer
 														.getsOne();
-								
+
 												float result = getsOne.divide(
 														payForOne).floatValue();
 												if (buy_price == 0) {
@@ -232,6 +237,8 @@ public class TraderNxN {
 												if (buy_amount > limit) {
 													buy_amount = limit;
 												}
+												buy_list.add(new double[] {
+														buy_price, buy_amount });
 												buy_count++;
 											}
 										}
@@ -255,7 +262,7 @@ public class TraderNxN {
 												float result = paysOne
 														.multiply(payForOne)
 														.floatValue();
-									
+
 												if (sell_price == 0) {
 													sell_price = result;
 													sell_amount = v;
@@ -270,6 +277,10 @@ public class TraderNxN {
 												if (sell_amount > limit) {
 													sell_amount = limit;
 												}
+												sell_list
+														.add(new double[] {
+																sell_price,
+																sell_amount });
 												sell_count++;
 											}
 										}
@@ -297,22 +308,55 @@ public class TraderNxN {
 													&& buys.size() > _min_transaction_count
 													&& buy_count > _min_transaction_count
 													&& sells.size() > _min_transaction_count) {
+												System.out.println("buy:"
+														+ buy_price
+														+ ","
+														+ buy_amount
+														+ ","
+														+ LSystem
+																.getNumberShort(buy_price
+																		* buy_amount));
+												System.out.println("sell:"
+														+ sell_price
+														+ ","
+														+ sell_amount
+														+ ","
+														+ LSystem
+																.getNumberShort(sell_price
+																		* sell_amount));
+
 												System.out
-														.println("buy:"
-																+ buy_price
+														.println(price.highBuy
 																+ ","
-																+ buy_amount
-																+ ","
-																+ LSystem.getNumberShort(buy_price * buy_amount));
-												System.out
-														.println("sell:"
-																+ sell_price
-																+ ","
-																+ sell_amount
-																+ ","
-																+ LSystem.getNumberShort(sell_price * sell_amount));
-											
-												System.out.println(price.highBuy+","+price.highSell);
+																+ price.highSell);
+
+												Coin coin = new Coin(
+														Code.newInstance(source_issuer
+																+ "/" + name),
+														Symbol.newInstance(source_issuer),
+														name,
+														0d,
+														0d,
+														0d,
+														0d,
+														0d,
+														0,
+														0d,
+														0d,
+														0,
+														buy_list.get(0)[0],
+														(int) buy_list.get(0)[1],
+														sell_list.get(0)[0],
+														(int) sell_list.get(0)[1],
+														buy_list.get(1)[0],
+														(int) buy_list.get(0)[1],
+														sell_list.get(1)[0],
+														(int) sell_list.get(0)[1],
+														buy_list.get(2)[0],
+														(int) buy_list.get(0)[1],
+														sell_list.get(2)[0],
+														(int) sell_list.get(0)[1],
+														System.currentTimeMillis());
 
 												_cache_count.put(source_issuer
 														+ name, buys.size());

@@ -2,13 +2,17 @@ package org.ripple.power.hft;
 
 import java.util.ArrayList;
 
+import org.ripple.power.txns.OfferPrice.OfferFruit;
+
+import com.ripple.core.types.known.sle.entries.Offer;
+
 public class CoinList {
 
 	private String IssuedName;
 
 	private double IssuedCount;
 
-	private ArrayList<Coin> list = new ArrayList<Coin>(100);
+	private ArrayList<Coin> _list = new ArrayList<Coin>(100);
 
 	private long baseTime;
 
@@ -18,14 +22,14 @@ public class CoinList {
 
 	public long getTimestamp(int idx) {
 		try {
-			return list.get(idx).getTimestamp();
+			return _list.get(idx).getTimestamp();
 		} catch (Exception ex) {
 			return -1;
 		}
 	}
 
 	public Coin getCoinTime(long time) {
-		for (Coin c : list) {
+		for (Coin c : _list) {
 			if (c.getTimestamp() == time) {
 				return c;
 			}
@@ -34,7 +38,7 @@ public class CoinList {
 	}
 
 	public int size() {
-		return list.size();
+		return _list.size();
 	}
 
 	public double getIssuedCount() {
@@ -42,7 +46,7 @@ public class CoinList {
 	}
 
 	public ArrayList<Coin> getList() {
-		return list;
+		return _list;
 	}
 
 	public String getIssuedName() {
