@@ -10,19 +10,30 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.utils.HttpRequest;
 
 import com.ripple.core.coretypes.RippleDate;
 
 public class RippleMarket {
 
+	public static class RippleItem {
+
+		public String startTime;
+		public double baseVolume;
+		public double counterVolume;
+		public double count;
+		public double open;
+		public double high;
+		public double low;
+		public double close;
+		public double vwap;
+		public String openTime;
+		public String closeTime;
+		public boolean partial;
+	}
+
 	// 用于获取指定类型的历史交易记录（比如24小时交易等）
 	private final static String CHARTS_URL = "http://api.ripplecharts.com/api/";
-
-	public ArrayList<OfferFruit> buys = new ArrayList<OfferFruit>(100);
-
-	public ArrayList<OfferFruit> sells = new ArrayList<OfferFruit>(100);
 
 	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
 			"yyyy-MM-dd");
@@ -214,6 +225,42 @@ public class RippleMarket {
 		} else {
 			return result;
 		}
+	}
+
+	public static Object getExchangeRateItems(final String currency,
+			final String issuer) {
+		Object o = RippleMarket.getExchangeRates(currency, issuer);
+		if (o != null && o instanceof JSONArray) {
+			JSONArray arrays = (JSONArray) o;
+			ArrayList<RippleMarket.RippleItem> list = new ArrayList<RippleMarket.RippleItem>(
+					arrays.length() - 1);
+			for (int i = 0; i < arrays.length(); i++) {
+				if (i == 0) {
+
+					//需要处理，预防替换索引位置
+					
+				} else {
+					RippleItem item = new RippleItem();
+					JSONArray obj = arrays.getJSONArray(i);
+					int idx = 0;
+					item.startTime = obj.getString(idx++);
+					item.baseVolume = obj.getDouble(idx++);
+					item.counterVolume = obj.getDouble(idx++);
+					item.count = obj.getDouble(idx++);
+					item.open = obj.getDouble(idx++);
+					item.high = obj.getDouble(idx++);
+					item.low = obj.getDouble(idx++);
+					item.close = obj.getDouble(idx++);
+					item.vwap = obj.getDouble(idx++);
+					item.openTime = obj.getString(idx++);
+					item.closeTime = obj.getString(idx++);
+					item.partial = obj.getBoolean(idx++);
+					list.add(item);
+				}
+			}
+			return list;
+		}
+		return null;
 	}
 
 	public static Object markettraders() {
