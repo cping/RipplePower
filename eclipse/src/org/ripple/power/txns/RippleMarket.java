@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpRequest;
 
@@ -38,11 +39,46 @@ public class RippleMarket {
 	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
 			"yyyy-MM-dd");
 
+	private static ArrayList<RippleItem> jsonToItems(Object o){
+		if (o != null && o instanceof JSONArray) {
+			JSONArray arrays = (JSONArray) o;
+			ArrayList<RippleMarket.RippleItem> list = new ArrayList<RippleMarket.RippleItem>(
+					arrays.length() - 1);
+			for (int i = 0; i < arrays.length(); i++) {
+				RippleItem item = new RippleItem();
+				JSONArray obj = arrays.getJSONArray(i);
+				int idx = 0;
+				item.startTime = obj.getString(idx++);
+				item.baseVolume = obj.getDouble(idx++);
+				item.counterVolume = obj.getDouble(idx++);
+				item.count = obj.getDouble(idx++);
+				item.open = obj.getDouble(idx++);
+				item.high = obj.getDouble(idx++);
+				item.low = obj.getDouble(idx++);
+				item.close = obj.getDouble(idx++);
+				item.vwap = obj.getDouble(idx++);
+				item.openTime = obj.getString(idx++);
+				item.closeTime = obj.getString(idx++);
+				item.partial = obj.getBoolean(idx++);
+				list.add(item);
+			}
+			return list;
+		}
+		return null;
+	}
+
 	public static Object offers_exercised24hour(IssuedCurrency issued) {
 		return offers_exercised24hour(LSystem.nativeCurrency, issued.currency,
 				issued.issuer.toString());
 	}
 
+	public static ArrayList<RippleItem> offers_exercised24hour_items(
+			IssuedCurrency issued) {
+		Object o = offers_exercised24hour(LSystem.nativeCurrency,
+				issued.currency, issued.issuer.toString());
+		return jsonToItems(o);
+	}
+	
 	public static Object offers_exercised24hour(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -58,7 +94,14 @@ public class RippleMarket {
 		return offers_exercisedYear(LSystem.nativeCurrency, issued.currency,
 				issued.issuer.toString());
 	}
-
+	
+	public static ArrayList<RippleItem> offers_exercisedYear_items(
+			IssuedCurrency issued) {
+		Object o = offers_exercisedYear(LSystem.nativeCurrency,
+				issued.currency, issued.issuer.toString());
+		return jsonToItems(o);
+	}
+	
 	public static Object offers_exercisedYear(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -75,6 +118,13 @@ public class RippleMarket {
 				issued.issuer.toString());
 	}
 
+	public static ArrayList<RippleItem> offers_exercisedMonth_items(
+			IssuedCurrency issued) {
+		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
+				issued.currency, issued.issuer.toString());
+		return jsonToItems(o);
+	}
+	
 	public static Object offers_exercisedMonth(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -90,7 +140,14 @@ public class RippleMarket {
 		return offers_exercisedWeek(LSystem.nativeCurrency, issued.currency,
 				issued.issuer.toString());
 	}
-
+	
+	public static ArrayList<RippleItem> offers_exercisedWeek_items(
+			IssuedCurrency issued) {
+		Object o = offers_exercisedWeek(LSystem.nativeCurrency,
+				issued.currency, issued.issuer.toString());
+		return jsonToItems(o);
+	}
+	
 	public static Object offers_exercisedWeek(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -227,34 +284,102 @@ public class RippleMarket {
 		}
 	}
 
-	public static Object getExchangeRateItems(final String currency,
-			final String issuer) {
+	public static ArrayList<RippleItem> getExchangeRateItems(
+			final String currency, final String issuer) {
 		Object o = RippleMarket.getExchangeRates(currency, issuer);
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
 			ArrayList<RippleMarket.RippleItem> list = new ArrayList<RippleMarket.RippleItem>(
 					arrays.length() - 1);
+			ArrayMap names = null;
 			for (int i = 0; i < arrays.length(); i++) {
 				if (i == 0) {
-
-					//需要处理，预防替换索引位置
-					
+					JSONArray obj = arrays.getJSONArray(i);
+					final int size = obj.length();
+					if (names == null) {
+						names = new ArrayMap(size);
+					}
+					try {
+						for (int j = 0; j < size; j++) {
+							names.put(obj.getString(j), j);
+						}
+					} catch (Exception ex) {
+						names = null;
+					}
 				} else {
 					RippleItem item = new RippleItem();
 					JSONArray obj = arrays.getJSONArray(i);
-					int idx = 0;
-					item.startTime = obj.getString(idx++);
-					item.baseVolume = obj.getDouble(idx++);
-					item.counterVolume = obj.getDouble(idx++);
-					item.count = obj.getDouble(idx++);
-					item.open = obj.getDouble(idx++);
-					item.high = obj.getDouble(idx++);
-					item.low = obj.getDouble(idx++);
-					item.close = obj.getDouble(idx++);
-					item.vwap = obj.getDouble(idx++);
-					item.openTime = obj.getString(idx++);
-					item.closeTime = obj.getString(idx++);
-					item.partial = obj.getBoolean(idx++);
+					if (names == null) {
+						int idx = 0;
+						item.startTime = obj.getString(idx++);
+						item.baseVolume = obj.getDouble(idx++);
+						item.counterVolume = obj.getDouble(idx++);
+						item.count = obj.getDouble(idx++);
+						item.open = obj.getDouble(idx++);
+						item.high = obj.getDouble(idx++);
+						item.low = obj.getDouble(idx++);
+						item.close = obj.getDouble(idx++);
+						item.vwap = obj.getDouble(idx++);
+						item.openTime = obj.getString(idx++);
+						item.closeTime = obj.getString(idx++);
+						item.partial = obj.getBoolean(idx++);
+					} else {
+						for (int j = 0; j < names.size(); j++) {
+							ArrayMap.Entry entry = names.getEntry(j);
+							switch (entry.getKey().toString()) {
+							case "startTime":
+								item.startTime = obj.getString((int) entry
+										.getValue());
+								break;
+							case "baseVolume":
+								item.baseVolume = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "counterVolume":
+								item.counterVolume = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "count":
+								item.count = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "open":
+								item.open = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "high":
+								item.high = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "low":
+								item.low = obj
+										.getDouble((int) entry.getValue());
+								break;
+							case "close":
+								item.close = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "vwap":
+								item.vwap = obj.getDouble((int) entry
+										.getValue());
+								break;
+							case "openTime":
+								item.openTime = obj.getString((int) entry
+										.getValue());
+								break;
+							case "closeTime":
+								item.openTime = obj.getString((int) entry
+										.getValue());
+								break;
+							case "partial":
+								item.partial = obj.getBoolean((int) entry
+										.getValue());
+								break;
+							default:
+								break;
+							}
+						}
+					}
 					list.add(item);
 				}
 			}
