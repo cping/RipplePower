@@ -73,6 +73,13 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercised24hour_items(
+			String currency,String issuer) {
+		Object o = offers_exercised24hour(LSystem.nativeCurrency,
+				currency, issuer);
+		return jsonToItems(o);
+	}
+	
+	public static ArrayList<RippleItem> offers_exercised24hour_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercised24hour(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
@@ -93,6 +100,13 @@ public class RippleMarket {
 	public static Object offers_exercisedYear(IssuedCurrency issued) {
 		return offers_exercisedYear(LSystem.nativeCurrency, issued.currency,
 				issued.issuer.toString());
+	}
+
+	public static ArrayList<RippleItem> offers_exercisedYear_items(
+			String currency,String issuer) {
+		Object o = offers_exercisedYear(LSystem.nativeCurrency,
+				currency, issuer);
+		return jsonToItems(o);
 	}
 	
 	public static ArrayList<RippleItem> offers_exercisedYear_items(
@@ -119,6 +133,13 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedMonth_items(
+			String currency,String issuer) {
+		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
+				currency, issuer);
+		return jsonToItems(o);
+	}
+	
+	public static ArrayList<RippleItem> offers_exercisedMonth_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
@@ -139,6 +160,13 @@ public class RippleMarket {
 	public static Object offers_exercisedWeek(IssuedCurrency issued) {
 		return offers_exercisedWeek(LSystem.nativeCurrency, issued.currency,
 				issued.issuer.toString());
+	}
+
+	public static ArrayList<RippleItem> offers_exercisedWeek_items(
+			String currency,String issuer) {
+		Object o = offers_exercisedWeek(LSystem.nativeCurrency,
+				currency, issuer);
+		return jsonToItems(o);
 	}
 	
 	public static ArrayList<RippleItem> offers_exercisedWeek_items(

@@ -15,6 +15,8 @@ import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
+import org.ripple.power.txns.RippleMarket;
+import org.ripple.power.txns.RippleMarket.RippleItem;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.Amount;
@@ -330,34 +332,52 @@ public class TraderNxN {
 																+ ","
 																+ price.highSell);
 
-												Coin coin = new Coin(
-														Code.newInstance(source_issuer
-																+ "/" + name),
-														Symbol.newInstance(source_issuer),
-														name,
-														0d,
-														0d,
-														0d,
-														0d,
-														0d,
-														0,
-														0d,
-														0d,
-														0,
-														buy_list.get(0)[0],
-														(int) buy_list.get(0)[1],
-														sell_list.get(0)[0],
-														(int) sell_list.get(0)[1],
-														buy_list.get(1)[0],
-														(int) buy_list.get(0)[1],
-														sell_list.get(1)[0],
-														(int) sell_list.get(0)[1],
-														buy_list.get(2)[0],
-														(int) buy_list.get(0)[1],
-														sell_list.get(2)[0],
-														(int) sell_list.get(0)[1],
-														System.currentTimeMillis());
+												ArrayList<RippleMarket.RippleItem> list = RippleMarket
+														.getExchangeRateItems(
+																source_currency,
+																source_issuer);
 
+												if (list.size() > 0) {
+
+													RippleItem item = list
+															.get(0);
+
+													Coin coin = new Coin(
+															Code.newInstance(source_issuer
+																	+ "/"
+																	+ name),
+															Symbol.newInstance(source_issuer),
+															name,
+															0d,
+															item.open,
+															0d,
+															item.high,
+															item.low,
+															0,
+															0d,
+															0d,
+															0,
+															buy_list.get(0)[0],
+															(int) buy_list
+																	.get(0)[1],
+															sell_list.get(0)[0],
+															(int) sell_list
+																	.get(0)[1],
+															buy_list.get(1)[0],
+															(int) buy_list
+																	.get(0)[1],
+															sell_list.get(1)[0],
+															(int) sell_list
+																	.get(0)[1],
+															buy_list.get(2)[0],
+															(int) buy_list
+																	.get(0)[1],
+															sell_list.get(2)[0],
+															(int) sell_list
+																	.get(0)[1],
+															System.currentTimeMillis());
+
+												}
 												_cache_count.put(source_issuer
 														+ name, buys.size());
 
