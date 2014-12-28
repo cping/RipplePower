@@ -17,22 +17,6 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class RippleMarket {
 
-	public static class RippleItem {
-
-		public String startTime;
-		public double baseVolume;
-		public double counterVolume;
-		public double count;
-		public double open;
-		public double high;
-		public double low;
-		public double close;
-		public double vwap;
-		public String openTime;
-		public String closeTime;
-		public boolean partial;
-	}
-
 	// 用于获取指定类型的历史交易记录（比如24小时交易等）
 	private final static String CHARTS_URL = "http://api.ripplecharts.com/api/";
 
@@ -42,7 +26,7 @@ public class RippleMarket {
 	private static ArrayList<RippleItem> jsonToItems(Object o){
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
-			ArrayList<RippleMarket.RippleItem> list = new ArrayList<RippleMarket.RippleItem>(
+			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
 					arrays.length() - 1);
 			for (int i = 0; i < arrays.length(); i++) {
 				RippleItem item = new RippleItem();
@@ -314,10 +298,10 @@ public class RippleMarket {
 
 	public static ArrayList<RippleItem> getExchangeRateItems(
 			final String currency, final String issuer) {
-		Object o = RippleMarket.getExchangeRates(currency, issuer);
+		Object o = getExchangeRates(currency, issuer);
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
-			ArrayList<RippleMarket.RippleItem> list = new ArrayList<RippleMarket.RippleItem>(
+			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
 					arrays.length() - 1);
 			ArrayMap names = null;
 			for (int i = 0; i < arrays.length(); i++) {
@@ -476,7 +460,7 @@ public class RippleMarket {
 
 	public static double getXRPto(ArrayList<IssuedCurrency> list) {
 		double a = -1, b = -1;
-		Object result = RippleMarket.getExchange(list);
+		Object result = getExchange(list);
 		if (result != null) {
 			if (result instanceof JSONArray) {
 				a = ((JSONArray) result).getJSONObject(0).getDouble("rate");

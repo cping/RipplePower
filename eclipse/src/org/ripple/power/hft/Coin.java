@@ -12,8 +12,7 @@ public class Coin {
 	private final double lowPrice;
 	private final long volume;
 	private final double changePrice;
-	private final double changePricePercentage;
-	private final int lastVolume;
+
 	private final double buyPrice;
 	private final int buyQuantity;
 	private final double sellPrice;
@@ -192,8 +191,8 @@ public class Coin {
 	private Coin(Builder builder) {
 		this(builder.code, builder.symbol, builder.name, builder.prevPrice,
 				builder.openPrice, builder.lastPrice, builder.highPrice,
-				builder.lowPrice, builder.volume, builder.changePrice,
-				builder.changePricePercentage, builder.lastVolume,
+				builder.lowPrice, builder.volume, 
+				builder.changePricePercentage, 
 				builder.buyPrice, builder.buyQuantity, builder.sellPrice,
 				builder.sellQuantity, builder.secondBuyPrice,
 				builder.secondBuyQuantity, builder.secondSellPrice,
@@ -204,8 +203,7 @@ public class Coin {
 
 	public Coin(Code code, Symbol symbol, String name, double prevPrice,
 			double openPrice, double lastPrice, double highPrice,
-			double lowPrice, long volume, double changePrice,
-			double changePricePercentage, int lastVolume, double buyPrice,
+			double lowPrice, long volume, double changePrice,  double buyPrice,
 			int buyQuantity, double sellPrice, int sellQuantity,
 			double secondBuyPrice, int secondBuyQuantity,
 			double secondSellPrice, int secondSellQuantity,
@@ -221,8 +219,6 @@ public class Coin {
 		this.lowPrice = lowPrice;
 		this.volume = volume;
 		this.changePrice = changePrice;
-		this.changePricePercentage = changePricePercentage;
-		this.lastVolume = lastVolume;
 		this.buyPrice = buyPrice;
 		this.buyQuantity = buyQuantity;
 		this.sellPrice = sellPrice;
@@ -249,8 +245,6 @@ public class Coin {
 		this.lowPrice = coin.lowPrice;
 		this.volume = coin.volume;
 		this.changePrice = coin.changePrice;
-		this.changePricePercentage = coin.changePricePercentage;
-		this.lastVolume = coin.lastVolume;
 		this.buyPrice = coin.buyPrice;
 		this.buyQuantity = coin.buyQuantity;
 		this.sellPrice = coin.sellPrice;
@@ -308,14 +302,6 @@ public class Coin {
 		return changePrice;
 	}
 
-	public double getChangePricePercentage() {
-		return changePricePercentage;
-	}
-
-	public int getLastVolume() {
-		return lastVolume;
-	}
-
 	public double getBuyPrice() {
 		return buyPrice;
 	}
@@ -371,8 +357,7 @@ public class Coin {
 	public Coin deriveStock(String name) {
 		return new Coin(this.code, this.symbol, name, this.prevPrice,
 				this.openPrice, this.lastPrice, this.highPrice, this.lowPrice,
-				this.volume, this.changePrice, this.changePricePercentage,
-				this.lastVolume, this.buyPrice, this.buyQuantity,
+				this.volume, this.changePrice, this.buyPrice, this.buyQuantity,
 				this.sellPrice, this.sellQuantity, this.secondBuyPrice,
 				this.secondBuyQuantity, this.secondSellPrice,
 				this.secondSellQuantity, this.thirdBuyPrice,
@@ -383,8 +368,8 @@ public class Coin {
 	public Coin deriveStock(Symbol symbol) {
 		return new Coin(this.code, symbol, this.name, this.prevPrice,
 				this.openPrice, this.lastPrice, this.highPrice, this.lowPrice,
-				this.volume, this.changePrice, this.changePricePercentage,
-				this.lastVolume, this.buyPrice, this.buyQuantity,
+				this.volume, this.changePrice
+			, this.buyPrice, this.buyQuantity,
 				this.sellPrice, this.sellQuantity, this.secondBuyPrice,
 				this.secondBuyQuantity, this.secondSellPrice,
 				this.secondSellQuantity, this.thirdBuyPrice,

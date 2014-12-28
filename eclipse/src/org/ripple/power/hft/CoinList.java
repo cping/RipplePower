@@ -2,13 +2,6 @@ package org.ripple.power.hft;
 
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.ripple.power.txns.RippleMarket;
-import org.ripple.power.txns.OfferPrice.OfferFruit;
-import org.ripple.power.txns.RippleMarket.RippleItem;
-
-import com.ripple.core.types.known.sle.entries.Offer;
 
 public class CoinList {
 

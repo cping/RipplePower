@@ -15,8 +15,8 @@ import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
+import org.ripple.power.txns.RippleItem;
 import org.ripple.power.txns.RippleMarket;
-import org.ripple.power.txns.RippleMarket.RippleItem;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.Amount;
@@ -332,7 +332,7 @@ public class TraderNxN {
 																+ ","
 																+ price.highSell);
 
-												ArrayList<RippleMarket.RippleItem> list = RippleMarket
+												ArrayList<RippleItem> list = RippleMarket
 														.getExchangeRateItems(
 																source_currency,
 																source_issuer);
@@ -350,12 +350,12 @@ public class TraderNxN {
 															name,
 															0d,
 															item.open,
-															0d,
+															item.vwap ,
 															item.high,
 															item.low,
-															0,
-															0d,
-															0d,
+															(int)item.counterVolume,
+															
+															
 															0,
 															buy_list.get(0)[0],
 															(int) buy_list

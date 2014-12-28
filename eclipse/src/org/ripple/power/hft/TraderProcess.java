@@ -15,6 +15,7 @@ import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
+import org.ripple.power.txns.RippleItem;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
@@ -196,7 +197,7 @@ public class TraderProcess extends TraderBase {
 		public int orderId = -1;
 		public float orderAmount = -1;
 		public Model model = Model.Spreads;
-		public ArrayList<Swap> swaps = new ArrayList<Swap>(10);
+		public ArrayList<RippleItem> swaps = new ArrayList<RippleItem>(10);
 		public ArrayList<Error> errors = new ArrayList<Error>(10);
 		public LTimer task_delay = new LTimer(LSystem.SECOND);
 		public boolean stop;
