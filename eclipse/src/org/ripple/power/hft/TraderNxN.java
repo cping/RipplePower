@@ -40,6 +40,11 @@ public class TraderNxN {
 			10);
 
 	private int _sleep = 10;
+	
+	//为了多网关高频交易方便换算计量单位，测试过几种方式后确认只有使用本地(Native)货币作为计量才是最高效的，具体到Ripple则是XRP了。
+	//(用IOU的话，因为不同网关的不能完全等价，高频交易过程中需要查询转换的数据太多，交易速度没有保障，反而不如直接统一到XRP作为基本单位效果好,
+	//而且实际转移时也是XRP速度最快，也就是说，XRP在这里起到了“共识计量单位”的作用)
+	private String baseCurrency = LSystem.nativeCurrency;
 
 	// 默认至少有15笔买/卖交易才会在对应网关进行交易()
 	// default you need at least count 15 to buy / sell transactions
@@ -328,10 +333,14 @@ public class TraderNxN {
 																		* sell_amount));
 
 												System.out
-														.println(price.highBuy
+														.println("1/"+source_currency+"=="+price.highBuy
 																+ ","
-																+ price.highSell);
+																+ "1/"+source_currency+"=="+price.highSell);
 
+												
+												//若本地货币和设置的基础货币一致,则实际后台计算的交易额,首先转化为本地货币进行计量
+												if(baseCurrency.equalsIgnoreCase(LSystem.nativeCurrency)){
+													
 												ArrayList<RippleItem> list = RippleMarket
 														.getExchangeRateItems(
 																source_currency,
@@ -342,40 +351,45 @@ public class TraderNxN {
 													RippleItem item = list
 															.get(0);
 
-													Coin coin = new Coin(
-															Code.newInstance(source_issuer
-																	+ "/"
-																	+ name),
-															Symbol.newInstance(source_issuer),
-															name,
-															0d,
-															item.open,
-															item.vwap ,
-															item.high,
-															item.low,
-															(int)item.counterVolume,
-															
-															
-															0,
-															buy_list.get(0)[0],
-															(int) buy_list
-																	.get(0)[1],
-															sell_list.get(0)[0],
-															(int) sell_list
-																	.get(0)[1],
-															buy_list.get(1)[0],
-															(int) buy_list
-																	.get(0)[1],
-															sell_list.get(1)[0],
-															(int) sell_list
-																	.get(0)[1],
-															buy_list.get(2)[0],
-															(int) buy_list
-																	.get(0)[1],
-															sell_list.get(2)[0],
-															(int) sell_list
-																	.get(0)[1],
-															System.currentTimeMillis());
+													System.out.println(name);
+													
+																								
+														Coin swap_xrp = new Coin(
+																Code.newInstance(source_issuer
+																		+ "/"
+																		+ name),
+																Symbol.newInstance(source_issuer),
+																name,
+																0d,
+																item.open,
+																item.vwap ,
+																item.high,
+																item.low,
+																(int)item.counterVolume,
+																0,
+																buy_list.get(0)[0],
+																(int) buy_list
+																		.get(0)[1],
+																sell_list.get(0)[0],
+																(int) sell_list
+																		.get(0)[1],
+																buy_list.get(1)[0],
+																(int) buy_list
+																		.get(0)[1],
+																sell_list.get(1)[0],
+																(int) sell_list
+																		.get(0)[1],
+																buy_list.get(2)[0],
+																(int) buy_list
+																		.get(0)[1],
+																sell_list.get(2)[0],
+																(int) sell_list
+																		.get(0)[1],
+														
+																System.currentTimeMillis());
+													}
+													
+												
 
 												}
 												_cache_count.put(source_issuer
