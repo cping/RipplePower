@@ -17,6 +17,7 @@ import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.RippleItem;
 import org.ripple.power.txns.RippleMarket;
+import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.Amount;
@@ -208,6 +209,10 @@ public class TraderNxN {
 										private float buy_count = 0;
 
 										private float sell_count = 0;
+										
+										private float high_buy_price;
+										
+										private float high_sell_price;
 
 										@Override
 										public void buy(Offer offer) {
@@ -223,6 +228,7 @@ public class TraderNxN {
 													|| TraderBase.equals(v,
 															filter)) {
 
+												float lastPrice = buy_price;
 												BigDecimal payForOne = offer
 														.askQuality();
 												Amount getsOne = offer
@@ -244,6 +250,7 @@ public class TraderNxN {
 												if (buy_amount > limit) {
 													buy_amount = limit;
 												}
+												high_buy_price = MathUtils.max(high_buy_price, lastPrice);
 												buy_list.add(new double[] {
 														buy_price, buy_amount });
 												buy_count++;
@@ -262,6 +269,9 @@ public class TraderNxN {
 											if (v >= filter
 													|| TraderBase.equals(v,
 															filter)) {
+												
+
+												float lastPrice = sell_price;
 												BigDecimal payForOne = offer
 														.askQuality();
 												Amount paysOne = offer
@@ -284,6 +294,7 @@ public class TraderNxN {
 												if (sell_amount > limit) {
 													sell_amount = limit;
 												}
+												high_sell_price = MathUtils.max(high_sell_price, lastPrice);
 												sell_list
 														.add(new double[] {
 																sell_price,
@@ -323,6 +334,7 @@ public class TraderNxN {
 														+ LSystem
 																.getNumberShort(buy_price
 																		* buy_amount));
+											
 												System.out.println("sell:"
 														+ sell_price
 														+ ","
@@ -331,7 +343,11 @@ public class TraderNxN {
 														+ LSystem
 																.getNumberShort(sell_price
 																		* sell_amount));
-
+												
+												//筛选条件后最高买卖价格(此最高指显示排序在第一顺位)
+												System.out.println(high_buy_price+","+high_sell_price);
+												
+												//单纯最高买卖价格
 												System.out
 														.println("1/"+source_currency+"=="+price.highBuy
 																+ ","
