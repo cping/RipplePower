@@ -19,11 +19,14 @@ import org.ripple.power.txns.RippleItem;
 import org.ripple.power.txns.RippleMarket;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
+import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 import com.ripple.core.types.known.sle.entries.Offer;
 
 public class TraderNxN {
+
+	private ArrayList<WalletItem> _myCurrency = new ArrayList<WalletItem>(10);
 
 	private ArrayList<String> _currencies = new ArrayList<String>(10);
 
@@ -357,57 +360,52 @@ public class TraderNxN {
 												//若本地货币和设置的基础货币一致,则实际后台计算的交易额,首先转化为本地货币进行计量
 												if(baseCurrency.equalsIgnoreCase(LSystem.nativeCurrency)){
 													
-												ArrayList<RippleItem> list = RippleMarket
-														.getExchangeRateItems(
-																source_currency,
-																source_issuer);
-
-												if (list.size() > 0) {
-
-													RippleItem item = list
-															.get(0);
-
-													System.out.println(name);
-													
-																								
-														Coin swap_xrp = new Coin(
-																Code.newInstance(source_issuer
-																		+ "/"
-																		+ name),
-																Symbol.newInstance(source_issuer),
-																name,
-																0d,
-																item.open,
-																item.vwap ,
-																item.high,
-																item.low,
-																(int)item.counterVolume,
-																0,
-																buy_list.get(0)[0],
-																(int) buy_list
-																		.get(0)[1],
-																sell_list.get(0)[0],
-																(int) sell_list
-																		.get(0)[1],
-																buy_list.get(1)[0],
-																(int) buy_list
-																		.get(0)[1],
-																sell_list.get(1)[0],
-																(int) sell_list
-																		.get(0)[1],
-																buy_list.get(2)[0],
-																(int) buy_list
-																		.get(0)[1],
-																sell_list.get(2)[0],
-																(int) sell_list
-																		.get(0)[1],
+													int idx = 0;
+													 double buyPrice=buy_list.get(idx)[0];
+														int buyQuantity=(int) buy_list
+														.get(idx)[1];
+														double sellPrice=sell_list.get(idx)[0];
+														int sellQuantity=(int) sell_list
+																.get(idx)[1];
 														
-																System.currentTimeMillis());
-													}
+														idx++;
+														
+														double secondBuyPrice=buy_list.get(idx)[0];
+														int secondBuyQuantity=(int) buy_list
+																.get(idx)[1];
+														double secondSellPrice=sell_list.get(idx)[0];
+														int secondSellQuantity=(int) sell_list
+																.get(idx)[1];
+														
+														idx++;
+														
+														double thirdBuyPrice=buy_list.get(idx)[0];
+														int thirdBuyQuantity=(int) buy_list
+																.get(idx)[1];
+														double thirdSellPrice=sell_list.get(idx)[0];
+														int thirdSellQuantity=(int) sell_list
+																.get(idx)[1];
 													
-												
-
+													
+													if(!source_currency.equalsIgnoreCase(baseCurrency)){
+														swap(name, source_currency, source_issuer, buyPrice,
+																 buyQuantity,  sellPrice,  sellQuantity,
+																 secondBuyPrice,  secondBuyQuantity,
+																 secondSellPrice,  secondSellQuantity,
+																 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
+																 thirdSellQuantity);
+													}
+													if(!target_currency.equalsIgnoreCase(baseCurrency)){
+														swap(name, target_currency, source_issuer, buyPrice,
+																 buyQuantity,  sellPrice,  sellQuantity,
+																 secondBuyPrice,  secondBuyQuantity,
+																 secondSellPrice,  secondSellQuantity,
+																 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
+																 thirdSellQuantity);
+													}
 												}
+												
+												
 												_cache_count.put(source_issuer
 														+ name, buys.size());
 
@@ -437,6 +435,51 @@ public class TraderNxN {
 
 		}
 
+	}
+	
+	private void swap(String name,String currency,String issuer, double buyPrice,
+			int buyQuantity, double sellPrice, int sellQuantity,
+			double secondBuyPrice, int secondBuyQuantity,
+			double secondSellPrice, int secondSellQuantity,
+			double thirdBuyPrice, int thirdBuyQuantity, double thirdSellPrice,
+			int thirdSellQuantity){
+
+		ArrayList<RippleItem> src_list = RippleMarket
+				.getExchangeRateItems(
+						currency,
+						issuer);
+
+		if (src_list.size() > 0) {
+
+			RippleItem item = src_list
+					.get(0);
+
+														
+				Coin swap_xrp = new Coin(
+						Code.newInstance(currency
+								+ "/"
+								+ name),
+						Symbol.newInstance(issuer),
+						name,
+						0d,
+						item.open,
+						item.vwap ,
+						item.high,
+						item.low,
+						(int)item.counterVolume,
+						0,buyPrice,buyQuantity,
+						 sellPrice,  sellQuantity,
+						 secondBuyPrice,  secondBuyQuantity,
+						 secondSellPrice,  secondSellQuantity,
+						 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
+						 thirdSellQuantity,
+				
+						System.currentTimeMillis());
+			}
+			
+		
+
+		
 	}
 
 	public void putIssuerAddress(String address) {
