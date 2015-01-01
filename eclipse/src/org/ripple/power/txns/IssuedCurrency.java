@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.ripple.power.CoinUtils;
 import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.nodejs.BigNumber;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.AccountID;
@@ -14,6 +15,25 @@ import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.Currency;
 
 public class IssuedCurrency {
+
+	boolean isHighNodeIssuer(BigNumber finalBalance, BigNumber previousBalance,
+			BigNumber highLimit, BigNumber lowLimit) {
+		if (finalBalance.isPositive()) {
+			return true;
+		} else if (finalBalance.isNegative()) {
+			return false;
+		} else if (previousBalance.isPositive()) {
+			return true;
+		} else if (previousBalance.isNegative()) {
+			return false;
+		} else if (lowLimit.isZero() && highLimit.isPositive()) {
+			return false;
+		} else if (highLimit.isZero() && lowLimit.isPositive()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// enter an account with a trust line containing XAU (-0.5%pa) -> hex:
 	private final static String XAU_05PA = "0158415500000000C1F76FF6ECB0BAC600000000";
@@ -83,8 +103,7 @@ public class IssuedCurrency {
 			if ("XAU (-0.5%pa)".equals(currency)
 					|| "XAU(-0.5%pa)".equals(currency)) {
 				this.currency = XAU_05PA;
-			} else if (currency.length() > 3
-					&& AccountFind.is256hash(currency)) {
+			} else if (currency.length() > 3 && AccountFind.is256hash(currency)) {
 				byte[] buffer = CoinUtils.fromHex(currency);
 				this.currency = CoinUtils.toHex(buffer);
 			}

@@ -1072,4 +1072,16 @@ public class BigNumber {
 	public static String hashSha512(LongArray data) {
 		return hex_fromBits(SHA512.hash(data));
 	}
+
+	public boolean isNegative() {
+		return toNumber() < 0;
+	}
+	
+	public boolean isPositive() {
+		return toNumber() > -1;
+	}
+
+	public boolean isZero() {
+		return toNumber() == 0;
+	}
 }
