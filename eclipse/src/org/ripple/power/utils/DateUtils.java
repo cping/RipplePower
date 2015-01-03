@@ -216,16 +216,16 @@ final public class DateUtils {
 			return str_Date;
 		}
 	}
-	
-	public static long convert(String timeout){
-	    long later = 0L;
-        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
-	    try {
-            later = format.parse(timeout).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-	    return later;
+
+	public static long convert(String timeout) {
+		long later = 0L;
+		SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
+		try {
+			later = format.parse(timeout).getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return later;
 	}
 
 	/**
@@ -416,13 +416,13 @@ final public class DateUtils {
 	public static String toDate() {
 		return toDate(new Date());
 	}
-	
+
 	public static String toDate(Date dt) {
 		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMATE);
 		df.setTimeZone(TimeZone.getDefault());
 		return df.format(dt);
 	}
-	
+
 	/**
 	 * 返回中文时间
 	 * 
@@ -1272,4 +1272,114 @@ final public class DateUtils {
 		cal.setTime(aDate);
 		return cal.get(Calendar.HOUR_OF_DAY);
 	}
+
+	/**
+	 * 转换格式为kk:mm:ss
+	 * 
+	 * @param mill
+	 * @return
+	 */
+	public static String toMillisToKKMMSSTime(long mill) {
+		String timeString = "";
+		mill = mill / 1000;
+		int hours = (int) (mill / 60 / 60);
+		if (hours < 10) {
+			timeString += "0" + hours + ":";
+		} else {
+			timeString += hours + ":";
+		}
+		int minutes = (int) ((mill - hours * 60 * 60) / 60);
+		if (minutes < 10) {
+			timeString += "0" + minutes + ":";
+		} else {
+			timeString += minutes + ":";
+		}
+		int seconds = (int) (mill % 60);
+		if (seconds < 10) {
+			timeString += "0" + seconds;
+		} else {
+			timeString += seconds;
+		}
+		return timeString;
+	}
+
+	/**
+	 * convert to hh:mm:ss
+	 * 
+	 * @param timeMillis
+	 * @return
+	 */
+	public static String toMillisToHHMMSSTime(long timeMillis) {
+		String timeString = "";
+		timeMillis = timeMillis / 1000;
+		int days = (int) (timeMillis / 60 / 60 / 24);
+		if (days > 0) {
+			if (days < 10) {
+				timeString += "0" + days + "-";
+			} else {
+				timeString += days + "-";
+			}
+		}
+		int dayTime = days * 24 * 60 * 60;
+		int hours = (int) ((timeMillis - dayTime) / 60 / 60);
+		if (hours < 10) {
+			timeString += "0" + hours + ":";
+		} else {
+			timeString += hours + ":";
+		}
+
+		int minutes = (int) ((timeMillis - dayTime - hours * 60 * 60) / 60);
+		if (minutes < 10) {
+			timeString += "0" + minutes + ":";
+		} else {
+			timeString += minutes + ":";
+		}
+
+		int seconds = (int) (timeMillis % 60);
+		if (seconds < 10) {
+			timeString += "0" + seconds;
+		} else {
+			timeString += seconds;
+		}
+
+		return timeString;
+	}
+
+	/**
+	 * 转换格式为Day hh:mm:ss
+	 * 
+	 * @param mill
+	 * @return
+	 */
+	public static String toMillisToDayTime(long mill) {
+		String timeString = "";
+		mill = mill / 1000;
+		int days = (int) (mill / 60 / 60 / 24);
+		if (days > 0) {
+			timeString += days + " Day ";
+		} else {
+			timeString += 0 + " Day ";
+		}
+		int dayTime = days * 24 * 60 * 60;
+		int hours = (int) ((mill - dayTime) / 60 / 60);
+		if (hours < 10) {
+			timeString += "0" + hours + ":";
+		} else {
+			timeString += hours + ":";
+		}
+		int minutes = (int) ((mill - dayTime - hours * 60 * 60) / 60);
+		if (minutes < 10) {
+			timeString += "0" + minutes + ":";
+		} else {
+			timeString += minutes + ":";
+		}
+		int seconds = (int) (mill % 60);
+		if (seconds < 10) {
+			timeString += "0" + seconds;
+		} else {
+			timeString += seconds;
+		}
+		return timeString;
+	}
+
 }
