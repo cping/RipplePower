@@ -31,6 +31,9 @@ public class UIMessage {
 
 	public final static String save = LangConfig.get(UIMessage.class, "save",
 			"Save");
+	
+	public final static String add = LangConfig.get(UIMessage.class, "add",
+			"Add");
 
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
