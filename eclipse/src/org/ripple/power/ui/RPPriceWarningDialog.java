@@ -4,31 +4,33 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.Dialog.ModalityType;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
+import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 
 public class RPPriceWarningDialog extends ABaseDialog {
-	private javax.swing.JButton _addDataButton;
-	private javax.swing.JLabel _dstCurLabel;
-	private javax.swing.JList _dstCurList;
-	private javax.swing.JLabel _dstGatewayLabel;
-	private javax.swing.JList _dstGatewayList;
-	private javax.swing.JLabel _existCurLabel;
-	private javax.swing.JList _existCurList;
-	private javax.swing.JLabel _existGatewayLabel;
-	private javax.swing.JList _existGatewayList;
-	private javax.swing.JLabel _finalSetLabel;
-	private javax.swing.JList _finalSetList;
-	private javax.swing.JComboBox _gatewayAndCurComboBox;
-	private javax.swing.JLabel _gatewayAndCurLabel;
-	private javax.swing.JLabel _intervalTimeLabel;
-	private javax.swing.JTextField _intervalTimeTexture;
-	private javax.swing.JButton _moveCurButton;
-	private javax.swing.JButton _moveGatewayButton;
-	private javax.swing.JButton _saveDataButton;
-	private javax.swing.JComboBox _typeSelectComboBox;
-	private javax.swing.JLabel _xrpPriceLabel;
-	private javax.swing.JTextField _xrpPriceText;
+	private RPCButton _addDataButton;
+	private RPLabel _dstCurLabel;
+	private RPList _dstCurList;
+	private RPLabel _dstGatewayLabel;
+	private RPList _dstGatewayList;
+	private RPLabel _existCurLabel;
+	private RPList _existCurList;
+	private RPLabel _existGatewayLabel;
+	private RPList _existGatewayList;
+	private RPLabel _finalSetLabel;
+	private RPList _finalSetList;
+	private RPComboBox _gatewayAndCurComboBox;
+	private RPLabel _gatewayAndCurLabel;
+	private RPLabel _intervalTimeLabel;
+	private RPTextBox _intervalTimeTexture;
+	private RPCButton _moveCurButton;
+	private RPCButton _moveGatewayButton;
+	private RPCButton _saveDataButton;
+	private RPComboBox _typeSelectComboBox;
+	private RPLabel _xrpPriceLabel;
+	private RPTextBox _xrpPriceText;
 
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
@@ -52,7 +54,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		this.addWindowListener(HelperWindow.get());
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(360, 420);
+		Dimension dim = new Dimension(665, 680);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();
@@ -60,36 +62,35 @@ public class RPPriceWarningDialog extends ABaseDialog {
 
 	private void initComponents() {
 
-		_intervalTimeLabel = new javax.swing.JLabel();
+		_intervalTimeLabel = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
-		_existCurList = new javax.swing.JList();
-		_finalSetLabel = new javax.swing.JLabel();
+		_existCurList = new RPList();
+		_finalSetLabel = new RPLabel();
 		jScrollPane2 = new javax.swing.JScrollPane();
-		_dstCurList = new javax.swing.JList();
-		_moveCurButton = new javax.swing.JButton();
+		_dstCurList = new RPList();
+		_moveCurButton = new RPCButton();
 		jScrollPane3 = new javax.swing.JScrollPane();
-		_existGatewayList = new javax.swing.JList();
-		_existGatewayLabel = new javax.swing.JLabel();
-		_dstGatewayLabel = new javax.swing.JLabel();
+		_existGatewayList = new RPList();
+		_existGatewayLabel = new RPLabel();
+		_dstGatewayLabel = new RPLabel();
 		jScrollPane4 = new javax.swing.JScrollPane();
-		_dstGatewayList = new javax.swing.JList();
-		_moveGatewayButton = new javax.swing.JButton();
-		_existCurLabel = new javax.swing.JLabel();
-		_intervalTimeTexture = new javax.swing.JTextField();
-		_gatewayAndCurLabel = new javax.swing.JLabel();
-		_xrpPriceText = new javax.swing.JTextField();
-		_gatewayAndCurComboBox = new javax.swing.JComboBox();
+		_dstGatewayList = new RPList();
+		_moveGatewayButton = new RPCButton();
+		_existCurLabel = new RPLabel();
+		_intervalTimeTexture = new RPTextBox();
+		_gatewayAndCurLabel = new RPLabel();
+		_xrpPriceText = new RPTextBox();
+		_gatewayAndCurComboBox = new RPComboBox();
 		jScrollPane5 = new javax.swing.JScrollPane();
-		_finalSetList = new javax.swing.JList();
-		_dstCurLabel = new javax.swing.JLabel();
-		javax.swing.JLabel label2 = new javax.swing.JLabel();
-		_xrpPriceLabel = new javax.swing.JLabel();
-		javax.swing.JLabel label1 = new javax.swing.JLabel();
-		_saveDataButton = new javax.swing.JButton();
-		_addDataButton = new javax.swing.JButton();
-		_typeSelectComboBox = new javax.swing.JComboBox();
+		_finalSetList = new RPList();
+		_dstCurLabel = new RPLabel();
+		RPLabel label2 = new RPLabel();
+		_xrpPriceLabel = new RPLabel();
+		RPLabel label1 = new RPLabel();
+		_saveDataButton = new RPCButton();
+		_addDataButton = new RPCButton();
+		_typeSelectComboBox = new RPComboBox();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 
 		_intervalTimeLabel.setFont(UIRes.getFont()); // NOI18N
@@ -97,7 +98,11 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
-		_existCurList.setModel(new javax.swing.AbstractListModel() {
+		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
 					"Item 5" };
 
@@ -119,7 +124,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_finalSetLabel);
 		_finalSetLabel.setBounds(370, 380, 70, 30);
 
-		_dstCurList.setModel(new javax.swing.AbstractListModel() {
+		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
 					"Item 5" };
 
@@ -140,7 +145,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_moveCurButton);
 		_moveCurButton.setBounds(300, 230, 50, 50);
 
-		_existGatewayList.setModel(new javax.swing.AbstractListModel() {
+		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
 					"Item 5" };
 
@@ -167,7 +172,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_dstGatewayLabel);
 		_dstGatewayLabel.setBounds(370, 20, 70, 30);
 
-		_dstGatewayList.setModel(new javax.swing.AbstractListModel() {
+		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
 					"Item 5" };
 
@@ -198,7 +203,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_intervalTimeTexture.setBounds(110, 530, 200, 30);
 
 		_gatewayAndCurLabel.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurLabel.setText("网关/币种");
+		_gatewayAndCurLabel.setText(LangConfig.get(this, "gateway", "Gateway")+"/"+LangConfig.get(this, "currency", "Currency"));
 		getContentPane().add(_gatewayAndCurLabel);
 		_gatewayAndCurLabel.setBounds(20, 380, 260, 30);
 
@@ -207,12 +212,15 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_xrpPriceText.setBounds(190, 480, 120, 30);
 
 		_gatewayAndCurComboBox.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_gatewayAndCurComboBox.setItemModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" });
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
 
-		_finalSetList.setModel(new javax.swing.AbstractListModel() {
+		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
 					"Item 5" };
 
@@ -235,7 +243,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_dstCurLabel.setBounds(370, 200, 70, 30);
 
 		label2.setFont(UIRes.getFont()); // NOI18N
-		label2.setText("Second");
+		label2.setText("MS");
 		getContentPane().add(label2);
 		label2.setBounds(320, 530, 40, 30);
 
@@ -250,18 +258,20 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		label1.setBounds(320, 480, 40, 30);
 
 		_saveDataButton.setText(UIMessage.save);
+		_saveDataButton.setFont(UIRes.getFont());
 		getContentPane().add(_saveDataButton);
 		_saveDataButton.setBounds(560, 590, 81, 40);
 
 		_addDataButton.setText(UIMessage.add);
+		_addDataButton.setFont(UIRes.getFont());
 		getContentPane().add(_addDataButton);
 		_addDataButton.setBounds(460, 590, 81, 40);
 
-		_typeSelectComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { ">", "<", "=", ">=", "<=" }));
+		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "=", ">=", "<=" });
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(110, 480, 70, 30);
 
+		getContentPane().setBackground(UIConfig.dialogbackground);
 		pack();
 	}
 }
