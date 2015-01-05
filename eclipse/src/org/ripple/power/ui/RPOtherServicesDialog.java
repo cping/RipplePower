@@ -138,7 +138,8 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		_activeRipple.setText("Activating Wallet");
+
+		_activeRipple.setText("Trading Tools(Developing)");
 		_activeRipple.setFont(font);
 		add(_activeRipple);
 		_activeRipple.setBounds(10, 310, 224, 34);
@@ -146,7 +147,7 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202964876-Activating-Your-Wallet");
+				RPTradingToolsDialog.showDialog("Trading Tools(Developing)", LSystem.applicationMain);
 			}
 		});
 

@@ -112,6 +112,8 @@ public class RPButton extends JButton {
 
 		ButtonUI navUI = new ButtonUI();
 		setUI(navUI);
+		
+		addMouseListener(new SoundButtonListener(this));
 
 	}
 

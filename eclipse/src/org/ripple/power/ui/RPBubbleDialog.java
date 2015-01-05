@@ -21,10 +21,13 @@ import javax.swing.border.LineBorder;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.sound.LWaveSound;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 
 public class RPBubbleDialog {
+	
+	final static LWaveSound wave = new LWaveSound();
 
 	public static class TipDialog extends JDialog {
 		/**
@@ -55,6 +58,7 @@ public class RPBubbleDialog {
 				} catch (InterruptedException ex) {
 				}
 			}
+			wave.playSound("jump.wav");
 		}
 
 		private void initComponents() {

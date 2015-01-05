@@ -12,14 +12,13 @@ import javax.swing.event.ChangeListener;
 
 import org.ripple.power.ui.graphics.LColor;
 
-
 public class RPCButton extends JButton {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	public RPCButton() {
 		this("");
 	}
