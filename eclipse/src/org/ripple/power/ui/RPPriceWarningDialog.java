@@ -26,7 +26,9 @@ public class RPPriceWarningDialog extends ABaseDialog {
 	private RPLabel _intervalTimeLabel;
 	private RPTextBox _intervalTimeTexture;
 	private RPCButton _moveCurButton;
+	private RPCButton _moveDelCurButton;
 	private RPCButton _moveGatewayButton;
+	private RPCButton _moveDelGatewayButton;
 	private RPCButton _saveDataButton;
 	private RPComboBox _typeSelectComboBox;
 	private RPLabel _xrpPriceLabel;
@@ -69,6 +71,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane2 = new javax.swing.JScrollPane();
 		_dstCurList = new RPList();
 		_moveCurButton = new RPCButton();
+		_moveDelCurButton = new RPCButton();
 		jScrollPane3 = new javax.swing.JScrollPane();
 		_existGatewayList = new RPList();
 		_existGatewayLabel = new RPLabel();
@@ -76,6 +79,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane4 = new javax.swing.JScrollPane();
 		_dstGatewayList = new RPList();
 		_moveGatewayButton = new RPCButton();
+		_moveDelGatewayButton = new RPCButton();
 		_existCurLabel = new RPLabel();
 		_intervalTimeTexture = new RPTextBox();
 		_gatewayAndCurLabel = new RPLabel();
@@ -84,17 +88,18 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane5 = new javax.swing.JScrollPane();
 		_finalSetList = new RPList();
 		_dstCurLabel = new RPLabel();
-		RPLabel label2 = new RPLabel();
 		_xrpPriceLabel = new RPLabel();
-		RPLabel label1 = new RPLabel();
+
 		_saveDataButton = new RPCButton();
 		_addDataButton = new RPCButton();
 		_typeSelectComboBox = new RPComboBox();
 
+		RPLabel label1 = new RPLabel();
+		RPLabel label2 = new RPLabel();
 		getContentPane().setLayout(null);
 
 		_intervalTimeLabel.setFont(UIRes.getFont()); // NOI18N
-		_intervalTimeLabel.setText("刷新间隔");
+		_intervalTimeLabel.setText(UIMessage.ri);
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
@@ -120,22 +125,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane1.setBounds(20, 230, 260, 140);
 
 		_finalSetLabel.setFont(UIRes.getFont()); // NOI18N
-		_finalSetLabel.setText("最终设置");
+		_finalSetLabel.setText(UIMessage.fs);
 		getContentPane().add(_finalSetLabel);
 		_finalSetLabel.setBounds(370, 380, 70, 30);
 
-		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
-					"Item 5" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
 		jScrollPane2.setViewportView(_dstCurList);
 
 		getContentPane().add(jScrollPane2);
@@ -144,6 +137,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_moveCurButton.setText(">>");
 		getContentPane().add(_moveCurButton);
 		_moveCurButton.setBounds(300, 230, 50, 50);
+
+		_moveDelCurButton.setText("<<");
+		getContentPane().add(_moveDelCurButton);
+		_moveDelCurButton.setBounds(300, 290, 50, 50);
 
 		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
@@ -172,18 +169,6 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_dstGatewayLabel);
 		_dstGatewayLabel.setBounds(370, 20, 70, 30);
 
-		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
-					"Item 5" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
 		jScrollPane4.setViewportView(_dstGatewayList);
 
 		getContentPane().add(jScrollPane4);
@@ -192,6 +177,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_moveGatewayButton.setText(">>");
 		getContentPane().add(_moveGatewayButton);
 		_moveGatewayButton.setBounds(300, 50, 50, 50);
+		
+		_moveDelGatewayButton.setText("<<");
+		getContentPane().add(_moveDelGatewayButton);
+		_moveDelGatewayButton.setBounds(300, 110, 50, 50);
 
 		_existCurLabel.setFont(UIRes.getFont()); // NOI18N
 		_existCurLabel.setText("已有币种");
@@ -203,7 +192,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_intervalTimeTexture.setBounds(110, 530, 200, 30);
 
 		_gatewayAndCurLabel.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurLabel.setText(LangConfig.get(this, "gateway", "Gateway")+"/"+LangConfig.get(this, "currency", "Currency"));
+		_gatewayAndCurLabel.setText(LangConfig.get(this, "gateway", "Gateway")
+				+ "/" + LangConfig.get(this, "currency", "Currency"));
 		getContentPane().add(_gatewayAndCurLabel);
 		_gatewayAndCurLabel.setBounds(20, 380, 260, 30);
 
@@ -212,26 +202,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_xrpPriceText.setBounds(190, 480, 120, 30);
 
 		_gatewayAndCurComboBox.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurComboBox.setItemModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" });
+		_gatewayAndCurComboBox.setItemModel(new String[] { "Empty" });
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
 
-		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
-					"Item 5" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public Object getElementAt(int i) {
-				return strings[i];
-			}
-		});
 		jScrollPane5.setViewportView(_finalSetList);
 
 		getContentPane().add(jScrollPane5);
@@ -248,7 +222,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		label2.setBounds(320, 530, 40, 30);
 
 		_xrpPriceLabel.setFont(UIRes.getFont()); // NOI18N
-		_xrpPriceLabel.setText("价格");
+		_xrpPriceLabel.setText(UIMessage.price);
 		getContentPane().add(_xrpPriceLabel);
 		_xrpPriceLabel.setBounds(20, 480, 50, 30);
 
@@ -267,7 +241,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_addDataButton);
 		_addDataButton.setBounds(460, 590, 81, 40);
 
-		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "=", ">=", "<=" });
+		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "=", ">=",
+				"<=" });
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(110, 480, 70, 30);
 

@@ -9,6 +9,15 @@ import org.ripple.power.ui.RPToast.Style;
 
 public class UIMessage {
 
+	public final static String price = LangConfig.get(UIMessage.class, "price",
+			"Price");
+
+	public final static String ri = LangConfig.get(UIMessage.class, "ri",
+			"Refresh Interval");
+
+	public final static String fs = LangConfig.get(UIMessage.class, "fs",
+			"Final Set");
+	
 	public final static String icon = LangConfig.get(UIMessage.class, "icon",
 			"Icon");
 
