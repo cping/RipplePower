@@ -176,7 +176,7 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		_btc2ripple_sn.setText("Btc2Ripple(~snapswap)");
+		_btc2ripple_sn.setText("Pay Money(Developing)");
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
 		_btc2ripple_sn.setBounds(10, 60, 224, 34);
@@ -184,7 +184,7 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://www.btc2ripple.com");
+				RPPayPortDialog.showDialog("Pay Money", LSystem.applicationMain);
 			}
 		});
 
