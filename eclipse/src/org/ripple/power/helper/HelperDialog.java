@@ -29,7 +29,8 @@ public class HelperDialog extends Canvas {
 	int fheight = 150;
 	BufferedImage _backimage;
 	BufferedImage _faceimage;
-
+	final int idx = 7;
+	
 	private static RPPushTool instance = null;
 
 	private static RPPushTool load() {
@@ -91,12 +92,13 @@ public class HelperDialog extends Canvas {
 	}
 
 	HelperDialog() {
-		faceImage = GraphicsUtils.getSplitImages("icons/face.png", 96, 96);
+	
+		faceImage = GraphicsUtils.getSplitImages("icons/monster.png", 96, 96);
 		GraphicTool tools = new GraphicTool();
 		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
 				UIConfig.background, true);
-		_faceimage = tools.getTable(faceImage[0].getWidth(this),
-				faceImage[0].getHeight(this));
+		_faceimage = tools.getTable(faceImage[idx].getWidth(this),
+				faceImage[idx].getHeight(this));
 		NowSerif = new Message(0, 0,
 				"Hello, Ripple World ! Right and Justice are on our side !");
 	}
@@ -121,7 +123,7 @@ public class HelperDialog extends Canvas {
 
 	public void drawFace(Graphics g, int x, int y) {
 		if (faceImage[0] != null) {
-			g.drawImage(faceImage[0], x, y, this);
+			g.drawImage(faceImage[idx], x, y, this);
 			g.drawImage(_faceimage, x, y, this);
 		}
 	}

@@ -127,7 +127,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_finalSetLabel.setFont(UIRes.getFont()); // NOI18N
 		_finalSetLabel.setText(UIMessage.fs);
 		getContentPane().add(_finalSetLabel);
-		_finalSetLabel.setBounds(370, 380, 70, 30);
+		_finalSetLabel.setBounds(370, 380, 150, 30);
 
 		jScrollPane2.setViewportView(_dstCurList);
 
@@ -160,14 +160,14 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane3.setBounds(20, 50, 260, 140);
 
 		_existGatewayLabel.setFont(UIRes.getFont()); // NOI18N
-		_existGatewayLabel.setText("已有网关");
+		_existGatewayLabel.setText(LangConfig.get(this, "eg", "Existing gateway"));
 		getContentPane().add(_existGatewayLabel);
-		_existGatewayLabel.setBounds(20, 20, 70, 30);
+		_existGatewayLabel.setBounds(20, 20, 150, 30);
 
 		_dstGatewayLabel.setFont(UIRes.getFont()); // NOI18N
-		_dstGatewayLabel.setText("目标网关");
+		_dstGatewayLabel.setText(LangConfig.get(this, "tg", "Target gateway"));
 		getContentPane().add(_dstGatewayLabel);
-		_dstGatewayLabel.setBounds(370, 20, 70, 30);
+		_dstGatewayLabel.setBounds(370, 20, 150, 30);
 
 		jScrollPane4.setViewportView(_dstGatewayList);
 
@@ -183,9 +183,9 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_moveDelGatewayButton.setBounds(300, 110, 50, 50);
 
 		_existCurLabel.setFont(UIRes.getFont()); // NOI18N
-		_existCurLabel.setText("已有币种");
+		_existCurLabel.setText(LangConfig.get(this, "ec", "Existing currency"));
 		getContentPane().add(_existCurLabel);
-		_existCurLabel.setBounds(20, 200, 70, 30);
+		_existCurLabel.setBounds(20, 200, 150, 30);
 
 		_intervalTimeTexture.setFont(UIRes.getFont()); // NOI18N
 		getContentPane().add(_intervalTimeTexture);
@@ -212,9 +212,9 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane5.setBounds(370, 420, 270, 150);
 
 		_dstCurLabel.setFont(UIRes.getFont()); // NOI18N
-		_dstCurLabel.setText("目标币种");
+		_dstCurLabel.setText(LangConfig.get(this, "tc", "Target Currency"));
 		getContentPane().add(_dstCurLabel);
-		_dstCurLabel.setBounds(370, 200, 70, 30);
+		_dstCurLabel.setBounds(370, 200, 150, 30);
 
 		label2.setFont(UIRes.getFont()); // NOI18N
 		label2.setText("MS");
