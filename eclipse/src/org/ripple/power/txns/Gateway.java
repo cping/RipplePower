@@ -1,6 +1,8 @@
 package org.ripple.power.txns;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -147,6 +149,23 @@ public class Gateway {
 			}
 		}
 		return list;
+	}
+
+	public static String[] currencies() {
+		ArrayList<Gateway> temps = get();
+		HashSet<String> list = new HashSet<>();
+		for (int i = 0; i < temps.size(); i++) {
+			list.addAll(temps.get(i).accounts.get(0).currencies);
+		}
+		ArrayList<Gateway> userlist = getUserGateway();
+		if (userlist != null) {
+			for (int i = 0; i < userlist.size(); i++) {
+				list.addAll(userlist.get(i).accounts.get(0).currencies);
+			}
+		}
+		final String[] curstrings = list.toArray(new String[0]);
+		Arrays.sort(curstrings);
+		return curstrings;
 	}
 
 	//

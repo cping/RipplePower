@@ -2,12 +2,12 @@ package org.ripple.power.ui;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
+import java.util.ArrayList;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.txns.Updateable;
+import org.ripple.power.txns.Currencies;
+import org.ripple.power.txns.Gateway;
 
 public class RPPriceWarningDialog extends ABaseDialog {
 	private RPCButton _addDataButton;
@@ -103,20 +103,20 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
+		final String[] curstrings = Gateway.currencies();
 		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
 			/**
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
-					"Item 5" };
 
 			public int getSize() {
-				return strings.length;
+				return curstrings.length;
 			}
 
 			public Object getElementAt(int i) {
-				return strings[i];
+				String result = Currencies.name(curstrings[i]);
+				return result!=null?result:curstrings[i];
 			}
 		});
 		jScrollPane1.setViewportView(_existCurList);
@@ -142,16 +142,19 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_moveDelCurButton);
 		_moveDelCurButton.setBounds(300, 290, 50, 50);
 
+		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4",
-					"Item 5" };
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
-				return strings.length;
+				return gatewaystrings.size();
 			}
 
 			public Object getElementAt(int i) {
-				return strings[i];
+				return gatewaystrings.get(i);
 			}
 		});
 		jScrollPane3.setViewportView(_existGatewayList);
@@ -160,7 +163,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane3.setBounds(20, 50, 260, 140);
 
 		_existGatewayLabel.setFont(UIRes.getFont()); // NOI18N
-		_existGatewayLabel.setText(LangConfig.get(this, "eg", "Existing gateway"));
+		_existGatewayLabel.setText(LangConfig.get(this, "eg",
+				"Existing gateway"));
 		getContentPane().add(_existGatewayLabel);
 		_existGatewayLabel.setBounds(20, 20, 150, 30);
 
@@ -177,7 +181,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_moveGatewayButton.setText(">>");
 		getContentPane().add(_moveGatewayButton);
 		_moveGatewayButton.setBounds(300, 50, 50, 50);
-		
+
 		_moveDelGatewayButton.setText("<<");
 		getContentPane().add(_moveDelGatewayButton);
 		_moveDelGatewayButton.setBounds(300, 110, 50, 50);
