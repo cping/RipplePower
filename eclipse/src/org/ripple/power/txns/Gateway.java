@@ -3,6 +3,7 @@ package org.ripple.power.txns;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -151,7 +152,7 @@ public class Gateway {
 		return list;
 	}
 
-	public static String[] currencies() {
+	public static List<String> currencies() {
 		ArrayList<Gateway> temps = get();
 		HashSet<String> list = new HashSet<>();
 		for (int i = 0; i < temps.size(); i++) {
@@ -163,9 +164,12 @@ public class Gateway {
 				list.addAll(userlist.get(i).accounts.get(0).currencies);
 			}
 		}
+		list.add(LSystem.nativeCurrency);
+		
 		final String[] curstrings = list.toArray(new String[0]);
 		Arrays.sort(curstrings);
-		return curstrings;
+	
+		return 	Arrays.asList(curstrings);
 	}
 
 	//

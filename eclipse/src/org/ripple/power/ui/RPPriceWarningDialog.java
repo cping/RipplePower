@@ -2,8 +2,14 @@ package org.ripple.power.ui;
 
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
@@ -11,6 +17,7 @@ import org.ripple.power.txns.Gateway;
 
 public class RPPriceWarningDialog extends ABaseDialog {
 	private RPCButton _addDataButton;
+	private RPCButton _delDataButton;
 	private RPLabel _dstCurLabel;
 	private RPList _dstCurList;
 	private RPLabel _dstGatewayLabel;
@@ -33,6 +40,12 @@ public class RPPriceWarningDialog extends ABaseDialog {
 	private RPComboBox _typeSelectComboBox;
 	private RPLabel _xrpPriceLabel;
 	private RPTextBox _xrpPriceText;
+
+	private ArrayList<String> curlist = new ArrayList<String>();
+	private ArrayList<String> gatewaylist = new ArrayList<String>();
+
+	private ArrayList<String> curSelectlist = new ArrayList<String>();
+	private ArrayList<String> gatewaySelectlist = new ArrayList<String>();
 
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
@@ -72,6 +85,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_dstCurList = new RPList();
 		_moveCurButton = new RPCButton();
 		_moveDelCurButton = new RPCButton();
+		_delDataButton = new RPCButton();
 		jScrollPane3 = new javax.swing.JScrollPane();
 		_existGatewayList = new RPList();
 		_existGatewayLabel = new RPLabel();
@@ -103,20 +117,34 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
-		final String[] curstrings = Gateway.currencies();
-		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
-			/**
-			 * 
-			 */
+		final List<String> curstrings = Gateway.currencies();
+
+		curlist.addAll(curstrings);
+
+		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
 			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
-				return curstrings.length;
+				return curSelectlist.size();
 			}
 
 			public Object getElementAt(int i) {
-				String result = Currencies.name(curstrings[i]);
-				return result!=null?result:curstrings[i];
+				String result = Currencies.name(curSelectlist.get(i));
+				return result != null ? result : curSelectlist.get(i);
+			}
+		});
+		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return curlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				String result = Currencies.name(curlist.get(i));
+				return result != null ? result : curlist.get(i);
 			}
 		});
 		jScrollPane1.setViewportView(_existCurList);
@@ -135,14 +163,64 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane2.setBounds(370, 230, 270, 138);
 
 		_moveCurButton.setText(">>");
+		_moveCurButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (_existCurList.getSelectedIndex() != -1) {
+					String result = (String) _existCurList.getSelectedValue();
+					if (!curSelectlist.contains(result)) {
+						curSelectlist.add(result);
+						Collections.sort(curSelectlist);
+						_dstCurList.updateUI();
+						curlist.remove(_existCurList.getSelectedIndex());
+						_existCurList.updateUI();
+					}
+				}
+			}
+		});
 		getContentPane().add(_moveCurButton);
 		_moveCurButton.setBounds(300, 230, 50, 50);
 
 		_moveDelCurButton.setText("<<");
+		_moveDelCurButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (_dstCurList.getSelectedIndex() != -1) {
+					String result = (String) _dstCurList.getSelectedValue();
+					if (!curlist.contains(result)) {
+						curlist.add(result);
+						Collections.sort(curlist);
+						_existCurList.updateUI();
+						curSelectlist.remove(_dstCurList.getSelectedIndex());
+						_dstCurList.updateUI();
+					}
+				}
+			}
+		});
 		getContentPane().add(_moveDelCurButton);
 		_moveDelCurButton.setBounds(300, 290, 50, 50);
 
+		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaySelectlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaySelectlist.get(i);
+			}
+		});
+
 		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
+		gatewaylist.addAll(gatewaystrings);
+
 		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
 			/**
 			 * 
@@ -150,11 +228,11 @@ public class RPPriceWarningDialog extends ABaseDialog {
 			private static final long serialVersionUID = 1L;
 
 			public int getSize() {
-				return gatewaystrings.size();
+				return gatewaylist.size();
 			}
 
 			public Object getElementAt(int i) {
-				return gatewaystrings.get(i);
+				return gatewaylist.get(i);
 			}
 		});
 		jScrollPane3.setViewportView(_existGatewayList);
@@ -179,10 +257,49 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		jScrollPane4.setBounds(370, 50, 270, 140);
 
 		_moveGatewayButton.setText(">>");
+		_moveGatewayButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (_existGatewayList.getSelectedIndex() != -1) {
+					String result = (String) _existGatewayList
+							.getSelectedValue();
+					if (!gatewaySelectlist.contains(result)) {
+						gatewaySelectlist.add(result);
+						Collections.sort(gatewaySelectlist);
+						_dstGatewayList.updateUI();
+						gatewaylist.remove(_existGatewayList.getSelectedIndex());
+						_existGatewayList.updateUI();
+					}
+				}
+			}
+
+		});
 		getContentPane().add(_moveGatewayButton);
 		_moveGatewayButton.setBounds(300, 50, 50, 50);
 
 		_moveDelGatewayButton.setText("<<");
+		_moveDelGatewayButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (_dstGatewayList.getSelectedIndex() != -1) {
+					String result = (String) _dstGatewayList.getSelectedValue();
+					if (!gatewaylist.contains(result)) {
+						gatewaylist.add(result);
+						Collections.sort(gatewaylist);
+						_existGatewayList.updateUI();
+						gatewaySelectlist.remove(_dstGatewayList
+								.getSelectedIndex());
+						_dstGatewayList.updateUI();
+
+					}
+				}
+
+			}
+		});
 		getContentPane().add(_moveDelGatewayButton);
 		_moveDelGatewayButton.setBounds(300, 110, 50, 50);
 
@@ -192,6 +309,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_existCurLabel.setBounds(20, 200, 150, 30);
 
 		_intervalTimeTexture.setFont(UIRes.getFont()); // NOI18N
+		_intervalTimeTexture.setText(String.valueOf(LSystem.MINUTE));
 		getContentPane().add(_intervalTimeTexture);
 		_intervalTimeTexture.setBounds(110, 530, 200, 30);
 

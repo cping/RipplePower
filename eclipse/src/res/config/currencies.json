@@ -1,5 +1,5 @@
 [
-  {"value": "XRP", "name": "Ripple", "standard_precision": 4, "order": 5},
+  {"value": "XRP", "name": "XRP - Ripple Native Currency", "standard_precision": 4, "order": 5},
   {"value": "USD", "name": "USD - US Dollar", "display": true, "standard_precision": 2, "order": 4},
   {"value": "EUR", "name": "EUR - Euro", "display": true, "standard_precision": 2, "order": 3},
   {"value": "JPY", "name": "JPY - Japanese Yen", "display": true, "standard_precision": 2, "order": 0},
