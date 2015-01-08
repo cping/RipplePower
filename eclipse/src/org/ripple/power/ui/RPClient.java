@@ -28,6 +28,10 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class RPClient {
 
+	static{
+		System.setProperty("https.protocols", "TLSv1.2");
+	}
+	
 	// Test status is not networking
 	public static boolean testing = false;
 

@@ -16,6 +16,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.Header;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
@@ -414,7 +415,7 @@ public class HttpsUtils {
 	}
 
 	public static class SSLSocketFactoryEx extends SSLSocketFactory {
-		SSLContext sslContext = SSLContext.getInstance("TLS");
+		SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
 
 		public SSLSocketFactoryEx(KeyStore truststore)
 				throws NoSuchAlgorithmException, KeyManagementException,

@@ -72,6 +72,10 @@ import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
 
+	static{
+		System.setProperty("https.protocols", "TLSv1.2");
+	}
+	
 	public static String getHttps(String url) {
 		ResponseResult result = HttpsUtils.getSSL(url);
 		if (result.ok()) {
@@ -208,7 +212,7 @@ public class HttpRequest {
 				}
 			} };
 			try {
-				SSLContext context = SSLContext.getInstance("TLS");
+				SSLContext context = SSLContext.getInstance("TLSv1.2");
 				context.init(null, trustAllCerts, new SecureRandom());
 				TRUSTED_FACTORY = context.getSocketFactory();
 			} catch (GeneralSecurityException e) {

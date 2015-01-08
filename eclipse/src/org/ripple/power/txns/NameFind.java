@@ -8,6 +8,8 @@ import org.ripple.power.utils.HttpRequest;
 
 public class NameFind {
 
+	// test
+	// https://id.staging.ripple.com/v1
 	private final static String page = "https://id.ripple.com/v1";
 
 	private static HashMap<String, String> _caches = new HashMap<String, String>(
@@ -19,11 +21,12 @@ public class NameFind {
 			if (name.startsWith("~")) {
 				name = name.substring(1, name.length());
 			}
-			HttpRequest request = HttpRequest.get(page + "/user/" + name);
+			String web = page + "/user/" + name;
+			HttpRequest request = HttpRequest.get(web);
 			if (request.ok()) {
 				String jsonResult = request.body();
 				JSONObject obj = new JSONObject(jsonResult);
-				result = obj.getString("address");
+				result = obj.optString("address", null);
 				if (result != null) {
 					_caches.put(name, result);
 				}

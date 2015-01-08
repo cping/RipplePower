@@ -41,7 +41,7 @@ public class InstallCert {
 		ks.load(in, passphrase);
 		in.close();
 
-		SSLContext context = SSLContext.getInstance("TLS");
+		SSLContext context = SSLContext.getInstance("TLSv1.2");
 		TrustManagerFactory tmf = TrustManagerFactory
 				.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		tmf.init(ks);
