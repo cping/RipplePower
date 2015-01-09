@@ -44,6 +44,9 @@ public class UIMessage {
 	public final static String add = LangConfig.get(UIMessage.class, "add",
 			"Add");
 
+	public final static String del = LangConfig.get(UIMessage.class, "del",
+			"Delete");
+	
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 

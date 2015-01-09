@@ -75,6 +75,20 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		this.initComponents();
 	}
 
+	private void updateData() {
+		if (curSelectlist.size() > 0 && gatewaySelectlist.size() > 0) {
+			ArrayList<String> list = new ArrayList<String>(20);
+			for (String gateway : gatewaySelectlist) {
+				for (String cur : curSelectlist) {
+					list.add(gateway + "/" + cur);
+				}
+			}
+			if (list.size() > 0) {
+				_gatewayAndCurComboBox.setItemModel(list.toArray());
+			}
+		}
+	}
+
 	private void initComponents() {
 
 		_intervalTimeLabel = new RPLabel();
@@ -175,6 +189,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 						_dstCurList.updateUI();
 						curlist.remove(_existCurList.getSelectedIndex());
 						_existCurList.updateUI();
+						updateData();
 					}
 				}
 			}
@@ -196,6 +211,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 						_existCurList.updateUI();
 						curSelectlist.remove(_dstCurList.getSelectedIndex());
 						_dstCurList.updateUI();
+						updateData();
 					}
 				}
 			}
@@ -271,6 +287,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 						_dstGatewayList.updateUI();
 						gatewaylist.remove(_existGatewayList.getSelectedIndex());
 						_existGatewayList.updateUI();
+						updateData();
 					}
 				}
 			}
@@ -294,7 +311,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 						gatewaySelectlist.remove(_dstGatewayList
 								.getSelectedIndex());
 						_dstGatewayList.updateUI();
-
+						updateData();
 					}
 				}
 
@@ -362,6 +379,11 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_addDataButton.setFont(UIRes.getFont());
 		getContentPane().add(_addDataButton);
 		_addDataButton.setBounds(460, 590, 81, 40);
+
+		_delDataButton.setText(UIMessage.del);
+		_delDataButton.setFont(UIRes.getFont());
+		getContentPane().add(_delDataButton);
+		_delDataButton.setBounds(360, 590, 81, 40);
 
 		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "=", ">=",
 				"<=" });
