@@ -456,12 +456,14 @@ public class RPExchangeDialog extends JDialog {
 				int idx = list.getSelectedIndex();
 				listsetforeground(list, idx);
 
-				synchronized (_buyerList) {
-					if (_buyerList.size() > 0 && idx < _buyerList.size()) {
-						_mysellText.setText(_buyerList.get(idx).offer
-								.takerPays().toText());
-						_cansellText.setText(_buyerList.get(idx).offer
-								.takerGets().toText());
+				if (_buyerList.size() > 0 && idx < _buyerList.size()) {
+					synchronized (_buyerList) {
+						try {
+							Offer offer = _buyerList.get(idx).offer;
+							_mysellText.setText(offer.takerPays().toText());
+							_cansellText.setText(offer.takerGets().toText());
+						} catch (Exception ex) {
+						}
 					}
 				}
 			}
@@ -485,14 +487,15 @@ public class RPExchangeDialog extends JDialog {
 			public void valueChanged(ListSelectionEvent e) {
 				RPList list = (RPList) e.getSource();
 				int idx = list.getSelectedIndex();
-				listsetforeground(list, idx);
-
-				synchronized (_sellerList) {
-					if (_sellerList.size() > 0 && idx < _sellerList.size()) {
-						_mybuyText.setText(_sellerList.get(idx).offer
-								.takerPays().toText());
-						_canbuyText.setText(_sellerList.get(idx).offer
-								.takerGets().toText());
+				if (idx != -1) {
+					listsetforeground(list, idx);
+					synchronized (_sellerList) {
+						if (_sellerList.size() > 0 && idx < _sellerList.size()) {
+							_mybuyText.setText(_sellerList.get(idx).offer
+									.takerPays().toText());
+							_canbuyText.setText(_sellerList.get(idx).offer
+									.takerGets().toText());
+						}
 					}
 				}
 			}
@@ -885,79 +888,88 @@ public class RPExchangeDialog extends JDialog {
 						final ArrayList<OfferFruit> sells,
 						final OfferPrice price) {
 
-					_tip1Label.setText(String.format(info_price(),
-							price.highBuy, price.highSell, price.spread));
-					if (buys.size() > 0) {
-						synchronized (_buyerList) {
-							_buymList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
-										private static final long serialVersionUID = 1L;
+					Updateable update = new Updateable() {
 
-										public int getSize() {
-											int size = buys.size();
-											if (size > _LIMIT_PAGE) {
-												return _LIMIT_PAGE;
-											}
-											return size;
-										}
+						@Override
+						public void action(Object o) {
+							_tip1Label.setText(String
+									.format(info_price(), price.highBuy,
+											price.highSell, price.spread));
+							if (buys.size() > 0) {
+								synchronized (_buyerList) {
+									_buymList
+											.setModel(new javax.swing.AbstractListModel<Object>() {
+												private static final long serialVersionUID = 1L;
 
-										public Object getElementAt(int i) {
-											return buys.get(i);
-										}
-									});
+												public int getSize() {
+													int size = buys.size();
+													if (size > _LIMIT_PAGE) {
+														return _LIMIT_PAGE;
+													}
+													return size;
+												}
 
-							_buyerList.clear();
-							_buyerList.addAll(buys);
-							_mysellText.setText(_buyerList.get(0).offer
-									.takerPays().toText());
-							_cansellText.setText(_buyerList.get(0).offer
-									.takerGets().toText());
-							_buymLabel.setText(LangConfig.get(
-									RPExchangeDialog.class, "bm",
-									"Buyer's Market")
-									+ " Count:" + buys.size());
+												public Object getElementAt(int i) {
+													return buys.get(i);
+												}
+											});
+
+									_buyerList.clear();
+									_buyerList.addAll(buys);
+									_mysellText.setText(_buyerList.get(0).offer
+											.takerPays().toText());
+									_cansellText.setText(_buyerList.get(0).offer
+											.takerGets().toText());
+									_buymLabel.setText(LangConfig.get(
+											RPExchangeDialog.class, "bm",
+											"Buyer's Market")
+											+ " Count:" + buys.size());
+								}
+							}
+							if (sells.size() > 0) {
+								synchronized (_sellerList) {
+									_sellmList
+											.setModel(new javax.swing.AbstractListModel<Object>() {
+												private static final long serialVersionUID = 1L;
+
+												public int getSize() {
+													int size = sells.size();
+													if (size > _LIMIT_PAGE) {
+														return _LIMIT_PAGE;
+													}
+													return size;
+												}
+
+												public Object getElementAt(int i) {
+													return sells.get(i);
+												}
+											});
+
+									_sellerList.clear();
+									_sellerList.addAll(sells);
+									_mybuyText.setText(_sellerList.get(0).offer
+											.takerPays().toText());
+									_canbuyText.setText(_sellerList.get(0).offer
+											.takerGets().toText());
+									_sellmLabel.setText(LangConfig.get(
+											RPExchangeDialog.class, "sm",
+											"Seller's Market")
+											+ " Count:" + sells.size());
+								}
+							}
+							if (dialog != null) {
+								dialog.closeDialog();
+							}
+							_tradeFlag = true;
+							loadTradingList(address, split);
+							loadOtherMarketList(address, split);
+							repaint();
+							getContentPane().repaint();
+							updateTrend(split[0]);
 						}
-					}
-					if (sells.size() > 0) {
-						synchronized (_sellerList) {
-							_sellmList
-									.setModel(new javax.swing.AbstractListModel<Object>() {
-										private static final long serialVersionUID = 1L;
+					};
+					LSystem.postThread(update);
 
-										public int getSize() {
-											int size = sells.size();
-											if (size > _LIMIT_PAGE) {
-												return _LIMIT_PAGE;
-											}
-											return size;
-										}
-
-										public Object getElementAt(int i) {
-											return sells.get(i);
-										}
-									});
-
-							_sellerList.clear();
-							_sellerList.addAll(sells);
-							_mybuyText.setText(_sellerList.get(0).offer
-									.takerPays().toText());
-							_canbuyText.setText(_sellerList.get(0).offer
-									.takerGets().toText());
-							_sellmLabel.setText(LangConfig.get(
-									RPExchangeDialog.class, "sm",
-									"Seller's Market")
-									+ " Count:" + sells.size());
-						}
-					}
-					if (dialog != null) {
-						dialog.closeDialog();
-					}
-					_tradeFlag = true;
-					loadTradingList(address, split);
-					loadOtherMarketList(address, split);
-					repaint();
-					getContentPane().repaint();
-					updateTrend(split[0]);
 				}
 
 			});
@@ -1520,62 +1532,73 @@ public class RPExchangeDialog extends JDialog {
 			public void complete(final ArrayList<OfferFruit> buys,
 					final ArrayList<OfferFruit> sells, final OfferPrice price) {
 
-				if (sells.size() > 0) {
-					synchronized (_sellerList) {
-						_sellmList
-								.setModel(new javax.swing.AbstractListModel<Object>() {
-									private static final long serialVersionUID = 1L;
+				Updateable update = new Updateable() {
 
-									public int getSize() {
-										int size = sells.size();
-										if (size > _LIMIT_PAGE) {
-											return _LIMIT_PAGE;
-										}
-										return size;
-									}
+					@Override
+					public void action(Object o) {
 
-									public Object getElementAt(int i) {
-										return sells.get(i);
-									}
-								});
+						if (sells.size() > 0) {
+							synchronized (_sellerList) {
+								_sellmList
+										.setModel(new javax.swing.AbstractListModel<Object>() {
+											private static final long serialVersionUID = 1L;
 
-						_sellerList.clear();
-						_sellerList.addAll(sells);
-						_sellmLabel.setText(LangConfig
-								.get(RPExchangeDialog.class, "sm",
+											public int getSize() {
+												int size = sells.size();
+												if (size > _LIMIT_PAGE) {
+													return _LIMIT_PAGE;
+												}
+												return size;
+											}
+
+											public Object getElementAt(int i) {
+												return sells.get(i);
+											}
+										});
+
+								_sellerList.clear();
+								_sellerList.addAll(sells);
+								_sellmLabel.setText(LangConfig.get(
+										RPExchangeDialog.class, "sm",
 										"Seller's Market")
-								+ " Count:" + sells.size());
+										+ " Count:" + sells.size());
+							}
+						}
+						if (buys.size() > 0) {
+							synchronized (_buyerList) {
+								_buymList
+										.setModel(new javax.swing.AbstractListModel<Object>() {
+											private static final long serialVersionUID = 1L;
+
+											public int getSize() {
+												int size = buys.size();
+												if (size > _LIMIT_PAGE) {
+													return _LIMIT_PAGE;
+												}
+												return size;
+											}
+
+											public Object getElementAt(int i) {
+												return buys.get(i);
+											}
+										});
+
+								_buyerList.clear();
+								_buyerList.addAll(buys);
+								_buymLabel.setText(LangConfig.get(
+										RPExchangeDialog.class, "bm",
+										"Buyer's Market")
+										+ " Count:" + buys.size());
+							}
+						}
+
+						_tip1Label.setText(String.format(info_price(),
+								price.highBuy, price.highSell, price.spread));
 					}
-				}
-				if (buys.size() > 0) {
-					synchronized (_buyerList) {
-						_buymList
-								.setModel(new javax.swing.AbstractListModel<Object>() {
-									private static final long serialVersionUID = 1L;
+				};
 
-									public int getSize() {
-										int size = buys.size();
-										if (size > _LIMIT_PAGE) {
-											return _LIMIT_PAGE;
-										}
-										return size;
-									}
+				LSystem.postThread(update);
 
-									public Object getElementAt(int i) {
-										return buys.get(i);
-									}
-								});
-
-						_buyerList.clear();
-						_buyerList.addAll(buys);
-						_buymLabel.setText(LangConfig.get(
-								RPExchangeDialog.class, "bm", "Buyer's Market")
-								+ " Count:" + buys.size());
-					}
-				}
-
-				_tip1Label.setText(String.format(info_price(), price.highBuy,
-						price.highSell, price.spread));
 			}
 
 		});
