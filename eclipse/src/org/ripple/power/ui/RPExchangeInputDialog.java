@@ -34,7 +34,7 @@ public class RPExchangeInputDialog extends JDialog {
 	private RPTextBox _countText;
 	private RPTextBox _countPriceText;
 
-	private RPTextBox _textContext;
+	private RPTextBox _textAContext,_textBContext;
 	private String _curName;
 	private String _dstCurrency = "USD";
 
@@ -134,11 +134,14 @@ public class RPExchangeInputDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_textContext != null) {
+				if (_textAContext != null) {
 					String price = _countText.getText().trim();
-					_textContext.setText(price + "/" + _curName);
+					_textAContext.setText(price + "/" + _curName);
 				}
-
+				if (_textBContext != null) {
+					String price = _countPriceText.getText().trim();
+					_textBContext.setText(price);
+				}
 			}
 		});
 
@@ -279,26 +282,28 @@ public class RPExchangeInputDialog extends JDialog {
 		pack();
 	}
 
-	public RPTextBox getTextContext() {
-		return _textContext;
+	public RPTextBox getTextAContext() {
+		return _textAContext;
 	}
 
-	public void setTextContext(RPTextBox text, String curName) {
-		if (text != null) {
-			this._textContext = text;
+	public void setTextContext(RPTextBox a,RPTextBox b, final String curName,final String dstCurName) {
+		if (a != null&&b!=null) {
+			this._dstCurrency = dstCurName;
+			this._textAContext = a;
+			this._textBContext = b;
 			this._countPriceText.setText("0");
 			this._curPriceText.setText("0");
 			this._countText.setText("0");
 			this._curName = curName;
-			this.setTitle(curName + "/" + _dstCurrency + "(Average Price)");
-			if (!_dstCurrency.equals(curName)) {
+			this.setTitle(curName + "/" + dstCurName + "(Average Price)");
+			if (!dstCurName.equals(curName)) {
 				final WaitDialog waitDialog = WaitDialog.showDialog(this);
 				Updateable update = new Updateable() {
 
 					@Override
 					public void action(Object o) {
 						String value = OfferPrice.getMoneyConvert("1",
-								_curName, _dstCurrency.toLowerCase());
+								_curName, dstCurName.toLowerCase());
 						if (!"unkown".equals(value)) {
 							_curPriceText.setText(value);
 						}

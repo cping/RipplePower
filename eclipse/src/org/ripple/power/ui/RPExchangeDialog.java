@@ -229,17 +229,15 @@ public class RPExchangeDialog extends JDialog {
 									"Price prompt"));
 					inputs.put(flag, dialog);
 				}
-				RPTextBox textBox = (RPTextBox) e.getSource();
-				String curName = split[0];
+			
 				switch (type) {
 				case 0:
-					curName = split[0];
+					dialog.setTextContext(_mysellText,_cansellText, split[0],split[1]);
 					break;
 				case 1:
-					curName = split[1];
+					dialog.setTextContext(_mybuyText,_canbuyText, split[1],split[0]);
 					break;
 				}
-				dialog.setTextContext(textBox, curName);
 				if (!dialog.isVisible()) {
 					dialog.setVisible(true);
 				}
@@ -1604,6 +1602,8 @@ public class RPExchangeDialog extends JDialog {
 		});
 	}
 
+	private boolean showTrend = false;
+
 	private void loadTradingList(final String address, final String[] split) {
 		if (!_tradeFlag) {
 			return;
@@ -1618,7 +1618,10 @@ public class RPExchangeDialog extends JDialog {
 				for (; !closed && _tradeFlag;) {
 					updateTrading(address, split[0], split[1]);
 					loadOtherMarketList(address, split);
-					updateTrend(split[0]);
+					if (!showTrend) {
+						updateTrend(split[0]);
+						showTrend = true;
+					}
 					try {
 						Thread.sleep(LSystem.SECOND * 10);
 					} catch (InterruptedException e) {
