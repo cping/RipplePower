@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
@@ -65,6 +67,86 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	private void init() {
+
+		final List<String> curstrings = Gateway.currencies();
+
+		curlist.addAll(curstrings);
+
+		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return curSelectlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				String result = Currencies.name(curSelectlist.get(i));
+				return result != null ? result : curSelectlist.get(i);
+			}
+		});
+		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return curlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				String result = Currencies.name(curlist.get(i));
+				return result != null ? result : curlist.get(i);
+			}
+		});
+
+		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaySelectlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaySelectlist.get(i);
+			}
+		});
+
+		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
+		gatewaylist.addAll(gatewaystrings);
+
+		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaylist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaylist.get(i);
+			}
+		});
+		
+		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return finallist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return finallist.get(i);
+			}
+		});
 	}
 
 	public RPPriceWarningDialog(String text, Window parent) {
@@ -129,41 +211,12 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		RPLabel label2 = new RPLabel();
 		getContentPane().setLayout(null);
 
+		init();
 		_intervalTimeLabel.setFont(UIRes.getFont()); // NOI18N
 		_intervalTimeLabel.setText(UIMessage.ri);
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
-		final List<String> curstrings = Gateway.currencies();
-
-		curlist.addAll(curstrings);
-
-		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			public int getSize() {
-				return curSelectlist.size();
-			}
-
-			public Object getElementAt(int i) {
-				String result = Currencies.name(curSelectlist.get(i));
-				return result != null ? result : curSelectlist.get(i);
-			}
-		});
-		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			public int getSize() {
-				return curlist.size();
-			}
-
-			public Object getElementAt(int i) {
-				String result = Currencies.name(curlist.get(i));
-				return result != null ? result : curlist.get(i);
-			}
-		});
 		jScrollPane1.setViewportView(_existCurList);
 
 		getContentPane().add(jScrollPane1);
@@ -222,38 +275,6 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_moveDelCurButton);
 		_moveDelCurButton.setBounds(300, 290, 50, 50);
 
-		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public int getSize() {
-				return gatewaySelectlist.size();
-			}
-
-			public Object getElementAt(int i) {
-				return gatewaySelectlist.get(i);
-			}
-		});
-
-		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
-		gatewaylist.addAll(gatewaystrings);
-
-		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public int getSize() {
-				return gatewaylist.size();
-			}
-
-			public Object getElementAt(int i) {
-				return gatewaylist.get(i);
-			}
-		});
 		jScrollPane3.setViewportView(_existGatewayList);
 
 		getContentPane().add(jScrollPane3);
@@ -340,6 +361,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_gatewayAndCurLabel.setBounds(20, 380, 260, 30);
 
 		_xrpPriceText.setFont(UIRes.getFont()); // NOI18N
+		_xrpPriceText.setText("0.02");
 		getContentPane().add(_xrpPriceText);
 		_xrpPriceText.setBounds(190, 480, 120, 30);
 
@@ -347,18 +369,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_gatewayAndCurComboBox.setItemModel(new String[] { "Empty" });
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
-		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			public int getSize() {
-				return finallist.size();
-			}
-
-			public Object getElementAt(int i) {
-				return finallist.get(i);
-			}
-		});
+	
 		jScrollPane5.setViewportView(_finalSetList);
 
 		getContentPane().add(jScrollPane5);
@@ -419,6 +430,15 @@ public class RPPriceWarningDialog extends ABaseDialog {
 							if (!finallist.contains(result)) {
 								finallist.add(result);
 								_finalSetList.updateUI();
+
+								Session session = LSystem
+										.session("check_price");
+								JSONArray json = new JSONArray();
+								for (String date : finallist) {
+									json.put(date);
+								}
+								session.set("warn", json.toString());
+								session.save();
 							}
 						}
 					}
@@ -430,6 +450,17 @@ public class RPPriceWarningDialog extends ABaseDialog {
 
 		_delDataButton.setText(UIMessage.del);
 		_delDataButton.setFont(UIRes.getFont());
+		_delDataButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int idx = _finalSetList.getSelectedIndex();
+				if (idx != -1) {
+					finallist.remove(idx);
+					_finalSetList.updateUI();
+				}
+			}
+		});
 		getContentPane().add(_delDataButton);
 		_delDataButton.setBounds(360, 590, 81, 40);
 

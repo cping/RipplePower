@@ -72,10 +72,10 @@ import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
 
-	static{
+	static {
 		System.setProperty("https.protocols", "TLSv1.2");
 	}
-	
+
 	public static String getHttps(String url) {
 		ResponseResult result = HttpsUtils.getSSL(url);
 		if (result.ok()) {
@@ -1637,6 +1637,7 @@ public class HttpRequest {
 	}
 
 	public String send(JSONObject obj) {
+
 		StringBuffer sbr = new StringBuffer();
 		try {
 			HttpURLConnection c = getConnection();
@@ -1667,13 +1668,13 @@ public class HttpRequest {
 					sbr.append(line);
 				}
 				rd.close();
-			} catch (FileNotFoundException e) {
-			} catch (NullPointerException e) {
+			} catch (Exception e) {
+				return null;
 			} finally {
 				c.disconnect();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
 		}
 		String result = sbr.toString();
 		return result;
