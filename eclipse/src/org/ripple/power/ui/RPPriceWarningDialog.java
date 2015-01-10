@@ -14,6 +14,7 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.utils.MathUtils;
 
 public class RPPriceWarningDialog extends ABaseDialog {
 	private RPCButton _addDataButton;
@@ -46,6 +47,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 
 	private ArrayList<String> curSelectlist = new ArrayList<String>();
 	private ArrayList<String> gatewaySelectlist = new ArrayList<String>();
+
+	private ArrayList<String> finallist = new ArrayList<String>();
 
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
@@ -344,7 +347,18 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_gatewayAndCurComboBox.setItemModel(new String[] { "Empty" });
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
+		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
 
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return finallist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return finallist.get(i);
+			}
+		});
 		jScrollPane5.setViewportView(_finalSetList);
 
 		getContentPane().add(jScrollPane5);
@@ -378,6 +392,40 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_addDataButton.setText(UIMessage.add);
 		_addDataButton.setFont(UIRes.getFont());
 		getContentPane().add(_addDataButton);
+		_addDataButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String time = _intervalTimeTexture.getText().trim();
+				if (time.length() <= 0 || !MathUtils.isNan(time)) {
+					return;
+				}
+				String value = _xrpPriceText.getText().trim();
+				if (value.length() <= 0 || !MathUtils.isNan(value)) {
+					return;
+				}
+				int idx = _gatewayAndCurComboBox.getSelectedIndex();
+				if (idx != -1) {
+					String item = (String) _gatewayAndCurComboBox
+							.getSelectedItem();
+					if (!"empty".equalsIgnoreCase(item)) {
+
+						idx = _typeSelectComboBox.getSelectedIndex();
+						if (idx != -1) {
+							String type = (String) _typeSelectComboBox
+									.getSelectedItem();
+							String result = item + " " + type + " " + value
+									+ "," + time;
+							if (!finallist.contains(result)) {
+								finallist.add(result);
+								_finalSetList.updateUI();
+							}
+						}
+					}
+
+				}
+			}
+		});
 		_addDataButton.setBounds(460, 590, 81, 40);
 
 		_delDataButton.setText(UIMessage.del);

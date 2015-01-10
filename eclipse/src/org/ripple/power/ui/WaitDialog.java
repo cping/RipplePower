@@ -134,10 +134,11 @@ public class WaitDialog {
 						if (panel != null && isRunning
 								&& panel.getGraphics() != null) {
 							panel.update(panel.getGraphics());
+							panel.repaint();
 						}
 						repaint();
 						try {
-							Thread.sleep(40);
+							Thread.sleep(45);
 						} catch (InterruptedException e) {
 						}
 					}
@@ -152,7 +153,7 @@ public class WaitDialog {
 		}
 
 		@Override
-		public void paint(Graphics g) {
+		public synchronized void paint(Graphics g) {
 			if (image != null) {
 				synchronized (image) {
 					g.drawImage(image, 0, 0, this);

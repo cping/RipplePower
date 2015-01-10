@@ -192,7 +192,7 @@ public class RPExchangeDialog extends JDialog {
 
 	}
 
-	private HashMap<Integer, RPExchangeInputDialog> inputs = new HashMap<Integer, RPExchangeInputDialog>();
+	private HashMap<String, RPExchangeInputDialog> inputs = new HashMap<String, RPExchangeInputDialog>();
 
 	class InputMouselstener implements MouseListener {
 
@@ -221,13 +221,13 @@ public class RPExchangeDialog extends JDialog {
 				String cur = ((String) _curComboBox.getSelectedItem()).trim();
 				String[] split = StringUtils.split(cur, "/");
 
-				RPExchangeInputDialog dialog = inputs.get(flag);
+				RPExchangeInputDialog dialog = inputs.get(cur);
 				if (dialog == null) {
 					dialog = RPExchangeInputDialog.showDialog(
 							RPExchangeDialog.this, LangConfig.get(
 									RPExchangeInputDialog.class, "ppt",
 									"Price prompt"));
-					inputs.put(flag, dialog);
+					inputs.put(cur, dialog);
 				}
 			
 				switch (type) {
@@ -959,6 +959,7 @@ public class RPExchangeDialog extends JDialog {
 								dialog.closeDialog();
 							}
 							_tradeFlag = true;
+							_showTrend = false;
 							loadTradingList(address, split);
 							loadOtherMarketList(address, split);
 							repaint();
@@ -1602,7 +1603,7 @@ public class RPExchangeDialog extends JDialog {
 		});
 	}
 
-	private boolean showTrend = false;
+	private boolean _showTrend = false;
 
 	private void loadTradingList(final String address, final String[] split) {
 		if (!_tradeFlag) {
@@ -1618,9 +1619,9 @@ public class RPExchangeDialog extends JDialog {
 				for (; !closed && _tradeFlag;) {
 					updateTrading(address, split[0], split[1]);
 					loadOtherMarketList(address, split);
-					if (!showTrend) {
+					if (!_showTrend) {
 						updateTrend(split[0]);
-						showTrend = true;
+						_showTrend = true;
 					}
 					try {
 						Thread.sleep(LSystem.SECOND * 10);
