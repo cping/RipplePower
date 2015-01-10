@@ -1,21 +1,12 @@
 package org.ripple.power.ui;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigDecimal;
-
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.RPToast.Style;
-import org.ripple.power.ui.graphics.LImage;
-import org.ripple.power.utils.GraphicsUtils;
-import org.ripple.power.wallet.WalletItem;
 
 public class RPPayPortDialog extends JPanel {
 
@@ -84,7 +75,7 @@ public class RPPayPortDialog extends JPanel {
 
         _toBankButton.setText("To Bank");
 
-        _toAlipayButton.setText("To Alipay(\"支付宝\"~dotpay)");
+        _toAlipayButton.setText("To Alipay(~dotpay)");
 
         _toGoogleButton.setText("To Google");
 

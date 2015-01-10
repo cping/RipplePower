@@ -5,7 +5,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +18,10 @@ import org.ripple.power.txns.Gateway;
 import org.ripple.power.utils.MathUtils;
 
 public class RPPriceWarningDialog extends ABaseDialog {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private RPCButton _addDataButton;
 	private RPCButton _delDataButton;
 	private RPLabel _dstCurLabel;
@@ -134,7 +137,15 @@ public class RPPriceWarningDialog extends ABaseDialog {
 				return gatewaylist.get(i);
 			}
 		});
-		
+
+		Session session = LSystem.session("check_price");
+		String result = session.get("warn");
+		if (result != null) {
+			JSONArray json = new JSONArray(result);
+			for (int i = 0; i < json.length(); i++) {
+				finallist.add(json.getString(i));
+			}
+		}
 		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
 
 			private static final long serialVersionUID = 1L;
@@ -369,7 +380,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_gatewayAndCurComboBox.setItemModel(new String[] { "Empty" });
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
-	
+
 		jScrollPane5.setViewportView(_finalSetList);
 
 		getContentPane().add(jScrollPane5);
@@ -397,6 +408,22 @@ public class RPPriceWarningDialog extends ABaseDialog {
 
 		_saveDataButton.setText(UIMessage.save);
 		_saveDataButton.setFont(UIRes.getFont());
+		_saveDataButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (finallist.size() > 0) {
+					Session session = LSystem.session("check_price");
+					JSONArray json = new JSONArray();
+					for (String date : finallist) {
+						json.put(date);
+					}
+					session.set("warn", json.toString());
+					session.save();
+					alert(UIMessage.save);
+				}
+			}
+		});
 		getContentPane().add(_saveDataButton);
 		_saveDataButton.setBounds(560, 590, 81, 40);
 
@@ -430,17 +457,9 @@ public class RPPriceWarningDialog extends ABaseDialog {
 							if (!finallist.contains(result)) {
 								finallist.add(result);
 								_finalSetList.updateUI();
-
-								Session session = LSystem
-										.session("check_price");
-								JSONArray json = new JSONArray();
-								for (String date : finallist) {
-									json.put(date);
-								}
-								session.set("warn", json.toString());
-								session.save();
 							}
 						}
+						alert(UIMessage.add);
 					}
 
 				}
@@ -458,6 +477,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 				if (idx != -1) {
 					finallist.remove(idx);
 					_finalSetList.updateUI();
+					alert(UIMessage.del);
 				}
 			}
 		});

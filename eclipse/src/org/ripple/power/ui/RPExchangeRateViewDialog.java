@@ -41,10 +41,10 @@ public class RPExchangeRateViewDialog extends JDialog {
 	private RPLabel _fourLabel;
 	private RPList _encryptcoinList;
 	private RPList _legalTenderList;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JSeparator jSeparator1;
+	private javax.swing.JPanel panelOne;
+	private javax.swing.JScrollPane scrollPanelOne;
+	private javax.swing.JScrollPane scrollPanelTwo;
+	private javax.swing.JSeparator spLine;
 	private RPTextBox _srcText;
 	private RPTextBox _dstText;
 	private boolean _closed;
@@ -137,16 +137,16 @@ public class RPExchangeRateViewDialog extends JDialog {
 		_dstText = new RPTextBox();
 		_dstComboBox = new RPComboBox();
 		_dstComboBox.setEditable(true);
-		jPanel1 = new javax.swing.JPanel();
-		jScrollPane1 = new javax.swing.JScrollPane();
+		panelOne = new javax.swing.JPanel();
+		scrollPanelOne = new javax.swing.JScrollPane();
 		_encryptcoinList = new RPList();
-		jScrollPane2 = new javax.swing.JScrollPane();
+		scrollPanelTwo = new javax.swing.JScrollPane();
 		_legalTenderList = new RPList();
 		_threeLabel = new RPLabel();
 		_fourLabel = new RPLabel();
 		_exitButton = new RPCButton();
 		_rateButton = new RPCButton();
-		jSeparator1 = new javax.swing.JSeparator();
+		spLine = new javax.swing.JSeparator();
 
 		getContentPane().setLayout(null);
 
@@ -191,11 +191,11 @@ public class RPExchangeRateViewDialog extends JDialog {
 			}
 		});
 
-		jPanel1.setBackground(new java.awt.Color(51, 51, 51));
-		jPanel1.setLayout(null);
+		panelOne.setBackground(new java.awt.Color(51, 51, 51));
+		panelOne.setLayout(null);
 
 		_encryptcoinList.setCellRenderer(new HtmlRenderer());
-		jScrollPane1.setViewportView(_encryptcoinList);
+		scrollPanelOne.setViewportView(_encryptcoinList);
 
 		final WaitDialog waitDialog = WaitDialog.showDialog(this);
 		Updateable updateable = new Updateable() {
@@ -249,31 +249,31 @@ public class RPExchangeRateViewDialog extends JDialog {
 
 		LSystem.postThread(updateable);
 
-		jPanel1.add(jScrollPane1);
-		jScrollPane1.setBounds(10, 40, 360, 340);
+		panelOne.add(scrollPanelOne);
+		scrollPanelOne.setBounds(10, 40, 360, 340);
 
 		_legalTenderList.setCellRenderer(new HtmlRenderer());
-		jScrollPane2.setViewportView(_legalTenderList);
+		scrollPanelTwo.setViewportView(_legalTenderList);
 
-		jPanel1.add(jScrollPane2);
-		jScrollPane2.setBounds(380, 40, 360, 340);
+		panelOne.add(scrollPanelTwo);
+		scrollPanelTwo.setBounds(380, 40, 360, 340);
 
 		_threeLabel.setFont(UIRes.getFont()); // NOI18N
 		_threeLabel.setForeground(LColor.white);
 		_threeLabel.setText(LangConfig.get(this, "lt", "Legal tender")
 				+ "(usd-cny)");
-		jPanel1.add(_threeLabel);
+		panelOne.add(_threeLabel);
 		_threeLabel.setBounds(380, 10, 360, 20);
 
 		_fourLabel.setFont(UIRes.getFont()); // NOI18N
 		_fourLabel.setForeground(LColor.white);
 		_fourLabel.setText(LangConfig.get(this, "em", "Electronic money")
 				+ "(coinmarketcap)");
-		jPanel1.add(_fourLabel);
+		panelOne.add(_fourLabel);
 		_fourLabel.setBounds(10, 10, 360, 20);
 
-		getContentPane().add(jPanel1);
-		jPanel1.setBounds(10, 10, 750, 390);
+		getContentPane().add(panelOne);
+		panelOne.setBounds(10, 10, 750, 390);
 
 		_exitButton.setText(LangConfig.get(this, "exit", "Exit"));
 		_exitButton.setFont(UIRes.getFont());
@@ -333,8 +333,8 @@ public class RPExchangeRateViewDialog extends JDialog {
 				LSystem.postThread(updateable);
 			}
 		});
-		getContentPane().add(jSeparator1);
-		jSeparator1.setBounds(0, 460, 770, 10);
+		getContentPane().add(spLine);
+		spLine.setBounds(0, 460, 770, 10);
 		getContentPane().setBackground(UIConfig.dialogbackground);
 		pack();
 	}

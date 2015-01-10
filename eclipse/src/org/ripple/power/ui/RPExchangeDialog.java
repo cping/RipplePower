@@ -98,12 +98,12 @@ public class RPExchangeDialog extends JDialog {
 	private RPList _buymList;
 	private RPList _sellmList;
 	private RPList _otherMarketList;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JPanel jPanel2;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JScrollPane jScrollPane3;
-	private javax.swing.JScrollPane jScrollPane4;
+	private javax.swing.JPanel panelOne;
+	private javax.swing.JPanel panelTwo;
+	private javax.swing.JScrollPane scrollPanelOne;
+	private javax.swing.JScrollPane scrollPanelTwo;
+	private javax.swing.JScrollPane scrollPanelThree;
+	private javax.swing.JScrollPane scrollPanelFour;
 	private RPCheckBox _priceTipCheckBox;
 	private RPTextBox _cansellText;
 	private RPTextBox _canbuyText;
@@ -229,13 +229,15 @@ public class RPExchangeDialog extends JDialog {
 									"Price prompt"));
 					inputs.put(cur, dialog);
 				}
-			
+
 				switch (type) {
 				case 0:
-					dialog.setTextContext(_mysellText,_cansellText, split[0],split[1]);
+					dialog.setTextContext(_mysellText, _cansellText, split[0],
+							split[1]);
 					break;
 				case 1:
-					dialog.setTextContext(_mybuyText,_canbuyText, split[1],split[0]);
+					dialog.setTextContext(_mybuyText, _canbuyText, split[1],
+							split[0]);
 					break;
 				}
 				if (!dialog.isVisible()) {
@@ -321,23 +323,23 @@ public class RPExchangeDialog extends JDialog {
 		_currencyLabel = new RPLabel();
 		_curComboBox = new RPComboBox();
 		_okButton = new RPCButton();
-		jPanel1 = new javax.swing.JPanel();
+		panelOne = new javax.swing.JPanel();
 		_mytradingLabel = new RPLabel();
 		_tip1Label = new RPLabel();
-		jScrollPane1 = new javax.swing.JScrollPane();
+		scrollPanelOne = new javax.swing.JScrollPane();
 		_mytradingList = new RPList();
 		_buymLabel = new RPLabel();
-		jScrollPane2 = new javax.swing.JScrollPane();
+		scrollPanelTwo = new javax.swing.JScrollPane();
 		_buymList = new RPList();
 		_sellmLabel = new RPLabel();
-		jScrollPane3 = new javax.swing.JScrollPane();
+		scrollPanelThree = new javax.swing.JScrollPane();
 		_sellmList = new RPList();
 		_coinmarketcapLabel = new RPLabel();
-		jScrollPane4 = new javax.swing.JScrollPane();
+		scrollPanelFour = new javax.swing.JScrollPane();
 		_otherMarketList = new RPList();
 		_gatewayLabel = new RPLabel();
 		_selectGateawyCombobox = new RPComboBox();
-		jPanel2 = new javax.swing.JPanel();
+		panelTwo = new javax.swing.JPanel();
 		_cansellLabel = new RPLabel();
 		_cansellText = new RPTextBox();
 		_canbuyLabel = new RPLabel();
@@ -381,7 +383,7 @@ public class RPExchangeDialog extends JDialog {
 						session.save();
 					}
 				});
-		jPanel2.add(_priceTipCheckBox);
+		panelTwo.add(_priceTipCheckBox);
 		_priceTipCheckBox.setBounds(858, 50, 110, 23);
 		_priceTipCheckBox.setFont(font14);
 		_priceTipCheckBox.setBackground(new LColor(51, 51, 51));
@@ -411,36 +413,36 @@ public class RPExchangeDialog extends JDialog {
 				submitOK();
 			}
 		});
-		jPanel1.setBackground(new LColor(51, 51, 51));
-		jPanel1.setLayout(null);
+		panelOne.setBackground(new LColor(51, 51, 51));
+		panelOne.setLayout(null);
 
 		_mytradingLabel.setFont(font14); // NOI18N
 		_mytradingLabel.setForeground(new LColor(255, 255, 255));
 		_mytradingLabel.setText(LangConfig
 				.get(this, "my_trading", "My trading"));
-		jPanel1.add(_mytradingLabel);
+		panelOne.add(_mytradingLabel);
 		_mytradingLabel.setBounds(380, 185, 210, 18);
 
 		_tip1Label.setFont(font14);
 		_tip1Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		_tip1Label.setText(String.format(info_price(), 0, 0, 0));
-		jPanel1.add(_tip1Label);
+		panelOne.add(_tip1Label);
 		_tip1Label.setBounds(0, 10, 970, 20);
 		_tip1Label.setForeground(LColor.red);
 
-		jScrollPane1.setViewportView(_mytradingList);
+		scrollPanelOne.setViewportView(_mytradingList);
 
 		if (_item != null) {
 			updateMyTrading();
 		}
 
-		jPanel1.add(jScrollPane1);
-		jScrollPane1.setBounds(380, 210, 210, 110);
+		panelOne.add(scrollPanelOne);
+		scrollPanelOne.setBounds(380, 210, 210, 110);
 
 		_buymLabel.setFont(font14); // NOI18N
 		_buymLabel.setForeground(new LColor(255, 255, 255));
 		_buymLabel.setText(LangConfig.get(this, "bm", "Buyer's Market"));
-		jPanel1.add(_buymLabel);
+		panelOne.add(_buymLabel);
 		_buymLabel.setBounds(10, 45, 360, 16);
 
 		_buymList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -466,15 +468,15 @@ public class RPExchangeDialog extends JDialog {
 				}
 			}
 		});
-		jScrollPane2.setViewportView(_buymList);
+		scrollPanelTwo.setViewportView(_buymList);
 		_buymList.setCellRenderer(new HtmlRenderer());
-		jPanel1.add(jScrollPane2);
-		jScrollPane2.setBounds(10, 70, 360, 250);
+		panelOne.add(scrollPanelTwo);
+		scrollPanelTwo.setBounds(10, 70, 360, 250);
 
 		_sellmLabel.setFont(font14); // NOI18N
 		_sellmLabel.setForeground(new LColor(255, 255, 255));
 		_sellmLabel.setText(LangConfig.get(this, "sm", "Seller's Market"));
-		jPanel1.add(_sellmLabel);
+		panelOne.add(_sellmLabel);
 		_sellmLabel.setBounds(600, 45, 360, 16);
 
 		_sellmList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -499,26 +501,26 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 		_sellmList.setCellRenderer(new HtmlRenderer());
-		jScrollPane3.setViewportView(_sellmList);
+		scrollPanelThree.setViewportView(_sellmList);
 
-		jPanel1.add(jScrollPane3);
-		jScrollPane3.setBounds(600, 70, 360, 250);
+		panelOne.add(scrollPanelThree);
+		scrollPanelThree.setBounds(600, 70, 360, 250);
 
 		_coinmarketcapLabel.setFont(font14); // NOI18N
 		_coinmarketcapLabel.setForeground(new LColor(255, 255, 255));
 		_coinmarketcapLabel.setText(LangConfig.get(this, "other_prices",
 				"Other Prices") + "(coinmarketcap)");
-		jPanel1.add(_coinmarketcapLabel);
+		panelOne.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
 
 		_otherMarketList.setCellRenderer(new HtmlRenderer());
-		jScrollPane4.setViewportView(_otherMarketList);
+		scrollPanelFour.setViewportView(_otherMarketList);
 
-		jPanel1.add(jScrollPane4);
-		jScrollPane4.setBounds(380, 70, 210, 110);
+		panelOne.add(scrollPanelFour);
+		scrollPanelFour.setBounds(380, 70, 210, 110);
 
-		getContentPane().add(jPanel1);
-		jPanel1.setBounds(10, 50, 970, 340);
+		getContentPane().add(panelOne);
+		panelOne.setBounds(10, 50, 970, 340);
 
 		_gatewayLabel.setFont(font); // NOI18N
 		_gatewayLabel.setText(LangConfig.get(this, "selgateway", "Gateway"));
@@ -542,13 +544,13 @@ public class RPExchangeDialog extends JDialog {
 		if (_selectGateawyCombobox.getItemCount() > 0) {
 			callCur((String) _selectGateawyCombobox.getSelectedItem());
 		}
-		jPanel2.setBackground(new LColor(51, 51, 51));
-		jPanel2.setLayout(null);
+		panelTwo.setBackground(new LColor(51, 51, 51));
+		panelTwo.setLayout(null);
 
 		_cansellLabel.setFont(font14); // NOI18N
 		_cansellLabel.setForeground(new LColor(255, 255, 255));
 		_cansellLabel.setText(LangConfig.get(this, "cansell", "Can Sell"));
-		jPanel2.add(_cansellLabel);
+		panelTwo.add(_cansellLabel);
 		_cansellLabel.setBounds(600, 50, 90, 20);
 
 		Font font12 = new Font("Dialog", 0, 12);
@@ -557,20 +559,20 @@ public class RPExchangeDialog extends JDialog {
 		_cansellText.setFont(font12);
 		_cansellText.addKeyListener(new MyKeyListener(1));
 		_cansellText.addMouseListener(new InputMouselstener(1, 1));
-		jPanel2.add(_cansellText);
+		panelTwo.add(_cansellText);
 		_cansellText.setBounds(670, 50, 170, 20);
 
 		_canbuyLabel.setFont(font14); // NOI18N
 		_canbuyLabel.setForeground(new LColor(255, 255, 255));
 		_canbuyLabel.setText(LangConfig.get(this, "canbuy", "Can Buy"));
-		jPanel2.add(_canbuyLabel);
+		panelTwo.add(_canbuyLabel);
 		_canbuyLabel.setBounds(10, 50, 90, 20);
 
 		_canbuyText.setText("0");
 		_canbuyText.setFont(font12);
 		_canbuyText.addKeyListener(new MyKeyListener(0));
 		_canbuyText.addMouseListener(new InputMouselstener(0, 0));
-		jPanel2.add(_canbuyText);
+		panelTwo.add(_canbuyText);
 		_canbuyText.setBounds(80, 50, 170, 21);
 
 		_oksellButton.setText(LangConfig.get(this, "oksell", "Confirm Sell"));
@@ -584,18 +586,18 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 
-		jPanel2.add(_oksellButton);
+		panelTwo.add(_oksellButton);
 		_oksellButton.setBounds(860, 10, 95, 23);
 
 		_mybuyLabel.setFont(font14); // NOI18N
 		_mybuyLabel.setForeground(new LColor(255, 255, 255));
 		_mybuyLabel.setText(LangConfig.get(this, "mybuy", "My Buy"));
-		jPanel2.add(_mybuyLabel);
+		panelTwo.add(_mybuyLabel);
 		_mybuyLabel.setBounds(10, 10, 90, 20);
 
 		_mybuyText.setText("0");
 		_mybuyText.setFont(font12);
-		jPanel2.add(_mybuyText);
+		panelTwo.add(_mybuyText);
 		_mybuyText.setBounds(80, 10, 170, 21);
 		_mybuyText.addKeyListener(new MyKeyListener(1));
 		_mybuyText.addMouseListener(new InputMouselstener(0, 1));
@@ -603,12 +605,12 @@ public class RPExchangeDialog extends JDialog {
 		_mysellLabel.setFont(font14); // NOI18N
 		_mysellLabel.setForeground(new LColor(255, 255, 255));
 		_mysellLabel.setText(LangConfig.get(this, "mysell", "My Sell"));
-		jPanel2.add(_mysellLabel);
+		panelTwo.add(_mysellLabel);
 		_mysellLabel.setBounds(600, 10, 90, 20);
 
 		_mysellText.setText("0");
 		_mysellText.setFont(font12);
-		jPanel2.add(_mysellText);
+		panelTwo.add(_mysellText);
 		_mysellText.setBounds(670, 10, 170, 21);
 		_mysellText.addKeyListener(new MyKeyListener(0));
 		_mysellText.addMouseListener(new InputMouselstener(1, 0));
@@ -616,7 +618,7 @@ public class RPExchangeDialog extends JDialog {
 		_okbuyButton.setText(LangConfig.get(this, "okbuy", "Confirm Buy"));
 		_okbuyButton.setActionCommand("buy");
 		_okbuyButton.setFont(font14);
-		jPanel2.add(_okbuyButton);
+		panelTwo.add(_okbuyButton);
 		_okbuyButton.setBounds(270, 10, 95, 23);
 		_okbuyButton.addActionListener(new ActionListener() {
 
@@ -637,13 +639,13 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 		_stopautonButton.setFont(font14);
-		jPanel2.add(_stopautonButton);
+		panelTwo.add(_stopautonButton);
 		_stopautonButton.setBounds(560, 90, 130, 23);
 
 		_canceltradingButton.setText(LangConfig.get(this, "cancel",
 				"Cancel Transaction"));
 		_canceltradingButton.setFont(font14);
-		jPanel2.add(_canceltradingButton);
+		panelTwo.add(_canceltradingButton);
 		_canceltradingButton.setBounds(410, 10, 140, 23);
 		_canceltradingButton.addActionListener(new ActionListener() {
 
@@ -687,13 +689,13 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 		_setautoButton.setFont(font14);
-		jPanel2.add(_setautoButton);
+		panelTwo.add(_setautoButton);
 		_setautoButton.setBounds(270, 90, 130, 23);
 
 		_startautobutton.setText(LangConfig.get(this, "startauto",
 				"Start auto trade"));
 		_startautobutton.setFont(font14);
-		jPanel2.add(_startautobutton);
+		panelTwo.add(_startautobutton);
 		_startautobutton.setBounds(420, 90, 120, 23);
 		_startautobutton.addActionListener(new ActionListener() {
 
@@ -703,8 +705,8 @@ public class RPExchangeDialog extends JDialog {
 			}
 		});
 
-		getContentPane().add(jPanel2);
-		jPanel2.setBounds(10, 400, 970, 130);
+		getContentPane().add(panelTwo);
+		panelTwo.setBounds(10, 400, 970, 130);
 
 		_editHFTButton.setText(LangConfig
 				.get(this, "editscript", "Edit Script"));
@@ -837,8 +839,10 @@ public class RPExchangeDialog extends JDialog {
 
 		_tradeFlag = false;
 		if (_tradeThread != null) {
+			_tradeFlag = false;
 			_tradeThread.interrupt();
 			_tradeThread = null;
+			
 		}
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");
@@ -1623,9 +1627,11 @@ public class RPExchangeDialog extends JDialog {
 						updateTrend(split[0]);
 						_showTrend = true;
 					}
-					try {
-						Thread.sleep(LSystem.SECOND * 10);
-					} catch (InterruptedException e) {
+					if (!closed && _tradeFlag) {
+						try {
+							Thread.sleep(LSystem.SECOND * 10);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 			}

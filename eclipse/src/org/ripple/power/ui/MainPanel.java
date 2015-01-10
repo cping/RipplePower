@@ -57,8 +57,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
 	private static final String[] columnNames = {
 			LangConfig.get(MainPanel.class, "create_date", "Create Date"),
-			UIMessage.address,
-			UIMessage.amount,
+			UIMessage.address, UIMessage.amount,
 			LangConfig.get(MainPanel.class, "status", "Status") };
 
 	private static final int[] columnTypes = { AddressTable.DATE,
@@ -575,8 +574,11 @@ public class MainPanel extends JPanel implements ActionListener {
 					RPToast.makeText(LSystem.applicationMain,
 							"Go to currency exchange trading network.",
 							Style.SUCCESS).display();
-					RPExchangeDialog.showDialog("Ripple Trading Network("
-							+ item.getPublicKey() + ")",
+					RPExchangeDialog.showDialog(
+							LangConfig.get(this, "rippletrade",
+									"Ripple Trading Network")
+									+ "("
+									+ item.getPublicKey() + ")",
 							LSystem.applicationMain, item);
 					break;
 				case CommandFlag.Gateway:

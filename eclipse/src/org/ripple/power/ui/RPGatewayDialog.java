@@ -66,10 +66,10 @@ public class RPGatewayDialog extends JDialog {
 	private RPList _listGateway;
 	private RPList _myGateway;
 	private javax.swing.JPanel _panel;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JScrollPane jScrollPane3;
-	private javax.swing.JSeparator jSeparator1;
+	private javax.swing.JScrollPane scrollPanelOne;
+	private javax.swing.JScrollPane scrollPanelTwo;
+	private javax.swing.JScrollPane scrollPanelThree;
+	private javax.swing.JSeparator spLine;
 	private javax.swing.JSlider _trustlimits;
 	private RPTextBox _addressText;
 	private RPTextBox _webText;
@@ -129,15 +129,15 @@ public class RPGatewayDialog extends JDialog {
 
 		LColor color = new LColor(255, 255, 255);
 
-		jScrollPane1 = new javax.swing.JScrollPane();
-		jScrollPane2 = new javax.swing.JScrollPane();
-		jScrollPane3 = new javax.swing.JScrollPane();
+		scrollPanelOne = new javax.swing.JScrollPane();
+		scrollPanelTwo = new javax.swing.JScrollPane();
+		scrollPanelThree = new javax.swing.JScrollPane();
 
 		_ioulistTable = new RPList();
 		_listGateway = new RPList();
 		_myGateway = new RPList();
 
-		jSeparator1 = new javax.swing.JSeparator();
+		spLine = new javax.swing.JSeparator();
 		_gatewayListLabel = new RPLabel();
 		_panel = new javax.swing.JPanel();
 		_currencyNameList = new RPLabel();
@@ -174,8 +174,8 @@ public class RPGatewayDialog extends JDialog {
 
 		getContentPane().setLayout(null);
 
-		getContentPane().add(jSeparator1);
-		jSeparator1.setBounds(0, 520, 781, 10);
+		getContentPane().add(spLine);
+		spLine.setBounds(0, 520, 781, 10);
 
 		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list",
 				"Gateway List"));
@@ -329,11 +329,11 @@ public class RPGatewayDialog extends JDialog {
 
 			}
 		});
-		jScrollPane2.setViewportView(_listGateway);
+		scrollPanelTwo.setViewportView(_listGateway);
 		_listGateway.setSelectedIndex(0);
 
-		getContentPane().add(jScrollPane2);
-		jScrollPane2.setBounds(10, 40, 170, 230);
+		getContentPane().add(scrollPanelTwo);
+		scrollPanelTwo.setBounds(10, 40, 170, 230);
 
 		_ioulistTable.setModel(new javax.swing.AbstractListModel<Object>() {
 
@@ -351,10 +351,10 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-		jScrollPane1.setViewportView(_ioulistTable);
+		scrollPanelOne.setViewportView(_ioulistTable);
 
-		getContentPane().add(jScrollPane1);
-		jScrollPane1.setBounds(10, 310, 170, 200);
+		getContentPane().add(scrollPanelOne);
+		scrollPanelOne.setBounds(10, 310, 170, 200);
 
 		_ioulistTable.addListSelectionListener(new ListSelectionListener() {
 
@@ -367,11 +367,11 @@ public class RPGatewayDialog extends JDialog {
 			}
 		});
 
-		jScrollPane3.setViewportView(_myGateway);
+		scrollPanelThree.setViewportView(_myGateway);
 
-		_panel.add(jScrollPane3);
+		_panel.add(scrollPanelThree);
 
-		jScrollPane3.setBounds(90, 220, 480, 200);
+		scrollPanelThree.setBounds(90, 220, 480, 200);
 
 		_addGatewayButton.setText(LangConfig.get(this, "add", "Add"));
 		_addGatewayButton.addActionListener(new ActionListener() {

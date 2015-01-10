@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 
-
 public class RPTradingToolsDialog extends JPanel {
 	/**
 	 * 
@@ -20,7 +19,8 @@ public class RPTradingToolsDialog extends JPanel {
 
 	private RPDialogTool tool;
 
-	public static RPTradingToolsDialog showDialog(String text, Window parent,boolean show) {
+	public static RPTradingToolsDialog showDialog(String text, Window parent,
+			boolean show) {
 		if (show) {
 			synchronized (RPTradingToolsDialog.class) {
 				if (lock == null) {
@@ -38,9 +38,8 @@ public class RPTradingToolsDialog extends JPanel {
 	}
 
 	public static RPTradingToolsDialog showDialog(String text, Window parent) {
-		return showDialog(text, parent,true);
+		return showDialog(text, parent, true);
 	}
-
 
 	public RPDialogTool get() {
 		return tool;
@@ -53,7 +52,7 @@ public class RPTradingToolsDialog extends JPanel {
 		}
 	}
 
-	private RPCButton jButton1;
+	private RPCButton pricemonitorButton;
 	private RPCButton exitButton;
 	private RPCButton jButton2;
 	private RPCButton jButton3;
@@ -64,16 +63,14 @@ public class RPTradingToolsDialog extends JPanel {
 	private RPCButton jButton8;
 	private RPCButton jButton9;
 
-
 	public RPTradingToolsDialog(String text, Window parent) {
 
 		Dimension dim = new Dimension(400, 490);
 		setPreferredSize(dim);
 		setSize(dim);
 
-
-		jButton1 = new RPCButton();
-		jButton1.setFont(UIRes.getFont());
+		pricemonitorButton = new RPCButton();
+		pricemonitorButton.setFont(UIRes.getFont());
 		jButton2 = new RPCButton();
 		jButton2.setFont(UIRes.getFont());
 		jButton3 = new RPCButton();
@@ -95,9 +92,17 @@ public class RPTradingToolsDialog extends JPanel {
 
 		setLayout(null);
 
-		jButton1.setText("价格预警");
-		add(jButton1);
-		jButton1.setBounds(20, 29, 170, 67);
+		pricemonitorButton.setText("Price Monitor");
+		pricemonitorButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPPriceWarningDialog.showDialog("Price Monitor",
+						LSystem.applicationMain);
+			}
+		});
+		add(pricemonitorButton);
+		pricemonitorButton.setBounds(20, 29, 170, 67);
 
 		jButton2.setText("定时买卖");
 		add(jButton2);
@@ -162,22 +167,20 @@ public class RPTradingToolsDialog extends JPanel {
 		add(exitButton);
 		exitButton.setBounds(220, 390, 160, 67);
 		exitButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RPTradingToolsDialog.this.closeDialog();
 			}
 		});
-		
 
 		setBackground(UIConfig.dialogbackground);
-		
+
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
 		revalidate();
 		repaint();
 
-	
 	}
-	
+
 }
