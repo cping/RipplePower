@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 
 public class RPTradingToolsDialog extends JPanel {
 	/**
@@ -92,7 +93,8 @@ public class RPTradingToolsDialog extends JPanel {
 
 		setLayout(null);
 
-		pricemonitorButton.setText("Price Monitor");
+		pricemonitorButton.setText(LangConfig.get(this, "monitor",
+				"Price Monitor"));
 		pricemonitorButton.addActionListener(new ActionListener() {
 
 			@Override
