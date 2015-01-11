@@ -484,7 +484,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_delDataButton);
 		_delDataButton.setBounds(360, 590, 81, 40);
 
-		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "=", ">=",
+		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "==", ">=",
 				"<=" });
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(110, 480, 70, 30);

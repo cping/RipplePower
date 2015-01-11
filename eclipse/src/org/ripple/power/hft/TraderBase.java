@@ -1,6 +1,8 @@
 package org.ripple.power.hft;
 
-public abstract class TraderBase {
+import org.ripple.power.config.Loop;
+
+public abstract class TraderBase extends Loop {
 	
     public enum TradeType
     {

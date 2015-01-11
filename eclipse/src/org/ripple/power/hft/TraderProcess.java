@@ -9,7 +9,6 @@ import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.timer.LTimerContext;
-import org.ripple.power.timer.SystemTimer;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.AccountInfo;
 import org.ripple.power.txns.AccountLine;
@@ -19,7 +18,6 @@ import org.ripple.power.txns.RippleItem;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
-import org.ripple.power.utils.MathUtils;
 
 import com.ripple.core.coretypes.Amount;
 import com.ripple.core.types.known.sle.entries.Offer;
@@ -31,21 +29,6 @@ public class TraderProcess extends TraderBase {
 	private int orders_percent_filter = 1;
 
 	private ArrayList<Task> _HFT_tasks = new ArrayList<Task>(10);
-
-	private long _lastTimeMicros, _currTimeMicros, _goalTimeMicros,
-			_elapsedTimeMicros, _remainderMicros, _elapsedTime;
-
-	private long _maxFrames = 60;
-
-	private Thread _mainLoop = null;
-
-	private final Object _synch = new Object();
-
-	private final LTimerContext _timerContext = new LTimerContext();
-
-	private SystemTimer _timer;
-
-	private boolean _isRunning, _isPause, _isDestroy, _isResume;
 
 	public static enum Model {
 		CrazyBuyer, CrazySeller, Spreads, Script
@@ -454,25 +437,6 @@ public class TraderProcess extends TraderBase {
 		log("testing...");
 	}
 
-	public boolean isRunning() {
-		return _isRunning;
-	}
-
-	public boolean isPause() {
-		return _isPause;
-	}
-
-	public boolean isResume() {
-		return _isResume;
-	}
-
-	public boolean isDestroy() {
-		return _isDestroy;
-	}
-
-	public void setFPS(long frames) {
-		this._maxFrames = frames;
-	}
 
 	public ArrayList<Task> getAllSeller() {
 		ArrayList<Task> tasks = new ArrayList<Task>(10);
@@ -514,51 +478,8 @@ public class TraderProcess extends TraderBase {
 		return tasks;
 	}
 
-	private Updateable main() {
-		Updateable updateable = new Updateable() {
-
-			@Override
-			public void action(Object o) {
-
-				for (; _isRunning;) {
-					_goalTimeMicros = _lastTimeMicros + 1000000L / _maxFrames;
-					_currTimeMicros = _timer.sleepTimeMicros(_goalTimeMicros);
-					_elapsedTimeMicros = _currTimeMicros - _lastTimeMicros
-							+ _remainderMicros;
-					_elapsedTime = MathUtils
-							.max(0, (_elapsedTimeMicros / 1000));
-					_remainderMicros = _elapsedTimeMicros - _elapsedTime * 1000;
-					_lastTimeMicros = _currTimeMicros;
-					_timerContext.millisSleepTime = _remainderMicros;
-					_timerContext.timeSinceLastUpdate = _elapsedTime;
-					runTaskTimer(_timerContext);
-					if (_isPause) {
-						pause(500);
-					}
-				}
-
-			}
-		};
-		return updateable;
-	}
-
-	public void loop() {
-		_isRunning = true;
-		if (_timer == null) {
-			_timer = new SystemTimer();
-		}
-
-		if (_mainLoop == null) {
-			_mainLoop = new Thread() {
-				public void run() {
-					main().action(this);
-				}
-			};
-			_mainLoop.start();
-		}
-	}
-
-	private void runTaskTimer(LTimerContext context) {
+	@Override
+	public void runTaskTimer(LTimerContext context) {
 		int size = _HFT_tasks.size();
 		for (int i = 0; i < size; i++) {
 			Task task = _HFT_tasks.get(i);
@@ -566,56 +487,17 @@ public class TraderProcess extends TraderBase {
 
 		}
 	}
+	
+	@Override
+	public Updateable main() {
+		Updateable updateable = new Updateable() {
 
-	private final void pause(long sleep) {
-		try {
-			Thread.sleep(sleep);
-		} catch (InterruptedException ex) {
-		}
-	}
-
-	final void resume() {
-		synchronized (_synch) {
-			if (_isRunning || _mainLoop != null) {
-				_isRunning = false;
-				if (_mainLoop != null) {
-					_mainLoop.interrupt();
-					_mainLoop = null;
-				}
+			@Override
+			public void action(Object o) {
+				mainLoop();
 			}
-			_isRunning = true;
-			_isResume = true;
-			loop();
-		}
-	}
-
-	final void pause() {
-		synchronized (_synch) {
-			if (!_isRunning) {
-				return;
-			}
-			_isRunning = false;
-			_isPause = true;
-			while (_isPause) {
-				try {
-					_synch.wait(4000);
-				} catch (InterruptedException ignored) {
-				}
-			}
-		}
-	}
-
-	final void destroy() {
-		synchronized (_synch) {
-			_isRunning = false;
-			_isDestroy = true;
-			while (_isDestroy) {
-				try {
-					_synch.wait();
-				} catch (InterruptedException ex) {
-				}
-			}
-		}
+		};
+		return updateable;
 	}
 
 	public int getOrdersPercentFilter() {
