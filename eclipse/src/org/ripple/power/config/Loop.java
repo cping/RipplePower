@@ -10,7 +10,7 @@ public abstract class Loop {
 	private long _lastTimeMicros, _currTimeMicros, _goalTimeMicros,
 			_elapsedTimeMicros, _remainderMicros, _elapsedTime;
 
-	private long _maxFrames = 60;
+	private long _maxFrames = 30;
 
 	private Thread _mainLoop = null;
 
@@ -84,10 +84,25 @@ public abstract class Loop {
 				}
 			};
 			_mainLoop.start();
+		} else if (_mainLoop != null) {
+			_isRunning = false;
+			try {
+				_mainLoop.interrupt();
+				_mainLoop = null;
+			} catch (Exception ex) {
+			}
+			_isRunning = true;
+			_mainLoop = new Thread() {
+				public void run() {
+					main().action(this);
+				}
+			};
+			_mainLoop.start();
 		}
+
 	}
 
-	final void resume() {
+	public final void resume() {
 		synchronized (_synch) {
 			if (_isRunning || _mainLoop != null) {
 				_isRunning = false;
@@ -102,7 +117,7 @@ public abstract class Loop {
 		}
 	}
 
-	final void pause() {
+	public final void pause() {
 		synchronized (_synch) {
 			if (!_isRunning) {
 				return;
@@ -118,7 +133,11 @@ public abstract class Loop {
 		}
 	}
 
-	final void destroy() {
+	protected void stop() {
+		_isRunning = false;
+	}
+
+	public final void destroy() {
 		synchronized (_synch) {
 			_isRunning = false;
 			_isDestroy = true;

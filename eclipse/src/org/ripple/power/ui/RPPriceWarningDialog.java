@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
+import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
@@ -421,6 +422,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 					session.set("warn", json.toString());
 					session.save();
 					alert(UIMessage.save);
+					
+					PriceMonitor.get().reset();
 				}
 			}
 		});

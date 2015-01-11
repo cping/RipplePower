@@ -32,6 +32,7 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPClipboard;
+import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
@@ -688,6 +689,8 @@ public class MainPanel extends JPanel implements ActionListener {
 			ex.printStackTrace();
 
 		}
+		
+		PriceMonitor.get();
 
 	}
 

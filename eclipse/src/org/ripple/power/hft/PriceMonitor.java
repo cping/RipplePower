@@ -3,26 +3,42 @@ package org.ripple.power.hft;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Loop;
 import org.ripple.power.config.Session;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.IssuedCurrency;
+import org.ripple.power.txns.RippleMarket;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.RPBubbleDialog;
+import org.ripple.power.utils.DateUtils;
 
 public class PriceMonitor extends Loop {
 
+	private static PriceMonitor instance;
+
 	class PriceMonitorItem {
 
-		String gateway;
-
-		String currency;
+		IssuedCurrency currency;
 
 		LTimer delay;
 
+		double value;
+
 		String query;
 
+	}
+
+	public static PriceMonitor get() {
+		synchronized (PriceMonitor.class) {
+			if (instance == null) {
+				instance = new PriceMonitor();
+			}
+			return instance;
+		}
 	}
 
 	private final String[] querys = { ">", ">=", "<", "<=", "==" };
@@ -30,7 +46,13 @@ public class PriceMonitor extends Loop {
 	private ArrayList<PriceMonitor.PriceMonitorItem> loops = new ArrayList<PriceMonitor.PriceMonitorItem>(
 			10);
 
-	public PriceMonitor() {
+	private PriceMonitor() {
+		reset();
+	}
+
+	public void reset() {
+		stop();
+		loops.clear();
 		Session session = LSystem.session("check_price");
 		String result = session.get("warn");
 		if (result != null) {
@@ -64,15 +86,17 @@ public class PriceMonitor extends Loop {
 									String query = res.substring(0, empty);
 									idx = res.indexOf(",");
 									if (idx != -1) {
+										String value = res.substring(empty + 1,
+												idx);
 										String delay = res.substring(idx + 1,
 												res.length());
-
 										PriceMonitorItem item = new PriceMonitorItem();
-										item.currency = cur;
-										item.gateway = address;
+										item.currency = new IssuedCurrency(
+												address, cur);
 										item.delay = new LTimer(
 												Long.parseLong(delay));
 										item.query = query;
+										item.value = Double.valueOf(value);
 										loops.add(item);
 									}
 								}
@@ -83,14 +107,106 @@ public class PriceMonitor extends Loop {
 				}
 			}
 		}
+		if (loops.size() > 0) {
+			initCheck();
+			loop();
+		}
 	}
-
 
 	@Override
 	public void runTaskTimer(LTimerContext context) {
+		for (PriceMonitorItem item : loops) {
+			if (item.delay.action(context)) {
+				double value = -1;
+				Object result = RippleMarket.getExchange(item.currency);
+				if (result != null) {
+					if (result instanceof JSONArray) {
+						value = ((JSONArray) result).getJSONObject(0)
+								.getDouble("rate");
+					} else if (result instanceof JSONObject) {
+						value = ((JSONObject) result).getDouble("rate");
+					}
+				}
+				value = (1d / value) + 0.0006d;
+				switch (item.query) {
+				case ">":
+					if (value > item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case ">=":
+					if (value >= item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "<":
+					if (value < item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "<=":
+					if (value <= item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "==":
+					if (value == item.value) {
+						showPrice(item, value);
+					}
+					break;
+				default:
+					break;
+				}
 
+			}
+		}
 	}
-
+	
+	private void initCheck(){
+		for (PriceMonitorItem item : loops) {
+				double value = -1;
+				Object result = RippleMarket.getExchange(item.currency);
+				if (result != null) {
+					if (result instanceof JSONArray) {
+						value = ((JSONArray) result).getJSONObject(0)
+								.getDouble("rate");
+					} else if (result instanceof JSONObject) {
+						value = ((JSONObject) result).getDouble("rate");
+					}
+				}
+				value = (1d / value) + 0.0006d;
+				switch (item.query) {
+				case ">":
+					if (value > item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case ">=":
+					if (value >= item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "<":
+					if (value < item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "<=":
+					if (value <= item.value) {
+						showPrice(item, value);
+					}
+					break;
+				case "==":
+					if (value == item.value) {
+						showPrice(item, value);
+					}
+					break;
+				default:
+					break;
+				}
+		}
+	}
+	
 	@Override
 	public Updateable main() {
 		Updateable updateable = new Updateable() {
@@ -101,6 +217,16 @@ public class PriceMonitor extends Loop {
 			}
 		};
 		return updateable;
+	}
+
+	private void showPrice(PriceMonitorItem item, double value) {
+		RPBubbleDialog.pop("Price Monitor : " + DateUtils.toDate() + ", now "
+				+ Gateway.getGateway(item.currency.issuer.toString()).name
+				+ "/" + item.currency.currency + " convert 1/XRP == " + value);
+	}
+	
+	public static void main(String[]args){
+		PriceMonitor.get();
 	}
 
 }
