@@ -1,12 +1,14 @@
 package org.ripple.power.ui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.i18n.LangConfig;
 
 public class RPPayPortDialog extends JPanel {
 
@@ -60,16 +62,18 @@ public class RPPayPortDialog extends JPanel {
 		setPreferredSize(dim);
 		setSize(dim);
 
+		Font font = new Font(LangConfig.getFontName(),1,20);
+		
         _toBtcButton = new RPCButton();
-        _toBtcButton.setFont(UIRes.getFont());
+        _toBtcButton.setFont(font);
         _toBankButton = new RPCButton();
-        _toBankButton.setFont(UIRes.getFont());
+        _toBankButton.setFont(font);
         _toAlipayButton = new RPCButton();
-        _toAlipayButton.setFont(UIRes.getFont());
+        _toAlipayButton.setFont(font);
         _toGoogleButton = new RPCButton();
-        _toGoogleButton.setFont(UIRes.getFont());
+        _toGoogleButton.setFont(font);
         _toAppletButton = new RPCButton();
-        _toAppletButton.setFont(UIRes.getFont());
+        _toAppletButton.setFont(font);
 
         _toBtcButton.setText("Btc2Ripple(~snapswap)");
 
