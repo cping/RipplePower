@@ -1227,6 +1227,7 @@ public final class LSystem {
 			return null;
 		}
 		password = password.trim();
+		LSystem.applicationPassword = password;
 		byte[] buffer = null;
 		try {
 			buffer = password.getBytes(LSystem.encoding);

@@ -173,19 +173,7 @@ public class WalletCryptos {
 		try {
 			SecretKeySpec key = getKey(passphrase);
 			return decrypt(key, ciphertext);
-		} catch (NoSuchAlgorithmException t) {
-			throw new DecryptException(t);
-		} catch (InvalidKeyException t) {
-			throw new DecryptException(t);
-		} catch (IllegalBlockSizeException t) {
-			throw new DecryptException(t);
-		} catch (BadPaddingException t) {
-			throw new DecryptException(t);
-		} catch (NoSuchPaddingException t) {
-			throw new DecryptException(t);
-		} catch (InvalidKeySpecException t) {
-			throw new DecryptException(t);
-		} catch (UnsupportedEncodingException t) {
+		} catch (Exception t) {
 			throw new DecryptException(t);
 		}
 	}
