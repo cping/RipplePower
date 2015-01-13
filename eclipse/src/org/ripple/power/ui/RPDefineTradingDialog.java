@@ -1,5 +1,11 @@
 package org.ripple.power.ui;
 
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
+
+import org.ripple.power.helper.HelperWindow;
+
 public class RPDefineTradingDialog extends ABaseDialog{
 
 	/**
@@ -50,7 +56,29 @@ public class RPDefineTradingDialog extends ABaseDialog{
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    
+
+	public static void showDialog(String text, Window parent) {
+		try {
+			RPDefineTradingDialog dialog = new RPDefineTradingDialog(text, parent);
+			dialog.pack();
+			dialog.setLocationRelativeTo(parent);
+			dialog.setVisible(true);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+
+	public RPDefineTradingDialog(String text, Window parent) {
+		super(parent, text, ModalityType.DOCUMENT_MODAL);
+		this.addWindowListener(HelperWindow.get());
+		this.setIconImage(UIRes.getIcon());
+		this.setResizable(false);
+		Dimension dim = new Dimension(665, 680);
+		this.setPreferredSize(dim);
+		this.setSize(dim);
+		this.initComponents();
+	}
+	
     private void initComponents() {
 
         _intervalTimeLabel = new javax.swing.JLabel();
