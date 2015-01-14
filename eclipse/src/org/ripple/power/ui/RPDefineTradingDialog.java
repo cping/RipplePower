@@ -14,7 +14,7 @@ public class RPDefineTradingDialog extends ABaseDialog{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-    private RPCButton _addDataButton;
+    private RPCButton _scriptButton;
     private RPCButton _addDataButton1;
     private RPCButton _addDataButton2;
     private RPLabel _dstCurLabel;
@@ -41,25 +41,25 @@ public class RPDefineTradingDialog extends ABaseDialog{
     private RPComboBox _typeSelectComboBox4;
     private RPComboBox _typeSelectComboBox5;
     private RPComboBox _typeSelectComboBox6;
-    private RPLabel _xrpPriceLabel;
+    private RPLabel _parameterLabel;
     private RPLabel _xrpPriceLabel1;
     private RPLabel _xrpPriceLabel2;
-    private RPLabel _xrpPriceLabel3;
-    private RPLabel _xrpPriceLabel4;
-    private RPLabel _xrpPriceLabel5;
-    private RPLabel _xrpPriceLabel6;
-    private RPLabel _xrpPriceLabel7;
+    private RPLabel _stopLabel;
+    private RPLabel _swapLabel;
+    private RPLabel _sellCurLabel;
+    private RPLabel _startLabel;
+    private RPLabel _tacticsLabel;
     private RPTextBox _xrpPriceText;
     private RPTextBox _xrpPriceText1;
     private RPTextBox _xrpPriceText2;
     private RPTextBox _xrpPriceText3;
-    private RPLabel jLabel10;
-    private RPLabel jLabel8;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
+    private RPLabel _xrpFlagLabel;
+    private RPLabel _msLabel;
+    private javax.swing.JScrollPane scrollPanelOne;
+    private javax.swing.JScrollPane scrollPanelTwo;
+    private javax.swing.JScrollPane scrollPanelThree;
+    private javax.swing.JScrollPane scrollPanelFour;
+    private javax.swing.JScrollPane scrollPanelFive;
 	public static void showDialog(String text, Window parent) {
 		try {
 			RPDefineTradingDialog dialog = new RPDefineTradingDialog(text, parent);
@@ -84,17 +84,17 @@ public class RPDefineTradingDialog extends ABaseDialog{
 	
     private void initComponents() {
         _intervalTimeLabel = new RPLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scrollPanelOne = new javax.swing.JScrollPane();
         _existCurList = new RPList();
         _finalSetLabel = new RPLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        scrollPanelTwo = new javax.swing.JScrollPane();
         _dstCurList = new RPList();
         _moveCurButton = new RPCButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        scrollPanelThree = new javax.swing.JScrollPane();
         _existGatewayList = new RPList();
         _existGatewayLabel = new RPLabel();
         _dstGatewayLabel = new RPLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
+        scrollPanelFour = new javax.swing.JScrollPane();
         _dstGatewayList = new RPList();
         _moveGatewayButton = new RPCButton();
         _existCurLabel = new RPLabel();
@@ -102,32 +102,32 @@ public class RPDefineTradingDialog extends ABaseDialog{
         _gatewayAndCurLabel = new RPLabel();
         _xrpPriceText = new RPTextBox();
         _gatewayAndCurComboBox = new RPComboBox();
-        jScrollPane5 = new javax.swing.JScrollPane();
+        scrollPanelFive = new javax.swing.JScrollPane();
         _finalSetList = new RPList();
         _dstCurLabel = new RPLabel();
-        jLabel8 = new RPLabel();
-        _xrpPriceLabel = new RPLabel();
-        jLabel10 = new RPLabel();
+        _msLabel = new RPLabel();
+        _parameterLabel = new RPLabel();
+        _xrpFlagLabel = new RPLabel();
         _saveDataButton = new RPCButton();
-        _addDataButton = new RPCButton();
+        _scriptButton = new RPCButton();
         _typeSelectComboBox = new RPComboBox();
         _xrpPriceLabel1 = new RPLabel();
         _typeSelectComboBox1 = new RPComboBox();
         _xrpPriceLabel2 = new RPLabel();
         _xrpPriceText1 = new RPTextBox();
         _typeSelectComboBox2 = new RPComboBox();
-        _xrpPriceLabel3 = new RPLabel();
-        _xrpPriceLabel4 = new RPLabel();
+        _stopLabel = new RPLabel();
+        _swapLabel = new RPLabel();
         _typeSelectComboBox3 = new RPComboBox();
-        _xrpPriceLabel5 = new RPLabel();
+        _sellCurLabel = new RPLabel();
         _xrpPriceText2 = new RPTextBox();
         _addDataButton1 = new RPCButton();
         _addDataButton2 = new RPCButton();
-        _xrpPriceLabel6 = new RPLabel();
+        _startLabel = new RPLabel();
         _typeSelectComboBox4 = new RPComboBox();
         _xrpPriceText3 = new RPTextBox();
         _typeSelectComboBox5 = new RPComboBox();
-        _xrpPriceLabel7 = new RPLabel();
+        _tacticsLabel = new RPLabel();
         _typeSelectComboBox6 = new RPComboBox();
 
         getContentPane().setLayout(null);
@@ -142,10 +142,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(_existCurList);
+        scrollPanelOne.setViewportView(_existCurList);
 
-        getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(20, 150, 260, 100);
+        getContentPane().add(scrollPanelOne);
+        scrollPanelOne.setBounds(20, 150, 260, 100);
 
         _finalSetLabel.setFont(UIRes.getFont()); // NOI18N
         _finalSetLabel.setText("最终设置");
@@ -157,10 +157,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(_dstCurList);
+        scrollPanelTwo.setViewportView(_dstCurList);
 
-        getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(370, 150, 270, 100);
+        getContentPane().add(scrollPanelTwo);
+        scrollPanelTwo.setBounds(370, 150, 270, 100);
 
         _moveCurButton.setText(">>");
         getContentPane().add(_moveCurButton);
@@ -171,10 +171,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane3.setViewportView(_existGatewayList);
+        scrollPanelThree.setViewportView(_existGatewayList);
 
-        getContentPane().add(jScrollPane3);
-        jScrollPane3.setBounds(20, 40, 260, 80);
+        getContentPane().add(scrollPanelThree);
+        scrollPanelThree.setBounds(20, 40, 260, 80);
 
         _existGatewayLabel.setFont(UIRes.getFont()); // NOI18N
         _existGatewayLabel.setText("已有网关");
@@ -191,10 +191,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane4.setViewportView(_dstGatewayList);
+        scrollPanelFour.setViewportView(_dstGatewayList);
 
-        getContentPane().add(jScrollPane4);
-        jScrollPane4.setBounds(370, 40, 270, 80);
+        getContentPane().add(scrollPanelFour);
+        scrollPanelFour.setBounds(370, 40, 270, 80);
 
         _moveGatewayButton.setText(">>");
         getContentPane().add(_moveGatewayButton);
@@ -228,30 +228,30 @@ public class RPDefineTradingDialog extends ABaseDialog{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane5.setViewportView(_finalSetList);
+        scrollPanelFive.setViewportView(_finalSetList);
 
-        getContentPane().add(jScrollPane5);
-        jScrollPane5.setBounds(100, 510, 540, 80);
+        getContentPane().add(scrollPanelFive);
+        scrollPanelFive.setBounds(100, 510, 540, 80);
 
         _dstCurLabel.setFont(UIRes.getFont()); // NOI18N
         _dstCurLabel.setText("目标币种");
         getContentPane().add(_dstCurLabel);
         _dstCurLabel.setBounds(370, 120, 70, 30);
 
-        jLabel8.setFont(UIRes.getFont()); // NOI18N
-        jLabel8.setText("MS");
-        getContentPane().add(jLabel8);
-        jLabel8.setBounds(310, 460, 30, 30);
+        _msLabel.setFont(UIRes.getFont()); // NOI18N
+        _msLabel.setText("MS");
+        getContentPane().add(_msLabel);
+        _msLabel.setBounds(310, 460, 30, 30);
 
-        _xrpPriceLabel.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel.setText("参数");
-        getContentPane().add(_xrpPriceLabel);
-        _xrpPriceLabel.setBounds(360, 410, 60, 30);
+        _parameterLabel.setFont(UIRes.getFont()); // NOI18N
+        _parameterLabel.setText("参数");
+        getContentPane().add(_parameterLabel);
+        _parameterLabel.setBounds(360, 410, 60, 30);
 
-        jLabel10.setFont(UIRes.getFont()); // NOI18N
-        jLabel10.setText("XRP");
-        getContentPane().add(jLabel10);
-        jLabel10.setBounds(620, 260, 30, 30);
+        _xrpFlagLabel.setFont(UIRes.getFont()); // NOI18N
+        _xrpFlagLabel.setText("XRP");
+        getContentPane().add(_xrpFlagLabel);
+        _xrpFlagLabel.setBounds(620, 260, 30, 30);
 
         _typeSelectComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(_typeSelectComboBox);
@@ -284,29 +284,29 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_saveDataButton);
         _saveDataButton.setBounds(560, 610, 81, 40);
 
-        _addDataButton.setText("高级策略(脚本编辑)");
-        _addDataButton.setFont(UIRes.getFont());
-        getContentPane().add(_addDataButton);
-        _addDataButton.setBounds(20, 610, 230, 40);
+        _scriptButton.setText("高级策略(脚本编辑)");
+        _scriptButton.setFont(UIRes.getFont());
+        getContentPane().add(_scriptButton);
+        _scriptButton.setBounds(20, 610, 230, 40);
 
-        _xrpPriceLabel3.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel3.setText("停止条件");
-        getContentPane().add(_xrpPriceLabel3);
-        _xrpPriceLabel3.setBounds(20, 410, 80, 30);
+        _stopLabel.setFont(UIRes.getFont()); // NOI18N
+        _stopLabel.setText("停止条件");
+        getContentPane().add(_stopLabel);
+        _stopLabel.setBounds(20, 410, 80, 30);
 
-        _xrpPriceLabel4.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel4.setText("交换");
-        getContentPane().add(_xrpPriceLabel4);
-        _xrpPriceLabel4.setBounds(360, 360, 60, 30);
+        _swapLabel.setFont(UIRes.getFont()); // NOI18N
+        _swapLabel.setText("交换");
+        getContentPane().add(_swapLabel);
+        _swapLabel.setBounds(360, 360, 60, 30);
 
         _typeSelectComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(_typeSelectComboBox3);
         _typeSelectComboBox3.setBounds(100, 310, 110, 30);
 
-        _xrpPriceLabel5.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel5.setText("使用货币");
-        getContentPane().add(_xrpPriceLabel5);
-        _xrpPriceLabel5.setBounds(20, 360, 70, 30);
+        _sellCurLabel.setFont(UIRes.getFont()); // NOI18N
+        _sellCurLabel.setText("使用货币");
+        getContentPane().add(_sellCurLabel);
+        _sellCurLabel.setBounds(20, 360, 70, 30);
 
         _xrpPriceText2.setFont(UIRes.getFont()); // NOI18N
         getContentPane().add(_xrpPriceText2);
@@ -322,10 +322,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_addDataButton2);
         _addDataButton2.setBounds(360, 610, 81, 40);
 
-        _xrpPriceLabel6.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel6.setText("条件");
-        getContentPane().add(_xrpPriceLabel6);
-        _xrpPriceLabel6.setBounds(360, 310, 60, 30);
+        _startLabel.setFont(UIRes.getFont()); // NOI18N
+        _startLabel.setText("条件");
+        getContentPane().add(_startLabel);
+        _startLabel.setBounds(360, 310, 60, 30);
 
         _typeSelectComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(_typeSelectComboBox4);
@@ -339,10 +339,10 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_typeSelectComboBox5);
         _typeSelectComboBox5.setBounds(270, 360, 70, 30);
 
-        _xrpPriceLabel7.setFont(UIRes.getFont()); // NOI18N
-        _xrpPriceLabel7.setText("交易策略");
-        getContentPane().add(_xrpPriceLabel7);
-        _xrpPriceLabel7.setBounds(20, 310, 80, 30);
+        _tacticsLabel.setFont(UIRes.getFont()); // NOI18N
+        _tacticsLabel.setText("交易策略");
+        getContentPane().add(_tacticsLabel);
+        _tacticsLabel.setBounds(20, 310, 80, 30);
 
         _typeSelectComboBox6.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(_typeSelectComboBox6);
