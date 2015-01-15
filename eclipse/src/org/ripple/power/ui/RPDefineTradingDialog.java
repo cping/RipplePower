@@ -3,6 +3,7 @@ package org.ripple.power.ui;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.Dialog.ModalityType;
+import java.util.ArrayList;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPConfig;
@@ -60,6 +61,15 @@ public class RPDefineTradingDialog extends ABaseDialog{
     private javax.swing.JScrollPane scrollPanelThree;
     private javax.swing.JScrollPane scrollPanelFour;
     private javax.swing.JScrollPane scrollPanelFive;
+    
+
+	private ArrayList<String> gatewaylist = new ArrayList<String>();
+
+	private ArrayList<String> curSelectlist = new ArrayList<String>();
+	private ArrayList<String> gatewaySelectlist = new ArrayList<String>();
+
+	private ArrayList<String> finallist = new ArrayList<String>();
+    
 	public static void showDialog(String text, Window parent) {
 		try {
 			RPDefineTradingDialog dialog = new RPDefineTradingDialog(text, parent);

@@ -56,11 +56,11 @@ public class RPPriceWarningDialog extends ABaseDialog {
 
 	private ArrayList<String> finallist = new ArrayList<String>();
 
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JScrollPane jScrollPane3;
-	private javax.swing.JScrollPane jScrollPane4;
-	private javax.swing.JScrollPane jScrollPane5;
+	private javax.swing.JScrollPane scrollPanelOne;
+	private javax.swing.JScrollPane scrollPanelTwo;
+	private javax.swing.JScrollPane scrollPanelThree;
+	private javax.swing.JScrollPane scrollPanelFour;
+	private javax.swing.JScrollPane scrollPanelFive;
 
 	public static void showDialog(String text, Window parent) {
 		try {
@@ -189,19 +189,19 @@ public class RPPriceWarningDialog extends ABaseDialog {
 	private void initComponents() {
 
 		_intervalTimeLabel = new RPLabel();
-		jScrollPane1 = new javax.swing.JScrollPane();
+		scrollPanelOne = new javax.swing.JScrollPane();
 		_existCurList = new RPList();
 		_finalSetLabel = new RPLabel();
-		jScrollPane2 = new javax.swing.JScrollPane();
+		scrollPanelTwo = new javax.swing.JScrollPane();
 		_dstCurList = new RPList();
 		_moveCurButton = new RPCButton();
 		_moveDelCurButton = new RPCButton();
 		_delDataButton = new RPCButton();
-		jScrollPane3 = new javax.swing.JScrollPane();
+		scrollPanelThree = new javax.swing.JScrollPane();
 		_existGatewayList = new RPList();
 		_existGatewayLabel = new RPLabel();
 		_dstGatewayLabel = new RPLabel();
-		jScrollPane4 = new javax.swing.JScrollPane();
+		scrollPanelFour = new javax.swing.JScrollPane();
 		_dstGatewayList = new RPList();
 		_moveGatewayButton = new RPCButton();
 		_moveDelGatewayButton = new RPCButton();
@@ -210,7 +210,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_gatewayAndCurLabel = new RPLabel();
 		_xrpPriceText = new RPTextBox();
 		_gatewayAndCurComboBox = new RPComboBox();
-		jScrollPane5 = new javax.swing.JScrollPane();
+		scrollPanelFive = new javax.swing.JScrollPane();
 		_finalSetList = new RPList();
 		_dstCurLabel = new RPLabel();
 		_xrpPriceLabel = new RPLabel();
@@ -229,20 +229,20 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_intervalTimeLabel);
 		_intervalTimeLabel.setBounds(20, 530, 80, 30);
 
-		jScrollPane1.setViewportView(_existCurList);
+		scrollPanelOne.setViewportView(_existCurList);
 
-		getContentPane().add(jScrollPane1);
-		jScrollPane1.setBounds(20, 230, 260, 140);
+		getContentPane().add(scrollPanelOne);
+		scrollPanelOne.setBounds(20, 230, 260, 140);
 
 		_finalSetLabel.setFont(UIRes.getFont()); // NOI18N
 		_finalSetLabel.setText(UIMessage.fs);
 		getContentPane().add(_finalSetLabel);
 		_finalSetLabel.setBounds(370, 380, 150, 30);
 
-		jScrollPane2.setViewportView(_dstCurList);
+		scrollPanelTwo.setViewportView(_dstCurList);
 
-		getContentPane().add(jScrollPane2);
-		jScrollPane2.setBounds(370, 230, 270, 138);
+		getContentPane().add(scrollPanelTwo);
+		scrollPanelTwo.setBounds(370, 230, 270, 138);
 
 		_moveCurButton.setText(">>");
 		_moveCurButton.addActionListener(new ActionListener() {
@@ -287,10 +287,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_moveDelCurButton);
 		_moveDelCurButton.setBounds(300, 290, 50, 50);
 
-		jScrollPane3.setViewportView(_existGatewayList);
+		scrollPanelThree.setViewportView(_existGatewayList);
 
-		getContentPane().add(jScrollPane3);
-		jScrollPane3.setBounds(20, 50, 260, 140);
+		getContentPane().add(scrollPanelThree);
+		scrollPanelThree.setBounds(20, 50, 260, 140);
 
 		_existGatewayLabel.setFont(UIRes.getFont()); // NOI18N
 		_existGatewayLabel.setText(LangConfig.get(this, "eg",
@@ -303,10 +303,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_dstGatewayLabel);
 		_dstGatewayLabel.setBounds(370, 20, 150, 30);
 
-		jScrollPane4.setViewportView(_dstGatewayList);
+		scrollPanelFour.setViewportView(_dstGatewayList);
 
-		getContentPane().add(jScrollPane4);
-		jScrollPane4.setBounds(370, 50, 270, 140);
+		getContentPane().add(scrollPanelFour);
+		scrollPanelFour.setBounds(370, 50, 270, 140);
 
 		_moveGatewayButton.setText(">>");
 		_moveGatewayButton.addActionListener(new ActionListener() {
@@ -382,10 +382,10 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setBounds(20, 420, 330, 30);
 
-		jScrollPane5.setViewportView(_finalSetList);
+		scrollPanelFive.setViewportView(_finalSetList);
 
-		getContentPane().add(jScrollPane5);
-		jScrollPane5.setBounds(370, 420, 270, 150);
+		getContentPane().add(scrollPanelFive);
+		scrollPanelFive.setBounds(370, 420, 270, 150);
 
 		_dstCurLabel.setFont(UIRes.getFont()); // NOI18N
 		_dstCurLabel.setText(LangConfig.get(this, "tc", "Target Currency"));
