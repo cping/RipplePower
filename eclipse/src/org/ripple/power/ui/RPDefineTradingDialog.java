@@ -4,10 +4,15 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPConfig;
+import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
+import org.ripple.power.txns.Currencies;
+import org.ripple.power.txns.Gateway;
 
 public class RPDefineTradingDialog extends ABaseDialog{
 
@@ -61,7 +66,8 @@ public class RPDefineTradingDialog extends ABaseDialog{
     private javax.swing.JScrollPane scrollPanelThree;
     private javax.swing.JScrollPane scrollPanelFour;
     private javax.swing.JScrollPane scrollPanelFive;
-    
+
+	private ArrayList<String> curlist = new ArrayList<String>();
 
 	private ArrayList<String> gatewaylist = new ArrayList<String>();
 
@@ -90,6 +96,94 @@ public class RPDefineTradingDialog extends ABaseDialog{
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();
+	}
+
+	private void init() {
+
+		final List<String> curstrings = Gateway.currencies();
+
+		curlist.addAll(curstrings);
+
+		_dstCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return curSelectlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				String result = Currencies.name(curSelectlist.get(i));
+				return result != null ? result : curSelectlist.get(i);
+			}
+		});
+		_existCurList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return curlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				String result = Currencies.name(curlist.get(i));
+				return result != null ? result : curlist.get(i);
+			}
+		});
+
+		_dstGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaySelectlist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaySelectlist.get(i);
+			}
+		});
+
+		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
+		gatewaylist.addAll(gatewaystrings);
+
+		_existGatewayList.setModel(new javax.swing.AbstractListModel<Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return gatewaylist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return gatewaylist.get(i);
+			}
+		});
+
+		Session session = LSystem.session("check_price");
+		String result = session.get("warn");
+		if (result != null) {
+			JSONArray json = new JSONArray(result);
+			for (int i = 0; i < json.length(); i++) {
+				finallist.add(json.getString(i));
+			}
+		}
+		_finalSetList.setModel(new javax.swing.AbstractListModel<Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			public int getSize() {
+				return finallist.size();
+			}
+
+			public Object getElementAt(int i) {
+				return finallist.get(i);
+			}
+		});
 	}
 	
     private void initComponents() {
