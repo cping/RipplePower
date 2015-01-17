@@ -96,6 +96,7 @@ public class RPDefineTradingDialog extends ABaseDialog{
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();
+	
 	}
 
 	private void init() {
@@ -236,16 +237,13 @@ public class RPDefineTradingDialog extends ABaseDialog{
 
         getContentPane().setLayout(null);
 
+    	this.init() ;
+        
         _intervalTimeLabel.setFont(UIRes.getFont()); // NOI18N
         _intervalTimeLabel.setText("刷新间隔");
         getContentPane().add(_intervalTimeLabel);
         _intervalTimeLabel.setBounds(20, 460, 80, 30);
 
-        _existCurList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         scrollPanelOne.setViewportView(_existCurList);
 
         getContentPane().add(scrollPanelOne);
@@ -256,11 +254,6 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_finalSetLabel);
         _finalSetLabel.setBounds(20, 510, 70, 30);
 
-        _dstCurList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         scrollPanelTwo.setViewportView(_dstCurList);
 
         getContentPane().add(scrollPanelTwo);
@@ -270,11 +263,6 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_moveCurButton);
         _moveCurButton.setBounds(300, 150, 50, 50);
 
-        _existGatewayList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         scrollPanelThree.setViewportView(_existGatewayList);
 
         getContentPane().add(scrollPanelThree);
@@ -290,11 +278,6 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_dstGatewayLabel);
         _dstGatewayLabel.setBounds(370, 10, 70, 30);
 
-        _dstGatewayList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         scrollPanelFour.setViewportView(_dstGatewayList);
 
         getContentPane().add(scrollPanelFour);
@@ -327,11 +310,7 @@ public class RPDefineTradingDialog extends ABaseDialog{
         getContentPane().add(_gatewayAndCurComboBox);
         _gatewayAndCurComboBox.setBounds(100, 260, 240, 30);
 
-        _finalSetList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+       
         scrollPanelFive.setViewportView(_finalSetList);
 
         getContentPane().add(scrollPanelFive);
