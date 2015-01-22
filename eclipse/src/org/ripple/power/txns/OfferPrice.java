@@ -19,7 +19,7 @@ import java.math.MathContext;
 import java.util.ArrayList;
 
 public abstract class OfferPrice {
-	
+
 	public static boolean isSellOrder(long flag) {
 		return (flag & 0x00020000) > 0;
 	}
@@ -215,6 +215,32 @@ public abstract class OfferPrice {
 		if (ripple != null) {
 			Issue buy = account.issue(buyCurName);
 			Issue sell = account.issue(sellCurName);
+			load(ripple.getClinet(), buy, sell, price, html);
+		}
+	}
+
+	public static void load(IssuedCurrency buy, IssuedCurrency sell,
+			OfferPrice price) {
+		load(buy, sell, price, true);
+	}
+
+	public static void load(IssuedCurrency buy, IssuedCurrency sell,
+			OfferPrice price, boolean html) {
+		RPClient ripple = RPClient.ripple();
+		if (ripple != null) {
+			load(ripple.getClinet(), buy.getIssue(), sell.getIssue(), price,
+					html);
+		}
+	}
+
+	public static void load(Issue buy, Issue sell, OfferPrice price) {
+		load(buy, sell, price, true);
+	}
+
+	public static void load(Issue buy, Issue sell, OfferPrice price,
+			boolean html) {
+		RPClient ripple = RPClient.ripple();
+		if (ripple != null) {
 			load(ripple.getClinet(), buy, sell, price, html);
 		}
 	}

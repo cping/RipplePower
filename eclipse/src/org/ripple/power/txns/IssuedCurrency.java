@@ -13,6 +13,7 @@ import org.ripple.power.utils.StringUtils;
 import com.ripple.core.coretypes.AccountID;
 import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.Currency;
+import com.ripple.core.coretypes.Issue;
 
 public class IssuedCurrency {
 
@@ -300,5 +301,11 @@ public class IssuedCurrency {
 		}
 		return new Amount(amount);
 	}
-
+	
+	public Issue getIssue() {
+		if (issuer != null && currency != null) {
+			return new Issue(Currency.fromString(currency),AccountID.fromAddress(issuer.toString()));
+		}
+		return null;
+	}
 }
