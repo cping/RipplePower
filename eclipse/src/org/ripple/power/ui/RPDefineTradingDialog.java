@@ -16,6 +16,7 @@ import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.utils.GraphicsUtils;
 
 public class RPDefineTradingDialog extends ABaseDialog {
 
@@ -414,10 +415,9 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceText);
 		_xrpPriceText.setBounds(420, 410, 190, 30);
 
-		_gatewayAndCurComboBox.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_gatewayAndCurComboBox.setFont(GraphicsUtils.getFont(12)); // NOI18N
 		getContentPane().add(_gatewayAndCurComboBox);
+		_gatewayAndCurComboBox.setItemModel(new Object[]{"Emprt"});
 		_gatewayAndCurComboBox.setBounds(100, 260, 240, 30);
 
 		scrollPanelFive.setViewportView(_finalSetList);

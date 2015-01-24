@@ -160,7 +160,7 @@ public class RPTradingToolsDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://support.ripplelabs.com/hc/en-us/articles/202964876-Activating-Your-Wallet");
+				LSystem.openURL("https://ripple.com/knowledge_center/activating-your-wallet/");
 			}
 		});
 		jButton9.setBounds(20, 390, 170, 67);
