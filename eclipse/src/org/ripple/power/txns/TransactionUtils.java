@@ -25,13 +25,15 @@ import com.ripple.crypto.ecdsa.Seed;
 
 public class TransactionUtils {
 
-	public  final static void submitBlob(final RippleSeedAddress seed, final Transaction txn,
-			final String fee, final long sequence, final Rollback back)
-			throws Exception {
+	public final static void submitBlob(final RippleSeedAddress seed,
+			final Transaction txn, final String fee, final long sequence,
+			final Rollback back) throws Exception {
 		IKeyPair keyPair = Seed.getKeyPair(seed.getPrivateKey());
 		VariableLength pubKey = new VariableLength(keyPair.pubBytes());
 		txn.put(UInt32.Sequence, new UInt32(sequence));
-		txn.put(Amount.Fee, Amount.fromString(fee));
+		if (fee != null) {
+			txn.put(Amount.Fee, Amount.fromString(fee));
+		}
 		txn.put(VariableLength.SigningPubKey, pubKey);
 		Hash256 signingHash = txn.signingHash();
 		VariableLength signature = new VariableLength(keyPair.sign(signingHash

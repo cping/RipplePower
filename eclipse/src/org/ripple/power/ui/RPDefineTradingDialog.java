@@ -2,7 +2,6 @@ package org.ripple.power.ui;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.RPConfig;
 import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.txns.Currencies;
@@ -419,7 +417,6 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_gatewayAndCurComboBox);
 		_gatewayAndCurComboBox.setItemModel(new Object[]{"Emprt"});
 		_gatewayAndCurComboBox.setBounds(100, 260, 240, 30);
-
 		scrollPanelFive.setViewportView(_finalSetList);
 
 		getContentPane().add(scrollPanelFive);
@@ -445,8 +442,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpFlagLabel);
 		_xrpFlagLabel.setBounds(620, 260, 30, 30);
 
-		_typeSelectComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox.setItemModel(new Object[]{"UP ?% DOWN ?%"});
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(420, 310, 230, 30);
 
@@ -455,8 +451,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceLabel1);
 		_xrpPriceLabel1.setBounds(220, 310, 50, 30);
 
-		_typeSelectComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox1.setItemModel(new Object[]{">",">=","<","<=","=="});
 		getContentPane().add(_typeSelectComboBox1);
 		_typeSelectComboBox1.setBounds(420, 260, 60, 30);
 
@@ -469,8 +464,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceText1);
 		_xrpPriceText1.setBounds(490, 260, 120, 30);
 
-		_typeSelectComboBox2.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox2.setItemModel(new Object[]{"? > ?"});
 		getContentPane().add(_typeSelectComboBox2);
 		_typeSelectComboBox2.setBounds(100, 410, 240, 30);
 
@@ -494,8 +488,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_swapLabel);
 		_swapLabel.setBounds(360, 360, 60, 30);
 
-		_typeSelectComboBox3.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox3.setItemModel(new Object[]{"SELL","BUY"});
 		getContentPane().add(_typeSelectComboBox3);
 		_typeSelectComboBox3.setBounds(100, 310, 110, 30);
 
@@ -523,8 +516,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_startLabel);
 		_startLabel.setBounds(360, 310, 60, 30);
 
-		_typeSelectComboBox4.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox4.setItemModel(new Object[]{"USD"});
 		getContentPane().add(_typeSelectComboBox4);
 		_typeSelectComboBox4.setBounds(270, 310, 70, 30);
 
@@ -532,8 +524,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceText3);
 		_xrpPriceText3.setBounds(100, 360, 160, 30);
 
-		_typeSelectComboBox5.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox5.setItemModel(new Object[]{"USD"});
 		getContentPane().add(_typeSelectComboBox5);
 		_typeSelectComboBox5.setBounds(270, 360, 70, 30);
 
@@ -542,8 +533,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_tacticsLabel);
 		_tacticsLabel.setBounds(20, 310, 80, 30);
 
-		_typeSelectComboBox6.setModel(new javax.swing.DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+		_typeSelectComboBox6.setItemModel(new Object[]{"USD"});
 		getContentPane().add(_typeSelectComboBox6);
 		_typeSelectComboBox6.setBounds(570, 360, 80, 30);
 
