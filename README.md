@@ -1,4 +1,6 @@
-﻿# Ripple Desktop Client (100% Java)
+﻿Please see [XRPMoon.com](http://www.xrpmoon.com/blog) for downloads, build and installation instructions and other documentation.
+
+# Ripple Desktop Client (100% Java)
 
 RipplePower is a Simplified Payment Ripple desktop client , This is a general purpose Ripple client in Java that targets HTML5 browsers (via GWT), desktop JavaSE, Android and iOS and WP devices.
 
