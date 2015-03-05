@@ -1468,7 +1468,7 @@ var rippleset =  window.rippleset || {
 				'tenpay'	: 	{icon: "resource/tenpay.png", name:"财付通", desc: "财付通讨赏",url:"", className:""},
 				'weixin'	: 	{icon: "resource/weixin.png", name:"微信", desc: "微信讨赏",url:"", className:""},
 	            'dogecoin'	:   {icon: "resource/dogecoin.png", name:"Dogecoin", desc: "狗狗币讨赏",url:"", className:""},
-				'bitcoin'	:   {icon: "resource/bitcoin.png", name:"Bitcoin", desc: "比特币讨赏",url:"", className:""},
+				'bitcoin'	:   {icon: "resource/bitcoin.png", name:"Bitcoin", desc: "比特币讨赏",url:"", className:""}
 	},
 
 	ripplepage : null,
@@ -1631,6 +1631,19 @@ var rippleset =  window.rippleset || {
 									obj = {className: "ripplepage-account"};
 									obj[rippleUtils.getTextKey()] = rippleset.currentData.desc || rippleset.currentData.name;
 									var ripplepageAccount = rippleUtils.createElement(obj, "p", this.ripplepageUbox);
+
+									var curURL = rippleset.currentData.url;
+									if(curURL != null && curURL.length != 0 && curURL != ""){
+											obj = {};
+											obj[rippleUtils.getTextKey()] = curURL;
+											rippleUtils.createElement({}, "br", ripplepageAccount);
+                                        var a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
+											a.target = '_black';
+											a.style.color = 'green';
+											a.href = rippleset.currentData.url;
+											a.style.fontWeight = 'bold';
+									}
+
 								}else if(rippleset.currentData.hasOwnProperty('account')){
 									 rippleUtils.generateQR({
 											render  : rippleUtils.isSupportCanvas() ? "canvas" : "table",
@@ -1643,22 +1656,26 @@ var rippleset =  window.rippleset || {
 									obj = {};
 									obj[rippleUtils.getTextKey()] = rippleset.currentData.account;
 									rippleUtils.createElement({}, "br", ripplepageAccount);
-									if(rippleset.currentData.url == null || rippleset.currentData.url.length == 0 || rippleset.currentData.url == ""){
+									var curURL = rippleset.currentData.url;
+									if(curURL == null || curURL.length == 0 || curURL == ""){
 											if(rippleset.currentData.name == 'Ripple'){
 											 var  a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
 											      a.target = '_black';
+												  a.style.color = 'green';
+												  a.style.fontWeight = 'bold';
 											      a.href = 'https://rippletrade.com/#/send?to=' + rippleset.currentData.account;
 											}else if(rippleset.currentData.name == 'Bitcoin'){
 											 var  a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
 											      a.target = '_black';
+												  a.style.color = 'green';
 											      a.href = 'bitcoin:' + rippleset.currentData.account;
 											}else{
                                                   rippleUtils.createElement(obj, "span", ripplepageAccount);
 											}
 									}else{
-											var a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
+											var a =  rippleUtils.createElement(obj, "a", ripplepageAccount);
 											a.target = '_black';
-											a.href = rippleset.currentData.url;
+											a.href = curURL;
 									}
 								}
 							},

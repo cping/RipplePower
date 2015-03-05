@@ -1,0 +1,1 @@
+cmd /k java -jar compiler.jar --js_output_file ../resource/rippleutils.min.js --js ../resource/rippleutils.js
