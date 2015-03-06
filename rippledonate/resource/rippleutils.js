@@ -1236,8 +1236,11 @@ QRBitBuffer.prototype = {
 	}
 };
 
+var globalAnimate = false;
+
 
 var rippleUtils = {
+
 
 createElement	: function(param, tagName, target) {
 				   var element = document.createElement(tagName || "div");
@@ -1355,17 +1358,63 @@ mergeList : function (target, source, isAll) {
 			return target;
 },
 
+moveRight : function (element){
+	element.style.left = (parseInt(element.style.left) + 1) + 'px';
+},
 
-animate : function(props, element, speed){
-		
-				for(var key in props){
-					element.style[key] = props[key];
-				}
+moveLeft : function (element){
+	element.style.left = (parseInt(element.style.left) - 1) + 'px';
+},
 
+forAnimate : function (element, frames, frame) {
+	if (typeof frame == "undefined") {
+	   frame = -1;
+	}
+	frame++;
+	if (frame >= frames.length) {
+	   frame = 0;
+	}
+	element.innerHTML = frames[frame][0];
+	setTimeout(function() { animate(element, frames, frame) }, frames[frame][1]);
+},
+
+animate : function(model,value, element, speed){
+		switch(model)
+		{
+			case 'show':
+					if(!globalAnimate){
+						width = 0,
+						interval = setInterval(function(){
+						width = width + 10;
+						element.style.width = width + 'px';
+						if(parseInt(element.style.width) >= value){
+							globalAnimate = true;
+							element.style.width = value + 'px';
+							clearInterval(interval);
+						}
+						}, speed);
+					}
+			  break;
+			case 'hide':
+					 if(globalAnimate){
+						width = parseInt(element.style.width),
+						interval = setInterval(function(){
+						width = width - 10;
+						element.style.width = width + 'px';
+						if(parseInt(element.style.width) <= value){
+							globalAnimate = false;
+							element.style.width = value + 'px';
+							clearInterval(interval);
+						}
+						}, speed);
+					}
+			  break;
+			default:
+			}
 },
 
 staticUrl:	function(pathPrefix, url){
-				if(pathPrefix !== "" && url.substring(0,4) != "http"){
+				if(pathPrefix !== "" && url.substring(0,4) != "http" && url.substring(0,5) != "https" ){
 					var length = pathPrefix.length;
 					if(pathPrefix[length-1] == "/"){
 						pathPrefix = pathPrefix.substring(0, length-1);
@@ -1378,7 +1427,7 @@ staticUrl:	function(pathPrefix, url){
 				}else{
 					return url;
 				}
-		},
+},
 
 generateQR : function (options, targetEle) {
 		
@@ -1471,14 +1520,14 @@ var rippleset =  window.rippleset || {
 				'bitcoin'	:   {icon: "resource/bitcoin.png", name:"Bitcoin", desc: "比特币讨赏",url:"", className:""}
 	},
 
-	ripplepage : null,
-	ripplepageBtn : null,
-	ripplepageMain:	null,
-	ripplepagebox: null,
-	ripplepageList:null,
-	ripplepageDetail:null,
-	ripplepageListUl: null,
-	ripplepageUbox: null,
+	iripplepage : null,
+	iripplepageBtn : null,
+	iripplepageMain:	null,
+	iripplepagebox: null,
+	iripplepageList:null,
+	iripplepageDetail:null,
+	iripplepageListUl: null,
+	iripplepageUbox: null,
 
 	currentLi:		null,
 	currentData:	null,
@@ -1527,69 +1576,82 @@ var rippleset =  window.rippleset || {
 
 	generateDonate:	function(){
 
-							this.ripplepage  = rippleUtils.createElement({
-								id:			"ripplepage", 
-								className: "ripplepage",
+							this.iripplepage  = rippleUtils.createElement({
+								id:			"iripplepage", 
+								className: "iripplepage",
+								onclick : function(){
+											/*if(globalAnimate &&  parseInt(rippleset.iripplepage.style.width) != 240){
+													rippleset.iripplepage.style.width = '0px';
+													globalAnimate = false;
+											}else if(!globalAnimate && parseInt(rippleset.iripplepage.style.width) != 0){
+													rippleset.iripplepage.style.width = '240px';
+													globalAnimate = true;
+											}*/
+								},
 								onmouseover : function(){
 													rippleset.showDonate(this);
 												},
 								onmouseout	: function(){
 													rippleset.hideDonate(this);
-												}
+									            }
 								});
 							this.generateLeftBtn();
 							this.generateDonateMain();
 						},
 	generateLeftBtn:	function(){
-							this.ripplepageBtn = rippleUtils.createElement({className: "btn-ripplepage", href: "javascript:;"}, 'a', this.ripplepage);
-							rippleUtils.createElement({className: "png", src: rippleset.buttonImageUrl(), alt: "Donate"}, 'img', this.ripplepageBtn);
+							this.iripplepageBtn = rippleUtils.createElement({className: "btn-iripplepage", href: "javascript:;"}, 'a', this.iripplepage);
+							rippleUtils.createElement({className: "png", src: rippleset.buttonImageUrl(), alt: "Donate"}, 'img', this.iripplepageBtn);
 	},
 
 	showDonate:			function(target){
-							 var e = rippleUtils.currentEvent();
-							 if(rippleUtils.isMouseLeaveOrEnter(e, target)){
-								 rippleUtils.animate({width:"240px"}, rippleset.ripplepage, 200);
-							 }
-						},
-
-	hideDonate:			function(target){
-							var e = rippleUtils.currentEvent();
-							if(rippleUtils.isMouseLeaveOrEnter(e, target)){
-								rippleUtils.animate({width:"0px"}, rippleset.ripplepage, 200);
+							if(!globalAnimate){ 
+								 var e = rippleUtils.currentEvent();
+								 if(rippleUtils.isMouseLeaveOrEnter(e, target)){
+									 rippleUtils.animate('show', 240, rippleset.iripplepage, 5);
+								 }
 							}
 						},
 
+	hideDonate:			function(target){
+			               if(globalAnimate){
+								var e = rippleUtils.currentEvent();
+								if(rippleUtils.isMouseLeaveOrEnter(e, target)){
+									rippleUtils.animate('hide', 0, rippleset.iripplepage, 5);
+								}
+						   }
+						},
+
 	generateDonateMain:	function(){
-							this.ripplepageMain = rippleUtils.createElement({className: "ripplepage-main"}, 'div', this.ripplepage);
+							this.iripplepageMain = rippleUtils.createElement({className: "iripplepage-main"}, 'div', this.iripplepage);
 							var obj = {className: "ripple-config-height"};
 							obj[rippleUtils.getTextKey()] =  rippleConfig.title;
-							rippleUtils.createElement(obj, 'h1', this.ripplepageMain);
+							rippleUtils.createElement(obj, 'h1', this.iripplepageMain);
 							this.generateDonatebox();
-							var ripplepageBot = rippleUtils.createElement({className: "ripple-config-robo"}, 'p', this.ripplepageMain);
+							var iripplepageBot = rippleUtils.createElement({className: "ripple-config-robo"}, 'p', this.iripplepageMain);
 							obj = {href:"https://github.com/cping/RipplePower", target: "_blank"};
 							obj[rippleUtils.getTextKey()] =  "更多第三方Ripple应用，请点此获得";
-							rippleUtils.createElement(obj, 'a', ripplepageBot);
+							rippleUtils.createElement(obj, 'a', iripplepageBot);
 	},
 
 	generateDonatebox:	function(){
-								this.ripplepagebox = rippleUtils.createElement({className: "ripplepagebox"},"div", this.ripplepageMain);
+								this.iripplepagebox = rippleUtils.createElement({className: "iripplepagebox"},"div", this.iripplepageMain);
 								this.generateDonateList();
 								this.generateDonateDetail();
 							},
 	
 	generateDonateList:	function(){
-								this.ripplepageList = rippleUtils.createElement({className: "ripplepage-list"},"div", this.ripplepagebox);
+								this.iripplepageList = rippleUtils.createElement({className: "iripplepage-list"},"div", this.iripplepagebox);
 								if(rippleset.showConfig.list.length >= 5){
-									this.ripplepageListUl = rippleUtils.createElement({}, 'ul', this.ripplepageList);
+									this.iripplepageListUl = rippleUtils.createElement({}, 'ul', this.iripplepageList);
 								}else{
-									this.ripplepageListUl = rippleUtils.createElement({className: "not-full"}, 'ul', this.ripplepageList);
+									this.iripplepageListUl = rippleUtils.createElement({className: "not-full"}, 'ul', this.iripplepageList);
 								}
 								for(var i= 0; i < 5; i++){
 									if( ! rippleset.showConfig.list.hasOwnProperty(i)){
 										break;
 									}
 									var one		= rippleset.showConfig.list[i];
-									var li_el	= rippleUtils.createElement({className: one.className}, 'li', this.ripplepageListUl);
+									var li_el	= rippleUtils.createElement({className: one.className}, 'li', this.iripplepageListUl);
 									var a_el	= null;
 									(function(){
 										var tmp_one = one;
@@ -1615,29 +1677,29 @@ var rippleset =  window.rippleset || {
 								}
 							},
 	generateDonateDetail:function(){
-								if(rippleset.ripplepageDetail){
-									rippleset.ripplepagebox.removeChild(rippleset.ripplepageDetail);
+								if(rippleset.iripplepageDetail){
+									rippleset.iripplepagebox.removeChild(rippleset.iripplepageDetail);
 								}
-								this.ripplepageDetail = rippleUtils.createElement({className: "ripplepage-detail"},"div", this.ripplepagebox);
+								this.iripplepageDetail = rippleUtils.createElement({className: "iripplepage-detail"},"div", this.iripplepagebox);
 
-								this.ripplepageUbox = rippleUtils.createElement({className: "ripplepage-ubox"},"div", this.ripplepageDetail);
-								var obj = {className: "ripplepage-code-tit"};
+								this.iripplepageUbox = rippleUtils.createElement({className: "iripplepage-ubox"},"div", this.iripplepageDetail);
+								var obj = {className: "iripplepage-code-tit"};
 								obj[rippleUtils.getTextKey()] =  rippleConfig.des;
-								rippleUtils.createElement(obj,"p", this.ripplepageUbox);
-								var ripplepageCode = rippleUtils.createElement({className: "ripplepage-code"}, 'div',  this.ripplepageUbox);
+								rippleUtils.createElement(obj,"p", this.iripplepageUbox);
+								var iripplepageCode = rippleUtils.createElement({className: "iripplepage-code"}, 'div',  this.iripplepageUbox);
 								if(rippleset.currentData.hasOwnProperty('qrimg')){
-									rippleUtils.createElement({src: rippleset.imageUrl(rippleset.currentData.qrimg)}, 'img',  ripplepageCode);
+									rippleUtils.createElement({src: rippleset.imageUrl(rippleset.currentData.qrimg)}, 'img',  iripplepageCode);
 
-									obj = {className: "ripplepage-account"};
+									obj = {className: "iripplepage-account"};
 									obj[rippleUtils.getTextKey()] = rippleset.currentData.desc || rippleset.currentData.name;
-									var ripplepageAccount = rippleUtils.createElement(obj, "p", this.ripplepageUbox);
+									var iripplepageAccount = rippleUtils.createElement(obj, "p", this.iripplepageUbox);
 
 									var curURL = rippleset.currentData.url;
 									if(curURL != null && curURL.length != 0 && curURL != ""){
 											obj = {};
 											obj[rippleUtils.getTextKey()] = curURL;
-											rippleUtils.createElement({}, "br", ripplepageAccount);
-                                        var a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
+											rippleUtils.createElement({}, "br", iripplepageAccount);
+                                        var a =    rippleUtils.createElement(obj, "a", iripplepageAccount);
 											a.target = '_black';
 											a.style.color = 'green';
 											a.href = rippleset.currentData.url;
@@ -1649,31 +1711,31 @@ var rippleset =  window.rippleset || {
 											render  : rippleUtils.isSupportCanvas() ? "canvas" : "table",
 											text    : rippleset.currentData.account,
 											width   : 106,
-											height  : 106}, ripplepageCode);
-									obj = {className: "ripplepage-account"};
+											height  : 106}, iripplepageCode);
+									obj = {className: "iripplepage-account"};
 									obj[rippleUtils.getTextKey()] = rippleset.currentData.desc || rippleset.currentData.name;
-									var ripplepageAccount = rippleUtils.createElement(obj, "p", this.ripplepageUbox);
+									var iripplepageAccount = rippleUtils.createElement(obj, "p", this.iripplepageUbox);
 									obj = {};
 									obj[rippleUtils.getTextKey()] = rippleset.currentData.account;
-									rippleUtils.createElement({}, "br", ripplepageAccount);
+									rippleUtils.createElement({}, "br", iripplepageAccount);
 									var curURL = rippleset.currentData.url;
 									if(curURL == null || curURL.length == 0 || curURL == ""){
 											if(rippleset.currentData.name == 'Ripple'){
-											 var  a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
+											 var  a =    rippleUtils.createElement(obj, "a", iripplepageAccount);
 											      a.target = '_black';
 												  a.style.color = 'green';
 												  a.style.fontWeight = 'bold';
 											      a.href = 'https://rippletrade.com/#/send?to=' + rippleset.currentData.account;
 											}else if(rippleset.currentData.name == 'Bitcoin'){
-											 var  a =    rippleUtils.createElement(obj, "a", ripplepageAccount);
+											 var  a =    rippleUtils.createElement(obj, "a", iripplepageAccount);
 											      a.target = '_black';
 												  a.style.color = 'green';
 											      a.href = 'bitcoin:' + rippleset.currentData.account;
 											}else{
-                                                  rippleUtils.createElement(obj, "span", ripplepageAccount);
+                                                  rippleUtils.createElement(obj, "span", iripplepageAccount);
 											}
 									}else{
-											var a =  rippleUtils.createElement(obj, "a", ripplepageAccount);
+											var a =  rippleUtils.createElement(obj, "a", iripplepageAccount);
 											a.target = '_black';
 											a.href = curURL;
 									}

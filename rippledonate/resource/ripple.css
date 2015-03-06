@@ -1,28 +1,28 @@
-.ripplepage {position:fixed; _position:absolute; right:0; top:20%; z-index:10000; padding-left:150px; width:0px; overflow:hidden; box-sizing: content-box;}
-.ripplepage ul,.ripplepage li{margin:0;padding:0;}
-.ripplepage img{ border:0; display:block; border-radius: 27px;-webkit-border-radius: 27px;}
-.ripplepage a{ color:#000; text-decoration:none; outline:0 none;}
-.ripplepage-main{ width:240px; height:332px; font:12px/1.5 "microsoft yahei",tahoma,arial,sans-serif;; color:#000; background-color:#fff; border:1px solid #000; border-right:none;}
-.btn-ripplepage{ position:absolute; left:0; top:50%; margin-top:-46px; width:150px; height:100px;}
-.ripplepage-list{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:90px; font-size:12px;}
-.ripplepage-list ul{ list-style:none;}
-.ripplepage-list ul.not-full{border-top:1px solid #000;}
-.ripplepage-list li{ display:block; height:56px; -webkit-transition:background-color .2s linear; transition:background-color .2s linear;}
-.ripplepage-list a{ position:relative; display:block; padding-left:40px; height:55px; line-height:55px; border-bottom:1px solid #cccccc;}
-.ripplepage-list a.fifth{border-bottom: none;}
-.ripplepage-list a img{ position:absolute; left:6px; top:13px; width:30px; height:30px;}
-.ripplepage-list .ripple-on{ border-right:none;}
-.ripplepage-list .ripple-on a,
-.ripplepage-list .ripple-on a:hover{ background-color:#00acee;}
-.ripplepage-detail{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:150px; height:280px; font-size:12px; background-color:#fff;}
-.ripplepage-ubox{ padding:14px 0 0 10px;}
-.ripplepage-code-tit{ margin:0 0 20px; width:132px; height:30px; line-height:30px; text-align:center; background:url(pay.jpg) no-repeat;}
-.ripplepage-code{ margin:0 0 20px; padding:12px; width:156px; height:115px; background:url(border.jpg) no-repeat;}
-.ripplepage-code img{ width:106px; height:106px;}
-.i-ripplepage{ position:absolute; right:6px; top:16px; width:23px; height:23px; line-height:23px; font-size:14px; color:#44b973; text-align:center;}
-.ripplepage-account{ word-break:break-all; text-align:center;}
+.iripplepage {display:block;position:fixed;right:0; top:20%; z-index:10000; padding-left:100px; width:0px; overflow:hidden; box-sizing: content-box;}
+.iripplepage ul,.iripplepage li{margin:0;padding:0;}
+.iripplepage img{ border:0; display:block; border-radius: 27px;-webkit-border-radius: 27px;}
+.iripplepage a{ color:#000; text-decoration:none; outline:0 none;}
+.iripplepage-main{ width:240px; height:332px; font:12px/1.5 "microsoft yahei",tahoma,arial,sans-serif;; color:#000; background-color:#fff; border:1px solid #000; border-right:none;}
+.btn-iripplepage{ position:absolute; left:0; top:50%; margin-top:-46px; width:5px; height:5px;}
+.iripplepage-list{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:90px; font-size:12px;}
+.iripplepage-list ul{ list-style:none;}
+.iripplepage-list ul.not-full{border-top:1px solid #cccccc;}
+.iripplepage-list li{ display:block; height:56px; -webkit-transition:background-color .2s linear; transition:background-color .2s linear;}
+.iripplepage-list a{ position:relative; display:block; padding-left:40px; height:55px; line-height:55px; border-bottom:1px solid #cccccc;}
+.iripplepage-list a.fifth{border-bottom: none;}
+.iripplepage-list a img{ position:absolute; left:6px; top:13px; width:30px; height:30px;}
+.iripplepage-list .ripple-on{ border-right:none;}
+.iripplepage-list .ripple-on a,
+.iripplepage-list .ripple-on a:hover{ background-color:#00acee;}
+.iripplepage-detail{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:150px; height:280px; font-size:12px; background-color:#fff;}
+.iripplepage-ubox{ padding:14px 0 0 10px;}
+.iripplepage-code-tit{ margin:0 0 20px; width:132px; height:30px; line-height:30px; text-align:center; background:url(pay.jpg) no-repeat;}
+.iripplepage-code{ margin:0 0 20px; padding:12px; width:156px; height:115px; background:url(border.jpg) no-repeat;}
+.iripplepage-code img{ width:106px; height:106px;}
+.i-iripplepage{ position:absolute; right:6px; top:16px; width:23px; height:23px; line-height:23px; font-size:14px; color:#44b973; text-align:center;}
+.iripplepage-account{ word-break:break-all; text-align:center;}
 .ripple-config-height,.ripple-config-robo{ margin:0; height:26px; line-height:26px; background-color:#00acee;}
 .ripple-config-height{ padding:0 0 0 6px; font-size:14px; font-weight:normal;}
 .ripple-config-robo{ padding-right:6px; text-align:center;}
 .ripple-config-robo a:hover{ text-decoration:underline;}
-.ripplepagebox{ font-size:0; background-color:#dfdfdf; width:240px;}
+.iripplepagebox{ font-size:0; background-color:#dfdfdf; width:240px;}
