@@ -17,7 +17,7 @@
 .iripplepage-detail{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:150px; height:280px; font-size:12px; background-color:#fff;}
 .iripplepage-ubox{ padding:14px 0 0 10px;}
 .iripplepage-code-tit{ margin:0 0 20px; width:132px; height:30px; line-height:30px; text-align:center; background:url(pay.jpg) no-repeat;}
-.iripplepage-code{ margin:0 0 20px; padding:12px; width:156px; height:115px; background:url(border.jpg) no-repeat;}
+.iripplepage-code{ margin:0 0 20px; padding:12px; width:156px; height:60%; background:url(border.jpg) no-repeat;}
 .iripplepage-code img{ width:106px; height:106px;}
 .i-iripplepage{ position:absolute; right:6px; top:16px; width:23px; height:23px; line-height:23px; font-size:14px; color:#44b973; text-align:center;}
 .iripplepage-account{ word-break:break-all; text-align:center;}

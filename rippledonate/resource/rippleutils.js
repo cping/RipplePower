@@ -1382,32 +1382,40 @@ animate : function(model,value, element, speed){
 		switch(model)
 		{
 			case 'show':
-					if(!globalAnimate){
-						width = 0,
-						interval = setInterval(function(){
-						width = width + 10;
-						element.style.width = width + 'px';
-						if(parseInt(element.style.width) >= value){
-							globalAnimate = true;
-							element.style.width = value + 'px';
-							clearInterval(interval);
-						}
-						}, speed);
-					}
+			if(!globalAnimate){
+				 var width = 0,interval = setInterval(function(){
+						try{   
+						    width = width + 10;
+						    element.style.width = width + 'px';
+							if(parseInt(element.style.width) >= value){
+								globalAnimate = true;
+								element.style.width = value + 'px';
+								clearInterval(interval);
+							 }
+						 }catch(ex){
+							 		element.style.width = value + 'px';
+									globalAnimate = true;
+						 }
+						 }, speed);
+			  }
 			  break;
 			case 'hide':
-					 if(globalAnimate){
-						width = parseInt(element.style.width),
-						interval = setInterval(function(){
-						width = width - 10;
-						element.style.width = width + 'px';
-						if(parseInt(element.style.width) <= value){
-							globalAnimate = false;
-							element.style.width = value + 'px';
-							clearInterval(interval);
-						}
-						}, speed);
-					}
+			if(globalAnimate){
+					 var width = parseInt(element.style.width), interval = setInterval(function(){
+						   try{   
+								width = width - 10;
+								element.style.width = width + 'px';
+								if(parseInt(element.style.width) <= value){
+									globalAnimate = false;
+									element.style.width = value + 'px';
+									clearInterval(interval);
+								}
+								}catch(ex){
+											element.style.width = value + 'px';
+											globalAnimate = false;
+								}	
+								}, speed);			
+			  }
 			  break;
 			default:
 			}
