@@ -1597,7 +1597,7 @@ var rippleset =  window.rippleset || {
 											}*/
 								},
 								onmouseover : function(){
-													rippleset.showDonate(this);
+												//rippleset.showDonate(this);
 												},
 								onmouseout	: function(){
 													rippleset.hideDonate(this);
@@ -1606,9 +1606,21 @@ var rippleset =  window.rippleset || {
 							this.generateLeftBtn();
 							this.generateDonateMain();
 						},
-	generateLeftBtn:	function(){
+	generateLeftBtn:function(){
 							this.iripplepageBtn = rippleUtils.createElement({className: "btn-iripplepage", href: "javascript:;"}, 'a', this.iripplepage);
-							rippleUtils.createElement({className: "png", src: rippleset.buttonImageUrl(), alt: "Donate"}, 'img', this.iripplepageBtn);
+							rippleUtils.createElement({className: "png", src: rippleset.buttonImageUrl(), alt: "Donate",
+								onclick : function(){
+											/*if(globalAnimate){
+													rippleset.iripplepage.style.width = '0px';
+													globalAnimate = false;
+											}*/
+								},
+								onmouseover : function(){
+													rippleset.showDonate(this);
+												},
+								onmouseout	: function(){
+													//rippleset.hideDonate(this);
+									            }}, 'img', this.iripplepageBtn);
 	},
 
 	showDonate:			function(target){
