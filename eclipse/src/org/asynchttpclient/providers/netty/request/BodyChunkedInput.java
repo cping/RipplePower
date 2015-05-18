@@ -26,51 +26,52 @@ import java.nio.ByteBuffer;
  */
 class BodyChunkedInput implements ChunkedInput<ByteBuf> {
 
-    private static final int DEFAULT_CHUNK_SIZE = 8 * 1024;
+	private static final int DEFAULT_CHUNK_SIZE = 8 * 1024;
 
-    private final Body body;
-    private final int contentLength;
-    private final int chunkSize;
+	private final Body body;
+	private final int contentLength;
+	private final int chunkSize;
 
-    private boolean endOfInput;
+	private boolean endOfInput;
 
-    public BodyChunkedInput(Body body) {
-        if (body == null) {
-            throw new IllegalArgumentException("no body specified");
-        }
-        this.body = body;
-        contentLength = (int) body.getContentLength();
-        if (contentLength <= 0)
-            chunkSize = DEFAULT_CHUNK_SIZE;
-        else
-            chunkSize = Math.min(contentLength, DEFAULT_CHUNK_SIZE);
-    }
+	public BodyChunkedInput(Body body) {
+		if (body == null) {
+			throw new IllegalArgumentException("no body specified");
+		}
+		this.body = body;
+		contentLength = (int) body.getContentLength();
+		if (contentLength <= 0)
+			chunkSize = DEFAULT_CHUNK_SIZE;
+		else
+			chunkSize = Math.min(contentLength, DEFAULT_CHUNK_SIZE);
+	}
 
-    @Override
-    public ByteBuf readChunk(ChannelHandlerContext ctx) throws Exception {
-        if (endOfInput) {
-            return null;
-        } else {
-            ByteBuffer buffer = ByteBuffer.allocate(chunkSize);
-            long r = body.read(buffer);
-            if (r < 0L) {
-                endOfInput = true;
-                return null;
-            } else {
-                endOfInput = r == contentLength || r < chunkSize && contentLength > 0;
-                buffer.flip();
-                return Unpooled.wrappedBuffer(buffer);
-            }
-        }
-    }
+	@Override
+	public ByteBuf readChunk(ChannelHandlerContext ctx) throws Exception {
+		if (endOfInput) {
+			return null;
+		} else {
+			ByteBuffer buffer = ByteBuffer.allocate(chunkSize);
+			long r = body.read(buffer);
+			if (r < 0L) {
+				endOfInput = true;
+				return null;
+			} else {
+				endOfInput = r == contentLength || r < chunkSize
+						&& contentLength > 0;
+				buffer.flip();
+				return Unpooled.wrappedBuffer(buffer);
+			}
+		}
+	}
 
-    @Override
-    public boolean isEndOfInput() throws Exception {
-        return endOfInput;
-    }
+	@Override
+	public boolean isEndOfInput() throws Exception {
+		return endOfInput;
+	}
 
-    @Override
-    public void close() throws Exception {
-        body.close();
-    }
+	@Override
+	public void close() throws Exception {
+		body.close();
+	}
 }

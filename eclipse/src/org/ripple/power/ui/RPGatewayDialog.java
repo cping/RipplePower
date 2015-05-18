@@ -446,8 +446,8 @@ public class RPGatewayDialog extends JDialog {
 										RPJSonLog.get().println(res);
 										dialog.closeDialog();
 										loadTrust(false);
-										RPGatewayDialog.this
-													.getContentPane().repaint();
+										RPGatewayDialog.this.getContentPane()
+												.repaint();
 										RPGatewayDialog.this.repaint();
 									}
 
@@ -486,9 +486,9 @@ public class RPGatewayDialog extends JDialog {
 										"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?"),
 						address, curName, trustValue);
 
-				int result = UIRes.showConfirmMessage(
-						LSystem.applicationMain, "Trust Gateway", message,
-						UIMessage.ok, UIMessage.cancel);
+				int result = UIRes.showConfirmMessage(LSystem.applicationMain,
+						"Trust Gateway", message, UIMessage.ok,
+						UIMessage.cancel);
 				if (result == 0) {
 					final WaitDialog dialog = new WaitDialog(
 							RPGatewayDialog.this);
@@ -502,8 +502,8 @@ public class RPGatewayDialog extends JDialog {
 									RPJSonLog.get().println(res);
 									dialog.closeDialog();
 									loadTrust(false);
-									RPGatewayDialog.this
-												.getContentPane().repaint();
+									RPGatewayDialog.this.getContentPane()
+											.repaint();
 									RPGatewayDialog.this.repaint();
 								}
 
@@ -561,7 +561,7 @@ public class RPGatewayDialog extends JDialog {
 	private void loadTrust() {
 		loadTrust(true);
 	}
-	
+
 	private void loadTrust(boolean wait) {
 		if (_item != null) {
 			final WaitDialog dialog = WaitDialog.showDialog(

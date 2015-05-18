@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2008 - 2009
  * 
@@ -50,7 +49,7 @@ public interface Expression {
 
 	// 缓存刷新标记
 	String RESET_CACHE_TAG = "reset";
-	
+
 	// 累计输入数据标记
 	String IN_TAG = "in";
 
@@ -93,7 +92,7 @@ public interface Expression {
 	String FLAG_LS_E_TAG = "*/";
 
 	String FLAG = "@";
-	
+
 	char FLAG_CHAR = FLAG.toCharArray()[0];
 
 }

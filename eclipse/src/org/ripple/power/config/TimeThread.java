@@ -3,7 +3,7 @@ package org.ripple.power.config;
 import java.util.Date;
 
 public abstract class TimeThread {
-	
+
 	private final Thread thread;
 	private final long sleepTime;
 

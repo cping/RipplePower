@@ -107,10 +107,9 @@ public class SpriteRotateSheet {
 					y = (int) (y - (halfHeight - (halfHeight * cosA + halfWidth
 							* sinA)));
 				}
-				g.drawImage(sheetRotationImages, x, y, x + bitmapWidth,
-								y + bitmapHeight, spriteIndex * bitmapWidth, 0,
-								(spriteIndex * bitmapWidth + bitmapWidth),
-								bitmapHeight);
+				g.drawImage(sheetRotationImages, x, y, x + bitmapWidth, y
+						+ bitmapHeight, spriteIndex * bitmapWidth, 0,
+						(spriteIndex * bitmapWidth + bitmapWidth), bitmapHeight);
 			}
 		}
 	}

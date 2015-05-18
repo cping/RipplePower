@@ -244,7 +244,7 @@ public class AVGChara implements LRelease {
 	public int getMoveX() {
 		return moveX;
 	}
-	
+
 	public boolean isVisible() {
 		return isVisible;
 	}

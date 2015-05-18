@@ -250,27 +250,27 @@ public class AddressManager {
 		}
 	}
 
-	
-	public static void main(String[]args) throws IOException{
+	public static void main(String[] args) throws IOException {
 		AddressManager manager = new AddressManager("F:\\bitcoin_data");
-		//manager.clearRepeatData();
-		//manager.updateDataToBlock();
-		String text=null;
-		for(int i=0;;i+=33){
-			
-			//	System.out.println(text);
-				text = String.valueOf(i);
-				String address = NativeSupport.getBitcoinPrivateKey(text).split(",")[0];
-			//	System.out.println("CCCCCCCC:"+address);
-				if(manager.findBlock(address)){
-					System.out.println("万万没想到"+address+","+ text);
-					FileUtils.write(new File("d://bit_save_random_data23.txt"),
-							address+","+ text + "\n", true);
-				}
-				if(i%5000==0){
-					System.out.println(text);
-				}
+		// manager.clearRepeatData();
+		// manager.updateDataToBlock();
+		String text = null;
+		for (int i = 0;; i += 33) {
 
+			// System.out.println(text);
+			text = String.valueOf(i);
+			String address = NativeSupport.getBitcoinPrivateKey(text)
+					.split(",")[0];
+			// System.out.println("CCCCCCCC:"+address);
+			if (manager.findBlock(address)) {
+				System.out.println("万万没想到" + address + "," + text);
+				FileUtils.write(new File("d://bit_save_random_data23.txt"),
+						address + "," + text + "\n", true);
 			}
+			if (i % 5000 == 0) {
+				System.out.println(text);
+			}
+
+		}
 	}
 }

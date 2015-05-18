@@ -37,7 +37,6 @@ import org.spongycastle.crypto.Digest;
 import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.util.encoders.Hex;
 
-
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Helper {
 
@@ -66,7 +65,6 @@ public class Helper {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	private static final int KEY_SIZE_BYTES = 32;
 	private static final String SHA_256 = "SHA-256";
@@ -100,17 +98,24 @@ public class Helper {
 		String char2 = String.valueOf(str.charAt(1));
 		String char3 = String.valueOf(str.charAt(2));
 		if ((char1.compareTo(char2) > 0) && (char1.compareTo(char3) < 0)) {
-			return sb.append(mixStep(str.substring(2))).append(str.charAt(1)).append(str.charAt(0)).toString();
+			return sb.append(mixStep(str.substring(2))).append(str.charAt(1))
+					.append(str.charAt(0)).toString();
 		} else if ((char1.compareTo(char2) > 0) && (char1.compareTo(char3) > 0)) {
-			String mixReverse = (new StringBuilder(mixStep(str.substring(2)))).reverse().toString();
-			return sb.append(str.charAt(1)).append(mixReverse).append(str.charAt(0)).toString();
+			String mixReverse = (new StringBuilder(mixStep(str.substring(2))))
+					.reverse().toString();
+			return sb.append(str.charAt(1)).append(mixReverse)
+					.append(str.charAt(0)).toString();
 		} else if ((char1.compareTo(char2) < 0) && (char1.compareTo(char3) > 0)) {
-			return sb.append(str.charAt(0)).append(mixStep(str.substring(2))).append(str.charAt(1)).toString();
+			return sb.append(str.charAt(0)).append(mixStep(str.substring(2)))
+					.append(str.charAt(1)).toString();
 		} else if ((char1.compareTo(char2) < 0) && (char1.compareTo(char3) < 0)) {
-			String mixReverse = (new StringBuilder(mixStep(str.substring(2)))).reverse().toString();
-			return sb.append(str.charAt(0)).append(mixReverse).append(str.charAt(1)).toString();
+			String mixReverse = (new StringBuilder(mixStep(str.substring(2))))
+					.reverse().toString();
+			return sb.append(str.charAt(0)).append(mixReverse)
+					.append(str.charAt(1)).toString();
 		}
-		return sb.append(str.charAt(1)).append(str.charAt(0)).append(mixStep(str.substring(2))).toString();
+		return sb.append(str.charAt(1)).append(str.charAt(0))
+				.append(mixStep(str.substring(2))).toString();
 	}
 
 	private static String deriveLongerString(String str) {
@@ -119,13 +124,14 @@ public class Helper {
 		builder.append(sb.toString().toLowerCase());
 		builder.append(sb.toString().toUpperCase());
 		StringBuilder result = new StringBuilder();
-		result.append(sb); 
+		result.append(sb);
 		result.append(mix(builder.toString()));
 		result.append(mix(builder.reverse().toString()));
 		return result.toString();
 	}
-	
-	public static byte[] generateRandom256() throws NoSuchAlgorithmException, InterruptedException {
+
+	public static byte[] generateRandom256() throws NoSuchAlgorithmException,
+			InterruptedException {
 		byte[] randomSeed1 = ByteUtils.longToBytes(System.nanoTime());
 		byte[] randomSeed2 = (new SecureRandom()).generateSeed(KEY_SIZE_BYTES);
 		byte[] bh1 = ByteUtils.concatenate(randomSeed1, randomSeed2);
@@ -135,8 +141,9 @@ public class Helper {
 		byte[] bh2 = ByteUtils.concatenate(randomSeed3, randomSeed4);
 		return simpleHash256(ByteUtils.concatenate(bh1, bh2));
 	}
-	
-	public static byte[] simpleHash256(byte[] msg) throws NoSuchAlgorithmException {
+
+	public static byte[] simpleHash256(byte[] msg)
+			throws NoSuchAlgorithmException {
 		MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
 		byte[] byteHolder1, byteHolder2;
 		byteHolder1 = sha256.digest(msg);
@@ -146,8 +153,10 @@ public class Helper {
 		}
 		return byteHolder1;
 	}
-	
-	public static byte[] hash256(String stringToMangle, String salt, int iterations) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+	public static byte[] hash256(String stringToMangle, String salt,
+			int iterations) throws NoSuchAlgorithmException,
+			UnsupportedEncodingException {
 		MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
 		StringBuilder sb = new StringBuilder();
 		sb.append(deriveLongerString(stringToMangle));
@@ -165,23 +174,30 @@ public class Helper {
 			byteHolder2 = sha256.digest(byteHolder1);
 			if ((i % wallInterval) < wallThickness) {
 				if ((i % 2) == 0) {
-					byteHolder3 = sha256.digest(ByteUtils.concatenate(byteHolder2, rawInput));
+					byteHolder3 = sha256.digest(ByteUtils.concatenate(
+							byteHolder2, rawInput));
 				} else {
-					byteHolder3 = sha256.digest(ByteUtils.concatenate(rawInput, byteHolder2));
+					byteHolder3 = sha256.digest(ByteUtils.concatenate(rawInput,
+							byteHolder2));
 				}
-				byteHolder1 = sha256.digest(ByteUtils.concatenate(byteHolder2, byteHolder3));
+				byteHolder1 = sha256.digest(ByteUtils.concatenate(byteHolder2,
+						byteHolder3));
 			} else {
 				byteHolder1 = sha256.digest(byteHolder2);
 			}
 		}
 		return byteHolder1;
 	}
-	
-	public static byte[] hash512(String stringToMangle, String salt, int iterations) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+	public static byte[] hash512(String stringToMangle, String salt,
+			int iterations) throws NoSuchAlgorithmException,
+			UnsupportedEncodingException {
 		byte[] hash256a = hash256(stringToMangle, salt, (iterations + 3) / 2);
-		byte[] hash256b = hash256(ByteUtils.toHexString(hash256a), stringToMangle, (iterations + 1) / 2);
+		byte[] hash256b = hash256(ByteUtils.toHexString(hash256a),
+				stringToMangle, (iterations + 1) / 2);
 		return ByteUtils.concatenate(hash256a, hash256b);
 	}
+
 	public static byte[] sha256(byte[] input) {
 		return sha256digest.digest(input);
 	}

@@ -1,8 +1,9 @@
 package org.ripple.power.print;
+
 import javax.print.PrintException;
 
 public abstract class PrintFunction {
-	
+
 	protected String path;
 
 	PrintFunction() {

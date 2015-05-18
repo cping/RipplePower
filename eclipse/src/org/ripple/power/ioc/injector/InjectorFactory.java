@@ -16,7 +16,7 @@ public class InjectorFactory {
 	public static ClassBindImpl createClassDependency(Class<?> classDependency) {
 		return new ClassBindImpl(classDependency);
 	}
-	
+
 	public static Bind createInstanceDependency(Object instance) {
 		return new BindInstance(instance);
 	}
@@ -24,7 +24,7 @@ public class InjectorFactory {
 	public static AttributeInjectorBuilder createAttributeInjectorBuilder() {
 		return new AttributeInjectorBuilderImpl();
 	}
-	
+
 	public static CompositeInjector createCompositeInjector() {
 		return new CompositeInjector();
 	}

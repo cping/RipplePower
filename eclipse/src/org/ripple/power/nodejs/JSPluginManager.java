@@ -4,19 +4,19 @@ import java.util.List;
 
 public interface JSPluginManager {
 
-    public void activate(JSPlugin plugin);
+	public void activate(JSPlugin plugin);
 
-    public void deactivate(JSPlugin plugin);
-    
-    public void install(JSPlugin plugin);
-    
-    public void uninstall(JSPlugin plugin);
+	public void deactivate(JSPlugin plugin);
 
-    public List<JSPlugin> listPlugins();
+	public void install(JSPlugin plugin);
 
-    public JSPlugin getPlugin(String name);
+	public void uninstall(JSPlugin plugin);
 
-    public void removePlugin(String name);
+	public List<JSPlugin> listPlugins();
 
-    public int getPluginNumber();
+	public JSPlugin getPlugin(String name);
+
+	public void removePlugin(String name);
+
+	public int getPluginNumber();
 }

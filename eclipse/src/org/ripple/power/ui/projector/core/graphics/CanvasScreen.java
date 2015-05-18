@@ -8,7 +8,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
 
-public abstract class CanvasScreen extends Screen  {
+public abstract class CanvasScreen extends Screen {
 
 	public static final int UP_PRESSED = 0x0002;
 
@@ -48,9 +48,7 @@ public abstract class CanvasScreen extends Screen  {
 
 	public CanvasScreen() {
 		LSystem.AUTO_REPAINT = false;
-		this
-				.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS
-						: getMaxFPS());
+		this.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS : getMaxFPS());
 		this.setRepaintMode(SCREEN_NOT_REPAINT);
 		this.bufferedImage = LImage.createImage(getWidth(), getHeight(), false);
 		this.nowWidth = getWidth();
@@ -61,9 +59,7 @@ public abstract class CanvasScreen extends Screen  {
 
 	public CanvasScreen(int nw, int nh, int w, int h) {
 		LSystem.AUTO_REPAINT = false;
-		this
-				.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS
-						: getMaxFPS());
+		this.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS : getMaxFPS());
 		this.setRepaintMode(SCREEN_NOT_REPAINT);
 		this.bufferedImage = LImage.createImage(nw, nh, false);
 		this.screenGraphics = bufferedImage.getLGraphics();
@@ -73,9 +69,7 @@ public abstract class CanvasScreen extends Screen  {
 
 	public CanvasScreen(int w, int h) {
 		LSystem.AUTO_REPAINT = false;
-		this
-				.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS
-						: getMaxFPS());
+		this.setFPS(getMaxFPS() > MAX_BUFFER_FPS ? MAX_BUFFER_FPS : getMaxFPS());
 		this.nowWidth = w;
 		this.nowHeight = h;
 		this.updateFlag = true;

@@ -21,5 +21,5 @@ package org.mapdb;
  */
 public interface TxBlock {
 
-    void tx(DB db) throws TxRollbackException;
+	void tx(DB db) throws TxRollbackException;
 }

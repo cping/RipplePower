@@ -27,46 +27,46 @@ import java.nio.ByteBuffer;
  */
 public class LazyResponseBodyPart extends ResponseBodyPart {
 
-    private static final String ERROR_MESSAGE = "This implementation is intended for one to directly read from the underlying ByteBuf and release after usage. Not for the fainted heart!";
+	private static final String ERROR_MESSAGE = "This implementation is intended for one to directly read from the underlying ByteBuf and release after usage. Not for the fainted heart!";
 
-    private final ByteBuf buf;
+	private final ByteBuf buf;
 
-    public LazyResponseBodyPart(ByteBuf buf, boolean last) {
-        super(last);
-        this.buf = buf;
-    }
+	public LazyResponseBodyPart(ByteBuf buf, boolean last) {
+		super(last);
+		this.buf = buf;
+	}
 
-    public ByteBuf getBuf() {
-        return buf;
-    }
+	public ByteBuf getBuf() {
+		return buf;
+	}
 
-    /**
-     * Return the response body's part bytes received.
-     * 
-     * @return the response body's part bytes received.
-     */
-    @Override
-    public byte[] getBodyPartBytes() {
-        throw new UnsupportedOperationException(ERROR_MESSAGE);
-    }
+	/**
+	 * Return the response body's part bytes received.
+	 * 
+	 * @return the response body's part bytes received.
+	 */
+	@Override
+	public byte[] getBodyPartBytes() {
+		throw new UnsupportedOperationException(ERROR_MESSAGE);
+	}
 
-    @Override
-    public InputStream readBodyPartBytes() {
-        throw new UnsupportedOperationException(ERROR_MESSAGE);
-    }
+	@Override
+	public InputStream readBodyPartBytes() {
+		throw new UnsupportedOperationException(ERROR_MESSAGE);
+	}
 
-    @Override
-    public int length() {
-        throw new UnsupportedOperationException(ERROR_MESSAGE);
-    }
+	@Override
+	public int length() {
+		throw new UnsupportedOperationException(ERROR_MESSAGE);
+	}
 
-    @Override
-    public int writeTo(OutputStream outputStream) throws IOException {
-        throw new UnsupportedOperationException(ERROR_MESSAGE);
-    }
+	@Override
+	public int writeTo(OutputStream outputStream) throws IOException {
+		throw new UnsupportedOperationException(ERROR_MESSAGE);
+	}
 
-    @Override
-    public ByteBuffer getBodyByteBuffer() {
-        throw new UnsupportedOperationException(ERROR_MESSAGE);
-    }
+	@Override
+	public ByteBuffer getBodyByteBuffer() {
+		throw new UnsupportedOperationException(ERROR_MESSAGE);
+	}
 }

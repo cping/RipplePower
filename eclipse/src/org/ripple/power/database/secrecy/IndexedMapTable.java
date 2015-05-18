@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IndexedMapTable<T extends IndexedTableEntry> implements Table<T> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private final Map<String, Long> tableEntryIndexMap;
 	private final SecureTable<T> backingMapTable;
@@ -14,7 +14,7 @@ public class IndexedMapTable<T extends IndexedTableEntry> implements Table<T> {
 		this.backingMapTable = backingMapTable;
 		this.tableEntryIndexMap = new ConcurrentHashMap<>();
 	}
-	
+
 	public T getEntry(String strId) {
 		if (this.tableEntryIndexMap.containsKey(strId)) {
 			Long id = this.tableEntryIndexMap.get(strId);
@@ -50,5 +50,4 @@ public class IndexedMapTable<T extends IndexedTableEntry> implements Table<T> {
 		return this.backingMapTable.getName();
 	}
 
-	
 }

@@ -13,24 +13,26 @@
 package org.asynchttpclient.filter;
 
 /**
- * An exception that can be thrown by an {@link org.asynchttpclient.AsyncHandler} to interrupt invocation of
- * the {@link RequestFilter} and {@link ResponseFilter}. It also interrupt the request and response processing.
+ * An exception that can be thrown by an
+ * {@link org.asynchttpclient.AsyncHandler} to interrupt invocation of the
+ * {@link RequestFilter} and {@link ResponseFilter}. It also interrupt the
+ * request and response processing.
  */
 @SuppressWarnings("serial")
 public class FilterException extends Exception {
 
-    /**
-     * @param message
-     */
-    public FilterException(final String message) {
-        super(message);
-    }
+	/**
+	 * @param message
+	 */
+	public FilterException(final String message) {
+		super(message);
+	}
 
-    /**
-     * @param message
-     * @param cause
-     */
-    public FilterException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public FilterException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
 }

@@ -12,7 +12,7 @@ import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
 import com.ripple.core.coretypes.Amount;
-import com.ripple.core.coretypes.VariableLength;
+import com.ripple.core.coretypes.Blob;
 import com.ripple.core.coretypes.hash.HalfSha512;
 import com.ripple.core.coretypes.hash.Hash256;
 import com.ripple.core.coretypes.hash.prefixes.HashPrefix;
@@ -29,16 +29,16 @@ public class TransactionUtils {
 			final Transaction txn, final String fee, final long sequence,
 			final Rollback back) throws Exception {
 		IKeyPair keyPair = Seed.getKeyPair(seed.getPrivateKey());
-		VariableLength pubKey = new VariableLength(keyPair.pubBytes());
+		Blob pubKey = new Blob(keyPair.pubBytes());
 		txn.put(UInt32.Sequence, new UInt32(sequence));
 		if (fee != null) {
 			txn.put(Amount.Fee, Amount.fromString(fee));
 		}
-		txn.put(VariableLength.SigningPubKey, pubKey);
+		txn.put(Blob.SigningPubKey, pubKey);
 		Hash256 signingHash = txn.signingHash();
-		VariableLength signature = new VariableLength(keyPair.sign(signingHash
+		Blob signature = new Blob(keyPair.sign(signingHash
 				.bytes()));
-		txn.put(VariableLength.TxnSignature, signature);
+		txn.put(Blob.TxnSignature, signature);
 		BytesList blob = new BytesList();
 		HalfSha512 id = HalfSha512.prefixed256(HashPrefix.transactionID);
 		txn.toBytesSink(new MultiSink(blob, id));

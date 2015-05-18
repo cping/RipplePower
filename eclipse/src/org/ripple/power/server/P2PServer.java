@@ -1,6 +1,5 @@
 package org.ripple.power.server;
 
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -41,10 +40,10 @@ import org.ripple.power.server.chat.MessageRecognizer;
 import org.ripple.power.server.chat.MessageType;
 import org.ripple.power.ui.RPComboBox;
 
-
 public class P2PServer extends ChannelInitializer<SocketChannel> {
 
-	private final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+	private final ChannelGroup channels = new DefaultChannelGroup(
+			GlobalEventExecutor.INSTANCE);
 	protected final BlockingQueue<AMessage> queue = new LinkedBlockingQueue<AMessage>();
 	private ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 	private LinkList userLinkList;
@@ -68,7 +67,8 @@ public class P2PServer extends ChannelInitializer<SocketChannel> {
 								broadcasts(_msg);
 								sysMessage.setText("");
 							} else {
-								Node node = userLinkList.findUser(_msg.getToUser());
+								Node node = userLinkList.findUser(_msg
+										.getToUser());
 								try {
 									node.channel.writeAndFlush(_msg);
 								} catch (Exception e) {
@@ -81,7 +81,8 @@ public class P2PServer extends ChannelInitializer<SocketChannel> {
 						case MessageType.CS_LOGIN: {
 							LoginMessage _msg = (LoginMessage) msg;
 							co.addItem(_msg.getUsername());
-							broadcasts(new LoginUsersMessage(userLinkList.users()));
+							broadcasts(new LoginUsersMessage(userLinkList
+									.users()));
 							break;
 						}
 						case MessageType.CS_LOGIN_OUT: {
@@ -107,10 +108,12 @@ public class P2PServer extends ChannelInitializer<SocketChannel> {
 	@Override
 	public void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(new ByteMesDecoder(new MessageRecognizer())).addLast(new MesToByteEncoder());
+		pipeline.addLast(new ByteMesDecoder(new MessageRecognizer())).addLast(
+				new MesToByteEncoder());
 		pipeline.addLast("LOGGING_HANDLER", LOGGING_HANDLER);
 		pipeline.addLast("handler", serverHandler);
-		pipeline.addLast("idleStateHandler", new IdleStateHandler(5, 5, 8,TimeUnit.SECONDS));
+		pipeline.addLast("idleStateHandler", new IdleStateHandler(5, 5, 8,
+				TimeUnit.SECONDS));
 		pipeline.addLast("heartHandler", new HeartHandler());
 	}
 
@@ -120,7 +123,9 @@ public class P2PServer extends ChannelInitializer<SocketChannel> {
 	public void connect(int port, LinkList userLinkList) throws Exception {
 		this.userLinkList = userLinkList;
 		ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 100).handler(new LoggingHandler(LogLevel.DEBUG)).childHandler(this);
+		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+				.option(ChannelOption.SO_BACKLOG, 100)
+				.handler(new LoggingHandler(LogLevel.DEBUG)).childHandler(this);
 		ChannelFuture f = b.bind(port).sync();
 		f.channel().closeFuture().sync();
 	}
@@ -173,14 +178,15 @@ public class P2PServer extends ChannelInitializer<SocketChannel> {
 		}
 
 		@Override
-		protected void channelRead0(ChannelHandlerContext ctx, AMessage msg) throws Exception {
+		protected void channelRead0(ChannelHandlerContext ctx, AMessage msg)
+				throws Exception {
 			Channel channel = ctx.channel();
 			if (msg instanceof LoginMessage) {
 				Node client = channel.attr(STATE).get();
 				client.username = ((LoginMessage) msg).getUsername();
 			}
 			queue.add(msg);
-			
+
 		}
 	}
 }

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BellmanFord {
-	
+
 	public static List<Integer> negativeWeightCycle(double[][] adjacenyMatrix,
 			int source) throws IllegalArgumentException {
 		if (adjacenyMatrix.length == 0

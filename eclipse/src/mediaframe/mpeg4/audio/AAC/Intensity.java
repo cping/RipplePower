@@ -43,10 +43,10 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
-/* original source intensity.c */ 	
+/* original source intensity.c */
 /**
  * Intensity
  * 
@@ -54,15 +54,12 @@ package mediaframe.mpeg4.audio.AAC;
 public class Intensity {
 
 	/*
-	 * if (chan==RIGHT) { 
-	 *     do IS decoding for this channel (scale left ch. values with
-	 * 	factor(SFr-SFl) )
-	 *     reset all lpflags for which IS is on
-	 *     pass decoded IS values to predict
-	 *     }
+	 * if (chan==RIGHT) { do IS decoding for this channel (scale left ch. values
+	 * with factor(SFr-SFl) ) reset all lpflags for which IS is on pass decoded
+	 * IS values to predict }
 	 */
-	static void intensity(MC_Info mip, Info info, int widx, int[] lpflag, int ch, float[][] coef)
-	{
+	static void intensity(MC_Info mip, Info info, int widx, int[] lpflag,
+			int ch, float[][] coef) {
 		int left, right, i, k, nsect, sign, bot, top, sfb, ktop;
 		float scale;
 		Ch_Info cip = mip.ch_info[ch];
@@ -71,27 +68,28 @@ public class Intensity {
 		if (!(cip.cpe && iip.is_present && !cip.ch_is_left)) {
 			return;
 		}
-	
+
 		left = cip.paired_ch;
 		right = ch;
 
 		nsect = iip.n_is_sect;
-		for (i=0; i<nsect; i++) {
+		for (i = 0; i < nsect; i++) {
 			sign = iip.sign[i];
 			top = iip.top[i];
 			bot = iip.bot[i];
-			for (sfb=bot; sfb<top; sfb++) {
+			for (sfb = bot; sfb < top; sfb++) {
 				/* disable prediction */
-				lpflag[1+sfb] = 0;
+				lpflag[1 + sfb] = 0;
 
-				scale = (float)(sign * Math.pow( 0.5,  0.25*(iip.fac[sfb]) ));
+				scale = (float) (sign * Math.pow(0.5, 0.25 * (iip.fac[sfb])));
 
 				/* reconstruct right intensity values */
-//				if (AACDecoder.debug[Constants.DEBUG_I])
-//					System.out.println("applying IS coding of " + scale + " on ch " + ch + " at sfb " + sfb);
-				k = (sfb==0) ? 0 : info.bk_sfb_top[sfb-1];
+				// if (AACDecoder.debug[Constants.DEBUG_I])
+				// System.out.println("applying IS coding of " + scale +
+				// " on ch " + ch + " at sfb " + sfb);
+				k = (sfb == 0) ? 0 : info.bk_sfb_top[sfb - 1];
 				ktop = info.bk_sfb_top[sfb];
-				for ( ; k<ktop; k++) {
+				for (; k < ktop; k++) {
 					coef[right][k] = coef[left][k] * scale;
 				}
 			}

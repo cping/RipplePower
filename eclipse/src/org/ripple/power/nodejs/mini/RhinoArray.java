@@ -4,7 +4,7 @@ import org.mozilla.javascript.NativeArray;
 
 public class RhinoArray implements JavascriptArray {
 
-	private final NativeArray	list;
+	private final NativeArray list;
 
 	public RhinoArray(final NativeArray list) {
 		this.list = list;

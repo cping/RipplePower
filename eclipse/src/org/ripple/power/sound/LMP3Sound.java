@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.ripple.power.ui.UIRes;
 
-
 import mediaframe.mpeg4.audio.MP3AudioPlayer;
 
 public class LMP3Sound implements Sound {

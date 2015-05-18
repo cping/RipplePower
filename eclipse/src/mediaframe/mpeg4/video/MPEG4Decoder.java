@@ -29,8 +29,6 @@ import java.io.InterruptedIOException;
 
 import org.ripple.power.sound.IMpeg4;
 
-
-
 //import mediaframe.mpeg4.MPEG4;
 
 /**
@@ -285,8 +283,7 @@ public final class MPEG4Decoder implements Runnable {
 					video_rate += 0.005d; // try to round the video_rate to
 											// the nearest double value
 					iVideo_rate = (int) video_rate;
-					duration = (int) Math
-							.round(mpeg4.getVideoLength() / 1000d);
+					duration = (int) Math.round(mpeg4.getVideoLength() / 1000d);
 					printed_video_info = true;
 				}
 				decode_VideoObjectPlane();
@@ -925,7 +922,7 @@ public final class MPEG4Decoder implements Runnable {
 	private int prev_vop_time_increment = -1;
 
 	private int base_time;
-	
+
 	private void decode_VideoObjectPlane() throws IOException {
 		vop_rounding_type = 0;
 		macroblock_number = 0;
@@ -936,8 +933,8 @@ public final class MPEG4Decoder implements Runnable {
 				* ((vop_height + 15) / 16) - 1;
 		vop_coding_type = (int) videoStream.next_bits(2);
 		if ((vop_coding_type != I_VOP) && (vop_coding_type != P_VOP)) {
-			throw new IllegalArgumentException("Unsupported Frame (Type = " + vop_coding_type
-					+ ")");
+			throw new IllegalArgumentException("Unsupported Frame (Type = "
+					+ vop_coding_type + ")");
 		}
 		vop_id++;
 		modulo_time_base = 0;
@@ -963,7 +960,7 @@ public final class MPEG4Decoder implements Runnable {
 		prev_vop_time_increment = vop_time_increment;
 
 		// calculates the current playing time
-		 base_time = time_code_hours * 3600 + time_code_minutes * 60
+		base_time = time_code_hours * 3600 + time_code_minutes * 60
 				+ time_code_seconds;
 
 		vop_coded = videoStream.next_bit();
@@ -1169,18 +1166,19 @@ public final class MPEG4Decoder implements Runnable {
 
 	private void printVideoObjectPlane() {
 		/*
-		 * System.out.println("VideoObjectPlane()"); System.out.println("Vop Id = " +
-		 * vop_id); System.out.println("Vop Coding Type = " + vop_coding_type);
+		 * System.out.println("VideoObjectPlane()");
+		 * System.out.println("Vop Id = " + vop_id);
+		 * System.out.println("Vop Coding Type = " + vop_coding_type);
 		 * System.out.println("Modulo Time Base = " + modulo_time_base);
 		 * System.out.println("Vop Time Increment = " + vop_time_increment);
 		 * System.out.println("Vop Coded = " + vop_coded);
 		 * System.out.println("vop_rounding_type = " + vop_rounding_type); //
 		 * System.out.println("max_macroblock_number = " +
 		 * max_macroblock_number); System.out.println("Current Time:" +
-		 * currentFrame.getPlaying_time()); System.out.println("Time Code Hours = " +
-		 * time_code_hours); System.out.println("Time Code Minutes = " +
-		 * time_code_minutes); System.out.println("Time Code Seconds = " +
-		 * time_code_seconds);
+		 * currentFrame.getPlaying_time());
+		 * System.out.println("Time Code Hours = " + time_code_hours);
+		 * System.out.println("Time Code Minutes = " + time_code_minutes);
+		 * System.out.println("Time Code Seconds = " + time_code_seconds);
 		 * 
 		 * if(vop_coded) { if(newpred_enable) {
 		 * System.out.println("vop_id_for_prediction_indication = " +
@@ -1664,10 +1662,10 @@ public final class MPEG4Decoder implements Runnable {
 						// four non-transparent blocks
 						int[][] cbpy_table = Huffman.CBPY_4_TAB;
 						/*
-						 * if(transparent_mb()) { switch(non_transparent_blocks) {
-						 * case 1: cbpy_table = Huffman.CBPY_1_TAB; break; case
-						 * 2: cbpy_table = Huffman.CBPY_2_TAB; break; case 3:
-						 * cbpy_table = Huffman.CBPY_3_TAB; break; default:
+						 * if(transparent_mb()) { switch(non_transparent_blocks)
+						 * { case 1: cbpy_table = Huffman.CBPY_1_TAB; break;
+						 * case 2: cbpy_table = Huffman.CBPY_2_TAB; break; case
+						 * 3: cbpy_table = Huffman.CBPY_3_TAB; break; default:
 						 * cbpy_table = Huffman.CBPY_4_TAB; break; } }
 						 */
 						// select the value for cbpy in the case of the intra or
@@ -1743,9 +1741,10 @@ public final class MPEG4Decoder implements Runnable {
 						 * macroblock_number);
 						 * System.out.println("derived_mb_type = " +
 						 * derived_mb_type); if ((derived_mb_type == 1) ||
-						 * (derived_mb_type == 4)) { System.out.println("dquant = " +
-						 * dquant); } System.out.println("not_coded = " +
-						 * not_coded); System.out.println("cbpy = " + cbpy);
+						 * (derived_mb_type == 4)) {
+						 * System.out.println("dquant = " + dquant); }
+						 * System.out.println("not_coded = " + not_coded);
+						 * System.out.println("cbpy = " + cbpy);
 						 * System.out.println("cbpc = " + cbpc);
 						 * System.out.println("quantiser_scale = " +
 						 * quantiser_scale); if((derived_mb_type == 3) ||
@@ -1876,13 +1875,13 @@ public final class MPEG4Decoder implements Runnable {
 	}
 
 	/**
-	 * Returns <tt>true</tt> if the 8x8 block with index <code>n</code>
-	 * consists only transparent pixels.
+	 * Returns <tt>true</tt> if the 8x8 block with index <code>n</code> consists
+	 * only transparent pixels.
 	 * 
 	 * @param n
 	 *            the number of the block to test.
-	 * @return <tt>true</tt> if the 8x8 block with index <code>n</code>
-	 *         consists only transparent pixels.
+	 * @return <tt>true</tt> if the 8x8 block with index <code>n</code> consists
+	 *         only transparent pixels.
 	 */
 	private boolean transparent_block(int n) {
 		// TODO complete transparent_block()
@@ -1974,8 +1973,7 @@ public final class MPEG4Decoder implements Runnable {
 	private boolean macroblock_intra;
 
 	/**
-	 * Reads the 8x8 block with the index <code>n</code> from the video
-	 * stream.
+	 * Reads the 8x8 block with the index <code>n</code> from the video stream.
 	 * 
 	 * @param n
 	 *            the index of the block.
@@ -2328,13 +2326,13 @@ public final class MPEG4Decoder implements Runnable {
 	}
 
 	/**
-	 * Returns <tt>true</tt> if the 8x8 block with index <code>n</code> is
-	 * coded (present in the bitstream).
+	 * Returns <tt>true</tt> if the 8x8 block with index <code>n</code> is coded
+	 * (present in the bitstream).
 	 * 
 	 * @param n
 	 *            the number of the block to test.
-	 * @return <tt>true</tt> if the 8x8 block with index <code>n</code> is
-	 *         coded (present in the bitstream).
+	 * @return <tt>true</tt> if the 8x8 block with index <code>n</code> is coded
+	 *         (present in the bitstream).
 	 */
 	private boolean pattern_code(int n) {
 		if (n < 4) {
@@ -2545,7 +2543,6 @@ public final class MPEG4Decoder implements Runnable {
 	public void setApm(boolean apm) {
 		this.apm = apm;
 	}
-
 
 	public byte getAspect_ratio_info() {
 		return aspect_ratio_info;
@@ -4242,11 +4239,9 @@ public final class MPEG4Decoder implements Runnable {
 		return duration;
 	}
 
-
 	public int getIVideo_rate() {
 		return iVideo_rate;
 	}
-
 
 	public int getBaseTime() {
 		return base_time;

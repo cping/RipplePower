@@ -14,29 +14,29 @@ package org.asynchttpclient;
 
 /**
  * This interface hosts new low level callback methods on {@link AsyncHandler}.
- * For now, those methods are in a dedicated interface in order not to break the existing API,
- * but could be merged into one of the existing ones in AHC 2.
+ * For now, those methods are in a dedicated interface in order not to break the
+ * existing API, but could be merged into one of the existing ones in AHC 2.
  * 
  * More additional hooks might come, such as:
  * <ul>
- *   <li>onConnected()</li>
- *   <li>onConnectionClosed()</li>
- *   <li>onBytesSent(long numberOfBytes)</li>
- *   <li>onBytesReceived(long numberOfBytes)</li>
+ * <li>onConnected()</li>
+ * <li>onConnectionClosed()</li>
+ * <li>onBytesSent(long numberOfBytes)</li>
+ * <li>onBytesReceived(long numberOfBytes)</li>
  * </ul>
  */
 public interface AsyncHandlerExtensions {
 
-    /**
-     * Notify the callback when a request is being written on the wire.
-     * If the original request causes multiple requests to be sent, for example, because of authorization or retry,
-     * it will be notified multiple times.
-     * Currently only supported by the Netty provider.
-     */
-    void onRequestSent();
-    
-    /**
-     * Notify the callback every time a request is being retried.
-     */
-    void onRetry();
+	/**
+	 * Notify the callback when a request is being written on the wire. If the
+	 * original request causes multiple requests to be sent, for example,
+	 * because of authorization or retry, it will be notified multiple times.
+	 * Currently only supported by the Netty provider.
+	 */
+	void onRequestSent();
+
+	/**
+	 * Notify the callback every time a request is being retried.
+	 */
+	void onRetry();
 }

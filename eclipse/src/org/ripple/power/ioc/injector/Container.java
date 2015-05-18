@@ -1,4 +1,3 @@
-
 /**
  * 
  * Copyright 2008 
@@ -32,7 +31,7 @@ public interface Container extends Start {
 	public void inject(Object target);
 
 	public Object getAttributeValue(Object key);
-	
+
 	public Container addInjector(Object key, Injector injector);
 
 	public Container addBind(Object key, Bind dependency);

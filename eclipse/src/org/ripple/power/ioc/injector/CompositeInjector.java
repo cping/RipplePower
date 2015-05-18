@@ -16,9 +16,9 @@ public class CompositeInjector implements Injector {
 			injector.inject(container, target);
 		}
 	}
-	
+
 	public Collection<Object> injects() {
-	          return injectors;
+		return injectors;
 	}
 
 	public CompositeInjector addInjector(Injector injector) {

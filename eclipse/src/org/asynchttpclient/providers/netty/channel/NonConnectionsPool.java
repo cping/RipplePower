@@ -21,22 +21,22 @@ import org.asynchttpclient.ConnectionsPool;
 
 public class NonConnectionsPool implements ConnectionsPool<String, Channel> {
 
-    public boolean offer(String uri, Channel connection) {
-        return false;
-    }
+	public boolean offer(String uri, Channel connection) {
+		return false;
+	}
 
-    public Channel poll(String uri) {
-        return null;
-    }
+	public Channel poll(String uri) {
+		return null;
+	}
 
-    public boolean removeAll(Channel connection) {
-        return false;
-    }
+	public boolean removeAll(Channel connection) {
+		return false;
+	}
 
-    public boolean canCacheConnection() {
-        return true;
-    }
+	public boolean canCacheConnection() {
+		return true;
+	}
 
-    public void destroy() {
-    }
+	public void destroy() {
+	}
 }

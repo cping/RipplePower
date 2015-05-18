@@ -17,72 +17,75 @@
 package com.google.zxing;
 
 /**
- * A wrapper implementation of {@link LuminanceSource} which inverts the luminances it returns -- black becomes
- * white and vice versa, and each value becomes (255-value).
+ * A wrapper implementation of {@link LuminanceSource} which inverts the
+ * luminances it returns -- black becomes white and vice versa, and each value
+ * becomes (255-value).
  * 
  * @author Sean Owen
  */
 public final class InvertedLuminanceSource extends LuminanceSource {
 
-  private final LuminanceSource delegate;
+	private final LuminanceSource delegate;
 
-  public InvertedLuminanceSource(LuminanceSource delegate) {
-    super(delegate.getWidth(), delegate.getHeight());
-    this.delegate = delegate;
-  }
+	public InvertedLuminanceSource(LuminanceSource delegate) {
+		super(delegate.getWidth(), delegate.getHeight());
+		this.delegate = delegate;
+	}
 
-  @Override
-  public byte[] getRow(int y, byte[] row) {
-    row = delegate.getRow(y, row);
-    int width = getWidth();
-    for (int i = 0; i < width; i++) {
-      row[i] = (byte) (255 - (row[i] & 0xFF));
-    }
-    return row;
-  }
+	@Override
+	public byte[] getRow(int y, byte[] row) {
+		row = delegate.getRow(y, row);
+		int width = getWidth();
+		for (int i = 0; i < width; i++) {
+			row[i] = (byte) (255 - (row[i] & 0xFF));
+		}
+		return row;
+	}
 
-  @Override
-  public byte[] getMatrix() {
-    byte[] matrix = delegate.getMatrix();
-    int length = getWidth() * getHeight();
-    byte[] invertedMatrix = new byte[length];
-    for (int i = 0; i < length; i++) {
-      invertedMatrix[i] = (byte) (255 - (matrix[i] & 0xFF));
-    }
-    return invertedMatrix;
-  }
-  
-  @Override
-  public boolean isCropSupported() {
-    return delegate.isCropSupported();
-  }
+	@Override
+	public byte[] getMatrix() {
+		byte[] matrix = delegate.getMatrix();
+		int length = getWidth() * getHeight();
+		byte[] invertedMatrix = new byte[length];
+		for (int i = 0; i < length; i++) {
+			invertedMatrix[i] = (byte) (255 - (matrix[i] & 0xFF));
+		}
+		return invertedMatrix;
+	}
 
-  @Override
-  public LuminanceSource crop(int left, int top, int width, int height) {
-    return new InvertedLuminanceSource(delegate.crop(left, top, width, height));
-  }
+	@Override
+	public boolean isCropSupported() {
+		return delegate.isCropSupported();
+	}
 
-  @Override
-  public boolean isRotateSupported() {
-    return delegate.isRotateSupported();
-  }
+	@Override
+	public LuminanceSource crop(int left, int top, int width, int height) {
+		return new InvertedLuminanceSource(delegate.crop(left, top, width,
+				height));
+	}
 
-  /**
-   * @return original delegate {@link LuminanceSource} since invert undoes itself
-   */
-  @Override
-  public LuminanceSource invert() {
-    return delegate;
-  }
+	@Override
+	public boolean isRotateSupported() {
+		return delegate.isRotateSupported();
+	}
 
-  @Override
-  public LuminanceSource rotateCounterClockwise() {
-    return new InvertedLuminanceSource(delegate.rotateCounterClockwise());
-  }
+	/**
+	 * @return original delegate {@link LuminanceSource} since invert undoes
+	 *         itself
+	 */
+	@Override
+	public LuminanceSource invert() {
+		return delegate;
+	}
 
-  @Override
-  public LuminanceSource rotateCounterClockwise45() {
-    return new InvertedLuminanceSource(delegate.rotateCounterClockwise45());
-  }
+	@Override
+	public LuminanceSource rotateCounterClockwise() {
+		return new InvertedLuminanceSource(delegate.rotateCounterClockwise());
+	}
+
+	@Override
+	public LuminanceSource rotateCounterClockwise45() {
+		return new InvertedLuminanceSource(delegate.rotateCounterClockwise45());
+	}
 
 }

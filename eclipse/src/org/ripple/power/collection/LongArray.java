@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.MathUtils;
+
 //
 public class LongArray {
 	public long[] items;

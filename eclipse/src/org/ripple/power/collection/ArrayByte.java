@@ -9,7 +9,7 @@ import java.io.UTFDataFormatException;
 import org.ripple.power.Closed;
 import org.ripple.power.utils.MathUtils;
 
-public class ArrayByte implements Closed{
+public class ArrayByte implements Closed {
 
 	public static final int BIG_ENDIAN = 0;
 

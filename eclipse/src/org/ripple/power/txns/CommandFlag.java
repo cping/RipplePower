@@ -4,13 +4,13 @@ public class CommandFlag {
 
 	// simple
 	public static final String RippledNodeS = "RippledNodeS";
-	
+
 	public static final String Ripple_Blockchain = "Ripple_Blockchain";
 
 	public static final String Todo = "Todo";
 
 	public static final String Download = "Download";
-	
+
 	public static final String SendCoin = "Sendcoin";
 
 	public static final String Donation = "Donation";
@@ -32,6 +32,6 @@ public class CommandFlag {
 	public static final String ExchangeRate = "ExchangeRate";
 
 	public static final String HistoricalPrices = "HistoricalPrices";
-	
+
 	public static final String Editor = "Editor";
 }

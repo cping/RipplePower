@@ -13,15 +13,15 @@ public class HTMLExporter implements Exporter {
 		this.file = file;
 		StringBuilder sbr = new StringBuilder();
 		for (TodoItem item : items) {
-			sbr.append("Id:"+item.getId());
+			sbr.append("Id:" + item.getId());
 			sbr.append("<br>");
-			sbr.append("Note:"+item.getNote());
+			sbr.append("Note:" + item.getNote());
 			sbr.append("<br>");
-			sbr.append("Status:"+item.getStatus());
+			sbr.append("Status:" + item.getStatus());
 			sbr.append("<br>");
-			sbr.append("Period:"+item.getPeriod());
+			sbr.append("Period:" + item.getPeriod());
 			sbr.append("<br>");
-			sbr.append("Timeout:"+item.getTimeout());
+			sbr.append("Timeout:" + item.getTimeout());
 			sbr.append("<br>");
 		}
 		this.content = sbr.toString();

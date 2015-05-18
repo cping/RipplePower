@@ -1,12 +1,12 @@
 package org.ripple.power.ui.todo;
 
-
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class TodoItemListBuilder {
 	private List<TodoItem> list;
+
 	public TodoItemListBuilder() {
 		list = new LinkedList<TodoItem>();
 		accessDataBase();

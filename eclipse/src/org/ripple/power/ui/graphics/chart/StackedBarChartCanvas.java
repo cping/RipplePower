@@ -31,12 +31,12 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 
 			getXYminmax();
 
-			if (p_yscale_auto){
+			if (p_yscale_auto) {
 				calcYgridRange();
 			}
 
 			calcXYcoefs();
-			
+
 			reset();
 
 			drawData();

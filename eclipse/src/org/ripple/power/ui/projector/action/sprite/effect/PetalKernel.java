@@ -13,11 +13,11 @@ public class PetalKernel implements IKernel {
 	private Image sakura;
 
 	private double offsetX, offsetY, speed, x, y, width, height, sakuraWidth,
-	sakuraHeight;
+			sakuraHeight;
 
 	public PetalKernel(int n, int w, int h) {
-		sakura = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME+("sakura_" + n + ".png")
-				.intern());
+		sakura = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME
+				+ ("sakura_" + n + ".png").intern());
 		sakuraWidth = sakura.getWidth(null);
 		sakuraHeight = sakura.getHeight(null);
 		width = w;
@@ -55,10 +55,9 @@ public class PetalKernel implements IKernel {
 			if (speed <= -0.2) {
 				speed = -0.2;
 			}
-			if(y >= height) {
-				y = -(int) (LSystem.random.nextFloat() * 1)
-				- sakuraHeight;
-				x =  (int) (LSystem.random.nextFloat() * (width - 1));
+			if (y >= height) {
+				y = -(int) (LSystem.random.nextFloat() * 1) - sakuraHeight;
+				x = (int) (LSystem.random.nextFloat() * (width - 1));
 			}
 		}
 	}

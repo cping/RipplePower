@@ -43,28 +43,28 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
  * SR_Info
  */
 final class SR_Info {
-	int	    samp_rate;
-	int	    nsfb1024 = 0;
-	short[]   SFbands1024;
-	int	    nsfb128 = 0;
-	short[]   SFbands128;
-	
+	int samp_rate;
+	int nsfb1024 = 0;
+	short[] SFbands1024;
+	int nsfb128 = 0;
+	short[] SFbands128;
+
 	SR_Info(int samp_rate, short[] sfbands1024, short[] sfbands128) {
 		this.samp_rate = samp_rate;
-		if(sfbands1024 != null) {
+		if (sfbands1024 != null) {
 			this.nsfb1024 = sfbands1024.length;
 		}
 		this.SFbands1024 = sfbands1024;
-		if(sfbands128 != null) {
+		if (sfbands128 != null) {
 			this.nsfb128 = sfbands128.length;
 		}
-		this.SFbands128 = sfbands128; 
+		this.SFbands128 = sfbands128;
 	}
 }

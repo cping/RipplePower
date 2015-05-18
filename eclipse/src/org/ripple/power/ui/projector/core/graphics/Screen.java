@@ -689,8 +689,8 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 		}
 		return false;
 	}
-	
-	private void initHandler(){
+
+	private void initHandler() {
 		if (handler == null) {
 			this.handler = LSystem.getSystemHandler();
 			if (LSystem.screenRect != null) {
@@ -718,7 +718,6 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 		initHandler();
 		return handler;
 	}
-	
 
 	/**
 	 * 设定游戏屏幕

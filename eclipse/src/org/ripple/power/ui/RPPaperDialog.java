@@ -170,8 +170,8 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 		if (modelFlag == 0) {
-			int select = UIRes.showConfirmMessage(this,
-					"Export paper wallet", "Please choose your way to export",
+			int select = UIRes.showConfirmMessage(this, "Export paper wallet",
+					"Please choose your way to export",
 					"Exporting an image file", "Export to printer");
 			if (select == -1) {
 				return;
@@ -252,16 +252,14 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 						this.pAddress = new String(buffer, LSystem.encoding);
 					} catch (Exception ex) {
 						this.pAddress = null;
-						UIRes
-								.showErrorMessage(
-										this,
-										"Import",
-										"File import fails, the default password does not match the image or paper wallet error !");
+						UIRes.showErrorMessage(
+								this,
+								"Import",
+								"File import fails, the default password does not match the image or paper wallet error !");
 					}
 				} else {
-					UIRes
-							.showErrorMessage(this, "Import",
-									"File import fails, the specified file does not exist !");
+					UIRes.showErrorMessage(this, "Import",
+							"File import fails, the specified file does not exist !");
 				}
 
 			}

@@ -3,11 +3,11 @@ package org.ripple.power.nodejs;
 import org.ripple.power.collection.LongArray;
 
 public class HMAC {
-	
+
 	private SHA512[] _baseHash;
 
 	private SHA512 _resultHash;
-	
+
 	private boolean _updated = false;
 
 	public HMAC(LongArray key) {
@@ -26,11 +26,11 @@ public class HMAC {
 		this._baseHash[1].update(exKey[1]);
 		this._resultHash = this._baseHash[0];
 	}
-	
+
 	public LongArray mac(Object data) {
 		return encrypt(data);
 	}
-	
+
 	public LongArray encrypt(Object data) {
 		if (!this._updated) {
 			this.update(data);

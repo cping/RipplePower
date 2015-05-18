@@ -173,12 +173,11 @@ final public class AVGDialog {
 			messageImage = GraphicsUtils.getResize(messageImage,
 					width - offset, height - offset);
 
-			g
-					.drawImage(messageImage,
-							(lazyImage.getWidth(null) - messageImage
-									.getWidth(null)) / 2, (lazyImage
-									.getHeight(null) - messageImage
-									.getHeight(null)) / 2, null);
+			g.drawImage(
+					messageImage,
+					(lazyImage.getWidth(null) - messageImage.getWidth(null)) / 2,
+					(lazyImage.getHeight(null) - messageImage.getHeight(null)) / 2,
+					null);
 
 			GraphicsUtils.setAlpha(g, 1.0D);
 
@@ -205,8 +204,8 @@ final public class AVGDialog {
 
 			g.drawImage(rightTop, right, 0, null);
 
-			tmp = GraphicsUtils.getResize(rightCenter, leftCenter
-					.getWidth(null), width - (size * 2));
+			tmp = GraphicsUtils.getResize(rightCenter,
+					leftCenter.getWidth(null), width - (size * 2));
 
 			g.drawImage(tmp, right, size, null);
 			tmp = null;

@@ -34,7 +34,7 @@ public class RPExchangeInputDialog extends JDialog {
 	private RPTextBox _countText;
 	private RPTextBox _countPriceText;
 
-	private RPTextBox _textAContext,_textBContext;
+	private RPTextBox _textAContext, _textBContext;
 	private String _curName;
 	private String _dstCurrency = "USD";
 
@@ -286,8 +286,9 @@ public class RPExchangeInputDialog extends JDialog {
 		return _textAContext;
 	}
 
-	public void setTextContext(RPTextBox a,RPTextBox b, final String curName,final String dstCurName) {
-		if (a != null&&b!=null) {
+	public void setTextContext(RPTextBox a, RPTextBox b, final String curName,
+			final String dstCurName) {
+		if (a != null && b != null) {
 			this._dstCurrency = dstCurName;
 			this._textAContext = a;
 			this._textBContext = b;

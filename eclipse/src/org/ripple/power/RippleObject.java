@@ -12,9 +12,9 @@ import org.ripple.power.RippleSchemas.PrimitiveTypes;
 import org.ripple.power.RippleSchemas.TransactionTypes;
 
 public class RippleObject {
-	
+
 	HashMap<BinaryFormatField, Object> fields = new HashMap<BinaryFormatField, Object>();
-	
+
 	private static RippleSerializer binSer = new RippleSerializer();
 
 	public RippleObject() {

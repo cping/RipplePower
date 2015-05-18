@@ -107,7 +107,7 @@ public class Payment {
 			final String fee, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
-		
+
 		find.info(address, new Rollback() {
 			@Override
 			public void success(JSONObject message) {

@@ -38,103 +38,127 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Protocol {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final Channels channels;
-    protected final AsyncHttpClientConfig config;
-    protected final NettyRequestSender requestSender;
-    protected final NettyAsyncHttpProviderConfig nettyConfig;
+	protected final Channels channels;
+	protected final AsyncHttpClientConfig config;
+	protected final NettyRequestSender requestSender;
+	protected final NettyAsyncHttpProviderConfig nettyConfig;
 
-    public Protocol(Channels channels, AsyncHttpClientConfig config, NettyAsyncHttpProviderConfig nettyConfig, NettyRequestSender requestSender) {
-        this.channels = channels;
-        this.config = config;
-        this.nettyConfig = nettyConfig;
-        this.requestSender = requestSender;
-    }
+	public Protocol(Channels channels, AsyncHttpClientConfig config,
+			NettyAsyncHttpProviderConfig nettyConfig,
+			NettyRequestSender requestSender) {
+		this.channels = channels;
+		this.config = config;
+		this.nettyConfig = nettyConfig;
+		this.requestSender = requestSender;
+	}
 
-    public abstract void handle(ChannelHandlerContext ctx, NettyResponseFuture<?> future, Object message) throws Exception;
+	public abstract void handle(ChannelHandlerContext ctx,
+			NettyResponseFuture<?> future, Object message) throws Exception;
 
-    public abstract void onError(ChannelHandlerContext ctx, Throwable error);
+	public abstract void onError(ChannelHandlerContext ctx, Throwable error);
 
-    public abstract void onClose(ChannelHandlerContext ctx);
+	public abstract void onClose(ChannelHandlerContext ctx);
 
-    protected boolean redirect(Request request, NettyResponseFuture<?> future, HttpResponse response, final ChannelHandlerContext ctx) throws Exception {
+	protected boolean redirect(Request request, NettyResponseFuture<?> future,
+			HttpResponse response, final ChannelHandlerContext ctx)
+			throws Exception {
 
-        io.netty.handler.codec.http.HttpResponseStatus status = response.getStatus();
-        boolean redirectEnabled = request.isRedirectOverrideSet() ? request.isRedirectEnabled() : config.isRedirectEnabled();
-        boolean isRedirectStatus = status.equals(MOVED_PERMANENTLY) || status.equals(FOUND) || status.equals(SEE_OTHER) || status.equals(TEMPORARY_REDIRECT);
-        if (redirectEnabled && isRedirectStatus) {
+		io.netty.handler.codec.http.HttpResponseStatus status = response
+				.getStatus();
+		boolean redirectEnabled = request.isRedirectOverrideSet() ? request
+				.isRedirectEnabled() : config.isRedirectEnabled();
+		boolean isRedirectStatus = status.equals(MOVED_PERMANENTLY)
+				|| status.equals(FOUND) || status.equals(SEE_OTHER)
+				|| status.equals(TEMPORARY_REDIRECT);
+		if (redirectEnabled && isRedirectStatus) {
 
-            if (future.incrementAndGetCurrentRedirectCount() < config.getMaxRedirects()) {
-                // We must allow 401 handling again.
-                future.getAndSetAuth(false);
+			if (future.incrementAndGetCurrentRedirectCount() < config
+					.getMaxRedirects()) {
+				// We must allow 401 handling again.
+				future.getAndSetAuth(false);
 
-                String location = response.headers().get(HttpHeaders.Names.LOCATION);
-                URI uri = AsyncHttpProviderUtils.getRedirectUri(future.getURI(), location);
+				String location = response.headers().get(
+						HttpHeaders.Names.LOCATION);
+				URI uri = AsyncHttpProviderUtils.getRedirectUri(
+						future.getURI(), location);
 
-                if (!uri.toString().equals(future.getURI().toString())) {
-                    final RequestBuilder nBuilder = new RequestBuilder(future.getRequest());
-                    if (config.isRemoveQueryParamOnRedirect()) {
-                        nBuilder.setQueryParameters(null);
-                    }
+				if (!uri.toString().equals(future.getURI().toString())) {
+					final RequestBuilder nBuilder = new RequestBuilder(
+							future.getRequest());
+					if (config.isRemoveQueryParamOnRedirect()) {
+						nBuilder.setQueryParameters(null);
+					}
 
-                    // FIXME why not do that for 301 and 307 too?
-                    if ((status.equals(FOUND) || status.equals(SEE_OTHER)) && !(status.equals(FOUND) && config.isStrict302Handling())) {
-                        nBuilder.setMethod(HttpMethod.GET.name());
-                    }
+					// FIXME why not do that for 301 and 307 too?
+					if ((status.equals(FOUND) || status.equals(SEE_OTHER))
+							&& !(status.equals(FOUND) && config
+									.isStrict302Handling())) {
+						nBuilder.setMethod(HttpMethod.GET.name());
+					}
 
-                    // in case of a redirect from HTTP to HTTPS, future attributes might change
-                    final boolean initialConnectionKeepAlive = future.isKeepAlive();
-                    final String initialPoolKey = channels.getPoolKey(future);
+					// in case of a redirect from HTTP to HTTPS, future
+					// attributes might change
+					final boolean initialConnectionKeepAlive = future
+							.isKeepAlive();
+					final String initialPoolKey = channels.getPoolKey(future);
 
-                    future.setURI(uri);
-                    String newUrl = uri.toString();
-                    if (request.getUrl().startsWith(WEBSOCKET)) {
-                        newUrl = newUrl.replace(HTTP, WEBSOCKET);
-                    }
+					future.setURI(uri);
+					String newUrl = uri.toString();
+					if (request.getUrl().startsWith(WEBSOCKET)) {
+						newUrl = newUrl.replace(HTTP, WEBSOCKET);
+					}
 
-                    logger.debug("Redirecting to {}", newUrl);
+					logger.debug("Redirecting to {}", newUrl);
 
-                    for (String cookieStr : future.getHttpResponse().headers().getAll(HttpHeaders.Names.SET_COOKIE)) {
-                        for (Cookie c : CookieDecoder.decode(cookieStr)) {
-                            nBuilder.addOrReplaceCookie(c);
-                        }
-                    }
+					for (String cookieStr : future.getHttpResponse().headers()
+							.getAll(HttpHeaders.Names.SET_COOKIE)) {
+						for (Cookie c : CookieDecoder.decode(cookieStr)) {
+							nBuilder.addOrReplaceCookie(c);
+						}
+					}
 
-                    for (String cookieStr : future.getHttpResponse().headers().getAll(HttpHeaders.Names.SET_COOKIE2)) {
-                        for (Cookie c : CookieDecoder.decode(cookieStr)) {
-                            nBuilder.addOrReplaceCookie(c);
-                        }
-                    }
+					for (String cookieStr : future.getHttpResponse().headers()
+							.getAll(HttpHeaders.Names.SET_COOKIE2)) {
+						for (Cookie c : CookieDecoder.decode(cookieStr)) {
+							nBuilder.addOrReplaceCookie(c);
+						}
+					}
 
-                    Callback callback = new Callback(future) {
-                        public void call() throws Exception {
-                            if (!(initialConnectionKeepAlive && ctx.channel().isActive() && channels.offerToPool(initialPoolKey, ctx.channel()))) {
-                                channels.finishChannel(ctx);
-                            }
-                        }
-                    };
+					Callback callback = new Callback(future) {
+						public void call() throws Exception {
+							if (!(initialConnectionKeepAlive
+									&& ctx.channel().isActive() && channels
+									.offerToPool(initialPoolKey, ctx.channel()))) {
+								channels.finishChannel(ctx);
+							}
+						}
+					};
 
-                    if (HttpHeaders.isTransferEncodingChunked(response)) {
-                        // We must make sure there is no bytes left before
-                        // executing the next request.
-                        // FIXME investigate this
-                        Channels.setDefaultAttribute(ctx, callback);
-                    } else {
-                        // FIXME don't understand: this offers the connection to the pool, or even closes it, while the request has not been sent, right?
-                        callback.call();
-                    }
+					if (HttpHeaders.isTransferEncodingChunked(response)) {
+						// We must make sure there is no bytes left before
+						// executing the next request.
+						// FIXME investigate this
+						Channels.setDefaultAttribute(ctx, callback);
+					} else {
+						// FIXME don't understand: this offers the connection to
+						// the pool, or even closes it, while the request has
+						// not been sent, right?
+						callback.call();
+					}
 
-                    Request target = nBuilder.setUrl(newUrl).build();
-                    future.setRequest(target);
-                    // FIXME why not reuse the channel is same host?
-                    requestSender.sendNextRequest(target, future);
-                    return true;
-                }
-            } else {
-                throw new MaxRedirectException("Maximum redirect reached: " + config.getMaxRedirects());
-            }
-        }
-        return false;
-    }
+					Request target = nBuilder.setUrl(newUrl).build();
+					future.setRequest(target);
+					// FIXME why not reuse the channel is same host?
+					requestSender.sendNextRequest(target, future);
+					return true;
+				}
+			} else {
+				throw new MaxRedirectException("Maximum redirect reached: "
+						+ config.getMaxRedirects());
+			}
+		}
+		return false;
+	}
 }

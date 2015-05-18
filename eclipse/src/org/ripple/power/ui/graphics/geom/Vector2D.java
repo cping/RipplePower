@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ripple.power.ui.projector.action.map.Field2D;
 
-
 public class Vector2D implements Serializable {
 
 	/**

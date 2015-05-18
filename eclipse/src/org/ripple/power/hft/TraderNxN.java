@@ -44,10 +44,10 @@ public class TraderNxN {
 			10);
 
 	private int _sleep = 10;
-	
-	//为了多网关高频交易方便换算计量单位，测试过几种方式后确认只有使用本地(Native)货币作为计量才是最高效的，具体到Ripple则是XRP了。
-	//(用IOU的话，因为不同网关的不能完全等价，高频交易过程中需要查询转换的数据太多，交易速度没有保障，反而不如直接统一到XRP作为基本单位效果好,
-	//而且实际转移时也是XRP速度最快，也就是说，XRP在这里起到了“共识计量单位”的作用)
+
+	// 为了多网关高频交易方便换算计量单位，测试过几种方式后确认只有使用本地(Native)货币作为计量才是最高效的，具体到Ripple则是XRP了。
+	// (用IOU的话，因为不同网关的不能完全等价，高频交易过程中需要查询转换的数据太多，交易速度没有保障，反而不如直接统一到XRP作为基本单位效果好,
+	// 而且实际转移时也是XRP速度最快，也就是说，XRP在这里起到了“共识计量单位”的作用)
 	private String baseCurrency = LSystem.nativeCurrency;
 
 	// 默认至少有15笔买/卖交易才会在对应网关进行交易()
@@ -212,9 +212,9 @@ public class TraderNxN {
 										private float buy_count = 0;
 
 										private float sell_count = 0;
-										
+
 										private float high_buy_price;
-										
+
 										private float high_sell_price;
 
 										@Override
@@ -253,7 +253,9 @@ public class TraderNxN {
 												if (buy_amount > limit) {
 													buy_amount = limit;
 												}
-												high_buy_price = MathUtils.max(high_buy_price, lastPrice);
+												high_buy_price = MathUtils.max(
+														high_buy_price,
+														lastPrice);
 												buy_list.add(new double[] {
 														buy_price, buy_amount });
 												buy_count++;
@@ -272,7 +274,6 @@ public class TraderNxN {
 											if (v >= filter
 													|| TraderBase.equals(v,
 															filter)) {
-												
 
 												float lastPrice = sell_price;
 												BigDecimal payForOne = offer
@@ -297,7 +298,9 @@ public class TraderNxN {
 												if (sell_amount > limit) {
 													sell_amount = limit;
 												}
-												high_sell_price = MathUtils.max(high_sell_price, lastPrice);
+												high_sell_price = MathUtils
+														.max(high_sell_price,
+																lastPrice);
 												sell_list
 														.add(new double[] {
 																sell_price,
@@ -337,7 +340,7 @@ public class TraderNxN {
 														+ LSystem
 																.getNumberShort(buy_price
 																		* buy_amount));
-											
+
 												System.out.println("sell:"
 														+ sell_price
 														+ ","
@@ -346,66 +349,99 @@ public class TraderNxN {
 														+ LSystem
 																.getNumberShort(sell_price
 																		* sell_amount));
-												
-												//筛选条件后最高买卖价格(此最高指显示排序在第一顺位)
-												System.out.println(high_buy_price+","+high_sell_price);
-												
-												//单纯最高买卖价格
-												System.out
-														.println("1/"+source_currency+"=="+price.highBuy
-																+ ","
-																+ "1/"+source_currency+"=="+price.highSell);
 
-												
-												//若本地货币和设置的基础货币一致,则实际后台计算的交易额,首先转化为本地货币进行计量
-												if(baseCurrency.equalsIgnoreCase(LSystem.nativeCurrency)){
-													
+												// 筛选条件后最高买卖价格(此最高指显示排序在第一顺位)
+												System.out
+														.println(high_buy_price
+																+ ","
+																+ high_sell_price);
+
+												// 单纯最高买卖价格
+												System.out
+														.println("1/"
+																+ source_currency
+																+ "=="
+																+ price.highBuy
+																+ ","
+																+ "1/"
+																+ source_currency
+																+ "=="
+																+ price.highSell);
+
+												// 若本地货币和设置的基础货币一致,则实际后台计算的交易额,首先转化为本地货币进行计量
+												if (baseCurrency
+														.equalsIgnoreCase(LSystem.nativeCurrency)) {
+
 													int idx = 0;
-													 double buyPrice=buy_list.get(idx)[0];
-														int buyQuantity=(int) buy_list
-														.get(idx)[1];
-														double sellPrice=sell_list.get(idx)[0];
-														int sellQuantity=(int) sell_list
-																.get(idx)[1];
-														
-														idx++;
-														
-														double secondBuyPrice=buy_list.get(idx)[0];
-														int secondBuyQuantity=(int) buy_list
-																.get(idx)[1];
-														double secondSellPrice=sell_list.get(idx)[0];
-														int secondSellQuantity=(int) sell_list
-																.get(idx)[1];
-														
-														idx++;
-														
-														double thirdBuyPrice=buy_list.get(idx)[0];
-														int thirdBuyQuantity=(int) buy_list
-																.get(idx)[1];
-														double thirdSellPrice=sell_list.get(idx)[0];
-														int thirdSellQuantity=(int) sell_list
-																.get(idx)[1];
-													
-													
-													if(!source_currency.equalsIgnoreCase(baseCurrency)){
-														swap(name, source_currency, source_issuer, buyPrice,
-																 buyQuantity,  sellPrice,  sellQuantity,
-																 secondBuyPrice,  secondBuyQuantity,
-																 secondSellPrice,  secondSellQuantity,
-																 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
-																 thirdSellQuantity);
+													double buyPrice = buy_list
+															.get(idx)[0];
+													int buyQuantity = (int) buy_list
+															.get(idx)[1];
+													double sellPrice = sell_list
+															.get(idx)[0];
+													int sellQuantity = (int) sell_list
+															.get(idx)[1];
+
+													idx++;
+
+													double secondBuyPrice = buy_list
+															.get(idx)[0];
+													int secondBuyQuantity = (int) buy_list
+															.get(idx)[1];
+													double secondSellPrice = sell_list
+															.get(idx)[0];
+													int secondSellQuantity = (int) sell_list
+															.get(idx)[1];
+
+													idx++;
+
+													double thirdBuyPrice = buy_list
+															.get(idx)[0];
+													int thirdBuyQuantity = (int) buy_list
+															.get(idx)[1];
+													double thirdSellPrice = sell_list
+															.get(idx)[0];
+													int thirdSellQuantity = (int) sell_list
+															.get(idx)[1];
+
+													if (!source_currency
+															.equalsIgnoreCase(baseCurrency)) {
+														swap(name,
+																source_currency,
+																source_issuer,
+																buyPrice,
+																buyQuantity,
+																sellPrice,
+																sellQuantity,
+																secondBuyPrice,
+																secondBuyQuantity,
+																secondSellPrice,
+																secondSellQuantity,
+																thirdBuyPrice,
+																thirdBuyQuantity,
+																thirdSellPrice,
+																thirdSellQuantity);
 													}
-													if(!target_currency.equalsIgnoreCase(baseCurrency)){
-														swap(name, target_currency, source_issuer, buyPrice,
-																 buyQuantity,  sellPrice,  sellQuantity,
-																 secondBuyPrice,  secondBuyQuantity,
-																 secondSellPrice,  secondSellQuantity,
-																 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
-																 thirdSellQuantity);
+													if (!target_currency
+															.equalsIgnoreCase(baseCurrency)) {
+														swap(name,
+																target_currency,
+																source_issuer,
+																buyPrice,
+																buyQuantity,
+																sellPrice,
+																sellQuantity,
+																secondBuyPrice,
+																secondBuyQuantity,
+																secondSellPrice,
+																secondSellQuantity,
+																thirdBuyPrice,
+																thirdBuyQuantity,
+																thirdSellPrice,
+																thirdSellQuantity);
 													}
 												}
-												
-												
+
 												_cache_count.put(source_issuer
 														+ name, buys.size());
 
@@ -436,50 +472,32 @@ public class TraderNxN {
 		}
 
 	}
-	
-	private void swap(String name,String currency,String issuer, double buyPrice,
-			int buyQuantity, double sellPrice, int sellQuantity,
-			double secondBuyPrice, int secondBuyQuantity,
+
+	private void swap(String name, String currency, String issuer,
+			double buyPrice, int buyQuantity, double sellPrice,
+			int sellQuantity, double secondBuyPrice, int secondBuyQuantity,
 			double secondSellPrice, int secondSellQuantity,
 			double thirdBuyPrice, int thirdBuyQuantity, double thirdSellPrice,
-			int thirdSellQuantity){
+			int thirdSellQuantity) {
 
-		ArrayList<RippleItem> src_list = RippleMarket
-				.getExchangeRateItems(
-						currency,
-						issuer);
+		ArrayList<RippleItem> src_list = RippleMarket.getExchangeRateItems(
+				currency, issuer);
 
 		if (src_list.size() > 0) {
 
-			RippleItem item = src_list
-					.get(0);
+			RippleItem item = src_list.get(0);
 
-														
-				Coin swap_xrp = new Coin(
-						Code.newInstance(currency
-								+ "/"
-								+ name),
-						Symbol.newInstance(issuer),
-						name,
-						0d,
-						item.open,
-						item.vwap ,
-						item.high,
-						item.low,
-						(int)item.counterVolume,
-						0,buyPrice,buyQuantity,
-						 sellPrice,  sellQuantity,
-						 secondBuyPrice,  secondBuyQuantity,
-						 secondSellPrice,  secondSellQuantity,
-						 thirdBuyPrice,  thirdBuyQuantity,  thirdSellPrice,
-						 thirdSellQuantity,
-				
-						System.currentTimeMillis());
-			}
-			
-		
+			Coin swap_xrp = new Coin(Code.newInstance(currency + "/" + name),
+					Symbol.newInstance(issuer), name, 0d, item.open, item.vwap,
+					item.high, item.low, (int) item.counterVolume, 0, buyPrice,
+					buyQuantity, sellPrice, sellQuantity, secondBuyPrice,
+					secondBuyQuantity, secondSellPrice, secondSellQuantity,
+					thirdBuyPrice, thirdBuyQuantity, thirdSellPrice,
+					thirdSellQuantity,
 
-		
+					System.currentTimeMillis());
+		}
+
 	}
 
 	public void putIssuerAddress(String address) {

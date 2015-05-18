@@ -689,7 +689,7 @@ public class MainPanel extends JPanel implements ActionListener {
 			ex.printStackTrace();
 
 		}
-		
+
 		PriceMonitor.get();
 
 	}

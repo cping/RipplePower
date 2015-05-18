@@ -16,8 +16,8 @@ public class SnowKernel implements IKernel {
 			snowHeight;
 
 	public SnowKernel(int n, int w, int h) {
-		snow = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME+("snow_" + n + ".png")
-				.intern());
+		snow = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME
+				+ ("snow_" + n + ".png").intern());
 		snowWidth = snow.getWidth(null);
 		snowHeight = snow.getHeight(null);
 		width = w;

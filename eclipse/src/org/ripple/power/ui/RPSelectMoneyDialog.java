@@ -150,14 +150,10 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		if ("xrp".equalsIgnoreCase(eve)) {
 			BigDecimal number = new BigDecimal(_item.getAmount());
 			if (number.compareTo(BigDecimal.ZERO) < 1) {
-				UIRes
-						.showWarningMessage(
-								this,
-								LangConfig.get(MainPanel.class, "txfails",
-										"Transaction fails"),
-								LangConfig
-										.get(MainPanel.class, "stop",
-												"Sorry, currently the address  XRP not send XRP"));
+				UIRes.showWarningMessage(this, LangConfig.get(MainPanel.class,
+						"txfails", "Transaction fails"), LangConfig.get(
+						MainPanel.class, "stop",
+						"Sorry, currently the address  XRP not send XRP"));
 			} else {
 				RPToast.makeText(LSystem.applicationMain, "Send XRP.",
 						Style.SUCCESS).display();
@@ -183,9 +179,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 					Style.SUCCESS).display();
 			RPRippledMemoDialog.showDialog(
 					LangConfig.get(MainPanel.class, "send_memo",
-							"Memo Send/Receive")
-							+ " "
-							+ _item.getPublicKey(),
+							"Memo Send/Receive") + " " + _item.getPublicKey(),
 					LSystem.applicationMain, _item);
 		} else if ("flag".equalsIgnoreCase(eve)) {
 			RPToast.makeText(LSystem.applicationMain, "Send Flags.",

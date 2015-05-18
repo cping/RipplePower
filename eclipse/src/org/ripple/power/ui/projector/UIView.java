@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
-
 import org.ripple.power.config.LSystem;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.timer.SystemTimer;
@@ -39,7 +38,8 @@ public class UIView extends Canvas implements Runnable {
 
 	private String actionName;
 
-	final static private Font fpsFont = GraphicsUtils.getFont(Font.SANS_SERIF, 0, 20);
+	final static private Font fpsFont = GraphicsUtils.getFont(Font.SANS_SERIF,
+			0, 20);
 
 	private transient long remainderMicros;
 
@@ -47,8 +47,8 @@ public class UIView extends Canvas implements Runnable {
 
 	private transient int repaintMode;
 
-	private long maxFrames, startTime, offsetTime, curFPS,
-			calcInterval, lastTimeMicros, elapsedTime;
+	private long maxFrames, startTime, offsetTime, curFPS, calcInterval,
+			lastTimeMicros, elapsedTime;
 
 	private transient double frameCount;
 
@@ -68,7 +68,6 @@ public class UIView extends Canvas implements Runnable {
 
 	private UIContext context;
 
-
 	public UIView(LHandler handler) {
 		format(handler);
 	}
@@ -80,7 +79,7 @@ public class UIView extends Canvas implements Runnable {
 	 */
 	public void format(LHandler handler) {
 		this.handler = handler;
-		if(handler != null){
+		if (handler != null) {
 			handler.setView(this);
 		}
 		this.context = LSystem.getInstance().registerApp(this);
@@ -150,7 +149,6 @@ public class UIView extends Canvas implements Runnable {
 		}
 	}
 
-
 	/**
 	 * 获得窗体图像
 	 * 
@@ -190,7 +188,7 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-					currentControl.drawImage(img, x, y, null);
+				currentControl.drawImage(img, x, y, null);
 				systemToolKit.sync();
 			}
 		}
@@ -203,8 +201,8 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-					currentControl.drawImage(img, getWidth() / 2 - w / 2,
-							getHeight() / 2 - h / 2, null);
+				currentControl.drawImage(img, getWidth() / 2 - w / 2,
+						getHeight() / 2 - h / 2, null);
 				systemToolKit.sync();
 			}
 		}
@@ -221,8 +219,8 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-					currentControl.drawImage(img, getWidth() / 2 - w / 2,
-							getHeight() / 2 - h / 2, w, h, null);
+				currentControl.drawImage(img, getWidth() / 2 - w / 2,
+						getHeight() / 2 - h / 2, w, h, null);
 				systemToolKit.sync();
 			}
 		}
@@ -235,7 +233,7 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-					currentControl.drawImage(img, 0, 0, null);
+				currentControl.drawImage(img, 0, 0, null);
 				systemToolKit.sync();
 			}
 		}
@@ -251,7 +249,7 @@ public class UIView extends Canvas implements Runnable {
 		long currTimeMicros, goalTimeMicros, elapsedTimeMicros;
 		Thread currentThread = Thread.currentThread();
 		do {
-		
+
 			if (LSystem.isPaused) {
 				GraphicsUtils.wait(300);
 				lastTimeMicros = timer.getTimeMicros();
@@ -271,7 +269,7 @@ public class UIView extends Canvas implements Runnable {
 				continue;
 			}
 			handler.calls();
-			
+
 			goalTimeMicros = lastTimeMicros + 1000000L / maxFrames;
 			currTimeMicros = timer.sleepTimeMicros(goalTimeMicros);
 			elapsedTimeMicros = currTimeMicros - lastTimeMicros
@@ -303,19 +301,19 @@ public class UIView extends Canvas implements Runnable {
 					break;
 				default:
 					if (handler.getX() == 0 && handler.getY() == 0) {
-						gl.drawImage(handler.getBackground(), repaintMode / 2
-								- LSystem.random.nextInt(repaintMode),
+						gl.drawImage(
+								handler.getBackground(),
+								repaintMode / 2
+										- LSystem.random.nextInt(repaintMode),
 								repaintMode / 2
 										- LSystem.random.nextInt(repaintMode));
 					} else {
 						gl.drawClear();
-						gl.drawImage(handler.getBackground(), handler.getX()
-								+ repaintMode / 2
-								- LSystem.random.nextInt(repaintMode), handler
-								.getY()
-								+ repaintMode
-								/ 2
-								- LSystem.random.nextInt(repaintMode));
+						gl.drawImage(handler.getBackground(),
+								handler.getX() + repaintMode / 2
+										- LSystem.random.nextInt(repaintMode),
+								handler.getY() + repaintMode / 2
+										- LSystem.random.nextInt(repaintMode));
 					}
 					break;
 				}

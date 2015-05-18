@@ -17,10 +17,9 @@ public class RippleExt {
 		}
 		s.insert(0, DEFAULT_ALPHABET[bi.intValue()]);
 		for (byte anInput : input) {
-			if (anInput == 0){
+			if (anInput == 0) {
 				s.insert(0, DEFAULT_ALPHABET[0]);
-			}
-			else{
+			} else {
 				break;
 			}
 		}
@@ -54,7 +53,7 @@ public class RippleExt {
 	public static BigInteger decodeToBigIntegerRipple(String input) {
 		BigInteger bi = BigInteger.valueOf(0);
 		for (int i = input.length() - 1; i >= 0; i--) {
-			int alphaIndex = index(DEFAULT_ALPHABET,input.charAt(i));
+			int alphaIndex = index(DEFAULT_ALPHABET, input.charAt(i));
 			if (alphaIndex == -1) {
 				throw new RuntimeException("Illegal character "
 						+ input.charAt(i) + " at " + i);

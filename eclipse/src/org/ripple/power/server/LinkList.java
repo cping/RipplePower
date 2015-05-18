@@ -1,4 +1,5 @@
 package org.ripple.power.server;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,6 @@ public class LinkList {
 	Node root;
 	Node pointer;
 	int count;
-
 
 	public LinkList() {
 		root = new Node();
@@ -29,7 +29,7 @@ public class LinkList {
 		count++;
 
 	}
-	
+
 	public void delUser(Node n) {
 		pointer = root;
 
@@ -50,7 +50,7 @@ public class LinkList {
 	}
 
 	public Node findUser(String username) {
-		if (count == 0){
+		if (count == 0) {
 			return null;
 		}
 
@@ -66,7 +66,6 @@ public class LinkList {
 
 		return null;
 	}
-
 
 	public Node findUser(int index) {
 		if (count == 0) {

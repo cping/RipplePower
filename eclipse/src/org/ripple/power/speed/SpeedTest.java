@@ -9,9 +9,9 @@ import java.net.URL;
 public class SpeedTest {
 
 	public static InputStream getSyncUrlRangeInputStream(URL url,
-			ByteRange byteRange, int index,
-			SpeedListener networkSpeedListener) throws IOException {
-	
+			ByteRange byteRange, int index, SpeedListener networkSpeedListener)
+			throws IOException {
+
 		HttpURLConnection connection = null;
 		connection = (HttpURLConnection) url.openConnection();
 		String rangeProperty = byteRange.getRangeProperty();
@@ -21,8 +21,8 @@ public class SpeedTest {
 	}
 
 	public static InputStream getAsyncUrlRangeInputStream(URL url,
-			ByteRange byteRange, int index,
-			SpeedListener networkSpeedListener) throws IOException {
+			ByteRange byteRange, int index, SpeedListener networkSpeedListener)
+			throws IOException {
 		HttpURLConnection connection = null;
 		connection = (HttpURLConnection) url.openConnection();
 		String rangeProperty = byteRange.getRangeProperty();
@@ -42,6 +42,5 @@ public class SpeedTest {
 		connection.addRequestProperty("range", rangeProperty);
 		return new BufferedInputStream(connection.getInputStream());
 	}
-
 
 }

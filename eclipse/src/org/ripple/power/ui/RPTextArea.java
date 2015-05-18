@@ -4,14 +4,14 @@ import javax.swing.JTextArea;
 
 import org.ripple.power.ui.graphics.LColor;
 
-public class RPTextArea extends JTextArea{
+public class RPTextArea extends JTextArea {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public RPTextArea(String name){
+	public RPTextArea(String name) {
 		super(name);
 		setCaretColor(LColor.white);
 		setBackground(new LColor(70, 70, 70));
@@ -20,7 +20,7 @@ public class RPTextArea extends JTextArea{
 		setLineWrap(true);
 	}
 
-	public RPTextArea(){
+	public RPTextArea() {
 		this(null);
 	}
 

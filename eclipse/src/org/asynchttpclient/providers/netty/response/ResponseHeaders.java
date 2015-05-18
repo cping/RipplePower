@@ -28,44 +28,45 @@ import org.asynchttpclient.HttpResponseHeaders;
  */
 public class ResponseHeaders extends HttpResponseHeaders {
 
-    private final HttpHeaders responseHeaders;
-    private final HttpHeaders trailingHeaders;
-    private final FluentCaseInsensitiveStringsMap headers;
+	private final HttpHeaders responseHeaders;
+	private final HttpHeaders trailingHeaders;
+	private final FluentCaseInsensitiveStringsMap headers;
 
-    // FIXME unused AsyncHttpProvider provider
-    public ResponseHeaders(URI uri, HttpHeaders responseHeaders) {
-        this(uri, responseHeaders, null);
-    }
+	// FIXME unused AsyncHttpProvider provider
+	public ResponseHeaders(URI uri, HttpHeaders responseHeaders) {
+		this(uri, responseHeaders, null);
+	}
 
-    public ResponseHeaders(URI uri,HttpHeaders responseHeaders, HttpHeaders traillingHeaders) {
-        super(traillingHeaders != null);
-        this.responseHeaders = responseHeaders;
-        this.trailingHeaders = traillingHeaders;
-        headers = computerHeaders();
-    }
+	public ResponseHeaders(URI uri, HttpHeaders responseHeaders,
+			HttpHeaders traillingHeaders) {
+		super(traillingHeaders != null);
+		this.responseHeaders = responseHeaders;
+		this.trailingHeaders = traillingHeaders;
+		headers = computerHeaders();
+	}
 
-    private FluentCaseInsensitiveStringsMap computerHeaders() {
-        FluentCaseInsensitiveStringsMap h = new FluentCaseInsensitiveStringsMap();
-        for (Map.Entry<String, String> header: responseHeaders) {
-            h.add(header.getKey(), header.getValue());
-        }
+	private FluentCaseInsensitiveStringsMap computerHeaders() {
+		FluentCaseInsensitiveStringsMap h = new FluentCaseInsensitiveStringsMap();
+		for (Map.Entry<String, String> header : responseHeaders) {
+			h.add(header.getKey(), header.getValue());
+		}
 
-        if (trailingHeaders != null) {
-            for (Map.Entry<String, String> header:  trailingHeaders) {
-                h.add(header.getKey(), header.getValue());
-            }
-        }
+		if (trailingHeaders != null) {
+			for (Map.Entry<String, String> header : trailingHeaders) {
+				h.add(header.getKey(), header.getValue());
+			}
+		}
 
-        return h;
-    }
+		return h;
+	}
 
-    /**
-     * Return the HTTP header
-     *
-     * @return an {@link org.asynchttpclient.FluentCaseInsensitiveStringsMap}
-     */
-    @Override
-    public FluentCaseInsensitiveStringsMap getHeaders() {
-        return headers;
-    }
+	/**
+	 * Return the HTTP header
+	 * 
+	 * @return an {@link org.asynchttpclient.FluentCaseInsensitiveStringsMap}
+	 */
+	@Override
+	public FluentCaseInsensitiveStringsMap getHeaders() {
+		return headers;
+	}
 }

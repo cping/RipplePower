@@ -21,44 +21,45 @@ import java.util.List;
 
 public class ByteBufUtil {
 
-    public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-    public static byte[] byteBuf2Bytes(ByteBuf buf) {
-        int readable = buf.readableBytes();
-        int readerIndex = buf.readerIndex();
-        if (buf.hasArray()) {
-            byte[] array = buf.array();
-            if (buf.arrayOffset() == 0 && readerIndex == 0 && array.length == readable) {
-                return array;
-            }
-        }
-        byte[] array = new byte[readable];
-        buf.getBytes(readerIndex, array);
-        return array;
-    }
+	public static byte[] byteBuf2Bytes(ByteBuf buf) {
+		int readable = buf.readableBytes();
+		int readerIndex = buf.readerIndex();
+		if (buf.hasArray()) {
+			byte[] array = buf.array();
+			if (buf.arrayOffset() == 0 && readerIndex == 0
+					&& array.length == readable) {
+				return array;
+			}
+		}
+		byte[] array = new byte[readable];
+		buf.getBytes(readerIndex, array);
+		return array;
+	}
 
-    public static byte[] byteBufs2Bytes(List<ByteBuf> bufs) {
+	public static byte[] byteBufs2Bytes(List<ByteBuf> bufs) {
 
-        if (bufs.isEmpty()) {
-            return EMPTY_BYTE_ARRAY;
+		if (bufs.isEmpty()) {
+			return EMPTY_BYTE_ARRAY;
 
-        } else if (bufs.size() == 1) {
-            return byteBuf2Bytes(bufs.get(0));
+		} else if (bufs.size() == 1) {
+			return byteBuf2Bytes(bufs.get(0));
 
-        } else {
-            int totalSize = 0;
-            for (ByteBuf buf : bufs) {
-                totalSize += buf.readableBytes();
-            }
+		} else {
+			int totalSize = 0;
+			for (ByteBuf buf : bufs) {
+				totalSize += buf.readableBytes();
+			}
 
-            byte[] bytes = new byte[totalSize];
-            int offset = 0;
-            for (ByteBuf buf : bufs) {
-                int readable = buf.readableBytes();
-                buf.getBytes(buf.readerIndex(), bytes, offset, readable);
-                offset += readable;
-            }
-            return bytes;
-        }
-    }
+			byte[] bytes = new byte[totalSize];
+			int offset = 0;
+			for (ByteBuf buf : bufs) {
+				int readable = buf.readableBytes();
+				buf.getBytes(buf.readerIndex(), bytes, offset, readable);
+				offset += readable;
+			}
+			return bytes;
+		}
+	}
 }

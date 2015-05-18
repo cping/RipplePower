@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import org.ripple.power.ui.UIRes;
 
-
 public class LFont {
 
 	private static LFont defaultFont = LFont.getFont("Dialog", 0, 20);
@@ -73,8 +72,7 @@ public class LFont {
 					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 							RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 				}
-				Font trueFont = Font.createFont(0,
-						UIRes.getStream(file));
+				Font trueFont = Font.createFont(0, UIRes.getStream(file));
 				Font baseFont = trueFont.deriveFont(style, size);
 				o.fontMetrics = g2d.getFontMetrics(baseFont);
 				o.initialized = true;
@@ -105,8 +103,7 @@ public class LFont {
 					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 							RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 				}
-				Font trueFont = Font
-						.createFont(0, UIRes.getStream(file));
+				Font trueFont = Font.createFont(0, UIRes.getStream(file));
 				Font baseFont = trueFont.deriveFont(style, size);
 				o.fontMetrics = g2d.getFontMetrics(baseFont);
 				o.initialized = true;

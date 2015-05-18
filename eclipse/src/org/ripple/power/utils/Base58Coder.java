@@ -64,14 +64,14 @@ public class Base58Coder {
 
 	private static byte[] decodeChecked(String input) throws Exception {
 		byte tmp[] = decode(input);
-		if (tmp.length < 4){
+		if (tmp.length < 4) {
 			throw new Exception("Input too short");
 		}
 		byte[] bytes = copyOfRange(tmp, 0, tmp.length - 4);
 		byte[] checksum = copyOfRange(tmp, tmp.length - 4, tmp.length);
 		tmp = Helper.doubleDigest(bytes);
 		byte[] hash = copyOfRange(tmp, 0, 4);
-		if (!Arrays.equals(checksum, hash)){
+		if (!Arrays.equals(checksum, hash)) {
 			throw new Exception("Checksum does not validate");
 		}
 		return bytes;

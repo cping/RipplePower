@@ -410,7 +410,7 @@ public class RippleMacros extends AMacros {
 					});
 					break;
 				case ACCOUNT_TX:
-					find.tx(address, -1, 200, new Rollback() {
+					find.tx(address, -1,-1, 20, new Rollback() {
 
 						@Override
 						public void success(JSONObject res) {

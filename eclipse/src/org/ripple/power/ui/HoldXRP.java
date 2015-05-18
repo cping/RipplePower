@@ -53,7 +53,6 @@ public class HoldXRP {
 		canvas.setTop(4);
 		canvas.setTextDisplay(textDisplay);
 		canvas.offsetX = -35;
-		
 
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 				LSystem.applicationMain.getGraphicsConfiguration());

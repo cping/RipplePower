@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -48,7 +47,6 @@ public class RPPasswordDialog extends JDialog {
 		_cancelButton = new RPCButton();
 		_okButton = new RPCButton();
 
-		 
 		getContentPane().setLayout(null);
 
 		Font font = UIRes.getFont();
@@ -114,8 +112,8 @@ public class RPPasswordDialog extends JDialog {
 
 				if (!_password1Text.getText().equals(_password2Text.getText())) {
 					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Two passwords are not the same !", UIMessage.error,
-							JOptionPane.ERROR_MESSAGE);
+							"Two passwords are not the same !",
+							UIMessage.error, JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				passwordEntered = true;

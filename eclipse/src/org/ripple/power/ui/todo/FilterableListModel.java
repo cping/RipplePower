@@ -42,15 +42,15 @@ public class FilterableListModel extends AbstractListModel<Object> implements
 		}
 		return returnValue;
 	}
-	
-	public void removeElement(int index){
+
+	public void removeElement(int index) {
 		list.remove(index);
 		filter(lastFilter);
 	}
-	
+
 	/*
-	 * search the list, compare two string, indexOf will return 
-	 * the index, if != -1, then added it into filtered-list.
+	 * search the list, compare two string, indexOf will return the index, if !=
+	 * -1, then added it into filtered-list.
 	 */
 	private void filter(String search) {
 		filteredList.clear();

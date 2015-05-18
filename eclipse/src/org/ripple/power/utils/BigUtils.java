@@ -38,7 +38,6 @@ public final class BigUtils {
 	public static final BigInteger FOUR = TWO.add(TWO);
 	public static final BigInteger SEVEN = FOUR.add(THREE);
 	public static final BigInteger EIGHT = FOUR.add(FOUR);
-	
 
 	private BigUtils() {
 	}

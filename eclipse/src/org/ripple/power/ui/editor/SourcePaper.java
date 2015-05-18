@@ -14,14 +14,13 @@ import org.ripple.power.utils.GraphicsUtils;
 
 public class SourcePaper extends JTextPane {
 
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private Font _font;
-	
+
 	public SourcePaper() {
 		super();
 		this._font = GraphicsUtils.getFont(Font.MONOSPACED, 1, 15);

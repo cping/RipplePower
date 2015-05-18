@@ -43,19 +43,18 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
- * The <code>Hcb</code> represents the Huffman codebook.  
- */	
-final class Hcb
-{
-	int		n;
-	int		dim;
-	int		lav;
-	int		mod;
-	int		off;
-	boolean	signed_cb;
+ * The <code>Hcb</code> represents the Huffman codebook.
+ */
+final class Hcb {
+	int n;
+	int dim;
+	int lav;
+	int mod;
+	int off;
+	boolean signed_cb;
 	int[][] hcw;
-} 
+}

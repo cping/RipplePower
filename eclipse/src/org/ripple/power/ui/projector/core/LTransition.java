@@ -29,11 +29,10 @@ public class LTransition {
 	 * @return
 	 */
 	public final static LTransition newCrossRandom(LColor c) {
-		return newCross(LSystem.getRandomBetWeen(0, 1), GraphicsUtils
-				.createLImage(LSystem.screenRect.width,
+		return newCross(LSystem.getRandomBetWeen(0, 1),
+				GraphicsUtils.createLImage(LSystem.screenRect.width,
 						LSystem.screenRect.height, c));
 	}
-
 
 	/**
 	 * 百叶窗特效
@@ -71,7 +70,6 @@ public class LTransition {
 		return transition;
 
 	}
-
 
 	/**
 	 * 默认使用黑色的圆弧渐变特效
@@ -118,7 +116,6 @@ public class LTransition {
 
 	}
 
-
 	/**
 	 * 产生一个Screen画面向双向分裂的过渡特效
 	 * 
@@ -139,7 +136,6 @@ public class LTransition {
 		return newSplitRandom(GraphicsUtils.createLImage(
 				LSystem.screenRect.width, LSystem.screenRect.height, c));
 	}
-
 
 	/**
 	 * 产生一个Screen画面向双向分裂的过渡特效(方向的静态值位于Config类中)

@@ -1,4 +1,5 @@
 package org.ripple.power.utils;
+
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;

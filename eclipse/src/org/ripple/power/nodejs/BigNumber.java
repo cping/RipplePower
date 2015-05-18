@@ -1076,7 +1076,7 @@ public class BigNumber {
 	public boolean isNegative() {
 		return toNumber() < 0;
 	}
-	
+
 	public boolean isPositive() {
 		return toNumber() > -1;
 	}

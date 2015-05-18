@@ -422,7 +422,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 					session.set("warn", json.toString());
 					session.save();
 					alert(UIMessage.save);
-					
+
 					PriceMonitor.get().reset();
 				}
 			}

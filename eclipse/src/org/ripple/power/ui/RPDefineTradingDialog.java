@@ -303,7 +303,6 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		});
 		_moveCurButton.setBounds(300, 150, 50, 30);
 
-
 		_moveDelCurButton.setText("<<");
 		_moveDelCurButton.addActionListener(new ActionListener() {
 
@@ -325,7 +324,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		});
 		getContentPane().add(_moveDelCurButton);
 		_moveDelCurButton.setBounds(300, 200, 50, 30);
-		
+
 		scrollPanelThree.setViewportView(_existGatewayList);
 
 		getContentPane().add(scrollPanelThree);
@@ -370,7 +369,6 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_moveGatewayButton);
 		_moveGatewayButton.setBounds(300, 40, 50, 30);
 
-
 		_moveDelGatewayButton.setText("<<");
 		_moveDelGatewayButton.addActionListener(new ActionListener() {
 
@@ -394,7 +392,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		});
 		getContentPane().add(_moveDelGatewayButton);
 		_moveDelGatewayButton.setBounds(300, 90, 50, 30);
-		
+
 		_existCurLabel.setFont(UIRes.getFont()); // NOI18N
 		_existCurLabel.setText("已有币种");
 		getContentPane().add(_existCurLabel);
@@ -415,7 +413,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 
 		_gatewayAndCurComboBox.setFont(GraphicsUtils.getFont(12)); // NOI18N
 		getContentPane().add(_gatewayAndCurComboBox);
-		_gatewayAndCurComboBox.setItemModel(new Object[]{"Emprt"});
+		_gatewayAndCurComboBox.setItemModel(new Object[] { "Emprt" });
 		_gatewayAndCurComboBox.setBounds(100, 260, 240, 30);
 		scrollPanelFive.setViewportView(_finalSetList);
 
@@ -442,7 +440,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpFlagLabel);
 		_xrpFlagLabel.setBounds(620, 260, 30, 30);
 
-		_typeSelectComboBox.setItemModel(new Object[]{"UP ?% DOWN ?%"});
+		_typeSelectComboBox.setItemModel(new Object[] { "UP ?% DOWN ?%" });
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(420, 310, 230, 30);
 
@@ -451,7 +449,8 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceLabel1);
 		_xrpPriceLabel1.setBounds(220, 310, 50, 30);
 
-		_typeSelectComboBox1.setItemModel(new Object[]{">",">=","<","<=","=="});
+		_typeSelectComboBox1.setItemModel(new Object[] { ">", ">=", "<", "<=",
+				"==" });
 		getContentPane().add(_typeSelectComboBox1);
 		_typeSelectComboBox1.setBounds(420, 260, 60, 30);
 
@@ -464,7 +463,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceText1);
 		_xrpPriceText1.setBounds(490, 260, 120, 30);
 
-		_typeSelectComboBox2.setItemModel(new Object[]{"? > ?"});
+		_typeSelectComboBox2.setItemModel(new Object[] { "? > ?" });
 		getContentPane().add(_typeSelectComboBox2);
 		_typeSelectComboBox2.setBounds(100, 410, 240, 30);
 
@@ -488,7 +487,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_swapLabel);
 		_swapLabel.setBounds(360, 360, 60, 30);
 
-		_typeSelectComboBox3.setItemModel(new Object[]{"SELL","BUY"});
+		_typeSelectComboBox3.setItemModel(new Object[] { "SELL", "BUY" });
 		getContentPane().add(_typeSelectComboBox3);
 		_typeSelectComboBox3.setBounds(100, 310, 110, 30);
 
@@ -516,7 +515,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_startLabel);
 		_startLabel.setBounds(360, 310, 60, 30);
 
-		_typeSelectComboBox4.setItemModel(new Object[]{"USD"});
+		_typeSelectComboBox4.setItemModel(new Object[] { "USD" });
 		getContentPane().add(_typeSelectComboBox4);
 		_typeSelectComboBox4.setBounds(270, 310, 70, 30);
 
@@ -524,7 +523,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceText3);
 		_xrpPriceText3.setBounds(100, 360, 160, 30);
 
-		_typeSelectComboBox5.setItemModel(new Object[]{"USD"});
+		_typeSelectComboBox5.setItemModel(new Object[] { "USD" });
 		getContentPane().add(_typeSelectComboBox5);
 		_typeSelectComboBox5.setBounds(270, 360, 70, 30);
 
@@ -533,7 +532,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_tacticsLabel);
 		_tacticsLabel.setBounds(20, 310, 80, 30);
 
-		_typeSelectComboBox6.setItemModel(new Object[]{"USD"});
+		_typeSelectComboBox6.setItemModel(new Object[] { "USD" });
 		getContentPane().add(_typeSelectComboBox6);
 		_typeSelectComboBox6.setBounds(570, 360, 80, 30);
 

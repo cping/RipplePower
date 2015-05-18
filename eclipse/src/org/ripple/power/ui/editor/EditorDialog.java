@@ -463,7 +463,8 @@ public class EditorDialog extends JDialog {
 					if (file.exists()) {
 						_editorText.setFile(file);
 						_editorText.openFile();
-						UIMessage.infoMessage(EditorDialog.this, "Open Completed");
+						UIMessage.infoMessage(EditorDialog.this,
+								"Open Completed");
 					}
 				}
 			}

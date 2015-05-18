@@ -110,7 +110,7 @@ public class RhinoEngine {
 			}
 		});
 	}
-	
+
 	public void removeObject(final String varName) {
 		RhinoUtils.runWithCtx(new ContextRunner() {
 			public Object run(Context cx) {

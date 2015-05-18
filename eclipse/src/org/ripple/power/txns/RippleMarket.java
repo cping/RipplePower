@@ -23,7 +23,7 @@ public class RippleMarket {
 	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
 			"yyyy-MM-dd");
 
-	private static ArrayList<RippleItem> jsonToItems(Object o){
+	private static ArrayList<RippleItem> jsonToItems(Object o) {
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
 			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
@@ -57,19 +57,19 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercised24hour_items(
-			String currency,String issuer) {
-		Object o = offers_exercised24hour(LSystem.nativeCurrency,
-				currency, issuer);
+			String currency, String issuer) {
+		Object o = offers_exercised24hour(LSystem.nativeCurrency, currency,
+				issuer);
 		return jsonToItems(o);
 	}
-	
+
 	public static ArrayList<RippleItem> offers_exercised24hour_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercised24hour(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
 		return jsonToItems(o);
 	}
-	
+
 	public static Object offers_exercised24hour(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -87,19 +87,19 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedYear_items(
-			String currency,String issuer) {
-		Object o = offers_exercisedYear(LSystem.nativeCurrency,
-				currency, issuer);
+			String currency, String issuer) {
+		Object o = offers_exercisedYear(LSystem.nativeCurrency, currency,
+				issuer);
 		return jsonToItems(o);
 	}
-	
+
 	public static ArrayList<RippleItem> offers_exercisedYear_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercisedYear(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
 		return jsonToItems(o);
 	}
-	
+
 	public static Object offers_exercisedYear(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -117,19 +117,19 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedMonth_items(
-			String currency,String issuer) {
-		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
-				currency, issuer);
+			String currency, String issuer) {
+		Object o = offers_exercisedMonth(LSystem.nativeCurrency, currency,
+				issuer);
 		return jsonToItems(o);
 	}
-	
+
 	public static ArrayList<RippleItem> offers_exercisedMonth_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
 		return jsonToItems(o);
 	}
-	
+
 	public static Object offers_exercisedMonth(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();
@@ -147,19 +147,19 @@ public class RippleMarket {
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedWeek_items(
-			String currency,String issuer) {
-		Object o = offers_exercisedWeek(LSystem.nativeCurrency,
-				currency, issuer);
+			String currency, String issuer) {
+		Object o = offers_exercisedWeek(LSystem.nativeCurrency, currency,
+				issuer);
 		return jsonToItems(o);
 	}
-	
+
 	public static ArrayList<RippleItem> offers_exercisedWeek_items(
 			IssuedCurrency issued) {
 		Object o = offers_exercisedWeek(LSystem.nativeCurrency,
 				issued.currency, issued.issuer.toString());
 		return jsonToItems(o);
 	}
-	
+
 	public static Object offers_exercisedWeek(String basecur, String cur,
 			String issuer) {
 		Calendar calone = Calendar.getInstance();

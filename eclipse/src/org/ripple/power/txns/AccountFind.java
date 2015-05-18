@@ -22,7 +22,7 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
-	public static int LIMIT_MAX_TX = 200;
+	public static int LIMIT_TX = 50;
 
 	private static AccountFind instance = null;
 
@@ -186,7 +186,7 @@ public class AccountFind {
 
 	public RippleMemoDecodes message(final String address,
 			final String password, final Updateable update) {
-		return message(address, password, -1, LIMIT_MAX_TX, update);
+		return message(address, password, -1, -1, LIMIT_TX, update);
 	}
 
 	/**
@@ -201,10 +201,10 @@ public class AccountFind {
 	 * @return
 	 */
 	public RippleMemoDecodes message(final String address,
-			final String password, final long txPreLgrSeq, final long max,
-			final Updateable update) {
+			final String password, final long min, final long max,
+			final long limit, final Updateable update) {
 		final RippleMemoDecodes decodes = new RippleMemoDecodes();
-		tx(address, txPreLgrSeq, max, new Rollback() {
+		tx(address, min, max, limit, new Rollback() {
 
 			@Override
 			public void success(JSONObject res) {
@@ -395,28 +395,28 @@ public class AccountFind {
 
 	public AccountInfo processTx(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, -1, LIMIT_MAX_TX, accountinfo, update);
+		return processTx(address, -1, -1, LIMIT_TX, accountinfo, update);
 	}
 
 	public AccountInfo processTxAffectedNodes(final String address,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, -1, LIMIT_MAX_TX, accountinfo, update, true);
+		return processTx(address, -1, -1, LIMIT_TX, accountinfo, update, true);
 	}
 
 	public AccountInfo processTxAffectedNodes(final String address,
-			final long txPreLgrSeq, final long max,
+			final long min, final long max, final long limit,
 			final AccountInfo accountinfo, final Updateable update) {
-		return processTx(address, txPreLgrSeq, max, accountinfo, update, true);
+		return processTx(address, min, max, limit, accountinfo, update, true);
 	}
 
-	public AccountInfo processTx(final String address, final long txPreLgrSeq,
-			final long max, final AccountInfo accountinfo,
+	public AccountInfo processTx(final String address, final long min,
+			final long max, final long limit, final AccountInfo accountinfo,
 			final Updateable update) {
-		return processTx(address, txPreLgrSeq, max, accountinfo, update, false);
+		return processTx(address, min, max, limit, accountinfo, update, false);
 	}
 
-	public AccountInfo processTx(final String address, final long txPreLgrSeq,
-			final long max, final AccountInfo accountinfo,
+	public AccountInfo processTx(final String address, final long min,
+			final long max, final long limit, final AccountInfo accountinfo,
 			final Updateable update, final boolean loadAffectedNodes) {
 		final ArrayList<IssuedCurrency> issues = new ArrayList<IssuedCurrency>(
 				10);
@@ -425,8 +425,11 @@ public class AccountFind {
 			@Override
 			public void action(Object res) {
 
-				tx(address, txPreLgrSeq == -1 ? accountinfo.txPreLgrSeq : -1,
-						max, new Rollback() {
+				tx(address, accountinfo.txPreLgrSeq == -1 ? min
+						: accountinfo.txPreLgrSeq,
+						accountinfo.txPreLgrSeq == -1 ? max
+								: accountinfo.txPreLgrSeq, limit,
+						new Rollback() {
 
 							@Override
 							public void success(JSONObject res) {
@@ -449,7 +452,8 @@ public class AccountFind {
 												newInfo.marker = accountinfo.marker;
 												processTx(address,
 														accountinfo.marker,
-														ledger, newInfo, null);
+														ledger, limit, newInfo,
+														null);
 												accountinfo.accountlinks
 														.add(newInfo);
 											}
@@ -788,7 +792,7 @@ public class AccountFind {
 													}
 													break;
 												case "AccountSet":
-													//Ignore
+													// Ignore
 													break;
 												}
 												accountinfo.transactions
@@ -1182,14 +1186,22 @@ public class AccountFind {
 		}
 	}
 
-	public void tx(String srcAddress, long ledger, long limit,
-			final Rollback back) {
+	public void tx(String srcAddress, long ledger_min, long ledger_max,
+			long limit, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.account_tx);
 			req.json("account", srcAddress);
-			req.json("ledger_index_max", ledger);
+			if (ledger_max == ledger_min) {
+				req.json("ledger_index_max", ledger_max);
+			} else {
+				req.json("ledger_index_min", ledger_min);
+				req.json("ledger_index_max", ledger_max);
+			}
 			req.json("limit", limit);
+			req.json("binary", false);
+			req.json("forward", false);
+			req.json("count", false);
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 				@Override
 				public void called(Response response) {

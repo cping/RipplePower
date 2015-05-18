@@ -16,8 +16,8 @@ public class RippleItem {
 	public String openTime;
 	public String closeTime;
 	public boolean partial;
-	
-	public String toString(){
+
+	public String toString() {
 		StringBuilder sbr = new StringBuilder();
 		sbr.append("startTime:").append(startTime).append(LSystem.LS);
 		sbr.append("baseVolume:").append(baseVolume).append(LSystem.LS);

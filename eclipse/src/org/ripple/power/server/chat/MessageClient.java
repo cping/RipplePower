@@ -1,6 +1,5 @@
 package org.ripple.power.server.chat;
 
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -29,21 +28,26 @@ public class MessageClient {
 	private String username;
 	private static final LoggingHandler LOGGING_HANDLER = new LoggingHandler();
 
-	public void init(String username, JTextArea messageShow, String ip, int port, RPComboBox combobox) throws Exception {
+	public void init(String username, JTextArea messageShow, String ip,
+			int port, RPComboBox combobox) throws Exception {
 		this.messageShow = messageShow;
 		this.username = username;
 		this.combobox = combobox;
 		Bootstrap b = new Bootstrap();
-		b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<SocketChannel>() {
+		b.group(group).channel(NioSocketChannel.class)
+				.option(ChannelOption.TCP_NODELAY, true)
+				.handler(new ChannelInitializer<SocketChannel>() {
 
-			@Override
-			public void initChannel(SocketChannel ch) throws Exception {
-				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new ByteMesDecoder(new MessageRecognizer())).addLast(new MesToByteEncoder());
-				pipeline.addLast("LOGGING_HANDLER", LOGGING_HANDLER);
-				pipeline.addLast(new GameClientHandler());
-			}
-		});
+					@Override
+					public void initChannel(SocketChannel ch) throws Exception {
+						ChannelPipeline pipeline = ch.pipeline();
+						pipeline.addLast(
+								new ByteMesDecoder(new MessageRecognizer()))
+								.addLast(new MesToByteEncoder());
+						pipeline.addLast("LOGGING_HANDLER", LOGGING_HANDLER);
+						pipeline.addLast(new GameClientHandler());
+					}
+				});
 		ChannelFuture f = b.connect(ip, port).sync();
 		this.channel = f.channel();
 		LoginMessage msg = new LoginMessage(username);
@@ -52,7 +56,8 @@ public class MessageClient {
 	}
 
 	@Sharable
-	private class GameClientHandler extends SimpleChannelInboundHandler<AMessage> {
+	private class GameClientHandler extends
+			SimpleChannelInboundHandler<AMessage> {
 		@Override
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			super.channelInactive(ctx);
@@ -65,18 +70,21 @@ public class MessageClient {
 		}
 
 		@Override
-		public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+		public void channelUnregistered(ChannelHandlerContext ctx)
+				throws Exception {
 			super.channelUnregistered(ctx);
 		}
 
 		@Override
-		protected void channelRead0(ChannelHandlerContext ctx, AMessage msg) throws Exception {
+		protected void channelRead0(ChannelHandlerContext ctx, AMessage msg)
+				throws Exception {
 
 			short type = msg.getMessageType();
 			switch (type) {
 			case MessageType.CS_CHAT: {
 				ChatMessage _msg = (ChatMessage) msg;
-				messageShow.append(_msg.getUsername() + " " + DateUtils.toDate() + "\n");
+				messageShow.append(_msg.getUsername() + " "
+						+ DateUtils.toDate() + "\n");
 				messageShow.append("    " + _msg.getMsg() + "\n");
 				break;
 			}
@@ -107,8 +115,7 @@ public class MessageClient {
 			default:
 				break;
 			}
-		
-			
+
 		}
 	}
 

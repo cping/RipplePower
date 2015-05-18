@@ -29,7 +29,7 @@ public interface Expression {
 
 	// 缓存刷新标记
 	String RESET_CACHE_TAG = "reset";
-	
+
 	// 累计输入数据标记
 	String IN_TAG = "in";
 

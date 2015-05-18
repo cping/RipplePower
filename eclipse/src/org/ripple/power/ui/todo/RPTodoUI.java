@@ -166,8 +166,7 @@ public class RPTodoUI extends ABaseDialog {
 								if (o != null && o instanceof WalletItem) {
 									WalletItem wallet_item = (WalletItem) o;
 									RPRippledMemoDialog.showDialog(
-											"Ripple TODO",
-											RPTodoUI.this,
+											"Ripple TODO", RPTodoUI.this,
 											wallet_item.getPublicKey(),
 											item.toText());
 								}

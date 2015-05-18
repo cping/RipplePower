@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SecureTable<T extends TableEntry> implements Table<T> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private final Map<Long, T> tableEntryMap;
 	private final String name;
@@ -27,7 +27,7 @@ public class SecureTable<T extends TableEntry> implements Table<T> {
 	@Override
 	public synchronized void putEntry(T entry) {
 		Long id = entry.getId();
-		if (id == null || id == 0L) { 
+		if (id == null || id == 0L) {
 			id = this.tableEntryMap.size() + 1L;
 			entry.setId(id);
 		}
@@ -44,5 +44,4 @@ public class SecureTable<T extends TableEntry> implements Table<T> {
 		return this.name;
 	}
 
-	
 }

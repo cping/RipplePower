@@ -18,7 +18,6 @@ import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.client.Client;
-import com.ripple.client.ClientLogger;
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
 import com.ripple.client.responses.Response;
@@ -28,10 +27,10 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class RPClient {
 
-	static{
+	static {
 		System.setProperty("https.protocols", "TLSv1.2");
 	}
-	
+
 	// Test status is not networking
 	public static boolean testing = false;
 
@@ -43,8 +42,8 @@ public class RPClient {
 			10);
 
 	private final static String[] applicationRippleLabes = new String[] {
-			"wss://s1.ripple.com:443", "wss://s-west.ripple.com:443",
-			"wss://s-east.ripple.com:443" };
+			"wss://s2.ripple.com:443", "wss://s1.ripple.com:443",
+			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443" };
 
 	public static ArrayList<String> getRLNodes(boolean flag) {
 		ArrayList<String> tmp = new ArrayList<String>(40);
@@ -52,6 +51,7 @@ public class RPClient {
 		tmp.add(applicationRippleLabes[0]);
 		tmp.add(applicationRippleLabes[1]);
 		tmp.add(applicationRippleLabes[2]);
+		tmp.add(applicationRippleLabes[3]);
 		if (flag) {
 			try {
 				ArrayList<String> list = RPClient.loadRLNodes();
@@ -99,7 +99,11 @@ public class RPClient {
 	public static WebRippled loadWebRippledConfig(String url)
 			throws HttpRequestException, IOException {
 		WebRippled rippled = new WebRippled();
+		// 突然发现报错Could not generate DH
+		// keypair（最早是没有的，不知道rl又换了什么……），似乎遇到java的bug了，目前验证ripple.com站的ssl证书会溢出，然后报错的是sun.security.ssl.SSLSocketImpl部分，私有代码想修改都不行，只能过几天换成openssl直接读吧……
 		HttpRequest request = HttpRequest.get(url);
+		request.trustAllCerts();
+		request.trustAllHosts();
 		if (request.ok()) {
 			String result = request.body();
 			if (result.indexOf('\r') != -1) {
@@ -366,7 +370,7 @@ public class RPClient {
 	}
 
 	public RPClient() {
-		ClientLogger.quiet = true;
+		// ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
 			pClinet.setProxy(LSystem.applicationProxy.getProxy());

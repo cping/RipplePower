@@ -33,589 +33,606 @@ import java.util.Set;
 
 public class MultipartBody implements RandomAccessBody {
 
-    private byte[] boundary;
-    private long contentLength;
-    private List<org.asynchttpclient.Part> parts;
-    private List<RandomAccessFile> files;
-    private int startPart;
-    private final static Logger logger = LoggerFactory.getLogger(MultipartBody.class);
-    ByteArrayInputStream currentStream;
-    int currentStreamPosition;
-    boolean endWritten;
-    boolean doneWritingParts;
-    FileLocation fileLocation;
-    FilePart currentFilePart;
-    FileChannel currentFileChannel;
-
-    enum FileLocation {NONE, START, MIDDLE, END}
-
-    public MultipartBody(List<org.asynchttpclient.Part> parts, String contentType, long contentLength) {
-        this.boundary = MultipartEncodingUtil.getAsciiBytes(contentType.substring(contentType.indexOf("boundary=") + "boundary=".length()));
-        this.contentLength = contentLength;
-        this.parts = parts;
-
-        files = new ArrayList<RandomAccessFile>();
-
-        startPart = 0;
-        currentStreamPosition = -1;
-        endWritten = false;
-        doneWritingParts = false;
-        fileLocation = FileLocation.NONE;
-        currentFilePart = null;
-    }
-
-    public void close() throws IOException {
-        for (RandomAccessFile file : files) {
-            file.close();
-        }
-    }
-
-    public long getContentLength() {
-        return contentLength;
-    }
-
-    public long read(ByteBuffer buffer) throws IOException {
-        try {
-            int overallLength = 0;
-
-            int maxLength = buffer.remaining();
-
-            if (startPart == parts.size() && endWritten) {
-                return -1;
-            }
-
-            boolean full = false;
-            while (!full && !doneWritingParts) {
-                org.asynchttpclient.Part part = null;
-                if (startPart < parts.size()) {
-                    part = parts.get(startPart);
-                }
-                if (currentFileChannel != null) {
-                    overallLength += currentFileChannel.read(buffer);
-
-                    if (currentFileChannel.position() == currentFileChannel.size()) {
-                        currentFileChannel.close();
-                        currentFileChannel = null;
-                    }
-
-                    if (overallLength == maxLength) {
-                        full = true;
-                    }
-                } else if (currentStreamPosition > -1) {
-                    overallLength += writeToBuffer(buffer, maxLength - overallLength);
-
-                    if (overallLength == maxLength) {
-                        full = true;
-                    }
-                    if (startPart == parts.size() && currentStream.available() == 0) {
-                        doneWritingParts = true;
-                    }
-                } else if (part instanceof StringPart) {
-                    StringPart currentPart = (StringPart) part;
-
-                    initializeStringPart(currentPart);
-
-                    startPart++;
-                } else if (part instanceof org.asynchttpclient.StringPart) {
-                    StringPart currentPart = generateClientStringpart(part);
-
-                    initializeStringPart(currentPart);
-
-                    startPart++;
-                } else if (part instanceof FilePart) {
-                    if (fileLocation == FileLocation.NONE) {
-                        currentFilePart = (FilePart) part;
-                        initializeFilePart(currentFilePart);
-                    } else if (fileLocation == FileLocation.START) {
-                        initializeFileBody(currentFilePart);
-                    } else if (fileLocation == FileLocation.MIDDLE) {
-                        initializeFileEnd(currentFilePart);
-                    } else if (fileLocation == FileLocation.END) {
-                        startPart++;
-                        fileLocation = FileLocation.NONE;
-                        if (startPart == parts.size() && currentStream.available() == 0) {
-                            doneWritingParts = true;
-                        }
-                    }
-                } else if (part instanceof org.asynchttpclient.FilePart) {
-                    if (fileLocation == FileLocation.NONE) {
-                        currentFilePart = generateClientFilePart(part);
-                        initializeFilePart(currentFilePart);
-                    } else if (fileLocation == FileLocation.START) {
-                        initializeFileBody(currentFilePart);
-                    } else if (fileLocation == FileLocation.MIDDLE) {
-                        initializeFileEnd(currentFilePart);
-                    } else if (fileLocation == FileLocation.END) {
-                        startPart++;
-                        fileLocation = FileLocation.NONE;
-                        if (startPart == parts.size() && currentStream.available() == 0) {
-                            doneWritingParts = true;
-                        }
-                    }
-                } else if (part instanceof ByteArrayPart) {
-                    ByteArrayPart bytePart =
-                            (ByteArrayPart) part;
+	private byte[] boundary;
+	private long contentLength;
+	private List<org.asynchttpclient.Part> parts;
+	private List<RandomAccessFile> files;
+	private int startPart;
+	private final static Logger logger = LoggerFactory
+			.getLogger(MultipartBody.class);
+	ByteArrayInputStream currentStream;
+	int currentStreamPosition;
+	boolean endWritten;
+	boolean doneWritingParts;
+	FileLocation fileLocation;
+	FilePart currentFilePart;
+	FileChannel currentFileChannel;
+
+	enum FileLocation {
+		NONE, START, MIDDLE, END
+	}
+
+	public MultipartBody(List<org.asynchttpclient.Part> parts,
+			String contentType, long contentLength) {
+		this.boundary = MultipartEncodingUtil.getAsciiBytes(contentType
+				.substring(contentType.indexOf("boundary=")
+						+ "boundary=".length()));
+		this.contentLength = contentLength;
+		this.parts = parts;
+
+		files = new ArrayList<RandomAccessFile>();
+
+		startPart = 0;
+		currentStreamPosition = -1;
+		endWritten = false;
+		doneWritingParts = false;
+		fileLocation = FileLocation.NONE;
+		currentFilePart = null;
+	}
+
+	public void close() throws IOException {
+		for (RandomAccessFile file : files) {
+			file.close();
+		}
+	}
+
+	public long getContentLength() {
+		return contentLength;
+	}
+
+	public long read(ByteBuffer buffer) throws IOException {
+		try {
+			int overallLength = 0;
+
+			int maxLength = buffer.remaining();
+
+			if (startPart == parts.size() && endWritten) {
+				return -1;
+			}
+
+			boolean full = false;
+			while (!full && !doneWritingParts) {
+				org.asynchttpclient.Part part = null;
+				if (startPart < parts.size()) {
+					part = parts.get(startPart);
+				}
+				if (currentFileChannel != null) {
+					overallLength += currentFileChannel.read(buffer);
+
+					if (currentFileChannel.position() == currentFileChannel
+							.size()) {
+						currentFileChannel.close();
+						currentFileChannel = null;
+					}
+
+					if (overallLength == maxLength) {
+						full = true;
+					}
+				} else if (currentStreamPosition > -1) {
+					overallLength += writeToBuffer(buffer, maxLength
+							- overallLength);
+
+					if (overallLength == maxLength) {
+						full = true;
+					}
+					if (startPart == parts.size()
+							&& currentStream.available() == 0) {
+						doneWritingParts = true;
+					}
+				} else if (part instanceof StringPart) {
+					StringPart currentPart = (StringPart) part;
+
+					initializeStringPart(currentPart);
+
+					startPart++;
+				} else if (part instanceof org.asynchttpclient.StringPart) {
+					StringPart currentPart = generateClientStringpart(part);
+
+					initializeStringPart(currentPart);
+
+					startPart++;
+				} else if (part instanceof FilePart) {
+					if (fileLocation == FileLocation.NONE) {
+						currentFilePart = (FilePart) part;
+						initializeFilePart(currentFilePart);
+					} else if (fileLocation == FileLocation.START) {
+						initializeFileBody(currentFilePart);
+					} else if (fileLocation == FileLocation.MIDDLE) {
+						initializeFileEnd(currentFilePart);
+					} else if (fileLocation == FileLocation.END) {
+						startPart++;
+						fileLocation = FileLocation.NONE;
+						if (startPart == parts.size()
+								&& currentStream.available() == 0) {
+							doneWritingParts = true;
+						}
+					}
+				} else if (part instanceof org.asynchttpclient.FilePart) {
+					if (fileLocation == FileLocation.NONE) {
+						currentFilePart = generateClientFilePart(part);
+						initializeFilePart(currentFilePart);
+					} else if (fileLocation == FileLocation.START) {
+						initializeFileBody(currentFilePart);
+					} else if (fileLocation == FileLocation.MIDDLE) {
+						initializeFileEnd(currentFilePart);
+					} else if (fileLocation == FileLocation.END) {
+						startPart++;
+						fileLocation = FileLocation.NONE;
+						if (startPart == parts.size()
+								&& currentStream.available() == 0) {
+							doneWritingParts = true;
+						}
+					}
+				} else if (part instanceof ByteArrayPart) {
+					ByteArrayPart bytePart = (ByteArrayPart) part;
+
+					if (fileLocation == FileLocation.NONE) {
+						currentFilePart = generateClientByteArrayPart(bytePart);
+
+						initializeFilePart(currentFilePart);
+					} else if (fileLocation == FileLocation.START) {
+						initializeByteArrayBody(currentFilePart);
+					} else if (fileLocation == FileLocation.MIDDLE) {
+						initializeFileEnd(currentFilePart);
+					} else if (fileLocation == FileLocation.END) {
+						startPart++;
+						fileLocation = FileLocation.NONE;
+						if (startPart == parts.size()
+								&& currentStream.available() == 0) {
+							doneWritingParts = true;
+						}
+					}
+				}
+			}
 
-                    if (fileLocation == FileLocation.NONE) {
-                        currentFilePart =
-                                generateClientByteArrayPart(bytePart);
+			if (doneWritingParts) {
+				if (currentStreamPosition == -1) {
+					ByteArrayOutputStream endWriter = new ByteArrayOutputStream();
 
-                        initializeFilePart(currentFilePart);
-                    } else if (fileLocation == FileLocation.START) {
-                        initializeByteArrayBody(currentFilePart);
-                    } else if (fileLocation == FileLocation.MIDDLE) {
-                        initializeFileEnd(currentFilePart);
-                    } else if (fileLocation == FileLocation.END) {
-                        startPart++;
-                        fileLocation = FileLocation.NONE;
-                        if (startPart == parts.size() && currentStream.available() == 0) {
-                            doneWritingParts = true;
-                        }
-                    }
-                }
-            }
+					Part.sendMessageEnd(endWriter, boundary);
 
-            if (doneWritingParts) {
-                if (currentStreamPosition == -1) {
-                    ByteArrayOutputStream endWriter = new ByteArrayOutputStream();
+					initializeBuffer(endWriter);
+				}
 
-                    Part.sendMessageEnd(endWriter, boundary);
+				if (currentStreamPosition > -1) {
+					overallLength += writeToBuffer(buffer, maxLength
+							- overallLength);
 
-                    initializeBuffer(endWriter);
-                }
+					if (currentStream.available() == 0) {
+						currentStream.close();
+						currentStreamPosition = -1;
+						endWritten = true;
+					}
+				}
+			}
+			return overallLength;
 
-                if (currentStreamPosition > -1) {
-                    overallLength += writeToBuffer(buffer, maxLength - overallLength);
+		} catch (Exception e) {
+			logger.info("read exception", e);
+			return 0;
+		}
+	}
 
-                    if (currentStream.available() == 0) {
-                        currentStream.close();
-                        currentStreamPosition = -1;
-                        endWritten = true;
-                    }
-                }
-            }
-            return overallLength;
+	private void initializeByteArrayBody(FilePart filePart) throws IOException {
 
-        } catch (Exception e) {
-            logger.info("read exception", e);
-            return 0;
-        }
-    }
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		filePart.sendData(output);
 
-    private void initializeByteArrayBody(FilePart filePart)
-            throws IOException {
+		initializeBuffer(output);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        filePart.sendData(output);
+		fileLocation = FileLocation.MIDDLE;
+	}
 
-        initializeBuffer(output);
+	private void initializeFileEnd(FilePart currentPart) throws IOException {
 
-        fileLocation = FileLocation.MIDDLE;
-    }
+		ByteArrayOutputStream output = generateFileEnd(currentPart);
 
-    private void initializeFileEnd(FilePart currentPart)
-            throws IOException {
+		initializeBuffer(output);
 
-        ByteArrayOutputStream output = generateFileEnd(currentPart);
+		fileLocation = FileLocation.END;
 
-        initializeBuffer(output);
+	}
 
-        fileLocation = FileLocation.END;
+	private void initializeFileBody(FilePart currentPart) throws IOException {
 
-    }
+		if (currentPart.getSource() instanceof FilePartSource) {
 
-    private void initializeFileBody(FilePart currentPart)
-            throws IOException {
+			FilePartSource source = (FilePartSource) currentPart.getSource();
 
-        if (currentPart.getSource() instanceof FilePartSource) {
+			File file = source.getFile();
 
-            FilePartSource source = (FilePartSource) currentPart.getSource();
+			RandomAccessFile raf = new RandomAccessFile(file, "r");
+			files.add(raf);
 
-            File file = source.getFile();
+			currentFileChannel = raf.getChannel();
 
-            RandomAccessFile raf = new RandomAccessFile(file, "r");
-            files.add(raf);
+		} else {
+			PartSource partSource = currentPart.getSource();
 
-            currentFileChannel = raf.getChannel();
+			InputStream stream = partSource.createInputStream();
 
-        } else {
-            PartSource partSource = currentPart.getSource();
+			byte[] bytes = new byte[(int) partSource.getLength()];
 
-            InputStream stream = partSource.createInputStream();
+			stream.read(bytes);
 
-            byte[] bytes = new byte[(int) partSource.getLength()];
+			currentStream = new ByteArrayInputStream(bytes);
 
-            stream.read(bytes);
+			currentStreamPosition = 0;
+		}
 
-            currentStream = new ByteArrayInputStream(bytes);
+		fileLocation = FileLocation.MIDDLE;
+	}
 
-            currentStreamPosition = 0;
-        }
+	private void initializeFilePart(FilePart filePart) throws IOException {
 
-        fileLocation = FileLocation.MIDDLE;
-    }
+		filePart.setPartBoundary(boundary);
 
-    private void initializeFilePart(FilePart filePart)
-            throws IOException {
+		ByteArrayOutputStream output = generateFileStart(filePart);
 
-        filePart.setPartBoundary(boundary);
+		initializeBuffer(output);
 
-        ByteArrayOutputStream output = generateFileStart(filePart);
+		fileLocation = FileLocation.START;
+	}
 
-        initializeBuffer(output);
+	private void initializeStringPart(StringPart currentPart)
+			throws IOException {
+		currentPart.setPartBoundary(boundary);
 
-        fileLocation = FileLocation.START;
-    }
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-    private void initializeStringPart(StringPart currentPart)
-            throws IOException {
-        currentPart.setPartBoundary(boundary);
+		Part.sendPart(outputStream, currentPart, boundary);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		initializeBuffer(outputStream);
+	}
 
-        Part.sendPart(outputStream, currentPart, boundary);
+	private int writeToBuffer(ByteBuffer buffer, int length) throws IOException {
 
-        initializeBuffer(outputStream);
-    }
+		int available = currentStream.available();
 
-    private int writeToBuffer(ByteBuffer buffer, int length)
-            throws IOException {
+		int writeLength = Math.min(available, length);
 
-        int available = currentStream.available();
+		byte[] bytes = new byte[writeLength];
 
-        int writeLength = Math.min(available, length);
+		currentStream.read(bytes);
 
-        byte[] bytes = new byte[writeLength];
+		buffer.put(bytes);
 
-        currentStream.read(bytes);
+		if (available <= length) {
+			currentStream.close();
+			currentStreamPosition = -1;
+		} else {
+			currentStreamPosition += writeLength;
+		}
 
-        buffer.put(bytes);
+		return writeLength;
+	}
 
-        if (available <= length) {
-            currentStream.close();
-            currentStreamPosition = -1;
-        } else {
-            currentStreamPosition += writeLength;
-        }
+	private void initializeBuffer(ByteArrayOutputStream outputStream)
+			throws IOException {
 
-        return writeLength;
-    }
+		currentStream = new ByteArrayInputStream(outputStream.toByteArray());
 
-    private void initializeBuffer(ByteArrayOutputStream outputStream)
-            throws IOException {
+		currentStreamPosition = 0;
 
-        currentStream = new ByteArrayInputStream(outputStream.toByteArray());
+	}
 
-        currentStreamPosition = 0;
+	public long transferTo(long position, long count, WritableByteChannel target)
+			throws IOException {
 
-    }
+		long overallLength = 0;
 
-    public long transferTo(long position, long count, WritableByteChannel target)
-            throws IOException {
+		if (startPart == parts.size()) {
+			return contentLength;
+		}
 
-        long overallLength = 0;
+		int tempPart = startPart;
 
-        if (startPart == parts.size()) {
-            return contentLength;
-        }
+		for (org.asynchttpclient.Part part : parts) {
+			if (part instanceof Part) {
+				overallLength += handleMultiPart(target, (Part) part);
+			} else {
+				overallLength += handleClientPart(target, part);
+			}
 
-        int tempPart = startPart;
+			tempPart++;
+		}
+		ByteArrayOutputStream endWriter = new ByteArrayOutputStream();
 
-        for (org.asynchttpclient.Part part : parts) {
-            if (part instanceof Part) {
-                overallLength += handleMultiPart(target, (Part) part);
-            } else {
-                overallLength += handleClientPart(target, part);
-            }
+		Part.sendMessageEnd(endWriter, boundary);
 
-            tempPart++;
-        }
-        ByteArrayOutputStream endWriter =
-                new ByteArrayOutputStream();
+		overallLength += writeToTarget(target, endWriter);
 
-        Part.sendMessageEnd(endWriter, boundary);
+		startPart = tempPart;
 
-        overallLength += writeToTarget(target, endWriter);
+		return overallLength;
+	}
 
-        startPart = tempPart;
+	private long handleClientPart(WritableByteChannel target,
+			org.asynchttpclient.Part part) throws IOException {
 
-        return overallLength;
-    }
+		if (part.getClass().equals(org.asynchttpclient.StringPart.class)) {
+			StringPart currentPart = generateClientStringpart(part);
 
-    private long handleClientPart(
-            WritableByteChannel target, org.asynchttpclient.Part part) throws IOException {
+			return handleStringPart(target, currentPart);
+		} else if (part.getClass().equals(org.asynchttpclient.FilePart.class)) {
+			FilePart filePart = generateClientFilePart(part);
 
-        if (part.getClass().equals(org.asynchttpclient.StringPart.class)) {
-            StringPart currentPart = generateClientStringpart(part);
+			return handleFilePart(target, filePart);
+		} else if (part.getClass().equals(ByteArrayPart.class)) {
+			ByteArrayPart bytePart = (ByteArrayPart) part;
 
-            return handleStringPart(target, currentPart);
-        } else if (part.getClass().equals(org.asynchttpclient.FilePart.class)) {
-            FilePart filePart = generateClientFilePart(part);
+			FilePart filePart = generateClientByteArrayPart(bytePart);
 
-            return handleFilePart(target, filePart);
-        } else if (part.getClass().equals(ByteArrayPart.class)) {
-            ByteArrayPart bytePart = (ByteArrayPart) part;
+			return handleByteArrayPart(target, filePart, bytePart.getData());
+		}
 
-            FilePart filePart = generateClientByteArrayPart(bytePart);
+		return 0;
+	}
 
-            return handleByteArrayPart(target, filePart, bytePart.getData());
-        }
+	private FilePart generateClientByteArrayPart(ByteArrayPart bytePart) {
+		ByteArrayPartSource source = new ByteArrayPartSource(
+				bytePart.getFileName(), bytePart.getData());
 
-        return 0;
-    }
+		FilePart filePart = new FilePart(bytePart.getName(), source,
+				bytePart.getMimeType(), bytePart.getCharSet());
+		return filePart;
+	}
 
-    private FilePart generateClientByteArrayPart(
-            ByteArrayPart bytePart) {
-        ByteArrayPartSource source = new ByteArrayPartSource(bytePart.getFileName(), bytePart.getData());
+	private FilePart generateClientFilePart(org.asynchttpclient.Part part)
+			throws FileNotFoundException {
+		org.asynchttpclient.FilePart currentPart = (org.asynchttpclient.FilePart) part;
 
-        FilePart filePart = new FilePart(bytePart.getName(), source, bytePart.getMimeType(), bytePart.getCharSet());
-        return filePart;
-    }
+		FilePart filePart = new FilePart(currentPart.getName(),
+				currentPart.getFile(), currentPart.getMimeType(),
+				currentPart.getCharSet());
+		return filePart;
+	}
 
-    private FilePart generateClientFilePart(org.asynchttpclient.Part part)
-            throws FileNotFoundException {
-        org.asynchttpclient.FilePart
-                currentPart = (org.asynchttpclient.FilePart) part;
+	private StringPart generateClientStringpart(org.asynchttpclient.Part part) {
+		org.asynchttpclient.StringPart stringPart = (org.asynchttpclient.StringPart) part;
 
-        FilePart filePart = new FilePart(currentPart.getName(), currentPart.getFile(), currentPart.getMimeType(), currentPart.getCharSet());
-        return filePart;
-    }
+		StringPart currentPart = new StringPart(stringPart.getName(),
+				stringPart.getValue(), stringPart.getCharset());
+		return currentPart;
+	}
 
-    private StringPart generateClientStringpart(org.asynchttpclient.Part part) {
-        org.asynchttpclient.StringPart
-                stringPart = (org.asynchttpclient.StringPart) part;
+	private long handleByteArrayPart(WritableByteChannel target,
+			FilePart filePart, byte[] data) throws IOException {
 
-        StringPart currentPart = new StringPart(stringPart.getName(), stringPart.getValue(), stringPart.getCharset());
-        return currentPart;
-    }
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		Part.sendPart(output, filePart, boundary);
+		return writeToTarget(target, output);
+	}
 
-    private long handleByteArrayPart(WritableByteChannel target,
-                                     FilePart filePart, byte[] data) throws IOException {
+	private long handleFileEnd(WritableByteChannel target, FilePart filePart)
+			throws IOException {
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Part.sendPart(output, filePart, boundary);
-        return writeToTarget(target, output);
-    }
+		ByteArrayOutputStream endOverhead = generateFileEnd(filePart);
 
-    private long handleFileEnd(WritableByteChannel target, FilePart filePart)
-            throws IOException {
+		return this.writeToTarget(target, endOverhead);
+	}
 
-        ByteArrayOutputStream endOverhead = generateFileEnd(filePart);
+	private ByteArrayOutputStream generateFileEnd(FilePart filePart)
+			throws IOException {
+		ByteArrayOutputStream endOverhead = new ByteArrayOutputStream();
 
-        return this.writeToTarget(target, endOverhead);
-    }
+		filePart.sendEnd(endOverhead);
+		return endOverhead;
+	}
 
-    private ByteArrayOutputStream generateFileEnd(FilePart filePart)
-            throws IOException {
-        ByteArrayOutputStream endOverhead = new ByteArrayOutputStream();
+	private long handleFileHeaders(WritableByteChannel target, FilePart filePart)
+			throws IOException {
+		filePart.setPartBoundary(boundary);
 
-        filePart.sendEnd(endOverhead);
-        return endOverhead;
-    }
+		ByteArrayOutputStream overhead = generateFileStart(filePart);
 
-    private long handleFileHeaders(WritableByteChannel target, FilePart filePart) throws IOException {
-        filePart.setPartBoundary(boundary);
+		return writeToTarget(target, overhead);
+	}
 
-        ByteArrayOutputStream overhead = generateFileStart(filePart);
+	private ByteArrayOutputStream generateFileStart(FilePart filePart)
+			throws IOException {
+		ByteArrayOutputStream overhead = new ByteArrayOutputStream();
 
-        return writeToTarget(target, overhead);
-    }
+		filePart.setPartBoundary(boundary);
 
-    private ByteArrayOutputStream generateFileStart(FilePart filePart)
-            throws IOException {
-        ByteArrayOutputStream overhead = new ByteArrayOutputStream();
+		filePart.sendStart(overhead);
+		filePart.sendDispositionHeader(overhead);
+		filePart.sendContentTypeHeader(overhead);
+		filePart.sendTransferEncodingHeader(overhead);
+		filePart.sendContentIdHeader(overhead);
+		filePart.sendEndOfHeader(overhead);
+		return overhead;
+	}
 
-        filePart.setPartBoundary(boundary);
+	private long handleFilePart(WritableByteChannel target, FilePart filePart)
+			throws IOException {
+		FilePartStallHandler handler = new FilePartStallHandler(
+				filePart.getStalledTime(), filePart);
 
-        filePart.sendStart(overhead);
-        filePart.sendDispositionHeader(overhead);
-        filePart.sendContentTypeHeader(overhead);
-        filePart.sendTransferEncodingHeader(overhead);
-        filePart.sendContentIdHeader(overhead);
-        filePart.sendEndOfHeader(overhead);
-        return overhead;
-    }
+		handler.start();
 
-    private long handleFilePart(WritableByteChannel target, FilePart filePart) throws IOException {
-        FilePartStallHandler handler = new FilePartStallHandler(
-                filePart.getStalledTime(), filePart);
+		if (filePart.getSource() instanceof FilePartSource) {
+			int length = 0;
 
-        handler.start();
+			length += handleFileHeaders(target, filePart);
+			FilePartSource source = (FilePartSource) filePart.getSource();
 
-        if (filePart.getSource() instanceof FilePartSource) {
-            int length = 0;
+			File file = source.getFile();
 
-            length += handleFileHeaders(target, filePart);
-            FilePartSource source = (FilePartSource) filePart.getSource();
+			RandomAccessFile raf = new RandomAccessFile(file, "r");
+			files.add(raf);
 
-            File file = source.getFile();
+			FileChannel fc = raf.getChannel();
 
-            RandomAccessFile raf = new RandomAccessFile(file, "r");
-            files.add(raf);
+			long l = file.length();
+			int fileLength = 0;
+			long nWrite = 0;
+			synchronized (fc) {
+				while (fileLength != l) {
+					if (handler.isFailed()) {
+						logger.debug("Stalled error");
+						throw new FileUploadStalledException();
+					}
+					try {
+						nWrite = fc.transferTo(fileLength, l, target);
 
-            FileChannel fc = raf.getChannel();
+						if (nWrite == 0) {
+							logger.info("Waiting for writing...");
+							try {
+								fc.wait(50);
+							} catch (InterruptedException e) {
+								logger.trace(e.getMessage(), e);
+							}
+						} else {
+							handler.writeHappened();
+						}
+					} catch (IOException ex) {
+						String message = ex.getMessage();
 
-            long l = file.length();
-            int fileLength = 0;
-            long nWrite = 0;
-            synchronized (fc) {
-                while (fileLength != l) {
-                    if (handler.isFailed()) {
-                        logger.debug("Stalled error");
-                        throw new FileUploadStalledException();
-                    }
-                    try {
-                        nWrite = fc.transferTo(fileLength, l, target);
+						// http://bugs.sun.com/view_bug.do?bug_id=5103988
+						if (message != null
+								&& message
+										.equalsIgnoreCase("Resource temporarily unavailable")) {
+							try {
+								fc.wait(1000);
+							} catch (InterruptedException e) {
+								logger.trace(e.getMessage(), e);
+							}
+							logger.warn("Experiencing NIO issue http://bugs.sun.com/view_bug.do?bug_id=5103988. Retrying");
+							continue;
+						} else {
+							throw ex;
+						}
+					}
+					fileLength += nWrite;
+				}
+			}
+			handler.completed();
 
-                        if (nWrite == 0) {
-                            logger.info("Waiting for writing...");
-                            try {
-                                fc.wait(50);
-                            } catch (InterruptedException e) {
-                                logger.trace(e.getMessage(), e);
-                            }
-                        } else {
-                            handler.writeHappened();
-                        }
-                    } catch (IOException ex) {
-                        String message = ex.getMessage();
+			fc.close();
 
-                        // http://bugs.sun.com/view_bug.do?bug_id=5103988
-                        if (message != null && message.equalsIgnoreCase("Resource temporarily unavailable")) {
-                            try {
-                                fc.wait(1000);
-                            } catch (InterruptedException e) {
-                                logger.trace(e.getMessage(), e);
-                            }
-                            logger.warn("Experiencing NIO issue http://bugs.sun.com/view_bug.do?bug_id=5103988. Retrying");
-                            continue;
-                        } else {
-                            throw ex;
-                        }
-                    }
-                    fileLength += nWrite;
-                }
-            }
-            handler.completed();
+			length += handleFileEnd(target, filePart);
 
-            fc.close();
-
-            length += handleFileEnd(target, filePart);
-
-            return length;
-        } else {
-            return handlePartSource(target, filePart);
-        }
-    }
-
-    private long handlePartSource(WritableByteChannel target, FilePart filePart) throws IOException {
-
-        int length = 0;
-
-        length += handleFileHeaders(target, filePart);
-
-        PartSource partSource = filePart.getSource();
-
-        InputStream stream = partSource.createInputStream();
-
-        try {
-            int nRead = 0;
-            while (nRead != -1) {
-                // Do not buffer the entire monster in memory.
-                byte[] bytes = new byte[8192];
-                nRead = stream.read(bytes);
-                if (nRead > 0) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream(nRead);
-                    bos.write(bytes, 0, nRead);
-                    writeToTarget(target, bos);
-                }
-            }
-        } finally {
-            stream.close();
-        }
-        length += handleFileEnd(target, filePart);
-
-        return length;
-    }
-
-    private long handleStringPart(WritableByteChannel target, StringPart currentPart) throws IOException {
-
-        currentPart.setPartBoundary(boundary);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        Part.sendPart(outputStream, currentPart, boundary);
-
-        return writeToTarget(target, outputStream);
-    }
-
-    private long handleMultiPart(WritableByteChannel target, Part currentPart) throws IOException {
-
-        currentPart.setPartBoundary(boundary);
-
-        if (currentPart.getClass().equals(StringPart.class)) {
-            return handleStringPart(target, (StringPart) currentPart);
-        } else if (currentPart.getClass().equals(FilePart.class)) {
-            FilePart filePart = (FilePart) currentPart;
-
-            return handleFilePart(target, filePart);
-        }
-        return 0;
-    }
-
-    private long writeToTarget(WritableByteChannel target, ByteArrayOutputStream byteWriter)
-            throws IOException {
-
-        int written = 0;
-        int maxSpin = 0;
-        synchronized (byteWriter) {
-            ByteBuffer message = ByteBuffer.wrap(byteWriter.toByteArray());
-
-            if (target instanceof SocketChannel) {
-                final Selector selector = Selector.open();
-                try {
-                    final SocketChannel channel = (SocketChannel) target;
-                    channel.register(selector, SelectionKey.OP_WRITE);
-
-                    while (written < byteWriter.size()) {
-                        selector.select(1000);
-                        maxSpin++;
-                        final Set<SelectionKey> selectedKeys = selector.selectedKeys();
-
-                        for (SelectionKey key : selectedKeys) {
-                            if (key.isWritable()) {
-                                written += target.write(message);
-                                maxSpin = 0;
-                            }
-                        }
-                        if (maxSpin >= 10) {
-                            throw new IOException("Unable to write on channel " + target);
-                        }
-                    }
-                } finally {
-                    selector.close();
-                }
-            } else {
-                while ((target.isOpen()) && (written < byteWriter.size())) {
-                    long nWrite = target.write(message);
-                    written += nWrite;
-                    if (nWrite == 0 && maxSpin++ < 10) {
-                        logger.info("Waiting for writing...");
-                        try {
-                            byteWriter.wait(1000);
-                        } catch (InterruptedException e) {
-                            logger.trace(e.getMessage(), e);
-                        }
-                    } else {
-                        if (maxSpin >= 10) {
-                            throw new IOException("Unable to write on channel " + target);
-                        }
-                        maxSpin = 0;
-                    }
-                }
-            }
-        }
-        return written;
-    }
+			return length;
+		} else {
+			return handlePartSource(target, filePart);
+		}
+	}
+
+	private long handlePartSource(WritableByteChannel target, FilePart filePart)
+			throws IOException {
+
+		int length = 0;
+
+		length += handleFileHeaders(target, filePart);
+
+		PartSource partSource = filePart.getSource();
+
+		InputStream stream = partSource.createInputStream();
+
+		try {
+			int nRead = 0;
+			while (nRead != -1) {
+				// Do not buffer the entire monster in memory.
+				byte[] bytes = new byte[8192];
+				nRead = stream.read(bytes);
+				if (nRead > 0) {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream(nRead);
+					bos.write(bytes, 0, nRead);
+					writeToTarget(target, bos);
+				}
+			}
+		} finally {
+			stream.close();
+		}
+		length += handleFileEnd(target, filePart);
+
+		return length;
+	}
+
+	private long handleStringPart(WritableByteChannel target,
+			StringPart currentPart) throws IOException {
+
+		currentPart.setPartBoundary(boundary);
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		Part.sendPart(outputStream, currentPart, boundary);
+
+		return writeToTarget(target, outputStream);
+	}
+
+	private long handleMultiPart(WritableByteChannel target, Part currentPart)
+			throws IOException {
+
+		currentPart.setPartBoundary(boundary);
+
+		if (currentPart.getClass().equals(StringPart.class)) {
+			return handleStringPart(target, (StringPart) currentPart);
+		} else if (currentPart.getClass().equals(FilePart.class)) {
+			FilePart filePart = (FilePart) currentPart;
+
+			return handleFilePart(target, filePart);
+		}
+		return 0;
+	}
+
+	private long writeToTarget(WritableByteChannel target,
+			ByteArrayOutputStream byteWriter) throws IOException {
+
+		int written = 0;
+		int maxSpin = 0;
+		synchronized (byteWriter) {
+			ByteBuffer message = ByteBuffer.wrap(byteWriter.toByteArray());
+
+			if (target instanceof SocketChannel) {
+				final Selector selector = Selector.open();
+				try {
+					final SocketChannel channel = (SocketChannel) target;
+					channel.register(selector, SelectionKey.OP_WRITE);
+
+					while (written < byteWriter.size()) {
+						selector.select(1000);
+						maxSpin++;
+						final Set<SelectionKey> selectedKeys = selector
+								.selectedKeys();
+
+						for (SelectionKey key : selectedKeys) {
+							if (key.isWritable()) {
+								written += target.write(message);
+								maxSpin = 0;
+							}
+						}
+						if (maxSpin >= 10) {
+							throw new IOException("Unable to write on channel "
+									+ target);
+						}
+					}
+				} finally {
+					selector.close();
+				}
+			} else {
+				while ((target.isOpen()) && (written < byteWriter.size())) {
+					long nWrite = target.write(message);
+					written += nWrite;
+					if (nWrite == 0 && maxSpin++ < 10) {
+						logger.info("Waiting for writing...");
+						try {
+							byteWriter.wait(1000);
+						} catch (InterruptedException e) {
+							logger.trace(e.getMessage(), e);
+						}
+					} else {
+						if (maxSpin >= 10) {
+							throw new IOException("Unable to write on channel "
+									+ target);
+						}
+						maxSpin = 0;
+					}
+				}
+			}
+		}
+		return written;
+	}
 
 }

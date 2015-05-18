@@ -5,14 +5,14 @@ import java.math.BigDecimal;
 import org.ripple.power.collection.LongArray;
 
 public class SHA256 {
-	
+
 	public SHA256() {
 		if (_key == null || _key.length == 0) {
 			_precompute();
 			reset();
 		}
 	}
-	
+
 	public static LongArray hash(LongArray data) {
 		SHA256 sha = new SHA256();
 		if (sha._key == null || sha._key.length == 0) {
@@ -148,13 +148,15 @@ public class SHA256 {
 			h7 = h6;
 			h6 = h5;
 			h5 = h4;
-			h4 = h3 + (int)(tmp | 0);
+			h4 = h3 + (int) (tmp | 0);
 			h3 = h2;
 			h2 = h1;
 			h1 = h0;
 
-			h0 = JS.get((tmp + ((h1 & h2) ^ (h3 & (h1 ^ h2))) + (JS.MOVE_RightUShift(h1 , 2) ^ JS.MOVE_RightUShift(h1 ,13)
-					^ JS.MOVE_RightUShift(h1 , 22) ^ h1 << 30 ^ h1 << 19 ^ h1 << 10)) | 0);
+			h0 = JS.get((tmp + ((h1 & h2) ^ (h3 & (h1 ^ h2))) + (JS
+					.MOVE_RightUShift(h1, 2)
+					^ JS.MOVE_RightUShift(h1, 13)
+					^ JS.MOVE_RightUShift(h1, 22) ^ h1 << 30 ^ h1 << 19 ^ h1 << 10)) | 0);
 		}
 		h.items[0] = h.items[0] + (int) (h0 | 0);
 		h.items[1] = h.items[1] + (int) (h1 | 0);

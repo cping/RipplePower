@@ -842,7 +842,7 @@ public class RPExchangeDialog extends JDialog {
 			_tradeFlag = false;
 			_tradeThread.interrupt();
 			_tradeThread = null;
-			
+
 		}
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");

@@ -6,8 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public abstract class SerialDate implements Serializable,
-		MonthConstants {
+public abstract class SerialDate implements Serializable, MonthConstants {
 
 	/**
 	 * 

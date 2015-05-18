@@ -6,20 +6,19 @@ import javax.swing.JCheckBox;
 
 import org.ripple.power.ui.graphics.LColor;
 
-
-public class RPCheckBox extends JCheckBox{
+public class RPCheckBox extends JCheckBox {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public RPCheckBox(){
+	public RPCheckBox() {
 		setBackground(new LColor(70, 70, 70));
 		setForeground(Color.WHITE);
 	}
 
-	public RPCheckBox(String title){
+	public RPCheckBox(String title) {
 		super(title);
 		setBackground(new LColor(70, 70, 70));
 		setForeground(Color.WHITE);

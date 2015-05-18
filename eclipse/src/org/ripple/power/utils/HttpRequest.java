@@ -42,7 +42,9 @@ import java.nio.charset.CharsetEncoder;
 import java.security.AccessController;
 import java.security.GeneralSecurityException;
 import java.security.PrivilegedAction;
+import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,12 +69,38 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONObject;
+import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
+	
+	public static final class JSSEProvider extends Provider {
 
+	    /**
+		 * 
+		 */
+		private static final long serialVersionUID = -4083233211478080177L;
+
+		public JSSEProvider() {
+	        super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
+	        AccessController.doPrivileged(new java.security.PrivilegedAction<Void>() {
+	            public Void run() {
+	                put("SSLContext.TLS",
+	                        "org.apache.harmony.xnet.provider.jsse.SSLContextImpl");
+	                put("Alg.Alias.SSLContext.TLSv1", "TLS");
+	                put("KeyManagerFactory.X509",
+	                        "org.apache.harmony.xnet.provider.jsse.KeyManagerFactoryImpl");
+	                put("TrustManagerFactory.X509",
+	                        "org.apache.harmony.xnet.provider.jsse.TrustManagerFactoryImpl");
+	                return null;
+	            }
+	        });
+	    }
+	}
 	static {
+		Security.addProvider(new JSSEProvider());   
+        Security.addProvider(new BouncyCastleProvider());
 		System.setProperty("https.protocols", "TLSv1.2");
 	}
 
@@ -194,6 +222,7 @@ public class HttpRequest {
 
 	private static SSLSocketFactory getTrustedFactory()
 			throws HttpRequestException {
+	
 		if (TRUSTED_FACTORY == null) {
 			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 
@@ -1740,17 +1769,19 @@ public class HttpRequest {
 
 	public HttpRequest trustAllCerts() throws HttpRequestException {
 		final HttpURLConnection connection = getConnection();
-		if (connection instanceof HttpsURLConnection)
+		if (connection instanceof HttpsURLConnection){
 			((HttpsURLConnection) connection)
 					.setSSLSocketFactory(getTrustedFactory());
+		}
 		return this;
 	}
 
 	public HttpRequest trustAllHosts() {
 		final HttpURLConnection connection = getConnection();
-		if (connection instanceof HttpsURLConnection)
+		if (connection instanceof HttpsURLConnection){
 			((HttpsURLConnection) connection)
 					.setHostnameVerifier(getTrustedVerifier());
+		}
 		return this;
 	}
 

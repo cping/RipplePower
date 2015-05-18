@@ -23,14 +23,13 @@
  */
 package org.ripple.power.sound;
 
-
 /**
  * DataSample
  */
 public final class DataSample {
 	protected long offset;
 	protected int size;
-	
+
 	public DataSample(long offset, int size) {
 		super();
 		this.offset = offset;

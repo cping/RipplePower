@@ -12,14 +12,14 @@ import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.projector.core.LRelease;
 import org.ripple.power.utils.CollectionUtils;
 
-public class Sprites implements Serializable,LRelease {
+public class Sprites implements Serializable, LRelease {
 
 	public static interface SpriteListener {
 
 		public void update(ISprite spr);
 
 	}
-	
+
 	private static final long serialVersionUID = 7460335325994101982L;
 
 	private int viewX;
@@ -300,9 +300,7 @@ public class Sprites implements Serializable,LRelease {
 		ISprite removed = this.sprites[index];
 		int size = this.size - index - 1;
 		if (size > 0) {
-			System
-					.arraycopy(this.sprites, index + 1, this.sprites, index,
-							size);
+			System.arraycopy(this.sprites, index + 1, this.sprites, index, size);
 		}
 		this.sprites[--this.size] = null;
 		if (size == 0) {

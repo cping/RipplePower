@@ -17,41 +17,42 @@
 package org.asynchttpclient;
 
 public class ByteArrayPart implements Part {
-    private String name;
-    private String fileName;
-    private byte[] data;
-    private String mimeType;
-    private String charSet;
+	private String name;
+	private String fileName;
+	private byte[] data;
+	private String mimeType;
+	private String charSet;
 
-    public ByteArrayPart(String name, String fileName, byte[] data, String mimeType, String charSet) {
-        this.name = name;
-        this.fileName = fileName;
-        this.data = data;
-        this.mimeType = mimeType;
-        this.charSet = charSet;
-    }
+	public ByteArrayPart(String name, String fileName, byte[] data,
+			String mimeType, String charSet) {
+		this.name = name;
+		this.fileName = fileName;
+		this.data = data;
+		this.mimeType = mimeType;
+		this.charSet = charSet;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public String getFileName() {
+		return fileName;
+	}
 
-    public byte[] getData() {
-        return data;
-    }
+	public byte[] getData() {
+		return data;
+	}
 
-    public String getMimeType() {
-        return mimeType;
-    }
+	public String getMimeType() {
+		return mimeType;
+	}
 
-    public String getCharSet() {
-        return charSet;
-    }
+	public String getCharSet() {
+		return charSet;
+	}
 }

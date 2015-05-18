@@ -1,13 +1,13 @@
 package org.ripple.power.config;
 
 public class Alphabet {
-	
+
 	private final static char[] DEFAULT = ("abcdefghijklmnopqrstuvwxyz"
 			+ "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "`1234567890-=" + "~!@#$%^&*()_+"
 			+ "[]{}\\|" + ":;\"'" + "<>,.?/ ").toCharArray();
-	
+
 	private char[] alphabet = DEFAULT;
-	
+
 	public static final Alphabet ENGLISH = new Alphabet();
 
 	public static final Alphabet GERMAN = new Alphabet(new char[] { 0x00C4,
@@ -34,7 +34,6 @@ public class Alphabet {
 	public Alphabet() {
 
 	}
-
 
 	public Alphabet(char[] additionalChars) {
 		String a = new String(additionalChars);

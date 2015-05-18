@@ -180,6 +180,9 @@ public class RPAccountInfoDialog extends JDialog {
 				throw new IndexOutOfBoundsException("Table row " + row
 						+ " is not valid");
 			}
+			if(_accountLineItems2.size()==0){
+				return null;
+			}
 			Object value = null;
 			AccountLine item = (AccountLine) _accountLineItems2.get(row);
 			switch (column) {
@@ -735,8 +738,8 @@ public class RPAccountInfoDialog extends JDialog {
 							tableModel3.update();
 							addStorage(new Store(address,
 									new AccountInfo().copy(info)));
-							dialog.closeDialog();
 						}
+						dialog.closeDialog();
 						RPAccountInfoDialog.this.revalidate();
 						RPAccountInfoDialog.this.repaint();
 						if (LSystem.applicationMain != null) {

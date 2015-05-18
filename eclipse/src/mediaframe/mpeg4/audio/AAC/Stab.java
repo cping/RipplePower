@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -52,6 +52,6 @@ package mediaframe.mpeg4.audio.AAC;
  * @author Konstantin Belous
  */
 final class Stab {
-	float	sin;
-	float	cos;
+	float sin;
+	float cos;
 }

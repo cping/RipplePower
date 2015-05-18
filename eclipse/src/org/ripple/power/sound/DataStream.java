@@ -31,15 +31,18 @@ import java.io.InputStream;
  * <code>DataStream</code>
  */
 public final class DataStream {
-	
+
 	/** The MPEG4 input stream. */
 	private InputStream is;
 	/** The current offset (position) in the stream. */
 	private long offset = 0;
-	
+
 	/**
-	 * Constructs an <code>DataStream</code> object using the specified MPEG4 input stream.
-	 * @param is the MPEG4 input stream.
+	 * Constructs an <code>DataStream</code> object using the specified MPEG4
+	 * input stream.
+	 * 
+	 * @param is
+	 *            the MPEG4 input stream.
 	 */
 	public DataStream(InputStream is) {
 		super();
@@ -49,29 +52,29 @@ public final class DataStream {
 	public long readBytes(int n) throws IOException {
 		int c = -1;
 		long result = 0;
-		while((n-- > 0) && ((c = is.read()) != -1)) {
+		while ((n-- > 0) && ((c = is.read()) != -1)) {
 			result <<= 8;
 			result += c & 0xff;
-			offset ++;
+			offset++;
 		}
-		if(c == -1) 
+		if (c == -1)
 			throw new EOFException();
 		return result;
 	}
 
 	public String readString(int n) throws IOException {
-		char c = (char)-1;
+		char c = (char) -1;
 		StringBuffer sb = new StringBuffer();
-		while((n-- > 0) && ((c = (char)is.read()) != -1)) {
+		while ((n-- > 0) && ((c = (char) is.read()) != -1)) {
 			sb.append(c);
-			offset ++;
+			offset++;
 		}
-		if(c == -1) {
+		if (c == -1) {
 			throw new EOFException();
 		}
 		return sb.toString();
 	}
-	
+
 	public void skipBytes(long n) throws IOException {
 		offset += n;
 		is.skip(n);

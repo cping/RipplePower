@@ -303,7 +303,8 @@ public class RPChatClientDialog extends ABaseDialog implements ActionListener {
 								} catch (Exception e) {
 								}
 								if (userName.length() > 20) {
-									userName = userName.substring(0, 19) + "...";
+									userName = userName.substring(0, 19)
+											+ "...";
 								}
 							}
 						}

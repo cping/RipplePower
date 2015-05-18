@@ -51,7 +51,7 @@ public class Mask implements Serializable {
 	}
 
 	public boolean getPixel(int x, int y) {
-		if (x < 0 || x >= width || y < 0 || y >= height){
+		if (x < 0 || x >= width || y < 0 || y >= height) {
 			return false;
 		}
 		return data[y][x];
@@ -68,6 +68,5 @@ public class Mask implements Serializable {
 	public int getHeight() {
 		return height;
 	}
-
 
 }

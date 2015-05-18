@@ -22,104 +22,104 @@ import java.util.Map;
 
 final class Config {
 
-  private Map<DecodeHintType,?> hints;
-  private boolean tryHarder;
-  private boolean pureBarcode;
-  private boolean productsOnly;
-  private boolean dumpResults;
-  private boolean dumpBlackPoint;
-  private boolean multi;
-  private boolean brief;
-  private boolean recursive;
-  private int[] crop;
-  private String[] possibleFormats;
+	private Map<DecodeHintType, ?> hints;
+	private boolean tryHarder;
+	private boolean pureBarcode;
+	private boolean productsOnly;
+	private boolean dumpResults;
+	private boolean dumpBlackPoint;
+	private boolean multi;
+	private boolean brief;
+	private boolean recursive;
+	private int[] crop;
+	private String[] possibleFormats;
 
-  Map<DecodeHintType,?> getHints() {
-    return hints;
-  }
+	Map<DecodeHintType, ?> getHints() {
+		return hints;
+	}
 
-  void setHints(Map<DecodeHintType,?> hints) {
-    this.hints = hints;
-  }
+	void setHints(Map<DecodeHintType, ?> hints) {
+		this.hints = hints;
+	}
 
-  boolean isTryHarder() {
-    return tryHarder;
-  }
+	boolean isTryHarder() {
+		return tryHarder;
+	}
 
-  void setTryHarder(boolean tryHarder) {
-    this.tryHarder = tryHarder;
-  }
+	void setTryHarder(boolean tryHarder) {
+		this.tryHarder = tryHarder;
+	}
 
-  boolean isPureBarcode() {
-    return pureBarcode;
-  }
+	boolean isPureBarcode() {
+		return pureBarcode;
+	}
 
-  void setPureBarcode(boolean pureBarcode) {
-    this.pureBarcode = pureBarcode;
-  }
+	void setPureBarcode(boolean pureBarcode) {
+		this.pureBarcode = pureBarcode;
+	}
 
-  boolean isProductsOnly() {
-    return productsOnly;
-  }
+	boolean isProductsOnly() {
+		return productsOnly;
+	}
 
-  void setProductsOnly(boolean productsOnly) {
-    this.productsOnly = productsOnly;
-  }
+	void setProductsOnly(boolean productsOnly) {
+		this.productsOnly = productsOnly;
+	}
 
-  boolean isDumpResults() {
-    return dumpResults;
-  }
+	boolean isDumpResults() {
+		return dumpResults;
+	}
 
-  void setDumpResults(boolean dumpResults) {
-    this.dumpResults = dumpResults;
-  }
+	void setDumpResults(boolean dumpResults) {
+		this.dumpResults = dumpResults;
+	}
 
-  boolean isDumpBlackPoint() {
-    return dumpBlackPoint;
-  }
+	boolean isDumpBlackPoint() {
+		return dumpBlackPoint;
+	}
 
-  void setDumpBlackPoint(boolean dumpBlackPoint) {
-    this.dumpBlackPoint = dumpBlackPoint;
-  }
+	void setDumpBlackPoint(boolean dumpBlackPoint) {
+		this.dumpBlackPoint = dumpBlackPoint;
+	}
 
-  boolean isMulti() {
-    return multi;
-  }
+	boolean isMulti() {
+		return multi;
+	}
 
-  void setMulti(boolean multi) {
-    this.multi = multi;
-  }
+	void setMulti(boolean multi) {
+		this.multi = multi;
+	}
 
-  boolean isBrief() {
-    return brief;
-  }
+	boolean isBrief() {
+		return brief;
+	}
 
-  void setBrief(boolean brief) {
-    this.brief = brief;
-  }
+	void setBrief(boolean brief) {
+		this.brief = brief;
+	}
 
-  boolean isRecursive() {
-    return recursive;
-  }
+	boolean isRecursive() {
+		return recursive;
+	}
 
-  void setRecursive(boolean recursive) {
-    this.recursive = recursive;
-  }
+	void setRecursive(boolean recursive) {
+		this.recursive = recursive;
+	}
 
-  int[] getCrop() {
-    return crop;
-  }
+	int[] getCrop() {
+		return crop;
+	}
 
-  void setCrop(int[] crop) {
-    this.crop = crop;
-  }
+	void setCrop(int[] crop) {
+		this.crop = crop;
+	}
 
-  String[] getPossibleFormats() {
-    return possibleFormats;
-  }
+	String[] getPossibleFormats() {
+		return possibleFormats;
+	}
 
-  void setPossibleFormats(String[] possibleFormats) {
-    this.possibleFormats = possibleFormats;
-  }
+	void setPossibleFormats(String[] possibleFormats) {
+		this.possibleFormats = possibleFormats;
+	}
 
 }

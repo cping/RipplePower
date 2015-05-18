@@ -1,6 +1,5 @@
 package org.ripple.power.server.chat;
 
-
 public abstract class MessageType {
 
 	public final static short GS_REGISTE = 1000;

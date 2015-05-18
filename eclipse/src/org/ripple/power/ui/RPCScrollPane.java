@@ -23,7 +23,7 @@ public class RPCScrollPane extends JScrollPane {
 	private static final long serialVersionUID = 1L;
 
 	private Gradation _gradation;
-	
+
 	private LColor _colorStart, _colorEnd;
 
 	private int _alpha;

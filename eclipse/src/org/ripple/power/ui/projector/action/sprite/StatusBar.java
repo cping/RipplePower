@@ -38,8 +38,8 @@ public class StatusBar extends LObject implements ISprite {
 		this.value = value;
 		this.valueMax = max;
 		this.valueMin = value;
-		this.w = (float)(width * value) / valueMax;
-		this.we = (float)(width * valueMin) / valueMax;
+		this.w = (float) (width * value) / valueMax;
+		this.we = (float) (width * valueMin) / valueMax;
 		this.width = width;
 		this.height = height;
 		this.visible = true;
@@ -102,12 +102,12 @@ public class StatusBar extends LObject implements ISprite {
 			return false;
 		if (w > we) {
 			w--;
-			value = MathUtils.mid(valueMin, ((int) w * valueMax) / width,
-					value);
+			value = MathUtils
+					.mid(valueMin, ((int) w * valueMax) / width, value);
 		} else {
 			w++;
-			value = MathUtils.mid(value, ((int) w * valueMax) / width,
-					valueMin);
+			value = MathUtils
+					.mid(value, ((int) w * valueMax) / width, valueMin);
 		}
 		return true;
 	}
@@ -215,7 +215,7 @@ public class StatusBar extends LObject implements ISprite {
 	}
 
 	public void dispose() {
-		
+
 	}
 
 }

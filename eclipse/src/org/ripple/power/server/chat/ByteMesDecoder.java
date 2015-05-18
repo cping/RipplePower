@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
-
 public class ByteMesDecoder extends ByteToMessageDecoder {
 
 	private IMessageRecognizer messageRecognizer;
@@ -16,7 +15,8 @@ public class ByteMesDecoder extends ByteToMessageDecoder {
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext chx, ByteBuf in, List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext chx, ByteBuf in,
+			List<Object> out) throws Exception {
 		if (in.readableBytes() < 6) {
 			return;
 		}

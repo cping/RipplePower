@@ -25,24 +25,24 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-
 class Invokable extends Object {
 
 	private final Method _method;
 	private final Constructor<?> _constructor;
-	
+
 	public Invokable(AccessibleObject accessibleObject) {
 		if (accessibleObject instanceof Method) {
-			this._method = (Method)accessibleObject;
+			this._method = (Method) accessibleObject;
 			this._constructor = null;
 		} else if (accessibleObject instanceof Constructor) {
-			this._constructor = (Constructor<?>)accessibleObject;
+			this._constructor = (Constructor<?>) accessibleObject;
 			this._method = null;
 		} else {
-			throw new IllegalArgumentException(accessibleObject + " is not a Constructor or Method");
+			throw new IllegalArgumentException(accessibleObject
+					+ " is not a Constructor or Method");
 		}
 	}
-	
+
 	public Class<?>[] getParameterTypes() {
 		if (_method != null) {
 			return _method.getParameterTypes();
@@ -50,7 +50,7 @@ class Invokable extends Object {
 			return _constructor.getParameterTypes();
 		}
 	}
-	
+
 	public Class<?> getDeclaringClass() {
 		if (_method != null) {
 			return _method.getDeclaringClass();
@@ -58,7 +58,7 @@ class Invokable extends Object {
 			return _constructor.getDeclaringClass();
 		}
 	}
-	
+
 	public AccessibleObject unwrap() {
 		if (_method != null) {
 			return _method;

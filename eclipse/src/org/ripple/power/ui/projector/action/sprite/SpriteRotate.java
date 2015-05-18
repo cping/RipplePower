@@ -56,8 +56,8 @@ public class SpriteRotate {
 			if (oldAngle != newAngle) {
 				oldAngle = newAngle;
 				BufferedImage tmp = showImage;
-				set(bufferImage, bufferImage.getWidth(), bufferImage
-						.getHeight(), newAngle);
+				set(bufferImage, bufferImage.getWidth(),
+						bufferImage.getHeight(), newAngle);
 				if (type == 0 || type == 3) {
 					showImage = GraphicsUtils.rotateImageRect(bufferImage,
 							newAngle);

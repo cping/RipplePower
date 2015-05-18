@@ -18,7 +18,7 @@ public class RPCButton extends JButton {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	public RPCButton() {
 		this("");
 	}
@@ -33,7 +33,7 @@ public class RPCButton extends JButton {
 		Border empty = new EmptyBorder(4, 4, 4, 4);
 		CompoundBorder border = new CompoundBorder(line, empty);
 		setBorder(border);
-		
+
 		getModel().addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -50,7 +50,7 @@ public class RPCButton extends JButton {
 			}
 		});
 	}
-	
+
 	public RPCButton(String name) {
 		super(name);
 		setForeground(new LColor(255, 255, 255));
@@ -61,7 +61,7 @@ public class RPCButton extends JButton {
 		Border empty = new EmptyBorder(4, 4, 4, 4);
 		CompoundBorder border = new CompoundBorder(line, empty);
 		setBorder(border);
-		
+
 		getModel().addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {

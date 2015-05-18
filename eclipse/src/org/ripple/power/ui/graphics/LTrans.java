@@ -17,5 +17,5 @@ public interface LTrans {
 	public static final int TRANS_MIRROR_ROT180 = 1;
 
 	public static final int TRANS_MIRROR_ROT270 = 4;
-	
+
 }

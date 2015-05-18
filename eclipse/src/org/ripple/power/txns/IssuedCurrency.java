@@ -301,10 +301,11 @@ public class IssuedCurrency {
 		}
 		return new Amount(amount);
 	}
-	
+
 	public Issue getIssue() {
 		if (issuer != null && currency != null) {
-			return new Issue(Currency.fromString(currency),AccountID.fromAddress(issuer.toString()));
+			return new Issue(Currency.fromString(currency),
+					AccountID.fromAddress(issuer.toString()));
 		}
 		return null;
 	}

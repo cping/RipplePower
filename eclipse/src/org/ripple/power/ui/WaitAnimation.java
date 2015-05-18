@@ -67,7 +67,7 @@ public class WaitAnimation {
 	}
 
 	public synchronized void draw(LGraphics g, int x, int y, int w, int h) {
-		g.setAntialiasAll( true);
+		g.setAntialiasAll(true);
 		g.setColor(color);
 		float alpha = 0.0f;
 		int nx = x + w / 2 - (int) r * 4, ny = y + h / 2 - (int) r * 4;
@@ -79,7 +79,7 @@ public class WaitAnimation {
 					alpha));
 			g.fill(s);
 		}
-		g.setAntialiasAll( false);
+		g.setAntialiasAll(false);
 		g.setAlpha(1.0F);
 		g.translate(-nx, -ny);
 	}

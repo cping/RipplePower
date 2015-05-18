@@ -121,9 +121,9 @@ public class LWaveSound implements Sound {
 
 	private SourceDataLine getLine(AudioInputStream ain, AudioFormat audioFormat)
 			throws LineUnavailableException {
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class, ain
-				.getFormat(), ((int) ain.getFrameLength() * audioFormat
-				.getFrameSize()));
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class,
+				ain.getFormat(),
+				((int) ain.getFrameLength() * audioFormat.getFrameSize()));
 		clip = (SourceDataLine) AudioSystem.getLine(info);
 		clip.open(audioFormat);
 		return clip;

@@ -279,7 +279,7 @@ public class OtherData {
 				if (a.has("price")) {
 					double result = a.getDouble("price");
 					double realprice = -1;
-					//Prevent coinmarketcap price fixing
+					// Prevent coinmarketcap price fixing
 					if (LSystem.nativeCurrency.equalsIgnoreCase(name)
 							|| "ripple".equalsIgnoreCase(name)) {
 						realprice = RippleMarket.getXRPtoUSD();
@@ -579,7 +579,6 @@ public class OtherData {
 		return getCharacterDataFromElement((Element) parent
 				.getElementsByTagName(label).item(0));
 	}
-	
 
 	public static String converterMoney(String src, String cur)
 			throws Exception {

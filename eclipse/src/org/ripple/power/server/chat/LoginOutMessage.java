@@ -3,7 +3,7 @@ package org.ripple.power.server.chat;
 public class LoginOutMessage extends AMessage {
 
 	private String username;
-	
+
 	public LoginOutMessage() {
 		super();
 	}

@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -53,9 +53,10 @@ final class TNSinfo {
 	int n_filt;
 	int coef_res;
 	TNSfilt[] filt = new TNSfilt[Constants.TNS_MAX_FILT];
+
 	public TNSinfo() {
-		for(int i = 0; i < filt.length; i++) {
-			filt[i] = new TNSfilt(); 
+		for (int i = 0; i < filt.length; i++) {
+			filt[i] = new TNSfilt();
 		}
 	}
 }

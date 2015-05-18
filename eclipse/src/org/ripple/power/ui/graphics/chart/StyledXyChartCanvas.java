@@ -24,38 +24,37 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 		if ((mBmp == null) || (bRedraw)) {
 
 			getViewSizes();
-		
+
 			getXYminmax();
-		
+
 			if (p_xscale_auto)
 				calcXgridRange();
 			if (p_yscale_auto)
 				calcYgridRange();
-	
+
 			calcXYcoefs();
 
 			reset();
 
 			drawData();
-		
+
 			if (p_grid_vis)
 				drawGrid();
-	
+
 			if (p_xtext_vis)
 				drawXlabel();
-			
+
 			if (p_ytext_vis)
 				drawYlabel();
-			
+
 			if (p_border_vis)
 				drawBorder();
-			
+
 			if (p_axis_vis)
 				drawAxis();
 
 			bRedraw = false;
 		}
-
 
 		cnv.drawBitmap(mBmp, 0, 0);
 	}
@@ -65,13 +64,13 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 			mSeries.remove(0);
 		}
 		bRedraw = true;
-		
+
 	}
 
 	public void addSerie(StyledChartPointSerie serie) {
 		mSeries.add(serie);
 		bRedraw = true;
-		
+
 	}
 
 	public ArrayList<StyledChartPointSerie> getSeries() {
@@ -81,19 +80,19 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 	public void setLineVis(int index, boolean show) {
 		mSeries.get(index).setVisible(show);
 		bRedraw = true;
-		
+
 	}
 
 	public void setLineStyle(int index, float size) {
 		mSeries.get(index).setStyle(size);
 		bRedraw = true;
-		
+
 	}
 
 	public void setLineStyle(int index, float size, boolean usedip) {
 		mSeries.get(index).setStyle(size, usedip);
 		bRedraw = true;
-		
+
 	}
 
 	protected void getXYminmax() {
@@ -118,7 +117,6 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 		}
 	}
 
-
 	protected void drawData() {
 		float qX = 0, qY = 0, pX = 0, pY = 0;
 		boolean pValid;
@@ -135,12 +133,12 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 		mFillPnt.setAntiAlias(false);
 		for (StyledChartPointSerie serie : mSeries) {
 			if (serie.isVisible()) {
-		
+
 				if (serie.mUseDip)
 					mLinePnt.setStrokeWidth(dipToPixel(serie.mWidth));
 				else
 					mLinePnt.setStrokeWidth(serie.mWidth);
-				
+
 				pValid = false;
 				for (int ii = 0; ii < serie.mPointList.size(); ii++) {
 					point = serie.mPointList.get(ii);
@@ -149,7 +147,7 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 					if (Float.isNaN(pX) || Float.isNaN(pY)) {
 						pValid = false;
 					} else if (!pValid) {
-	
+
 						if (point.markColor != 0) {
 							mMarkPnt.setColor(point.markColor);
 							mCnv.drawCircle(sX + (pX - bX) * aX, eY - (pY - bY)
@@ -157,7 +155,7 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 						}
 						pValid = true;
 					} else {
-				
+
 						if (point.fillColor != 0) {
 							mFillPnt.setColor(point.fillColor);
 							mPath.reset();

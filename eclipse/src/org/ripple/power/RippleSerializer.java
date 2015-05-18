@@ -264,7 +264,7 @@ public class RippleSerializer {
 				writeVariableLength(output, (byte[]) value);
 			} else if (value instanceof String) {
 				writeVariableLength(output, CoinUtils.fromHex((String) value));
-			}else {
+			} else {
 				throw new RuntimeException("Variable type, not yet supported");
 			}
 		} else if (primitive == PrimitiveTypes.ACCOUNT) {

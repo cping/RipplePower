@@ -31,9 +31,9 @@ public class PropertyEditorConverter extends BaseConverter implements Converter 
 		super(String.class);
 		this.editor = editor;
 	}
-	
+
 	protected Object doConversion(Object text) {
-		editor.setAsText((String)text);
+		editor.setAsText((String) text);
 		return editor.getValue();
 	}
 }

@@ -112,7 +112,7 @@ public class RPXRPSendDialog extends JPanel {
 		InputMap inputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		inputMap.put(stroke, esc);
 		this.getActionMap().put(esc, actionListener);
-		
+
 		_addressText = new JTextField(34);
 		_addressText.setText(address);
 		UIRes.addStyle(_addressText, "Pay to: ", false);

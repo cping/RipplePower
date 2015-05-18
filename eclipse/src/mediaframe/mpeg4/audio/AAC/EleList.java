@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -51,6 +51,6 @@ package mediaframe.mpeg4.audio.AAC;
  */
 final class EleList {
 	int num_ele = 0;
-	int[] ele_is_cpe = new int[(1<<Constants.LEN_TAG)];
-	int[] ele_tag = new int[(1<<Constants.LEN_TAG)];
+	int[] ele_is_cpe = new int[(1 << Constants.LEN_TAG)];
+	int[] ele_tag = new int[(1 << Constants.LEN_TAG)];
 }

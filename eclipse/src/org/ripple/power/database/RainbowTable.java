@@ -1,11 +1,12 @@
 package org.ripple.power.database;
 
 import org.ripple.power.CoinUtils;
+
 /**
  * 一个简单的“非专用”彩虹表实现，可以实现“增查”功能，但速度显然无法和专用表媲美。
  * 
  * @author cping
- *
+ * 
  */
 public class RainbowTable {
 

@@ -159,7 +159,8 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPTradingToolsDialog.showDialog("Ripple Trading Tools(Developing)",
+				RPTradingToolsDialog.showDialog(
+						"Ripple Trading Tools(Developing)",
 						LSystem.applicationMain);
 			}
 		});

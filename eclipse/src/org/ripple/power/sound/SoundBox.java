@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2008 - 2009
  * 
@@ -24,7 +23,6 @@ package org.ripple.power.sound;
 import java.util.HashMap;
 
 import org.ripple.power.utils.FileUtils;
-
 
 public abstract class SoundBox {
 
@@ -52,7 +50,8 @@ public abstract class SoundBox {
 
 	public static final int SOUNDTYPE_MOD = 9;
 
-	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(9);
+	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(
+			9);
 
 	static {
 		supportedFiles.put("mid", new Integer(SOUNDTYPE_MIDI));

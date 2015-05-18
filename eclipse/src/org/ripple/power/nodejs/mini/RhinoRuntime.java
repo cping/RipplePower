@@ -7,11 +7,10 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
-
 public class RhinoRuntime implements JavascriptRuntime {
 
-	final Context					jsContext	= Context.enter();
-	private final ScriptableObject	global;
+	final Context jsContext = Context.enter();
+	private final ScriptableObject global;
 
 	public RhinoRuntime() {
 		this.global = this.jsContext.initStandardObjects();
@@ -36,14 +35,16 @@ public class RhinoRuntime implements JavascriptRuntime {
 	}
 
 	@Override
-	public Object run(final Reader code, final String fileName, final Object module, final Object export) throws Exception {
+	public Object run(final Reader code, final String fileName,
+			final Object module, final Object export) throws Exception {
 		final Scriptable object = this.jsContext.newObject(this.global);
 		object.setPrototype(this.global);
 		object.setParentScope(null);
 		ScriptableObject.putProperty(object, "module", module);
 		ScriptableObject.putProperty(object, "exports", export);
 		ScriptableObject.putProperty(object, "global", this.global);
-		return convert(this.jsContext.evaluateReader(object, code, fileName != null ? fileName : "<run>", 1, null));
+		return convert(this.jsContext.evaluateReader(object, code,
+				fileName != null ? fileName : "<run>", 1, null));
 	}
 
 	@Override

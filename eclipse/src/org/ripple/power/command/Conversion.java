@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2008 - 2011
  * 
@@ -28,7 +27,6 @@ import java.util.List;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
-
 
 public abstract class Conversion implements Expression {
 
@@ -95,7 +93,8 @@ public abstract class Conversion implements Expression {
 
 	public static String updateOperator(String context) {
 		if (context != null
-				&& (StringUtils.startsWith(context, '"') || StringUtils.startsWith(context, '\''))) {
+				&& (StringUtils.startsWith(context, '"') || StringUtils
+						.startsWith(context, '\''))) {
 			return context;
 		}
 		int size = context.length();
@@ -187,7 +186,7 @@ public abstract class Conversion implements Expression {
 			} else {
 				try {
 					compute.push(Float.valueOf(new String(expChr, stIdx, lgt))
-					* sign, STACK_NUM);
+							* sign, STACK_NUM);
 				} catch (NumberFormatException e) {
 					compute.push(0, STACK_NUM);
 				}

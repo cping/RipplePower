@@ -1,6 +1,6 @@
 package org.ripple.power.nodejs.mini;
 
-public interface JavascriptObject  extends JavascriptMirror {
+public interface JavascriptObject extends JavascriptMirror {
 
 	public Object get(String key);
 

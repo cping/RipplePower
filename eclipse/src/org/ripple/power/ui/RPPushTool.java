@@ -65,7 +65,7 @@ public class RPPushTool {
 			}
 			initComponents();
 		}
-		
+
 		public void run() {
 			for (int i = 0; i <= endTop; i += 10) {
 				try {
@@ -230,7 +230,7 @@ public class RPPushTool {
 			}
 		});
 
-		//_tpDialog.setAlwaysOnTop(true);
+		// _tpDialog.setAlwaysOnTop(true);
 		_tpDialog.setUndecorated(true);
 		_tpDialog.setResizable(false);
 		_tpDialog.setVisible(true);
@@ -251,12 +251,11 @@ public class RPPushTool {
 		}
 	}
 
-	
 	public boolean isClose() {
 		return _tpDialog.closed;
 	}
-	
-	public void setTitle(String title){
+
+	public void setTitle(String title) {
 		_titleLabel.setText(title);
 	}
 
@@ -267,19 +266,19 @@ public class RPPushTool {
 	public boolean isVisible() {
 		return _tpDialog.isVisible();
 	}
-	
-	public void setOpacity(float opacity){
+
+	public void setOpacity(float opacity) {
 		_tpDialog.setOpacity(opacity);
 	}
-	
-	public float getOpacity(){
+
+	public float getOpacity() {
 		return _tpDialog.getOpacity();
 	}
-	
-	public void close(){
+
+	public void close() {
 		_tpDialog.close();
 	}
-	
+
 	public Dialog getDialog() {
 		return _tpDialog;
 	}

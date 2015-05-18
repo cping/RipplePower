@@ -95,7 +95,7 @@ public abstract class AMacros implements IMacros {
 			setVar(type, key, null);
 		}
 	}
-	
+
 	protected void setVar(int type, String key, Object value) {
 		setVar(type, key, value, false);
 	}

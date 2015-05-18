@@ -42,13 +42,12 @@ public class EmptyToolBarBorder extends ToolBarBorder {
 		return newInsets;
 	}
 
-	public void paintBorder(Component c, Graphics g, int x, int y, int w,
-			int h) {
+	public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
 
 	}
 
-	protected void drawXPBorder(Component c, Graphics g, int x, int y,
-			int w, int h) {
+	protected void drawXPBorder(Component c, Graphics g, int x, int y, int w,
+			int h) {
 
 	}
 }

@@ -4,7 +4,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
 
 public class Setting {
-	
+
 	private Preference preference;
 
 	private Session session = new Session("todo_setting");

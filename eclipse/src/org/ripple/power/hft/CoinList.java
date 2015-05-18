@@ -2,7 +2,6 @@ package org.ripple.power.hft;
 
 import java.util.ArrayList;
 
-
 public class CoinList {
 
 	private String IssuedName;

@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 public class BaseTableEntry implements IndexedTableEntry {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private long id;
@@ -25,7 +25,7 @@ public class BaseTableEntry implements IndexedTableEntry {
 	public String getFileName() {
 		return this.fileName;
 	}
-	
+
 	public String getFileNameHash() {
 		return this.fileNameHash;
 	}

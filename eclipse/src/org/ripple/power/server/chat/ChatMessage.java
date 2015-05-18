@@ -1,16 +1,17 @@
 package org.ripple.power.server.chat;
 
-public class ChatMessage  extends AMessage {
+public class ChatMessage extends AMessage {
 
 	private String msg;
 	private short type;
 	private String username;
 	private String toUser;
+
 	public ChatMessage() {
 		super();
 	}
 
-	public ChatMessage(short type, String msg, String username,String toUser) {
+	public ChatMessage(short type, String msg, String username, String toUser) {
 		super();
 		this.msg = msg;
 		this.type = type;

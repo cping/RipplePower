@@ -37,7 +37,7 @@ public final class AddressTable extends ColorTable {
 	public static final int ICON = 8;
 
 	public static final int INFO = 9;
-	
+
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
@@ -103,7 +103,7 @@ public final class AddressTable extends ColorTable {
 			case ICON: // 图片
 				column.setCellRenderer(new ImageRenderer(JLabel.CENTER));
 				break;
-			case INFO: 
+			case INFO:
 				column.setCellRenderer(new InfoRenderer(JLabel.LEFT));
 				break;
 			default:

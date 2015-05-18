@@ -122,11 +122,13 @@ public class LButton extends LComponent {
 			Color color = g.getColor();
 			g.setFont(font);
 			g.setColor(fontColor);
-			g.drawString(text, x + button.getOffsetLeft()
-					+ (button.getWidth() - font.stringWidth(text)) / 2, y
-					+ button.getOffsetTop()
-					+ (button.getHeight() - font.getLineHeight()) / 2
-					+ font.getLineHeight());
+			g.drawString(
+					text,
+					x + button.getOffsetLeft()
+							+ (button.getWidth() - font.stringWidth(text)) / 2,
+					y + button.getOffsetTop()
+							+ (button.getHeight() - font.getLineHeight()) / 2
+							+ font.getLineHeight());
 			g.setFont(old);
 			g.setColor(color);
 		}

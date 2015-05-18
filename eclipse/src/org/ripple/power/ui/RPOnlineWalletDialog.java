@@ -141,11 +141,10 @@ public class RPOnlineWalletDialog extends JDialog {
 										try {
 											WalletCache.saveDefWallet();
 										} catch (Exception e) {
-											UIRes
-													.showErrorMessage(
-															RPOnlineWalletDialog.this,
-															UIMessage.error,
-															"System exception, wallets save failed !");
+											UIRes.showErrorMessage(
+													RPOnlineWalletDialog.this,
+													UIMessage.error,
+													"System exception, wallets save failed !");
 											return;
 										}
 										Session session = LSystem

@@ -16,8 +16,6 @@ import javax.sound.midi.Synthesizer;
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.ui.UIRes;
 
-
-
 public class LMidiSound implements MetaEventListener, Sound {
 
 	private static final int MIDI_EOT_MESSAGE = 47;
@@ -39,7 +37,7 @@ public class LMidiSound implements MetaEventListener, Sound {
 	private static final int INITIALIZED = 2;
 
 	private static int rendererStatus = UNINITIALIZED;
-	
+
 	private ArrayByte bytes;
 
 	public LMidiSound() {
@@ -65,9 +63,9 @@ public class LMidiSound implements MetaEventListener, Sound {
 			thread.start();
 		}
 	}
-	
+
 	public LMidiSound(String fileName) throws IOException {
-		bytes = new ArrayByte(UIRes.getStream(fileName),ArrayByte.BIG_ENDIAN);
+		bytes = new ArrayByte(UIRes.getStream(fileName), ArrayByte.BIG_ENDIAN);
 		if (rendererStatus == UNINITIALIZED) {
 			rendererStatus = INITIALIZING;
 			Thread thread = new Thread() {
@@ -90,7 +88,7 @@ public class LMidiSound implements MetaEventListener, Sound {
 			thread.start();
 		}
 	}
-	
+
 	public boolean isAvailable() {
 		if (rendererStatus != INITIALIZED) {
 			int i = 0;
@@ -116,11 +114,11 @@ public class LMidiSound implements MetaEventListener, Sound {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void playSound() {
 		playSound(new ByteArrayInputStream(bytes.getData()));
 	}
-	
+
 	public void playSound(InputStream in) {
 		try {
 			System.setProperty("javax.sound.midi.Sequencer",

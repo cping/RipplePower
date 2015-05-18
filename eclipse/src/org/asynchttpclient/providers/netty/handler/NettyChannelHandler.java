@@ -42,160 +42,186 @@ import org.slf4j.LoggerFactory;
 @Sharable
 public class NettyChannelHandler extends ChannelInboundHandlerAdapter {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(NettyChannelHandler.class);
+	static final Logger LOGGER = LoggerFactory
+			.getLogger(NettyChannelHandler.class);
 
-    private final AsyncHttpClientConfig config;
-    private final NettyRequestSender requestSender;
-    private final Channels channels;
-    private final AtomicBoolean closed;
-    private final Protocol httpProtocol;
-    private final Protocol webSocketProtocol;
+	private final AsyncHttpClientConfig config;
+	private final NettyRequestSender requestSender;
+	private final Channels channels;
+	private final AtomicBoolean closed;
+	private final Protocol httpProtocol;
+	private final Protocol webSocketProtocol;
 
-    public NettyChannelHandler(AsyncHttpClientConfig config, NettyAsyncHttpProviderConfig nettyConfig, NettyRequestSender requestSender, Channels channels, AtomicBoolean isClose) {
-        this.config = config;
-        this.requestSender = requestSender;
-        this.channels = channels;
-        this.closed = isClose;
-        httpProtocol = new HttpProtocol(channels, config, nettyConfig, requestSender);
-        webSocketProtocol = new WebSocketProtocol(channels, config, nettyConfig, requestSender);
-    }
+	public NettyChannelHandler(AsyncHttpClientConfig config,
+			NettyAsyncHttpProviderConfig nettyConfig,
+			NettyRequestSender requestSender, Channels channels,
+			AtomicBoolean isClose) {
+		this.config = config;
+		this.requestSender = requestSender;
+		this.channels = channels;
+		this.closed = isClose;
+		httpProtocol = new HttpProtocol(channels, config, nettyConfig,
+				requestSender);
+		webSocketProtocol = new WebSocketProtocol(channels, config,
+				nettyConfig, requestSender);
+	}
 
-    @Override
-    public void channelRead(final ChannelHandlerContext ctx, Object e) throws Exception {
+	@Override
+	public void channelRead(final ChannelHandlerContext ctx, Object e)
+			throws Exception {
 
-        Object attribute = Channels.getDefaultAttribute(ctx);
+		Object attribute = Channels.getDefaultAttribute(ctx);
 
-        // FIXME is || !(e instanceof HttpContent) necessary?
-        if (attribute instanceof Callback && (e instanceof LastHttpContent /* || !(e instanceof HttpContent) */)) {
-            Callback ac = (Callback) attribute;
-            ac.call();
-            Channels.setDefaultAttribute(ctx, DiscardEvent.INSTANCE);
+		// FIXME is || !(e instanceof HttpContent) necessary?
+		if (attribute instanceof Callback
+				&& (e instanceof LastHttpContent /*
+												 * || !(e instanceof
+												 * HttpContent)
+												 */)) {
+			Callback ac = (Callback) attribute;
+			ac.call();
+			Channels.setDefaultAttribute(ctx, DiscardEvent.INSTANCE);
 
-        } else if (attribute instanceof NettyResponseFuture) {
-            Protocol p = (ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol : webSocketProtocol);
-            NettyResponseFuture<?> future = (NettyResponseFuture<?>) attribute;
+		} else if (attribute instanceof NettyResponseFuture) {
+			Protocol p = (ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol
+					: webSocketProtocol);
+			NettyResponseFuture<?> future = (NettyResponseFuture<?>) attribute;
 
-            p.handle(ctx, future, e);
+			p.handle(ctx, future, e);
 
-        } else if (attribute != DiscardEvent.INSTANCE) {
-            try {
-                LOGGER.trace("Closing an orphan channel {}", ctx.channel());
-                ctx.channel().close();
-            } catch (Throwable t) {
-            }
-        }
-    }
+		} else if (attribute != DiscardEvent.INSTANCE) {
+			try {
+				LOGGER.trace("Closing an orphan channel {}", ctx.channel());
+				ctx.channel().close();
+			} catch (Throwable t) {
+			}
+		}
+	}
 
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 
-        if (closed.get()) {
-            return;
-        }
+		if (closed.get()) {
+			return;
+		}
 
-        try {
-            super.channelInactive(ctx);
-        } catch (Exception ex) {
-            LOGGER.trace("super.channelClosed", ex);
-        }
+		try {
+			super.channelInactive(ctx);
+		} catch (Exception ex) {
+			LOGGER.trace("super.channelClosed", ex);
+		}
 
-        channels.removeFromPool(ctx);
-        Object attachment = Channels.getDefaultAttribute(ctx);
-        LOGGER.debug("Channel Closed: {} with attachment {}", ctx.channel(), attachment);
+		channels.removeFromPool(ctx);
+		Object attachment = Channels.getDefaultAttribute(ctx);
+		LOGGER.debug("Channel Closed: {} with attachment {}", ctx.channel(),
+				attachment);
 
-        if (attachment instanceof Callback) {
-            Callback callback = (Callback) attachment;
-            Channels.setDefaultAttribute(ctx, callback.future());
-            callback.call();
+		if (attachment instanceof Callback) {
+			Callback callback = (Callback) attachment;
+			Channels.setDefaultAttribute(ctx, callback.future());
+			callback.call();
 
-        } else if (attachment instanceof NettyResponseFuture<?>) {
-            NettyResponseFuture<?> future = NettyResponseFuture.class.cast(attachment);
-            future.touch();
+		} else if (attachment instanceof NettyResponseFuture<?>) {
+			NettyResponseFuture<?> future = NettyResponseFuture.class
+					.cast(attachment);
+			future.touch();
 
-            if (!config.getIOExceptionFilters().isEmpty() && requestSender.applyIoExceptionFiltersAndReplayRequest(ctx, future, new IOException("Channel Closed"))) {
-                return;
-            }
+			if (!config.getIOExceptionFilters().isEmpty()
+					&& requestSender.applyIoExceptionFiltersAndReplayRequest(
+							ctx, future, new IOException("Channel Closed"))) {
+				return;
+			}
 
-            Protocol p = (ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol : webSocketProtocol);
-            p.onClose(ctx);
+			Protocol p = (ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol
+					: webSocketProtocol);
+			p.onClose(ctx);
 
-            if (future != null && !future.isDone() && !future.isCancelled()) {
-                if (!requestSender.retry(ctx.channel(), future)) {
-                    channels.abort(future, AsyncHttpProviderUtils.REMOTELY_CLOSED_EXCEPTION);
-                }
-            } else {
-                channels.closeChannel(ctx);
-            }
-        }
-    }
+			if (future != null && !future.isDone() && !future.isCancelled()) {
+				if (!requestSender.retry(ctx.channel(), future)) {
+					channels.abort(future,
+							AsyncHttpProviderUtils.REMOTELY_CLOSED_EXCEPTION);
+				}
+			} else {
+				channels.closeChannel(ctx);
+			}
+		}
+	}
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-        Channel channel = ctx.channel();
-        Throwable cause = e.getCause() != null ? e.getCause() : e;
-        NettyResponseFuture<?> future = null;
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable e)
+			throws Exception {
+		Channel channel = ctx.channel();
+		Throwable cause = e.getCause() != null ? e.getCause() : e;
+		NettyResponseFuture<?> future = null;
 
-        if (cause instanceof PrematureChannelClosureException) {
-            return;
-        }
+		if (cause instanceof PrematureChannelClosureException) {
+			return;
+		}
 
-        LOGGER.debug("Unexpected I/O exception on channel {}", channel, cause);
+		LOGGER.debug("Unexpected I/O exception on channel {}", channel, cause);
 
-        try {
-            if (cause instanceof ClosedChannelException) {
-                return;
-            }
+		try {
+			if (cause instanceof ClosedChannelException) {
+				return;
+			}
 
-            Object attribute = Channels.getDefaultAttribute(ctx);
-            if (attribute instanceof NettyResponseFuture<?>) {
-                future = (NettyResponseFuture<?>) attribute;
-                future.attachChannel(null, false);
-                future.touch();
+			Object attribute = Channels.getDefaultAttribute(ctx);
+			if (attribute instanceof NettyResponseFuture<?>) {
+				future = (NettyResponseFuture<?>) attribute;
+				future.attachChannel(null, false);
+				future.touch();
 
-                if (cause instanceof IOException) {
+				if (cause instanceof IOException) {
 
-                    // FIXME why drop the original exception and create a new
-                    // one?
-                    if (!config.getIOExceptionFilters().isEmpty()) {
-                        if (requestSender.applyIoExceptionFiltersAndReplayRequest(ctx, future, new IOException("Channel Closed"))) {
-                            return;
-                        }
-                    } else {
-                        // Close the channel so the recovering can occurs.
-                        try {
-                            ctx.channel().close();
-                        } catch (Throwable t) {
-                            // Swallow.
-                        }
-                        return;
-                    }
-                }
+					// FIXME why drop the original exception and create a new
+					// one?
+					if (!config.getIOExceptionFilters().isEmpty()) {
+						if (requestSender
+								.applyIoExceptionFiltersAndReplayRequest(ctx,
+										future, new IOException(
+												"Channel Closed"))) {
+							return;
+						}
+					} else {
+						// Close the channel so the recovering can occurs.
+						try {
+							ctx.channel().close();
+						} catch (Throwable t) {
+							// Swallow.
+						}
+						return;
+					}
+				}
 
-                if (NettyResponseFutures.abortOnReadCloseException(cause) || NettyResponseFutures.abortOnWriteCloseException(cause)) {
-                    LOGGER.debug("Trying to recover from dead Channel: {}", channel);
-                    return;
-                }
-            } else if (attribute instanceof Callback) {
-                future = Callback.class.cast(attribute).future();
-            }
-        } catch (Throwable t) {
-            cause = t;
-        }
+				if (NettyResponseFutures.abortOnReadCloseException(cause)
+						|| NettyResponseFutures
+								.abortOnWriteCloseException(cause)) {
+					LOGGER.debug("Trying to recover from dead Channel: {}",
+							channel);
+					return;
+				}
+			} else if (attribute instanceof Callback) {
+				future = Callback.class.cast(attribute).future();
+			}
+		} catch (Throwable t) {
+			cause = t;
+		}
 
-        if (future != null) {
-            try {
-                LOGGER.debug("Was unable to recover Future: {}", future);
-                channels.abort(future, cause);
-            } catch (Throwable t) {
-                LOGGER.error(t.getMessage(), t);
-            }
-        }
+		if (future != null) {
+			try {
+				LOGGER.debug("Was unable to recover Future: {}", future);
+				channels.abort(future, cause);
+			} catch (Throwable t) {
+				LOGGER.error(t.getMessage(), t);
+			}
+		}
 
-        Protocol protocol = ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol : webSocketProtocol;
-        protocol.onError(ctx, e);
+		Protocol protocol = ctx.pipeline().get(HttpClientCodec.class) != null ? httpProtocol
+				: webSocketProtocol;
+		protocol.onError(ctx, e);
 
-        channels.closeChannel(ctx);
-        // FIXME not really sure
-        // ctx.fireChannelRead(e);
-        ctx.close();
-    }
+		channels.closeChannel(ctx);
+		// FIXME not really sure
+		// ctx.fireChannelRead(e);
+		ctx.close();
+	}
 }

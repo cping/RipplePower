@@ -165,11 +165,11 @@ public class Gateway {
 			}
 		}
 		list.add(LSystem.nativeCurrency);
-		
+
 		final String[] curstrings = list.toArray(new String[0]);
 		Arrays.sort(curstrings);
-	
-		return 	Arrays.asList(curstrings);
+
+		return Arrays.asList(curstrings);
 	}
 
 	//

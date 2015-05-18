@@ -7,7 +7,7 @@ import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.projector.core.LRelease;
 
-public interface ISprite extends Serializable,LRelease {
+public interface ISprite extends Serializable, LRelease {
 
 	public static final int TYPE_FADE_IN = 0;
 

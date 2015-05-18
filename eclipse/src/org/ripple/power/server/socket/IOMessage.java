@@ -33,7 +33,7 @@ class IOMessage {
 	private final String[] fields = new String[NUM_FIELDS];
 
 	private int type;
-	
+
 	public IOMessage(int type, String id, String namespace, String data) {
 		this.type = type;
 		this.fields[FIELD_ID] = id;
@@ -50,7 +50,7 @@ class IOMessage {
 		String[] fields = message.split(":", NUM_FIELDS);
 		for (int i = 0; i < fields.length; i++) {
 			this.fields[i] = fields[i];
-			if(i == FIELD_TYPE)
+			if (i == FIELD_TYPE)
 				this.type = Integer.parseInt(fields[i]);
 		}
 	}
@@ -58,7 +58,7 @@ class IOMessage {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for(int i = 0; i < fields.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			builder.append(':');
 			if (fields[i] != null)
 				builder.append(fields[i]);

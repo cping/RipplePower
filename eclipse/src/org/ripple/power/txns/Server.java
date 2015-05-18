@@ -13,7 +13,7 @@ public class Server {
 		String reg = "^(?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|[-_]){0,61}[0-9A-Za-z])?(?:\\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|[-_]){0,61}[0-9A-Za-z])?)*\\.?$";
 		return Pattern.matches(reg, res);
 	}
-	
+
 	public final static String[] TLS_ERRORS = { "UNABLE_TO_GET_ISSUER_CERT",
 			"UNABLE_TO_GET_CRL", "UNABLE_TO_DECRYPT_CERT_SIGNATURE",
 			"UNABLE_TO_DECRYPT_CRL_SIGNATURE",
@@ -27,5 +27,5 @@ public class Server {
 			"UNABLE_TO_VERIFY_LEAF_SIGNATURE", "CERT_CHAIN_TOO_LONG",
 			"CERT_REVOKED", "INVALID_CA", "PATH_LENGTH_EXCEEDED",
 			"INVALID_PURPOSE", "CERT_UNTRUSTED", "CERT_REJECTED" };
-	
+
 }

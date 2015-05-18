@@ -3,7 +3,7 @@ package org.ripple.power.hft;
 import java.util.Set;
 
 public interface IExchange {
-	
+
 	Set<String> getAvailableCurs();
 
 	double getMaxBid(String security);

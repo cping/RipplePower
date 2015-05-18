@@ -21,76 +21,75 @@
 package javazoom.jlme.decoder;
 
 final class BitReserve {
-  private final static int BUFSIZE = 4096 * 8;
-  private final static int BUFSIZE_MASK = BUFSIZE - 1;
-  static int offset, buf_byte_idx;
-  private static final int[] buf = new int[BUFSIZE];
-  static int buf_bit_idx;
-  public static int totbit;
-  //public int hsstell() {
-  //  return totbit;
-  //}
+	private final static int BUFSIZE = 4096 * 8;
+	private final static int BUFSIZE_MASK = BUFSIZE - 1;
+	static int offset, buf_byte_idx;
+	private static final int[] buf = new int[BUFSIZE];
+	static int buf_bit_idx;
+	public static int totbit;
 
-  public final int hgetbits(int N) {
-    totbit += N;
-    val=0;
-    if (buf_byte_idx + N < BUFSIZE) {
-      while (N-- > 0) {
-        val <<= 1;
-        val |= ((buf[buf_byte_idx++] == 0) ? 0 : 1);
-      }
-    }
-    else {
-      while (N-- > 0) {
-        val <<= 1;
-        val |= ((buf[buf_byte_idx] == 0) ? 0 : 1);
-        buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
-      }
-    }
+	// public int hsstell() {
+	// return totbit;
+	// }
 
-    return val;
-  }
+	public final int hgetbits(int N) {
+		totbit += N;
+		val = 0;
+		if (buf_byte_idx + N < BUFSIZE) {
+			while (N-- > 0) {
+				val <<= 1;
+				val |= ((buf[buf_byte_idx++] == 0) ? 0 : 1);
+			}
+		} else {
+			while (N-- > 0) {
+				val <<= 1;
+				val |= ((buf[buf_byte_idx] == 0) ? 0 : 1);
+				buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
+			}
+		}
 
+		return val;
+	}
 
-  static int val;
+	static int val;
 
-  public final int hget1bit() {
-    totbit++;
-    val = buf[buf_byte_idx];
-    buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
-    return val;
-  }
+	public final int hget1bit() {
+		totbit++;
+		val = buf[buf_byte_idx];
+		buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
+		return val;
+	}
 
-  public final void hputbuf(int val) {
-    buf[offset++] = val & 0x80;
-    buf[offset++] = val & 0x40;
-    buf[offset++] = val & 0x20;
-    buf[offset++] = val & 0x10;
-    buf[offset++] = val & 0x08;
-    buf[offset++] = val & 0x04;
-    buf[offset++] = val & 0x02;
-    buf[offset++] = val & 0x01;
-    if (offset == BUFSIZE)
-      offset = 0;
-  }
+	public final void hputbuf(int val) {
+		buf[offset++] = val & 0x80;
+		buf[offset++] = val & 0x40;
+		buf[offset++] = val & 0x20;
+		buf[offset++] = val & 0x10;
+		buf[offset++] = val & 0x08;
+		buf[offset++] = val & 0x04;
+		buf[offset++] = val & 0x02;
+		buf[offset++] = val & 0x01;
+		if (offset == BUFSIZE)
+			offset = 0;
+	}
 
+	public final void rewindNbits(int N) {
+		totbit -= N;
+		buf_byte_idx -= N;
+		if (buf_byte_idx < 0) {
+			buf_byte_idx += BUFSIZE;
+		}
+	}
 
-  public final void rewindNbits(int N) {
-    totbit -= N;
-    buf_byte_idx -= N;
-    if (buf_byte_idx < 0) {
-      buf_byte_idx += BUFSIZE;
-    }
-  }
+	static int bits;
 
-  static int bits;
-  public final void rewindNbytes(int N) {
-    bits = (N << 3);
-    totbit -= bits;
-    buf_byte_idx -= bits;
-    if (buf_byte_idx < 0) {
-      buf_byte_idx += BUFSIZE;
-    }
-  }
+	public final void rewindNbytes(int N) {
+		bits = (N << 3);
+		totbit -= bits;
+		buf_byte_idx -= bits;
+		if (buf_byte_idx < 0) {
+			buf_byte_idx += BUFSIZE;
+		}
+	}
 
 }

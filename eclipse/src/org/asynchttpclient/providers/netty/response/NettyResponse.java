@@ -37,69 +37,71 @@ import org.asynchttpclient.util.AsyncHttpProviderUtils;
  */
 public class NettyResponse extends ResponseBase {
 
-    public NettyResponse(HttpResponseStatus status,
-                         HttpResponseHeaders headers,
-                         List<HttpResponseBodyPart> bodyParts) {
-        super(status, headers, bodyParts);
-    }
+	public NettyResponse(HttpResponseStatus status,
+			HttpResponseHeaders headers, List<HttpResponseBodyPart> bodyParts) {
+		super(status, headers, bodyParts);
+	}
 
-    @Override
-    public String getResponseBodyExcerpt(int maxLength) throws IOException {
-        return getResponseBodyExcerpt(maxLength, null);
-    }
+	@Override
+	public String getResponseBodyExcerpt(int maxLength) throws IOException {
+		return getResponseBodyExcerpt(maxLength, null);
+	}
 
-    public String getResponseBodyExcerpt(int maxLength, String charset) throws IOException {
-        // should be fine; except that it may split multi-byte chars (last char may become '?')
-        charset = calculateCharset(charset);
-        byte[] b = AsyncHttpProviderUtils.contentToBytes(bodyParts, maxLength);
-        return new String(b, charset);
-    }
-    
-    protected List<Cookie> buildCookies() {
-    	List<Cookie> cookies = new ArrayList<Cookie>();
-        for (Map.Entry<String, List<String>> header : headers.getHeaders().entrySet()) {
-            if (header.getKey().equalsIgnoreCase("Set-Cookie")) {
-                // TODO: ask for parsed header
-                List<String> v = header.getValue();
-                for (String value : v) {
-                    cookies.addAll(CookieDecoder.decode(value));
-                }
-            }
-        }
-        return Collections.unmodifiableList(cookies);
-    }
+	public String getResponseBodyExcerpt(int maxLength, String charset)
+			throws IOException {
+		// should be fine; except that it may split multi-byte chars (last char
+		// may become '?')
+		charset = calculateCharset(charset);
+		byte[] b = AsyncHttpProviderUtils.contentToBytes(bodyParts, maxLength);
+		return new String(b, charset);
+	}
 
-    @Override
-    public byte[] getResponseBodyAsBytes() throws IOException {
-        return getResponseBodyAsByteBuffer().array();
-    }
+	protected List<Cookie> buildCookies() {
+		List<Cookie> cookies = new ArrayList<Cookie>();
+		for (Map.Entry<String, List<String>> header : headers.getHeaders()
+				.entrySet()) {
+			if (header.getKey().equalsIgnoreCase("Set-Cookie")) {
+				// TODO: ask for parsed header
+				List<String> v = header.getValue();
+				for (String value : v) {
+					cookies.addAll(CookieDecoder.decode(value));
+				}
+			}
+		}
+		return Collections.unmodifiableList(cookies);
+	}
 
-    @Override
-    public ByteBuffer getResponseBodyAsByteBuffer() throws IOException {
+	@Override
+	public byte[] getResponseBodyAsBytes() throws IOException {
+		return getResponseBodyAsByteBuffer().array();
+	}
 
-        int length = 0;
-        for (HttpResponseBodyPart part: bodyParts)
-            length += part.length();
+	@Override
+	public ByteBuffer getResponseBodyAsByteBuffer() throws IOException {
 
-        ByteBuffer target = ByteBuffer.wrap(new byte[length]);
-        for (HttpResponseBodyPart part: bodyParts)
-            target.put(part.getBodyPartBytes());
+		int length = 0;
+		for (HttpResponseBodyPart part : bodyParts)
+			length += part.length();
 
-        return target;
-    }
+		ByteBuffer target = ByteBuffer.wrap(new byte[length]);
+		for (HttpResponseBodyPart part : bodyParts)
+			target.put(part.getBodyPartBytes());
 
-    @Override
-    public String getResponseBody() throws IOException {
-        return getResponseBody(null);
-    }
+		return target;
+	}
 
-    @Override
-    public String getResponseBody(String charset) throws IOException {
-        return new String(getResponseBodyAsBytes(), calculateCharset(charset));
-    }
+	@Override
+	public String getResponseBody() throws IOException {
+		return getResponseBody(null);
+	}
 
-    @Override
-    public InputStream getResponseBodyAsStream() throws IOException {
-        return new ByteArrayInputStream(getResponseBodyAsBytes());
-    }
+	@Override
+	public String getResponseBody(String charset) throws IOException {
+		return new String(getResponseBodyAsBytes(), calculateCharset(charset));
+	}
+
+	@Override
+	public InputStream getResponseBodyAsStream() throws IOException {
+		return new ByteArrayInputStream(getResponseBodyAsBytes());
+	}
 }

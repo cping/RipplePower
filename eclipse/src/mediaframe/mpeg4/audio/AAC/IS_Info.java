@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -51,10 +51,10 @@ package mediaframe.mpeg4.audio.AAC;
  */
 public class IS_Info {
 	/** right channel uses intensiy stereo */
-	boolean is_present;	
+	boolean is_present;
 	int n_is_sect;
-	int[] sign = new int[2*(Constants.MAXBANDS+1)];
-	int[] fac = new int[2*(Constants.MAXBANDS+1)];
-	int[] bot = new int[2*(Constants.MAXBANDS+1)];
-	int[] top = new int[2*(Constants.MAXBANDS+1)];
+	int[] sign = new int[2 * (Constants.MAXBANDS + 1)];
+	int[] fac = new int[2 * (Constants.MAXBANDS + 1)];
+	int[] bot = new int[2 * (Constants.MAXBANDS + 1)];
+	int[] top = new int[2 * (Constants.MAXBANDS + 1)];
 }

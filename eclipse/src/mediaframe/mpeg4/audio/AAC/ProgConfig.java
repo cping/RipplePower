@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -52,7 +52,7 @@ package mediaframe.mpeg4.audio.AAC;
 public class ProgConfig {
 	int profile;
 	int sampling_rate_idx;
-	/** The sampling frequency value. */	
+	/** The sampling frequency value. */
 	int sampling_rate;
 	EleList front = new EleList();
 	EleList side = new EleList();
@@ -62,10 +62,10 @@ public class ProgConfig {
 	EleList coupling = new EleList();
 	EleList mono_mix = new EleList();
 	EleList stereo_mix = new EleList();
-	char[] comments = new char[(1<<Constants.LEN_PC_COMM)+1];
+	char[] comments = new char[(1 << Constants.LEN_PC_COMM) + 1];
 	/** put this transport level info here */
-	long    buffer_fullness;
+	long buffer_fullness;
 	boolean matrix_mixdown_idx_present;
 	int matrix_mixdown_idx;
-	boolean pseudo_surround_enable;	
+	boolean pseudo_surround_enable;
 }

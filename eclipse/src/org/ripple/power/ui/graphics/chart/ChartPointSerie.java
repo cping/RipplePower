@@ -183,7 +183,7 @@ public class ChartPointSerie {
 		mColor = color.getARGB();
 		mWidth = fWidth;
 	}
-	
+
 	public void setStyle(int iColor, float fWidth, boolean bUsedip) {
 		mColor = iColor;
 		mWidth = fWidth;

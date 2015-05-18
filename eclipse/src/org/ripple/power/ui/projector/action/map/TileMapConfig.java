@@ -22,7 +22,8 @@ public class TileMapConfig {
 		this.backMap = backMap;
 	}
 
-	public static List<int[]> loadList(final String fileName) throws IOException {
+	public static List<int[]> loadList(final String fileName)
+			throws IOException {
 		InputStream in = Resources.openResource(fileName);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		List<int[]> records = new ArrayList<int[]>(10);

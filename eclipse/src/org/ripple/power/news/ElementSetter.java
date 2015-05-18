@@ -67,7 +67,8 @@ public enum ElementSetter {
 				return;
 			}
 			try {
-				element.addMediaThumbnail(new MediaThumbnail(new URI(url), height, width));
+				element.addMediaThumbnail(new MediaThumbnail(new URI(url),
+						height, width));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -88,8 +89,7 @@ public enum ElementSetter {
 			}
 			MediaEnclosure enclosure = null;
 			try {
-				enclosure = new MediaEnclosure(
-						new URI(url), length, mimeType);
+				enclosure = new MediaEnclosure(new URI(url), length, mimeType);
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -156,7 +156,7 @@ public enum ElementSetter {
 	}
 
 	private static interface AttributeSetter extends Setter {
-		
+
 		void set(RssElement element, Attributes attributes);
 	}
 }

@@ -6,7 +6,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.GraphicsUtils;
 
-public class RainKernel implements IKernel{
+public class RainKernel implements IKernel {
 
 	private boolean exist;
 
@@ -16,8 +16,8 @@ public class RainKernel implements IKernel{
 			rainHeight;
 
 	public RainKernel(int n, int w, int h) {
-		rain = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME+("rain_" + n + ".png")
-				.intern());
+		rain = GraphicsUtils.loadImage(LSystem.FRAMEWORK_IMG_NAME
+				+ ("rain_" + n + ".png").intern());
 		rainWidth = rain.getWidth(null);
 		rainHeight = rain.getHeight(null);
 		width = w;
@@ -60,10 +60,8 @@ public class RainKernel implements IKernel{
 		return rainHeight;
 	}
 
-
 	public double getRainWidth() {
 		return rainWidth;
 	}
-
 
 }

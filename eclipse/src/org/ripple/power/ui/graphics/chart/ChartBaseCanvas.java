@@ -20,7 +20,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	int p_paddright = 8;
 	int p_paddbottom = 8;
 	int p_paddleft = 8;
-	
+
 	boolean p_xscale_auto = true;
 	boolean p_yscale_auto = true;
 	boolean p_border_vis = true;
@@ -70,8 +70,8 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	private final Canvas _myCanvas;
 
 	private LColor _background = LColor.black;
-	
-	public void repaint(){
+
+	public void repaint() {
 		bRedraw = true;
 		update(getGraphics());
 		super.repaint();
@@ -135,11 +135,11 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 	}
 
 	public void reset() {
-			mBmp = Bitmap.createBitmap(p_width, p_height);
-			mCnv = new Canvas(mBmp);
+		mBmp = Bitmap.createBitmap(p_width, p_height);
+		mCnv = new Canvas(mBmp);
 	}
-	
-	public void setAxisVis(boolean a){
+
+	public void setAxisVis(boolean a) {
 		p_axis_vis = a;
 	}
 
@@ -325,23 +325,22 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 		mYmax = 90;
 	}
 
-	public void setLeft(int p){
+	public void setLeft(int p) {
 		this.p_paddleft = p;
 	}
 
-	public void setTop(int p){
+	public void setTop(int p) {
 		this.p_paddtop = p;
 	}
-	
-	
-	public void setBottom(int p){
+
+	public void setBottom(int p) {
 		this.p_paddbottom = p;
 	}
 
-	public void setRight(int p){
+	public void setRight(int p) {
 		this.p_paddright = p;
 	}
-	
+
 	protected void calcXgridRange() {
 		mXdivGrid = (float) Math.pow(10,
 				Math.floor(Math.log10(Math.abs(mXmax - mXmin))));
@@ -441,10 +440,10 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 
 	private String mYLabelFlag = null;
 
-	public void setYLabelFlag(String label){
+	public void setYLabelFlag(String label) {
 		this.mYLabelFlag = label;
 	}
-	
+
 	protected void drawYlabel() {
 		if (p_ytext_left) {
 			mPntText.setTextAlign(Align.RIGHT);
@@ -466,7 +465,7 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 									/ 2, mPntText);
 				}
 			}
-			
+
 		} else {
 			for (int ii = 1; ii < mYgridNum; ii++) {
 				mPath.moveTo(eX - 3, eY - ii * (dY / mYgridNum));

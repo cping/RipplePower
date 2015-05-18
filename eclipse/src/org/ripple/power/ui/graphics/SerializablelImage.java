@@ -44,8 +44,8 @@ public class SerializablelImage implements Serializable {
 		} else {
 			LSystem.writeInt(out, 1);
 			WritableRaster wr = image.getRaster();
-			int pixels[] = (int[]) wr.getPixels(0, 0, image.getWidth(), image
-					.getHeight(), (int[]) null);
+			int pixels[] = (int[]) wr.getPixels(0, 0, image.getWidth(),
+					image.getHeight(), (int[]) null);
 			LSystem.writeInt(out, image.getWidth());
 			LSystem.writeInt(out, image.getHeight());
 			LSystem.writeInt(out, pixels.length);

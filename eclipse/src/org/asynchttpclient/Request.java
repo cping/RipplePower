@@ -24,194 +24,200 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * The Request class can be used to construct HTTP request:
- * <blockquote><pre>
- *   Request r = new RequestBuilder().setUrl("url")
- *                      .setRealm((new Realm.RealmBuilder()).setPrincipal(user)
- *                      .setPassword(admin)
- *                      .setRealmName("MyRealm")
- *                      .setScheme(Realm.AuthScheme.DIGEST).build());
- *   r.execute();
- * </pre></blockquote>
+ * The Request class can be used to construct HTTP request: <blockquote>
+ * 
+ * <pre>
+ * Request r = new RequestBuilder().setUrl(&quot;url&quot;).setRealm(
+ * 		(new Realm.RealmBuilder()).setPrincipal(user).setPassword(admin)
+ * 				.setRealmName(&quot;MyRealm&quot;).setScheme(Realm.AuthScheme.DIGEST)
+ * 				.build());
+ * r.execute();
+ * </pre>
+ * 
+ * </blockquote>
  */
 public interface Request {
 
-    /**
-     * Return the request's method name (GET, POST, etc.)
-     *
-     * @return the request's method name (GET, POST, etc.)
-     */
-    public String getMethod();
+	/**
+	 * Return the request's method name (GET, POST, etc.)
+	 * 
+	 * @return the request's method name (GET, POST, etc.)
+	 */
+	public String getMethod();
 
-    /**
-     * Return the decoded url
-     *
-     * @return the decoded url
-     */
-    public String getUrl();
+	/**
+	 * Return the decoded url
+	 * 
+	 * @return the decoded url
+	 */
+	public String getUrl();
 
-    public URI getOriginalURI();
-    public URI getURI();
-    public URI getRawURI();
+	public URI getOriginalURI();
 
-    /**
-     * Return the InetAddress to override
-     *
-     * @return the InetAddress
-     */
-    public InetAddress getInetAddress();
+	public URI getURI();
 
-    public InetAddress getLocalAddress();
+	public URI getRawURI();
 
-    /**
-     * Return the undecoded url
-     *
-     * @return the undecoded url
-     */
-    public String getRawUrl();
+	/**
+	 * Return the InetAddress to override
+	 * 
+	 * @return the InetAddress
+	 */
+	public InetAddress getInetAddress();
 
-    /**
-     * Return the current set of Headers.
-     *
-     * @return a {@link FluentCaseInsensitiveStringsMap} contains headers.
-     */
-    public FluentCaseInsensitiveStringsMap getHeaders();
+	public InetAddress getLocalAddress();
 
-    /**
-     * @return return <code>true</code> if request headers have been added,
-     *  otherwise, returns <code>false</code>.
-     *
-     * @since 2.0
-     */
-    boolean hasHeaders();
+	/**
+	 * Return the undecoded url
+	 * 
+	 * @return the undecoded url
+	 */
+	public String getRawUrl();
 
-    /**
-     * Return Coookie.
-     *
-     * @return an unmodifiable Collection of Cookies
-     */
-    public Collection<Cookie> getCookies();
+	/**
+	 * Return the current set of Headers.
+	 * 
+	 * @return a {@link FluentCaseInsensitiveStringsMap} contains headers.
+	 */
+	public FluentCaseInsensitiveStringsMap getHeaders();
 
-    /**
-     * Return the current request's body as a byte array
-     *
-     * @return a byte array of the current request's body.
-     */
-    public byte[] getByteData();
+	/**
+	 * @return return <code>true</code> if request headers have been added,
+	 *         otherwise, returns <code>false</code>.
+	 * 
+	 * @since 2.0
+	 */
+	boolean hasHeaders();
 
-    /**
-     * Return the current request's body as a string
-     *
-     * @return an String representation of the current request's body.
-     */
-    public String getStringData();
+	/**
+	 * Return Coookie.
+	 * 
+	 * @return an unmodifiable Collection of Cookies
+	 */
+	public Collection<Cookie> getCookies();
 
-    /**
-     * Return the current request's body as an InputStream
-     *
-     * @return an InputStream representation of the current request's body.
-     */
-    public InputStream getStreamData();
+	/**
+	 * Return the current request's body as a byte array
+	 * 
+	 * @return a byte array of the current request's body.
+	 */
+	public byte[] getByteData();
 
-    /**
-     * Return the current request's body generator.
-     *
-     * @return A generator for the request body.
-     */
-    public BodyGenerator getBodyGenerator();
+	/**
+	 * Return the current request's body as a string
+	 * 
+	 * @return an String representation of the current request's body.
+	 */
+	public String getStringData();
 
-    /**
-     * Return the current size of the content-lenght header based on the body's size.
-     *
-     * @return the current size of the content-lenght header based on the body's size.
-     */
-    public long getContentLength();
+	/**
+	 * Return the current request's body as an InputStream
+	 * 
+	 * @return an InputStream representation of the current request's body.
+	 */
+	public InputStream getStreamData();
 
-    /**
-     * Return the current parameters.
-     *
-     * @return a {@link FluentStringsMap} of parameters.
-     */
-    public FluentStringsMap getParams();
+	/**
+	 * Return the current request's body generator.
+	 * 
+	 * @return A generator for the request body.
+	 */
+	public BodyGenerator getBodyGenerator();
 
-    /**
-     * Return the current {@link Part}
-     *
-     * @return the current {@link Part}
-     */
-    public List<Part> getParts();
+	/**
+	 * Return the current size of the content-lenght header based on the body's
+	 * size.
+	 * 
+	 * @return the current size of the content-lenght header based on the body's
+	 *         size.
+	 */
+	public long getContentLength();
 
-    /**
-     * Return the virtual host value.
-     *
-     * @return the virtual host value.
-     */
-    public String getVirtualHost();
+	/**
+	 * Return the current parameters.
+	 * 
+	 * @return a {@link FluentStringsMap} of parameters.
+	 */
+	public FluentStringsMap getParams();
 
-    /**
-     * Return the query params.
-     *
-     * @return {@link FluentStringsMap} of query string
-     */
-    public FluentStringsMap getQueryParams();
+	/**
+	 * Return the current {@link Part}
+	 * 
+	 * @return the current {@link Part}
+	 */
+	public List<Part> getParts();
 
-    /**
-     * Return the {@link ProxyServer}
-     *
-     * @return the {@link ProxyServer}
-     */
-    public ProxyServer getProxyServer();
+	/**
+	 * Return the virtual host value.
+	 * 
+	 * @return the virtual host value.
+	 */
+	public String getVirtualHost();
 
-    /**
-     * Return the {@link Realm}
-     *
-     * @return the {@link Realm}
-     */
-    public Realm getRealm();
+	/**
+	 * Return the query params.
+	 * 
+	 * @return {@link FluentStringsMap} of query string
+	 */
+	public FluentStringsMap getQueryParams();
 
-    /**
-     * Return the {@link File} to upload.
-     *
-     * @return the {@link File} to upload.
-     */
-    public File getFile();
+	/**
+	 * Return the {@link ProxyServer}
+	 * 
+	 * @return the {@link ProxyServer}
+	 */
+	public ProxyServer getProxyServer();
 
-    /**
-     * Return the <tt>true></tt> to follow redirect
-     *
-     * @return the <tt>true></tt> to follow redirect
-     */
-    public boolean isRedirectEnabled();
+	/**
+	 * Return the {@link Realm}
+	 * 
+	 * @return the {@link Realm}
+	 */
+	public Realm getRealm();
 
-    /**
-     *
-     * @return <tt>true></tt> if request's redirectEnabled setting
-     *          should be used in place of client's
-     */
-    public boolean isRedirectOverrideSet();
+	/**
+	 * Return the {@link File} to upload.
+	 * 
+	 * @return the {@link File} to upload.
+	 */
+	public File getFile();
 
-    /**
-     * Return the request time out in milliseconds.
-     *
-     * @return requestTimeoutInMs.
-     */
-    public int getRequestTimeoutInMs();
+	/**
+	 * Return the <tt>true></tt> to follow redirect
+	 * 
+	 * @return the <tt>true></tt> to follow redirect
+	 */
+	public boolean isRedirectEnabled();
 
-    /**
-     * Return the HTTP Range header value, or
-     *
-     * @return the range header value, or 0 is not set.
-     */
-    public long getRangeOffset();
+	/**
+	 * 
+	 * @return <tt>true></tt> if request's redirectEnabled setting should be
+	 *         used in place of client's
+	 */
+	public boolean isRedirectOverrideSet();
 
-    /**
-     * Return the encoding value used when encoding the request's body.
-     *
-     * @return the encoding value used when encoding the request's body.
-     */
-    public String getBodyEncoding();
+	/**
+	 * Return the request time out in milliseconds.
+	 * 
+	 * @return requestTimeoutInMs.
+	 */
+	public int getRequestTimeoutInMs();
 
-    public boolean isUseRawUrl();
+	/**
+	 * Return the HTTP Range header value, or
+	 * 
+	 * @return the range header value, or 0 is not set.
+	 */
+	public long getRangeOffset();
 
-    ConnectionPoolKeyStrategy getConnectionPoolKeyStrategy();
+	/**
+	 * Return the encoding value used when encoding the request's body.
+	 * 
+	 * @return the encoding value used when encoding the request's body.
+	 */
+	public String getBodyEncoding();
+
+	public boolean isUseRawUrl();
+
+	ConnectionPoolKeyStrategy getConnectionPoolKeyStrategy();
 }

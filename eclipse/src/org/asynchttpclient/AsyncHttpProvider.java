@@ -23,17 +23,20 @@ import java.io.IOException;
  */
 public interface AsyncHttpProvider extends Closeable {
 
-    /**
-     * Execute the request and invoke the {@link AsyncHandler} when the response arrive.
-     *
-     * @param handler an instance of {@link AsyncHandler}
-     * @return a {@link ListenableFuture} of Type T.
-     * @throws IOException
-     */
-    <T> ListenableFuture<T> execute(Request request, AsyncHandler<T> handler) throws IOException;
+	/**
+	 * Execute the request and invoke the {@link AsyncHandler} when the response
+	 * arrive.
+	 * 
+	 * @param handler
+	 *            an instance of {@link AsyncHandler}
+	 * @return a {@link ListenableFuture} of Type T.
+	 * @throws IOException
+	 */
+	<T> ListenableFuture<T> execute(Request request, AsyncHandler<T> handler)
+			throws IOException;
 
-    /**
-     * Close the current underlying TCP/HTTP connection.
-     */
-    void close();
+	/**
+	 * Close the current underlying TCP/HTTP connection.
+	 */
+	void close();
 }

@@ -55,11 +55,14 @@ public class RPAlert extends JLabel {
 		float height = getHeight();
 
 		Graphics2D g2 = (Graphics2D) graphics.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+				RenderingHints.VALUE_STROKE_PURE);
 
-		RoundRectangle2D rect = new RoundRectangle2D.Float(borderWidth / 2, borderWidth / 2, width - borderWidth,
-				height - borderWidth, arc, arc);
+		RoundRectangle2D rect = new RoundRectangle2D.Float(borderWidth / 2,
+				borderWidth / 2, width - borderWidth, height - borderWidth,
+				arc, arc);
 		g2.setColor(this.getBackground());
 		g2.fill(rect);
 		g2.dispose();

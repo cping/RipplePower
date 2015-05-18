@@ -31,54 +31,56 @@ import org.asynchttpclient.Response;
  * A class that represent the HTTP response' status line (code + text)
  */
 public class ResponseStatus extends HttpResponseStatus {
-    
-    private final HttpResponse response;
 
-    public ResponseStatus(URI uri, HttpResponse response, AsyncHttpClientConfig config) {
-        super(uri, config);
-        this.response = response;
-    }
-    
-    @Override
-    public Response prepareResponse(HttpResponseHeaders headers, List<HttpResponseBodyPart> bodyParts) {
-        return new NettyResponse(this, headers, bodyParts);
-    }
+	private final HttpResponse response;
 
-    /**
-     * Return the response status code
-     *
-     * @return the response status code
-     */
-    public int getStatusCode() {
-        return response.getStatus().code();
-    }
+	public ResponseStatus(URI uri, HttpResponse response,
+			AsyncHttpClientConfig config) {
+		super(uri, config);
+		this.response = response;
+	}
 
-    /**
-     * Return the response status text
-     *
-     * @return the response status text
-     */
-    public String getStatusText() {
-        return response.getStatus().reasonPhrase();
-    }
+	@Override
+	public Response prepareResponse(HttpResponseHeaders headers,
+			List<HttpResponseBodyPart> bodyParts) {
+		return new NettyResponse(this, headers, bodyParts);
+	}
 
-    @Override
-    public String getProtocolName() {
-        return response.getProtocolVersion().protocolName();
-    }
+	/**
+	 * Return the response status code
+	 * 
+	 * @return the response status code
+	 */
+	public int getStatusCode() {
+		return response.getStatus().code();
+	}
 
-    @Override
-    public int getProtocolMajorVersion() {
-        return response.getProtocolVersion().majorVersion();
-    }
+	/**
+	 * Return the response status text
+	 * 
+	 * @return the response status text
+	 */
+	public String getStatusText() {
+		return response.getStatus().reasonPhrase();
+	}
 
-    @Override
-    public int getProtocolMinorVersion() {
-        return response.getProtocolVersion().minorVersion();
-    }
+	@Override
+	public String getProtocolName() {
+		return response.getProtocolVersion().protocolName();
+	}
 
-    @Override
-    public String getProtocolText() {
-        return response.getProtocolVersion().text();
-    }
+	@Override
+	public int getProtocolMajorVersion() {
+		return response.getProtocolVersion().majorVersion();
+	}
+
+	@Override
+	public int getProtocolMinorVersion() {
+		return response.getProtocolVersion().minorVersion();
+	}
+
+	@Override
+	public String getProtocolText() {
+		return response.getProtocolVersion().text();
+	}
 }

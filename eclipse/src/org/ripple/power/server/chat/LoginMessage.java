@@ -3,7 +3,7 @@ package org.ripple.power.server.chat;
 public class LoginMessage extends AMessage {
 
 	private String username;
-	
+
 	public LoginMessage() {
 		super();
 	}

@@ -39,15 +39,18 @@ public class CalloutBorder extends AbstractBorder {
 	}
 
 	@Override
-	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+	public void paintBorder(Component c, Graphics g, int x, int y, int width,
+			int height) {
 
 		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+				RenderingHints.VALUE_STROKE_PURE);
 
 		g2.setColor(this.borderColor);
 		g2.fillRect(0, 0, borderWidth, height);
-		
+
 		g2.dispose();
 	}
 

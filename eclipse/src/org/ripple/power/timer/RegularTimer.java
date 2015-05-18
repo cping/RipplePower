@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-
 public abstract class RegularTimer implements TimePeriod, MonthConstants {
 
 	public static RegularTimer createInstance(Class<?> c, Date millisecond,
@@ -55,9 +54,7 @@ public abstract class RegularTimer implements TimePeriod, MonthConstants {
 	public static final Calendar WORKING_CALENDAR = Calendar
 			.getInstance(DEFAULT_TIME_ZONE);
 
-
 	public abstract void peg(Calendar calendar);
-
 
 	@Override
 	public Date getStart() {
@@ -68,7 +65,6 @@ public abstract class RegularTimer implements TimePeriod, MonthConstants {
 	public Date getEnd() {
 		return new Date(getLastMillisecond());
 	}
-
 
 	public abstract long getFirstMillisecond();
 

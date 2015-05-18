@@ -154,8 +154,8 @@ public class SplitEffect extends LObject implements ISprite {
 			case Config.DOWN:
 			case Config.TLEFT:
 			case Config.TRIGHT:
-				g.drawImage(image, x1, y1, halfWidth, height, 0, 0,
-						halfWidth, height);
+				g.drawImage(image, x1, y1, halfWidth, height, 0, 0, halfWidth,
+						height);
 				g.drawImage(image, x2, y2, halfWidth, height, halfWidth, 0,
 						width, height);
 				break;

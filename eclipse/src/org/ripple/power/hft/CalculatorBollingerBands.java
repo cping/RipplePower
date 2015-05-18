@@ -7,7 +7,7 @@ import com.tictactec.ta.lib.RetCode;
 import java.util.List;
 
 public class CalculatorBollingerBands {
-	
+
 	private Core core = new Core();
 
 	public RetCode calcBollBands(InstrumentAo instrumentAo, int noOutEle,
@@ -38,14 +38,15 @@ public class CalculatorBollingerBands {
 				optInTimePeriod, optInNbDevUp, optInNbDevDn, optInMAType,
 				outBegIdx, outNBElement, outRealUpperBand, outRealMiddleBand,
 				outRealLowerBand);
-		//boolean wtf = true;
+		// boolean wtf = true;
 		for (int i = 0; i <= endIndex; i++) {
 			upperBandList.add(outRealUpperBand[i]);
 			middleBandList.add(outRealMiddleBand[i]);
 			lowerBandList.add(outRealLowerBand[i]);
-			/*if (!(outRealLowerBand[i] == outRealMiddleBand[i] && outRealLowerBand[i] == outRealMiddleBand[i])) {
-				wtf = false;
-			}*/
+			/*
+			 * if (!(outRealLowerBand[i] == outRealMiddleBand[i] &&
+			 * outRealLowerBand[i] == outRealMiddleBand[i])) { wtf = false; }
+			 */
 		}
 		return retCode;
 	}
@@ -56,22 +57,17 @@ public class CalculatorBollingerBands {
 
 	public BBandState getBBandState(Double upperBand, Double middleBand,
 			Double lowerBand, Double actValue) {
-		if (actValue > upperBand){
+		if (actValue > upperBand) {
 			return BBandState.ABOVE_UPPER_THRESHOLD;
-		}
-		else if (actValue == upperBand){
+		} else if (actValue == upperBand) {
 			return BBandState.AT_UPPER_THRESHOLD;
-		}
-		else if (actValue > middleBand){
+		} else if (actValue > middleBand) {
 			return BBandState.ABOVE_MEAN_THRESHOLD;
-		}
-		else if (actValue > lowerBand){
+		} else if (actValue > lowerBand) {
 			return BBandState.BELOW_MEAN_THRESHOLD;
-		}
-		else if (actValue == lowerBand){
+		} else if (actValue == lowerBand) {
 			return BBandState.AT_LOWER_THRESHOLD;
-		}
-		else{
+		} else {
 			return BBandState.BELOW_LOWER_THRESHOLD;
 		}
 	}

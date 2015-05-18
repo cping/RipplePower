@@ -314,19 +314,18 @@ public class RP {
 		return -1;
 	}
 
-
 	public static void fullTraverse(byte[] msgData, int level, int startPos,
 			int endPos, int levelToIndex, Queue<Integer> index) {
 
 		try {
-			if (msgData == null || msgData.length == 0){
+			if (msgData == null || msgData.length == 0) {
 				return;
 			}
 			int pos = startPos;
 
 			while (pos < endPos) {
 
-				if (level == levelToIndex){
+				if (level == levelToIndex) {
 					index.add(new Integer(pos));
 				}
 
@@ -341,7 +340,7 @@ public class RP {
 					pos += lengthOfLength + length + 1;
 					continue;
 				}
-	
+
 				if ((msgData[pos] & 0xFF) >= OFFSET_SHORT_LIST
 						&& (msgData[pos] & 0xFF) < OFFSET_LONG_LIST) {
 
@@ -356,7 +355,7 @@ public class RP {
 					pos += 1 + length;
 					continue;
 				}
-	
+
 				if ((msgData[pos] & 0xFF) >= OFFSET_LONG_ITEM
 						&& (msgData[pos] & 0xFF) < OFFSET_SHORT_LIST) {
 
@@ -367,7 +366,7 @@ public class RP {
 
 					continue;
 				}
-		
+
 				if ((msgData[pos] & 0xFF) > OFFSET_SHORT_ITEM
 						&& (msgData[pos] & 0xFF) < OFFSET_LONG_ITEM) {
 
@@ -376,12 +375,12 @@ public class RP {
 					pos += 1 + length;
 					continue;
 				}
-			
+
 				if ((msgData[pos] & 0xFF) == OFFSET_SHORT_ITEM) {
 					pos += 1;
 					continue;
 				}
-		
+
 				if ((msgData[pos] & 0xFF) < OFFSET_SHORT_ITEM) {
 					pos += 1;
 					continue;
@@ -422,7 +421,6 @@ public class RP {
 		return command;
 	}
 
-
 	public static RPList decode2(byte[] msgData) {
 		RPList rlpList = new RPList();
 		fullTraverse(msgData, 0, 0, msgData.length, 1, rlpList);
@@ -433,7 +431,7 @@ public class RP {
 			int endPos, int levelToIndex, RPList rlpList) {
 
 		try {
-			if (msgData == null || msgData.length == 0){
+			if (msgData == null || msgData.length == 0) {
 				return;
 			}
 			int pos = startPos;
@@ -460,7 +458,7 @@ public class RP {
 					pos += lengthOfLength + length + 1;
 					continue;
 				}
-		
+
 				if ((msgData[pos] & 0xFF) >= OFFSET_SHORT_LIST
 						&& (msgData[pos] & 0xFF) <= OFFSET_LONG_LIST) {
 
@@ -480,7 +478,7 @@ public class RP {
 					pos += 1 + length;
 					continue;
 				}
-	
+
 				if ((msgData[pos] & 0xFF) > OFFSET_LONG_ITEM
 						&& (msgData[pos] & 0xFF) < OFFSET_SHORT_LIST) {
 
@@ -501,7 +499,7 @@ public class RP {
 
 					continue;
 				}
-		
+
 				if ((msgData[pos] & 0xFF) > OFFSET_SHORT_ITEM
 						&& (msgData[pos] & 0xFF) <= OFFSET_LONG_ITEM) {
 
@@ -519,7 +517,7 @@ public class RP {
 
 					continue;
 				}
-		
+
 				if ((msgData[pos] & 0xFF) == OFFSET_SHORT_ITEM) {
 					byte[] item = ByteUtils.EMPTY_BYTE_ARRAY;
 					RPItem rlpItem = new RPItem(item);
@@ -527,7 +525,7 @@ public class RP {
 					pos += 1;
 					continue;
 				}
-			
+
 				if ((msgData[pos] & 0xFF) < OFFSET_SHORT_ITEM) {
 
 					byte[] item = { (byte) (msgData[pos] & 0xFF) };
@@ -549,17 +547,17 @@ public class RP {
 		}
 		int prefix = data[pos] & 0xFF;
 		if (prefix == OFFSET_SHORT_ITEM) {
-			return new DecodeResult(pos + 1, ""); 
+			return new DecodeResult(pos + 1, "");
 		} else if (prefix < OFFSET_SHORT_ITEM) {
 			return new DecodeResult(pos + 1, new byte[] { data[pos] });
 		} else if (prefix < OFFSET_LONG_ITEM) {
-			int len = prefix - OFFSET_SHORT_ITEM; 
+			int len = prefix - OFFSET_SHORT_ITEM;
 			return new DecodeResult(pos + 1 + len, Arrays.copyOfRange(data,
 					pos + 1, pos + 1 + len));
 		} else if (prefix < OFFSET_SHORT_LIST) {
-			int lenlen = prefix - OFFSET_LONG_ITEM; 
+			int lenlen = prefix - OFFSET_LONG_ITEM;
 			int lenbytes = ByteUtils.byteArrayToInt(Arrays.copyOfRange(data,
-					pos + 1, pos + 1 + lenlen)); 
+					pos + 1, pos + 1 + lenlen));
 			return new DecodeResult(pos + 1 + lenlen + lenbytes,
 					Arrays.copyOfRange(data, pos + 1 + lenlen, pos + 1 + lenlen
 							+ lenbytes));
@@ -569,9 +567,9 @@ public class RP {
 			pos++;
 			return decodeList(data, pos, prevPos, len);
 		} else if (prefix < 0xFF) {
-			int lenlen = prefix - OFFSET_LONG_LIST; 
+			int lenlen = prefix - OFFSET_LONG_LIST;
 			int lenlist = ByteUtils.byteArrayToInt(Arrays.copyOfRange(data,
-					pos + 1, pos + 1 + lenlen)); 
+					pos + 1, pos + 1 + lenlen));
 			pos = pos + lenlen + 1;
 			int prevPos = lenlist;
 			return decodeList(data, pos, prevPos, lenlist);
@@ -620,7 +618,6 @@ public class RP {
 		}
 	}
 
-
 	public static byte[] encodeLength(int length, int offset) {
 		if (length < SIZE_THRESHOLD) {
 			byte firstByte = (byte) (length + offset);
@@ -660,18 +657,15 @@ public class RP {
 	}
 
 	public static byte[] encodeInt(int singleInt) {
-		if (singleInt <= 0xFF){
+		if (singleInt <= 0xFF) {
 			return encodeByte((byte) singleInt);
-		}
-		else if (singleInt <= 0xFFFF){
+		} else if (singleInt <= 0xFFFF) {
 			return encodeShort((short) singleInt);
-		}
-		else if (singleInt <= 0xFFFFFF){
+		} else if (singleInt <= 0xFFFFFF) {
 			return new byte[] { (byte) (OFFSET_SHORT_ITEM + 3),
 					(byte) (singleInt >>> 16), (byte) (singleInt >>> 8),
 					(byte) singleInt };
-		}
-		else {
+		} else {
 			return new byte[] { (byte) (OFFSET_SHORT_ITEM + 4),
 					(byte) (singleInt >>> 24), (byte) (singleInt >>> 16),
 					(byte) (singleInt >>> 8), (byte) singleInt };
@@ -690,10 +684,9 @@ public class RP {
 	}
 
 	public static byte[] encodeElement(byte[] srcData) {
-		if (srcData == null){
+		if (srcData == null) {
 			return new byte[] { (byte) OFFSET_SHORT_ITEM };
-		}
-		else if (srcData.length == 1 && (srcData[0] & 0xFF) < 0x80) {
+		} else if (srcData.length == 1 && (srcData[0] & 0xFF) < 0x80) {
 			return srcData;
 		} else if (srcData.length < SIZE_THRESHOLD) {
 			byte length = (byte) (OFFSET_SHORT_ITEM + srcData.length);

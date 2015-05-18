@@ -25,5 +25,5 @@ public interface MonthConstants {
 	public static final int NOVEMBER = 11;
 
 	public static final int DECEMBER = 12;
-	
+
 }

@@ -10,7 +10,7 @@ public class JSArray<T extends Object> extends JSValue<ArrayList<T>> implements
 		List<T> {
 
 	public JSArray() {
-		super(JSType.ARRAY,new ArrayList<T>());
+		super(JSType.ARRAY, new ArrayList<T>());
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -20,7 +20,7 @@ public class JSArray<T extends Object> extends JSValue<ArrayList<T>> implements
 
 	@SuppressWarnings("unchecked")
 	protected JSArray(final ArrayList<T> toclone) {
-		super(JSType.ARRAY,(ArrayList<T>) toclone.clone());
+		super(JSType.ARRAY, (ArrayList<T>) toclone.clone());
 	}
 
 	public void add(final int index, final T element) {

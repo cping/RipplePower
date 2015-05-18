@@ -1,255 +1,245 @@
 package com.ripple.core.coretypes.uint;
 
-import com.ripple.core.serialized.*;
+import com.ripple.core.serialized.BinaryParser;
+import com.ripple.core.serialized.BytesSink;
+import com.ripple.core.serialized.SerializedType;
+import com.ripple.core.serialized.TypeTranslator;
 import com.ripple.encodings.common.B16;
 
 import java.math.BigInteger;
 
-abstract public class UInt<Subclass extends UInt> extends Number implements
-		SerializedType, Comparable<UInt> {
+abstract public class UInt<Subclass extends UInt> extends Number implements SerializedType, Comparable<UInt> {
 
-	private BigInteger value;
+    private BigInteger value;
 
-	public static BigInteger Max8 = new BigInteger("256"),
-			Max16 = new BigInteger("65536"), Max32 = new BigInteger(
-					"4294967296"), Max64 = new BigInteger(
-					"18446744073709551616");
+    public static BigInteger Max8  = new BigInteger("256"),
+                             Max16 = new BigInteger("65536"),
+                             Max32 = new BigInteger("4294967296"),
+                             Max64 = new BigInteger("18446744073709551616");
 
-	public BigInteger getMinimumValue() {
-		return BigInteger.ZERO;
-	}
+    public BigInteger getMinimumValue() {
+        return BigInteger.ZERO;
+    }
+    public UInt(byte[] bytes) {
+        setValue(new BigInteger(1, bytes));
+    }
+    public UInt(BigInteger bi) {
+        setValue(bi);
+    }
+    public UInt(Number s) {
+        setValue(BigInteger.valueOf(s.longValue()));
+    }
+    public UInt(String s) {
+        setValue(new BigInteger(s));
+    }
+    public UInt(String s, int radix) {
+        setValue(new BigInteger(s, radix));
+    }
 
-	public UInt(byte[] bytes) {
-		setValue(new BigInteger(1, bytes));
-	}
 
-	public UInt(BigInteger bi) {
-		setValue(bi);
-	}
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 
-	public UInt(Number s) {
-		setValue(BigInteger.valueOf(s.longValue()));
-	}
+    public UInt() {}
 
-	public UInt(String s) {
-		setValue(new BigInteger(s));
-	}
+    public abstract int getByteWidth();
+    public abstract Subclass instanceFrom(BigInteger n);
 
-	public UInt(String s, int radix) {
-		setValue(new BigInteger(s, radix));
-	}
+    public boolean isValid(BigInteger n) {
+        return !((bitLength() / 8) > getByteWidth());
+    }
 
-	@Override
-	public String toString() {
-		return value.toString();
-	}
+    public Subclass add(UInt val) {
+        return instanceFrom(value.add(val.value));
+    }
 
-	public UInt() {
-	}
+    public Subclass subtract(UInt val) {
+        return instanceFrom(value.subtract(val.value));
+    }
 
-	public abstract int getByteWidth();
+    public Subclass multiply(UInt val) {
+        return instanceFrom(value.multiply(val.value));
+    }
 
-	public abstract Subclass instanceFrom(BigInteger n);
+    public Subclass divide(UInt val) {
+        return instanceFrom(value.divide(val.value));
+    }
 
-	public boolean isValid(BigInteger n) {
-		return !((bitLength() / 8) > getByteWidth());
-	}
+    public Subclass or(UInt val) {
+        return instanceFrom(value.or(val.value));
+    }
 
-	public Subclass add(UInt val) {
-		return instanceFrom(value.add(val.value));
-	}
+    public Subclass shiftLeft(int n) {
+        return instanceFrom(value.shiftLeft(n));
+    }
 
-	public Subclass subtract(UInt val) {
-		return instanceFrom(value.subtract(val.value));
-	}
+    public Subclass shiftRight(int n) {
+        return instanceFrom(value.shiftRight(n));
+    }
 
-	public Subclass multiply(UInt val) {
-		return instanceFrom(value.multiply(val.value));
-	}
+    public int bitLength() {
+        return value.bitLength();
+    }
 
-	public Subclass divide(UInt val) {
-		return instanceFrom(value.divide(val.value));
-	}
+    public int compareTo(UInt val) {
+        return value.compareTo(val.value);
+    }
 
-	public Subclass or(UInt val) {
-		return instanceFrom(value.or(val.value));
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UInt) {
+            return equals((UInt) obj);
+        }
+        else return super.equals(obj);
+    }
 
-	public Subclass shiftLeft(int n) {
-		return instanceFrom(value.shiftLeft(n));
-	}
+    public boolean equals(UInt x) {
+        return value.equals(x.value);
+    }
 
-	public Subclass shiftRight(int n) {
-		return instanceFrom(value.shiftRight(n));
-	}
+    public BigInteger min(BigInteger val) {
+        return value.min(val);
+    }
 
-	public int bitLength() {
-		return value.bitLength();
-	}
+    public BigInteger max(BigInteger val) {
+        return value.max(val);
+    }
 
-	public int compareTo(UInt val) {
-		return value.compareTo(val.value);
-	}
+    public String toString(int radix) {
+        return value.toString(radix);
+    }
+    public byte[] toByteArray() {
+        int length = getByteWidth();
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof UInt) {
-			return equals((UInt) obj);
-		} else
-			return super.equals(obj);
-	}
+        {
+            byte[] bytes = value.toByteArray();
 
-	public boolean equals(UInt x) {
-		return value.equals(x.value);
-	}
+            if (bytes[0] == 0) {
+                if (bytes.length - 1 > length) {
+                    throw new IllegalArgumentException("standard length exceeded for value");
+                }
 
-	public BigInteger min(BigInteger val) {
-		return value.min(val);
-	}
+                byte[] tmp = new byte[length];
 
-	public BigInteger max(BigInteger val) {
-		return value.max(val);
-	}
+                System.arraycopy(bytes, 1, tmp, tmp.length - (bytes.length - 1), bytes.length - 1);
 
-	public String toString(int radix) {
-		return value.toString(radix);
-	}
+                return tmp;
+            } else {
+                if (bytes.length == length) {
+                    return bytes;
+                }
 
-	public byte[] toByteArray() {
-		int length = getByteWidth();
+                if (bytes.length > length) {
+                    throw new IllegalArgumentException("standard length exceeded for value");
+                }
 
-		{
-			byte[] bytes = value.toByteArray();
+                byte[] tmp = new byte[length];
 
-			if (bytes[0] == 0) {
-				if (bytes.length - 1 > length) {
-					throw new IllegalArgumentException(
-							"standard length exceeded for value");
-				}
+                System.arraycopy(bytes, 0, tmp, tmp.length - bytes.length, bytes.length);
 
-				byte[] tmp = new byte[length];
+                return tmp;
+            }
+        }
+    }
 
-				System.arraycopy(bytes, 1, tmp,
-						tmp.length - (bytes.length - 1), bytes.length - 1);
+    abstract public Object value();
 
-				return tmp;
-			} else {
-				if (bytes.length == length) {
-					return bytes;
-				}
+    public BigInteger bigInteger(){
+        return value;
+    }
 
-				if (bytes.length > length) {
-					throw new IllegalArgumentException(
-							"standard length exceeded for value");
-				}
 
-				byte[] tmp = new byte[length];
+    @Override
+    public int intValue() {
+        return value.intValue();
+    }
 
-				System.arraycopy(bytes, 0, tmp, tmp.length - bytes.length,
-						bytes.length);
+    @Override
+    public long longValue() {
+        return value.longValue();
+    }
 
-				return tmp;
-			}
-		}
-	}
+    @Override
+    public double doubleValue() {
+        return value.doubleValue();
+    }
 
-	abstract public Object value();
+    @Override
+    public float floatValue() {
+        return value.floatValue();
+    }
 
-	public BigInteger bigInteger() {
-		return value;
-	}
+    @Override
+    public byte byteValue() {
+        return value.byteValue();
+    }
 
-	@Override
-	public int intValue() {
-		return value.intValue();
-	}
+    @Override
+    public short shortValue() {
+        return value.shortValue();
+    }
 
-	@Override
-	public long longValue() {
-		return value.longValue();
-	}
+    public void setValue(BigInteger value) {
+        this.value = value;
+    }
 
-	@Override
-	public double doubleValue() {
-		return value.doubleValue();
-	}
+    public <T extends UInt> boolean  lte(T sequence) {
+        return compareTo(sequence) < 1;
+    }
 
-	@Override
-	public float floatValue() {
-		return value.floatValue();
-	}
+    public boolean testBit(int f) {
+        // TODO, optimized ;) // move to Uint32
+        return value.testBit(f);
+    }
 
-	@Override
-	public byte byteValue() {
-		return value.byteValue();
-	}
+    public boolean isZero() {
+        return value.signum() == 0;
+    }
 
-	@Override
-	public short shortValue() {
-		return value.shortValue();
-	}
+    static public abstract class UINTTranslator<T extends UInt> extends TypeTranslator<T> {
+        public abstract T newInstance(BigInteger i);
+        public abstract int byteWidth();
 
-	public void setValue(BigInteger value) {
-		this.value = value;
-	}
+        @Override
+        public T fromParser(BinaryParser parser, Integer hint) {
+            return newInstance(new BigInteger(1, parser.read(byteWidth())));
+        }
 
-	public <T extends UInt> boolean lte(T sequence) {
-		return compareTo(sequence) < 1;
-	}
+        @Override
+        public Object toJSON(T obj) {
+            if (obj.getByteWidth() <= 4) {
+                return obj.longValue();
+            } else {
+                return toString(obj);
+            }
+        }
 
-	public boolean testBit(int f) {
-		// TODO, optimized ;) // move to Uint32
-		return value.testBit(f);
-	}
+        @Override
+        public T fromLong(long aLong) {
+            return newInstance(BigInteger.valueOf(aLong));
+        }
 
-	public boolean isZero() {
-		return value.signum() == 0;
-	}
+        @Override
+        public T fromString(String value) {
+            int radix = byteWidth() <= 4 ? 10 : 16;
+            return newInstance(new BigInteger(value, radix));
+        }
 
-	static public abstract class UINTTranslator<T extends UInt> extends
-			TypeTranslator<T> {
-		public abstract T newInstance(BigInteger i);
+        @Override
+        public T fromInteger(int integer) {
+            return fromLong(integer);
+        }
 
-		public abstract int byteWidth();
+        @Override
+        public String toString(T obj) {
+            return B16.toString(obj.toByteArray());
+        }
 
-		@Override
-		public T fromParser(BinaryParser parser, Integer hint) {
-			return newInstance(new BigInteger(1, parser.read(byteWidth())));
-		}
-
-		@Override
-		public Object toJSON(T obj) {
-			if (obj.getByteWidth() <= 4) {
-				return obj.longValue();
-			} else {
-				return toString(obj);
-			}
-		}
-
-		@Override
-		public T fromLong(long aLong) {
-			return newInstance(BigInteger.valueOf(aLong));
-		}
-
-		@Override
-		public T fromString(String value) {
-			int radix = byteWidth() <= 4 ? 10 : 16;
-			return newInstance(new BigInteger(value, radix));
-		}
-
-		@Override
-		public T fromInteger(int integer) {
-			return fromLong(integer);
-		}
-
-		@Override
-		public String toString(T obj) {
-			return B16.toString(obj.toByteArray());
-		}
-
-		@Override
-		public void toBytesSink(T obj, BytesSink to) {
-			to.add(obj.toByteArray());
-		}
-	}
+        @Override
+        public void toBytesSink(T obj, BytesSink to) {
+            to.add(obj.toByteArray());
+        }
+    }
 }

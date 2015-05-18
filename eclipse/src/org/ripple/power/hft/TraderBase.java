@@ -3,12 +3,10 @@ package org.ripple.power.hft;
 import org.ripple.power.config.Loop;
 
 public abstract class TraderBase extends Loop {
-	
-    public enum TradeType
-    {
-        BUY,
-        SELL
-    }
+
+	public enum TradeType {
+		BUY, SELL
+	}
 
 	public static boolean equals(float value, float other) {
 		return equals(value, other, 0.01f);
@@ -33,10 +31,8 @@ public abstract class TraderBase extends Loop {
 		return (long) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
 	}
 
-	public static float suggestWallVolume(float minVolume,
-			float maxVolume) {
+	public static float suggestWallVolume(float minVolume, float maxVolume) {
 		return Math.min(minVolume, maxVolume);
 	}
-
 
 }

@@ -10,29 +10,29 @@ import java.io.Reader;
 import java.util.Date;
 
 public class CachedScript {
-    private Compilable scriptEngine;
-    private File scriptFile;
-    private CompiledScript compiledScript;
-    private Date compiledDate;
+	private Compilable scriptEngine;
+	private File scriptFile;
+	private CompiledScript compiledScript;
+	private Date compiledDate;
 
-    public CachedScript(Compilable scriptEngine, File scriptFile) {
-        this.scriptEngine = scriptEngine;
-        this.scriptFile = scriptFile;
-    }
-    
-    public CompiledScript getCompiledScript()
-            throws ScriptException, IOException {
-        Date scriptDate = new Date(scriptFile.lastModified());
-        if (compiledDate == null || scriptDate.after(compiledDate)) {
-            Reader reader = new FileReader(scriptFile);
-            try {
-                compiledScript = scriptEngine.compile(reader);
-                compiledDate = scriptDate;
-            } finally {
-                reader.close();
-            }
-        }
-        return compiledScript;
-    }
+	public CachedScript(Compilable scriptEngine, File scriptFile) {
+		this.scriptEngine = scriptEngine;
+		this.scriptFile = scriptFile;
+	}
+
+	public CompiledScript getCompiledScript() throws ScriptException,
+			IOException {
+		Date scriptDate = new Date(scriptFile.lastModified());
+		if (compiledDate == null || scriptDate.after(compiledDate)) {
+			Reader reader = new FileReader(scriptFile);
+			try {
+				compiledScript = scriptEngine.compile(reader);
+				compiledDate = scriptDate;
+			} finally {
+				reader.close();
+			}
+		}
+		return compiledScript;
+	}
 
 }

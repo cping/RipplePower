@@ -1,4 +1,3 @@
-
 /**
  * 
  * Copyright 2008
@@ -41,11 +40,10 @@ import org.ripple.power.ioc.ClassUtils;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.ReflectorUtils;
 
-
 final public class Reflector {
 
-	private static final Map<Object,Object> reflectorMap = Collections
-			.synchronizedMap(new HashMap<Object,Object>(1000));
+	private static final Map<Object, Object> reflectorMap = Collections
+			.synchronizedMap(new HashMap<Object, Object>(1000));
 
 	private Class<?> clazz;
 
@@ -196,9 +194,9 @@ final public class Reflector {
 	 * @return
 	 */
 	public Method lookupMethod(String name, Class<?>[] parameters) {
-		Method method = lookupMethod(name, ReflectorUtils
-				.parameterToTypeArray(parameters), ReflectorUtils.converterMap,
-				true);
+		Method method = lookupMethod(name,
+				ReflectorUtils.parameterToTypeArray(parameters),
+				ReflectorUtils.converterMap, true);
 		return method;
 	}
 
@@ -281,15 +279,15 @@ final public class Reflector {
 			currentDescriptor = ntarrays[i];
 			if (!currentDescriptor.isAliased()
 					&& currentDescriptor.getName().equals(desired.getName())) {
-				current = new Invokable((AccessibleObject) invokables
-						.get(currentDescriptor));
+				current = new Invokable(
+						(AccessibleObject) invokables.get(currentDescriptor));
 				if (converterMap.typesAssignable(current.getParameterTypes(),
 						desired.getParameterTypes())) {
 					try {
 						if (candidate == null
-								|| compareTypes(currentDescriptor
-										.getParameterTypes(), candidate
-										.getParameterTypes()) < 0) {
+								|| compareTypes(
+										currentDescriptor.getParameterTypes(),
+										candidate.getParameterTypes()) < 0) {
 							candidate = current;
 						}
 					} catch (Exception e) {
@@ -534,16 +532,16 @@ final public class Reflector {
 		}
 		methodName = ReflectorUtils.getMatchGetMethod(clazz, methodName);
 		try {
-			Method method = lookupMethod(methodName, ReflectorUtils
-					.parameterToTypeArray(parameters),
+			Method method = lookupMethod(methodName,
+					ReflectorUtils.parameterToTypeArray(parameters),
 					ReflectorUtils.converterMap, true);
 			Object[] parametersToUse = ReflectorUtils.converterMap
 					.convertParameters(method.getParameterTypes(), parameters);
 			return method.invoke(object, parametersToUse);
 		} catch (Exception ex) {
-			throw new Exception((methodName
-					+ " method can not be invoke ! exception : " + ex
-					.getMessage()).intern());
+			throw new Exception(
+					(methodName + " method can not be invoke ! exception : " + ex
+							.getMessage()).intern());
 		}
 	}
 
@@ -554,8 +552,9 @@ final public class Reflector {
 	 * @return
 	 */
 	public Object newInstance(Object[] args) {
-		Constructor<?> constructor = lookupConstructor(ReflectorUtils
-				.parameterToTypeArray(args), ReflectorUtils.converterMap, true);
+		Constructor<?> constructor = lookupConstructor(
+				ReflectorUtils.parameterToTypeArray(args),
+				ReflectorUtils.converterMap, true);
 		Object[] parametersToUse = ReflectorUtils.converterMap
 				.convertParameters(constructor.getParameterTypes(), args);
 		try {

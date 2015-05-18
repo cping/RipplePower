@@ -7,8 +7,9 @@ public class AttributeInjectorInstance extends AttributeAbstractInjector {
 
 	private Object instance;
 
-	public AttributeInjectorInstance(Reflector reflector,String attributeName, Object instance) {
-		super(reflector,attributeName);
+	public AttributeInjectorInstance(Reflector reflector, String attributeName,
+			Object instance) {
+		super(reflector, attributeName);
 		this.instance = instance;
 	}
 

@@ -46,8 +46,10 @@ class XHRTransport implements IOTransport {
 							+ System.currentTimeMillis());
 					urlConnection = (HttpURLConnection) url.openConnection();
 					SSLContext context = IOConnection.getSslContext();
-					if(urlConnection instanceof HttpsURLConnection && context != null) {
-						((HttpsURLConnection)urlConnection).setSSLSocketFactory(context.getSocketFactory());
+					if (urlConnection instanceof HttpsURLConnection
+							&& context != null) {
+						((HttpsURLConnection) urlConnection)
+								.setSSLSocketFactory(context.getSocketFactory());
 					}
 					if (!queue.isEmpty()) {
 						urlConnection.setDoOutput(true);
@@ -59,7 +61,8 @@ class XHRTransport implements IOTransport {
 							Iterator<String> iter = queue.iterator();
 							while (iter.hasNext()) {
 								String junk = iter.next();
-								line = IOConnection.FRAME_DELIMITER + junk.length()
+								line = IOConnection.FRAME_DELIMITER
+										+ junk.length()
 										+ IOConnection.FRAME_DELIMITER + junk;
 								output.write(line.getBytes(CHARSET));
 								iter.remove();
@@ -68,7 +71,7 @@ class XHRTransport implements IOTransport {
 						output.close();
 						InputStream input = urlConnection.getInputStream();
 						byte[] buffer = new byte[1024];
-						while(input.read(buffer) > 0) {
+						while (input.read(buffer) > 0) {
 						}
 						input.close();
 					} else {
@@ -97,7 +100,6 @@ class XHRTransport implements IOTransport {
 			connection.transportDisconnected();
 		}
 	}
-
 
 	public static IOTransport create(URL url, IOConnection connection) {
 		try {

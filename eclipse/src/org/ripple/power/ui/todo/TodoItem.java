@@ -109,13 +109,12 @@ public class TodoItem {
 
 	public String toText() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("id : " + id).append(LSystem.LS)
-		.append("desc : " + desc).append(LSystem.LS)
-		.append("type : " + type).append(LSystem.LS)
-		.append("timeout : " + timeout).append(LSystem.LS)
-		.append("period : " + period).append(LSystem.LS)
-		.append("status : " + status).append(LSystem.LS)
-		.append("note : " + note);
+		buffer.append("id : " + id).append(LSystem.LS).append("desc : " + desc)
+				.append(LSystem.LS).append("type : " + type).append(LSystem.LS)
+				.append("timeout : " + timeout).append(LSystem.LS)
+				.append("period : " + period).append(LSystem.LS)
+				.append("status : " + status).append(LSystem.LS)
+				.append("note : " + note);
 		return buffer.toString();
 	}
 

@@ -30,7 +30,7 @@ public class HelperDialog extends Canvas {
 	BufferedImage _backimage;
 	BufferedImage _faceimage;
 	final int idx = 7;
-	
+
 	private static RPPushTool instance = null;
 
 	private static RPPushTool load() {
@@ -92,7 +92,7 @@ public class HelperDialog extends Canvas {
 	}
 
 	HelperDialog() {
-	
+
 		faceImage = GraphicsUtils.getSplitImages("icons/monster.png", 96, 96);
 		GraphicTool tools = new GraphicTool();
 		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
@@ -128,7 +128,7 @@ public class HelperDialog extends Canvas {
 		}
 	}
 
-	private Font deffont = GraphicsUtils.getFont(Font.SANS_SERIF,1,20);
+	private Font deffont = GraphicsUtils.getFont(Font.SANS_SERIF, 1, 20);
 
 	private void draw(Graphics g) {
 		if (NowSerif == null) {

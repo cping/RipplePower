@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2008 - 2012
  * 
@@ -713,7 +712,7 @@ public class MathUtils {
 	public static final long randomLong(int start, int end) {
 		return start + LSystem.random.nextInt(end - start + 1);
 	}
-	
+
 	public static final boolean randomBoolean() {
 		return LSystem.random.nextBoolean();
 	}

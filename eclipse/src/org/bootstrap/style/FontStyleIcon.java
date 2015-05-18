@@ -69,7 +69,8 @@ public class FontStyleIcon implements Icon {
 		this.icon = icon;
 		this.iconSize = iconSize;
 		this.color = color;
-		this.font = FontStyle.getInstance().getFont().deriveFont(Font.PLAIN, iconSize);
+		this.font = FontStyle.getInstance().getFont()
+				.deriveFont(Font.PLAIN, iconSize);
 
 		calcImageBufferSize();
 		paintImageBuffer();
@@ -92,33 +93,43 @@ public class FontStyleIcon implements Icon {
 	}
 
 	private void calcImageBufferSize() {
-		GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+		GraphicsConfiguration config = GraphicsEnvironment
+				.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration();
 
-		BufferedImage buff = config.createCompatibleImage(1, 1, Transparency.TRANSLUCENT);
+		BufferedImage buff = config.createCompatibleImage(1, 1,
+				Transparency.TRANSLUCENT);
 		Graphics2D g2 = buff.createGraphics();
 		g2.setFont(font);
 
-		LineMetrics lm = font.getLineMetrics(String.valueOf(icon), g2.getFontRenderContext());
+		LineMetrics lm = font.getLineMetrics(String.valueOf(icon),
+				g2.getFontRenderContext());
 		iconWidth = g2.getFontMetrics().charWidth(icon.getChar());
 		iconHeight = (int) lm.getHeight();
-		iconBaseline = (int) (lm.getHeight() - lm.getLeading() - lm.getDescent());
+		iconBaseline = (int) (lm.getHeight() - lm.getLeading() - lm
+				.getDescent());
 		g2.dispose();
 	}
 
 	private void paintImageBuffer() {
-		if (imageBuffer == null) {	
-			GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+		if (imageBuffer == null) {
+			GraphicsConfiguration config = GraphicsEnvironment
+					.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 					.getDefaultConfiguration();
-			imageBuffer = config.createCompatibleImage(iconWidth, iconHeight, Transparency.TRANSLUCENT);
-		} else { 
-			int pixelSize = imageBuffer.getWidth() * imageBuffer.getHeight() * 4;
-			imageBuffer.getRaster().setPixels(0, 0, iconWidth, iconHeight, new int[pixelSize]);
+			imageBuffer = config.createCompatibleImage(iconWidth, iconHeight,
+					Transparency.TRANSLUCENT);
+		} else {
+			int pixelSize = imageBuffer.getWidth() * imageBuffer.getHeight()
+					* 4;
+			imageBuffer.getRaster().setPixels(0, 0, iconWidth, iconHeight,
+					new int[pixelSize]);
 		}
-		
+
 		Graphics2D g2 = imageBuffer.createGraphics();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 		g2.setFont(font);
 		g2.setColor(color);
 		g2.drawString(String.valueOf(icon), 0, iconBaseline);

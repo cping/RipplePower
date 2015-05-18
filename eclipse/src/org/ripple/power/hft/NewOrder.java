@@ -1,13 +1,13 @@
 package org.ripple.power.hft;
 
-public interface NewOrder extends Order{
+public interface NewOrder extends Order {
 
-    public String getSymbol();
+	public String getSymbol();
 
-    public int getSize();
+	public int getSize();
 
-    public String getOrderId();
+	public String getOrderId();
 
-    public double getLimitPrice();
-    
+	public double getLimitPrice();
+
 }

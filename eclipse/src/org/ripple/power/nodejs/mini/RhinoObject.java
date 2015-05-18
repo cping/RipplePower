@@ -5,7 +5,7 @@ import org.mozilla.javascript.ScriptableObject;
 
 public class RhinoObject implements JavascriptObject {
 
-	private final Scriptable	map;
+	private final Scriptable map;
 
 	public RhinoObject(final Scriptable obj) {
 		this.map = obj;

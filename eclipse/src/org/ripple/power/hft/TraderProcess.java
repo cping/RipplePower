@@ -437,7 +437,6 @@ public class TraderProcess extends TraderBase {
 		log("testing...");
 	}
 
-
 	public ArrayList<Task> getAllSeller() {
 		ArrayList<Task> tasks = new ArrayList<Task>(10);
 		for (Task t : _HFT_tasks) {
@@ -487,7 +486,7 @@ public class TraderProcess extends TraderBase {
 
 		}
 	}
-	
+
 	@Override
 	public Updateable main() {
 		Updateable updateable = new Updateable() {

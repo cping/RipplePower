@@ -5,7 +5,8 @@ import java.io.UnsupportedEncodingException;
 import org.json.JSONObject;
 import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.config.LSystem;
-import com.ripple.core.coretypes.VariableLength;
+
+import com.ripple.core.coretypes.Blob;
 import com.ripple.core.coretypes.hash.Hash128;
 import com.ripple.core.fields.Field;
 import com.ripple.core.serialized.enums.TransactionType;
@@ -15,8 +16,8 @@ public class AccountSet {
 
 	public static void set(final RippleSeedAddress seed,
 			final String messageKey, final String domain,
-			final String emailHash, final long clearFlag, final long setFlag,final long transferRate,
-			final String fee, final Rollback back) {
+			final String emailHash, final long clearFlag, final long setFlag,
+			final long transferRate, final String fee, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -27,20 +28,20 @@ public class AccountSet {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				if (messageKey != null) {
 					try {
-						txn.put(Field.MessageKey, VariableLength
+						txn.put(Field.MessageKey, Blob
 								.fromBytes(domain.getBytes(LSystem.encoding)));
 					} catch (UnsupportedEncodingException e) {
 						txn.put(Field.MessageKey,
-								VariableLength.fromBytes(domain.getBytes()));
+								Blob.fromBytes(domain.getBytes()));
 					}
 				}
 				if (domain != null) {
 					try {
-						txn.put(Field.Domain, VariableLength.fromBytes(domain
+						txn.put(Field.Domain, Blob.fromBytes(domain
 								.getBytes(LSystem.encoding)));
 					} catch (UnsupportedEncodingException e) {
 						txn.put(Field.Domain,
-								VariableLength.fromBytes(domain.getBytes()));
+								Blob.fromBytes(domain.getBytes()));
 					}
 				}
 				if (emailHash != null) {
@@ -53,7 +54,7 @@ public class AccountSet {
 								new Hash128(emailHash.getBytes()));
 					}
 				}
-				if (transferRate >-1) {
+				if (transferRate > -1) {
 					txn.putTranslated(Field.TransferRate, transferRate);
 				}
 				if (clearFlag > -1) {

@@ -31,80 +31,95 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProgressListener implements ChannelProgressiveFutureListener {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProgressListener.class);
 
-    private final AsyncHttpClientConfig config;
-    private final boolean notifyHeaders;
-    private final AsyncHandler<?> asyncHandler;
-    private final NettyResponseFuture<?> future;
-    private final AtomicLong lastProgress = new AtomicLong(0);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ProgressListener.class);
 
-    public ProgressListener(AsyncHttpClientConfig config, boolean notifyHeaders, AsyncHandler<?> asyncHandler, NettyResponseFuture<?> future) {
-        this.config = config;
-        this.notifyHeaders = notifyHeaders;
-        this.asyncHandler = asyncHandler;
-        this.future = future;
-    }
+	private final AsyncHttpClientConfig config;
+	private final boolean notifyHeaders;
+	private final AsyncHandler<?> asyncHandler;
+	private final NettyResponseFuture<?> future;
+	private final AtomicLong lastProgress = new AtomicLong(0);
 
-    @Override
-    public void operationComplete(ChannelProgressiveFuture cf) {
-        // The write operation failed. If the channel was cached, it means it got asynchronously closed.
-        // Let's retry a second time.
-        Throwable cause = cf.cause();
-        if (cause != null && future.getState() != NettyResponseFuture.STATE.NEW) {
+	public ProgressListener(AsyncHttpClientConfig config,
+			boolean notifyHeaders, AsyncHandler<?> asyncHandler,
+			NettyResponseFuture<?> future) {
+		this.config = config;
+		this.notifyHeaders = notifyHeaders;
+		this.asyncHandler = asyncHandler;
+		this.future = future;
+	}
 
-            if (cause instanceof IllegalStateException) {
-                LOGGER.debug(cause.getMessage(), cause);
-                try {
-                    cf.channel().close();
-                } catch (RuntimeException ex) {
-                    LOGGER.debug(ex.getMessage(), ex);
-                }
-                return;
-            }
+	@Override
+	public void operationComplete(ChannelProgressiveFuture cf) {
+		// The write operation failed. If the channel was cached, it means it
+		// got asynchronously closed.
+		// Let's retry a second time.
+		Throwable cause = cf.cause();
+		if (cause != null && future.getState() != NettyResponseFuture.STATE.NEW) {
 
-            if (cause instanceof ClosedChannelException || NettyResponseFutures.abortOnReadCloseException(cause) || NettyResponseFutures.abortOnWriteCloseException(cause)) {
+			if (cause instanceof IllegalStateException) {
+				LOGGER.debug(cause.getMessage(), cause);
+				try {
+					cf.channel().close();
+				} catch (RuntimeException ex) {
+					LOGGER.debug(ex.getMessage(), ex);
+				}
+				return;
+			}
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(cf.cause() == null ? "" : cf.cause().getMessage(), cf.cause());
-                }
+			if (cause instanceof ClosedChannelException
+					|| NettyResponseFutures.abortOnReadCloseException(cause)
+					|| NettyResponseFutures.abortOnWriteCloseException(cause)) {
 
-                try {
-                    cf.channel().close();
-                } catch (RuntimeException ex) {
-                    LOGGER.debug(ex.getMessage(), ex);
-                }
-                return;
-            } else {
-                future.abort(cause);
-            }
-            return;
-        }
-        future.touch();
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(cf.cause() == null ? "" : cf.cause()
+							.getMessage(), cf.cause());
+				}
 
-        /**
-         * We need to make sure we aren't in the middle of an authorization process before publishing events as we will re-publish again the same event after the authorization,
-         * causing unpredictable behavior.
-         */
-        Realm realm = future.getRequest().getRealm() != null ? future.getRequest().getRealm() : config.getRealm();
-        boolean startPublishing = future.isInAuth() || realm == null || realm.getUsePreemptiveAuth();
+				try {
+					cf.channel().close();
+				} catch (RuntimeException ex) {
+					LOGGER.debug(ex.getMessage(), ex);
+				}
+				return;
+			} else {
+				future.abort(cause);
+			}
+			return;
+		}
+		future.touch();
 
-        if (startPublishing && asyncHandler instanceof ProgressAsyncHandler) {
-            if (notifyHeaders) {
-                ProgressAsyncHandler.class.cast(asyncHandler).onHeaderWriteCompleted();
-            } else {
-                ProgressAsyncHandler.class.cast(asyncHandler).onContentWriteCompleted();
-            }
-        }
-    }
+		/**
+		 * We need to make sure we aren't in the middle of an authorization
+		 * process before publishing events as we will re-publish again the same
+		 * event after the authorization, causing unpredictable behavior.
+		 */
+		Realm realm = future.getRequest().getRealm() != null ? future
+				.getRequest().getRealm() : config.getRealm();
+		boolean startPublishing = future.isInAuth() || realm == null
+				|| realm.getUsePreemptiveAuth();
 
-    @Override
-    public void operationProgressed(ChannelProgressiveFuture f, long progress, long total) {
-        future.touch();
-        if (!notifyHeaders && asyncHandler instanceof ProgressAsyncHandler) {
-            long lastProgressValue = lastProgress.getAndSet(progress);
-            ProgressAsyncHandler.class.cast(asyncHandler).onContentWriteProgress(progress - lastProgressValue, progress, total);
-        }
-    }
+		if (startPublishing && asyncHandler instanceof ProgressAsyncHandler) {
+			if (notifyHeaders) {
+				ProgressAsyncHandler.class.cast(asyncHandler)
+						.onHeaderWriteCompleted();
+			} else {
+				ProgressAsyncHandler.class.cast(asyncHandler)
+						.onContentWriteCompleted();
+			}
+		}
+	}
+
+	@Override
+	public void operationProgressed(ChannelProgressiveFuture f, long progress,
+			long total) {
+		future.touch();
+		if (!notifyHeaders && asyncHandler instanceof ProgressAsyncHandler) {
+			long lastProgressValue = lastProgress.getAndSet(progress);
+			ProgressAsyncHandler.class.cast(asyncHandler)
+					.onContentWriteProgress(progress - lastProgressValue,
+							progress, total);
+		}
+	}
 }

@@ -26,7 +26,7 @@ import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 
 public class RPBubbleDialog {
-	
+
 	final static LWaveSound wave = new LWaveSound();
 
 	public static class TipDialog extends JDialog {
@@ -142,7 +142,8 @@ public class RPBubbleDialog {
 		_closeLabel.setToolTipText(LangConfig.get(this, "close", "Close"));
 
 		_contentText.setEditable(false);
-		_contentText.setFont(new Font(LangConfig.getFontName(), Font.PLAIN, 13));
+		_contentText
+				.setFont(new Font(LangConfig.getFontName(), Font.PLAIN, 13));
 		_contentText.setForeground(LColor.white);
 		_contentText.setLineWrap(true);
 		_contentText.setText(_message);

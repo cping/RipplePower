@@ -36,7 +36,7 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public void insert(HashBytes key) {
-		if(pClose){
+		if (pClose) {
 			return;
 		}
 		int index = hf.hash(key);
@@ -59,7 +59,7 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public void insert(HashBytes key, HashBytes value) {
-		if(pClose){
+		if (pClose) {
 			return;
 		}
 		key.value = value;
@@ -67,7 +67,7 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public boolean contains(HashBytes key) {
-		if(pClose){
+		if (pClose) {
 			return false;
 		}
 		HashBytes found = findKey(key);
@@ -78,7 +78,7 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public HashBytes search(HashBytes key) {
-		if(pClose){
+		if (pClose) {
 			return null;
 		}
 		HashBytes found = findKey(key);
@@ -89,14 +89,14 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public int size() {
-		if(pClose){
+		if (pClose) {
 			return 0;
 		}
 		return size;
 	}
 
 	public String toString() {
-		if(pClose){
+		if (pClose) {
 			return null;
 		}
 		StringBuilder sb = new StringBuilder();
@@ -114,7 +114,7 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 	}
 
 	public HashBytes[] getBytes() {
-		if(pClose){
+		if (pClose) {
 			return null;
 		}
 		return bytesTable;
@@ -122,14 +122,14 @@ public class HashTable implements Iterable<HashBytes>, Closed {
 
 	@Override
 	public Iterator<HashBytes> iterator() {
-		if(pClose){
+		if (pClose) {
 			return null;
 		}
 		return new HashIterator(bytesTable, size);
 	}
 
 	private HashBytes findKey(HashBytes key) {
-		if(pClose){
+		if (pClose) {
 			return null;
 		}
 		int index = hf.hash(key);

@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -52,34 +52,34 @@ package mediaframe.mpeg4.audio.AAC;
 final class MC_Info {
 
 	/** total number of audio channels */
-	int nch = 0;		
+	int nch = 0;
 	/** number of front SCE's pror to first front CPE */
-	int nfsce = 0;		
+	int nfsce = 0;
 	/** number of front channels */
-	int nfch = 0;		
+	int nfch = 0;
 	/** number of side channels */
-	int nsch = 0;		
+	int nsch = 0;
 	/** number of back channels */
-	int nbch = 0;		
+	int nbch = 0;
 	/** number of lfe channels */
-	int nlch = 0;		
+	int nlch = 0;
 	/** number of valid coupling channels */
-	int ncch = 0;		
+	int ncch = 0;
 	/** tags of valid CCE's */
-	int[] cch_tag = new int[1 << Constants.LEN_TAG];	
+	int[] cch_tag = new int[1 << Constants.LEN_TAG];
 	/** The profile of the AAC stream. */
 	int profile;
-	/** The index for the sampling frequency (@see Tables.SampleIndexRateTable). */	
+	/** The index for the sampling frequency (@see Tables.SampleIndexRateTable). */
 	int sampling_rate_idx;
-	/** The sampling frequency value. */	
+	/** The sampling frequency value. */
 	int sampling_rate;
-	
+
 	Ch_Info[] ch_info = new Ch_Info[Constants.Chans];
-	
+
 	MC_Info() {
 		super();
-		for(int i = 0; i < ch_info.length; i++) {
-			ch_info[i] = new Ch_Info(); 
+		for (int i = 0; i < ch_info.length; i++) {
+			ch_info[i] = new Ch_Info();
 		}
 	}
 }

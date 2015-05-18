@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -52,29 +52,29 @@ package mediaframe.mpeg4.audio.AAC;
  */
 final class Ch_Info {
 	/** channel present */
-	boolean present;	
+	boolean present;
 	/** element tag */
-	int tag;		
+	int tag;
 	/** false if single channel, true if channel pair */
-	boolean cpe;		
+	boolean cpe;
 	/** true if common window for cpe */
-	boolean	common_window;
-	/** true if left channel of cpe */	
-	boolean	ch_is_left;	
+	boolean common_window;
+	/** true if left channel of cpe */
+	boolean ch_is_left;
 	/** index of paired channel in cpe */
-	int	paired_ch;	
+	int paired_ch;
 	/** window element index for this channel */
-	int widx;		
+	int widx;
 	/** IS information */
 	IS_Info is_info = new IS_Info();
-	/** number of coupling channels for this ch */	
-	int ncch;		
+	/** number of coupling channels for this ch */
+	int ncch;
 	/** coupling channel idx */
-	int[] cch = new int[Constants.CChans];	
+	int[] cch = new int[Constants.CChans];
 	/** coupling channel domain */
-	int[] cc_dom = new int[Constants.CChans];	
+	int[] cc_dom = new int[Constants.CChans];
 	/** independently switched coupling channel flag */
 	int[] cc_ind = new int[Constants.CChans];
-	/** filename extension */	
-	String fext;		
+	/** filename extension */
+	String fext;
 }

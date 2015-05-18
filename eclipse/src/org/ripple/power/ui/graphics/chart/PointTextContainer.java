@@ -24,7 +24,6 @@ public class PointTextContainer {
 		this(text, x, y, paintFront, paintBack, null, position);
 	}
 
-
 	public PointTextContainer(String text, double x, double y,
 			Paint paintFront, Paint paintBack, SymbolContainer symbol,
 			Position position) {
@@ -51,6 +50,5 @@ public class PointTextContainer {
 		}
 		return new RectBox(0, 0, this.textWidth, this.textHeight);
 	}
-	
-	
+
 }

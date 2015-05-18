@@ -165,9 +165,9 @@ public abstract class Conversion implements Expression {
 				}
 			} else {
 				try {
-					compute.push(new Float(new String(expChr, stIdx, lgt))
-							.floatValue()
-							* sign, STACK_NUM);
+					compute.push(
+							new Float(new String(expChr, stIdx, lgt))
+									.floatValue() * sign, STACK_NUM);
 				} catch (NumberFormatException e) {
 					compute.push(0, STACK_NUM);
 				}

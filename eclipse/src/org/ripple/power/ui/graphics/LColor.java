@@ -1,6 +1,7 @@
 package org.ripple.power.ui.graphics;
 
 import java.awt.Color;
+
 public class LColor extends Color {
 
 	/**
@@ -81,13 +82,12 @@ public class LColor extends Color {
 
 	public final static LColor magenta = new LColor(1.0f, 0.0f, 1.0f, 1.0f);
 
-
 	public final static int transparent = 0xff000000;
-	
+
 	public LColor(Color c) {
-		super(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+		super(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 	}
-	
+
 	public LColor(int r, int g, int b) {
 		super(r, g, b, 255);
 	}

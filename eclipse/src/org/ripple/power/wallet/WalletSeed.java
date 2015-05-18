@@ -101,7 +101,6 @@ public class WalletSeed {
 			out.close();
 		}
 	}
-
 	public String load(File file) throws Exception {
 		if (!file.exists()) {
 			return null;

@@ -6,7 +6,6 @@ import javax.swing.JScrollPane;
 
 import org.bootstrap.ui.ScrollBarUI;
 
-
 public class RPScrollPane extends JScrollPane {
 
 	/**
@@ -28,10 +27,10 @@ public class RPScrollPane extends JScrollPane {
 
 	public RPScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
 		super(view, vsbPolicy, hsbPolicy);
-		
+
 		this.getVerticalScrollBar().setUI(new ScrollBarUI());
 		this.getHorizontalScrollBar().setUI(new ScrollBarUI());
-		
+
 		this.getVerticalScrollBar().setUnitIncrement(16);
 	}
 

@@ -17,18 +17,21 @@ public class UIMessage {
 
 	public final static String fs = LangConfig.get(UIMessage.class, "fs",
 			"Final Set");
-	
+
 	public final static String icon = LangConfig.get(UIMessage.class, "icon",
 			"Icon");
 
 	public final static String currency = LangConfig.get(UIMessage.class,
 			"currency", "Currency");
-	
-	public final static String gateway = LangConfig.get(UIMessage.class, "gateway", "Gateway");
-	
-	public final static String amount = LangConfig.get(UIMessage.class, "amount", "Amount");
-	
-	public final static String address = LangConfig.get(UIMessage.class, "address", "Address");
+
+	public final static String gateway = LangConfig.get(UIMessage.class,
+			"gateway", "Gateway");
+
+	public final static String amount = LangConfig.get(UIMessage.class,
+			"amount", "Amount");
+
+	public final static String address = LangConfig.get(UIMessage.class,
+			"address", "Address");
 
 	public final static String ok = LangConfig.get(UIMessage.class, "ok", "OK");
 
@@ -40,13 +43,13 @@ public class UIMessage {
 
 	public final static String save = LangConfig.get(UIMessage.class, "save",
 			"Save");
-	
+
 	public final static String add = LangConfig.get(UIMessage.class, "add",
 			"Add");
 
 	public final static String del = LangConfig.get(UIMessage.class, "del",
 			"Delete");
-	
+
 	public final static String cancel = LangConfig.get(UIMessage.class,
 			"cancel", "Cancel");
 

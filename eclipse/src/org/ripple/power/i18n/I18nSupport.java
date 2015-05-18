@@ -12,7 +12,7 @@ public class I18nSupport {
 	private HashMap<Language, List<ResourceBundle>> pLanguageToBundles = new HashMap<Language, List<ResourceBundle>>();
 
 	private boolean pDirty;
-	
+
 	public void addBundle(ResourceBundle resourceBundle, Language language) {
 		List<ResourceBundle> bundles = pLanguageToBundles.get(language);
 		if (bundles == null) {
@@ -69,8 +69,8 @@ public class I18nSupport {
 		}
 		return true;
 	}
-	
-	public boolean isDirty(){
+
+	public boolean isDirty() {
 		return pDirty;
 	}
 

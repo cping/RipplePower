@@ -24,9 +24,9 @@ public class FilePartStallHandler extends TimerTask {
 		_failed = false;
 		_written = false;
 	}
-	
+
 	public void completed() {
-		if(_waitTime > 0) {
+		if (_waitTime > 0) {
 			_timer.cancel();
 		}
 	}
@@ -36,7 +36,7 @@ public class FilePartStallHandler extends TimerTask {
 	}
 
 	public void run() {
-		if(!_written) {
+		if (!_written) {
 			_failed = true;
 			_timer.cancel();
 		}
@@ -44,12 +44,12 @@ public class FilePartStallHandler extends TimerTask {
 	}
 
 	public void start() {
-		if(_waitTime > 0) {
+		if (_waitTime > 0) {
 			_timer = new Timer();
 			_timer.scheduleAtFixedRate(this, _waitTime, _waitTime);
 		}
 	}
-	
+
 	public void writeHappened() {
 		_written = true;
 	}

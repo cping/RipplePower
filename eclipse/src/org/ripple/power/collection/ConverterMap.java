@@ -12,7 +12,6 @@ import org.ripple.power.ioc.reflect.PropertyEditorConverter;
 import org.ripple.power.ioc.reflect.Reflector;
 import org.ripple.power.ioc.reflect.TypeArray;
 
-
 public class ConverterMap {
 
 	public static final BaseTypeMap BaseTypeMap = new BaseTypeMap();
@@ -47,11 +46,13 @@ public class ConverterMap {
 	}
 
 	public void store(Class<?> targetClass, Converter converter) {
-		converters.put(new TypeArray(new Class[] { targetClass,
-				converter.getInputType() }), converter);
+		converters.put(
+				new TypeArray(new Class[] { targetClass,
+						converter.getInputType() }), converter);
 	}
 
-	public Object[] convertParameters(Class<?>[] targetTypes, Object[] parameters) {
+	public Object[] convertParameters(Class<?>[] targetTypes,
+			Object[] parameters) {
 		if (parameters == null) {
 			return null;
 		}
@@ -81,7 +82,8 @@ public class ConverterMap {
 		return converted;
 	}
 
-	public boolean typeAssignable(Class<?> targetType, Class<? extends Object> rawClass) {
+	public boolean typeAssignable(Class<?> targetType,
+			Class<? extends Object> rawClass) {
 
 		if (rawClass == null)
 			return true;
@@ -92,8 +94,8 @@ public class ConverterMap {
 		if (lookup(targetType, rawClass) != null)
 			return true;
 
-		//if (findPropertyEditor(targetType, rawClass) != null)
-		//	return true;
+		// if (findPropertyEditor(targetType, rawClass) != null)
+		// return true;
 
 		if (isBaseAssignable(targetType, rawClass))
 			return true;
@@ -139,8 +141,8 @@ public class ConverterMap {
 		return false;
 	}
 
-	private boolean convertAsPrimitive(Class<?>[] targetTypes, Object[] converted,
-			Object[] parameters, int i) {
+	private boolean convertAsPrimitive(Class<?>[] targetTypes,
+			Object[] converted, Object[] parameters, int i) {
 		if (isBaseAssignable(targetTypes[i], parameters[i].getClass())) {
 			converted[i] = parameters[i];
 			return true;
@@ -148,7 +150,8 @@ public class ConverterMap {
 		return false;
 	}
 
-	private boolean isBaseAssignable(Class<?> targetType, Class<?> parameterClass) {
+	private boolean isBaseAssignable(Class<?> targetType,
+			Class<?> parameterClass) {
 		if (targetType.isPrimitive()) {
 			Class<?> parameterPrimitiveClass = BaseTypeMap
 					.getBaseClassForWrapper(parameterClass);
@@ -162,8 +165,8 @@ public class ConverterMap {
 
 	private boolean convertAsPropertyEditor(Class<?>[] targetTypes,
 			Object[] converted, Object[] parameters, int i) {
-		Converter pec = findPropertyEditor(targetTypes[i], parameters[i]
-				.getClass());
+		Converter pec = findPropertyEditor(targetTypes[i],
+				parameters[i].getClass());
 		if (pec != null) {
 			converted[i] = pec.convert(parameters[i]);
 			return true;
@@ -171,7 +174,8 @@ public class ConverterMap {
 		return false;
 	}
 
-	private Converter findPropertyEditor(Class<?> targetType, Class<?> parameterClass) {
+	private Converter findPropertyEditor(Class<?> targetType,
+			Class<?> parameterClass) {
 
 		Converter pec = null;
 		if (String.class.equals(parameterClass)) {
@@ -196,8 +200,8 @@ public class ConverterMap {
 
 	private boolean convertAsConstructor(Class<?>[] targetTypes,
 			Object[] converted, Object[] parameters, int i) {
-		Converter cc = constructorConverter(targetTypes[i], parameters[i]
-				.getClass());
+		Converter cc = constructorConverter(targetTypes[i],
+				parameters[i].getClass());
 		if (cc != null) {
 			converted[i] = cc.convert(parameters[i]);
 			return true;
@@ -208,8 +212,8 @@ public class ConverterMap {
 	private Converter constructorConverter(Class<?> targetType,
 			Class<?> parameterClass) {
 		Converter cc = null;
-		Constructor<?> c = Reflector.getReflector(targetType).lookupConstructor(
-				new Class[] { parameterClass }, this, false);
+		Constructor<?> c = Reflector.getReflector(targetType)
+				.lookupConstructor(new Class[] { parameterClass }, this, false);
 		if (c != null) {
 			cc = new ConstructorConverter(parameterClass, c);
 			store(targetType, cc);

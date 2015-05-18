@@ -20,7 +20,6 @@
  */
 package org.ripple.power.timer;
 
-
 public class NanoTimer extends SystemTimer {
 
 	private static final int NUM_TIMERS = 8;

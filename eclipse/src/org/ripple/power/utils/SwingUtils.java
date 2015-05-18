@@ -125,7 +125,7 @@ public class SwingUtils {
 			public void actionPerformed(ActionEvent e) {
 				opacity += 0.05f;
 				win.setOpacity(Math.min(opacity, 1f));
-				if (opacity >= 1){
+				if (opacity >= 1) {
 					timer.stop();
 				}
 			}

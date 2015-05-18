@@ -31,8 +31,8 @@ final public class IocBind implements Ioc {
 		this(container, clazz, args, 0);
 	}
 
-	IocBind(final Container container, final Class<? extends Object> clazz, final Object[] args,
-			final int model) {
+	IocBind(final Container container, final Class<? extends Object> clazz,
+			final Object[] args, final int model) {
 		this.container = container;
 		this.reflector = Reflector.getReflector(clazz);
 		if (args == null) {

@@ -32,23 +32,23 @@ import java.io.InterruptedIOException;
  */
 /**
  * 
- * Copyright 2008 
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Copyright 2008
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
  * @project loonframework
- * @author chenpeng  
- * @email：ceponline@yahoo.com.cn 
+ * @author chenpeng
+ * @email：ceponline@yahoo.com.cn
  * @version 0.1
  */
 public final class DataBuffer extends InputStream implements Runnable {
@@ -85,7 +85,6 @@ public final class DataBuffer extends InputStream implements Runnable {
 
 	private byte[] encryption_key;
 
-
 	public DataBuffer(IMpeg4 mpeg4, InputStream is, int movieLength,
 			int maxBufferSize, boolean encryptedStream) {
 		System.gc();
@@ -101,10 +100,10 @@ public final class DataBuffer extends InputStream implements Runnable {
 		this.movieData = new byte[movieLength];
 		if (encryptedStream) {
 			try {
-				encryption_key = (byte[]) Class.forName(
-						"mediaframe.mpeg4.LicenseManager").getMethod(
-						"getEncryptionKey", new Class[0]).invoke(null,
-						new Object[0]);
+				encryption_key = (byte[]) Class
+						.forName("mediaframe.mpeg4.LicenseManager")
+						.getMethod("getEncryptionKey", new Class[0])
+						.invoke(null, new Object[0]);
 			} catch (Throwable ex) {
 				this.encryptedStream = false;
 			}

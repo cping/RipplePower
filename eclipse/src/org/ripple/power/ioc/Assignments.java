@@ -1,4 +1,3 @@
-
 package org.ripple.power.ioc;
 
 public class Assignments {

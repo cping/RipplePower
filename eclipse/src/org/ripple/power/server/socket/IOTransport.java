@@ -15,6 +15,6 @@ interface IOTransport {
 	void sendBulk(String[] texts) throws IOException;
 
 	void invalidate();
-	
+
 	String getName();
 }

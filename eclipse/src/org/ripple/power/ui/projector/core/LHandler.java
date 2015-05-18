@@ -38,9 +38,9 @@ public class LHandler implements MouseListener, MouseMotionListener,
 	private LTransition transition;
 
 	private boolean waitTransition;
-	
+
 	private long fps;
-	
+
 	private UIView view;
 
 	public LHandler(Window scene, int width, int height) {
@@ -57,12 +57,12 @@ public class LHandler implements MouseListener, MouseMotionListener,
 		this.textOrigin = new Point(0, 0);
 		this.screens = new LinkedList<Screen>();
 	}
-	
-	public UIView getView(){
+
+	public UIView getView() {
 		return view;
 	}
-	
-	public void setView(UIView view){
+
+	public void setView(UIView view) {
 		this.view = view;
 	}
 
@@ -457,11 +457,10 @@ public class LHandler implements MouseListener, MouseMotionListener,
 	public Point getTextOrigin() {
 		return textOrigin;
 	}
-	
+
 	public void setFPS(long fps) {
 		this.fps = fps;
 	}
-
 
 	public long getFPS() {
 		return fps;
@@ -470,7 +469,7 @@ public class LHandler implements MouseListener, MouseMotionListener,
 	public long getMaxFPS() {
 		return fps;
 	}
-	
+
 	public void destroy() {
 		endTransition();
 		if (isInstance) {

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class WorkQueue {
-	
+
 	private LinkedList<Runnable> _queue;
 
 	public WorkQueue() {

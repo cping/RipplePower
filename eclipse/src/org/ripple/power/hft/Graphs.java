@@ -172,7 +172,7 @@ public class Graphs {
 		return id[u] == id[v];
 	}
 
-	static boolean[][] transitiveClosure(int N) { 
+	static boolean[][] transitiveClosure(int N) {
 		int i, j, k, M;
 		M = strongComponentsTarjan(N);
 		boolean[][] trans = new boolean[N][N];
@@ -476,7 +476,6 @@ public class Graphs {
 		return par[t] >= 0;
 	}
 
-
 	int maxFlowMinCost(int n, int s, int t) {
 		Arrays.fill(deg, 0);
 		int i, j, v, bot, u;
@@ -584,7 +583,7 @@ public class Graphs {
 		return distance;
 	}
 
-	static int[] dijkstra2(int s, int N) { 
+	static int[] dijkstra2(int s, int N) {
 		final int NN = N * N;
 		int qs, t;
 		int[] d = new int[NN], q = new int[NN], inq = new int[NN], prev = new int[NN], deg = new int[NN];
@@ -842,7 +841,7 @@ public class Graphs {
 		int i, j, cost = 0;
 		set.clear();
 		mst.clear();
-		set.add(new Edge(-1, 0, 0)); 
+		set.add(new Edge(-1, 0, 0));
 		for (i = 0; i < N; i++) {
 			iter = set.iterator();
 			do {
@@ -902,7 +901,7 @@ public class Graphs {
 				searchBridge(w, t);
 				low[w] = Math.min(low[w], low[t]);
 				if (low[t] == ord[t])
-					bCnt++; 
+					bCnt++;
 			} else if (t != v)
 				low[w] = Math.min(low[w], ord[t]);
 		}

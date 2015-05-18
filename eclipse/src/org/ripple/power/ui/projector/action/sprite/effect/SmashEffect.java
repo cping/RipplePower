@@ -156,7 +156,6 @@ public class SmashEffect {
 
 		private int numSmash;
 
-
 		public Explosion(int s, int type, int width, int height) {
 			this.type = type;
 			this.width = width;
@@ -270,5 +269,3 @@ public class SmashEffect {
 	}
 
 }
-
-

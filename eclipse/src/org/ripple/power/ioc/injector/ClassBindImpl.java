@@ -8,11 +8,11 @@ import org.ripple.power.ioc.reflect.Reflector;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.ReflectorUtils;
 
-
 public class ClassBindImpl implements ClassBind {
 
 	private Class<?> classDependency;
-	private Collection<Object> constructorParameters = CollectionUtils.createCollection();
+	private Collection<Object> constructorParameters = CollectionUtils
+			.createCollection();
 
 	public ClassBindImpl(Class<?> classDependency) {
 		this.classDependency = classDependency;
@@ -20,13 +20,17 @@ public class ClassBindImpl implements ClassBind {
 
 	private void fillConstructorParameters() {
 		if (this.constructorParameters.isEmpty()) {
-			Collection<Object> constructors = CollectionUtils.createCollection(classDependency.getDeclaredConstructors());	
-			Constructor<?> constructor = (Constructor<?>) CollectionUtils.first(constructors);
-			Collection<Object> collection = CollectionUtils.createCollection(constructor.getParameterTypes());
+			Collection<Object> constructors = CollectionUtils
+					.createCollection(classDependency.getDeclaredConstructors());
+			Constructor<?> constructor = (Constructor<?>) CollectionUtils
+					.first(constructors);
+			Collection<Object> collection = CollectionUtils
+					.createCollection(constructor.getParameterTypes());
 			CollectionUtils.visitor(collection, new Dispose() {
 				public void accept(Object object) {
 					ClassBindImpl.this.addKeyParam(object);
 				}
+
 				public void accept() {
 				}
 			});
@@ -34,24 +38,26 @@ public class ClassBindImpl implements ClassBind {
 	}
 
 	public Object instance(Container container) {
-		
+
 		fillConstructorParameters();
 		Collection<Object> instances = CollectionUtils.createCollection();
-		Object obj=null;
-		if(constructorParameters.size()==0){
-			obj=Reflector.getReflector(classDependency).newInstance();
-		}else{
-			for (Iterator<Object> it = this.constructorParameters.iterator(); it.hasNext();) {
+		Object obj = null;
+		if (constructorParameters.size() == 0) {
+			obj = Reflector.getReflector(classDependency).newInstance();
+		} else {
+			for (Iterator<Object> it = this.constructorParameters.iterator(); it
+					.hasNext();) {
 				Bind dependency = (Bind) it.next();
 				instances.add(dependency.instance(container));
 			}
-			obj=ReflectorUtils.invokeContructor(classDependency, instances);
+			obj = ReflectorUtils.invokeContructor(classDependency, instances);
 		}
 		return obj;
 	}
 
 	public ClassBind addInstanceParam(Object instance) {
-		addConstructorParameter(InjectorFactory.createInstanceDependency(instance));
+		addConstructorParameter(InjectorFactory
+				.createInstanceDependency(instance));
 		return this;
 	}
 

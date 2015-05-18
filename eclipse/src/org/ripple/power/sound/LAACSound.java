@@ -7,7 +7,6 @@ import org.ripple.power.ui.UIRes;
 
 import mediaframe.mpeg4.audio.AACAudioPlayer;
 
-
 public class LAACSound implements Sound {
 
 	private int volume;

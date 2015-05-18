@@ -412,7 +412,8 @@ public class CollectionUtils {
 	}
 
 	final static public Map<Object, Object> createMap(final int size) {
-		return size > 0 ? new HashMap<Object, Object>(size) : new HashMap<Object, Object>();
+		return size > 0 ? new HashMap<Object, Object>(size)
+				: new HashMap<Object, Object>();
 	}
 
 	final static public MapArray createArrayMap() {
@@ -474,7 +475,7 @@ public class CollectionUtils {
 	 * @param map
 	 * @return
 	 */
-	final static public boolean isEmpty(Map<Object,Object> map) {
+	final static public boolean isEmpty(Map<Object, Object> map) {
 		return map == null || map.size() == 0;
 	}
 
@@ -485,7 +486,8 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean contains(Collection<Object> collection, Object item) {
+	final static public boolean contains(Collection<Object> collection,
+			Object item) {
 		return collection != null && collection.contains(item);
 	}
 
@@ -496,7 +498,8 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsKey(Map<Object,Object> collection, Object item) {
+	final static public boolean containsKey(Map<Object, Object> collection,
+			Object item) {
 		return collection != null && collection.containsKey(item);
 	}
 
@@ -507,7 +510,8 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsValue(Map<Object,Object> collection, Object item) {
+	final static public boolean containsValue(Map<Object, Object> collection,
+			Object item) {
 		return collection != null && collection.containsValue(item);
 	}
 
@@ -527,7 +531,8 @@ public class CollectionUtils {
 	}
 
 	final static public Set<Object> synchronizedSet() {
-		return Collections.synchronizedSet(new HashSet<Object>(INITIAL_CAPACITY));
+		return Collections
+				.synchronizedSet(new HashSet<Object>(INITIAL_CAPACITY));
 	}
 
 	final static public List<Object> synchronizedList(final int size) {

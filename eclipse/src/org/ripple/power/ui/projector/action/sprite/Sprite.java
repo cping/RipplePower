@@ -340,10 +340,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 */
 	public static int centerX(Sprite sprite, int x) {
 		int newX = x - (sprite.getWidth() / 2);
-		if (newX + sprite.getWidth() >= LSystem.screenRect
-				.getWidth()) {
-			return (LSystem.screenRect.getWidth()
-					- sprite.getWidth() - 1);
+		if (newX + sprite.getWidth() >= LSystem.screenRect.getWidth()) {
+			return (LSystem.screenRect.getWidth() - sprite.getWidth() - 1);
 		}
 		if (newX < 0) {
 			return x;
@@ -371,10 +369,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 */
 	public static int centerY(Sprite sprite, int y) {
 		int newY = y - (sprite.getHeight() / 2);
-		if (newY + sprite.getHeight() >= LSystem.screenRect
-				.getHeight()) {
-			return (LSystem.screenRect.getHeight()
-					- sprite.getHeight() - 1);
+		if (newY + sprite.getHeight() >= LSystem.screenRect.getHeight()) {
+			return (LSystem.screenRect.getHeight() - sprite.getHeight() - 1);
 		}
 		if (newY < 0) {
 			return y;
@@ -415,8 +411,9 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 */
 	public void setAnimation(String fileName, int maxFrame, int row, int col,
 			long timer) {
-		setAnimation(new Animation(), GraphicsUtils.getSplitImages(fileName,
-				row, col), maxFrame, timer);
+		setAnimation(new Animation(),
+				GraphicsUtils.getSplitImages(fileName, row, col), maxFrame,
+				timer);
 	}
 
 	/**
@@ -564,8 +561,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @return
 	 */
 	public RectBox getCollisionBox() {
-		return getRect(getLocation().x(), getLocation().y(),
-				getWidth(), getHeight());
+		return getRect(getLocation().x(), getLocation().y(), getWidth(),
+				getHeight());
 	}
 
 	public void createUI(LGraphics g) {

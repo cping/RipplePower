@@ -26,46 +26,46 @@ import java.nio.ByteBuffer;
 import org.asynchttpclient.providers.netty.util.ByteBufUtil;
 
 /**
- * A callback class used when an HTTP response body is received.
- * Bytes are eagerly fetched from the ByteBuf
+ * A callback class used when an HTTP response body is received. Bytes are
+ * eagerly fetched from the ByteBuf
  */
 public class EagerResponseBodyPart extends ResponseBodyPart {
 
-    private final byte[] bytes;
+	private final byte[] bytes;
 
-    public EagerResponseBodyPart(ByteBuf buf, boolean last) {
-        super(last);
-        bytes = ByteBufUtil.byteBuf2Bytes(buf);
-    }
+	public EagerResponseBodyPart(ByteBuf buf, boolean last) {
+		super(last);
+		bytes = ByteBufUtil.byteBuf2Bytes(buf);
+	}
 
-    /**
-     * Return the response body's part bytes received.
-     * 
-     * @return the response body's part bytes received.
-     */
-    @Override
-    public byte[] getBodyPartBytes() {
-        return bytes;
-    }
+	/**
+	 * Return the response body's part bytes received.
+	 * 
+	 * @return the response body's part bytes received.
+	 */
+	@Override
+	public byte[] getBodyPartBytes() {
+		return bytes;
+	}
 
-    @Override
-    public InputStream readBodyPartBytes() {
-        return new ByteArrayInputStream(bytes);
-    }
+	@Override
+	public InputStream readBodyPartBytes() {
+		return new ByteArrayInputStream(bytes);
+	}
 
-    @Override
-    public int length() {
-        return bytes.length;
-    }
+	@Override
+	public int length() {
+		return bytes.length;
+	}
 
-    @Override
-    public int writeTo(OutputStream outputStream) throws IOException {
-        outputStream.write(bytes);
-        return length();
-    }
+	@Override
+	public int writeTo(OutputStream outputStream) throws IOException {
+		outputStream.write(bytes);
+		return length();
+	}
 
-    @Override
-    public ByteBuffer getBodyByteBuffer() {
-        return ByteBuffer.wrap(bytes);
-    }
+	@Override
+	public ByteBuffer getBodyByteBuffer() {
+		return ByteBuffer.wrap(bytes);
+	}
 }

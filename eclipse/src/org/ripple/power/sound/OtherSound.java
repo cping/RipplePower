@@ -25,7 +25,6 @@ public class OtherSound implements Sound {
 		setSoundVolume(Sound.defaultMaxVolume);
 	}
 
-
 	public void playSound(String fileName) {
 		try {
 			playSound(UIRes.getStream(fileName));
@@ -96,10 +95,10 @@ public class OtherSound implements Sound {
 			int nBytesRead = 0;
 			while (isRunning && (nBytesRead != -1)) {
 				nBytesRead = din.read(data, 0, data.length);
-				for (int i = 0; i < nBytesRead; i++){
+				for (int i = 0; i < nBytesRead; i++) {
 					data[i] *= volume;
 				}
-				if (nBytesRead != -1){
+				if (nBytesRead != -1) {
 					clip.write(data, 0, nBytesRead);
 				}
 			}

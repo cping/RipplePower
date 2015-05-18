@@ -22,34 +22,34 @@ import org.asynchttpclient.HttpResponseBodyPart;
  */
 public abstract class ResponseBodyPart extends HttpResponseBodyPart {
 
-    private final boolean last;
-    private boolean closeConnection;
+	private final boolean last;
+	private boolean closeConnection;
 
-    public ResponseBodyPart(boolean last) {
-        this.last = last;
-    }
+	public ResponseBodyPart(boolean last) {
+		this.last = last;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isLast() {
-        return last;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isLast() {
+		return last;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void markUnderlyingConnectionAsToBeClosed() {
-        closeConnection = true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void markUnderlyingConnectionAsToBeClosed() {
+		closeConnection = true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isUnderlyingConnectionToBeClosed() {
-        return closeConnection;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isUnderlyingConnectionToBeClosed() {
+		return closeConnection;
+	}
 }

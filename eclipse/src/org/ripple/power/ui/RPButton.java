@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import org.bootstrap.ui.ButtonUI;
 import org.ripple.power.utils.GraphicsUtils;
 
-
 public class RPButton extends JButton {
 
 	/**
@@ -112,7 +111,7 @@ public class RPButton extends JButton {
 
 		ButtonUI navUI = new ButtonUI();
 		setUI(navUI);
-		
+
 		addMouseListener(new SoundButtonListener(this));
 
 	}

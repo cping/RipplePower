@@ -1,110 +1,104 @@
 package com.ripple.core.coretypes;
 
 import com.ripple.core.fields.Field;
-import com.ripple.core.fields.TypedFields;
+import com.ripple.core.fields.STArrayField;
+import com.ripple.core.fields.Type;
 import com.ripple.core.serialized.BinaryParser;
 import com.ripple.core.serialized.BytesSink;
 import com.ripple.core.serialized.SerializedType;
 import com.ripple.core.serialized.TypeTranslator;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class STArray extends ArrayList<STObject> implements SerializedType {
-	public JSONArray toJSONArray() {
-		JSONArray array = new JSONArray();
+    public JSONArray toJSONArray() {
+        JSONArray array = new JSONArray();
 
-		for (STObject so : this) {
-			array.put(so.toJSON());
-		}
+        for (STObject so : this) {
+            array.put(so.toJSON());
+        }
 
-		return array;
-	}
+        return array;
+    }
 
-	@Override
-	public Object toJSON() {
-		return toJSONArray();
-	}
+    @Override
+    public Object toJSON() {
+        return toJSONArray();
+    }
 
-	@Override
-	public byte[] toBytes() {
-		return translate.toBytes(this);
-	}
+    @Override
+    public byte[] toBytes() {
+        return translate.toBytes(this);
+    }
 
-	@Override
-	public String toHex() {
-		return translate.toHex(this);
-	}
+    @Override
+    public String toHex() {
+        return translate.toHex(this);
+    }
 
-	@Override
-	public void toBytesSink(BytesSink to) {
-		for (STObject stObject : this) {
-			stObject.toBytesSink(to);
-		}
-	}
+    @Override
+    public void toBytesSink(BytesSink to) {
+        for (STObject stObject : this) {
+            stObject.toBytesSink(to);
+        }
+    }
 
-	public static class Translator extends TypeTranslator<STArray> {
+    @Override
+    public Type type() {
+        return Type.STArray;
+    }
 
-		@Override
-		public STArray fromParser(BinaryParser parser, Integer hint) {
-			STArray stArray = new STArray();
-			while (!parser.end()) {
-				Field field = parser.readField();
-				if (field == Field.ArrayEndMarker) {
-					break;
-				}
-				STObject outer = new STObject();
-				// assert field.getType() == Type.STObject;
-				outer.put(field, STObject.translate.fromParser(parser));
-				stArray.add(STObject.formatted(outer));
-			}
-			return stArray;
-		}
+    public static class Translator extends TypeTranslator<STArray> {
 
-		@Override
-		public JSONArray toJSONArray(STArray obj) {
-			return obj.toJSONArray();
-		}
+        @Override
+        public STArray fromParser(BinaryParser parser, Integer hint) {
+            STArray stArray = new STArray();
+            while (!parser.end()) {
+                Field field = parser.readField();
+                if (field == Field.ArrayEndMarker) {
+                    break;
+                }
+                STObject outer = new STObject();
+                // assert field.getType() == Type.STObject;
+                outer.put(field, STObject.translate.fromParser(parser));
+                stArray.add(STObject.formatted(outer));
+            }
+            return stArray;
+        }
 
-		@Override
-		public STArray fromJSONArray(JSONArray jsonArray) {
-			STArray arr = new STArray();
+        @Override
+        public JSONArray toJSONArray(STArray obj) {
+            return obj.toJSONArray();
+        }
 
-			for (int i = 0; i < jsonArray.length(); i++) {
-				try {
-					Object o = jsonArray.get(i);
-					arr.add(STObject.fromJSONObject((JSONObject) o));
-				} catch (JSONException e) {
-					throw new RuntimeException(e);
-				}
-			}
+        @Override
+        public STArray fromJSONArray(JSONArray jsonArray) {
+            STArray arr = new STArray();
 
-			return arr;
-		}
-	}
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Object o = jsonArray.get(i);
+                arr.add(STObject.fromJSONObject((JSONObject) o));
+            }
 
-	static public Translator translate = new Translator();
+            return arr;
+        }
+    }
+    static public Translator translate = new Translator();
 
-	public STArray() {
-	}
+    public STArray(){}
 
-	public static TypedFields.STArrayField starrayField(final Field f) {
-		return new TypedFields.STArrayField() {
-			@Override
-			public Field getField() {
-				return f;
-			}
-		};
-	}
+    public static STArrayField starrayField(final Field f) {
+        return new STArrayField(){ @Override public Field getField() {return f;}};
+    }
 
-	static public TypedFields.STArrayField AffectedNodes = starrayField(Field.AffectedNodes);
+    static public STArrayField AffectedNodes = starrayField(Field.AffectedNodes);
 
-	static public TypedFields.STArrayField SigningAccounts = starrayField(Field.SigningAccounts);
-	static public TypedFields.STArrayField TxnSignatures = starrayField(Field.TxnSignatures);
-	static public TypedFields.STArrayField Signatures = starrayField(Field.Signatures);
-	static public TypedFields.STArrayField Template = starrayField(Field.Template);
-	static public TypedFields.STArrayField Necessary = starrayField(Field.Necessary);
-	static public TypedFields.STArrayField Sufficient = starrayField(Field.Sufficient);
+    static public STArrayField SigningAccounts = starrayField(Field.SigningAccounts);
+    static public STArrayField TxnSignatures = starrayField(Field.TxnSignatures);
+    static public STArrayField Signatures = starrayField(Field.Signatures);
+    static public STArrayField Template = starrayField(Field.Template);
+    static public STArrayField Necessary = starrayField(Field.Necessary);
+    static public STArrayField Sufficient = starrayField(Field.Sufficient);
 }

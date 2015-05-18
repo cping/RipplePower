@@ -3,12 +3,11 @@ package org.ripple.power.nodejs.mini;
 import java.io.IOException;
 import java.io.Reader;
 
-
 public class SequenceReader extends Reader {
 
-	private final Reader	first;
-	private final Reader	later;
-	private boolean			second	= false;
+	private final Reader first;
+	private final Reader later;
+	private boolean second = false;
 
 	public SequenceReader(final Reader first, final Reader later) {
 		super();
@@ -23,7 +22,8 @@ public class SequenceReader extends Reader {
 	}
 
 	@Override
-	public int read(final char[] cbuf, final int off, final int len) throws IOException {
+	public int read(final char[] cbuf, final int off, final int len)
+			throws IOException {
 		if (this.second) {
 			final int res = this.later.read(cbuf, off, len);
 			if (res == -1) {

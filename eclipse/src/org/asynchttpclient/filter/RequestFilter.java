@@ -17,14 +17,20 @@ package org.asynchttpclient.filter;
  */
 public interface RequestFilter {
 
-    /**
-     * An {@link org.asynchttpclient.AsyncHttpProvider} will invoke {@link RequestFilter#filter} and will use the
-     * returned {@link FilterContext#getRequest()} and {@link FilterContext#getAsyncHandler()} to continue the request
-     * processing.
-     *
-     * @param ctx a {@link FilterContext}
-     * @return {@link FilterContext}. The {@link FilterContext} instance may not the same as the original one.
-     * @throws FilterException to interrupt the filter processing.
-     */
-    public <T> FilterContext<T> filter(FilterContext<T> ctx) throws FilterException;
+	/**
+	 * An {@link org.asynchttpclient.AsyncHttpProvider} will invoke
+	 * {@link RequestFilter#filter} and will use the returned
+	 * {@link FilterContext#getRequest()} and
+	 * {@link FilterContext#getAsyncHandler()} to continue the request
+	 * processing.
+	 * 
+	 * @param ctx
+	 *            a {@link FilterContext}
+	 * @return {@link FilterContext}. The {@link FilterContext} instance may not
+	 *         the same as the original one.
+	 * @throws FilterException
+	 *             to interrupt the filter processing.
+	 */
+	public <T> FilterContext<T> filter(FilterContext<T> ctx)
+			throws FilterException;
 }

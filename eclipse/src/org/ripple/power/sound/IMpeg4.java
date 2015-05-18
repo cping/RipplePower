@@ -37,6 +37,6 @@ public interface IMpeg4 {
 
 	public abstract void stopReBuffering() throws InterruptedIOException;
 
-	public abstract void stopBuffering()  throws InterruptedIOException;
+	public abstract void stopBuffering() throws InterruptedIOException;
 
 }

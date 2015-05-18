@@ -1,16 +1,13 @@
 package org.ripple.power.config.task;
 
-
-public interface Task{
+public interface Task {
 
 	String getId();
- 
-    void setTaskListener(TaskListener listener);
 
-  
-    void setTaskContext(TaskContext context);
+	void setTaskListener(TaskListener listener);
 
-  
-    void execute();
+	void setTaskContext(TaskContext context);
+
+	void execute();
 
 }

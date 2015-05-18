@@ -25,65 +25,65 @@ import com.google.zxing.common.BitMatrix;
  */
 public final class AztecCode {
 
-  private boolean compact;
-  private int size;
-  private int layers;
-  private int codeWords;
-  private BitMatrix matrix;
+	private boolean compact;
+	private int size;
+	private int layers;
+	private int codeWords;
+	private BitMatrix matrix;
 
-  /**
-   * @return {@code true} if compact instead of full mode
-   */
-  public boolean isCompact() {
-    return compact;
-  }
+	/**
+	 * @return {@code true} if compact instead of full mode
+	 */
+	public boolean isCompact() {
+		return compact;
+	}
 
-  public void setCompact(boolean compact) {
-    this.compact = compact;
-  }
+	public void setCompact(boolean compact) {
+		this.compact = compact;
+	}
 
-  /**
-   * @return size in pixels (width and height)
-   */
-  public int getSize() {
-    return size;
-  }
+	/**
+	 * @return size in pixels (width and height)
+	 */
+	public int getSize() {
+		return size;
+	}
 
-  public void setSize(int size) {
-    this.size = size;
-  }
-  
-  /**
-   * @return number of levels
-   */
-  public int getLayers() {
-    return layers;
-  }
-  
-  public void setLayers(int layers) {
-    this.layers = layers;
-  }
+	public void setSize(int size) {
+		this.size = size;
+	}
 
-  /**
-   * @return number of data codewords
-   */
-  public int getCodeWords() {
-    return codeWords;
-  }
+	/**
+	 * @return number of levels
+	 */
+	public int getLayers() {
+		return layers;
+	}
 
-  public void setCodeWords(int codeWords) {
-    this.codeWords = codeWords;
-  }
+	public void setLayers(int layers) {
+		this.layers = layers;
+	}
 
-  /**
-   * @return the symbol image
-   */
-  public BitMatrix getMatrix() {
-    return matrix;
-  }
+	/**
+	 * @return number of data codewords
+	 */
+	public int getCodeWords() {
+		return codeWords;
+	}
 
-  public void setMatrix(BitMatrix matrix) {
-    this.matrix = matrix;
-  }
+	public void setCodeWords(int codeWords) {
+		this.codeWords = codeWords;
+	}
+
+	/**
+	 * @return the symbol image
+	 */
+	public BitMatrix getMatrix() {
+		return matrix;
+	}
+
+	public void setMatrix(BitMatrix matrix) {
+		this.matrix = matrix;
+	}
 
 }

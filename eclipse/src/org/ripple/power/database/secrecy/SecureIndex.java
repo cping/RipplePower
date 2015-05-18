@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SecureIndex implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private long commitCount;
@@ -16,7 +16,6 @@ public class SecureIndex implements Serializable {
 	private final Map<String, IndexedMapTable> indexedMapTables;
 	@SuppressWarnings("rawtypes")
 	private final Map<String, SecureTable> mapTables;
-
 
 	public SecureIndex() {
 		this.commitCount = 0L;
@@ -28,23 +27,23 @@ public class SecureIndex implements Serializable {
 	public void putFileTable(BaseTable fileTable) {
 		this.fileTables.put(fileTable.getName(), fileTable);
 	}
-	
+
 	public BaseTable getFileTable(String name) {
 		if (this.fileTables.containsKey(name)) {
 			return this.fileTables.get(name);
 		}
 		return null;
 	}
-	
+
 	public List<BaseTable> getFileTables() {
 		return new ArrayList<>(this.fileTables.values());
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public void putIndexedMapTable( IndexedMapTable indexedMapTable) {
+	public void putIndexedMapTable(IndexedMapTable indexedMapTable) {
 		this.indexedMapTables.put(indexedMapTable.getName(), indexedMapTable);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public IndexedMapTable getIndexedMapTable(String name) {
 		if (this.indexedMapTables.containsKey(name)) {
@@ -52,12 +51,12 @@ public class SecureIndex implements Serializable {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public void putMapTable(SecureTable mapTable) {
 		this.mapTables.put(mapTable.getName(), mapTable);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public SecureTable getMapTable(String name) {
 		if (this.mapTables.containsKey(name)) {

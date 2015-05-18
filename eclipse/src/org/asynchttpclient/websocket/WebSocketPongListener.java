@@ -17,10 +17,12 @@ package org.asynchttpclient.websocket;
  */
 public interface WebSocketPongListener extends WebSocketListener {
 
-    /**
-     * Invoked when a pong message is received
-     * @param message a byte array
-     */
-    void onPong(byte[] message);
+	/**
+	 * Invoked when a pong message is received
+	 * 
+	 * @param message
+	 *            a byte array
+	 */
+	void onPong(byte[] message);
 
 }

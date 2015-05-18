@@ -29,15 +29,15 @@ public class JConsole extends JScrollPane {
 		imageLabel.setIcon(icon);
 		imageLabel.setVisible(true);
 	}
-	
+
 	public void imageShow() {
 		imageLabel.setVisible(true);
 	}
-	
+
 	public void imageHide() {
 		imageLabel.setVisible(false);
 	}
-	
+
 	public void uiprint(String mes) {
 		if (attrOut != null) {
 			imageHide();

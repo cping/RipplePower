@@ -11,15 +11,14 @@ import javax.swing.event.ChangeListener;
 
 import org.ripple.power.ui.graphics.LColor;
 
-
-public class RPPopMenuItem extends JMenuItem{
+public class RPPopMenuItem extends JMenuItem {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	public RPPopMenuItem(String name){
+
+	public RPPopMenuItem(String name) {
 		super(name);
 		setForeground(new LColor(255, 255, 255));
 		setBackground(new LColor(18, 18, 18));
@@ -29,7 +28,7 @@ public class RPPopMenuItem extends JMenuItem{
 		Border empty = new EmptyBorder(4, 4, 4, 4);
 		CompoundBorder border = new CompoundBorder(line, empty);
 		setBorder(border);
-		
+
 		getModel().addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {

@@ -114,7 +114,7 @@ public class WalletCache {
 			return null;
 		}
 	}
-	
+
 	public String findSecret(String address) {
 		synchronized (pCaches) {
 			int size = pCaches.size();

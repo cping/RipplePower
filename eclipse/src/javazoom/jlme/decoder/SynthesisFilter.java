@@ -32,7 +32,6 @@ import java.io.ObjectInputStream;
 
 import org.ripple.power.ui.UIRes;
 
-
 final class SynthesisFilter {
 	private final static double MY_PI = 3.14159265358979323846;
 
@@ -146,7 +145,7 @@ final class SynthesisFilter {
 	private static float scalefactor;
 
 	public SynthesisFilter(int channelnumber, float factor) {
-		if (d16 == null){
+		if (d16 == null) {
 			loadD16();
 		}
 		v1 = new float[512];

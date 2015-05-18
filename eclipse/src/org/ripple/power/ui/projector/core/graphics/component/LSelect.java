@@ -190,8 +190,8 @@ public class LSelect extends LContainer {
 				isSelect = (type == (selectFlag > 0 ? selectFlag : 1));
 				if ((buoyage != null) && isSelect) {
 					g.setAlpha(autoAlpha);
-					g.drawImage(buoyage, nLeft, nTop
-							- (int) (buoyage.getHeight() / 1.5));
+					g.drawImage(buoyage, nLeft,
+							nTop - (int) (buoyage.getHeight() / 1.5));
 					g.setAlpha(1.0F);
 				}
 				g.drawString(selects[i], messageLeft, nTop);

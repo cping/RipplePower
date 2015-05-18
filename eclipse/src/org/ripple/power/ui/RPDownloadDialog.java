@@ -75,8 +75,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 					connection = (HttpURLConnection) url
 							.openConnection(LSystem.applicationProxy.getProxy());
 				} else {
-					connection = (HttpURLConnection) url
-							.openConnection();
+					connection = (HttpURLConnection) url.openConnection();
 				}
 				connection.setRequestProperty("Range", "bytes=" + downloaded
 						+ "-");

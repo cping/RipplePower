@@ -79,7 +79,8 @@ public class IocFactory {
 		}
 	}
 
-	public static Ioc bind(final String className, final Map<Object,Object> args) {
+	public static Ioc bind(final String className,
+			final Map<Object, Object> args) {
 		return bind(defaultContainer, className, args.values().toArray());
 	}
 

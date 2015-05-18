@@ -9,6 +9,7 @@ import static java.lang.annotation.ElementType.*;
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)
 public @interface Message {
-    String value();
-    String locale() default "";
+	String value();
+
+	String locale() default "";
 }

@@ -23,8 +23,8 @@ public class PrintImageOutput {
 			DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
 			PrintRequestAttributeSet requestAttributeSet = new HashPrintRequestAttributeSet();
 			requestAttributeSet.add(MediaSizeName.ISO_A4);
-			requestAttributeSet.add(new JobName(LSystem.applicationName + LSystem.getTime(),
-					Locale.ENGLISH));
+			requestAttributeSet.add(new JobName(LSystem.applicationName
+					+ LSystem.getTime(), Locale.ENGLISH));
 			PrintService[] services = PrintServiceLookup.lookupPrintServices(
 					flavor, requestAttributeSet);
 			PrintService defaultService = PrintServiceLookup

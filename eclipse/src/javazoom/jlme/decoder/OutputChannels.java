@@ -20,17 +20,16 @@
  */
 package javazoom.jlme.decoder;
 
-
 public interface OutputChannels {
-  /** Flag to indicate output should include both channels. */
-  public final static int BOTH_CHANNELS = 0;
+	/** Flag to indicate output should include both channels. */
+	public final static int BOTH_CHANNELS = 0;
 
-  /** Flag to indicate output should include the left channel only. */
-  public final static int LEFT_CHANNEL = 1;
+	/** Flag to indicate output should include the left channel only. */
+	public final static int LEFT_CHANNEL = 1;
 
-  /** Flag to indicate output should include the right channel only. */
-  public final static int RIGHT_CHANNEL = 2;
+	/** Flag to indicate output should include the right channel only. */
+	public final static int RIGHT_CHANNEL = 2;
 
-  /** Flag to indicate output is mono. */
-  public final static int DOWNMIX_CHANNELS = 3;
+	/** Flag to indicate output is mono. */
+	public final static int DOWNMIX_CHANNELS = 3;
 }

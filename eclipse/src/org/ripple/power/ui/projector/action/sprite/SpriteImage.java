@@ -33,7 +33,7 @@ public class SpriteImage extends LObject implements ISprite {
 	public SerializablelImage serializablelImage;
 
 	private boolean isOpaque = true;
-	
+
 	private Polygon newPy;
 
 	private SpriteRotate sRotate;
@@ -299,8 +299,8 @@ public class SpriteImage extends LObject implements ISprite {
 			if (t != Sprite.TRANS_NONE) {
 				sRotate = makeRotate(t);
 				int[] trans = sRotate.makeSpritePixels();
-				py = makePolygon(trans, 0, 0, 0, 0, sRotate.getWidth(), sRotate
-						.getHeight());
+				py = makePolygon(trans, 0, 0, 0, 0, sRotate.getWidth(),
+						sRotate.getHeight());
 			} else {
 				py = makePolygon(0, 0);
 			}
@@ -424,8 +424,8 @@ public class SpriteImage extends LObject implements ISprite {
 	private static Polygon filterPolygon(Polygon polygon) {
 		Area area = new Area(polygon);
 		Polygon newPoly = new Polygon();
-		PathIterator it = area.getPathIterator(AffineTransform
-				.getTranslateInstance(0, 0), 0);
+		PathIterator it = area.getPathIterator(
+				AffineTransform.getTranslateInstance(0, 0), 0);
 		float[] coords = new float[6];
 		LinkedHashSet<String> set = new LinkedHashSet<String>();
 		while (!it.isDone()) {

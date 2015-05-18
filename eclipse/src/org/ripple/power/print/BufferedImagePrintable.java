@@ -1,11 +1,11 @@
 package org.ripple.power.print;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-
 
 import org.ripple.power.utils.GraphicsUtils;
 
@@ -28,17 +28,16 @@ public class BufferedImagePrintable implements Printable, Pageable {
 	public BufferedImagePrintable(BufferedImage img) {
 		pImage = img;
 	}
-	
+
 	@Override
-	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
+	public int print(Graphics g, PageFormat pf, int pageIndex)
+			throws PrinterException {
 		if (pImage != null) {
 			GraphicsUtils.setAntialiasAll(g, true);
 			g.drawImage(pImage, 0, 0, (int) pf.getWidth(),
-					(int) pf.getHeight(),
-					null);
+					(int) pf.getHeight(), null);
 			return Printable.PAGE_EXISTS;
-		}
-		else{
+		} else {
 			return Printable.NO_SUCH_PAGE;
 		}
 	}
@@ -49,12 +48,14 @@ public class BufferedImagePrintable implements Printable, Pageable {
 	}
 
 	@Override
-	public PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException {
+	public PageFormat getPageFormat(int pageIndex)
+			throws IndexOutOfBoundsException {
 		return pf;
 	}
 
 	@Override
-	public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
+	public Printable getPrintable(int pageIndex)
+			throws IndexOutOfBoundsException {
 		return this;
 	}
 

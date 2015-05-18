@@ -54,8 +54,8 @@ public class FreedomEffect extends LObject implements ISprite {
 	 * @return
 	 */
 	public static FreedomEffect getSnowEffect(int count, int x, int y) {
-		return FreedomEffect.getSnowEffect(count, x, y, LSystem.screenRect.getWidth(), LSystem.screenRect
-				.getHeight());
+		return FreedomEffect.getSnowEffect(count, x, y,
+				LSystem.screenRect.getWidth(), LSystem.screenRect.getHeight());
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class FreedomEffect extends LObject implements ISprite {
 	 * @return
 	 */
 	public static FreedomEffect getRainEffect(int count, int x, int y) {
-		return FreedomEffect.getRainEffect(count, x, y, LSystem.screenRect.getWidth(), LSystem.screenRect
-				.getHeight());
+		return FreedomEffect.getRainEffect(count, x, y,
+				LSystem.screenRect.getWidth(), LSystem.screenRect.getHeight());
 	}
 
 	/**
@@ -148,8 +148,8 @@ public class FreedomEffect extends LObject implements ISprite {
 	 * @return
 	 */
 	public static FreedomEffect getPetalEffect(int count, int x, int y) {
-		return FreedomEffect.getPetalEffect(count, x, y, LSystem.screenRect.getWidth(), LSystem.screenRect
-				.getHeight());
+		return FreedomEffect.getPetalEffect(count, x, y,
+				LSystem.screenRect.getWidth(), LSystem.screenRect.getHeight());
 	}
 
 	/**
@@ -172,8 +172,8 @@ public class FreedomEffect extends LObject implements ISprite {
 	}
 
 	public FreedomEffect(Class<?> clazz, int count, int limit, int x, int y) {
-		this(clazz, count, limit, x, y, LSystem.screenRect
-				.getWidth(), LSystem.screenRect.getHeight());
+		this(clazz, count, limit, x, y, LSystem.screenRect.getWidth(),
+				LSystem.screenRect.getHeight());
 	}
 
 	public FreedomEffect(Class<?> clazz, int count, int limit, int x, int y,
@@ -187,8 +187,9 @@ public class FreedomEffect extends LObject implements ISprite {
 		this.kernels = (IKernel[]) Array.newInstance(clazz, count);
 		// 为了配合Android版……
 		try {
-			Constructor<?> constructor = clazz.getDeclaredConstructor(new Class[] {
-					int.class, int.class, int.class });
+			Constructor<?> constructor = clazz
+					.getDeclaredConstructor(new Class[] { int.class, int.class,
+							int.class });
 			for (int i = 0; i < count; i++) {
 				int no = LSystem.getRandom(0, limit);
 				kernels[i] = (IKernel) constructor.newInstance(new Object[] {
@@ -295,12 +296,12 @@ public class FreedomEffect extends LObject implements ISprite {
 	public float getAlpha() {
 		return 0;
 	}
-	
+
 	public LImage getBitmap() {
 		return null;
 	}
 
 	public void dispose() {
-	
+
 	}
 }

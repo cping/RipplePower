@@ -25,17 +25,17 @@ public interface CommandType {
 	String L_WAIT = "wait";
 
 	String L_MES = "mes";
-	
+
 	String L_SELLEN = "selleft";
-	
+
 	String L_SELTOP = "seltop";
-	
+
 	String L_MESLEN = "meslen";
 
 	String L_MESTOP = "mestop";
-	
+
 	String L_MESLEFT = "mesleft";
-	
+
 	String L_MESCOLOR = "mescolor";
 
 	String L_MESSTOP = "messtop";

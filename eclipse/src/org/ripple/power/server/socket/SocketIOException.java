@@ -2,7 +2,6 @@ package org.ripple.power.server.socket;
 
 public class SocketIOException extends Exception {
 
-
 	/**
 	 * 
 	 */

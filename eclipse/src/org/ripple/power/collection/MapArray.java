@@ -244,8 +244,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 						return false;
 					}
 					Entry entry = (Entry) o;
-					int index = (entry.hashCode & 0x7FFFFFFF)
-							% mapTable.length;
+					int index = (entry.hashCode & 0x7FFFFFFF) % mapTable.length;
 					for (Entry e = mapTable[index]; e != null; e = e.next) {
 						if (e.equals(entry)) {
 							return true;
@@ -328,9 +327,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 		Entry e = listTable[index];
 		int numMoved = length - index - 1;
 		if (numMoved > 0) {
-			System
-					.arraycopy(listTable, index + 1, listTable, index,
-							numMoved);
+			System.arraycopy(listTable, index + 1, listTable, index, numMoved);
 		}
 		listTable[--length] = null;
 		return e;

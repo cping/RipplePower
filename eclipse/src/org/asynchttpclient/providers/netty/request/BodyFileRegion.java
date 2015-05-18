@@ -25,46 +25,47 @@ import org.asynchttpclient.RandomAccessBody;
  */
 class BodyFileRegion extends AbstractReferenceCounted implements FileRegion {
 
-    private final RandomAccessBody body;
-    private long transfered;
+	private final RandomAccessBody body;
+	private long transfered;
 
-    public BodyFileRegion(RandomAccessBody body) {
-        if (body == null) {
-            throw new IllegalArgumentException("no body specified");
-        }
-        this.body = body;
-    }
+	public BodyFileRegion(RandomAccessBody body) {
+		if (body == null) {
+			throw new IllegalArgumentException("no body specified");
+		}
+		this.body = body;
+	}
 
-    @Override
-    public long position() {
-        return 0;
-    }
+	@Override
+	public long position() {
+		return 0;
+	}
 
-    @Override
-    public long count() {
-        return body.getContentLength();
-    }
+	@Override
+	public long count() {
+		return body.getContentLength();
+	}
 
-    @Override
-    public long transfered() {
-        return transfered;
-    }
+	@Override
+	public long transfered() {
+		return transfered;
+	}
 
-    @Override
-    public long transferTo(WritableByteChannel target, long position) throws IOException {
-        long written = body.transferTo(position, Long.MAX_VALUE, target);
-        if (written > 0) {
-            transfered += written;
-        }
-        return written;
-    }
+	@Override
+	public long transferTo(WritableByteChannel target, long position)
+			throws IOException {
+		long written = body.transferTo(position, Long.MAX_VALUE, target);
+		if (written > 0) {
+			transfered += written;
+		}
+		return written;
+	}
 
-    @Override
-    protected void deallocate() {
-        try {
-            body.close();
-        } catch (IOException e) {
-            // we tried
-        }
-    }
+	@Override
+	protected void deallocate() {
+		try {
+			body.close();
+		} catch (IOException e) {
+			// we tried
+		}
+	}
 }

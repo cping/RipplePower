@@ -316,7 +316,7 @@ public class RPRippledMemoDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (_address != null) {
-					loadMessages(_address, -1, 200);
+					loadMessages(_address, -1, -1,20);
 				}
 			}
 		});
@@ -329,7 +329,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_recipientText.setBounds(80, 360, 420, 21);
 		getContentPane().setBackground(UIConfig.dialogbackground);
 		if (_address != null) {
-			loadMessages(_address, -1, 200);
+			loadMessages(_address, -1,-1, 200);
 		}
 		if (_item == null) {
 			_submitButton.setEnabled(false);
@@ -338,7 +338,7 @@ public class RPRippledMemoDialog extends JDialog {
 		pack();
 	}
 
-	private void loadMessages(final String address, final int min, final int max) {
+	private void loadMessages(final String address, final int min, final int max,final int limit) {
 
 		Updateable update = new Updateable() {
 
@@ -356,7 +356,7 @@ public class RPRippledMemoDialog extends JDialog {
 					}
 					final WaitDialog wait = WaitDialog
 							.showDialog(RPRippledMemoDialog.this);
-					find.message(address, password, min, max, new Updateable() {
+					find.message(address, password, min, max, limit,new Updateable() {
 
 						@Override
 						public void action(Object o) {

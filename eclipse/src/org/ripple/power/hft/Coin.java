@@ -191,19 +191,19 @@ public class Coin {
 	private Coin(Builder builder) {
 		this(builder.code, builder.symbol, builder.name, builder.prevPrice,
 				builder.openPrice, builder.lastPrice, builder.highPrice,
-				builder.lowPrice, builder.volume, 
-				builder.changePricePercentage, 
-				builder.buyPrice, builder.buyQuantity, builder.sellPrice,
-				builder.sellQuantity, builder.secondBuyPrice,
-				builder.secondBuyQuantity, builder.secondSellPrice,
-				builder.secondSellQuantity, builder.thirdBuyPrice,
-				builder.thirdBuyQuantity, builder.thirdSellPrice,
-				builder.thirdSellQuantity, builder.timestamp);
+				builder.lowPrice, builder.volume,
+				builder.changePricePercentage, builder.buyPrice,
+				builder.buyQuantity, builder.sellPrice, builder.sellQuantity,
+				builder.secondBuyPrice, builder.secondBuyQuantity,
+				builder.secondSellPrice, builder.secondSellQuantity,
+				builder.thirdBuyPrice, builder.thirdBuyQuantity,
+				builder.thirdSellPrice, builder.thirdSellQuantity,
+				builder.timestamp);
 	}
 
 	public Coin(Code code, Symbol symbol, String name, double prevPrice,
 			double openPrice, double lastPrice, double highPrice,
-			double lowPrice, long volume, double changePrice,  double buyPrice,
+			double lowPrice, long volume, double changePrice, double buyPrice,
 			int buyQuantity, double sellPrice, int sellQuantity,
 			double secondBuyPrice, int secondBuyQuantity,
 			double secondSellPrice, int secondSellQuantity,
@@ -259,8 +259,6 @@ public class Coin {
 		this.thirdSellQuantity = coin.thirdSellQuantity;
 		this.timestamp = coin.timestamp;
 	}
-
-
 
 	public Code getCode() {
 		return code;
@@ -368,8 +366,7 @@ public class Coin {
 	public Coin deriveStock(Symbol symbol) {
 		return new Coin(this.code, symbol, this.name, this.prevPrice,
 				this.openPrice, this.lastPrice, this.highPrice, this.lowPrice,
-				this.volume, this.changePrice
-			, this.buyPrice, this.buyQuantity,
+				this.volume, this.changePrice, this.buyPrice, this.buyQuantity,
 				this.sellPrice, this.sellQuantity, this.secondBuyPrice,
 				this.secondBuyQuantity, this.secondSellPrice,
 				this.secondSellQuantity, this.thirdBuyPrice,

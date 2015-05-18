@@ -26,7 +26,6 @@ public abstract class ABaseDialog extends JDialog {
 		super();
 	}
 
-
 	public ABaseDialog(Window parent, String title, ModalityType modal)
 			throws HeadlessException {
 		super(parent, title, modal);

@@ -52,6 +52,7 @@ public class RegularKey {
 		});
 
 	}
+
 	public static void setTxJson(final String seed, final String message,
 			final String fee, final Rollback back) {
 		RegularKey.setTxJson(new RippleSeedAddress(seed), message, fee, back);

@@ -15,35 +15,34 @@
  */
 package org.asynchttpclient;
 
-
 /**
  * A class that represent the HTTP headers.
  */
 public abstract class HttpResponseHeaders {
 
-    private final boolean traillingHeaders;
+	private final boolean traillingHeaders;
 
-    public HttpResponseHeaders() {
-        this.traillingHeaders = false;
-    }
+	public HttpResponseHeaders() {
+		this.traillingHeaders = false;
+	}
 
-    public HttpResponseHeaders(boolean traillingHeaders) {
-        this.traillingHeaders = traillingHeaders;
-    }
+	public HttpResponseHeaders(boolean traillingHeaders) {
+		this.traillingHeaders = traillingHeaders;
+	}
 
-    /**
-     * Return the HTTP header
-     *
-     * @return an {@link FluentCaseInsensitiveStringsMap}
-     */
-    abstract public FluentCaseInsensitiveStringsMap getHeaders();
+	/**
+	 * Return the HTTP header
+	 * 
+	 * @return an {@link FluentCaseInsensitiveStringsMap}
+	 */
+	abstract public FluentCaseInsensitiveStringsMap getHeaders();
 
-    /**
-     * Return true is headers has been received after the response body.
-     *
-     * @return true is headers has been received after the response body.
-     */
-    public boolean isTraillingHeadersReceived() {
-        return traillingHeaders;
-    }
+	/**
+	 * Return true is headers has been received after the response body.
+	 * 
+	 * @return true is headers has been received after the response body.
+	 */
+	public boolean isTraillingHeadersReceived() {
+		return traillingHeaders;
+	}
 }

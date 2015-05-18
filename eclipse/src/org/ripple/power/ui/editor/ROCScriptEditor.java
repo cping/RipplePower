@@ -27,10 +27,9 @@ import javax.swing.undo.UndoManager;
 import org.ripple.power.ui.graphics.LColor;
 
 public class ROCScriptEditor extends JPanel {
-	
-	
+
 	public final static ROCFileFilter FILTER = new ROCFileFilter();
-	
+
 	private static class ROCFileFilter extends FileFilter {
 		public boolean accept(File f) {
 			if (f.isDirectory()) {
@@ -44,7 +43,6 @@ public class ROCScriptEditor extends JPanel {
 			return ".txt|.roc|.script";
 		}
 	}
-
 
 	/**
 	 * 
@@ -85,7 +83,7 @@ public class ROCScriptEditor extends JPanel {
 		try {
 			this.setLayout(_borderLayout);
 			this.add(_jScrollPanel, java.awt.BorderLayout.CENTER);
-		
+
 			_jScrollPanel.getViewport().add(_textEdit);
 			_jScrollPanel.setBackground(new Color(70, 70, 70));
 			_jScrollPanel.setForeground(Color.WHITE);

@@ -4,7 +4,7 @@ import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.utils.MathUtils;
 
 public class WalletItem {
-	
+
 	private boolean pTip = true;
 
 	private String pDate;
@@ -14,7 +14,7 @@ public class WalletItem {
 	private String pAmount;
 
 	private String pStatus;
-	
+
 	private boolean online;
 
 	public WalletItem(String date, String seed, String amount, String status) {

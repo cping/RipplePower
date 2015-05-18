@@ -54,7 +54,8 @@ public class ReflectorUtils {
 	final static public ConverterMap converterMap = CollectionUtils
 			.createConverterMap();
 
-	final static private Map<Object, Object> interfaceMap = CollectionUtils.createMap();
+	final static private Map<Object, Object> interfaceMap = CollectionUtils
+			.createMap();
 
 	final static private Class<?>[] EMPTY_CLASS = new Class[0];
 
@@ -113,14 +114,14 @@ public class ReflectorUtils {
 	public static Class<?> getParameterType(Class<?> targetClass,
 			String attributeName, String preffix) {
 		String setName = preffix + initialUppercase(attributeName);
-		Collection<Object> methods = CollectionUtils.createCollection(targetClass
-				.getMethods());
+		Collection<Object> methods = CollectionUtils
+				.createCollection(targetClass.getMethods());
 		for (Iterator<Object> it = methods.iterator(); it.hasNext();) {
 			Method method = (Method) it.next();
 			if (setName.equals(method.getName())
 					&& method.getParameterTypes().length == 1) {
-				Collection<Object> collection = CollectionUtils.createCollection(method
-						.getParameterTypes());
+				Collection<Object> collection = CollectionUtils
+						.createCollection(method.getParameterTypes());
 				return (Class<?>) CollectionUtils.first(collection);
 			}
 		}
@@ -211,7 +212,8 @@ public class ReflectorUtils {
 		return beanName.endsWith(FAIL_TAG);
 	}
 
-	public static Object invokeContructor(Class<?> clazz, Collection<Object> instances) {
+	public static Object invokeContructor(Class<?> clazz,
+			Collection<Object> instances) {
 		return getReturnObjects(clazz, instances != null ? instances.toArray()
 				: null);
 	}
@@ -221,7 +223,8 @@ public class ReflectorUtils {
 				value);
 	}
 
-	final public static Object getReturnObjects(Class<?> methodType, Object[] value) {
+	final public static Object getReturnObjects(Class<?> methodType,
+			Object[] value) {
 		return getReturnObjects(FileUtils.getExtension(methodType.getName()),
 				value);
 	}
@@ -488,7 +491,8 @@ public class ReflectorUtils {
 		}
 	}
 
-	private static void throwClassCastException(Class<?> targetClass, Class<?> clazz) {
+	private static void throwClassCastException(Class<?> targetClass,
+			Class<?> clazz) {
 		throw new ClassCastException("Cannot assign an object of type " + clazz
 				+ " to an object of type " + targetClass);
 	}
@@ -575,12 +579,14 @@ public class ReflectorUtils {
 
 	}
 
-	public static Constructor<?> getAccessible(Class<?> clazz, Class<?> parameterType) {
+	public static Constructor<?> getAccessible(Class<?> clazz,
+			Class<?> parameterType) {
 		Class<?>[] parameterTypes = { parameterType };
 		return getAccessible(clazz, parameterTypes);
 	}
 
-	public static Constructor<?> getAccessible(Class<?> clazz, Class<?>[] parameterTypes) {
+	public static Constructor<?> getAccessible(Class<?> clazz,
+			Class<?>[] parameterTypes) {
 		try {
 			return getAccessible(clazz.getConstructor(parameterTypes));
 		} catch (NoSuchMethodException e) {
@@ -602,8 +608,8 @@ public class ReflectorUtils {
 		return null;
 	}
 
-	private static Constructor<?> getMatchingAccessibleConstructor(Class<?> clazz,
-			Class<?>[] parameterTypes) {
+	private static Constructor<?> getMatchingAccessibleConstructor(
+			Class<?> clazz, Class<?>[] parameterTypes) {
 		try {
 			Constructor<?> ctor = clazz.getConstructor(parameterTypes);
 			try {
@@ -721,7 +727,8 @@ public class ReflectorUtils {
 		return doMethod(clazz, name, 0);
 	}
 
-	final static public Method doSetMethod(final Class<?> clazz, final String name) {
+	final static public Method doSetMethod(final Class<?> clazz,
+			final String name) {
 		return doMethod(clazz, name, 1);
 	}
 
@@ -735,8 +742,8 @@ public class ReflectorUtils {
 		return result;
 	}
 
-	final static private Method doMethod(final Class<?> clazz, final String name,
-			final int flag) {
+	final static private Method doMethod(final Class<?> clazz,
+			final String name, final int flag) {
 		MapArray asmMethods = ClassUtils.getFieldInspector(clazz).getMethods();
 		Method method = (Method) asmMethods.get(name);
 		if (flag == 0 || method != null) {
@@ -744,8 +751,8 @@ public class ReflectorUtils {
 		} else {
 			String keyName = ReflectorUtils.getParameter(name);
 			Reflector reflector = Reflector.getReflector(keyName);
-			keyName = StringUtils.replace(StringUtils
-					.replace(name, keyName, ""), "()", "");
+			keyName = StringUtils.replace(
+					StringUtils.replace(name, keyName, ""), "()", "");
 			Set<?> entrys = asmMethods.entrySet();
 			for (Iterator<?> it = entrys.iterator(); it.hasNext();) {
 				Entry<?, ?> entry = (Entry<?, ?>) it.next();
@@ -770,8 +777,8 @@ public class ReflectorUtils {
 					offset = ReflectorUtils.getMethodOffget(methodName);
 				}
 				if (offset > 0) {
-					String nowName = methodName.substring(offset, methodName
-							.length());
+					String nowName = methodName.substring(offset,
+							methodName.length());
 					if (nowName.equals(initialUppercase(name))) {
 						return (Method) entry.getValue();
 					}
@@ -792,8 +799,8 @@ public class ReflectorUtils {
 			String methodName = (String) it.next();
 			int offset = ReflectorUtils.getMethodOffset(methodName);
 			if (offset > 0) {
-				String nowName = methodName.substring(offset, methodName
-						.length());
+				String nowName = methodName.substring(offset,
+						methodName.length());
 				if (nowName.equals(initialUppercase(name))) {
 
 					return methodName;
@@ -814,8 +821,8 @@ public class ReflectorUtils {
 			String methodName = (String) it.next();
 			int offset = ReflectorUtils.getMethodOffget(methodName);
 			if (offset > 0) {
-				String nowName = methodName.substring(offset, methodName
-						.length());
+				String nowName = methodName.substring(offset,
+						methodName.length());
 				if (nowName.equals(initialUppercase(name))) {
 					return methodName;
 				}
@@ -862,6 +869,7 @@ public class ReflectorUtils {
 	final static public Set<Object> getMethodNames(Class<?> clazz) {
 		return ClassUtils.getFieldInspector(clazz).getMethods().keySet();
 	}
+
 	@SuppressWarnings("unchecked")
 	final static public Set<Object> getFields(Class<?> clazz) {
 		return ClassUtils.getFieldInspector(clazz).getFields().keySet();

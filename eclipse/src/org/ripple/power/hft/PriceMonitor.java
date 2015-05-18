@@ -161,52 +161,52 @@ public class PriceMonitor extends Loop {
 			}
 		}
 	}
-	
-	private void initCheck(){
+
+	private void initCheck() {
 		for (PriceMonitorItem item : loops) {
-				double value = -1;
-				Object result = RippleMarket.getExchange(item.currency);
-				if (result != null) {
-					if (result instanceof JSONArray) {
-						value = ((JSONArray) result).getJSONObject(0)
-								.getDouble("rate");
-					} else if (result instanceof JSONObject) {
-						value = ((JSONObject) result).getDouble("rate");
-					}
+			double value = -1;
+			Object result = RippleMarket.getExchange(item.currency);
+			if (result != null) {
+				if (result instanceof JSONArray) {
+					value = ((JSONArray) result).getJSONObject(0).getDouble(
+							"rate");
+				} else if (result instanceof JSONObject) {
+					value = ((JSONObject) result).getDouble("rate");
 				}
-				value = (1d / value) + 0.0006d;
-				switch (item.query) {
-				case ">":
-					if (value > item.value) {
-						showPrice(item, value);
-					}
-					break;
-				case ">=":
-					if (value >= item.value) {
-						showPrice(item, value);
-					}
-					break;
-				case "<":
-					if (value < item.value) {
-						showPrice(item, value);
-					}
-					break;
-				case "<=":
-					if (value <= item.value) {
-						showPrice(item, value);
-					}
-					break;
-				case "==":
-					if (value == item.value) {
-						showPrice(item, value);
-					}
-					break;
-				default:
-					break;
+			}
+			value = (1d / value) + 0.0006d;
+			switch (item.query) {
+			case ">":
+				if (value > item.value) {
+					showPrice(item, value);
 				}
+				break;
+			case ">=":
+				if (value >= item.value) {
+					showPrice(item, value);
+				}
+				break;
+			case "<":
+				if (value < item.value) {
+					showPrice(item, value);
+				}
+				break;
+			case "<=":
+				if (value <= item.value) {
+					showPrice(item, value);
+				}
+				break;
+			case "==":
+				if (value == item.value) {
+					showPrice(item, value);
+				}
+				break;
+			default:
+				break;
+			}
 		}
 	}
-	
+
 	@Override
 	public Updateable main() {
 		Updateable updateable = new Updateable() {
@@ -224,8 +224,8 @@ public class PriceMonitor extends Loop {
 				+ Gateway.getGateway(item.currency.issuer.toString()).name
 				+ "/" + item.currency.currency + " convert 1/XRP == " + value);
 	}
-	
-	public static void main(String[]args){
+
+	public static void main(String[] args) {
 		PriceMonitor.get();
 	}
 

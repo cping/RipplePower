@@ -14,10 +14,10 @@ public class MinuteFive extends RegularTimer implements Serializable {
 	private Calendar cal;
 	private long firstMillisecond;
 	private long lastMillisecond;
-	
+
 	private Day day;
-    private byte hour;
-    private byte minute;
+	private byte hour;
+	private byte minute;
 
 	public MinuteFive(Date date) {
 		this.date = date;
@@ -25,8 +25,8 @@ public class MinuteFive extends RegularTimer implements Serializable {
 		cal.setTime(date);
 		peg(cal);
 		cal.setTimeInMillis(getFirstMillisecond());
-		minute = (byte)cal.get(Calendar.MINUTE);
-		hour = (byte)cal.get(Calendar.HOUR_OF_DAY);
+		minute = (byte) cal.get(Calendar.MINUTE);
+		hour = (byte) cal.get(Calendar.HOUR_OF_DAY);
 		day = new Day(date);
 	}
 
@@ -152,8 +152,8 @@ public class MinuteFive extends RegularTimer implements Serializable {
 
 	@Override
 	public long getSerialIndex() {
-        long hourIndex = this.day.getSerialIndex() * 24L + this.hour;
-        return hourIndex * (long)(60 / 5) + (long)(this.minute / 5);
+		long hourIndex = this.day.getSerialIndex() * 24L + this.hour;
+		return hourIndex * (long) (60 / 5) + (long) (this.minute / 5);
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class MinuteFive extends RegularTimer implements Serializable {
 		cal.add(Calendar.MINUTE, -5);
 		return new MinuteFive(cal.getTime());
 	}
-	
+
 	public int compareTo(Object obj) {
 		int result;
 		if (obj instanceof MinuteFive) {
@@ -184,13 +184,12 @@ public class MinuteFive extends RegularTimer implements Serializable {
 					&& this.getLastMillisecond() == m5.getLastMillisecond()) {
 				result = 0;
 			} else {
-				result = (int) (this.getLastMillisecond() - m5.getLastMillisecond());
+				result = (int) (this.getLastMillisecond() - m5
+						.getLastMillisecond());
 			}
-		}
-		else if (obj instanceof RegularTimer) {
+		} else if (obj instanceof RegularTimer) {
 			result = 0;
-		}
-		else {
+		} else {
 			result = 1;
 		}
 

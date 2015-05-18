@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Polygon2D {
-	
+
 	public static class Point2D {
-		
+
 		public float x;
 
 		public float y;

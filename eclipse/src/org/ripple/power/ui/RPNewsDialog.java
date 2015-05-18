@@ -47,7 +47,8 @@ public class RPNewsDialog extends JDialog {
 	}
 
 	public RPNewsDialog(Window parent) {
-		super(parent,LangConfig.get(RPNewsDialog.class, "news", "News"), Dialog.ModalityType.MODELESS);
+		super(parent, LangConfig.get(RPNewsDialog.class, "news", "News"),
+				Dialog.ModalityType.MODELESS);
 		setResizable(false);
 		Dimension dim = new Dimension(366, 550);
 		setPreferredSize(dim);
@@ -58,7 +59,7 @@ public class RPNewsDialog extends JDialog {
 	private void initComponents() {
 
 		addWindowListener(HelperWindow.get());
-		
+
 		_loadStatusLabel = new RPLabel();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		_newsList = new RPList();

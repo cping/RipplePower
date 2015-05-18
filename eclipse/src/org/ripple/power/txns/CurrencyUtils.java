@@ -8,7 +8,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
 public class CurrencyUtils {
-	
+
 	private static final BigDecimal MILLION = new BigDecimal("1000000");
 
 	public static IssuedCurrency getAmount(Object jsonDenominatedAmount) {

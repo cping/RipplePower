@@ -7,7 +7,7 @@ import java.util.List;
 public class OrdersIterator {
 
 	static class NewOrderImpl implements NewOrder {
-		
+
 		private String symbol;
 		private String orderId;
 		public int size;

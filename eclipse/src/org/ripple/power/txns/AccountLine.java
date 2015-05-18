@@ -20,8 +20,8 @@ public class AccountLine {
 		this.currency = currency;
 		this.amount = amount;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return get().toGatewayString();
 	}
 

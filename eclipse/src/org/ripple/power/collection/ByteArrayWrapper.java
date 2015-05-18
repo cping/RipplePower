@@ -15,12 +15,12 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper> {
 	}
 
 	public boolean equals(Object other) {
-		if (!(other instanceof ByteArrayWrapper)){
+		if (!(other instanceof ByteArrayWrapper)) {
 			return false;
 		}
 		byte[] otherData = ((ByteArrayWrapper) other).getData();
-		return FastBytes.compareTo(data, 0, data.length, otherData,
-				0, otherData.length) == 0;
+		return FastBytes.compareTo(data, 0, data.length, otherData, 0,
+				otherData.length) == 0;
 	}
 
 	@Override
@@ -30,8 +30,8 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper> {
 
 	@Override
 	public int compareTo(ByteArrayWrapper o) {
-		return FastBytes.compareTo(data, 0, data.length, o.getData(),
-				0, o.getData().length);
+		return FastBytes.compareTo(data, 0, data.length, o.getData(), 0,
+				o.getData().length);
 	}
 
 	public byte[] getData() {

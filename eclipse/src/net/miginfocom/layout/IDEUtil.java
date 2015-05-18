@@ -1,6 +1,7 @@
 package net.miginfocom.layout;
 
 import java.util.HashMap;
+
 /*
  * License (BSD):
  * ==============
@@ -35,146 +36,199 @@ import java.util.HashMap;
  *         Date: 2006-sep-08
  */
 
-/** This class contains static methods to be used by IDE vendors to convert to and from String/API constraints.
+/**
+ * This class contains static methods to be used by IDE vendors to convert to
+ * and from String/API constraints.
  * <p>
- * <b>Note that {@link LayoutUtil#setDesignTime(ContainerWrapper, boolean)} should be set to <code>true</code> for this class'
- * methods to work.</b>
+ * <b>Note that {@link LayoutUtil#setDesignTime(ContainerWrapper, boolean)}
+ * should be set to <code>true</code> for this class' methods to work.</b>
  */
-public class IDEUtil
-{
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+public class IDEUtil {
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue ZERO = UnitValue.ZERO;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue TOP = UnitValue.TOP;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue LEADING = UnitValue.LEADING;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue LEFT = UnitValue.LEFT;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue CENTER = UnitValue.CENTER;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue TRAILING = UnitValue.TRAILING;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue RIGHT = UnitValue.RIGHT;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue BOTTOM = UnitValue.BOTTOM;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue LABEL = UnitValue.LABEL;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue INF = UnitValue.INF;
 
-	/** A direct reference to the corresponding value for predefined UnitValues in {@link UnitValue}.
+	/**
+	 * A direct reference to the corresponding value for predefined UnitValues
+	 * in {@link UnitValue}.
 	 */
 	public static final UnitValue BASELINE_IDENTITY = UnitValue.BASELINE_IDENTITY;
 
-	private final static String[] X_Y_STRINGS = new String[] {"x", "y", "x2", "y2"};
+	private final static String[] X_Y_STRINGS = new String[] { "x", "y", "x2",
+			"y2" };
 
-	/** Returns the version of IDEUtil
+	/**
+	 * Returns the version of IDEUtil
+	 * 
 	 * @return The version.
 	 */
-	public String getIDEUtilVersion()
-	{
+	public String getIDEUtilVersion() {
 		return "1.0";
 	}
 
-	/** Returns the grid cells that the components in <code>parentContainer</code> has.
-	 * @param parentContainer The parent container. It is an object since MigLayout is GUI toolkit
-	 * independent.
-	 * @return A new hashmap with the components mapped to an array [x, y, spanx, spany].
-	 * <p>
-	 * Dock components will always have x and y less than -30000 or more than 30000. This is since they
-	 * are actually part of the grid, but on the outer edges.
-	 * <p>
-	 * Components that span the "rest of the row/column" have really large span values. Actually 30000-x or
-	 * 30000-y.
-	 * <p>
-	 * Generally, the grid does not need to have the upper left at 0, 0. Though it normally does if you
-	 * don't set the cells explicitly to other values. Rows and columns that are completely empty and
-	 * that does not have an explicit row/column constraint will be totally disregarded.
+	/**
+	 * Returns the grid cells that the components in
+	 * <code>parentContainer</code> has.
+	 * 
+	 * @param parentContainer
+	 *            The parent container. It is an object since MigLayout is GUI
+	 *            toolkit independent.
+	 * @return A new hashmap with the components mapped to an array [x, y,
+	 *         spanx, spany].
+	 *         <p>
+	 *         Dock components will always have x and y less than -30000 or more
+	 *         than 30000. This is since they are actually part of the grid, but
+	 *         on the outer edges.
+	 *         <p>
+	 *         Components that span the "rest of the row/column" have really
+	 *         large span values. Actually 30000-x or 30000-y.
+	 *         <p>
+	 *         Generally, the grid does not need to have the upper left at 0, 0.
+	 *         Though it normally does if you don't set the cells explicitly to
+	 *         other values. Rows and columns that are completely empty and that
+	 *         does not have an explicit row/column constraint will be totally
+	 *         disregarded.
 	 */
-	public static HashMap<Object, int[]> getGridPositions(Object parentContainer)
-	{
+	public static HashMap<Object, int[]> getGridPositions(Object parentContainer) {
 		return Grid.getGridPositions(parentContainer);
 	}
 
-	/** Returns the sizes of the rows and gaps for a container.
-	 * There will be two arrays returned [0] and [1].
+	/**
+	 * Returns the sizes of the rows and gaps for a container. There will be two
+	 * arrays returned [0] and [1].
 	 * <p>
-	 * The first array will be the indexes of the rows where indexes that
-	 * are less than 30000 or larger than 30000 is docking rows. There might be extra docking rows that aren't
-	 * visible but they always have size 0. Non docking indexes will probably always be 0, 1, 2, 3, etc..
+	 * The first array will be the indexes of the rows where indexes that are
+	 * less than 30000 or larger than 30000 is docking rows. There might be
+	 * extra docking rows that aren't visible but they always have size 0. Non
+	 * docking indexes will probably always be 0, 1, 2, 3, etc..
 	 * <p>
 	 * The second array is the sizes of the form:<br>
 	 * <code>[left inset][row size 1][gap 1][row size 2][gap 2][row size n][right inset]</code>.
 	 * <p>
 	 * The returned sizes will be the ones calculated in the last layout cycle.
-	 * @param parentContainer The container to retuern the row sizes and gaps for. In Swing it will be a {@link java.awt.Container} and
-	 * in SWT it will be a {@link org.eclipse.swt.widgets.Composite}.
-	 * @return The sizes or <code>null</code> if {@link LayoutUtil#isDesignTime(ContainerWrapper)} is <code>false</code> or
-	 * <code>parentContainer</code> does not have a MigLayout layout manager.
-	 * The returned sizes will be the ones calculated in the last layout cycle.
+	 * 
+	 * @param parentContainer
+	 *            The container to retuern the row sizes and gaps for. In Swing
+	 *            it will be a {@link java.awt.Container} and in SWT it will be
+	 *            a {@link org.eclipse.swt.widgets.Composite}.
+	 * @return The sizes or <code>null</code> if
+	 *         {@link LayoutUtil#isDesignTime(ContainerWrapper)} is
+	 *         <code>false</code> or <code>parentContainer</code> does not have
+	 *         a MigLayout layout manager. The returned sizes will be the ones
+	 *         calculated in the last layout cycle.
 	 * @see LayoutUtil#isDesignTime(ContainerWrapper)
 	 */
-	public static int[][] getRowSizes(Object parentContainer)
-	{
+	public static int[][] getRowSizes(Object parentContainer) {
 		return Grid.getSizesAndIndexes(parentContainer, true);
 	}
 
-	/** Returns the sizes of the columns and gaps for a container.
-	 * There will be two arrays returned [0] and [1].
+	/**
+	 * Returns the sizes of the columns and gaps for a container. There will be
+	 * two arrays returned [0] and [1].
 	 * <p>
-	 * The first array will be the indexes of the columns where indexes that
-	 * are less than 30000 or larger than 30000 is docking columns. There might be extra docking columns that aren't
-	 * visible but they always have size 0. Non docking indexes will probably always be 0, 1, 2, 3, etc..
+	 * The first array will be the indexes of the columns where indexes that are
+	 * less than 30000 or larger than 30000 is docking columns. There might be
+	 * extra docking columns that aren't visible but they always have size 0.
+	 * Non docking indexes will probably always be 0, 1, 2, 3, etc..
 	 * <p>
 	 * The second array is the sizes of the form:<br>
 	 * <code>[top inset][column size 1][gap 1][column size 2][gap 2][column size n][bottom inset]</code>.
 	 * <p>
 	 * The returned sizes will be the ones calculated in the last layout cycle.
-	 * @param parentContainer The container to retuern the column sizes and gaps for. In Swing it will be a {@link java.awt.Container} and
-	 * in SWT it will be a {@link org.eclipse.swt.widgets.Composite}.
-	 * @return The sizes and indexes or <code>null</code> if {@link LayoutUtil#isDesignTime(ContainerWrapper)} is <code>false</code> or
-	 * <code>parentContainer</code> does not have a MigLayout layout manager.
-	 * The returned sizes will be the ones calculated in the last layout cycle.
+	 * 
+	 * @param parentContainer
+	 *            The container to retuern the column sizes and gaps for. In
+	 *            Swing it will be a {@link java.awt.Container} and in SWT it
+	 *            will be a {@link org.eclipse.swt.widgets.Composite}.
+	 * @return The sizes and indexes or <code>null</code> if
+	 *         {@link LayoutUtil#isDesignTime(ContainerWrapper)} is
+	 *         <code>false</code> or <code>parentContainer</code> does not have
+	 *         a MigLayout layout manager. The returned sizes will be the ones
+	 *         calculated in the last layout cycle.
 	 * @see LayoutUtil#isDesignTime(ContainerWrapper)
 	 */
-	public static int[][] getColumnSizes(Object parentContainer)
-	{
+	public static int[][] getColumnSizes(Object parentContainer) {
 		return Grid.getSizesAndIndexes(parentContainer, false);
 	}
 
-	/** Returns the a constraint string that can be re-parsed to be the exact same AxisConstraint.
-	 * @param ac The axis constraint to return as a constraint string.
-	 * @param asAPI If the returned string should be of API type (e.g. .flowX().gap("rel").align("right")) or
-	 * as a String type (e.g. "flowx, gap rel, right").
-	 * @param isCols The the constraint should be returned for columns rather than rows.
+	/**
+	 * Returns the a constraint string that can be re-parsed to be the exact
+	 * same AxisConstraint.
+	 * 
+	 * @param ac
+	 *            The axis constraint to return as a constraint string.
+	 * @param asAPI
+	 *            If the returned string should be of API type (e.g.
+	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
+	 *            "flowx, gap rel, right").
+	 * @param isCols
+	 *            The the constraint should be returned for columns rather than
+	 *            rows.
 	 * @return A String. Never <code>null</code>.
 	 */
-	public static String getConstraintString(AC ac, boolean asAPI, boolean isCols)
-	{
+	public static String getConstraintString(AC ac, boolean asAPI,
+			boolean isCols) {
 		StringBuffer sb = new StringBuffer(32);
 
 		DimConstraint[] dims = ac.getConstaints();
-		BoundSize defGap = isCols ? PlatformDefaults.getGridGapX() : PlatformDefaults.getGridGapY();
+		BoundSize defGap = isCols ? PlatformDefaults.getGridGapX()
+				: PlatformDefaults.getGridGapY();
 
 		for (int i = 0; i < dims.length; i++) {
 			DimConstraint dc = dims[i];
@@ -204,13 +258,19 @@ public class IDEUtil
 		return sb.toString();
 	}
 
-	/** Adds the a constraint string that can be re-parsed to be the exact same DimConstraint.
-	 * @param dc The layout constraint to return as a constraint string.
-	 * @param asAPI If the returned string should be of API type (e.g. .flowX().gap("rel").align("right")) or
-	 * as a String type (e.g. "flowx, gap rel, right").
+	/**
+	 * Adds the a constraint string that can be re-parsed to be the exact same
+	 * DimConstraint.
+	 * 
+	 * @param dc
+	 *            The layout constraint to return as a constraint string.
+	 * @param asAPI
+	 *            If the returned string should be of API type (e.g.
+	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
+	 *            "flowx, gap rel, right").
 	 */
-	private static void addRowDimConstraintString(DimConstraint dc, StringBuffer sb, boolean asAPI)
-	{
+	private static void addRowDimConstraintString(DimConstraint dc,
+			StringBuffer sb, boolean asAPI) {
 		int gp = dc.getGrowPriority();
 
 		int firstComma = sb.length();
@@ -289,9 +349,11 @@ public class IDEUtil
 				sb.append(".align(\"").append(getUV(al)).append("\")");
 			} else {
 				String s = getUV(al);
-				String alKw = (s.equals("top") || s.equals("bottom") || s.equals("left") || s.equals("label") ||
-							   s.equals("leading") || s.equals("center") || s.equals("trailing") ||
-							   s.equals("right") || s.equals("baseline")) ? "" : "align ";
+				String alKw = (s.equals("top") || s.equals("bottom")
+						|| s.equals("left") || s.equals("label")
+						|| s.equals("leading") || s.equals("center")
+						|| s.equals("trailing") || s.equals("right") || s
+						.equals("baseline")) ? "" : "align ";
 				sb.append(',').append(alKw).append(s);
 			}
 		}
@@ -322,20 +384,30 @@ public class IDEUtil
 		}
 	}
 
-	/** Returns the a constraint string that can be re-parsed to be the exact same DimConstraint.
-	 * @param dc The layout constraint to return as a constraint string.
-	 * @param asAPI If the returned string should be of API type (e.g. .flowX().gap("rel").align("right")) or
-	 * as a String type (e.g. "flowx, gap rel, right").
-	 * @param isHor The the DimConstraint is decoration something horizontal (column or x).
-	 * @param noGrowAdd If <code>true</code> no grow constraints will be added.
+	/**
+	 * Returns the a constraint string that can be re-parsed to be the exact
+	 * same DimConstraint.
+	 * 
+	 * @param dc
+	 *            The layout constraint to return as a constraint string.
+	 * @param asAPI
+	 *            If the returned string should be of API type (e.g.
+	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
+	 *            "flowx, gap rel, right").
+	 * @param isHor
+	 *            The the DimConstraint is decoration something horizontal
+	 *            (column or x).
+	 * @param noGrowAdd
+	 *            If <code>true</code> no grow constraints will be added.
 	 * @return A constraint string. Never <code>null</code>.
 	 */
-	private static void addComponentDimConstraintString(DimConstraint dc, StringBuffer sb, boolean asAPI, boolean isHor, boolean noGrowAdd)
-	{
+	private static void addComponentDimConstraintString(DimConstraint dc,
+			StringBuffer sb, boolean asAPI, boolean isHor, boolean noGrowAdd) {
 		int gp = dc.getGrowPriority();
 		if (gp != 100) {
 			if (asAPI) {
-				sb.append(isHor ? ".growPrioX(" : ".growPrioY(").append(gp).append(')');
+				sb.append(isHor ? ".growPrioX(" : ".growPrioY(").append(gp)
+						.append(')');
 			} else {
 				sb.append(isHor ? ",growpriox " : ",growprioy ").append(gp);
 			}
@@ -346,9 +418,11 @@ public class IDEUtil
 			if (gw != null) {
 				String g = gw != 100f ? floatToString(gw, asAPI) : "";
 				if (asAPI) {
-					sb.append(isHor ? ".growX(" : ".growY(").append(g).append(')');
+					sb.append(isHor ? ".growX(" : ".growY(").append(g)
+							.append(')');
 				} else {
-					sb.append(isHor ? ",growx" : ",growy").append(g.length() > 0 ? (" " + g) : "");
+					sb.append(isHor ? ",growx" : ",growy").append(
+							g.length() > 0 ? (" " + g) : "");
 				}
 			}
 		}
@@ -356,7 +430,8 @@ public class IDEUtil
 		int sp = dc.getShrinkPriority();
 		if (sp != 100) {
 			if (asAPI) {
-				sb.append(isHor ? ".shrinkPrioX(" : ".shrinkPrioY(").append(sp).append(')');
+				sb.append(isHor ? ".shrinkPrioX(" : ".shrinkPrioY(").append(sp)
+						.append(')');
 			} else {
 				sb.append(isHor ? ",shrinkpriox " : ",shrinkprioy ").append(sp);
 			}
@@ -366,7 +441,8 @@ public class IDEUtil
 		if (sw != null && sw.intValue() != 100) {
 			String s = floatToString(sw, asAPI);
 			if (asAPI) {
-				sb.append(isHor ? ".shrinkX(" : ".shrinkY(").append(s).append(')');
+				sb.append(isHor ? ".shrinkX(" : ".shrinkY(").append(s)
+						.append(')');
 			} else {
 				sb.append(isHor ? ",shrinkx " : ",shrinky ").append(s);
 			}
@@ -375,7 +451,8 @@ public class IDEUtil
 		String eg = dc.getEndGroup();
 		if (eg != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".endGroupX(\"" : ".endGroupY(\"").append(eg).append("\")");
+				sb.append(isHor ? ".endGroupX(\"" : ".endGroupY(\"").append(eg)
+						.append("\")");
 			} else {
 				sb.append(isHor ? ",endgroupx " : ",endgroupy ").append(eg);
 			}
@@ -384,7 +461,8 @@ public class IDEUtil
 		String sg = dc.getSizeGroup();
 		if (sg != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".sizeGroupX(\"" : ".sizeGroupY(\"").append(sg).append("\")");
+				sb.append(isHor ? ".sizeGroupX(\"" : ".sizeGroupY(\"")
+						.append(sg).append("\")");
 			} else {
 				sb.append(isHor ? ",sizegroupx " : ",sizegroupy ").append(sg);
 			}
@@ -395,17 +473,20 @@ public class IDEUtil
 		UnitValue al = dc.getAlign();
 		if (al != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".alignX(\"" : ".alignY(\"").append(getUV(al)).append("\")");
+				sb.append(isHor ? ".alignX(\"" : ".alignY(\"")
+						.append(getUV(al)).append("\")");
 			} else {
 				sb.append(isHor ? ",alignx " : ",aligny ").append(getUV(al));
 			}
 		}
 
 		BoundSize gapBef = dc.getGapBefore();
-		BoundSize gapAft= dc.getGapAfter();
+		BoundSize gapAft = dc.getGapAfter();
 		if (gapBef != null || gapAft != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".gapX(\"" : ".gapY(\"").append(getBS(gapBef)).append("\", \"").append(getBS(gapAft)).append("\")");
+				sb.append(isHor ? ".gapX(\"" : ".gapY(\"")
+						.append(getBS(gapBef)).append("\", \"")
+						.append(getBS(gapAft)).append("\")");
 			} else {
 				sb.append(isHor ? ",gapx " : ",gapy ").append(getBS(gapBef));
 				if (gapAft != null)
@@ -414,48 +495,63 @@ public class IDEUtil
 		}
 	}
 
-	private static void appendBoundSize(BoundSize size, StringBuffer sb, boolean isHor, boolean asAPI)
-	{
+	private static void appendBoundSize(BoundSize size, StringBuffer sb,
+			boolean isHor, boolean asAPI) {
 		if (size.isUnset() == false) {
 			if (size.getPreferred() == null) {
 				if (size.getMin() == null) {
 					if (asAPI) {
-						sb.append(isHor ? ".maxWidth(\"" : ".maxHeight(\"").append(getUV(size.getMax())).append("\")");
+						sb.append(isHor ? ".maxWidth(\"" : ".maxHeight(\"")
+								.append(getUV(size.getMax())).append("\")");
 					} else {
-						sb.append(isHor ? ",wmax " : ",hmax ").append(getUV(size.getMax()));
+						sb.append(isHor ? ",wmax " : ",hmax ").append(
+								getUV(size.getMax()));
 					}
 
 				} else if (size.getMax() == null) {
 					if (asAPI) {
-						sb.append(isHor ? ".minWidth(\"" : ".minHeight(\"").append(getUV(size.getMin())).append("\")");
+						sb.append(isHor ? ".minWidth(\"" : ".minHeight(\"")
+								.append(getUV(size.getMin())).append("\")");
 					} else {
-						sb.append(isHor ? ",wmin " : ",hmin ").append(getUV(size.getMin()));
+						sb.append(isHor ? ",wmin " : ",hmin ").append(
+								getUV(size.getMin()));
 					}
 				} else { // None are null
 					if (asAPI) {
-						sb.append(isHor ? ".width(\"" : ".height(\"").append(getUV(size.getMin())).append("::").append(getUV(size.getMax())).append("\")");
+						sb.append(isHor ? ".width(\"" : ".height(\"")
+								.append(getUV(size.getMin())).append("::")
+								.append(getUV(size.getMax())).append("\")");
 					} else {
-						sb.append(isHor ? ",width " : ",height ").append(getUV(size.getMin())).append("::").append(getUV(size.getMax()));
+						sb.append(isHor ? ",width " : ",height ")
+								.append(getUV(size.getMin())).append("::")
+								.append(getUV(size.getMax()));
 					}
 				}
 			} else {
 				if (asAPI) {
-					sb.append(isHor ? ".width(\"" : ".height(\"").append(getBS(size)).append("\")");
+					sb.append(isHor ? ".width(\"" : ".height(\"")
+							.append(getBS(size)).append("\")");
 				} else {
-					sb.append(isHor ? ",width " : ",height ").append(getBS(size));
+					sb.append(isHor ? ",width " : ",height ").append(
+							getBS(size));
 				}
 			}
 		}
 	}
 
-	/** Returns the a constraint string that can be re-parsed to be the exact same LayoutConstraint.
-	 * @param cc The component constraint to return as a constraint string.
-	 * @param asAPI If the returned string should be of API type (e.g. .flowX().gap("rel").align("right")) or
-	 * as a String type (e.g. "flowx, gap rel, right").
+	/**
+	 * Returns the a constraint string that can be re-parsed to be the exact
+	 * same LayoutConstraint.
+	 * 
+	 * @param cc
+	 *            The component constraint to return as a constraint string.
+	 * @param asAPI
+	 *            If the returned string should be of API type (e.g.
+	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
+	 *            "flowx, gap rel, right").
 	 * @return A String. Never <code>null</code>.
 	 */
-	public static String getConstraintString(CC cc, boolean asAPI)
-	{
+	public static String getConstraintString(CC cc, boolean asAPI) {
 		StringBuffer sb = new StringBuffer(16);
 
 		if (cc.isNewline())
@@ -488,15 +584,19 @@ public class IDEUtil
 				for (int i = 0; i < 4; i++) {
 					if (pos[i] != null) {
 						if (asAPI) {
-							sb.append('.').append(X_Y_STRINGS[i]).append("(\"").append(getUV(pos[i])).append("\")");
+							sb.append('.').append(X_Y_STRINGS[i]).append("(\"")
+									.append(getUV(pos[i])).append("\")");
 						} else {
-							sb.append(',').append(X_Y_STRINGS[i]).append(getUV(pos[i]));
+							sb.append(',').append(X_Y_STRINGS[i])
+									.append(getUV(pos[i]));
 						}
 					}
 				}
 			} else {
 				sb.append(asAPI ? ".pos(\"" : ",pos ");
-				int iSz = (pos[2] != null || pos[3] != null) ? 4 : 2;  // "pos x y" vs "pos x1 y1 x2 y2".
+				int iSz = (pos[2] != null || pos[3] != null) ? 4 : 2; // "pos x y"
+																		// vs
+																		// "pos x1 y1 x2 y2".
 				for (int i = 0; i < iSz; i++)
 					sb.append(getUV(pos[i])).append(i < iSz - 1 ? " " : "");
 
@@ -568,11 +668,14 @@ public class IDEUtil
 			}
 		} else if (spanX > 1 || spanY > 1) {
 			if (spanX > 1 && spanY > 1) {
-				sb.append(asAPI ? ".span(" : ",span ").append(spanX).append(asAPI ? ", " : " ").append(spanY);
+				sb.append(asAPI ? ".span(" : ",span ").append(spanX)
+						.append(asAPI ? ", " : " ").append(spanY);
 			} else if (spanX > 1) {
-				sb.append(asAPI ? ".spanX(" : ",spanx ").append(spanX == LayoutUtil.INF ? "" : (String.valueOf(spanX)));
+				sb.append(asAPI ? ".spanX(" : ",spanx ").append(
+						spanX == LayoutUtil.INF ? "" : (String.valueOf(spanX)));
 			} else if (spanY > 1) {
-				sb.append(asAPI ? ".spanY(" : ",spany ").append(spanY == LayoutUtil.INF ? "" : (String.valueOf(spanY)));
+				sb.append(asAPI ? ".spanY(" : ",spany ").append(
+						spanY == LayoutUtil.INF ? "" : (String.valueOf(spanY)));
 			}
 			if (asAPI)
 				sb.append(')');
@@ -586,9 +689,11 @@ public class IDEUtil
 				if (pushX != 100.0 || pushY != 100.0)
 					sb.append(pushX).append(asAPI ? ", " : " ").append(pushY);
 			} else if (pushX != null) {
-				sb.append(asAPI ? ".pushX(" : ",pushx ").append(pushX == 100 ? "" : (String.valueOf(pushX)));
+				sb.append(asAPI ? ".pushX(" : ",pushx ").append(
+						pushX == 100 ? "" : (String.valueOf(pushX)));
 			} else if (pushY != null) {
-				sb.append(asAPI ? ".pushY(" : ",pushy ").append(pushY == 100 ? "" : (String.valueOf(pushY)));
+				sb.append(asAPI ? ".pushY(" : ",pushy ").append(
+						pushY == 100 ? "" : (String.valueOf(pushY)));
 			}
 			if (asAPI)
 				sb.append(')');
@@ -598,19 +703,26 @@ public class IDEUtil
 		if (dock >= 0) {
 			String ds = CC.DOCK_SIDES[dock];
 			if (asAPI) {
-				sb.append(".dock").append(Character.toUpperCase(ds.charAt(0))).append(ds.substring(1)).append("()");
+				sb.append(".dock").append(Character.toUpperCase(ds.charAt(0)))
+						.append(ds.substring(1)).append("()");
 			} else {
 				sb.append(",").append(ds);
 			}
 		}
 
-		boolean noGrowAdd = cc.getHorizontal().getGrow() != null && cc.getHorizontal().getGrow().intValue() == 100 &&
-		                    cc.getVertical().getGrow() != null && cc.getVertical().getGrow().intValue() == 100;
+		boolean noGrowAdd = cc.getHorizontal().getGrow() != null
+				&& cc.getHorizontal().getGrow().intValue() == 100
+				&& cc.getVertical().getGrow() != null
+				&& cc.getVertical().getGrow().intValue() == 100;
 
-		addComponentDimConstraintString(cc.getHorizontal(), sb, asAPI, true, noGrowAdd);
-		addComponentDimConstraintString(cc.getVertical(), sb, asAPI, false, noGrowAdd);
+		addComponentDimConstraintString(cc.getHorizontal(), sb, asAPI, true,
+				noGrowAdd);
+		addComponentDimConstraintString(cc.getVertical(), sb, asAPI, false,
+				noGrowAdd);
 		if (noGrowAdd)
-			sb.append(asAPI ? ".grow()" : ",grow");   // Combine ".growX().growY()" into ".grow()".
+			sb.append(asAPI ? ".grow()" : ",grow"); // Combine
+													// ".growX().growY()" into
+													// ".grow()".
 
 		if (cc.isWrap())
 			sb.append(asAPI ? ".wrap()" : ",wrap");
@@ -619,14 +731,19 @@ public class IDEUtil
 		return s.length() == 0 || s.charAt(0) != ',' ? s : s.substring(1);
 	}
 
-	/** Returns the a constraint string that can be re-parsed to be the exact same LayoutConstraint.
-	 * @param lc The layout constraint to return as a constraint string.
-	 * @param asAPI If the returned string should be of API type (e.g. .flowX().gap("rel").align("right")) or
-	 * as a String type (e.g. "flowx, gap rel, right").
+	/**
+	 * Returns the a constraint string that can be re-parsed to be the exact
+	 * same LayoutConstraint.
+	 * 
+	 * @param lc
+	 *            The layout constraint to return as a constraint string.
+	 * @param asAPI
+	 *            If the returned string should be of API type (e.g.
+	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
+	 *            "flowx, gap rel, right").
 	 * @return A String. Never <code>null</code>.
 	 */
-	public static String getConstraintString(LC lc, boolean asAPI)
-	{
+	public static String getConstraintString(LC lc, boolean asAPI) {
 		StringBuffer sb = new StringBuffer(16);
 
 		if (lc.isFlowX() == false)
@@ -638,7 +755,8 @@ public class IDEUtil
 			if (fillX == fillY) {
 				sb.append(asAPI ? ".fill()" : ",fill");
 			} else {
-				sb.append(asAPI ? (fillX ? ".fillX()" : ".fillY()") : (fillX ? ",fillx" : ",filly"));
+				sb.append(asAPI ? (fillX ? ".fillX()" : ".fillY()")
+						: (fillX ? ",fillx" : ",filly"));
 			}
 		}
 
@@ -659,11 +777,13 @@ public class IDEUtil
 				if (w.equals("pref") && h.equals("pref")) {
 					sb.append(')');
 				} else {
-					sb.append('\"').append(w).append("\", \"").append(h).append("\")");
+					sb.append('\"').append(w).append("\", \"").append(h)
+							.append("\")");
 				}
 			} else {
 				sb.append(",pack");
-				String size = getBS(lc.getPackWidth()) + " " + getBS(lc.getPackHeight());
+				String size = getBS(lc.getPackWidth()) + " "
+						+ getBS(lc.getPackHeight());
 				if (size.equals("pref pref") == false)
 					sb.append(' ').append(size);
 			}
@@ -671,9 +791,16 @@ public class IDEUtil
 
 		if (lc.getPackWidthAlign() != 0.5f || lc.getPackHeightAlign() != 1f) {
 			if (asAPI) {
-				sb.append(".packAlign(").append(floatToString(lc.getPackWidthAlign(), asAPI)).append(", ").append(floatToString(lc.getPackHeightAlign(), asAPI)).append(')');
+				sb.append(".packAlign(")
+						.append(floatToString(lc.getPackWidthAlign(), asAPI))
+						.append(", ")
+						.append(floatToString(lc.getPackHeightAlign(), asAPI))
+						.append(')');
 			} else {
-				sb.append(",packalign ").append(floatToString(lc.getPackWidthAlign(), asAPI)).append(' ').append(floatToString(lc.getPackHeightAlign(), asAPI));
+				sb.append(",packalign ")
+						.append(floatToString(lc.getPackWidthAlign(), asAPI))
+						.append(' ')
+						.append(floatToString(lc.getPackHeightAlign(), asAPI));
 			}
 		}
 
@@ -692,7 +819,8 @@ public class IDEUtil
 			} else {
 				sb.append(asAPI ? ".insets(\"" : ",insets ");
 				for (int i = 0; i < insets.length; i++)
-					sb.append(getUV(insets[i])).append(i < insets.length - 1 ? " " : "");
+					sb.append(getUV(insets[i])).append(
+							i < insets.length - 1 ? " " : "");
 				if (asAPI)
 					sb.append("\")");
 			}
@@ -720,11 +848,15 @@ public class IDEUtil
 		UnitValue alignY = lc.getAlignY();
 		if (alignX != null || alignY != null) {
 			if (alignX != null && alignY != null) {
-				sb.append(asAPI ? ".align(\"" : ",align ").append(getUV(alignX)).append(' ').append(getUV(alignY));
+				sb.append(asAPI ? ".align(\"" : ",align ")
+						.append(getUV(alignX)).append(' ')
+						.append(getUV(alignY));
 			} else if (alignX != null) {
-				sb.append(asAPI ? ".alignX(\"" : ",alignx ").append(getUV(alignX));
+				sb.append(asAPI ? ".alignX(\"" : ",alignx ").append(
+						getUV(alignX));
 			} else if (alignY != null) {
-				sb.append(asAPI ? ".alignY(\"" : ",aligny ").append(getUV(alignY));
+				sb.append(asAPI ? ".alignY(\"" : ",aligny ").append(
+						getUV(alignY));
 			}
 			if (asAPI)
 				sb.append("\")");
@@ -734,11 +866,15 @@ public class IDEUtil
 		BoundSize gridGapY = lc.getGridGapY();
 		if (gridGapX != null || gridGapY != null) {
 			if (gridGapX != null && gridGapY != null) {
-				sb.append(asAPI ? ".gridGap(\"" : ",gap ").append(getBS(gridGapX)).append(' ').append(getBS(gridGapY));
+				sb.append(asAPI ? ".gridGap(\"" : ",gap ")
+						.append(getBS(gridGapX)).append(' ')
+						.append(getBS(gridGapY));
 			} else if (gridGapX != null) {
-				sb.append(asAPI ? ".gridGapX(\"" : ",gapx ").append(getBS(gridGapX));
+				sb.append(asAPI ? ".gridGapX(\"" : ",gapx ").append(
+						getBS(gridGapX));
 			} else if (gridGapY != null) {
-				sb.append(asAPI ? ".gridGapY(\"" : ",gapy ").append(getBS(gridGapY));
+				sb.append(asAPI ? ".gridGapY(\"" : ",gapy ").append(
+						getBS(gridGapY));
 			}
 			if (asAPI)
 				sb.append("\")");
@@ -767,23 +903,25 @@ public class IDEUtil
 		return s.length() == 0 || s.charAt(0) != ',' ? s : s.substring(1);
 	}
 
-	private static String getUV(UnitValue uv)
-	{
+	private static String getUV(UnitValue uv) {
 		return uv != null ? uv.getConstraintString() : "null";
 	}
 
-	private static String getBS(BoundSize bs)
-	{
+	private static String getBS(BoundSize bs) {
 		return bs != null ? bs.getConstraintString() : "null";
 	}
 
-	/** Converts a <code>float</code> to a string and is removing the ".0" if the float is an integer.
-	 * @param f the float.
+	/**
+	 * Converts a <code>float</code> to a string and is removing the ".0" if the
+	 * float is an integer.
+	 * 
+	 * @param f
+	 *            the float.
 	 * @return <code>f</code> as a string. Never <code>null</code>.
 	 */
-	private static String floatToString(float f, boolean asAPI)
-	{
+	private static String floatToString(float f, boolean asAPI) {
 		String valS = String.valueOf(f);
-		return valS.endsWith(".0") ? valS.substring(0, valS.length() - 2) : (valS + (asAPI ? "f" : ""));
+		return valS.endsWith(".0") ? valS.substring(0, valS.length() - 2)
+				: (valS + (asAPI ? "f" : ""));
 	}
 }

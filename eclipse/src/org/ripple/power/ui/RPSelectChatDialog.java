@@ -14,7 +14,6 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
 
-
 public class RPSelectChatDialog extends JPanel implements ActionListener {
 
 	/**
@@ -74,7 +73,6 @@ public class RPSelectChatDialog extends JPanel implements ActionListener {
 
 		_sendXRPButton = new RPCButton(iconXRP);
 		_sendIOUButton = new RPCButton(iconIOU);
-	
 
 		setLayout(null);
 
@@ -101,14 +99,14 @@ public class RPSelectChatDialog extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-	
+
 		String eve = ae.getActionCommand();
-		if("server".equalsIgnoreCase(eve)){
+		if ("server".equalsIgnoreCase(eve)) {
 			new RPChatServerDialog("Ripple Chat Server", this.tool.getDialog());
-		}else if("client".equalsIgnoreCase(eve)){
+		} else if ("client".equalsIgnoreCase(eve)) {
 			new RPChatClientDialog("Ripple Chat Client", this.tool.getDialog());
 		}
-	
+
 	}
 
 }

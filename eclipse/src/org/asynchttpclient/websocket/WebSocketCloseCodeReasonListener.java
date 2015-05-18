@@ -13,15 +13,17 @@
 package org.asynchttpclient.websocket;
 
 /**
- * Extend the normal close listener with one that support the WebSocket's code and reason.
+ * Extend the normal close listener with one that support the WebSocket's code
+ * and reason.
+ * 
  * @see "http://tools.ietf.org/html/rfc6455#section-5.5.1"
  */
 public interface WebSocketCloseCodeReasonListener {
 
-    /**
-     * Invoked when the {@link WebSocket} is close.
-     *
-     * @param websocket
-     */
-    void onClose(WebSocket websocket, int code, String reason);
+	/**
+	 * Invoked when the {@link WebSocket} is close.
+	 * 
+	 * @param websocket
+	 */
+	void onClose(WebSocket websocket, int code, String reason);
 }

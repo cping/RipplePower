@@ -21,188 +21,162 @@ package com.google.zxing.client.result;
  */
 public final class AddressBookParsedResult extends ParsedResult {
 
-  private final String[] names;
-  private final String[] nicknames;
-  private final String pronunciation;
-  private final String[] phoneNumbers;
-  private final String[] phoneTypes;
-  private final String[] emails;
-  private final String[] emailTypes;
-  private final String instantMessenger;
-  private final String note;
-  private final String[] addresses;
-  private final String[] addressTypes;
-  private final String org;
-  private final String birthday;
-  private final String title;
-  private final String[] urls;
-  private final String[] geo;
+	private final String[] names;
+	private final String[] nicknames;
+	private final String pronunciation;
+	private final String[] phoneNumbers;
+	private final String[] phoneTypes;
+	private final String[] emails;
+	private final String[] emailTypes;
+	private final String instantMessenger;
+	private final String note;
+	private final String[] addresses;
+	private final String[] addressTypes;
+	private final String org;
+	private final String birthday;
+	private final String title;
+	private final String[] urls;
+	private final String[] geo;
 
-  public AddressBookParsedResult(String[] names,
-                                 String[] phoneNumbers,
-                                 String[] phoneTypes,
-                                 String[] emails,
-                                 String[] emailTypes,
-                                 String[] addresses,
-                                 String[] addressTypes) {
-    this(names,
-         null,
-         null,
-         phoneNumbers,
-         phoneTypes,
-         emails,
-         emailTypes,
-         null,
-         null,
-         addresses,
-         addressTypes,
-         null,
-         null,
-         null,
-         null,
-         null);
-  }
+	public AddressBookParsedResult(String[] names, String[] phoneNumbers,
+			String[] phoneTypes, String[] emails, String[] emailTypes,
+			String[] addresses, String[] addressTypes) {
+		this(names, null, null, phoneNumbers, phoneTypes, emails, emailTypes,
+				null, null, addresses, addressTypes, null, null, null, null,
+				null);
+	}
 
-  public AddressBookParsedResult(String[] names,
-                                 String[] nicknames,
-                                 String pronunciation,
-                                 String[] phoneNumbers,
-                                 String[] phoneTypes,
-                                 String[] emails,
-                                 String[] emailTypes,
-                                 String instantMessenger,
-                                 String note,
-                                 String[] addresses,
-                                 String[] addressTypes,
-                                 String org,
-                                 String birthday,
-                                 String title,
-                                 String[] urls,
-                                 String[] geo) {
-    super(ParsedResultType.ADDRESSBOOK);
-    this.names = names;
-    this.nicknames = nicknames;
-    this.pronunciation = pronunciation;
-    this.phoneNumbers = phoneNumbers;
-    this.phoneTypes = phoneTypes;
-    this.emails = emails;
-    this.emailTypes = emailTypes;
-    this.instantMessenger = instantMessenger;
-    this.note = note;
-    this.addresses = addresses;
-    this.addressTypes = addressTypes;
-    this.org = org;
-    this.birthday = birthday;
-    this.title = title;
-    this.urls = urls;
-    this.geo = geo;
-  }
+	public AddressBookParsedResult(String[] names, String[] nicknames,
+			String pronunciation, String[] phoneNumbers, String[] phoneTypes,
+			String[] emails, String[] emailTypes, String instantMessenger,
+			String note, String[] addresses, String[] addressTypes, String org,
+			String birthday, String title, String[] urls, String[] geo) {
+		super(ParsedResultType.ADDRESSBOOK);
+		this.names = names;
+		this.nicknames = nicknames;
+		this.pronunciation = pronunciation;
+		this.phoneNumbers = phoneNumbers;
+		this.phoneTypes = phoneTypes;
+		this.emails = emails;
+		this.emailTypes = emailTypes;
+		this.instantMessenger = instantMessenger;
+		this.note = note;
+		this.addresses = addresses;
+		this.addressTypes = addressTypes;
+		this.org = org;
+		this.birthday = birthday;
+		this.title = title;
+		this.urls = urls;
+		this.geo = geo;
+	}
 
-  public String[] getNames() {
-    return names;
-  }
+	public String[] getNames() {
+		return names;
+	}
 
-  public String[] getNicknames() {
-    return nicknames;
-  }
+	public String[] getNicknames() {
+		return nicknames;
+	}
 
-  /**
-   * In Japanese, the name is written in kanji, which can have multiple readings. Therefore a hint
-   * is often provided, called furigana, which spells the name phonetically.
-   *
-   * @return The pronunciation of the getNames() field, often in hiragana or katakana.
-   */
-  public String getPronunciation() {
-    return pronunciation;
-  }
+	/**
+	 * In Japanese, the name is written in kanji, which can have multiple
+	 * readings. Therefore a hint is often provided, called furigana, which
+	 * spells the name phonetically.
+	 * 
+	 * @return The pronunciation of the getNames() field, often in hiragana or
+	 *         katakana.
+	 */
+	public String getPronunciation() {
+		return pronunciation;
+	}
 
-  public String[] getPhoneNumbers() {
-    return phoneNumbers;
-  }
+	public String[] getPhoneNumbers() {
+		return phoneNumbers;
+	}
 
-  /**
-   * @return optional descriptions of the type of each phone number. It could be like "HOME", but,
-   *  there is no guaranteed or standard format.
-   */
-  public String[] getPhoneTypes() {
-    return phoneTypes;
-  }
+	/**
+	 * @return optional descriptions of the type of each phone number. It could
+	 *         be like "HOME", but, there is no guaranteed or standard format.
+	 */
+	public String[] getPhoneTypes() {
+		return phoneTypes;
+	}
 
-  public String[] getEmails() {
-    return emails;
-  }
+	public String[] getEmails() {
+		return emails;
+	}
 
-  /**
-   * @return optional descriptions of the type of each e-mail. It could be like "WORK", but,
-   *  there is no guaranteed or standard format.
-   */
-  public String[] getEmailTypes() {
-    return emailTypes;
-  }
-  
-  public String getInstantMessenger() {
-    return instantMessenger;
-  }
+	/**
+	 * @return optional descriptions of the type of each e-mail. It could be
+	 *         like "WORK", but, there is no guaranteed or standard format.
+	 */
+	public String[] getEmailTypes() {
+		return emailTypes;
+	}
 
-  public String getNote() {
-    return note;
-  }
+	public String getInstantMessenger() {
+		return instantMessenger;
+	}
 
-  public String[] getAddresses() {
-    return addresses;
-  }
+	public String getNote() {
+		return note;
+	}
 
-  /**
-   * @return optional descriptions of the type of each e-mail. It could be like "WORK", but,
-   *  there is no guaranteed or standard format.
-   */
-  public String[] getAddressTypes() {
-    return addressTypes;
-  }
+	public String[] getAddresses() {
+		return addresses;
+	}
 
-  public String getTitle() {
-    return title;
-  }
+	/**
+	 * @return optional descriptions of the type of each e-mail. It could be
+	 *         like "WORK", but, there is no guaranteed or standard format.
+	 */
+	public String[] getAddressTypes() {
+		return addressTypes;
+	}
 
-  public String getOrg() {
-    return org;
-  }
+	public String getTitle() {
+		return title;
+	}
 
-  public String[] getURLs() {
-    return urls;
-  }
+	public String getOrg() {
+		return org;
+	}
 
-  /**
-   * @return birthday formatted as yyyyMMdd (e.g. 19780917)
-   */
-  public String getBirthday() {
-    return birthday;
-  }
+	public String[] getURLs() {
+		return urls;
+	}
 
-  /**
-   * @return a location as a latitude/longitude pair
-   */
-  public String[] getGeo() {
-    return geo;
-  }
+	/**
+	 * @return birthday formatted as yyyyMMdd (e.g. 19780917)
+	 */
+	public String getBirthday() {
+		return birthday;
+	}
 
-  @Override
-  public String getDisplayResult() {
-    StringBuilder result = new StringBuilder(100);
-    maybeAppend(names, result);
-    maybeAppend(nicknames, result);
-    maybeAppend(pronunciation, result);
-    maybeAppend(title, result);
-    maybeAppend(org, result);
-    maybeAppend(addresses, result);
-    maybeAppend(phoneNumbers, result);
-    maybeAppend(emails, result);
-    maybeAppend(instantMessenger, result);
-    maybeAppend(urls, result);
-    maybeAppend(birthday, result);
-    maybeAppend(geo, result);
-    maybeAppend(note, result);
-    return result.toString();
-  }
+	/**
+	 * @return a location as a latitude/longitude pair
+	 */
+	public String[] getGeo() {
+		return geo;
+	}
+
+	@Override
+	public String getDisplayResult() {
+		StringBuilder result = new StringBuilder(100);
+		maybeAppend(names, result);
+		maybeAppend(nicknames, result);
+		maybeAppend(pronunciation, result);
+		maybeAppend(title, result);
+		maybeAppend(org, result);
+		maybeAppend(addresses, result);
+		maybeAppend(phoneNumbers, result);
+		maybeAppend(emails, result);
+		maybeAppend(instantMessenger, result);
+		maybeAppend(urls, result);
+		maybeAppend(birthday, result);
+		maybeAppend(geo, result);
+		maybeAppend(note, result);
+		return result.toString();
+	}
 
 }

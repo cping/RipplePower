@@ -19,14 +19,16 @@ import javax.net.ssl.SSLEngine;
 import java.security.GeneralSecurityException;
 
 /**
- * Factory that creates an {@link SSLEngine} to be used for a single SSL connection.
+ * Factory that creates an {@link SSLEngine} to be used for a single SSL
+ * connection.
  */
 public interface SSLEngineFactory {
-    /**
-     * Creates new {@link SSLEngine}.
-     *
-     * @return new engine
-     * @throws GeneralSecurityException if the SSLEngine cannot be created
-     */
-    SSLEngine newSSLEngine() throws GeneralSecurityException;
+	/**
+	 * Creates new {@link SSLEngine}.
+	 * 
+	 * @return new engine
+	 * @throws GeneralSecurityException
+	 *             if the SSLEngine cannot be created
+	 */
+	SSLEngine newSSLEngine() throws GeneralSecurityException;
 }

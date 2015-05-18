@@ -102,7 +102,6 @@ class IOConnection implements IOCallback {
 		}
 	}
 
-
 	private class ConnectThread extends Thread {
 
 		public ConnectThread() {
@@ -111,7 +110,7 @@ class IOConnection implements IOCallback {
 
 		@Override
 		public void run() {
-			if (IOConnection.this.getState() == STATE_INIT){
+			if (IOConnection.this.getState() == STATE_INIT) {
 				handshake();
 			}
 			connectTransport();
@@ -343,7 +342,7 @@ class IOConnection implements IOCallback {
 			ConcurrentLinkedQueue<String> outputBuffer = this.outputBuffer;
 			this.outputBuffer = new ConcurrentLinkedQueue<String>();
 			try {
-			
+
 				String[] texts = outputBuffer.toArray(new String[outputBuffer
 						.size()]);
 				logger.info("Bulk start:");
@@ -388,7 +387,6 @@ class IOConnection implements IOCallback {
 			int length = Integer.parseInt(fragments.next());
 			String string = (String) fragments.next();
 
-
 			if (length != string.length()) {
 				error(new SocketIOException("Garbage from server: " + text));
 				return;
@@ -397,7 +395,6 @@ class IOConnection implements IOCallback {
 			transportMessage(string);
 		}
 	}
-
 
 	public void transportMessage(String text) {
 		logger.info("< " + text);
@@ -539,7 +536,7 @@ class IOConnection implements IOCallback {
 			break;
 		}
 	}
-	
+
 	public synchronized void reconnect() {
 		if (getState() != STATE_INVALID) {
 			invalidateTransport();

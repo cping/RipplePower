@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.ripple.power.ui.graphics.LColor;
 
-
 public final class AmountRenderer extends DefaultTableCellRenderer {
 
 	/**
@@ -33,7 +32,7 @@ public final class AmountRenderer extends DefaultTableCellRenderer {
 		if (text.charAt(0) == '-' || text.equals("0.000000")
 				|| text.equals("0")) {
 			setForeground(LColor.red.darker().darker());
-		}else{
+		} else {
 			setForeground(LColor.blue.darker().darker());
 		}
 		setText(text);

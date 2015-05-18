@@ -102,11 +102,11 @@ public class Label extends LObject implements ISprite {
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public void setLabel(int label) {
 		setLabel(String.valueOf(label));
 	}
-	
+
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -132,7 +132,7 @@ public class Label extends LObject implements ISprite {
 	}
 
 	public void dispose() {
-		
+
 	}
 
 }

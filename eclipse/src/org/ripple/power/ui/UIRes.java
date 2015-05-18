@@ -107,7 +107,6 @@ public class UIRes {
 				48, 48).getBufferedImage());
 	}
 
-
 	public static BufferedImage getIcon() {
 		return icon;
 	}
@@ -134,7 +133,7 @@ public class UIRes {
 		}
 		return new Font(Font.DIALOG, style, size);
 	}
-	
+
 	public static void addPopMenu(final JPopupMenu menu, final String name,
 			final Updateable update) {
 		JMenuItem tempMenu = new JMenuItem(name);

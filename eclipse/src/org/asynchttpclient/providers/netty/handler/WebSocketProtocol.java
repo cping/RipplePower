@@ -51,178 +51,215 @@ import org.asynchttpclient.websocket.WebSocketUpgradeHandler;
 
 final class WebSocketProtocol extends Protocol {
 
-    private static final byte OPCODE_TEXT = 0x1;
-    private static final byte OPCODE_BINARY = 0x2;
-    private static final byte OPCODE_UNKNOWN = -1;
-    protected byte pendingOpcode = OPCODE_UNKNOWN;
+	private static final byte OPCODE_TEXT = 0x1;
+	private static final byte OPCODE_BINARY = 0x2;
+	private static final byte OPCODE_UNKNOWN = -1;
+	protected byte pendingOpcode = OPCODE_UNKNOWN;
 
-    public WebSocketProtocol(Channels channels, AsyncHttpClientConfig config, NettyAsyncHttpProviderConfig nettyConfig, NettyRequestSender requestSender) {
-        super(channels, config, nettyConfig, requestSender);
-    }
+	public WebSocketProtocol(Channels channels, AsyncHttpClientConfig config,
+			NettyAsyncHttpProviderConfig nettyConfig,
+			NettyRequestSender requestSender) {
+		super(channels, config, nettyConfig, requestSender);
+	}
 
-    // We don't need to synchronize as replacing the "ws-decoder" will
-    // process using the same thread.
-    private void invokeOnSucces(ChannelHandlerContext ctx, WebSocketUpgradeHandler h) {
-        if (!h.touchSuccess()) {
-            try {
-                h.onSuccess(new NettyWebSocket(ctx.channel()));
-            } catch (Exception ex) {
-                NettyChannelHandler.LOGGER.warn("onSuccess unexpected exception", ex);
-            }
-        }
-    }
+	// We don't need to synchronize as replacing the "ws-decoder" will
+	// process using the same thread.
+	private void invokeOnSucces(ChannelHandlerContext ctx,
+			WebSocketUpgradeHandler h) {
+		if (!h.touchSuccess()) {
+			try {
+				h.onSuccess(new NettyWebSocket(ctx.channel()));
+			} catch (Exception ex) {
+				NettyChannelHandler.LOGGER.warn(
+						"onSuccess unexpected exception", ex);
+			}
+		}
+	}
 
-    @Override
-    public void handle(ChannelHandlerContext ctx, NettyResponseFuture future, Object e) throws Exception {
-        WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class.cast(future.getAsyncHandler());
-        Request request = future.getRequest();
+	@Override
+	public void handle(ChannelHandlerContext ctx, NettyResponseFuture future,
+			Object e) throws Exception {
+		WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class.cast(future
+				.getAsyncHandler());
+		Request request = future.getRequest();
 
-        if (e instanceof HttpResponse) {
-            HttpResponse response = (HttpResponse) e;
+		if (e instanceof HttpResponse) {
+			HttpResponse response = (HttpResponse) e;
 
-            HttpResponseStatus s = new ResponseStatus(future.getURI(), response, config);
-            HttpResponseHeaders responseHeaders = new ResponseHeaders(future.getURI(), response.headers());
+			HttpResponseStatus s = new ResponseStatus(future.getURI(),
+					response, config);
+			HttpResponseHeaders responseHeaders = new ResponseHeaders(
+					future.getURI(), response.headers());
 
-            // FIXME there's a method for that IIRC
-            FilterContext<?> fc = new FilterContext.FilterContextBuilder().asyncHandler(h).request(request).responseStatus(s).responseHeaders(responseHeaders).build();
-            for (ResponseFilter asyncFilter : config.getResponseFilters()) {
-                try {
-                    fc = asyncFilter.filter(fc);
-                    if (fc == null) {
-                        throw new NullPointerException("FilterContext is null");
-                    }
-                } catch (FilterException efe) {
-                    channels.abort(future, efe);
-                }
-            }
+			// FIXME there's a method for that IIRC
+			FilterContext<?> fc = new FilterContext.FilterContextBuilder()
+					.asyncHandler(h).request(request).responseStatus(s)
+					.responseHeaders(responseHeaders).build();
+			for (ResponseFilter asyncFilter : config.getResponseFilters()) {
+				try {
+					fc = asyncFilter.filter(fc);
+					if (fc == null) {
+						throw new NullPointerException("FilterContext is null");
+					}
+				} catch (FilterException efe) {
+					channels.abort(future, efe);
+				}
+			}
 
-            // The handler may have been wrapped.
-            future.setAsyncHandler(fc.getAsyncHandler());
+			// The handler may have been wrapped.
+			future.setAsyncHandler(fc.getAsyncHandler());
 
-            // The request has changed
-            if (fc.replayRequest()) {
-                requestSender.replayRequest(future, fc, ctx);
-                return;
-            }
+			// The request has changed
+			if (fc.replayRequest()) {
+				requestSender.replayRequest(future, fc, ctx);
+				return;
+			}
 
-            future.setHttpResponse(response);
-            if (redirect(request, future, response, ctx))
-                return;
+			future.setHttpResponse(response);
+			if (redirect(request, future, response, ctx))
+				return;
 
-            boolean validStatus = response.getStatus().equals(SWITCHING_PROTOCOLS);
-            boolean validUpgrade = response.headers().get(HttpHeaders.Names.UPGRADE) != null;
-            String c = response.headers().get(HttpHeaders.Names.CONNECTION);
-            if (c == null) {
-                c = response.headers().get(HttpHeaders.Names.CONNECTION.toLowerCase());
-            }
+			boolean validStatus = response.getStatus().equals(
+					SWITCHING_PROTOCOLS);
+			boolean validUpgrade = response.headers().get(
+					HttpHeaders.Names.UPGRADE) != null;
+			String c = response.headers().get(HttpHeaders.Names.CONNECTION);
+			if (c == null) {
+				c = response.headers().get(
+						HttpHeaders.Names.CONNECTION.toLowerCase());
+			}
 
-            boolean validConnection = c == null ? false : c.equalsIgnoreCase(HttpHeaders.Values.UPGRADE);
+			boolean validConnection = c == null ? false : c
+					.equalsIgnoreCase(HttpHeaders.Values.UPGRADE);
 
-            s = new ResponseStatus(future.getURI(), response, config);
-            final boolean statusReceived = h.onStatusReceived(s) == STATE.UPGRADE;
+			s = new ResponseStatus(future.getURI(), response, config);
+			final boolean statusReceived = h.onStatusReceived(s) == STATE.UPGRADE;
 
-            final boolean headerOK = h.onHeadersReceived(responseHeaders) == STATE.CONTINUE;
-            if (!headerOK || !validStatus || !validUpgrade || !validConnection || !statusReceived) {
-                channels.abort(future, new IOException("Invalid handshake response"));
-                return;
-            }
+			final boolean headerOK = h.onHeadersReceived(responseHeaders) == STATE.CONTINUE;
+			if (!headerOK || !validStatus || !validUpgrade || !validConnection
+					|| !statusReceived) {
+				channels.abort(future, new IOException(
+						"Invalid handshake response"));
+				return;
+			}
 
-            String accept = response.headers().get(HttpHeaders.Names.SEC_WEBSOCKET_ACCEPT);
-            String key = WebSocketUtil.getAcceptKey(future.getNettyRequest().headers().get(HttpHeaders.Names.SEC_WEBSOCKET_KEY));
-            if (accept == null || !accept.equals(key)) {
-                throw new IOException(String.format("Invalid challenge. Actual: %s. Expected: %s", accept, key));
-            }
+			String accept = response.headers().get(
+					HttpHeaders.Names.SEC_WEBSOCKET_ACCEPT);
+			String key = WebSocketUtil.getAcceptKey(future.getNettyRequest()
+					.headers().get(HttpHeaders.Names.SEC_WEBSOCKET_KEY));
+			if (accept == null || !accept.equals(key)) {
+				throw new IOException(String.format(
+						"Invalid challenge. Actual: %s. Expected: %s", accept,
+						key));
+			}
 
-            Channels.upgradePipelineForWebSockets(ctx);
+			Channels.upgradePipelineForWebSockets(ctx);
 
-            invokeOnSucces(ctx, h);
-            future.done();
+			invokeOnSucces(ctx, h);
+			future.done();
 
-        } else if (e instanceof WebSocketFrame) {
+		} else if (e instanceof WebSocketFrame) {
 
-            final WebSocketFrame frame = (WebSocketFrame) e;
-            NettyWebSocket webSocket = NettyWebSocket.class.cast(h.onCompleted());
-            invokeOnSucces(ctx, h);
+			final WebSocketFrame frame = (WebSocketFrame) e;
+			NettyWebSocket webSocket = NettyWebSocket.class.cast(h
+					.onCompleted());
+			invokeOnSucces(ctx, h);
 
-            if (webSocket != null) {
-                if (frame instanceof CloseWebSocketFrame) {
-                    Channels.setDefaultAttribute(ctx, DiscardEvent.INSTANCE);
-                    CloseWebSocketFrame closeFrame = CloseWebSocketFrame.class.cast(frame);
-                    webSocket.onClose(closeFrame.statusCode(), closeFrame.reasonText());
-                } else {
-                    if (frame instanceof TextWebSocketFrame) {
-                        pendingOpcode = OPCODE_TEXT;
-                    } else if (frame instanceof BinaryWebSocketFrame) {
-                        pendingOpcode = OPCODE_BINARY;
-                    }
+			if (webSocket != null) {
+				if (frame instanceof CloseWebSocketFrame) {
+					Channels.setDefaultAttribute(ctx, DiscardEvent.INSTANCE);
+					CloseWebSocketFrame closeFrame = CloseWebSocketFrame.class
+							.cast(frame);
+					webSocket.onClose(closeFrame.statusCode(),
+							closeFrame.reasonText());
+				} else {
+					if (frame instanceof TextWebSocketFrame) {
+						pendingOpcode = OPCODE_TEXT;
+					} else if (frame instanceof BinaryWebSocketFrame) {
+						pendingOpcode = OPCODE_BINARY;
+					}
 
-                    ByteBuf buf = frame.content();
-                    if (buf != null && buf.readableBytes() > 0) {
-                        try {
-                            ResponseBodyPart rp = nettyConfig.getBodyPartFactory().newResponseBodyPart(buf, frame.isFinalFragment());
-                            h.onBodyPartReceived(rp);
+					ByteBuf buf = frame.content();
+					if (buf != null && buf.readableBytes() > 0) {
+						try {
+							ResponseBodyPart rp = nettyConfig
+									.getBodyPartFactory().newResponseBodyPart(
+											buf, frame.isFinalFragment());
+							h.onBodyPartReceived(rp);
 
-                            if (pendingOpcode == OPCODE_BINARY) {
-                                webSocket.onBinaryFragment(rp.getBodyPartBytes(), frame.isFinalFragment());
-                            } else {
-                                webSocket.onTextFragment(buf.toString(Constants.UTF8), frame.isFinalFragment());
-                            }
-                        } finally {
-                            buf.release();
-                        }
-                    }
-                }
-            } else {
-                NettyChannelHandler.LOGGER.debug("UpgradeHandler returned a null NettyWebSocket ");
-            }
-        } else if (e instanceof LastHttpContent) {
-            // FIXME what to do with this kind of messages?
-        } else {
-            NettyChannelHandler.LOGGER.error("Invalid message {}", e);
-        }
-    }
+							if (pendingOpcode == OPCODE_BINARY) {
+								webSocket.onBinaryFragment(
+										rp.getBodyPartBytes(),
+										frame.isFinalFragment());
+							} else {
+								webSocket.onTextFragment(
+										buf.toString(Constants.UTF8),
+										frame.isFinalFragment());
+							}
+						} finally {
+							buf.release();
+						}
+					}
+				}
+			} else {
+				NettyChannelHandler.LOGGER
+						.debug("UpgradeHandler returned a null NettyWebSocket ");
+			}
+		} else if (e instanceof LastHttpContent) {
+			// FIXME what to do with this kind of messages?
+		} else {
+			NettyChannelHandler.LOGGER.error("Invalid message {}", e);
+		}
+	}
 
-    @Override
-    public void onError(ChannelHandlerContext ctx, Throwable e) {
-        try {
-            Object attribute = Channels.getDefaultAttribute(ctx);
-            NettyChannelHandler.LOGGER.warn("onError {}", e);
-            if (!(attribute instanceof NettyResponseFuture)) {
-                return;
-            }
+	@Override
+	public void onError(ChannelHandlerContext ctx, Throwable e) {
+		try {
+			Object attribute = Channels.getDefaultAttribute(ctx);
+			NettyChannelHandler.LOGGER.warn("onError {}", e);
+			if (!(attribute instanceof NettyResponseFuture)) {
+				return;
+			}
 
-            NettyResponseFuture<?> nettyResponse = (NettyResponseFuture<?>) attribute;
-            WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class.cast(nettyResponse.getAsyncHandler());
+			NettyResponseFuture<?> nettyResponse = (NettyResponseFuture<?>) attribute;
+			WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class
+					.cast(nettyResponse.getAsyncHandler());
 
-            NettyWebSocket webSocket = NettyWebSocket.class.cast(h.onCompleted());
-            if (webSocket != null) {
-                webSocket.onError(e.getCause());
-                webSocket.close();
-            }
-        } catch (Throwable t) {
-            NettyChannelHandler.LOGGER.error("onError", t);
-        }
-    }
+			NettyWebSocket webSocket = NettyWebSocket.class.cast(h
+					.onCompleted());
+			if (webSocket != null) {
+				webSocket.onError(e.getCause());
+				webSocket.close();
+			}
+		} catch (Throwable t) {
+			NettyChannelHandler.LOGGER.error("onError", t);
+		}
+	}
 
-    @Override
-    public void onClose(ChannelHandlerContext ctx) {
-        NettyChannelHandler.LOGGER.trace("onClose {}");
-        Object attribute = Channels.getDefaultAttribute(ctx);
-        if (!(attribute instanceof NettyResponseFuture)) {
-            return;
-        }
+	@Override
+	public void onClose(ChannelHandlerContext ctx) {
+		NettyChannelHandler.LOGGER.trace("onClose {}");
+		Object attribute = Channels.getDefaultAttribute(ctx);
+		if (!(attribute instanceof NettyResponseFuture)) {
+			return;
+		}
 
-        try {
-            NettyResponseFuture<?> nettyResponse = NettyResponseFuture.class.cast(attribute);
-            WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class.cast(nettyResponse.getAsyncHandler());
-            NettyWebSocket webSocket = NettyWebSocket.class.cast(h.onCompleted());
+		try {
+			NettyResponseFuture<?> nettyResponse = NettyResponseFuture.class
+					.cast(attribute);
+			WebSocketUpgradeHandler h = WebSocketUpgradeHandler.class
+					.cast(nettyResponse.getAsyncHandler());
+			NettyWebSocket webSocket = NettyWebSocket.class.cast(h
+					.onCompleted());
 
-            // FIXME How could this test not succeed, attachment is a
-            // NettyResponseFuture????
-            if (attribute != DiscardEvent.INSTANCE)
-                webSocket.close(1006, "Connection was closed abnormally (that is, with no close frame being sent).");
-        } catch (Throwable t) {
-            NettyChannelHandler.LOGGER.error("onError", t);
-        }
-    }
+			// FIXME How could this test not succeed, attachment is a
+			// NettyResponseFuture????
+			if (attribute != DiscardEvent.INSTANCE)
+				webSocket
+						.close(1006,
+								"Connection was closed abnormally (that is, with no close frame being sent).");
+		} catch (Throwable t) {
+			NettyChannelHandler.LOGGER.error("onError", t);
+		}
+	}
 }

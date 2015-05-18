@@ -23,7 +23,7 @@ public class HistoryOperator {
 	}
 
 	public enum Type {
-		PrevPrice, OpenPrice, HighPrice, LowPrice, LastPrice, TypicalPrice, Volume,Issued
+		PrevPrice, OpenPrice, HighPrice, LowPrice, LastPrice, TypicalPrice, Volume, Issued
 	}
 
 	static boolean equals(Object oldValue, Object newValue) {

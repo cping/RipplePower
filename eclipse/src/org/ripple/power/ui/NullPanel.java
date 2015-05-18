@@ -22,7 +22,8 @@ public class NullPanel extends JPanel {
 
 		JPanel brandPanel = new JPanel();
 		brandPanel.setBackground(UIConfig.background);
-		brandPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]", "50[100]170[100]50"));
+		brandPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]",
+				"50[100]170[100]50"));
 		add(brandPanel, "cell 0 0 1 1, grow");
 
 		JLabel logoLabel = new JLabel("呕血施工中，请暂待下一版本提供功能.");
@@ -37,7 +38,7 @@ public class NullPanel extends JPanel {
 		motoLabel.setFont(new Font("Sans", Font.PLAIN, 24));
 		motoLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		brandPanel.add(motoLabel, "cell 0 1 1 1, gapleft 10%, gapright 10%");
-		setPreferredSize(new Dimension(400,200));
+		setPreferredSize(new Dimension(400, 200));
 	}
 
 }

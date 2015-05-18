@@ -14,7 +14,6 @@ import org.ripple.power.ui.projector.core.LInput;
 import org.ripple.power.ui.projector.core.LObject;
 import org.ripple.power.ui.projector.core.LRelease;
 
-
 public abstract class LComponent extends LObject implements LRelease {
 
 	protected Shape oldClip;
@@ -202,8 +201,8 @@ public abstract class LComponent extends LObject implements LRelease {
 		try {
 			if (this.elastic) {
 				this.oldClip = g.getClip();
-				g.clipRect(this.getScreenX(), this.getScreenY(), this
-						.getWidth(), this.getHeight());
+				g.clipRect(this.getScreenX(), this.getScreenY(),
+						this.getWidth(), this.getHeight());
 			}
 			// 变更透明度
 			if (alpha > 0.1 && alpha < 1.0) {

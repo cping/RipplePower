@@ -3,7 +3,6 @@ package org.ripple.power.server.chat;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class LoginUsersMessage extends AMessage {
 
 	private List<String> users;

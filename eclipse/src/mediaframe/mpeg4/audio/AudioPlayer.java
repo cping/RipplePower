@@ -27,7 +27,6 @@ import java.io.InputStream;
 
 import org.ripple.power.config.LSystem;
 
-
 /**
  * The <code>AudioPlayer</code> is an abstract parent class for audio players
  * which able to play the audio binary stream. It contains the methods that
@@ -48,8 +47,8 @@ public abstract class AudioPlayer {
 	protected AudioDevice audioDevice;
 
 	/**
-	 * <tt>True</tt>, if the <code>AudioPlayer</code> is ready to play the
-	 * audio stream.
+	 * <tt>True</tt>, if the <code>AudioPlayer</code> is ready to play the audio
+	 * stream.
 	 */
 	protected boolean readyToPlay = false;
 
@@ -95,7 +94,7 @@ public abstract class AudioPlayer {
 		try {
 			try {
 				Class.forName(try_AAC_first ? "mediaframe.mpeg4.audio.AAC.AACDecoder"
-								: "javazoom.jlme.decoder.Decoder");
+						: "javazoom.jlme.decoder.Decoder");
 				if (try_AAC_first) {
 					return new AACAudioPlayer(is, audioHeaderSize);
 				} else {
@@ -217,16 +216,16 @@ public abstract class AudioPlayer {
 	}
 
 	/**
-	 * Returns <tt>true</tt>, if the player has been detected the audio
-	 * device and is able to play the sound.
+	 * Returns <tt>true</tt>, if the player has been detected the audio device
+	 * and is able to play the sound.
 	 */
 	public static boolean isSoundEnabled() {
 		return detectSoundDevice() != null;
 	}
 
 	/**
-	 * Returns <tt>true</tt>, if the <code>AudioPlayer</code> is decoding
-	 * the audio stream.
+	 * Returns <tt>true</tt>, if the <code>AudioPlayer</code> is decoding the
+	 * audio stream.
 	 */
 	public boolean isDecoding() {
 		return decoding;

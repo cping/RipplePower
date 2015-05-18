@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -52,9 +52,9 @@ package mediaframe.mpeg4.audio.AAC;
 public class TNS_frame_info {
 	int n_subblocks;
 	TNSinfo[] info = new TNSinfo[Constants.TNS_MAX_WIN];
-	
+
 	TNS_frame_info() {
-		for(int i = 0; i < info.length; i ++) {
+		for (int i = 0; i < info.length; i++) {
 			info[i] = new TNSinfo();
 		}
 	}

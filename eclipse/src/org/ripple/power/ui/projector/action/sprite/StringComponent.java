@@ -5,7 +5,7 @@ import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LGraphics;
 
 public class StringComponent {
-	
+
 	private String text;
 
 	private int breaks[] = new int[4];
@@ -139,9 +139,7 @@ public class StringComponent {
 				} else {
 					g.setGrayScale(0);
 				}
-				g
-						.drawSubString(text, prevIndex, breaks[i] - prevIndex,
-								0, y, 0);
+				g.drawSubString(text, prevIndex, breaks[i] - prevIndex, 0, y, 0);
 				prevIndex = breaks[i];
 				y += f.getHeight();
 			}

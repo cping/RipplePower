@@ -8,10 +8,11 @@ public interface JavascriptRuntime {
 
 	public void registerGlobal(String name, Object value);
 
-	public Object run(Reader code, String fileName, Object module, Object exports) throws Exception;
+	public Object run(Reader code, String fileName, Object module,
+			Object exports) throws Exception;
 
 	public JavascriptArray toArray(Object array);
 
 	public JavascriptObject toObject(Object object);
-	
+
 }

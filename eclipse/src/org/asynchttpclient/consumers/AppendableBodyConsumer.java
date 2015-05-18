@@ -23,37 +23,36 @@ import java.nio.ByteBuffer;
  */
 public class AppendableBodyConsumer implements BodyConsumer {
 
-    private final Appendable appendable;
-    private final String encoding;
+	private final Appendable appendable;
+	private final String encoding;
 
-    public AppendableBodyConsumer(Appendable appendable, String encoding) {
-        this.appendable = appendable;
-        this.encoding = encoding;
-    }
+	public AppendableBodyConsumer(Appendable appendable, String encoding) {
+		this.appendable = appendable;
+		this.encoding = encoding;
+	}
 
-    public AppendableBodyConsumer(Appendable appendable) {
-        this.appendable = appendable;
-        this.encoding = "UTF-8";
-    }
+	public AppendableBodyConsumer(Appendable appendable) {
+		this.appendable = appendable;
+		this.encoding = "UTF-8";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void consume(ByteBuffer byteBuffer) throws IOException {
-        appendable.append(new String(byteBuffer.array(),
-                                     byteBuffer.arrayOffset() + byteBuffer.position(),
-                                     byteBuffer.remaining(),
-                                     encoding));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void consume(ByteBuffer byteBuffer) throws IOException {
+		appendable.append(new String(byteBuffer.array(), byteBuffer
+				.arrayOffset() + byteBuffer.position(), byteBuffer.remaining(),
+				encoding));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws IOException {
-        if (appendable instanceof Closeable) {
-            Closeable.class.cast(appendable).close();
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() throws IOException {
+		if (appendable instanceof Closeable) {
+			Closeable.class.cast(appendable).close();
+		}
+	}
 }

@@ -1,7 +1,7 @@
 package org.ripple.power.hft;
 
-public class Price implements Order{
-	
+public class Price implements Order {
+
 	private long priceId;
 	private long timeStamp;
 	private Double closePrice, openPrice, lowPrice, highPrice, lastClosePrice;
@@ -83,12 +83,11 @@ public class Price implements Order{
 		this.lastClosePrice = lastClosePrice;
 	}
 
-
 	@Override
 	public String getOrderId() {
 		return String.valueOf(priceId);
 	}
-	
+
 	public Price() {
 	}
 

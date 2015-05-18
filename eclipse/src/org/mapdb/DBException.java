@@ -1,60 +1,59 @@
 package org.mapdb;
 
 /**
- * General exception returned by MapDB if something goes wrong.
- * Check {@link org.mapdb.DBException.Code error code} for more details.
- *
+ * General exception returned by MapDB if something goes wrong. Check
+ * {@link org.mapdb.DBException.Code error code} for more details.
+ * 
  */
-public class DBException extends RuntimeException{
+public class DBException extends RuntimeException {
 
+	public static enum Code {
 
-    public static enum Code{
+		ENGINE_GET_VOID(
+				"Recid passed to Engine.get() does not exist. Possible data corruption!"),
 
-        ENGINE_GET_VOID("Recid passed to Engine.get() does not exist. Possible data corruption!"),
+		ENGINE_COMPACT_UNCOMMITED(
+				"Engine.compact() called while uncommited data exist. Commit first, than compact!"),
 
-        ENGINE_COMPACT_UNCOMMITED("Engine.compact() called while uncommited data exist. Commit first, than compact!"),
+		/** @see java.nio.channels.ClosedByInterruptException */
+		// TODO this thread was interrupted while doing IO?
+		VOLUME_CLOSED_BY_INTERRUPT(
+				"Some thread was interrupted while doing IO, and FileChannel was closed in result."), VOLUME_CLOSED(
+				"Volume (file or other device) was already closed.");
 
-        /** @see java.nio.channels.ClosedByInterruptException */
-        //TODO this thread was interrupted while doing IO?
-        VOLUME_CLOSED_BY_INTERRUPT("Some thread was interrupted while doing IO, and FileChannel was closed in result."),
-        VOLUME_CLOSED("Volume (file or other device) was already closed.")  ;
+		private final String message;
 
-        private final String message;
+		Code(String message) {
+			this.message = message;
+		}
 
-        Code(String message) {
-            this.message = message;
-        }
+		public String getMessage() {
+			return message;
+		}
 
-        public String getMessage(){
-            return message;
-        }
+		@Override
+		public String toString() {
+			return super.toString() + " - " + message;
+		}
+	}
 
+	protected final Code code;
 
-        @Override
-        public String toString() {
-            return super.toString()+" - "+message;
-        }
-    }
+	public DBException(Code code) {
+		super(code.toString());
+		this.code = code;
+	}
 
+	public DBException(Code code, Exception cause) {
+		super(code.toString(), cause);
+		this.code = code;
+	}
 
-    protected final Code code;
-
-    public DBException(Code code) {
-        super(code.toString());
-        this.code = code;
-    }
-
-    public DBException(Code code, Exception cause) {
-        super(code.toString(),cause);
-        this.code = code;
-    }
-
-
-    /**
-     * @return error code associated with this exception
-     */
-    public Code getCode(){
-        return code;
-    }
+	/**
+	 * @return error code associated with this exception
+	 */
+	public Code getCode() {
+		return code;
+	}
 
 }

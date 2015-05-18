@@ -3,7 +3,7 @@ package org.ripple.power.hft;
 public class Symbol {
 
 	private String symbol;
-	
+
 	private Symbol(String symbol) {
 		this.symbol = symbol;
 	}
@@ -40,6 +40,5 @@ public class Symbol {
 	public String toString() {
 		return symbol;
 	}
-
 
 }

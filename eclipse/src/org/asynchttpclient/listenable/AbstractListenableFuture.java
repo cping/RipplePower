@@ -33,7 +33,8 @@ import org.asynchttpclient.ListenableFuture;
 import java.util.concurrent.Executor;
 
 /**
- * <p>An abstract base implementation of the listener support provided by
+ * <p>
+ * An abstract base implementation of the listener support provided by
  * {@link ListenableFuture}. This class uses an {@link ExecutionList} to
  * guarantee that all registered listeners will be executed. Listener/Executor
  * pairs are stored in the execution list and executed in the order in which
@@ -41,29 +42,30 @@ import java.util.concurrent.Executor;
  * guarantee that the JVM will execute them in order. In addition, listeners
  * added after the task is complete will be executed immediately, even if some
  * previously added listeners have not yet been executed.
- *
+ * 
  * @author Sven Mawson
  * @since 1
  */
-public abstract class AbstractListenableFuture<V> implements ListenableFuture<V> {
+public abstract class AbstractListenableFuture<V> implements
+		ListenableFuture<V> {
 
-    // The execution list to hold our executors.
-    private final ExecutionList executionList = new ExecutionList();
+	// The execution list to hold our executors.
+	private final ExecutionList executionList = new ExecutionList();
 
-    /*
-    * Adds a listener/executor pair to execution list to execute when this task
-    * is completed.
-    */
+	/*
+	 * Adds a listener/executor pair to execution list to execute when this task
+	 * is completed.
+	 */
 
-    public ListenableFuture<V> addListener(Runnable listener, Executor exec) {
-        executionList.add(listener, exec);
-        return this;
-    }
+	public ListenableFuture<V> addListener(Runnable listener, Executor exec) {
+		executionList.add(listener, exec);
+		return this;
+	}
 
-    /*
-    * Execute the execution list.
-    */
-    protected void runListeners() {
-        executionList.run();
-    }
+	/*
+	 * Execute the execution list.
+	 */
+	protected void runListeners() {
+		executionList.run();
+	}
 }

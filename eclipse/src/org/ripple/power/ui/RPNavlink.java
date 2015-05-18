@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 
 import org.bootstrap.ui.NavlinkUI;
 
-
 public class RPNavlink extends JButton {
 
 	/**
@@ -29,7 +28,7 @@ public class RPNavlink extends JButton {
 	private int navigationAlignment = ALIGN_LEFT;
 
 	private JLabel titleLabel;
-	
+
 	private JPanel containerPanel;
 	private JPanel linkPanel;
 
@@ -72,7 +71,7 @@ public class RPNavlink extends JButton {
 	public void setLinkPanel(JPanel linkPanel) {
 		this.linkPanel = linkPanel;
 	}
-	
+
 	public RPNavlink(String title) {
 		this(title, null, null, null);
 	}
@@ -80,16 +79,17 @@ public class RPNavlink extends JButton {
 	public RPNavlink(Icon icon) {
 		this(null, icon, null, null);
 	}
-	
+
 	public RPNavlink(String title, JPanel containerPanel, JPanel linkPanel) {
 		this(title, null, containerPanel, linkPanel);
 	}
-	
+
 	public RPNavlink(Icon icon, JPanel containerPanel, JPanel linkPanel) {
 		this(null, icon, containerPanel, linkPanel);
 	}
 
-	public RPNavlink(String title, Icon icon, JPanel containerPanel, JPanel linkPanel) {
+	public RPNavlink(String title, Icon icon, JPanel containerPanel,
+			JPanel linkPanel) {
 		super(title, icon);
 		this.containerPanel = containerPanel;
 		this.linkPanel = linkPanel;
@@ -101,7 +101,7 @@ public class RPNavlink extends JButton {
 		setFont(getFont().deriveFont(16f));
 
 		setBorder(BorderFactory.createEmptyBorder());
-		
+
 		setMargin(new Insets(0, 8, 0, 8));
 
 		NavlinkUI navUI = new NavlinkUI();
@@ -114,17 +114,20 @@ public class RPNavlink extends JButton {
 			public void mouseEntered(MouseEvent e) {
 				colorSave = RPNavlink.this.getForeground();
 				cursorSave = RPNavlink.this.getCursor().getType();
-				RPNavlink.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				RPNavlink.this.setForeground(RPNavlink.this.getForeground().darker());
+				RPNavlink.this.setCursor(Cursor
+						.getPredefinedCursor(Cursor.HAND_CURSOR));
+				RPNavlink.this.setForeground(RPNavlink.this.getForeground()
+						.darker());
 			}
 
 			public void mouseExited(MouseEvent e) {
 				RPNavlink.this.setForeground(colorSave);
-				RPNavlink.this.setCursor(Cursor.getPredefinedCursor(cursorSave));
+				RPNavlink.this
+						.setCursor(Cursor.getPredefinedCursor(cursorSave));
 			}
 
 			public void mouseReleased(MouseEvent e) {
-			
+
 			}
 
 			public void mousePressed(MouseEvent e) {
@@ -144,7 +147,7 @@ public class RPNavlink extends JButton {
 			this.titleLabel.setForeground(fg);
 		}
 	}
-	
+
 	public void route() {
 		if (containerPanel != null && linkPanel != null) {
 			containerPanel.removeAll();

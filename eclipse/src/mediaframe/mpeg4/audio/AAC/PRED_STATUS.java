@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -51,20 +51,20 @@ package mediaframe.mpeg4.audio.AAC;
  */
 final class PRED_STATUS {
 	/** predictor order */
-	int		grad;		       	
+	int grad;
 	/** adaptation time constant */
-	float	alpha;		       	
+	float alpha;
 	/** attenuation factor in R-Branch */
-	float	a;		       	
+	float a;
 	/** attenuation factor in cross branches */
-	float	b;		       	
+	float b;
 	/** contents of delay elements */
-	float[]	r = new float[Constants.MAX_PGRAD+1];		
+	float[] r = new float[Constants.MAX_PGRAD + 1];
 	/** estimates of correlations */
-	float[]	kor = new float[Constants.MAX_PGRAD+1];     	
+	float[] kor = new float[Constants.MAX_PGRAD + 1];
 	/** estimates of variances */
-	float[]	var = new float[Constants.MAX_PGRAD+1];     	
+	float[] var = new float[Constants.MAX_PGRAD + 1];
 	/** predictor coefficients */
-	float[]	k = new float[Constants.MAX_PGRAD+1];		
+	float[] k = new float[Constants.MAX_PGRAD + 1];
 
 }

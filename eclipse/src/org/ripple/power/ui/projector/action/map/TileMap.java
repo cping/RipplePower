@@ -58,8 +58,8 @@ public class TileMap {
 		double x = (p.getX() + offset.getX());
 		double y = (p.getY() + offset.getY());
 		Vector2D tileCoordinates = pixelsToTiles(x, y);
-		return getTile((int) Math.round(tileCoordinates.getX()), (int) Math
-				.round(tileCoordinates.getY()));
+		return getTile((int) Math.round(tileCoordinates.getX()),
+				(int) Math.round(tileCoordinates.getY()));
 	}
 
 	public Vector2D pixelsToTiles(double x, double y) {

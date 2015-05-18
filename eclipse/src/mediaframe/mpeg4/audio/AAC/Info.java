@@ -43,7 +43,7 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
@@ -51,34 +51,34 @@ package mediaframe.mpeg4.audio.AAC;
  */
 final class Info {
 	/** true if long block */
-	boolean	islong;				
+	boolean islong;
 	/** sub-blocks (SB) per block */
-	int	    nsbk;				
+	int nsbk;
 	/** coef's per block */
-	int	    bins_per_bk;		
+	int bins_per_bk;
 	/** sfb per block */
-	int	    sfb_per_bk;			
+	int sfb_per_bk;
 	/** coef's per SB */
-	int[]	bins_per_sbk = new int[Constants.MAX_SBK];	
+	int[] bins_per_sbk = new int[Constants.MAX_SBK];
 	/** sfb per SB */
-	int[]   sfb_per_sbk = new int[Constants.MAX_SBK];	
-	int[]   sectbits = new int [Constants.MAX_SBK];
+	int[] sfb_per_sbk = new int[Constants.MAX_SBK];
+	int[] sectbits = new int[Constants.MAX_SBK];
 	/** top coef per sfb per SB */
-	short[][] sbk_sfb_top = new short [Constants.MAX_SBK][];
-	/** sfb width for short blocks */	
-	short[] sfb_width_128 = null;				
+	short[][] sbk_sfb_top = new short[Constants.MAX_SBK][];
+	/** sfb width for short blocks */
+	short[] sfb_width_128 = null;
 	/** cum version of above */
 	short[] bk_sfb_top = new short[200];
-	int	    num_groups;
+	int num_groups;
 	short[] group_len = new short[8];
 	short[] group_offs = new short[8];
-	
+
 	void copyFields(Info info) {
 		this.islong = info.islong;
 		this.nsbk = info.nsbk;
 		this.bins_per_bk = info.bins_per_bk;
 		this.sfb_per_bk = info.sfb_per_bk;
-		
+
 		this.sectbits = info.sectbits;
 		this.bins_per_bk = info.bins_per_bk;
 		this.sfb_per_sbk = info.sfb_per_sbk;
@@ -86,33 +86,21 @@ final class Info {
 		this.bk_sfb_top = info.bk_sfb_top;
 		this.sfb_width_128 = info.sfb_width_128;
 		this.group_len = info.group_len;
-		this.group_offs = info.group_offs;  
-/*		
-		for(i =0; i < Constants.MAX_SBK; i++) {
-			this.sectbits[i] = info.sectbits[i];
-			this.bins_per_sbk[i] = info.bins_per_sbk[i];
-			this.sfb_per_sbk[i] = info.sfb_per_sbk[i];
-			if(info.sbk_sfb_top[i] != null) {
-				this.sbk_sfb_top[i] = new short[info.sbk_sfb_top[i].length];
-				for(j = 0; j < info.sbk_sfb_top[i].length; j++) {
-					this.sbk_sfb_top[i][j] = info.sbk_sfb_top[i][j];
-				}
-			}
-		}
-		for(i =0; i < 200; i++) {
-			this.bk_sfb_top[i] = info.bk_sfb_top[i];
-		}
-		if(info.sfb_width_128 != null) {
-			this.sfb_width_128 = new short[info.sfb_width_128.length];
-			for(j = 0; j < info.sfb_width_128.length; j++) {
-				this.sfb_width_128[j] = info.sfb_width_128[j];
-			}
-		}
-		for(i =0; i < 8; i++) {
-			this.group_len[i] = info.group_len[i];
-			this.group_offs[i] = info.group_offs[i];
-		}
-*/		
+		this.group_offs = info.group_offs;
+		/*
+		 * for(i =0; i < Constants.MAX_SBK; i++) { this.sectbits[i] =
+		 * info.sectbits[i]; this.bins_per_sbk[i] = info.bins_per_sbk[i];
+		 * this.sfb_per_sbk[i] = info.sfb_per_sbk[i]; if(info.sbk_sfb_top[i] !=
+		 * null) { this.sbk_sfb_top[i] = new short[info.sbk_sfb_top[i].length];
+		 * for(j = 0; j < info.sbk_sfb_top[i].length; j++) {
+		 * this.sbk_sfb_top[i][j] = info.sbk_sfb_top[i][j]; } } } for(i =0; i <
+		 * 200; i++) { this.bk_sfb_top[i] = info.bk_sfb_top[i]; }
+		 * if(info.sfb_width_128 != null) { this.sfb_width_128 = new
+		 * short[info.sfb_width_128.length]; for(j = 0; j <
+		 * info.sfb_width_128.length; j++) { this.sfb_width_128[j] =
+		 * info.sfb_width_128[j]; } } for(i =0; i < 8; i++) { this.group_len[i]
+		 * = info.group_len[i]; this.group_offs[i] = info.group_offs[i]; }
+		 */
 		this.num_groups = info.num_groups;
 	}
 }

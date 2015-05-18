@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.timer.LTimer;
 
-public class Cycle extends LObject{
+public class Cycle extends LObject {
 
 	public final static Cycle newSample(int type, float srcWidth,
 			float srcHeight) {
@@ -128,9 +128,7 @@ public class Cycle extends LObject{
 			cycle.setStepsPerFrame(1);
 			cycle.setTrailLength(1);
 			cycle.setPointDistance(0.025f);
-			cycle
-					.addPath(Cycle.ARC, 50 * scale, 50 * scale, 40 * scale, 0,
-							360);
+			cycle.addPath(Cycle.ARC, 50 * scale, 50 * scale, 40 * scale, 0, 360);
 			break;
 		case 3:
 			cycle.setColor(0xFF2E82);
@@ -159,9 +157,7 @@ public class Cycle extends LObject{
 			cycle.setStepsPerFrame(1);
 			cycle.setTrailLength(1);
 			cycle.setPointDistance(0.02f);
-			cycle
-					.addPath(Cycle.ARC, 50 * scale, 50 * scale, 30 * scale, 0,
-							360);
+			cycle.addPath(Cycle.ARC, 50 * scale, 50 * scale, 30 * scale, 0, 360);
 			break;
 		case 6:
 			cycle.setStepType(1);

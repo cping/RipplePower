@@ -23,7 +23,6 @@ package org.ripple.power.ioc.injector;
 
 import java.util.Stack;
 
-
 public class BindInterceptor implements Interceptor {
 
 	private static ThreadLocal<Stack<Object>> threadLocal = new ThreadLocal<Stack<Object>>();
@@ -34,12 +33,10 @@ public class BindInterceptor implements Interceptor {
 			stack = new Stack<Object>();
 			stack.push(key);
 			threadLocal.set(stack);
-		}
-		else {
+		} else {
 			stack.push(key);
 		}
 	}
-
 
 	public void after(Object key) {
 		Stack<Object> stack = getStack();
@@ -49,11 +46,10 @@ public class BindInterceptor implements Interceptor {
 	private Stack<Object> getStack() {
 		return (Stack<Object>) threadLocal.get();
 	}
-	
-	
+
 	public void clear() {
 		Stack<?> stack = getStack();
-		if (stack != null) {			
+		if (stack != null) {
 			stack.clear();
 		}
 	}

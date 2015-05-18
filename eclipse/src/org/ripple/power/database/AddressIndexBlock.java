@@ -139,6 +139,7 @@ public class AddressIndexBlock {
 			return null;
 		}
 	}
+
 	protected static byte[] findBlock(File tableFile, String name)
 			throws IOException {
 		try (DataInputStream db = new DataInputStream(new FileInputStream(

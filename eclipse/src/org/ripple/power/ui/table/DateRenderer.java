@@ -10,7 +10,6 @@ public final class DateRenderer extends DefaultTableCellRenderer {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	public DateRenderer() {
 		super();
 		setHorizontalAlignment(JLabel.CENTER);
@@ -22,6 +21,6 @@ public final class DateRenderer extends DefaultTableCellRenderer {
 			setText(new String());
 			return;
 		}
-		setText((String)value);
+		setText((String) value);
 	}
 }

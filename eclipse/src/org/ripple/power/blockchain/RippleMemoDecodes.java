@@ -2,7 +2,7 @@ package org.ripple.power.blockchain;
 
 import java.util.ArrayList;
 
-public class RippleMemoDecodes extends ArrayList<RippleMemoDecode>{
+public class RippleMemoDecodes extends ArrayList<RippleMemoDecode> {
 
 	/**
 	 * 

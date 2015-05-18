@@ -39,196 +39,220 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>A utility which auto-translates English strings in Android string resources using
- * Google Translate.</p>
- *
- * <p>Pass the Android client res/ directory as first argument, and optionally message keys
- * who should be forced to retranslate.
- * Usage: {@code StringsResourceTranslator android/res/ [key_1 ...]}</p>
- *
- * <p>You must set your Google Translate API key into the environment with -DtranslateAPI.key=...</p>
- *
+ * <p>
+ * A utility which auto-translates English strings in Android string resources
+ * using Google Translate.
+ * </p>
+ * 
+ * <p>
+ * Pass the Android client res/ directory as first argument, and optionally
+ * message keys who should be forced to retranslate. Usage:
+ * {@code StringsResourceTranslator android/res/ [key_1 ...]}
+ * </p>
+ * 
+ * <p>
+ * You must set your Google Translate API key into the environment with
+ * -DtranslateAPI.key=...
+ * </p>
+ * 
  * @author Sean Owen
  */
 public final class StringsResourceTranslator {
 
-  private static final String API_KEY = System.getProperty("translateAPI.key");
-  static {
-    if (API_KEY == null) {
-      throw new IllegalArgumentException("translateAPI.key is not specified");
-    }
-  }
-  
-  private static final Pattern ENTRY_PATTERN = Pattern.compile("<string name=\"([^\"]+)\".*>([^<]+)</string>");
-  private static final Pattern STRINGS_FILE_NAME_PATTERN = Pattern.compile("values-(.+)");
-  private static final Pattern TRANSLATE_RESPONSE_PATTERN = Pattern.compile("translatedText\":\\s*\"([^\"]+)\"");
-  private static final Pattern VALUES_DIR_PATTERN = Pattern.compile("values-[a-z]{2}(-[a-zA-Z]{2,3})?");
+	private static final String API_KEY = System
+			.getProperty("translateAPI.key");
+	static {
+		if (API_KEY == null) {
+			throw new IllegalArgumentException(
+					"translateAPI.key is not specified");
+		}
+	}
 
-  private static final String APACHE_2_LICENSE =
-      "<!--\n" +
-      " Copyright (C) 2014 ZXing authors\n" +
-      '\n' +
-      " Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
-      " you may not use this file except in compliance with the License.\n" +
-      " You may obtain a copy of the License at\n" +
-      '\n' +
-      "      http://www.apache.org/licenses/LICENSE-2.0\n" +
-      '\n' +
-      " Unless required by applicable law or agreed to in writing, software\n" +
-      " distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-      " WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-      " See the License for the specific language governing permissions and\n" +
-      " limitations under the License.\n" +
-      " -->\n";
+	private static final Pattern ENTRY_PATTERN = Pattern
+			.compile("<string name=\"([^\"]+)\".*>([^<]+)</string>");
+	private static final Pattern STRINGS_FILE_NAME_PATTERN = Pattern
+			.compile("values-(.+)");
+	private static final Pattern TRANSLATE_RESPONSE_PATTERN = Pattern
+			.compile("translatedText\":\\s*\"([^\"]+)\"");
+	private static final Pattern VALUES_DIR_PATTERN = Pattern
+			.compile("values-[a-z]{2}(-[a-zA-Z]{2,3})?");
 
-  private static final Map<String,String> LANGUAGE_CODE_MASSAGINGS = new HashMap<>(3);
-  static {
-    LANGUAGE_CODE_MASSAGINGS.put("zh-rCN", "zh-cn");
-    LANGUAGE_CODE_MASSAGINGS.put("zh-rTW", "zh-tw");
-  }
+	private static final String APACHE_2_LICENSE = "<!--\n"
+			+ " Copyright (C) 2014 ZXing authors\n"
+			+ '\n'
+			+ " Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+			+ " you may not use this file except in compliance with the License.\n"
+			+ " You may obtain a copy of the License at\n"
+			+ '\n'
+			+ "      http://www.apache.org/licenses/LICENSE-2.0\n"
+			+ '\n'
+			+ " Unless required by applicable law or agreed to in writing, software\n"
+			+ " distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+			+ " WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+			+ " See the License for the specific language governing permissions and\n"
+			+ " limitations under the License.\n" + " -->\n";
 
-  private StringsResourceTranslator() {}
+	private static final Map<String, String> LANGUAGE_CODE_MASSAGINGS = new HashMap<>(
+			3);
+	static {
+		LANGUAGE_CODE_MASSAGINGS.put("zh-rCN", "zh-cn");
+		LANGUAGE_CODE_MASSAGINGS.put("zh-rTW", "zh-tw");
+	}
 
-  public static void main(String[] args) throws IOException {
-    Path resDir = Paths.get(args[0]);
-    Path valueDir = resDir.resolve("values");
-    Path stringsFile = valueDir.resolve("strings.xml");
-    Collection<String> forceRetranslation = Arrays.asList(args).subList(1, args.length);
+	private StringsResourceTranslator() {
+	}
 
-    DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-      @Override
-      public boolean accept(Path entry) {
-        return Files.isDirectory(entry) && !Files.isSymbolicLink(entry) &&
-            VALUES_DIR_PATTERN.matcher(entry.getFileName().toString()).matches();
-      }
-    };
-    try (DirectoryStream<Path> dirs = Files.newDirectoryStream(resDir, filter)) {
-      for (Path dir : dirs) {
-        translate(stringsFile, dir.resolve("strings.xml"), forceRetranslation);
-      }
-    }
-  }
+	public static void main(String[] args) throws IOException {
+		Path resDir = Paths.get(args[0]);
+		Path valueDir = resDir.resolve("values");
+		Path stringsFile = valueDir.resolve("strings.xml");
+		Collection<String> forceRetranslation = Arrays.asList(args).subList(1,
+				args.length);
 
-  private static void translate(Path englishFile,
-                                Path translatedFile,
-                                Collection<String> forceRetranslation) throws IOException {
+		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path entry) {
+				return Files.isDirectory(entry)
+						&& !Files.isSymbolicLink(entry)
+						&& VALUES_DIR_PATTERN.matcher(
+								entry.getFileName().toString()).matches();
+			}
+		};
+		try (DirectoryStream<Path> dirs = Files.newDirectoryStream(resDir,
+				filter)) {
+			for (Path dir : dirs) {
+				translate(stringsFile, dir.resolve("strings.xml"),
+						forceRetranslation);
+			}
+		}
+	}
 
-    Map<String, String> english = readLines(englishFile);
-    Map<String,String> translated = readLines(translatedFile);
-    String parentName = translatedFile.getParent().getFileName().toString();
+	private static void translate(Path englishFile, Path translatedFile,
+			Collection<String> forceRetranslation) throws IOException {
 
-    Matcher stringsFileNameMatcher = STRINGS_FILE_NAME_PATTERN.matcher(parentName);
-    stringsFileNameMatcher.find();
-    String language = stringsFileNameMatcher.group(1);
-    String massagedLanguage = LANGUAGE_CODE_MASSAGINGS.get(language);
-    if (massagedLanguage != null) {
-      language = massagedLanguage;
-    }
+		Map<String, String> english = readLines(englishFile);
+		Map<String, String> translated = readLines(translatedFile);
+		String parentName = translatedFile.getParent().getFileName().toString();
 
-    System.out.println("Translating " + language);
+		Matcher stringsFileNameMatcher = STRINGS_FILE_NAME_PATTERN
+				.matcher(parentName);
+		stringsFileNameMatcher.find();
+		String language = stringsFileNameMatcher.group(1);
+		String massagedLanguage = LANGUAGE_CODE_MASSAGINGS.get(language);
+		if (massagedLanguage != null) {
+			language = massagedLanguage;
+		}
 
-    Path resultTempFile = Files.createTempFile(null, null);
+		System.out.println("Translating " + language);
 
-    boolean anyChange = false;
-    try (Writer out = Files.newBufferedWriter(resultTempFile, StandardCharsets.UTF_8)) {
-      out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-      out.write(APACHE_2_LICENSE);
-      out.write("<resources>\n");
+		Path resultTempFile = Files.createTempFile(null, null);
 
-      for (Map.Entry<String,String> englishEntry : english.entrySet()) {
-        String key = englishEntry.getKey();
-        String value = englishEntry.getValue();
-        out.write("  <string name=\"");
-        out.write(key);
-        out.write('"');
-        if (value.contains("%s") || value.contains("%f")) {
-          // Need to specify that there's a value placeholder
-          out.write(" formatted=\"false\"");
-        }
-        out.write('>');
+		boolean anyChange = false;
+		try (Writer out = Files.newBufferedWriter(resultTempFile,
+				StandardCharsets.UTF_8)) {
+			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			out.write(APACHE_2_LICENSE);
+			out.write("<resources>\n");
 
-        String translatedString = translated.get(key);
-        if (translatedString == null || forceRetranslation.contains(key)) {
-          anyChange = true;
-          translatedString = translateString(value, language);
-        }
-        out.write(translatedString);
+			for (Map.Entry<String, String> englishEntry : english.entrySet()) {
+				String key = englishEntry.getKey();
+				String value = englishEntry.getValue();
+				out.write("  <string name=\"");
+				out.write(key);
+				out.write('"');
+				if (value.contains("%s") || value.contains("%f")) {
+					// Need to specify that there's a value placeholder
+					out.write(" formatted=\"false\"");
+				}
+				out.write('>');
 
-        out.write("</string>\n");
-      }
+				String translatedString = translated.get(key);
+				if (translatedString == null
+						|| forceRetranslation.contains(key)) {
+					anyChange = true;
+					translatedString = translateString(value, language);
+				}
+				out.write(translatedString);
 
-      out.write("</resources>\n");
-      out.flush();
-    }
+				out.write("</string>\n");
+			}
 
-    if (anyChange) {
-      System.out.println("  Writing translations");
-      Files.move(resultTempFile, translatedFile, StandardCopyOption.REPLACE_EXISTING);
-    } else {
-      Files.delete(resultTempFile);
-    }
-  }
+			out.write("</resources>\n");
+			out.flush();
+		}
 
-  static String translateString(String english, String language) throws IOException {
-    if ("en".equals(language)) {
-      return english;
-    }
-    String massagedLanguage = LANGUAGE_CODE_MASSAGINGS.get(language);
-    if (massagedLanguage != null) {
-      language = massagedLanguage;
-    }
-    System.out.println("  Need translation for " + english);
+		if (anyChange) {
+			System.out.println("  Writing translations");
+			Files.move(resultTempFile, translatedFile,
+					StandardCopyOption.REPLACE_EXISTING);
+		} else {
+			Files.delete(resultTempFile);
+		}
+	}
 
-    URI translateURI = URI.create(
-        "https://www.googleapis.com/language/translate/v2?key=" + API_KEY + "&q=" +
-            URLEncoder.encode(english, "UTF-8") +
-            "&source=en&target=" + language);
-    CharSequence translateResult = fetch(translateURI);
-    Matcher m = TRANSLATE_RESPONSE_PATTERN.matcher(translateResult);
-    if (!m.find()) {
-      System.err.println("No translate result");
-      System.err.println(translateResult);
-      return english;
-    }
-    String translation = m.group(1);
+	static String translateString(String english, String language)
+			throws IOException {
+		if ("en".equals(language)) {
+			return english;
+		}
+		String massagedLanguage = LANGUAGE_CODE_MASSAGINGS.get(language);
+		if (massagedLanguage != null) {
+			language = massagedLanguage;
+		}
+		System.out.println("  Need translation for " + english);
 
-    // This is a little crude; unescape some common escapes in the raw response
-    translation = translation.replaceAll("&quot;", "\"");
-    translation = translation.replaceAll("&#39;", "'");
-    translation = translation.replaceAll("&amp;quot;", "\"");
-    translation = translation.replaceAll("&amp;#39;", "'");
+		URI translateURI = URI
+				.create("https://www.googleapis.com/language/translate/v2?key="
+						+ API_KEY + "&q=" + URLEncoder.encode(english, "UTF-8")
+						+ "&source=en&target=" + language);
+		CharSequence translateResult = fetch(translateURI);
+		Matcher m = TRANSLATE_RESPONSE_PATTERN.matcher(translateResult);
+		if (!m.find()) {
+			System.err.println("No translate result");
+			System.err.println(translateResult);
+			return english;
+		}
+		String translation = m.group(1);
 
-    System.out.println("  Got translation " + translation);
-    return translation;
-  }
+		// This is a little crude; unescape some common escapes in the raw
+		// response
+		translation = translation.replaceAll("&quot;", "\"");
+		translation = translation.replaceAll("&#39;", "'");
+		translation = translation.replaceAll("&amp;quot;", "\"");
+		translation = translation.replaceAll("&amp;#39;", "'");
 
-  private static CharSequence fetch(URI translateURI) throws IOException {
-    URLConnection connection = translateURI.toURL().openConnection();
-    connection.connect();
-    StringBuilder translateResult = new StringBuilder(200);
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-      char[] buffer = new char[8192];
-      int charsRead;
-      while ((charsRead = in.read(buffer)) > 0) {
-        translateResult.append(buffer, 0, charsRead);
-      }
-    }
-    return translateResult;
-  }
+		System.out.println("  Got translation " + translation);
+		return translation;
+	}
 
-  private static Map<String,String> readLines(Path file) throws IOException {
-    if (Files.exists(file)) {
-      Map<String,String> entries = new TreeMap<>();
-      for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
-        Matcher m = ENTRY_PATTERN.matcher(line);
-        if (m.find()) {
-          entries.put(m.group(1), m.group(2));
-        }
-      }
-      return entries;
-    } else {
-      return Collections.emptyMap();
-    }
-  }
+	private static CharSequence fetch(URI translateURI) throws IOException {
+		URLConnection connection = translateURI.toURL().openConnection();
+		connection.connect();
+		StringBuilder translateResult = new StringBuilder(200);
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(
+				connection.getInputStream(), StandardCharsets.UTF_8))) {
+			char[] buffer = new char[8192];
+			int charsRead;
+			while ((charsRead = in.read(buffer)) > 0) {
+				translateResult.append(buffer, 0, charsRead);
+			}
+		}
+		return translateResult;
+	}
+
+	private static Map<String, String> readLines(Path file) throws IOException {
+		if (Files.exists(file)) {
+			Map<String, String> entries = new TreeMap<>();
+			for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
+				Matcher m = ENTRY_PATTERN.matcher(line);
+				if (m.find()) {
+					entries.put(m.group(1), m.group(2));
+				}
+			}
+			return entries;
+		} else {
+			return Collections.emptyMap();
+		}
+	}
 
 }

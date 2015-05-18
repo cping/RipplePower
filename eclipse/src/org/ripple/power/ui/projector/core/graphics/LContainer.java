@@ -6,7 +6,6 @@ import java.util.Comparator;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.CollectionUtils;
 
-
 public abstract class LContainer extends LComponent {
 
 	private static final Comparator<Object> DEFAULT_COMPARATOR = new Comparator<Object>() {

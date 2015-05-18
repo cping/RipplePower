@@ -60,6 +60,7 @@ public final class LSystem {
 	public static RectBox screenRect;
 
 	public static boolean isPaused;
+
 	/**
 	 * 返回一个Random对象
 	 * 
@@ -100,6 +101,7 @@ public final class LSystem {
 		}
 		return LSystem.random.nextInt(j + 1 - i) + i;
 	}
+
 	public static void repaint() {
 		UIContext context = getInstance().getContext();
 		if (context != null) {

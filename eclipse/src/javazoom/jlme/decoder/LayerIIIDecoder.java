@@ -1035,14 +1035,14 @@ final class LayerIIIDecoder {
 					{ 6, 15, 12, 0 }, { 6, 12, 9, 6 }, { 6, 18, 9, 0 } } };
 
 	private static int n_slen2[] = new int[512]; /*
-													 * MPEG 2.0 slen for
-													 * 'normal' mode
-													 */
+												 * MPEG 2.0 slen for 'normal'
+												 * mode
+												 */
 
 	private static int i_slen2[] = new int[256]; /*
-													 * MPEG 2.0 slen for
-													 * intensity stereo
-													 */
+												 * MPEG 2.0 slen for intensity
+												 * stereo
+												 */
 
 	static {
 		int i, j, k, l;
@@ -1113,9 +1113,9 @@ final class LayerIIIDecoder {
 		}
 
 		if ((ch > 0) && i_stereo) /*
-									 * i_stereo AND second channel ->
-									 * do_layer3() checks this
-									 */
+								 * i_stereo AND second channel -> do_layer3()
+								 * checks this
+								 */
 			slen = i_slen2[gr_info.scalefac_compress >> 1];
 		else
 			slen = n_slen2[gr_info.scalefac_compress];
@@ -1411,66 +1411,77 @@ final class LayerIIIDecoder {
 
 	private final void dequantize_sample(final float xr[][], final int ch,
 			final int gr) {
-		try{
-		GRInfo gr_info = (si.ch[ch].gr[gr]);
-		int cb = 0;
-		int next_cb_boundary = 0;
-		int cb_begin = 0;
-		int cb_width = 0;
-		float g_gain = 0.0f;
-		// choose correct scalefactor band per block type, initalize boundary
-		if ((gr_info.window_switching_flag != 0) && (gr_info.block_type == 2)) {
-			if (gr_info.mixed_block_flag != 0) {
-				next_cb_boundary = sfBandIndexL[1];
-			}
-			// LONG blocks: 0,1,3
-			else {
-				cb_width = sfBandIndexS[1];
-				next_cb_boundary = (cb_width << 2) - cb_width;
-				cb_begin = 0;
-			}
-		} else {
-			next_cb_boundary = sfBandIndexL[1];
-			// LONG blocks: 0,1,3
-		}
-		// Compute overall (global) scaling.
-		g_gain = (float) Math.pow(2.0, (0.25 * (gr_info.global_gain - 210.0)));
-		int maxNonZero = (ch == 0) ? nonzero0 : nonzero1;
-		for (int j = 0; j < maxNonZero; j++) {
-			reste = j % SSLIMIT;
-			quotien = (int) ((j - reste) / SSLIMIT);
-			if (is_1d[j] == 0) {
-				xr[quotien][reste] = 0.0f;
+		try {
+			GRInfo gr_info = (si.ch[ch].gr[gr]);
+			int cb = 0;
+			int next_cb_boundary = 0;
+			int cb_begin = 0;
+			int cb_width = 0;
+			float g_gain = 0.0f;
+			// choose correct scalefactor band per block type, initalize
+			// boundary
+			if ((gr_info.window_switching_flag != 0)
+					&& (gr_info.block_type == 2)) {
+				if (gr_info.mixed_block_flag != 0) {
+					next_cb_boundary = sfBandIndexL[1];
+				}
+				// LONG blocks: 0,1,3
+				else {
+					cb_width = sfBandIndexS[1];
+					next_cb_boundary = (cb_width << 2) - cb_width;
+					cb_begin = 0;
+				}
 			} else {
-				int abv = is_1d[j];
-				if (is_1d[j] > 0) {
-					xr[quotien][reste] = g_gain * t_43[abv];
+				next_cb_boundary = sfBandIndexL[1];
+				// LONG blocks: 0,1,3
+			}
+			// Compute overall (global) scaling.
+			g_gain = (float) Math.pow(2.0,
+					(0.25 * (gr_info.global_gain - 210.0)));
+			int maxNonZero = (ch == 0) ? nonzero0 : nonzero1;
+			for (int j = 0; j < maxNonZero; j++) {
+				reste = j % SSLIMIT;
+				quotien = (int) ((j - reste) / SSLIMIT);
+				if (is_1d[j] == 0) {
+					xr[quotien][reste] = 0.0f;
 				} else {
-					xr[quotien][reste] = -g_gain * t_43[-abv];
+					int abv = is_1d[j];
+					if (is_1d[j] > 0) {
+						xr[quotien][reste] = g_gain * t_43[abv];
+					} else {
+						xr[quotien][reste] = -g_gain * t_43[-abv];
+					}
 				}
 			}
-		}
-		// apply formula per block type
-		for (int i = 0, j = 0; j < maxNonZero; j++, i++) {
-			reste = j % SSLIMIT;
-			quotien = (int) ((j - reste) / SSLIMIT);
-			if (i == next_cb_boundary) {
-				/*
-				 * Adjust critical band boundary
-				 */
-				if ((gr_info.window_switching_flag != 0)
-						&& (gr_info.block_type == 2)) {
-					if (gr_info.mixed_block_flag != 0) {
-						if (i == sfBandIndexL[8]) {
-							next_cb_boundary = sfBandIndexS[4];
-							next_cb_boundary = (next_cb_boundary << 2)
-									- next_cb_boundary;
-							cb = 3;
-							cb_width = sfBandIndexS[4] - sfBandIndexS[3];
-							cb_begin = sfBandIndexS[3];
-							cb_begin = (cb_begin << 2) - cb_begin;
-						} else if (i < sfBandIndexL[8]) {
-							next_cb_boundary = sfBandIndexL[(++cb) + 1];
+			// apply formula per block type
+			for (int i = 0, j = 0; j < maxNonZero; j++, i++) {
+				reste = j % SSLIMIT;
+				quotien = (int) ((j - reste) / SSLIMIT);
+				if (i == next_cb_boundary) {
+					/*
+					 * Adjust critical band boundary
+					 */
+					if ((gr_info.window_switching_flag != 0)
+							&& (gr_info.block_type == 2)) {
+						if (gr_info.mixed_block_flag != 0) {
+							if (i == sfBandIndexL[8]) {
+								next_cb_boundary = sfBandIndexS[4];
+								next_cb_boundary = (next_cb_boundary << 2)
+										- next_cb_boundary;
+								cb = 3;
+								cb_width = sfBandIndexS[4] - sfBandIndexS[3];
+								cb_begin = sfBandIndexS[3];
+								cb_begin = (cb_begin << 2) - cb_begin;
+							} else if (i < sfBandIndexL[8]) {
+								next_cb_boundary = sfBandIndexL[(++cb) + 1];
+							} else {
+								next_cb_boundary = sfBandIndexS[(++cb) + 1];
+								next_cb_boundary = (next_cb_boundary << 2)
+										- next_cb_boundary;
+								cb_begin = sfBandIndexS[cb];
+								cb_width = sfBandIndexS[cb + 1] - cb_begin;
+								cb_begin = (cb_begin << 2) - cb_begin;
+							}
 						} else {
 							next_cb_boundary = sfBandIndexS[(++cb) + 1];
 							next_cb_boundary = (next_cb_boundary << 2)
@@ -1480,47 +1491,40 @@ final class LayerIIIDecoder {
 							cb_begin = (cb_begin << 2) - cb_begin;
 						}
 					} else {
-						next_cb_boundary = sfBandIndexS[(++cb) + 1];
-						next_cb_boundary = (next_cb_boundary << 2)
-								- next_cb_boundary;
-						cb_begin = sfBandIndexS[cb];
-						cb_width = sfBandIndexS[cb + 1] - cb_begin;
-						cb_begin = (cb_begin << 2) - cb_begin;
+						// long blocks
+						next_cb_boundary = sfBandIndexL[(++cb) + 1];
 					}
+				}
+				int s[][] = (ch == 0) ? scalefac0S : scalefac1S;
+				int l[] = (ch == 0) ? scalefac0L : scalefac1L;
+				// Do long/short dependent scaling operations
+				if ((gr_info.window_switching_flag != 0)
+						&& (((gr_info.block_type == 2) && (gr_info.mixed_block_flag == 0)) || ((gr_info.block_type == 2)
+								&& (gr_info.mixed_block_flag != 0) && (j >= 36)))) {
+					int t_index = (i - cb_begin) / cb_width;
+					int idx = s[t_index][cb] << gr_info.scalefac_scale;
+					idx += (gr_info.subblock_gain[t_index] << 2);
+					xr[quotien][reste] *= two_to_negative_half_pow[idx];
 				} else {
-					// long blocks
-					next_cb_boundary = sfBandIndexL[(++cb) + 1];
+					// LONG block types 0,1,3 & 1st 2 subbands of switched
+					// blocks
+					int idx = l[cb];
+					if (gr_info.preflag != 0) {
+						idx += pretab[cb];
+					}
+					idx = idx << gr_info.scalefac_scale;
+					xr[quotien][reste] *= two_to_negative_half_pow[idx];
 				}
 			}
-			int s[][] = (ch == 0) ? scalefac0S : scalefac1S;
-			int l[] = (ch == 0) ? scalefac0L : scalefac1L;
-			// Do long/short dependent scaling operations
-			if ((gr_info.window_switching_flag != 0)
-					&& (((gr_info.block_type == 2) && (gr_info.mixed_block_flag == 0)) || ((gr_info.block_type == 2)
-							&& (gr_info.mixed_block_flag != 0) && (j >= 36)))) {
-				int t_index = (i - cb_begin) / cb_width;
-				int idx = s[t_index][cb] << gr_info.scalefac_scale;
-				idx += (gr_info.subblock_gain[t_index] << 2);
-				xr[quotien][reste] *= two_to_negative_half_pow[idx];
-			} else {
-				// LONG block types 0,1,3 & 1st 2 subbands of switched blocks
-				int idx = l[cb];
-				if (gr_info.preflag != 0) {
-					idx += pretab[cb];
-				}
-				idx = idx << gr_info.scalefac_scale;
-				xr[quotien][reste] *= two_to_negative_half_pow[idx];
-			}
-		}
 
-		int reste;
-		int quotien;
-		for (int j = maxNonZero; j < 576; j++) {
-			reste = j % SSLIMIT;
-			quotien = (int) ((j - reste) / SSLIMIT);
-			xr[quotien][reste] = 0.0f;
-		}
-		}catch (Exception e) {
+			int reste;
+			int quotien;
+			for (int j = maxNonZero; j < 576; j++) {
+				reste = j % SSLIMIT;
+				quotien = (int) ((j - reste) / SSLIMIT);
+				xr[quotien][reste] = 0.0f;
+			}
+		} catch (Exception e) {
 		}
 	}
 
@@ -1528,59 +1532,60 @@ final class LayerIIIDecoder {
 			sfb_lines, reste, quotien;
 
 	private final void reorder(final float xr[][], final int ch, final int gr) {
-		try{
-		GRInfo gr_info = (si.ch[ch].gr[gr]);
+		try {
+			GRInfo gr_info = (si.ch[ch].gr[gr]);
 
-		if ((gr_info.window_switching_flag != 0) && (gr_info.block_type == 2)) {
-			if (gr_info.mixed_block_flag != 0) {
-				// NO REORDER FOR LOW 2 SUBBANDS
-				for (int i = 36; --i >= 0;) {// i = 0; i < 36; i++) {
+			if ((gr_info.window_switching_flag != 0)
+					&& (gr_info.block_type == 2)) {
+				if (gr_info.mixed_block_flag != 0) {
+					// NO REORDER FOR LOW 2 SUBBANDS
+					for (int i = 36; --i >= 0;) {// i = 0; i < 36; i++) {
+						reste = i % SSLIMIT;
+						quotien = (int) ((i - reste) / SSLIMIT);
+						out_1d[i] = xr[quotien][reste];
+					}
+					// REORDERING FOR REST SWITCHED SHORT
+					for (int sfb = 3, sfb_start = sfBandIndexS[3], sfb_lines = sfBandIndexS[4]
+							- sfb_start; sfb < 13; sfb++, sfb_start = sfBandIndexS[sfb], sfb_lines = sfBandIndexS[sfb + 1]
+							- sfb_start) {
+						sfb_start3 = (sfb_start << 2) - sfb_start;
+						for (freq = 0, freq3 = 0; freq < sfb_lines; freq++, freq3 += 3) {
+							src_line = sfb_start3 + freq;
+							des_line = sfb_start3 + freq3;
+							reste = src_line % SSLIMIT;
+							quotien = (int) ((src_line - reste) / SSLIMIT);
+							out_1d[des_line] = xr[quotien][reste];
+							src_line += sfb_lines;
+							des_line++;
+							reste = src_line % SSLIMIT;
+							quotien = (int) ((src_line - reste) / SSLIMIT);
+							out_1d[des_line] = xr[quotien][reste];
+							src_line += sfb_lines;
+							des_line++;
+							reste = src_line % SSLIMIT;
+							quotien = (int) ((src_line - reste) / SSLIMIT);
+							out_1d[des_line] = xr[quotien][reste];
+						}
+					}
+				} else {
+					// pure short
+					int reorder[] = reorder_table[sfreq];
+					for (int i = 576; --i >= 0;) {// while(i < 576){
+						int j = reorder[i];
+						reste = j % SSLIMIT;
+						quotien = (int) ((j - reste) / SSLIMIT);
+						out_1d[i] = xr[quotien][reste];
+					}
+				}
+			} else {
+				// long blocks
+				for (int i = 576; --i >= 0;) {
 					reste = i % SSLIMIT;
 					quotien = (int) ((i - reste) / SSLIMIT);
 					out_1d[i] = xr[quotien][reste];
 				}
-				// REORDERING FOR REST SWITCHED SHORT
-				for (int sfb = 3, sfb_start = sfBandIndexS[3], sfb_lines = sfBandIndexS[4]
-						- sfb_start; sfb < 13; sfb++, sfb_start = sfBandIndexS[sfb], sfb_lines = sfBandIndexS[sfb + 1]
-						- sfb_start) {
-					sfb_start3 = (sfb_start << 2) - sfb_start;
-					for (freq = 0, freq3 = 0; freq < sfb_lines; freq++, freq3 += 3) {
-						src_line = sfb_start3 + freq;
-						des_line = sfb_start3 + freq3;
-						reste = src_line % SSLIMIT;
-						quotien = (int) ((src_line - reste) / SSLIMIT);
-						out_1d[des_line] = xr[quotien][reste];
-						src_line += sfb_lines;
-						des_line++;
-						reste = src_line % SSLIMIT;
-						quotien = (int) ((src_line - reste) / SSLIMIT);
-						out_1d[des_line] = xr[quotien][reste];
-						src_line += sfb_lines;
-						des_line++;
-						reste = src_line % SSLIMIT;
-						quotien = (int) ((src_line - reste) / SSLIMIT);
-						out_1d[des_line] = xr[quotien][reste];
-					}
-				}
-			} else {
-				// pure short
-				int reorder[] = reorder_table[sfreq];
-				for (int i = 576; --i >= 0;) {// while(i < 576){
-					int j = reorder[i];
-					reste = j % SSLIMIT;
-					quotien = (int) ((j - reste) / SSLIMIT);
-					out_1d[i] = xr[quotien][reste];
-				}
 			}
-		} else {
-			// long blocks
-			for (int i = 576; --i >= 0;) {
-				reste = i % SSLIMIT;
-				quotien = (int) ((i - reste) / SSLIMIT);
-				out_1d[i] = xr[quotien][reste];
-			}
-		}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
@@ -1607,8 +1612,8 @@ final class LayerIIIDecoder {
 			// initialization
 			/*
 			 * for (i = 0; i < 576;) { is_pos[i] = 7; is_ratio[i++] = 0.0f;
-			 * is_pos[i] = 7; is_ratio[i++] = 0.0f; is_pos[i] = 7; is_ratio[i++] =
-			 * 0.0f; is_pos[i] = 7; is_ratio[i++] = 0.0f; }
+			 * is_pos[i] = 7; is_ratio[i++] = 0.0f; is_pos[i] = 7; is_ratio[i++]
+			 * = 0.0f; is_pos[i] = 7; is_ratio[i++] = 0.0f; }
 			 */
 			for (int i = 0; i < is_pos.length; i++) {
 				is_pos[i] = 7;

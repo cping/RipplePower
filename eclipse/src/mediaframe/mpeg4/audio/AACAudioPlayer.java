@@ -31,25 +31,30 @@ import mediaframe.mpeg4.audio.AAC.BitStream;
 import mediaframe.mpeg4.audio.AAC.AACDecoder;
 
 /**
- * The <code>AACAudioPlayer</code> class realizes an audio player that plays the AAC audio binary stream.
- * It uses the external AAC library to decode the audio binary stream into the array of audio samples, 
- * which plays through the available audio device (Java2 Sound API or Java1 compatible audio device).
+ * The <code>AACAudioPlayer</code> class realizes an audio player that plays the
+ * AAC audio binary stream. It uses the external AAC library to decode the audio
+ * binary stream into the array of audio samples, which plays through the
+ * available audio device (Java2 Sound API or Java1 compatible audio device).
  */
 public final class AACAudioPlayer extends AudioPlayer implements Runnable {
-	
-	/** Constant, the size of the buffer for audio samples. */	
+
+	/** Constant, the size of the buffer for audio samples. */
 	private final static int BUFFER_SIZE = 15000;
-	
-	/** The input audio binary stream. */	
+
+	/** The input audio binary stream. */
 	private BitStream bitstream;
 
 	/**
-	 * Constructs an <code>AACAudioPlayer</code> object using specified audio data input stream
-	 * and the size of the audio header. 
-	 * @param is audio data input stream.
-	 * @param audioHeaderSize the size of the audio header.
-	 * @throws Exception raises if there is an error occurs 
-	 * (in most cases if no output audio devices have been found).
+	 * Constructs an <code>AACAudioPlayer</code> object using specified audio
+	 * data input stream and the size of the audio header.
+	 * 
+	 * @param is
+	 *            audio data input stream.
+	 * @param audioHeaderSize
+	 *            the size of the audio header.
+	 * @throws Exception
+	 *             raises if there is an error occurs (in most cases if no
+	 *             output audio devices have been found).
 	 */
 	public AACAudioPlayer(InputStream is, int audioHeaderSize) throws Exception {
 		super();
@@ -57,33 +62,37 @@ public final class AACAudioPlayer extends AudioPlayer implements Runnable {
 		audioPlayerThread = new Thread(this, "Audio Player Thread");
 		audioPlayerThread.start();
 	}
-	
+
 	/**
-	 * Decodes the audio binary stream using the external AAC library into the array of audio samples,
-	 * which plays through the available audio device.
+	 * Decodes the audio binary stream using the external AAC library into the
+	 * array of audio samples, which plays through the available audio device.
 	 */
-	public void run() { 
+	public void run() {
 		try {
 			byte[] buf = new byte[BUFFER_SIZE];
 			AACDecoder decoder = null;
-			while(audioPlayerThread != null) {
-				if(decoder == null) {
+			while (audioPlayerThread != null) {
+				if (decoder == null) {
 					decoder = new AACDecoder(bitstream);
-				//	System.out.println("Audio: MPEG AAC " + decoder.getAudioProfile() + ' ' + 
-					//	decoder.getSampleFrequency() + " kHz " + 
-					//	(decoder.getChannelCount() == 1 ? "Mono" :  (decoder.getChannelCount() == 2 ? "Stereo" : decoder.getChannelCount() + " Channels")));
+					// System.out.println("Audio: MPEG AAC " +
+					// decoder.getAudioProfile() + ' ' +
+					// decoder.getSampleFrequency() + " kHz " +
+					// (decoder.getChannelCount() == 1 ? "Mono" :
+					// (decoder.getChannelCount() == 2 ? "Stereo" :
+					// decoder.getChannelCount() + " Channels")));
 				}
-				if(! audioDevice.isOpened()) {
-					audioDevice.open(decoder.getSampleFrequency(), decoder.getChannelCount());
+				if (!audioDevice.isOpened()) {
+					audioDevice.open(decoder.getSampleFrequency(),
+							decoder.getChannelCount());
 				}
-				if(!readyToPlay && audioDevice.isReady()) {
-					synchronized(this) {
+				if (!readyToPlay && audioDevice.isReady()) {
+					synchronized (this) {
 						readyToPlay = true;
 						notifyAll();
 					}
 				}
 				int bufSize = decoder.decodeFrame(buf);
-				if(bufSize > 0) {
+				if (bufSize > 0) {
 					audioDevice.write(buf, bufSize);
 				}
 			}
@@ -92,11 +101,11 @@ public final class AACAudioPlayer extends AudioPlayer implements Runnable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			decoding = false; 
+			decoding = false;
 			readyToPlay = true;
-			audioPlayerThread = null; 
+			audioPlayerThread = null;
 		}
-		//System.out.println("Audio Stream is ended!");
+		// System.out.println("Audio Stream is ended!");
 	}
-	
+
 }

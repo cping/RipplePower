@@ -1,6 +1,5 @@
 package org.ripple.power.txns;
 
-
 import org.json.JSONObject;
 import org.ripple.power.RippleObject;
 import org.ripple.power.RippleSeedAddress;

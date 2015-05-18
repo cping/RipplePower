@@ -104,13 +104,11 @@ public class Tns {
 			float[] lpc, int order) {
 		/*
 		 * - Simple all-pole filter of order "order" defined by y(n) = x(n) -
-		 * a(2)*y(n-1) - ... - a(order+1)*y(n-order)
-		 *  - The state variables of the filter are initialized to zero every
-		 * time
-		 *  - The output data is written over the input data ("in-place
-		 * operation")
-		 *  - An input vector of "size" samples is processed and the index
-		 * increment to the next data sample is given by "inc"
+		 * a(2)*y(n-1) - ... - a(order+1)*y(n-order) - The state variables of
+		 * the filter are initialized to zero every time - The output data is
+		 * written over the input data ("in-place operation") - An input vector
+		 * of "size" samples is processed and the index increment to the next
+		 * data sample is given by "inc"
 		 */
 		int i, j;
 		float y;

@@ -2,7 +2,6 @@ package org.ripple.power.nodejs;
 
 import java.util.List;
 
-
 public abstract class JSPluginTool {
 
 	private static String parseScriptName(String name) {

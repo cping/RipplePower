@@ -6,21 +6,22 @@ import java.util.Map;
 
 import org.ripple.power.utils.CollectionUtils;
 
-
 public class ClassUtils {
 
-	final static Map<Object,Object> lazyMap = Collections.synchronizedMap(new HashMap<Object,Object>(1000));
+	final static Map<Object, Object> lazyMap = Collections
+			.synchronizedMap(new HashMap<Object, Object>(1000));
 
 	final static private String CLASS_FILE_SUFFIX = ".class";
 
 	final static private char PACKAGE_SEPARATOR = '.';
 
-	final static private Map<Object,Object> baseTypeMap = CollectionUtils.createMap(9);
+	final static private Map<Object, Object> baseTypeMap = CollectionUtils
+			.createMap(9);
 
-	final static private Map<Object,Object> baseClassMap = CollectionUtils.createMap(9);
+	final static private Map<Object, Object> baseClassMap = CollectionUtils
+			.createMap(9);
 
-	
-	//类与对象的对应关系
+	// 类与对象的对应关系
 	static {
 		baseClassMap.put(Character.class, Character.TYPE);
 		baseClassMap.put(Integer.class, Integer.TYPE);
@@ -33,7 +34,7 @@ public class ClassUtils {
 		baseClassMap.put(Void.class, Void.TYPE);
 	}
 
-	//对象与类的对应关系
+	// 对象与类的对应关系
 	static {
 		baseTypeMap.put(Boolean.TYPE, Boolean.class);
 		baseTypeMap.put(Byte.TYPE, Byte.class);
@@ -60,8 +61,7 @@ public class ClassUtils {
 		return baseTypeMap;
 	}
 
-	final public static boolean equals(ClassLoader cl,
-			final ClassLoader other) {
+	final public static boolean equals(ClassLoader cl, final ClassLoader other) {
 		while (cl != null) {
 			if (cl == other) {
 				return true;

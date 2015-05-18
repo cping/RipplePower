@@ -25,96 +25,98 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- * Customized {@link Response} which add support for getting the response's body as an XML document (@link WebDavResponse#getBodyAsXML}
+ * Customized {@link Response} which add support for getting the response's body
+ * as an XML document (@link WebDavResponse#getBodyAsXML}
  */
 public class WebDavResponse implements Response {
 
-    private final Response response;
-    private final Document document;
+	private final Response response;
+	private final Document document;
 
-    public WebDavResponse(Response response, Document document) {
-        this.response = response;
-        this.document = document;
-    }
+	public WebDavResponse(Response response, Document document) {
+		this.response = response;
+		this.document = document;
+	}
 
-    public int getStatusCode() {
-        return response.getStatusCode();
-    }
+	public int getStatusCode() {
+		return response.getStatusCode();
+	}
 
-    public String getStatusText() {
-        return response.getStatusText();
-    }
+	public String getStatusText() {
+		return response.getStatusText();
+	}
 
-    @Override
-    public byte[] getResponseBodyAsBytes() throws IOException {
-        return response.getResponseBodyAsBytes();
-    }
+	@Override
+	public byte[] getResponseBodyAsBytes() throws IOException {
+		return response.getResponseBodyAsBytes();
+	}
 
-    public ByteBuffer getResponseBodyAsByteBuffer() throws IOException {
-        return response.getResponseBodyAsByteBuffer();
-    }
+	public ByteBuffer getResponseBodyAsByteBuffer() throws IOException {
+		return response.getResponseBodyAsByteBuffer();
+	}
 
-    public InputStream getResponseBodyAsStream() throws IOException {
-        return response.getResponseBodyAsStream();
-    }
+	public InputStream getResponseBodyAsStream() throws IOException {
+		return response.getResponseBodyAsStream();
+	}
 
-    public String getResponseBodyExcerpt(int maxLength) throws IOException {
-        return response.getResponseBodyExcerpt(maxLength);
-    }
+	public String getResponseBodyExcerpt(int maxLength) throws IOException {
+		return response.getResponseBodyExcerpt(maxLength);
+	}
 
-    public String getResponseBodyExcerpt(int maxLength, String charset) throws IOException {
-        return response.getResponseBodyExcerpt(maxLength, charset);
-    }
+	public String getResponseBodyExcerpt(int maxLength, String charset)
+			throws IOException {
+		return response.getResponseBodyExcerpt(maxLength, charset);
+	}
 
-    public String getResponseBody() throws IOException {
-        return response.getResponseBody();
-    }
+	public String getResponseBody() throws IOException {
+		return response.getResponseBody();
+	}
 
-    public String getResponseBody(String charset) throws IOException {
-        return response.getResponseBody(charset);
-    }
+	public String getResponseBody(String charset) throws IOException {
+		return response.getResponseBody(charset);
+	}
 
-    public URI getUri() throws MalformedURLException {
-        return response.getUri();
-    }
+	public URI getUri() throws MalformedURLException {
+		return response.getUri();
+	}
 
-    public String getContentType() {
-        return response.getContentType();
-    }
+	public String getContentType() {
+		return response.getContentType();
+	}
 
-    public String getHeader(String name) {
-        return response.getHeader(name);
-    }
+	public String getHeader(String name) {
+		return response.getHeader(name);
+	}
 
-    public List<String> getHeaders(String name) {
-        return response.getHeaders(name);
-    }
+	public List<String> getHeaders(String name) {
+		return response.getHeaders(name);
+	}
 
-    public FluentCaseInsensitiveStringsMap getHeaders() {
-        return response.getHeaders();
-    }
+	public FluentCaseInsensitiveStringsMap getHeaders() {
+		return response.getHeaders();
+	}
 
-    public boolean isRedirected() {
-        return response.isRedirected();
-    }
+	public boolean isRedirected() {
+		return response.isRedirected();
+	}
 
-    public List<Cookie> getCookies() {
-        return response.getCookies();
-    }
+	public List<Cookie> getCookies() {
+		return response.getCookies();
+	}
 
-    public boolean hasResponseStatus() {
-        return response.hasResponseStatus();
-    }
+	public boolean hasResponseStatus() {
+		return response.hasResponseStatus();
+	}
 
-    public boolean hasResponseHeaders() {
-        return response.hasResponseHeaders();
-    }
+	public boolean hasResponseHeaders() {
+		return response.hasResponseHeaders();
+	}
 
-    public boolean hasResponseBody() {
-        return response.hasResponseBody();
-    }
+	public boolean hasResponseBody() {
+		return response.hasResponseBody();
+	}
 
-    public Document getBodyAsXML() {
-        return document;
-    }
+	public Document getBodyAsXML() {
+		return document;
+	}
 }

@@ -20,7 +20,6 @@
  */
 package org.ripple.power.timer;
 
-
 public class LTimerContext {
 
 	public long timeSinceLastUpdate, millisSleepTime;

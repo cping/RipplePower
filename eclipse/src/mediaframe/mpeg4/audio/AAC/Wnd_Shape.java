@@ -43,13 +43,13 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
  * Wnd_Shape
  */
 final class Wnd_Shape {
-	byte    this_bk;
-	byte    prev_bk;
+	byte this_bk;
+	byte prev_bk;
 }

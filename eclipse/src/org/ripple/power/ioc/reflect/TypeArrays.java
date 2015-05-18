@@ -19,8 +19,8 @@ public class TypeArrays extends TypeArray {
 	}
 
 	public static TypeArrays getNamedTypeArray(Constructor<?> constructor) {
-		return new TypeArrays(CONSTRUCTOR_METHOD_NAME, constructor
-				.getParameterTypes());
+		return new TypeArrays(CONSTRUCTOR_METHOD_NAME,
+				constructor.getParameterTypes());
 	}
 
 	public TypeArrays(Method method, Class<?>[] types) {

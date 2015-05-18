@@ -22,7 +22,6 @@ import javax.swing.text.View;
 
 import org.ripple.power.ui.RPNavlink;
 
-
 public class NavlinkUI extends BasicButtonUI {
 	protected Color selectColor = Color.decode("#EBEBEB");
 	protected Color focusColor = Color.decode("#EBEBEB");
@@ -85,8 +84,10 @@ public class NavlinkUI extends BasicButtonUI {
 
 		if (text != null && !text.equals("")) {
 			Graphics2D g2 = (Graphics2D) g.create();
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
 			View v = (View) c.getClientProperty(BasicHTML.propertyKey);
 			if (v != null) {
@@ -97,7 +98,8 @@ public class NavlinkUI extends BasicButtonUI {
 		}
 	}
 
-	private String layout(AbstractButton b, FontMetrics fm, int width, int height) {
+	private String layout(AbstractButton b, FontMetrics fm, int width,
+			int height) {
 		Insets i = b.getInsets();
 		viewRect.x = i.left;
 		viewRect.y = i.top;
@@ -107,9 +109,11 @@ public class NavlinkUI extends BasicButtonUI {
 		textRect.x = textRect.y = textRect.width = textRect.height = 0;
 		iconRect.x = iconRect.y = iconRect.width = iconRect.height = 0;
 
-		return SwingUtilities.layoutCompoundLabel(b, fm, b.getText(), b.getIcon(), b.getVerticalAlignment(),
-				b.getHorizontalAlignment(), b.getVerticalTextPosition(), b.getHorizontalTextPosition(), viewRect,
-				iconRect, textRect, b.getText() == null ? 0 : b.getIconTextGap());
+		return SwingUtilities.layoutCompoundLabel(b, fm, b.getText(),
+				b.getIcon(), b.getVerticalAlignment(),
+				b.getHorizontalAlignment(), b.getVerticalTextPosition(),
+				b.getHorizontalTextPosition(), viewRect, iconRect, textRect,
+				b.getText() == null ? 0 : b.getIconTextGap());
 	}
 
 	protected void paintButtonPressed(Graphics g, AbstractButton b) {
@@ -122,15 +126,18 @@ public class NavlinkUI extends BasicButtonUI {
 					int arc = link.getNavbar().getArc();
 
 					Graphics2D g2 = (Graphics2D) g.create();
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+							RenderingHints.VALUE_ANTIALIAS_ON);
+					g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+							RenderingHints.VALUE_STROKE_PURE);
 
-					RoundRectangle2D rect = new RoundRectangle2D.Float(0, 0, width, height, link.getNavbar().getArc(),
-							arc);
+					RoundRectangle2D rect = new RoundRectangle2D.Float(0, 0,
+							width, height, link.getNavbar().getArc(), arc);
 					g2.setColor(getSelectColor());
 					g2.fill(rect);
 
-					Rectangle2D rectFix = new Rectangle((int) width - arc, 0, (int) arc, (int) height);
+					Rectangle2D rectFix = new Rectangle((int) width - arc, 0,
+							(int) arc, (int) height);
 					g2.fill(rectFix);
 
 					g2.dispose();
@@ -143,8 +150,8 @@ public class NavlinkUI extends BasicButtonUI {
 		}
 	}
 
-
-	protected void paintText(Graphics g, JComponent c, Rectangle textRect, String text) {
+	protected void paintText(Graphics g, JComponent c, Rectangle textRect,
+			String text) {
 		AbstractButton b = (AbstractButton) c;
 		ButtonModel model = b.getModel();
 		FontMetrics fm = g.getFontMetrics();
@@ -155,14 +162,17 @@ public class NavlinkUI extends BasicButtonUI {
 		} else {
 			g.setColor(getDisabledTextColor());
 		}
-		BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemIndex, textRect.x, textRect.y + fm.getAscent());
+		BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemIndex,
+				textRect.x, textRect.y + fm.getAscent());
 	}
 
 	public Dimension getPreferredSize(JComponent c) {
 		AbstractButton b = (AbstractButton) c;
-		Dimension d = BasicGraphicsUtils.getPreferredButtonSize(b, b.getIconTextGap());
+		Dimension d = BasicGraphicsUtils.getPreferredButtonSize(b,
+				b.getIconTextGap());
 		Insets margin = b.getMargin();
-		d.setSize(d.getWidth() + margin.left + margin.right, d.getHeight() + margin.top + margin.bottom);
+		d.setSize(d.getWidth() + margin.left + margin.right, d.getHeight()
+				+ margin.top + margin.bottom);
 		return d;
 	}
 

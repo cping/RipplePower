@@ -60,10 +60,9 @@ public abstract class AbstractContainer implements Container {
 				Object candidateKey = (Object) it.next();
 
 				if (candidateKey instanceof Class) {
-					keys
-							.add(((Class<?>) key)
-									.isAssignableFrom((Class<?>) candidateKey) ? candidateKey
-									: key);
+					keys.add(((Class<?>) key)
+							.isAssignableFrom((Class<?>) candidateKey) ? candidateKey
+							: key);
 				}
 			}
 			rightKey = CollectionUtils.first(keys);
@@ -84,7 +83,8 @@ public abstract class AbstractContainer implements Container {
 	}
 
 	public void inject(Object target) {
-		for (Iterator<Object> it = this.injectors.keySet().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = this.injectors.keySet().iterator(); it
+				.hasNext();) {
 			Object key = it.next();
 			if (key instanceof Class) {
 				Class<?> classKey = (Class<?>) key;
@@ -96,7 +96,6 @@ public abstract class AbstractContainer implements Container {
 			}
 		}
 	}
-
 
 	public Object getAttributeValue(Object key) {
 		Object rightKey = key;
@@ -121,7 +120,6 @@ public abstract class AbstractContainer implements Container {
 	private Interceptor createInterceptor() {
 		return new BindInterceptor();
 	}
-
 
 	private Object getInstanceFromBind(Object key) {
 		BindMediator result = getBindMediator(key);

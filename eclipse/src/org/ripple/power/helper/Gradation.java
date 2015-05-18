@@ -67,15 +67,16 @@ public class Gradation {
 					gl.setColor(new Color((start.getRed() * (width - i))
 							/ width + (end.getRed() * i) / width, (start
 							.getGreen() * (width - i))
-							/ width + (end.getGreen() * i) / width, (start
-							.getBlue() * (width - i))
-							/ width + (end.getBlue() * i) / width, alpha));
+							/ width
+							+ (end.getGreen() * i) / width,
+							(start.getBlue() * (width - i)) / width
+									+ (end.getBlue() * i) / width, alpha));
 					gl.drawLine(i, 0, i, height);
 				}
 				gl.dispose();
 				gl = null;
 			}
-			g.drawImage(drawWidth, x, y,null);
+			g.drawImage(drawWidth, x, y, null);
 		} catch (Exception e) {
 			for (int i = 0; i < width; i++) {
 				g.setColor(new Color((start.getRed() * (width - i)) / width
@@ -83,7 +84,8 @@ public class Gradation {
 						(start.getGreen() * (width - i)) / width
 								+ (end.getGreen() * i) / width, (start
 								.getBlue() * (width - i))
-								/ width + (end.getBlue() * i) / width, alpha));
+								/ width
+								+ (end.getBlue() * i) / width, alpha));
 				g.drawLine(i + x, y, i + x, y + height);
 			}
 		}
@@ -98,15 +100,16 @@ public class Gradation {
 					gl.setColor(new Color((start.getRed() * (height - i))
 							/ height + (end.getRed() * i) / height, (start
 							.getGreen() * (height - i))
-							/ height + (end.getGreen() * i) / height, (start
-							.getBlue() * (height - i))
-							/ height + (end.getBlue() * i) / height, alpha));
+							/ height
+							+ (end.getGreen() * i) / height,
+							(start.getBlue() * (height - i)) / height
+									+ (end.getBlue() * i) / height, alpha));
 					gl.drawLine(0, i, width, i);
 				}
 				gl.dispose();
 				gl = null;
 			}
-			g.drawImage(drawHeight, x, y,null);
+			g.drawImage(drawHeight, x, y, null);
 		} catch (Exception e) {
 			for (int i = 0; i < height; i++) {
 				g.setColor(new Color((start.getRed() * (height - i)) / height
@@ -114,7 +117,8 @@ public class Gradation {
 						(start.getGreen() * (height - i)) / height
 								+ (end.getGreen() * i) / height, (start
 								.getBlue() * (height - i))
-								/ height + (end.getBlue() * i) / height, alpha));
+								/ height
+								+ (end.getBlue() * i) / height, alpha));
 				g.drawLine(x, i + y, x + width, i + y);
 			}
 		}

@@ -33,15 +33,16 @@ public class SunUnsafe implements Unsafe {
 		}
 	}
 
-	public long getLong(Object...  args) {
-		return (int) ReflectorUtils.getNotPrefixInvoke(sunUnsafe, "getLong", args);
+	public long getLong(Object... args) {
+		return (int) ReflectorUtils.getNotPrefixInvoke(sunUnsafe, "getLong",
+				args);
 	}
-	
+
 	public int arrayIndexScale(Class<?> clazz) {
 		return (int) ReflectorUtils.getNotPrefixInvoke(sunUnsafe,
 				"arrayIndexScale", new Object[] { clazz });
 	}
-	
+
 	public int arrayBaseOffset(Class<?> clazz) {
 		return (int) ReflectorUtils.getNotPrefixInvoke(sunUnsafe,
 				"arrayBaseOffset", new Object[] { clazz });

@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 
-	private final static Logger logger = LoggerFactory.getLogger(AsyncHandlerWrapper.class);
+	private final static Logger logger = LoggerFactory
+			.getLogger(AsyncHandlerWrapper.class);
 	private final AsyncHandler<T> asyncHandler;
 	private final Semaphore available;
 
@@ -30,7 +31,8 @@ public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 		} finally {
 			available.release();
 			if (logger.isDebugEnabled()) {
-				logger.debug("Current Throttling Status after onThrowable {}", available.availablePermits());
+				logger.debug("Current Throttling Status after onThrowable {}",
+						available.availablePermits());
 			}
 		}
 	}
@@ -39,7 +41,8 @@ public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
+	public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart)
+			throws Exception {
 		return asyncHandler.onBodyPartReceived(bodyPart);
 	}
 
@@ -47,7 +50,8 @@ public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public STATE onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
+	public STATE onStatusReceived(HttpResponseStatus responseStatus)
+			throws Exception {
 		return asyncHandler.onStatusReceived(responseStatus);
 	}
 
@@ -55,7 +59,8 @@ public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public STATE onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+	public STATE onHeadersReceived(HttpResponseHeaders headers)
+			throws Exception {
 		return asyncHandler.onHeadersReceived(headers);
 	}
 
@@ -66,7 +71,8 @@ public class AsyncHandlerWrapper<T> implements AsyncHandler<T> {
 	public T onCompleted() throws Exception {
 		available.release();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Current Throttling Status {}", available.availablePermits());
+			logger.debug("Current Throttling Status {}",
+					available.availablePermits());
 		}
 		return asyncHandler.onCompleted();
 	}

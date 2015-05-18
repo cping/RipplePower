@@ -22,22 +22,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple {@link AsyncHandler} of type {@link Response}
  */
-public class AsyncCompletionHandlerBase extends AsyncCompletionHandler<Response> {
-    private final Logger log = LoggerFactory.getLogger(AsyncCompletionHandlerBase.class);
+public class AsyncCompletionHandlerBase extends
+		AsyncCompletionHandler<Response> {
+	private final Logger log = LoggerFactory
+			.getLogger(AsyncCompletionHandlerBase.class);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Response onCompleted(Response response) throws Exception {
-        return response;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Response onCompleted(Response response) throws Exception {
+		return response;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onThrowable(Throwable t) {
-        log.debug(t.getMessage(), t);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onThrowable(Throwable t) {
+		log.debug(t.getMessage(), t);
+	}
 }

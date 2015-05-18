@@ -80,7 +80,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		this.store.save(g2d);
 	}
 
-	public LGraphics(Graphics2D g,int w,int h) {
+	public LGraphics(Graphics2D g, int w, int h) {
 		this.width = w;
 		this.height = h;
 		this.g2d = g;
@@ -88,16 +88,14 @@ public class LGraphics extends Graphics2D implements LTrans {
 		this.store.save(g2d);
 	}
 
-	
 	public void resetColor() {
 		this.setColor(Color.white);
 	}
 
-
 	public void save() {
 		this.store.save(g2d);
 	}
-	
+
 	public void restore() {
 		this.store.restore(g2d);
 	}

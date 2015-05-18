@@ -24,72 +24,76 @@ import java.util.List;
  */
 public abstract class HttpResponseStatus {
 
-    private final URI uri;
-    protected final AsyncHttpClientConfig config;
+	private final URI uri;
+	protected final AsyncHttpClientConfig config;
 
-    public HttpResponseStatus(URI uri, AsyncHttpClientConfig config) {
-        this.uri = uri;
-        this.config = config;
-    }
+	public HttpResponseStatus(URI uri, AsyncHttpClientConfig config) {
+		this.uri = uri;
+		this.config = config;
+	}
 
-    /**
-     * Return the request {@link URI}
-     * 
-     * @return the request {@link URI}
-     */
-    public final URI getUri() {
-        return uri;
-    }
-    
-    /**
-     * Prepare a {@link Response}
-     *
-     * @param headers   {@link HttpResponseHeaders}
-     * @param bodyParts list of {@link HttpResponseBodyPart}
-     * @param config the client config
-     * @return a {@link Response}
-     */
-    public abstract Response prepareResponse(HttpResponseHeaders headers, List<HttpResponseBodyPart> bodyParts);
+	/**
+	 * Return the request {@link URI}
+	 * 
+	 * @return the request {@link URI}
+	 */
+	public final URI getUri() {
+		return uri;
+	}
 
-    /**
-     * Return the response status code
-     * 
-     * @return the response status code
-     */
-    public abstract int getStatusCode();
+	/**
+	 * Prepare a {@link Response}
+	 * 
+	 * @param headers
+	 *            {@link HttpResponseHeaders}
+	 * @param bodyParts
+	 *            list of {@link HttpResponseBodyPart}
+	 * @param config
+	 *            the client config
+	 * @return a {@link Response}
+	 */
+	public abstract Response prepareResponse(HttpResponseHeaders headers,
+			List<HttpResponseBodyPart> bodyParts);
 
-    /**
-     * Return the response status text
-     * 
-     * @return the response status text
-     */
-    public abstract String getStatusText();
+	/**
+	 * Return the response status code
+	 * 
+	 * @return the response status code
+	 */
+	public abstract int getStatusCode();
 
-    /**
-     * Protocol name from status line.
-     * 
-     * @return Protocol name.
-     */
-    public abstract String getProtocolName();
+	/**
+	 * Return the response status text
+	 * 
+	 * @return the response status text
+	 */
+	public abstract String getStatusText();
 
-    /**
-     * Protocol major version.
-     * 
-     * @return Major version.
-     */
-    public abstract int getProtocolMajorVersion();
+	/**
+	 * Protocol name from status line.
+	 * 
+	 * @return Protocol name.
+	 */
+	public abstract String getProtocolName();
 
-    /**
-     * Protocol minor version.
-     * 
-     * @return Minor version.
-     */
-    public abstract int getProtocolMinorVersion();
+	/**
+	 * Protocol major version.
+	 * 
+	 * @return Major version.
+	 */
+	public abstract int getProtocolMajorVersion();
 
-    /**
-     * Full protocol name + version
-     * 
-     * @return protocol name + version
-     */
-    public abstract String getProtocolText();
+	/**
+	 * Protocol minor version.
+	 * 
+	 * @return Minor version.
+	 */
+	public abstract int getProtocolMinorVersion();
+
+	/**
+	 * Full protocol name + version
+	 * 
+	 * @return protocol name + version
+	 */
+	public abstract String getProtocolText();
 }

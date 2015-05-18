@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2008
  * 
@@ -29,7 +28,6 @@ import java.util.Set;
 import org.ripple.power.collection.MapArray;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.power.utils.ReflectorUtils;
-
 
 public class ClassMethod {
 

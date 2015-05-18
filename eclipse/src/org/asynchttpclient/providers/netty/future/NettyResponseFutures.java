@@ -13,86 +13,99 @@ import org.asynchttpclient.util.AsyncHttpProviderUtils;
 
 public class NettyResponseFutures {
 
-    public static <T> NettyResponseFuture<T> newNettyResponseFuture(URI uri, Request request, AsyncHandler<T> asyncHandler, HttpRequest nettyRequest, AsyncHttpClientConfig config, ProxyServer proxyServer) {
+	public static <T> NettyResponseFuture<T> newNettyResponseFuture(URI uri,
+			Request request, AsyncHandler<T> asyncHandler,
+			HttpRequest nettyRequest, AsyncHttpClientConfig config,
+			ProxyServer proxyServer) {
 
-        int requestTimeout = AsyncHttpProviderUtils.requestTimeout(config, request);
-        NettyResponseFuture<T> f = new NettyResponseFuture<T>(uri,//
-                request,//
-                asyncHandler,//
-                nettyRequest,//
-                requestTimeout,//
-                config,//
-                request.getConnectionPoolKeyStrategy(),//
-                proxyServer);
+		int requestTimeout = AsyncHttpProviderUtils.requestTimeout(config,
+				request);
+		NettyResponseFuture<T> f = new NettyResponseFuture<T>(uri,//
+				request,//
+				asyncHandler,//
+				nettyRequest,//
+				requestTimeout,//
+				config,//
+				request.getConnectionPoolKeyStrategy(),//
+				proxyServer);
 
-        String expectHeader = request.getHeaders().getFirstValue(HttpHeaders.Names.EXPECT);
-        if (expectHeader != null && expectHeader.equalsIgnoreCase(HttpHeaders.Values.CONTINUE)) {
-            f.getAndSetWriteBody(false);
-        }
-        return f;
-    }
-    
-    public static boolean abortOnConnectCloseException(Throwable cause) {
-        try {
-            for (StackTraceElement element : cause.getStackTrace()) {
-                if (element.getClassName().equals("sun.nio.ch.SocketChannelImpl") && element.getMethodName().equals("checkConnect")) {
-                    return true;
-                }
-            }
+		String expectHeader = request.getHeaders().getFirstValue(
+				HttpHeaders.Names.EXPECT);
+		if (expectHeader != null
+				&& expectHeader.equalsIgnoreCase(HttpHeaders.Values.CONTINUE)) {
+			f.getAndSetWriteBody(false);
+		}
+		return f;
+	}
 
-            if (cause.getCause() != null) {
-                return abortOnConnectCloseException(cause.getCause());
-            }
+	public static boolean abortOnConnectCloseException(Throwable cause) {
+		try {
+			for (StackTraceElement element : cause.getStackTrace()) {
+				if (element.getClassName().equals(
+						"sun.nio.ch.SocketChannelImpl")
+						&& element.getMethodName().equals("checkConnect")) {
+					return true;
+				}
+			}
 
-        } catch (Throwable t) {
-        }
-        return false;
-    }
+			if (cause.getCause() != null) {
+				return abortOnConnectCloseException(cause.getCause());
+			}
 
-    public static boolean abortOnDisconnectException(Throwable cause) {
-        try {
-            for (StackTraceElement element : cause.getStackTrace()) {
-                if (element.getClassName().equals("io.netty.handler.ssl.SslHandler") && element.getMethodName().equals("channelDisconnected")) {
-                    return true;
-                }
-            }
+		} catch (Throwable t) {
+		}
+		return false;
+	}
 
-            if (cause.getCause() != null) {
-                return abortOnConnectCloseException(cause.getCause());
-            }
+	public static boolean abortOnDisconnectException(Throwable cause) {
+		try {
+			for (StackTraceElement element : cause.getStackTrace()) {
+				if (element.getClassName().equals(
+						"io.netty.handler.ssl.SslHandler")
+						&& element.getMethodName()
+								.equals("channelDisconnected")) {
+					return true;
+				}
+			}
 
-        } catch (Throwable t) {
-        }
-        return false;
-    }
+			if (cause.getCause() != null) {
+				return abortOnConnectCloseException(cause.getCause());
+			}
 
-    public static boolean abortOnReadCloseException(Throwable cause) {
+		} catch (Throwable t) {
+		}
+		return false;
+	}
 
-        for (StackTraceElement element : cause.getStackTrace()) {
-            if (element.getClassName().equals("sun.nio.ch.SocketDispatcher") && element.getMethodName().equals("read")) {
-                return true;
-            }
-        }
+	public static boolean abortOnReadCloseException(Throwable cause) {
 
-        if (cause.getCause() != null) {
-            return abortOnReadCloseException(cause.getCause());
-        }
+		for (StackTraceElement element : cause.getStackTrace()) {
+			if (element.getClassName().equals("sun.nio.ch.SocketDispatcher")
+					&& element.getMethodName().equals("read")) {
+				return true;
+			}
+		}
 
-        return false;
-    }
+		if (cause.getCause() != null) {
+			return abortOnReadCloseException(cause.getCause());
+		}
 
-    public static boolean abortOnWriteCloseException(Throwable cause) {
+		return false;
+	}
 
-        for (StackTraceElement element : cause.getStackTrace()) {
-            if (element.getClassName().equals("sun.nio.ch.SocketDispatcher") && element.getMethodName().equals("write")) {
-                return true;
-            }
-        }
+	public static boolean abortOnWriteCloseException(Throwable cause) {
 
-        if (cause.getCause() != null) {
-            return abortOnReadCloseException(cause.getCause());
-        }
+		for (StackTraceElement element : cause.getStackTrace()) {
+			if (element.getClassName().equals("sun.nio.ch.SocketDispatcher")
+					&& element.getMethodName().equals("write")) {
+				return true;
+			}
+		}
 
-        return false;
-    }
+		if (cause.getCause() != null) {
+			return abortOnReadCloseException(cause.getCause());
+		}
+
+		return false;
+	}
 }

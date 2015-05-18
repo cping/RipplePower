@@ -43,20 +43,20 @@
  * be included in all copies or derivative works." 
  * Copyright(c)1996.
  * 
- ******************************************************************************/                                                                          
+ ******************************************************************************/
 package mediaframe.mpeg4.audio.AAC;
 
 /**
  * ADIF_Header
  */
 public class ADIF_Header {
-	char[]  adif_id = new char[Constants.LEN_ADIF_ID+1];
-	int	    copy_id_present;
-	char[]  copy_id = new char[Constants.LEN_COPYRT_ID+1];
-	int	    original_copy;
-	int	    home;
-	int	    bitstream_type;
-	long    bitrate;
-	int	    num_pce;
-	int[]   prog_tags = new int[(1<<Constants.LEN_TAG)];
+	char[] adif_id = new char[Constants.LEN_ADIF_ID + 1];
+	int copy_id_present;
+	char[] copy_id = new char[Constants.LEN_COPYRT_ID + 1];
+	int original_copy;
+	int home;
+	int bitstream_type;
+	long bitrate;
+	int num_pce;
+	int[] prog_tags = new int[(1 << Constants.LEN_TAG)];
 }

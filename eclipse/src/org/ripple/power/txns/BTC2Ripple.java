@@ -4,7 +4,7 @@ public class BTC2Ripple {
 
 	public static String def_bitcoin_bridge = "https://www.btc2ripple.com";
 
-	//rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2qBTC
+	// rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2qBTC
 	public static String def_b2rAddress = "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q";
 
 	private String _recipient;

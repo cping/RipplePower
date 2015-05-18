@@ -83,8 +83,8 @@ public class REST_API {
 		}
 		return null;
 	}
-	
+
 	public static JSONObject findXRPPaths(String address, String destination) {
-		return findPaths(address,destination,"1+XRP");
+		return findPaths(address, destination, "1+XRP");
 	}
 }

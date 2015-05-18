@@ -3,7 +3,6 @@ package org.ripple.power.nodejs;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class SimplePluginManager implements JSPluginManager {
 	private List<JSPlugin> plist;
 	private static SimplePluginManager instance;
