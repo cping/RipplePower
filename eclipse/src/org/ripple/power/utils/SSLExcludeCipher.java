@@ -86,6 +86,7 @@ public class SSLExcludeCipher {
             }
             if (!exclude) {
                 enabledCiphers.add(cipher);
+                System.out.println(cipher);
             }
         }
         String[] cArray = new String[enabledCiphers.size()];
@@ -96,7 +97,6 @@ public class SSLExcludeCipher {
         sf = new DOSSLSocketFactory(sf, cArray);
         urlConnection.setSSLSocketFactory(sf);
         
-        System.out.println(urlConnection.getInputStream());
         BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
         String inputLine;
         StringBuffer buffer = new StringBuffer();

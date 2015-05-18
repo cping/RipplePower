@@ -102,61 +102,76 @@ public class RPClient {
 		// 突然发现报错Could not generate DH
 		// keypair（最早是没有的，不知道rl又换了什么……），似乎遇到java的bug了，目前验证ripple.com站的ssl证书会溢出，然后报错的是sun.security.ssl.SSLSocketImpl部分，私有代码想修改都不行，只能过几天换成openssl直接读吧……
 		HttpRequest request = HttpRequest.get(url);
-		request.trustAllCerts();
 		request.trustAllHosts();
-		if (request.ok()) {
-			String result = request.body();
-			if (result.indexOf('\r') != -1) {
-				result = StringUtils.replace(result, "\r", "\n");
+		request.trustAllCerts();
+		boolean ok = false;
+		try {
+			ok = request.ok();
+		} catch (Throwable ex) {
+
+		}
+		String result = null;
+		if (ok) {
+			result = request.body();
+		} else {
+			//亲测除了java外（而且android下也正常），其它用什么都解析正常，等着oracle打补丁吧，暂时先用c#写个小程序读取下……
+			try {
+				result = HttpRequest.fix_ssl_open(url);
+			} catch (Exception e) {
+				return rippled;
 			}
-			StringTokenizer str = new StringTokenizer(result, "\n");
-			int flagNext = -1;
-			for (; str.hasMoreTokens();) {
-				String context = str.nextToken().trim();
-				if (context != null && context.length() > 0) {
-					if (context.startsWith("[")) {
-						if ("[accounts]".equals(context)) {
-							flagNext = 0;
-						} else if ("[validation_public_key]".equals(context)) {
-							flagNext = 1;
-						} else if ("[domain]".equals(context)) {
-							flagNext = 2;
-						} else if ("[ips]".equals(context)) {
-							flagNext = 3;
-						} else if ("[validators]".equals(context)) {
-							flagNext = 4;
-						} else if ("[authinfo_url]".equals(context)) {
-							flagNext = 5;
-						} else {
-							flagNext = -1;
-						}
-						continue;
+		}
+		if (result.indexOf('\r') != -1) {
+			result = StringUtils.replace(result, "\r", "\n");
+		}
+		StringTokenizer str = new StringTokenizer(result, "\n");
+		int flagNext = -1;
+		for (; str.hasMoreTokens();) {
+			String context = str.nextToken().trim();
+			if (context != null && context.length() > 0) {
+				if (context.startsWith("[")) {
+					if ("[accounts]".equals(context)) {
+						flagNext = 0;
+					} else if ("[validation_public_key]".equals(context)) {
+						flagNext = 1;
+					} else if ("[domain]".equals(context)) {
+						flagNext = 2;
+					} else if ("[ips]".equals(context)) {
+						flagNext = 3;
+					} else if ("[validators]".equals(context)) {
+						flagNext = 4;
+					} else if ("[authinfo_url]".equals(context)) {
+						flagNext = 5;
+					} else {
+						flagNext = -1;
 					}
-					switch (flagNext) {
-					case 0:
-						rippled.accounts.add(context);
-						break;
-					case 1:
-						rippled.validation_public_key.add(context);
-						break;
-					case 2:
-						rippled.domain.add(context);
-						break;
-					case 3:
-						rippled.ips.add(context);
-						break;
-					case 4:
-						rippled.validators.add(context);
-						break;
-					case 5:
-						rippled.authinfo_url.add(context);
-						break;
-					default:
-						break;
-					}
+					continue;
+				}
+				switch (flagNext) {
+				case 0:
+					rippled.accounts.add(context);
+					break;
+				case 1:
+					rippled.validation_public_key.add(context);
+					break;
+				case 2:
+					rippled.domain.add(context);
+					break;
+				case 3:
+					rippled.ips.add(context);
+					break;
+				case 4:
+					rippled.validators.add(context);
+					break;
+				case 5:
+					rippled.authinfo_url.add(context);
+					break;
+				default:
+					break;
 				}
 			}
 		}
+
 		return rippled;
 
 	}

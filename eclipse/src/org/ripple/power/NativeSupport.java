@@ -86,6 +86,11 @@ public class NativeSupport {
 
 	public static File export(String sourcePath, String dirName)
 			throws IOException {
+		return export(sourcePath, dirName, null);
+	}
+
+	public static File export(String sourcePath, String dirName, String name)
+			throws IOException {
 		ClassLoader loader = NativeSupport.class.getClassLoader();
 		String sourceCrc = CRC(loader.getResourceAsStream(sourcePath));
 		if (dirName == null) {
@@ -93,8 +98,8 @@ public class NativeSupport {
 		}
 		File extractedDir = new File(System.getProperty("java.io.tmpdir")
 				+ "/loon" + LSystem.getUserName() + "/" + dirName);
-		File extractedFile = new File(extractedDir,
-				new File(sourcePath).getName());
+		File extractedFile = new File(extractedDir, name == null ? new File(
+				sourcePath).getName() : name);
 		String extractedCrc = null;
 		if (extractedFile.exists()) {
 			try {

@@ -40,7 +40,6 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.security.AccessController;
-import java.security.GeneralSecurityException;
 import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -70,38 +69,69 @@ import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONObject;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.ripple.power.NativeSupport;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
-	
+
 	public static final class JSSEProvider extends Provider {
 
-	    /**
+		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -4083233211478080177L;
 
 		public JSSEProvider() {
-	        super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
-	        AccessController.doPrivileged(new java.security.PrivilegedAction<Void>() {
-	            public Void run() {
-	                put("SSLContext.TLS",
-	                        "org.apache.harmony.xnet.provider.jsse.SSLContextImpl");
-	                put("Alg.Alias.SSLContext.TLSv1", "TLS");
-	                put("KeyManagerFactory.X509",
-	                        "org.apache.harmony.xnet.provider.jsse.KeyManagerFactoryImpl");
-	                put("TrustManagerFactory.X509",
-	                        "org.apache.harmony.xnet.provider.jsse.TrustManagerFactoryImpl");
-	                return null;
-	            }
-	        });
-	    }
+			super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
+			AccessController
+					.doPrivileged(new java.security.PrivilegedAction<Void>() {
+						public Void run() {
+							put("SSLContext.TLS",
+									"org.apache.harmony.xnet.provider.jsse.SSLContextImpl");
+							put("Alg.Alias.SSLContext.TLSv1", "TLS");
+							put("KeyManagerFactory.X509",
+									"org.apache.harmony.xnet.provider.jsse.KeyManagerFactoryImpl");
+							put("TrustManagerFactory.X509",
+									"org.apache.harmony.xnet.provider.jsse.TrustManagerFactoryImpl");
+							return null;
+						}
+					});
+		}
 	}
+
 	static {
-		Security.addProvider(new JSSEProvider());   
-        Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new JSSEProvider());
+		Security.addProvider(new BouncyCastleProvider());
 		System.setProperty("https.protocols", "TLSv1.2");
+	}
+
+	/**
+	 * java默认提供的ssl解析协议不全，无法正确解析ripplelabs目前使用的ssl报文，暂时先凑活着来……(但是android上没问题)
+	 * 
+	 * 只是临时补丁，等待oracle修正ssl中，除了java，用c#和node.js、python解析ripple的https站点无此问题……
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
+	public synchronized static String fix_ssl_open(String url) throws Exception {
+		File file = NativeSupport.export("res/tmpfix/temp_fix_ssl", "ssl_fix",
+				"temp_fix_ssl.exe");
+		Runtime run = Runtime.getRuntime();
+		Process process = run.exec(file.getAbsolutePath() + " " + url);
+		process.waitFor();
+		InputStream ins = process.getInputStream();
+		InputStreamReader str = new InputStreamReader(ins);
+		BufferedReader br = new BufferedReader(str);
+		StringBuilder sbr = new StringBuilder();
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			sbr.append(line);
+			sbr.append(LSystem.LS);
+		}
+		process.waitFor();
+		return sbr.toString();
 	}
 
 	public static String getHttps(String url) {
@@ -220,9 +250,21 @@ public class HttpRequest {
 		}
 	}
 
+	public static final String ENABLED_CIPHERS[] = {
+			"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+			"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+
+			"TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+
+			"TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
+			"TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+			"TLS_ECDHE_ECDSA_WITH_RC4_128_SHA", "TLS_RSA_WITH_AES_128_CBC_SHA",
+			"SSL_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_RSA_WITH_RC4_128_SHA",
+			"SSL_RSA_WITH_RC4_128_MD5" };
+
 	private static SSLSocketFactory getTrustedFactory()
 			throws HttpRequestException {
-	
+		System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
 		if (TRUSTED_FACTORY == null) {
 			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 
@@ -241,10 +283,20 @@ public class HttpRequest {
 				}
 			} };
 			try {
+				String algorithm = Security
+						.getProperty("ssl.KeyManagerFactory.algorithm");
+				if (algorithm == null) {
+					algorithm = "SunX509";
+				}
+
 				SSLContext context = SSLContext.getInstance("TLSv1.2");
 				context.init(null, trustAllCerts, new SecureRandom());
 				TRUSTED_FACTORY = context.getSocketFactory();
-			} catch (GeneralSecurityException e) {
+				// final SSLSocket socket = (SSLSocket)
+				// TRUSTED_FACTORY.createSocket();
+				// socket.setEnabledCipherSuites(ENABLED_CIPHERS);
+				// socket.setUseClientMode(true);
+			} catch (Exception e) {
 				IOException ioException = new IOException(
 						"Security exception configuring SSL context");
 				ioException.initCause(e);
@@ -1769,7 +1821,7 @@ public class HttpRequest {
 
 	public HttpRequest trustAllCerts() throws HttpRequestException {
 		final HttpURLConnection connection = getConnection();
-		if (connection instanceof HttpsURLConnection){
+		if (connection instanceof HttpsURLConnection) {
 			((HttpsURLConnection) connection)
 					.setSSLSocketFactory(getTrustedFactory());
 		}
@@ -1778,7 +1830,7 @@ public class HttpRequest {
 
 	public HttpRequest trustAllHosts() {
 		final HttpURLConnection connection = getConnection();
-		if (connection instanceof HttpsURLConnection){
+		if (connection instanceof HttpsURLConnection) {
 			((HttpsURLConnection) connection)
 					.setHostnameVerifier(getTrustedVerifier());
 		}

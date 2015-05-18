@@ -8,80 +8,74 @@ public class REST_API {
 
 	private final static String page = "https://api.ripple.com/v1/";
 
+	private static JSONObject open_rest(String url) throws Exception {
+		HttpRequest request = HttpRequest.get(url);
+		boolean ok = false;
+		try {
+			ok = request.ok();
+		} catch (Throwable ex) {
+		}
+		if (ok) {
+			return new JSONObject(request.body());
+		} else {
+			return new JSONObject(HttpRequest.fix_ssl_open(url));
+		}
+	}
+
 	public static JSONObject balances(String address) {
 		try {
-			HttpRequest request = HttpRequest.get(page + "accounts/" + address
-					+ "/balances");
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "accounts/" + address + "/balances";
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject settings(String address) {
 		try {
-			HttpRequest request = HttpRequest.get(page + "accounts/" + address
-					+ "/settings");
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "accounts/" + address + "/settings";
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject server() {
 		try {
-			HttpRequest request = HttpRequest.get(page + "server");
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "server";
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject server_connected() {
 		try {
-			HttpRequest request = HttpRequest.get(page + "server/connected");
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "server/connected";
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject uuid() {
 		try {
-			HttpRequest request = HttpRequest.get(page + "uuid");
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "uuid";
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject findPaths(String address, String destination,
 			String limit) {
 		try {
-			HttpRequest request = HttpRequest.get(page + "accounts/" + address
-					+ "/payments/paths/" + destination + "/" + limit);
-			if (request.ok()) {
-				return new JSONObject(request.body());
-			}
+			String url = page + "accounts/" + address + "/payments/paths/"
+					+ destination + "/" + limit;
+			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
-		return null;
 	}
 
 	public static JSONObject findXRPPaths(String address, String destination) {
