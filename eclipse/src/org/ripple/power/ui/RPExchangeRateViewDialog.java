@@ -25,7 +25,7 @@ import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPExchangeRateViewDialog extends JDialog {
+public class RPExchangeRateViewDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 
@@ -48,6 +48,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 	private RPTextBox _srcText;
 	private RPTextBox _dstText;
 	private boolean _closed;
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	public static RPExchangeRateViewDialog showDialog(String text, JFrame parent) {
 		RPExchangeRateViewDialog dialog = new RPExchangeRateViewDialog(text,
@@ -198,6 +199,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 		scrollPanelOne.setViewportView(_encryptcoinList);
 
 		final WaitDialog waitDialog = WaitDialog.showDialog(this);
+		_waitDialogs.add(waitDialog);
 		Updateable updateable = new Updateable() {
 
 			@Override
@@ -320,7 +322,7 @@ public class RPExchangeRateViewDialog extends JDialog {
 				}
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPExchangeRateViewDialog.this);
-
+				_waitDialogs.add(dialog);
 				Updateable updateable = new Updateable() {
 
 					@Override
@@ -337,5 +339,52 @@ public class RPExchangeRateViewDialog extends JDialog {
 		spLine.setBounds(0, 460, 770, 10);
 		getContentPane().setBackground(UIConfig.dialogbackground);
 		pack();
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

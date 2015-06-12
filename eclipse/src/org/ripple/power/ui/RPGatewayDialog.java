@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -34,7 +36,7 @@ import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPGatewayDialog extends JDialog {
+public class RPGatewayDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 
@@ -79,6 +81,8 @@ public class RPGatewayDialog extends JDialog {
 
 	private ArrayList<String> _iouList = new ArrayList<String>(100);
 
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
+	
 	private class userMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
 			if (_listGateway.getSelectedValuesList().size() > 0) {
@@ -437,6 +441,7 @@ public class RPGatewayDialog extends JDialog {
 					if (result == 0) {
 						final WaitDialog dialog = new WaitDialog(
 								RPGatewayDialog.this);
+						_waitDialogs.add(dialog);
 						IssuedCurrency cur = new IssuedCurrency("0",
 								currency.issuer.toString(), currency.currency);
 						TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
@@ -492,6 +497,7 @@ public class RPGatewayDialog extends JDialog {
 				if (result == 0) {
 					final WaitDialog dialog = new WaitDialog(
 							RPGatewayDialog.this);
+					_waitDialogs.add(dialog);
 					IssuedCurrency cur = new IssuedCurrency(trustValue,
 							address, curName);
 					TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
@@ -566,6 +572,7 @@ public class RPGatewayDialog extends JDialog {
 		if (_item != null) {
 			final WaitDialog dialog = WaitDialog.showDialog(
 					RPGatewayDialog.this, wait);
+			_waitDialogs.add(dialog);
 			AccountFind.getTrusts(_item.getPublicKey(), new Updateable() {
 				@SuppressWarnings("unchecked")
 				@Override
@@ -630,5 +637,52 @@ public class RPGatewayDialog extends JDialog {
 			_cancelTrustButton.setEnabled(false);
 			_okTrustButton.setEnabled(false);
 		}
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

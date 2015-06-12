@@ -12,6 +12,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,7 +32,7 @@ public class RPBubbleDialog {
 
 	final static LWaveSound wave = new LWaveSound();
 
-	public static class TipDialog extends JDialog {
+	public static class TipDialog extends JDialog implements WindowListener {
 		/**
 		 * 
 		 */
@@ -38,6 +41,7 @@ public class RPBubbleDialog {
 		private int x, y;
 		private final int width, height;
 		private static Insets screenInsets;
+		private boolean closed;
 
 		public TipDialog(final int width, final int height) {
 			this.width = width;
@@ -68,17 +72,59 @@ public class RPBubbleDialog {
 		}
 
 		public void close() {
-			x = this.getX();
-			y = this.getY();
-			int ybottom = (int) dim.getHeight() - screenInsets.bottom;
-			for (int i = 0; i <= ybottom - y; i += 10) {
-				try {
-					setLocation(x, y + i);
-					Thread.sleep(5);
-				} catch (InterruptedException ex) {
+			if (!closed) {
+				closed = true;
+				x = this.getX();
+				y = this.getY();
+				int ybottom = (int) dim.getHeight() - screenInsets.bottom;
+				for (int i = 0; i <= ybottom - y; i += 10) {
+					try {
+						setLocation(x, y + i);
+						Thread.sleep(5);
+					} catch (InterruptedException ex) {
+					}
 				}
+				dispose();
 			}
-			dispose();
+		}
+		
+		public boolean isClosed(){
+			return closed;
+		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			close();
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+
+		}
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+
 		}
 	}
 

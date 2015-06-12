@@ -80,16 +80,22 @@ public class RPDialogTool {
 		public void setClose(Updateable close) {
 			this.closeCall = close;
 		}
+		
+		public boolean isClosed(){
+			return closed;
+		}
 
 		public void close() {
-			if (closeCall != null) {
-				closeCall.action(this);
-			}
-			closed = true;
-			if (fadeclose) {
-				SwingUtils.fadeOut(this, true);
-			} else {
-				SwingUtils.close(this);
+			if (!closed) {
+				if (closeCall != null) {
+					closeCall.action(this);
+				}
+				closed = true;
+				if (fadeclose) {
+					SwingUtils.fadeOut(this, true);
+				} else {
+					SwingUtils.close(this);
+				}
 			}
 		}
 	}

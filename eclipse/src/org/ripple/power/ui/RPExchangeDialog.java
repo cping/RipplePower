@@ -54,7 +54,7 @@ import com.google.common.base.Strings;
 import com.other.calc.Calc;
 import com.ripple.core.types.known.sle.entries.Offer;
 
-public class RPExchangeDialog extends JDialog {
+public class RPExchangeDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 
@@ -112,6 +112,7 @@ public class RPExchangeDialog extends JDialog {
 	private RPTextBox _addressText;
 	private WalletItem _item;
 	private final AccountInfo _info = new AccountInfo();
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	private void warning_noselect() {
 		UIRes.showWarningMessage(this, UIMessage.info, UIMessage.noselect);
@@ -847,12 +848,13 @@ public class RPExchangeDialog extends JDialog {
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");
 		if (split.length == 2) {
-			repaint();
-			getContentPane().repaint();
+			//repaint();
+			//getContentPane().repaint();
 			final String address = _addressText.getText().trim();
 
 			final WaitDialog dialog = WaitDialog.showDialog(
 					RPExchangeDialog.this, wait);
+			_waitDialogs.add(dialog);
 			OfferPrice.load(address, split[0], split[1], new OfferPrice() {
 
 				@Override
@@ -966,8 +968,8 @@ public class RPExchangeDialog extends JDialog {
 							_showTrend = false;
 							loadTradingList(address, split);
 							loadOtherMarketList(address, split);
-							repaint();
-							getContentPane().repaint();
+							//repaint();
+						//	getContentPane().repaint();
 							updateTrend(split[0]);
 						}
 					};
@@ -1151,6 +1153,7 @@ public class RPExchangeDialog extends JDialog {
 
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
+			_waitDialogs.add(dialog);
 			final String myAddress = _item.getPublicKey();
 			final Updateable updateable = new Updateable() {
 
@@ -1231,6 +1234,7 @@ public class RPExchangeDialog extends JDialog {
 
 			final WaitDialog dialog = WaitDialog
 					.showDialog(RPExchangeDialog.this);
+			_waitDialogs.add(dialog);
 			final String myAddress = _item.getPublicKey();
 			final Updateable updateable = new Updateable() {
 
@@ -1650,5 +1654,52 @@ public class RPExchangeDialog extends JDialog {
 		jlist.setSelectedIndex(k);
 		jlist.setSelectionForeground(new LColor(250, 250, 0));
 		jlist.setSelectionBackground(new LColor(128, 128, 128));
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

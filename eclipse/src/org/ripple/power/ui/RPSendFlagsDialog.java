@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 
-public class RPSendFlagsDialog extends JDialog {
+public class RPSendFlagsDialog extends JDialog implements WindowListener{
 	/**
 	 * 
 	 */
@@ -69,6 +71,7 @@ public class RPSendFlagsDialog extends JDialog {
 	private RPLabel _tagLabel;
 	private RPTextBox _tagText;
 
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 	private WalletItem _item;
 
 	public static RPSendFlagsDialog showDialog(String title, Window parent,
@@ -303,6 +306,7 @@ public class RPSendFlagsDialog extends JDialog {
 
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPSendFlagsDialog.this);
+				_waitDialogs.add(dialog);
 
 				Updateable update = new Updateable() {
 
@@ -429,5 +433,52 @@ public class RPSendFlagsDialog extends JDialog {
 					+ gateway_address);
 		}
 		return amount_value;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

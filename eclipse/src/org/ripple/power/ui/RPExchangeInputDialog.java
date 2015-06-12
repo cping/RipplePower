@@ -8,7 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.WindowConstants;
@@ -21,7 +24,7 @@ import org.ripple.power.txns.Updateable;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 
-public class RPExchangeInputDialog extends JDialog {
+public class RPExchangeInputDialog extends JDialog implements WindowListener{
 	/**
 	 * 
 	 */
@@ -37,6 +40,7 @@ public class RPExchangeInputDialog extends JDialog {
 	private RPTextBox _textAContext, _textBContext;
 	private String _curName;
 	private String _dstCurrency = "USD";
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	public RPExchangeInputDialog(Window parent, String name) {
 		super(parent, name, Dialog.ModalityType.MODELESS);
@@ -299,6 +303,7 @@ public class RPExchangeInputDialog extends JDialog {
 			this.setTitle(curName + "/" + dstCurName + "(Average Price)");
 			if (!dstCurName.equals(curName)) {
 				final WaitDialog waitDialog = WaitDialog.showDialog(this);
+				_waitDialogs.add(waitDialog);
 				Updateable update = new Updateable() {
 
 					@Override
@@ -314,5 +319,52 @@ public class RPExchangeInputDialog extends JDialog {
 				LSystem.postThread(update);
 			}
 		}
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

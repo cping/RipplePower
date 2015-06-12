@@ -83,6 +83,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		setPreferredSize(dim);
 		setSize(dim);
 		initUI();
+		
 	}
 
 	private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {

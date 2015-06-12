@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
@@ -29,7 +32,7 @@ import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 
-public class RPRippledMemoDialog extends JDialog {
+public class RPRippledMemoDialog extends JDialog implements WindowListener {
 	/**
 	 * 
 	 */
@@ -57,6 +60,7 @@ public class RPRippledMemoDialog extends JDialog {
 	private RPTextBox _recipientText;
 	private WalletItem _item;
 	private String _address, _message;
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	public static void showDialog(String name, Window parent, String address,
 			String message) {
@@ -276,6 +280,7 @@ public class RPRippledMemoDialog extends JDialog {
 						}
 						final WaitDialog wait = WaitDialog
 								.showDialog(RPRippledMemoDialog.this);
+						_waitDialogs.add(wait);
 						Payment.send(_item.getSeed(), amount, address, encode,
 								fee, new Rollback() {
 
@@ -316,7 +321,7 @@ public class RPRippledMemoDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (_address != null) {
-					loadMessages(_address, -1, -1,20);
+					loadMessages(_address, -1, -1, 20);
 				}
 			}
 		});
@@ -329,7 +334,7 @@ public class RPRippledMemoDialog extends JDialog {
 		_recipientText.setBounds(80, 360, 420, 21);
 		getContentPane().setBackground(UIConfig.dialogbackground);
 		if (_address != null) {
-			loadMessages(_address, -1,-1, 200);
+			loadMessages(_address, -1, -1, 200);
 		}
 		if (_item == null) {
 			_submitButton.setEnabled(false);
@@ -338,7 +343,8 @@ public class RPRippledMemoDialog extends JDialog {
 		pack();
 	}
 
-	private void loadMessages(final String address, final int min, final int max,final int limit) {
+	private void loadMessages(final String address, final int min,
+			final int max, final int limit) {
 
 		Updateable update = new Updateable() {
 
@@ -356,35 +362,87 @@ public class RPRippledMemoDialog extends JDialog {
 					}
 					final WaitDialog wait = WaitDialog
 							.showDialog(RPRippledMemoDialog.this);
-					find.message(address, password, min, max, limit,new Updateable() {
+					_waitDialogs.add(wait);
+					find.message(address, password, min, max, limit,
+							new Updateable() {
 
-						@Override
-						public void action(Object o) {
-							if (o != null && o instanceof RippleMemoDecodes) {
-								final RippleMemoDecodes decodes = (RippleMemoDecodes) o;
-								if (decodes.size() > 0) {
-									_messageList
-											.setModel(new javax.swing.AbstractListModel<Object>() {
-												private static final long serialVersionUID = 1L;
+								@Override
+								public void action(Object o) {
+									if (o != null
+											&& o instanceof RippleMemoDecodes) {
+										final RippleMemoDecodes decodes = (RippleMemoDecodes) o;
+										if (decodes.size() > 0) {
+											_messageList
+													.setModel(new javax.swing.AbstractListModel<Object>() {
+														private static final long serialVersionUID = 1L;
 
-												public int getSize() {
-													return decodes.size();
-												}
+														public int getSize() {
+															return decodes
+																	.size();
+														}
 
-												public Object getElementAt(int i) {
-													return decodes.get(i)
-															.toHTML();
-												}
-											});
+														public Object getElementAt(
+																int i) {
+															return decodes.get(
+																	i).toHTML();
+														}
+													});
+										}
+									}
+									wait.closeDialog();
 								}
-							}
-							wait.closeDialog();
-						}
-					});
+							});
 				}
 
 			}
 		};
 		LSystem.postThread(update);
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

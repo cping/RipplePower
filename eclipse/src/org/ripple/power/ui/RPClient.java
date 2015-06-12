@@ -42,7 +42,7 @@ public class RPClient {
 			10);
 
 	private final static String[] applicationRippleLabes = new String[] {
-			"wss://s2.ripple.com:443", "wss://s1.ripple.com:443",
+			"wss://s1.ripple.com:443", "wss://s2.ripple.com:443",
 			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443" };
 
 	public static ArrayList<String> getRLNodes(boolean flag) {
@@ -114,7 +114,7 @@ public class RPClient {
 		if (ok) {
 			result = request.body();
 		} else {
-			//亲测除了java外（而且android下也正常），其它用什么都解析正常，等着oracle打补丁吧，暂时先用c#写个小程序读取下……
+			// 亲测除了java外（而且android下也正常），其它用什么都解析正常，等着oracle打补丁吧，暂时先用c#写个小程序读取下……
 			try {
 				result = HttpRequest.fix_ssl_open(url);
 			} catch (Exception e) {

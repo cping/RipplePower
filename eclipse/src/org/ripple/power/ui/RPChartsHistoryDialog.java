@@ -27,7 +27,7 @@ import org.ripple.power.ui.graphics.chart.ChartValueSerie;
 import org.ripple.power.ui.graphics.chart.LineChartCanvas;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPChartsHistoryDialog extends JDialog {
+public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 	/**
 	 * 
 	 */
@@ -60,6 +60,8 @@ public class RPChartsHistoryDialog extends JDialog {
 	private ChartValueSerie chartsThreebtc = new ChartValueSerie(LColor.blue, 2);
 
 	private boolean _closed = false;
+
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	private static LineChartCanvas addChart(LineChartCanvas canvas,
 			JPanel panel, ChartValueSerie my, ChartValueSerie btc) {
@@ -193,6 +195,7 @@ public class RPChartsHistoryDialog extends JDialog {
 
 				final WaitDialog dialog = WaitDialog
 						.showDialog(RPChartsHistoryDialog.this);
+				_waitDialogs.add(dialog);
 				dialog.get().setFadeClose(false);
 				Updateable update = new Updateable() {
 
@@ -437,5 +440,46 @@ public class RPChartsHistoryDialog extends JDialog {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+
 	}
 }

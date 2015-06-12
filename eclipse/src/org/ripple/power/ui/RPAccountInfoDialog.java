@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -32,7 +34,7 @@ import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPAccountInfoDialog extends JDialog {
+public class RPAccountInfoDialog extends JDialog implements WindowListener {
 	/**
 	 * 
 	 */
@@ -180,7 +182,7 @@ public class RPAccountInfoDialog extends JDialog {
 				throw new IndexOutOfBoundsException("Table row " + row
 						+ " is not valid");
 			}
-			if(_accountLineItems2.size()==0){
+			if (_accountLineItems2.size() == 0) {
 				return null;
 			}
 			Object value = null;
@@ -573,6 +575,8 @@ public class RPAccountInfoDialog extends JDialog {
 
 	}
 
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
+
 	public void call(final AccountInfo info,
 			final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
@@ -637,12 +641,13 @@ public class RPAccountInfoDialog extends JDialog {
 			@Override
 			public void action(Object o) {
 				String addressTmp = _addressText.getText().trim();
-				revalidate();
-				repaint();
-				final WaitDialog dialog = WaitDialog
+				// revalidate();
+				// repaint();
+				final WaitDialog waitDialog = WaitDialog
 						.showDialog(RPAccountInfoDialog.this);
-				revalidate();
-				repaint();
+				_waitDialogs.add(waitDialog);
+				// revalidate();
+				// repaint();
 				if (addressTmp.startsWith("~")) {
 					try {
 						addressTmp = NameFind.getAddress(addressTmp);
@@ -659,8 +664,8 @@ public class RPAccountInfoDialog extends JDialog {
 				}
 				final String address = addressTmp;
 				AccountFind find = new AccountFind();
-				revalidate();
-				repaint();
+				// revalidate();
+				// repaint();
 				Updateable update_info = new Updateable() {
 
 					@Override
@@ -685,8 +690,8 @@ public class RPAccountInfoDialog extends JDialog {
 							name = "Unkown";
 						}
 						_addressNameText.setText(name);
-						RPAccountInfoDialog.this.revalidate();
-						RPAccountInfoDialog.this.repaint();
+						// RPAccountInfoDialog.this.revalidate();
+						// RPAccountInfoDialog.this.repaint();
 					}
 				};
 
@@ -716,8 +721,8 @@ public class RPAccountInfoDialog extends JDialog {
 							}
 							tableModel2.update();
 						}
-						RPAccountInfoDialog.this.revalidate();
-						RPAccountInfoDialog.this.repaint();
+						// RPAccountInfoDialog.this.revalidate();
+						// RPAccountInfoDialog.this.repaint();
 					}
 				};
 
@@ -739,13 +744,14 @@ public class RPAccountInfoDialog extends JDialog {
 							addStorage(new Store(address,
 									new AccountInfo().copy(info)));
 						}
-						dialog.closeDialog();
-						RPAccountInfoDialog.this.revalidate();
-						RPAccountInfoDialog.this.repaint();
-						if (LSystem.applicationMain != null) {
-							LSystem.applicationMain.revalidate();
-							LSystem.applicationMain.repaint();
-						}
+						waitDialog.closeDialog();
+						/*
+						 * RPAccountInfoDialog.this.revalidate();
+						 * RPAccountInfoDialog.this.repaint(); if
+						 * (LSystem.applicationMain != null) {
+						 * LSystem.applicationMain.revalidate();
+						 * LSystem.applicationMain.repaint(); }
+						 */
 					}
 
 				};
@@ -753,8 +759,8 @@ public class RPAccountInfoDialog extends JDialog {
 				find.processInfo(address, info, update_info);
 				find.processLines(address, info, update_line);
 				find.processTx(address, info, update_tx);
-				revalidate();
-				repaint();
+				// revalidate();
+				// repaint();
 			}
 		};
 		LSystem.postThread(updateAll);
@@ -763,6 +769,47 @@ public class RPAccountInfoDialog extends JDialog {
 
 	public AccountInfo getAccountinfo() {
 		return _accountinfo;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+
 	}
 
 }

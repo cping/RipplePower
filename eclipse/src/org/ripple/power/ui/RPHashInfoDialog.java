@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
@@ -18,7 +21,7 @@ import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPHashInfoDialog extends JDialog {
+public class RPHashInfoDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 
@@ -65,6 +68,8 @@ public class RPHashInfoDialog extends JDialog {
 	private javax.swing.JScrollPane _panelThree;
 
 	private TransactionTx _trTx;
+
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	public static RPHashInfoDialog showDialog(Window parent) {
 		return showDialog(parent, null);
@@ -346,6 +351,7 @@ public class RPHashInfoDialog extends JDialog {
 			return;
 		}
 		final WaitDialog wait = WaitDialog.showDialog(this);
+		_waitDialogs.add(wait);
 		final AccountFind find = new AccountFind();
 		final TransactionTx tx = new TransactionTx();
 		find.processTxHash(hash, tx, new Updateable() {
@@ -356,5 +362,52 @@ public class RPHashInfoDialog extends JDialog {
 				wait.closeDialog();
 			}
 		});
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

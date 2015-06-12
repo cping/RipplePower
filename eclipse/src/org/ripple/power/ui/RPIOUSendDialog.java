@@ -6,6 +6,9 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -34,7 +37,7 @@ import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPIOUSendDialog extends JPanel {
+public class RPIOUSendDialog extends JPanel implements WindowListener{
 
 	/**
 	 * 
@@ -48,6 +51,7 @@ public class RPIOUSendDialog extends JPanel {
 	private final JLabel _submitLabel;
 
 	private static RPIOUSendDialog lock = null;
+	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	private RPDialogTool tool;
 
@@ -225,6 +229,7 @@ public class RPIOUSendDialog extends JPanel {
 				}
 				final WaitDialog dialog = WaitDialog.showDialog(get()
 						.getDialog());
+				_waitDialogs.add(dialog);
 				Payment.send(item.getSeed(), address, cur, fee, new Rollback() {
 
 					@Override
@@ -276,6 +281,7 @@ public class RPIOUSendDialog extends JPanel {
 			public void action(Object o) {
 				final WaitDialog dialog = WaitDialog.showDialog(get()
 						.getDialog());
+				_waitDialogs.add(dialog);
 				final AccountInfo info = new AccountInfo();
 				Updateable accountline = new Updateable() {
 					@Override
@@ -287,11 +293,7 @@ public class RPIOUSendDialog extends JPanel {
 						} else {
 							calldisable();
 						}
-						revalidate();
-						repaint();
 						dialog.closeDialog();
-						revalidate();
-						repaint();
 					}
 				};
 				AccountFind find = new AccountFind();
@@ -299,6 +301,53 @@ public class RPIOUSendDialog extends JPanel {
 			}
 		};
 		LSystem.postThread(update);
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (_waitDialogs != null) {
+			for (WaitDialog wait : _waitDialogs) {
+				if (wait != null) {
+					wait.closeDialog();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
