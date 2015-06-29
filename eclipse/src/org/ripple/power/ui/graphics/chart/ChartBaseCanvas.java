@@ -65,9 +65,9 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 
 	Path mPath = new Path();
 
-	private final LImage _myImage;
+	private LImage _myImage;
 
-	private final Canvas _myCanvas;
+	private Canvas _myCanvas;
 
 	private LColor _background = LColor.black;
 
@@ -87,12 +87,18 @@ public class ChartBaseCanvas extends java.awt.Canvas {
 			synchronized (_myImage) {
 				_myCanvas.drawClear(_background, p_width, p_height);
 				onDraw(_myCanvas);
-				g.drawImage(_myImage.getBufferedImage(), 0, 0, this);
+				if (_myImage != null && g != null) {
+					g.drawImage(_myImage.getBufferedImage(), 0, 0, this);
+				}
 			}
 		}
 	}
 
 	public ChartBaseCanvas(int w, int h) {
+		update(w, h);
+	}
+
+	public void update(int w, int h) {
 		this._myImage = new LImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		this._myCanvas = new Canvas(_myImage.getLGraphics());
 		this.p_width = w;

@@ -6,7 +6,7 @@ import org.ripple.power.utils.HttpRequest;
 
 public class History {
 
-	public static String def_historyApi = "https://history-dev.ripple.com:7443/v1";
+	public static String def_historyApi = "https://history.ripple.com/v1/";
 
 	private String _baseUrl;
 

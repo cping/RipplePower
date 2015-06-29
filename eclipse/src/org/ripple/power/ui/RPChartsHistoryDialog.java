@@ -79,8 +79,8 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 			chart.addSerie(btc);
 			canvas.joinLine(chart);
 		} else {
-			canvas.repaint();
 			canvas.update(panel.getGraphics());
+			canvas.repaint();
 		}
 		return canvas;
 	}
@@ -356,7 +356,7 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 			public void action(Object o) {
 				try {
 					ArrayList<CoinmarketcapData> datas = OtherData
-							.getCoinmarketcapAllTo(15);
+							.getCoinmarketcapAllTo(30);
 					if (datas.size() > 0) {
 						final ArrayList<String> list = new ArrayList<String>(30);
 						for (CoinmarketcapData data : datas) {
@@ -403,7 +403,7 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 						}
 					}
 					try {
-						Thread.sleep(40);
+						Thread.sleep(LSystem.SECOND);
 					} catch (InterruptedException e) {
 					}
 

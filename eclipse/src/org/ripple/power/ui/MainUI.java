@@ -36,7 +36,8 @@ import org.ripple.power.utils.SwingUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class MainUI {
-
+	
+	private BTCPanel btcPanel ;
 	class HIRipple extends AVGScreen {
 
 		int type;
@@ -221,7 +222,7 @@ public class MainUI {
 				"[10%][80%][]", "[100%]"));
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
 
-		JPanel emptyPanel = new JPanel();
+		final JPanel emptyPanel = new JPanel();
 		mainPanel.setBackground(UIConfig.background);
 		emptyPanel.setLayout(new MigLayout("gap 0, ins 0", "[100%]", "[fill]"));
 		mainPanel.add(emptyPanel, "cell 0 1 1 1, grow");
@@ -247,7 +248,7 @@ public class MainUI {
 			public void actionPerformed(ActionEvent e) {
 				HelperDialog.hideDialog();
 				RPJSonLog.hideDialog();
-				HoldXRP.hideDialog();
+				HoldXRPDialog.hideDialog();
 				RPOtherServicesDialog.hideDialog();
 			}
 		});
@@ -268,30 +269,37 @@ public class MainUI {
 
 					@Override
 					public void action(Object o) {
-						HelperDialog.showDialog();
-						RPJSonLog.showDialog();
-						HoldXRP.showDialog();
-						RPOtherServicesDialog.showDialog();
-						try {
-							Thread.sleep(LSystem.SECOND * 3);
-						} catch (InterruptedException e) {
-						}
-						HelperDialog.get();
-						try {
-							Thread.sleep(LSystem.SECOND);
-						} catch (InterruptedException e) {
-						}
-						RPJSonLog.get();
-						try {
-							Thread.sleep(LSystem.SECOND);
-						} catch (InterruptedException e) {
-						}
-						HoldXRP.get();
-						try {
-							Thread.sleep(LSystem.SECOND);
-						} catch (InterruptedException e) {
-						}
-						RPOtherServicesDialog.get();
+						LSystem.postThread(new Updateable() {
+
+							@Override
+							public void action(Object o) {
+								HelperDialog.showDialog();
+								RPJSonLog.showDialog();
+								HoldXRPDialog.showDialog();
+								RPOtherServicesDialog.showDialog();
+								try {
+									Thread.sleep(LSystem.SECOND * 3);
+								} catch (InterruptedException e) {
+								}
+								HelperDialog.get();
+								try {
+									Thread.sleep(LSystem.SECOND);
+								} catch (InterruptedException e) {
+								}
+								RPJSonLog.get();
+								try {
+									Thread.sleep(LSystem.SECOND);
+								} catch (InterruptedException e) {
+								}
+								HoldXRPDialog.get();
+								try {
+									Thread.sleep(LSystem.SECOND);
+								} catch (InterruptedException e) {
+								}
+								RPOtherServicesDialog.get();
+							}
+						});
+
 					}
 				};
 				LSystem.postThread(update);
@@ -304,16 +312,26 @@ public class MainUI {
 
 		// bitcoin
 		Icon iconBtc = UIRes.getImage("icons/btc.png");
-		RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel,
-				new NullPanel());
+		btcPanel = new BTCPanel();
+		final RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, btcPanel);
 		btcLink.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HelperDialog.hideDialog();
-				RPJSonLog.hideDialog();
-				HoldXRP.hideDialog();
-				RPOtherServicesDialog.hideDialog();
+
+				LSystem.postThread(new Updateable() {
+
+					@Override
+					public void action(Object o) {
+						btcPanel.stop();
+						btcLink.setLinkPanel(btcPanel = new BTCPanel());
+						HelperDialog.hideDialog();
+						RPJSonLog.hideDialog();
+						HoldXRPDialog.hideDialog();
+						RPOtherServicesDialog.hideDialog();
+					}
+				});
+
 			}
 		});
 		btcLink.setIcon(iconBtc);

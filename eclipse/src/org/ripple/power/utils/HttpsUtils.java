@@ -17,6 +17,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.Header;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
@@ -32,6 +33,7 @@ import org.ripple.power.config.LSystem;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -459,12 +461,12 @@ public class HttpsUtils {
 			KeyStore trustStore = KeyStore.getInstance(KeyStore
 					.getDefaultType());
 			trustStore.load(null, null);
-
 			SSLSocketFactory sf = new SSLSocketFactoryEx(trustStore);
 			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 			HttpParams params = new BasicHttpParams();
 			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+			HttpProtocolParams.setUserAgent(params, "Mozilla/5.0 (Windows; Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory
 					.getSocketFactory(), 80));
@@ -473,6 +475,7 @@ public class HttpsUtils {
 					params, registry);
 			@SuppressWarnings("resource")
 			DefaultHttpClient httpClient = new DefaultHttpClient(ccm, params);
+			httpClient.setCookieStore(new BasicCookieStore());
 			return new DefaultHttpClient(ccm, params);
 		} catch (Exception e) {
 			return new DefaultHttpClient();

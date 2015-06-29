@@ -38,11 +38,15 @@ public class RPCScrollPane extends JScrollPane {
 
 	private MP4Player _player;
 
-	public RPCScrollPane(Component view, LColor start, LColor end, int alpha) {
+	private boolean _media;
+
+	public RPCScrollPane(Component view, LColor start, LColor end, int alpha,
+			boolean media) {
 		super(view);
 		_colorStart = start;
 		_colorEnd = end;
 		_alpha = alpha;
+		_media = media;
 		_isRunning = WalletCache.get().size() < _address_limit;
 		setOpaque(false);
 		setBackground(new LColor(0f, 0F, 0F, 0F));
@@ -89,7 +93,7 @@ public class RPCScrollPane extends JScrollPane {
 
 	protected synchronized void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (WalletCache.get().size() < _address_limit) {
+		if (WalletCache.get().size() < _address_limit && _media) {
 			if (_image == null) {
 				loop();
 				_image = new LImage(getWidth(), getHeight());

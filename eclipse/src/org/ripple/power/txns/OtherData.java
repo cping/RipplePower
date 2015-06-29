@@ -386,40 +386,20 @@ public class OtherData {
 		}
 		HttpRequest request = HttpRequest
 				.get("http://coinmarketcap.northpole.ro/api/all.json");
-
+		request.acceptGzipEncoding();
 		if (request.ok()) {
-			InputStreamReader reader = new InputStreamReader(request.stream());
-			StringBuilder sbr = new StringBuilder();
-			boolean flag = false;
-			for (;;) {
-				int ch = reader.read();
-				if (ch < 0) {
-					break;
-				}
-				if (flag) {
-					if (sbr.toString().endsWith(
-							"\"position\":\"" + (limit + 1) + "\"")) {
-						break;
-					}
-				} else {
-					if (sbr.toString().endsWith("\"markets\":[")) {
-						flag = true;
-						sbr.delete(0, sbr.length());
-					}
-				}
-				sbr.append((char) ch);
-			}
-			reader.close();
-			String result = sbr.toString();
-			JSONArray arrays = new JSONArray(String.format("[%s]",
-					result.substring(0, result.lastIndexOf(","))));
+			request.uncompress(true);
+			JSONObject obj = new JSONObject(request.body());
+			JSONArray arrays = obj.optJSONArray("markets");
 			final int size = arrays.length();
 			ArrayList<CoinmarketcapData> list = new ArrayList<CoinmarketcapData>(
 					size);
-			for (int i = 0; i < size; i++) {
+			for (int i = size - 1; i > -1; i--) {
 				JSONObject o = arrays.getJSONObject(i);
-				CoinmarketcapData data = CoinmarketcapData.from(o);
-				list.add(data);
+				if (Integer.valueOf(o.optString("position")) <= limit) {
+					CoinmarketcapData data = CoinmarketcapData.from(o);
+					list.add(data);
+				}
 			}
 			return list;
 		}

@@ -137,7 +137,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		super(new BorderLayout());
 		setOpaque(true);
 		setBackground(UIConfig.background);
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 15));
+		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		tableModel = new AddressTableModel(columnNames, columnClasses);
 		table = new AddressTable(tableModel, columnTypes);
 		table.setFont(new Font("Dialog", 1, 14));
@@ -162,7 +162,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		// Create the table scroll pane
 		//
 		scrollPane = new RPCScrollPane(table, new LColor(220, 220, 220),
-				LColor.black, 240);
+				LColor.black, 240, true);
 		scrollPane.addMouseListener(new tableMouseListener());
 		//
 		// Create the table pane
@@ -340,7 +340,6 @@ public class MainPanel extends JPanel implements ActionListener {
 				CommandFlag.Donation);
 
 		showTrayIcon();
-
 	}
 
 	private boolean isTray;

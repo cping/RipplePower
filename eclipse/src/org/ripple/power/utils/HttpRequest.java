@@ -116,22 +116,33 @@ public class HttpRequest {
 	 * @throws Exception
 	 */
 	public synchronized static String fix_ssl_open(String url) throws Exception {
-		File file = NativeSupport.export("res/tmpfix/temp_fix_ssl", "ssl_fix",
-				"temp_fix_ssl.exe");
-		Runtime run = Runtime.getRuntime();
-		Process process = run.exec(file.getAbsolutePath() + " " + url);
-		process.waitFor();
-		InputStream ins = process.getInputStream();
-		InputStreamReader str = new InputStreamReader(ins);
-		BufferedReader br = new BufferedReader(str);
-		StringBuilder sbr = new StringBuilder();
-		String line = null;
-		while ((line = br.readLine()) != null) {
-			sbr.append(line);
-			sbr.append(LSystem.LS);
+		try {
+			File file = NativeSupport.export("res/tmpfix/temp_fix_ssl",
+					"ssl_fix", "temp_fix_ssl.exe");
+			Runtime run = Runtime.getRuntime();
+			Process process = run.exec(file.getAbsolutePath() + " " + url);
+			process.waitFor();
+			InputStream ins = process.getInputStream();
+			InputStreamReader str = new InputStreamReader(ins);
+			BufferedReader br = new BufferedReader(str);
+			StringBuilder sbr = new StringBuilder();
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				sbr.append(line);
+				sbr.append(LSystem.LS);
+			}
+			process.waitFor();
+			return sbr.toString();
+		} catch (Throwable ex) {
+			HttpRequest request = HttpRequest.get(url);
+			request.trustAllCerts();
+			request.trustAllHosts();
+			if (request.ok()) {
+				return request.body();
+			} else {
+				throw ex;
+			}
 		}
-		process.waitFor();
-		return sbr.toString();
 	}
 
 	public static String getHttps(String url) {

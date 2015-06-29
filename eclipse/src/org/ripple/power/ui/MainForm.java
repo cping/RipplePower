@@ -178,7 +178,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menuItem = new JMenuItem(LangConfig.get(this, "server_settings",
 				"Server Settings"));
 		menuItem.setFont(font);
-		menuItem.setActionCommand("服务器设置");
+		menuItem.setActionCommand("server");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
@@ -197,13 +197,13 @@ public class MainForm extends JFrame implements ActionListener {
 		menuItem = new JMenuItem(LangConfig.get(this, "automation",
 				"Automation"));
 		menuItem.setFont(font);
-		menuItem.setActionCommand("一键开启");
+		menuItem.setActionCommand("keyopen");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(LangConfig.get(this, "manage", "Manage"));
 		menuItem.setFont(font);
-		menuItem.setActionCommand("管理GAE");
+		menuItem.setActionCommand("GAE");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
