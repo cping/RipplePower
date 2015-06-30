@@ -20,157 +20,208 @@ import org.ripple.bouncycastle.util.Integers;
 import org.ripple.bouncycastle.util.Strings;
 
 /**
- * Diffie-Hellman key agreement. There's actually a better way of doing this if
- * you are using long term public keys, see the light-weight version for
+ * Diffie-Hellman key agreement. There's actually a better way of doing this
+ * if you are using long term public keys, see the light-weight version for
  * details.
  */
-public class KeyAgreementSpi extends javax.crypto.KeyAgreementSpi {
-	private BigInteger x;
-	private BigInteger p;
-	private BigInteger g;
-	private BigInteger result;
+public class KeyAgreementSpi
+    extends javax.crypto.KeyAgreementSpi
+{
+    private BigInteger      x;
+    private BigInteger      p;
+    private BigInteger      g;
+    private BigInteger      result;
 
-	private static final Hashtable algorithms = new Hashtable();
+    private static final Hashtable algorithms = new Hashtable();
 
-	static {
-		Integer i64 = Integers.valueOf(64);
-		Integer i192 = Integers.valueOf(192);
-		Integer i128 = Integers.valueOf(128);
-		Integer i256 = Integers.valueOf(256);
+    static
+    {
+        Integer i64 = Integers.valueOf(64);
+        Integer i192 = Integers.valueOf(192);
+        Integer i128 = Integers.valueOf(128);
+        Integer i256 = Integers.valueOf(256);
 
-		algorithms.put("DES", i64);
-		algorithms.put("DESEDE", i192);
-		algorithms.put("BLOWFISH", i128);
-		algorithms.put("AES", i256);
-	}
+        algorithms.put("DES", i64);
+        algorithms.put("DESEDE", i192);
+        algorithms.put("BLOWFISH", i128);
+        algorithms.put("AES", i256);
+    }
 
-	private byte[] bigIntToBytes(BigInteger r) {
-		byte[] tmp = r.toByteArray();
+    private byte[] bigIntToBytes(
+        BigInteger    r)
+    {
+        //
+        // RFC 2631 (2.1.2) specifies that the secret should be padded with leading zeros if necessary
+        // must be the same length as p
+        //
+        int expectedLength = (p.bitLength() + 7) / 8;
 
-		if (tmp[0] == 0) {
-			byte[] ntmp = new byte[tmp.length - 1];
+        byte[]    tmp = r.toByteArray();
 
-			System.arraycopy(tmp, 1, ntmp, 0, ntmp.length);
-			return ntmp;
-		}
+        if (tmp.length == expectedLength)
+        {
+            return tmp;
+        }
 
-		return tmp;
-	}
+        if (tmp[0] == 0 && tmp.length == expectedLength + 1)
+        {
+            byte[]    rv = new byte[tmp.length - 1];
+            
+            System.arraycopy(tmp, 1, rv, 0, rv.length);
+            return rv;
+        }
 
-	protected Key engineDoPhase(Key key, boolean lastPhase)
-			throws InvalidKeyException, IllegalStateException {
-		if (x == null) {
-			throw new IllegalStateException("Diffie-Hellman not initialised.");
-		}
+        // tmp must be shorter than expectedLength
+        // pad to the left with zeros.
+        byte[]    rv = new byte[expectedLength];
 
-		if (!(key instanceof DHPublicKey)) {
-			throw new InvalidKeyException(
-					"DHKeyAgreement doPhase requires DHPublicKey");
-		}
-		DHPublicKey pubKey = (DHPublicKey) key;
+        System.arraycopy(tmp, 0, rv, rv.length - tmp.length, tmp.length);
 
-		if (!pubKey.getParams().getG().equals(g)
-				|| !pubKey.getParams().getP().equals(p)) {
-			throw new InvalidKeyException(
-					"DHPublicKey not for this KeyAgreement!");
-		}
+        return rv;
+    }
+    
+    protected Key engineDoPhase(
+        Key     key,
+        boolean lastPhase) 
+        throws InvalidKeyException, IllegalStateException
+    {
+        if (x == null)
+        {
+            throw new IllegalStateException("Diffie-Hellman not initialised.");
+        }
 
-		if (lastPhase) {
-			result = ((DHPublicKey) key).getY().modPow(x, p);
-			return null;
-		} else {
-			result = ((DHPublicKey) key).getY().modPow(x, p);
-		}
+        if (!(key instanceof DHPublicKey))
+        {
+            throw new InvalidKeyException("DHKeyAgreement doPhase requires DHPublicKey");
+        }
+        DHPublicKey pubKey = (DHPublicKey)key;
 
-		return new BCDHPublicKey(result, pubKey.getParams());
-	}
+        if (!pubKey.getParams().getG().equals(g) || !pubKey.getParams().getP().equals(p))
+        {
+            throw new InvalidKeyException("DHPublicKey not for this KeyAgreement!");
+        }
 
-	protected byte[] engineGenerateSecret() throws IllegalStateException {
-		if (x == null) {
-			throw new IllegalStateException("Diffie-Hellman not initialised.");
-		}
+        if (lastPhase)
+        {
+            result = ((DHPublicKey)key).getY().modPow(x, p);
+            return null;
+        }
+        else
+        {
+            result = ((DHPublicKey)key).getY().modPow(x, p);
+        }
 
-		return bigIntToBytes(result);
-	}
+        return new BCDHPublicKey(result, pubKey.getParams());
+    }
 
-	protected int engineGenerateSecret(byte[] sharedSecret, int offset)
-			throws IllegalStateException, ShortBufferException {
-		if (x == null) {
-			throw new IllegalStateException("Diffie-Hellman not initialised.");
-		}
+    protected byte[] engineGenerateSecret() 
+        throws IllegalStateException
+    {
+        if (x == null)
+        {
+            throw new IllegalStateException("Diffie-Hellman not initialised.");
+        }
 
-		byte[] secret = bigIntToBytes(result);
+        return bigIntToBytes(result);
+    }
 
-		if (sharedSecret.length - offset < secret.length) {
-			throw new ShortBufferException("DHKeyAgreement - buffer too short");
-		}
+    protected int engineGenerateSecret(
+        byte[]  sharedSecret,
+        int     offset) 
+        throws IllegalStateException, ShortBufferException
+    {
+        if (x == null)
+        {
+            throw new IllegalStateException("Diffie-Hellman not initialised.");
+        }
 
-		System.arraycopy(secret, 0, sharedSecret, offset, secret.length);
+        byte[]  secret = bigIntToBytes(result);
 
-		return secret.length;
-	}
+        if (sharedSecret.length - offset < secret.length)
+        {
+            throw new ShortBufferException("DHKeyAgreement - buffer too short");
+        }
 
-	protected SecretKey engineGenerateSecret(String algorithm) {
-		if (x == null) {
-			throw new IllegalStateException("Diffie-Hellman not initialised.");
-		}
+        System.arraycopy(secret, 0, sharedSecret, offset, secret.length);
 
-		String algKey = Strings.toUpperCase(algorithm);
-		byte[] res = bigIntToBytes(result);
+        return secret.length;
+    }
 
-		if (algorithms.containsKey(algKey)) {
-			Integer length = (Integer) algorithms.get(algKey);
+    protected SecretKey engineGenerateSecret(
+        String algorithm) 
+    {
+        if (x == null)
+        {
+            throw new IllegalStateException("Diffie-Hellman not initialised.");
+        }
 
-			byte[] key = new byte[length.intValue() / 8];
-			System.arraycopy(res, 0, key, 0, key.length);
+        String algKey = Strings.toUpperCase(algorithm);
+        byte[] res = bigIntToBytes(result);
 
-			if (algKey.startsWith("DES")) {
-				DESParameters.setOddParity(key);
-			}
+        if (algorithms.containsKey(algKey))
+        {
+            Integer length = (Integer)algorithms.get(algKey);
 
-			return new SecretKeySpec(key, algorithm);
-		}
+            byte[] key = new byte[length.intValue() / 8];
+            System.arraycopy(res, 0, key, 0, key.length);
 
-		return new SecretKeySpec(res, algorithm);
-	}
+            if (algKey.startsWith("DES"))
+            {
+                DESParameters.setOddParity(key);
+            }
+            
+            return new SecretKeySpec(key, algorithm);
+        }
 
-	protected void engineInit(Key key, AlgorithmParameterSpec params,
-			SecureRandom random) throws InvalidKeyException,
-			InvalidAlgorithmParameterException {
-		if (!(key instanceof DHPrivateKey)) {
-			throw new InvalidKeyException(
-					"DHKeyAgreement requires DHPrivateKey for initialisation");
-		}
-		DHPrivateKey privKey = (DHPrivateKey) key;
+        return new SecretKeySpec(res, algorithm);
+    }
 
-		if (params != null) {
-			if (!(params instanceof DHParameterSpec)) {
-				throw new InvalidAlgorithmParameterException(
-						"DHKeyAgreement only accepts DHParameterSpec");
-			}
-			DHParameterSpec p = (DHParameterSpec) params;
+    protected void engineInit(
+        Key                     key,
+        AlgorithmParameterSpec  params,
+        SecureRandom            random) 
+        throws InvalidKeyException, InvalidAlgorithmParameterException
+    {
+        if (!(key instanceof DHPrivateKey))
+        {
+            throw new InvalidKeyException("DHKeyAgreement requires DHPrivateKey for initialisation");
+        }
+        DHPrivateKey    privKey = (DHPrivateKey)key;
 
-			this.p = p.getP();
-			this.g = p.getG();
-		} else {
-			this.p = privKey.getParams().getP();
-			this.g = privKey.getParams().getG();
-		}
+        if (params != null)
+        {
+            if (!(params instanceof DHParameterSpec))
+            {
+                throw new InvalidAlgorithmParameterException("DHKeyAgreement only accepts DHParameterSpec");
+            }
+            DHParameterSpec p = (DHParameterSpec)params;
 
-		this.x = this.result = privKey.getX();
-	}
+            this.p = p.getP();
+            this.g = p.getG();
+        }
+        else
+        {
+            this.p = privKey.getParams().getP();
+            this.g = privKey.getParams().getG();
+        }
 
-	protected void engineInit(Key key, SecureRandom random)
-			throws InvalidKeyException {
-		if (!(key instanceof DHPrivateKey)) {
-			throw new InvalidKeyException(
-					"DHKeyAgreement requires DHPrivateKey");
-		}
+        this.x = this.result = privKey.getX();
+    }
 
-		DHPrivateKey privKey = (DHPrivateKey) key;
+    protected void engineInit(
+        Key             key,
+        SecureRandom    random) 
+        throws InvalidKeyException
+    {
+        if (!(key instanceof DHPrivateKey))
+        {
+            throw new InvalidKeyException("DHKeyAgreement requires DHPrivateKey");
+        }
 
-		this.p = privKey.getParams().getP();
-		this.g = privKey.getParams().getG();
-		this.x = this.result = privKey.getX();
-	}
+        DHPrivateKey    privKey = (DHPrivateKey)key;
+
+        this.p = privKey.getParams().getP();
+        this.g = privKey.getParams().getG();
+        this.x = this.result = privKey.getX();
+    }
 }

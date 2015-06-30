@@ -2,32 +2,39 @@ package org.ripple.bouncycastle.crypto.ec;
 
 import org.ripple.bouncycastle.math.ec.ECPoint;
 
-public class ECPair {
-	private final ECPoint x;
-	private final ECPoint y;
+public class ECPair
+{
+    private final ECPoint x;
+    private final ECPoint y;
 
-	public ECPair(ECPoint x, ECPoint y) {
-		this.x = x;
-		this.y = y;
-	}
+    public ECPair(ECPoint x, ECPoint y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
-	public ECPoint getX() {
-		return x;
-	}
+    public ECPoint getX()
+    {
+        return x;
+    }
 
-	public ECPoint getY() {
-		return y;
-	}
+    public ECPoint getY()
+    {
+        return y;
+    }
 
-	public byte[] getEncoded() {
-		byte[] xEnc = x.getEncoded();
-		byte[] yEnc = y.getEncoded();
+    public boolean equals(ECPair other)
+    {
+        return other.getX().equals(getX()) && other.getY().equals(getY());
+    }
 
-		byte[] full = new byte[xEnc.length + yEnc.length];
+    public boolean equals(Object other)
+    {
+        return other instanceof ECPair ? equals((ECPair)other) : false;
+    }
 
-		System.arraycopy(xEnc, 0, full, 0, xEnc.length);
-		System.arraycopy(yEnc, 0, full, xEnc.length, yEnc.length);
-
-		return full;
-	}
+    public int hashCode()
+    {
+        return x.hashCode() + 37 * y.hashCode();
+    }
 }

@@ -9,7 +9,6 @@ import org.ripple.bouncycastle.asn1.cms.RecipientKeyIdentifier;
 
 /**
  * The SMIMEEncryptionKeyPreference object.
- * 
  * <pre>
  * SMIMEEncryptionKeyPreference ::= CHOICE {
  *     issuerAndSerialNumber   [0] IssuerAndSerialNumber,
@@ -18,25 +17,32 @@ import org.ripple.bouncycastle.asn1.cms.RecipientKeyIdentifier;
  * }
  * </pre>
  */
-public class SMIMEEncryptionKeyPreferenceAttribute extends Attribute {
-	public SMIMEEncryptionKeyPreferenceAttribute(IssuerAndSerialNumber issAndSer) {
-		super(SMIMEAttributes.encrypKeyPref, new DERSet(new DERTaggedObject(
-				false, 0, issAndSer)));
-	}
+public class SMIMEEncryptionKeyPreferenceAttribute
+    extends Attribute
+{
+    public SMIMEEncryptionKeyPreferenceAttribute(
+        IssuerAndSerialNumber issAndSer)
+    {
+        super(SMIMEAttributes.encrypKeyPref,
+                new DERSet(new DERTaggedObject(false, 0, issAndSer)));
+    }
+    
+    public SMIMEEncryptionKeyPreferenceAttribute(
+        RecipientKeyIdentifier rKeyId)
+    {
 
-	public SMIMEEncryptionKeyPreferenceAttribute(RecipientKeyIdentifier rKeyId) {
+        super(SMIMEAttributes.encrypKeyPref, 
+                    new DERSet(new DERTaggedObject(false, 1, rKeyId)));
+    }
+    
+    /**
+     * @param sKeyId the subjectKeyIdentifier value (normally the X.509 one)
+     */
+    public SMIMEEncryptionKeyPreferenceAttribute(
+        ASN1OctetString sKeyId)
+    {
 
-		super(SMIMEAttributes.encrypKeyPref, new DERSet(new DERTaggedObject(
-				false, 1, rKeyId)));
-	}
-
-	/**
-	 * @param sKeyId
-	 *            the subjectKeyIdentifier value (normally the X.509 one)
-	 */
-	public SMIMEEncryptionKeyPreferenceAttribute(ASN1OctetString sKeyId) {
-
-		super(SMIMEAttributes.encrypKeyPref, new DERSet(new DERTaggedObject(
-				false, 2, sKeyId)));
-	}
+        super(SMIMEAttributes.encrypKeyPref,
+                    new DERSet(new DERTaggedObject(false, 2, sKeyId)));
+    }
 }

@@ -13,54 +13,66 @@ import org.ripple.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.ripple.bouncycastle.crypto.params.RSAKeyParameters;
 import org.ripple.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 
-public class KeyPairGeneratorSpi extends java.security.KeyPairGenerator {
-	public KeyPairGeneratorSpi(String algorithmName) {
-		super(algorithmName);
-	}
+public class KeyPairGeneratorSpi
+    extends java.security.KeyPairGenerator
+{
+    public KeyPairGeneratorSpi(
+        String algorithmName)
+    {
+        super(algorithmName);
+    }
 
-	final static BigInteger defaultPublicExponent = BigInteger.valueOf(0x10001);
-	final static int defaultTests = 12;
+    final static BigInteger defaultPublicExponent = BigInteger.valueOf(0x10001);
+    final static int defaultTests = 112;
 
-	RSAKeyGenerationParameters param;
-	RSAKeyPairGenerator engine;
+    RSAKeyGenerationParameters param;
+    RSAKeyPairGenerator engine;
 
-	public KeyPairGeneratorSpi() {
-		super("RSA");
+    public KeyPairGeneratorSpi()
+    {
+        super("RSA");
 
-		engine = new RSAKeyPairGenerator();
-		param = new RSAKeyGenerationParameters(defaultPublicExponent,
-				new SecureRandom(), 2048, defaultTests);
-		engine.init(param);
-	}
+        engine = new RSAKeyPairGenerator();
+        param = new RSAKeyGenerationParameters(defaultPublicExponent,
+            new SecureRandom(), 2048, defaultTests);
+        engine.init(param);
+    }
 
-	public void initialize(int strength, SecureRandom random) {
-		param = new RSAKeyGenerationParameters(defaultPublicExponent, random,
-				strength, defaultTests);
+    public void initialize(
+        int strength,
+        SecureRandom random)
+    {
+        param = new RSAKeyGenerationParameters(defaultPublicExponent,
+            random, strength, defaultTests);
 
-		engine.init(param);
-	}
+        engine.init(param);
+    }
 
-	public void initialize(AlgorithmParameterSpec params, SecureRandom random)
-			throws InvalidAlgorithmParameterException {
-		if (!(params instanceof RSAKeyGenParameterSpec)) {
-			throw new InvalidAlgorithmParameterException(
-					"parameter object not a RSAKeyGenParameterSpec");
-		}
-		RSAKeyGenParameterSpec rsaParams = (RSAKeyGenParameterSpec) params;
+    public void initialize(
+        AlgorithmParameterSpec params,
+        SecureRandom random)
+        throws InvalidAlgorithmParameterException
+    {
+        if (!(params instanceof RSAKeyGenParameterSpec))
+        {
+            throw new InvalidAlgorithmParameterException("parameter object not a RSAKeyGenParameterSpec");
+        }
+        RSAKeyGenParameterSpec rsaParams = (RSAKeyGenParameterSpec)params;
 
-		param = new RSAKeyGenerationParameters(rsaParams.getPublicExponent(),
-				random, rsaParams.getKeysize(), defaultTests);
+        param = new RSAKeyGenerationParameters(
+            rsaParams.getPublicExponent(),
+            random, rsaParams.getKeysize(), defaultTests);
 
-		engine.init(param);
-	}
+        engine.init(param);
+    }
 
-	public KeyPair generateKeyPair() {
-		AsymmetricCipherKeyPair pair = engine.generateKeyPair();
-		RSAKeyParameters pub = (RSAKeyParameters) pair.getPublic();
-		RSAPrivateCrtKeyParameters priv = (RSAPrivateCrtKeyParameters) pair
-				.getPrivate();
+    public KeyPair generateKeyPair()
+    {
+        AsymmetricCipherKeyPair pair = engine.generateKeyPair();
+        RSAKeyParameters pub = (RSAKeyParameters)pair.getPublic();
+        RSAPrivateCrtKeyParameters priv = (RSAPrivateCrtKeyParameters)pair.getPrivate();
 
-		return new KeyPair(new BCRSAPublicKey(pub),
-				new BCRSAPrivateCrtKey(priv));
-	}
+        return new KeyPair(new BCRSAPublicKey(pub),
+            new BCRSAPrivateCrtKey(priv));
+    }
 }

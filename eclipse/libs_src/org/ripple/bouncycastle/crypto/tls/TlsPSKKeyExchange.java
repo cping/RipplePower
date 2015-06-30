@@ -13,173 +13,347 @@ import org.ripple.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.ripple.bouncycastle.crypto.params.DHParameters;
 import org.ripple.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import org.ripple.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
+import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.ripple.bouncycastle.crypto.params.RSAKeyParameters;
 import org.ripple.bouncycastle.crypto.util.PublicKeyFactory;
+import org.ripple.bouncycastle.util.Arrays;
+import org.ripple.bouncycastle.util.io.Streams;
 
 /**
- * TLS 1.0 PSK key exchange (RFC 4279).
+ * (D)TLS PSK key exchange (RFC 4279).
  */
-public class TlsPSKKeyExchange extends AbstractTlsKeyExchange {
+public class TlsPSKKeyExchange
+    extends AbstractTlsKeyExchange
+{
+    protected TlsPSKIdentity pskIdentity;
+    protected TlsPSKIdentityManager pskIdentityManager;
 
-	protected TlsPSKIdentity pskIdentity;
+    protected DHParameters dhParameters;
+    protected int[] namedCurves;
+    protected short[] clientECPointFormats, serverECPointFormats;
 
-	protected byte[] psk_identity_hint = null;
+    protected byte[] psk_identity_hint = null;
+    protected byte[] psk = null;
 
-	protected DHPublicKeyParameters dhAgreeServerPublicKey = null;
-	protected DHPrivateKeyParameters dhAgreeClientPrivateKey = null;
+    protected DHPrivateKeyParameters dhAgreePrivateKey = null;
+    protected DHPublicKeyParameters dhAgreePublicKey = null;
 
-	protected AsymmetricKeyParameter serverPublicKey = null;
-	protected RSAKeyParameters rsaServerPublicKey = null;
-	protected byte[] premasterSecret;
+    protected ECPrivateKeyParameters ecAgreePrivateKey = null;
+    protected ECPublicKeyParameters ecAgreePublicKey = null;
 
-	public TlsPSKKeyExchange(int keyExchange,
-			Vector supportedSignatureAlgorithms, TlsPSKIdentity pskIdentity) {
-		super(keyExchange, supportedSignatureAlgorithms);
+    protected AsymmetricKeyParameter serverPublicKey = null;
+    protected RSAKeyParameters rsaServerPublicKey = null;
+    protected TlsEncryptionCredentials serverCredentials = null;
+    protected byte[] premasterSecret;
 
-		switch (keyExchange) {
-		case KeyExchangeAlgorithm.PSK:
-		case KeyExchangeAlgorithm.RSA_PSK:
-		case KeyExchangeAlgorithm.DHE_PSK:
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"unsupported key exchange algorithm");
-		}
+    public TlsPSKKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, TlsPSKIdentity pskIdentity,
+        TlsPSKIdentityManager pskIdentityManager, DHParameters dhParameters, int[] namedCurves,
+        short[] clientECPointFormats, short[] serverECPointFormats)
+    {
+        super(keyExchange, supportedSignatureAlgorithms);
 
-		this.pskIdentity = pskIdentity;
-	}
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.DHE_PSK:
+        case KeyExchangeAlgorithm.ECDHE_PSK:
+        case KeyExchangeAlgorithm.PSK:
+        case KeyExchangeAlgorithm.RSA_PSK:
+            break;
+        default:
+            throw new IllegalArgumentException("unsupported key exchange algorithm");
+        }
 
-	public void skipServerCredentials() throws IOException {
-		if (keyExchange == KeyExchangeAlgorithm.RSA_PSK) {
-			throw new TlsFatalAlert(AlertDescription.unexpected_message);
-		}
-	}
+        this.pskIdentity = pskIdentity;
+        this.pskIdentityManager = pskIdentityManager;
+        this.dhParameters = dhParameters;
+        this.namedCurves = namedCurves;
+        this.clientECPointFormats = clientECPointFormats;
+        this.serverECPointFormats = serverECPointFormats;
+    }
 
-	public void processServerCertificate(Certificate serverCertificate)
-			throws IOException {
+    public void skipServerCredentials() throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.RSA_PSK)
+        {
+            throw new TlsFatalAlert(AlertDescription.unexpected_message);
+        }
+    }
 
-		if (keyExchange != KeyExchangeAlgorithm.RSA_PSK) {
-			throw new TlsFatalAlert(AlertDescription.unexpected_message);
-		}
-		if (serverCertificate.isEmpty()) {
-			throw new TlsFatalAlert(AlertDescription.bad_certificate);
-		}
+    public void processServerCredentials(TlsCredentials serverCredentials) throws IOException
+    {
+        if (!(serverCredentials instanceof TlsEncryptionCredentials))
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		org.ripple.bouncycastle.asn1.x509.Certificate x509Cert = serverCertificate
-				.getCertificateAt(0);
+        processServerCertificate(serverCredentials.getCertificate());
 
-		SubjectPublicKeyInfo keyInfo = x509Cert.getSubjectPublicKeyInfo();
-		try {
-			this.serverPublicKey = PublicKeyFactory.createKey(keyInfo);
-		} catch (RuntimeException e) {
-			throw new TlsFatalAlert(AlertDescription.unsupported_certificate);
-		}
+        this.serverCredentials = (TlsEncryptionCredentials)serverCredentials;
+    }
 
-		// Sanity check the PublicKeyFactory
-		if (this.serverPublicKey.isPrivate()) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+    public byte[] generateServerKeyExchange() throws IOException
+    {
+        this.psk_identity_hint = pskIdentityManager.getHint();
 
-		this.rsaServerPublicKey = validateRSAPublicKey((RSAKeyParameters) this.serverPublicKey);
+        if (this.psk_identity_hint == null && !requiresServerKeyExchange())
+        {
+            return null;
+        }
 
-		TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyEncipherment);
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
-		super.processServerCertificate(serverCertificate);
-	}
+        if (this.psk_identity_hint == null)
+        {
+            TlsUtils.writeOpaque16(TlsUtils.EMPTY_BYTES, buf);
+        }
+        else
+        {
+            TlsUtils.writeOpaque16(this.psk_identity_hint, buf);
+        }
 
-	public boolean requiresServerKeyExchange() {
-		return keyExchange == KeyExchangeAlgorithm.DHE_PSK;
-	}
+        if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK)
+        {
+            if (this.dhParameters == null)
+            {
+                throw new TlsFatalAlert(AlertDescription.internal_error);
+            }
 
-	public void processServerKeyExchange(InputStream input) throws IOException {
+            this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(),
+                this.dhParameters, buf);
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.ECDHE_PSK)
+        {
+            this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(),
+                namedCurves, clientECPointFormats, buf);
+        }
 
-		this.psk_identity_hint = TlsUtils.readOpaque16(input);
+        return buf.toByteArray();
+    }
 
-		if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK) {
-			byte[] pBytes = TlsUtils.readOpaque16(input);
-			byte[] gBytes = TlsUtils.readOpaque16(input);
-			byte[] YsBytes = TlsUtils.readOpaque16(input);
+    public void processServerCertificate(Certificate serverCertificate) throws IOException
+    {
+        if (keyExchange != KeyExchangeAlgorithm.RSA_PSK)
+        {
+            throw new TlsFatalAlert(AlertDescription.unexpected_message);
+        }
+        if (serverCertificate.isEmpty())
+        {
+            throw new TlsFatalAlert(AlertDescription.bad_certificate);
+        }
 
-			BigInteger p = new BigInteger(1, pBytes);
-			BigInteger g = new BigInteger(1, gBytes);
-			BigInteger Ys = new BigInteger(1, YsBytes);
+        org.ripple.bouncycastle.asn1.x509.Certificate x509Cert = serverCertificate.getCertificateAt(0);
 
-			this.dhAgreeServerPublicKey = TlsDHUtils
-					.validateDHPublicKey(new DHPublicKeyParameters(Ys,
-							new DHParameters(p, g)));
-		}
-	}
+        SubjectPublicKeyInfo keyInfo = x509Cert.getSubjectPublicKeyInfo();
+        try
+        {
+            this.serverPublicKey = PublicKeyFactory.createKey(keyInfo);
+        }
+        catch (RuntimeException e)
+        {
+            throw new TlsFatalAlert(AlertDescription.unsupported_certificate, e);
+        }
 
-	public void validateCertificateRequest(CertificateRequest certificateRequest)
-			throws IOException {
-		throw new TlsFatalAlert(AlertDescription.unexpected_message);
-	}
+        // Sanity check the PublicKeyFactory
+        if (this.serverPublicKey.isPrivate())
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-	public void processClientCredentials(TlsCredentials clientCredentials)
-			throws IOException {
-		throw new TlsFatalAlert(AlertDescription.internal_error);
-	}
+        this.rsaServerPublicKey = validateRSAPublicKey((RSAKeyParameters)this.serverPublicKey);
 
-	public void generateClientKeyExchange(OutputStream output)
-			throws IOException {
+        TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyEncipherment);
 
-		if (psk_identity_hint == null) {
-			pskIdentity.skipIdentityHint();
-		} else {
-			pskIdentity.notifyIdentityHint(psk_identity_hint);
-		}
+        super.processServerCertificate(serverCertificate);
+    }
 
-		byte[] psk_identity = pskIdentity.getPSKIdentity();
+    public boolean requiresServerKeyExchange()
+    {
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.DHE_PSK:
+        case KeyExchangeAlgorithm.ECDHE_PSK:
+            return true;
+        default:
+            return false;
+        }
+    }
 
-		TlsUtils.writeOpaque16(psk_identity, output);
+    public void processServerKeyExchange(InputStream input) throws IOException
+    {
+        this.psk_identity_hint = TlsUtils.readOpaque16(input);
 
-		if (this.keyExchange == KeyExchangeAlgorithm.RSA_PSK) {
-			this.premasterSecret = TlsRSAUtils
-					.generateEncryptedPreMasterSecret(context,
-							this.rsaServerPublicKey, output);
-		} else if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK) {
-			this.dhAgreeClientPrivateKey = TlsDHUtils
-					.generateEphemeralClientKeyExchange(
-							context.getSecureRandom(),
-							dhAgreeServerPublicKey.getParameters(), output);
-		}
-	}
+        if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK)
+        {
+            ServerDHParams serverDHParams = ServerDHParams.parse(input);
 
-	public byte[] generatePremasterSecret() throws IOException {
+            this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(serverDHParams.getPublicKey());
+            this.dhParameters = dhAgreePublicKey.getParameters();
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.ECDHE_PSK)
+        {
+            ECDomainParameters ecParams = TlsECCUtils.readECParameters(namedCurves, clientECPointFormats, input);
 
-		byte[] psk = pskIdentity.getPSK();
-		byte[] other_secret = generateOtherSecret(psk.length);
+            byte[] point = TlsUtils.readOpaque8(input);
 
-		ByteArrayOutputStream buf = new ByteArrayOutputStream(4
-				+ other_secret.length + psk.length);
-		TlsUtils.writeOpaque16(other_secret, buf);
-		TlsUtils.writeOpaque16(psk, buf);
-		return buf.toByteArray();
-	}
+            this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey(TlsECCUtils.deserializeECPublicKey(
+                clientECPointFormats, ecParams, point));
+        }
+    }
 
-	protected byte[] generateOtherSecret(int pskLength) {
+    public void validateCertificateRequest(CertificateRequest certificateRequest) throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.unexpected_message);
+    }
 
-		if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK) {
-			return TlsDHUtils.calculateDHBasicAgreement(dhAgreeServerPublicKey,
-					dhAgreeClientPrivateKey);
-		}
+    public void processClientCredentials(TlsCredentials clientCredentials) throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.internal_error);
+    }
 
-		if (this.keyExchange == KeyExchangeAlgorithm.RSA_PSK) {
-			return this.premasterSecret;
-		}
+    public void generateClientKeyExchange(OutputStream output) throws IOException
+    {
+        if (psk_identity_hint == null)
+        {
+            pskIdentity.skipIdentityHint();
+        }
+        else
+        {
+            pskIdentity.notifyIdentityHint(psk_identity_hint);
+        }
 
-		return new byte[pskLength];
-	}
+        byte[] psk_identity = pskIdentity.getPSKIdentity();
+        if (psk_identity == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-	protected RSAKeyParameters validateRSAPublicKey(RSAKeyParameters key)
-			throws IOException {
-		// TODO What is the minimum bit length required?
-		// key.getModulus().bitLength();
+        this.psk = pskIdentity.getPSK();
+        if (psk == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		if (!key.getExponent().isProbablePrime(2)) {
-			throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-		}
+        TlsUtils.writeOpaque16(psk_identity, output);
 
-		return key;
-	}
+        context.getSecurityParameters().pskIdentity = Arrays.clone(psk_identity);
+
+        if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK)
+        {
+            this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralClientKeyExchange(context.getSecureRandom(),
+                dhParameters, output);
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.ECDHE_PSK)
+        {
+            this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralClientKeyExchange(context.getSecureRandom(),
+                serverECPointFormats, ecAgreePublicKey.getParameters(), output);
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.RSA_PSK)
+        {
+            this.premasterSecret = TlsRSAUtils.generateEncryptedPreMasterSecret(context, this.rsaServerPublicKey,
+                output);
+        }
+    }
+
+    public void processClientKeyExchange(InputStream input) throws IOException
+    {
+        byte[] psk_identity = TlsUtils.readOpaque16(input);
+
+        this.psk = pskIdentityManager.getPSK(psk_identity);
+        if (psk == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.unknown_psk_identity);
+        }
+
+        context.getSecurityParameters().pskIdentity = psk_identity;
+
+        if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK)
+        {
+            BigInteger Yc = TlsDHUtils.readDHParameter(input);
+
+            this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(new DHPublicKeyParameters(Yc, dhParameters));
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.ECDHE_PSK)
+        {
+            byte[] point = TlsUtils.readOpaque8(input);
+
+            ECDomainParameters curve_params = this.ecAgreePrivateKey.getParameters();
+
+            this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey(TlsECCUtils.deserializeECPublicKey(
+                serverECPointFormats, curve_params, point));
+        }
+        else if (this.keyExchange == KeyExchangeAlgorithm.RSA_PSK)
+        {
+            byte[] encryptedPreMasterSecret;
+            if (TlsUtils.isSSL(context))
+            {
+                // TODO Do any SSLv3 clients actually include the length?
+                encryptedPreMasterSecret = Streams.readAll(input);
+            }
+            else
+            {
+                encryptedPreMasterSecret = TlsUtils.readOpaque16(input);
+            }
+
+            this.premasterSecret = serverCredentials.decryptPreMasterSecret(encryptedPreMasterSecret);
+        }
+    }
+
+    public byte[] generatePremasterSecret() throws IOException
+    {
+        byte[] other_secret = generateOtherSecret(psk.length);
+
+        ByteArrayOutputStream buf = new ByteArrayOutputStream(4 + other_secret.length + psk.length);
+        TlsUtils.writeOpaque16(other_secret, buf);
+        TlsUtils.writeOpaque16(psk, buf);
+
+        Arrays.fill(psk, (byte)0);
+        this.psk = null;
+
+        return buf.toByteArray();
+    }
+
+    protected byte[] generateOtherSecret(int pskLength) throws IOException
+    {
+        if (this.keyExchange == KeyExchangeAlgorithm.DHE_PSK)
+        {
+            if (dhAgreePrivateKey != null)
+            {
+                return TlsDHUtils.calculateDHBasicAgreement(dhAgreePublicKey, dhAgreePrivateKey);
+            }
+
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
+
+        if (this.keyExchange == KeyExchangeAlgorithm.ECDHE_PSK)
+        {
+            if (ecAgreePrivateKey != null)
+            {
+                return TlsECCUtils.calculateECDHBasicAgreement(ecAgreePublicKey, ecAgreePrivateKey);
+            }
+
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
+
+        if (this.keyExchange == KeyExchangeAlgorithm.RSA_PSK)
+        {
+            return this.premasterSecret;
+        }
+
+        return new byte[pskLength];
+    }
+
+    protected RSAKeyParameters validateRSAPublicKey(RSAKeyParameters key) throws IOException
+    {
+        // TODO What is the minimum bit length required?
+        // key.getModulus().bitLength();
+
+        if (!key.getExponent().isProbablePrime(2))
+        {
+            throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        }
+
+        return key;
+    }
 }

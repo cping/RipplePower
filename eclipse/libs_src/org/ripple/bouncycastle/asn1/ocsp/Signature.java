@@ -10,81 +10,102 @@ import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.DERTaggedObject;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-public class Signature extends ASN1Object {
-	AlgorithmIdentifier signatureAlgorithm;
-	DERBitString signature;
-	ASN1Sequence certs;
+public class Signature
+    extends ASN1Object
+{
+    AlgorithmIdentifier signatureAlgorithm;
+    DERBitString        signature;
+    ASN1Sequence        certs;
 
-	public Signature(AlgorithmIdentifier signatureAlgorithm,
-			DERBitString signature) {
-		this.signatureAlgorithm = signatureAlgorithm;
-		this.signature = signature;
-	}
+    public Signature(
+        AlgorithmIdentifier signatureAlgorithm,
+        DERBitString        signature)
+    {
+        this.signatureAlgorithm = signatureAlgorithm;
+        this.signature = signature;
+    }
 
-	public Signature(AlgorithmIdentifier signatureAlgorithm,
-			DERBitString signature, ASN1Sequence certs) {
-		this.signatureAlgorithm = signatureAlgorithm;
-		this.signature = signature;
-		this.certs = certs;
-	}
+    public Signature(
+        AlgorithmIdentifier signatureAlgorithm,
+        DERBitString        signature,
+        ASN1Sequence        certs)
+    {
+        this.signatureAlgorithm = signatureAlgorithm;
+        this.signature = signature;
+        this.certs = certs;
+    }
 
-	private Signature(ASN1Sequence seq) {
-		signatureAlgorithm = AlgorithmIdentifier
-				.getInstance(seq.getObjectAt(0));
-		signature = (DERBitString) seq.getObjectAt(1);
+    private Signature(
+        ASN1Sequence    seq)
+    {
+        signatureAlgorithm  = AlgorithmIdentifier.getInstance(seq.getObjectAt(0));
+        signature = (DERBitString)seq.getObjectAt(1);
 
-		if (seq.size() == 3) {
-			certs = ASN1Sequence.getInstance(
-					(ASN1TaggedObject) seq.getObjectAt(2), true);
-		}
-	}
+        if (seq.size() == 3)
+        {
+            certs = ASN1Sequence.getInstance(
+                                (ASN1TaggedObject)seq.getObjectAt(2), true);
+        }
+    }
 
-	public static Signature getInstance(ASN1TaggedObject obj, boolean explicit) {
-		return getInstance(ASN1Sequence.getInstance(obj, explicit));
-	}
+    public static Signature getInstance(
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
+        return getInstance(ASN1Sequence.getInstance(obj, explicit));
+    }
 
-	public static Signature getInstance(Object obj) {
-		if (obj instanceof Signature) {
-			return (Signature) obj;
-		} else if (obj != null) {
-			return new Signature(ASN1Sequence.getInstance(obj));
-		}
+    public static Signature getInstance(
+        Object  obj)
+    {
+        if (obj instanceof Signature)
+        {
+            return (Signature)obj;
+        }
+        else if (obj != null)
+        {
+            return new Signature(ASN1Sequence.getInstance(obj));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public AlgorithmIdentifier getSignatureAlgorithm() {
-		return signatureAlgorithm;
-	}
+    public AlgorithmIdentifier getSignatureAlgorithm()
+    {
+        return signatureAlgorithm;
+    }
 
-	public DERBitString getSignature() {
-		return signature;
-	}
+    public DERBitString getSignature()
+    {
+        return signature;
+    }
 
-	public ASN1Sequence getCerts() {
-		return certs;
-	}
+    public ASN1Sequence getCerts()
+    {
+        return certs;
+    }
 
-	/**
-	 * Produce an object suitable for an ASN1OutputStream.
-	 * 
-	 * <pre>
-	 * Signature       ::=     SEQUENCE {
-	 *     signatureAlgorithm      AlgorithmIdentifier,
-	 *     signature               BIT STRING,
-	 *     certs               [0] EXPLICIT SEQUENCE OF Certificate OPTIONAL}
-	 * </pre>
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
+    /**
+     * Produce an object suitable for an ASN1OutputStream.
+     * <pre>
+     * Signature       ::=     SEQUENCE {
+     *     signatureAlgorithm      AlgorithmIdentifier,
+     *     signature               BIT STRING,
+     *     certs               [0] EXPLICIT SEQUENCE OF Certificate OPTIONAL}
+     * </pre>
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector    v = new ASN1EncodableVector();
 
-		v.add(signatureAlgorithm);
-		v.add(signature);
+        v.add(signatureAlgorithm);
+        v.add(signature);
 
-		if (certs != null) {
-			v.add(new DERTaggedObject(true, 0, certs));
-		}
+        if (certs != null)
+        {
+            v.add(new DERTaggedObject(true, 0, certs));
+        }
 
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 }

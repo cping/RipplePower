@@ -1,15 +1,21 @@
 package org.ripple.bouncycastle.crypto.params;
 
-public class ECKeyParameters extends AsymmetricKeyParameter {
-	ECDomainParameters params;
+public class ECKeyParameters
+    extends AsymmetricKeyParameter
+{
+    ECDomainParameters params;
 
-	protected ECKeyParameters(boolean isPrivate, ECDomainParameters params) {
-		super(isPrivate);
+    protected ECKeyParameters(
+        boolean             isPrivate,
+        ECDomainParameters  params)
+    {
+        super(isPrivate);
 
-		this.params = params;
-	}
+        this.params = params;
+    }
 
-	public ECDomainParameters getParameters() {
-		return params;
-	}
+    public ECDomainParameters getParameters()
+    {
+        return params;
+    }
 }

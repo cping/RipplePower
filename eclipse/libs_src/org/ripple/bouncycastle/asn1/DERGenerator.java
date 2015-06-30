@@ -7,75 +7,113 @@ import java.io.OutputStream;
 
 import org.ripple.bouncycastle.util.io.Streams;
 
-public abstract class DERGenerator extends ASN1Generator {
-	private boolean _tagged = false;
-	private boolean _isExplicit;
-	private int _tagNo;
+public abstract class DERGenerator
+    extends ASN1Generator
+{       
+    private boolean      _tagged = false;
+    private boolean      _isExplicit;
+    private int          _tagNo;
+    
+    protected DERGenerator(
+        OutputStream out)
+    {
+        super(out);
+    }
 
-	protected DERGenerator(OutputStream out) {
-		super(out);
-	}
+    public DERGenerator(
+        OutputStream out,
+        int          tagNo,
+        boolean      isExplicit)
+    { 
+        super(out);
+        
+        _tagged = true;
+        _isExplicit = isExplicit;
+        _tagNo = tagNo;
+    }
 
-	public DERGenerator(OutputStream out, int tagNo, boolean isExplicit) {
-		super(out);
+    private void writeLength(
+        OutputStream out,
+        int          length)
+        throws IOException
+    {
+        if (length > 127)
+        {
+            int size = 1;
+            int val = length;
 
-		_tagged = true;
-		_isExplicit = isExplicit;
-		_tagNo = tagNo;
-	}
+            while ((val >>>= 8) != 0)
+            {
+                size++;
+            }
 
-	private void writeLength(OutputStream out, int length) throws IOException {
-		if (length > 127) {
-			int size = 1;
-			int val = length;
+            out.write((byte)(size | 0x80));
 
-			while ((val >>>= 8) != 0) {
-				size++;
-			}
+            for (int i = (size - 1) * 8; i >= 0; i -= 8)
+            {
+                out.write((byte)(length >> i));
+            }
+        }
+        else
+        {
+            out.write((byte)length);
+        }
+    }
 
-			out.write((byte) (size | 0x80));
+    void writeDEREncoded(
+        OutputStream out,
+        int          tag,
+        byte[]       bytes)
+        throws IOException
+    {
+        out.write(tag);
+        writeLength(out, bytes.length);
+        out.write(bytes);
+    }
 
-			for (int i = (size - 1) * 8; i >= 0; i -= 8) {
-				out.write((byte) (length >> i));
-			}
-		} else {
-			out.write((byte) length);
-		}
-	}
+    void writeDEREncoded(
+        int       tag,
+        byte[]    bytes)
+        throws IOException
+    {
+        if (_tagged)
+        {
+            int tagNum = _tagNo | BERTags.TAGGED;
+            
+            if (_isExplicit)
+            {
+                int newTag = _tagNo | BERTags.CONSTRUCTED | BERTags.TAGGED;
 
-	void writeDEREncoded(OutputStream out, int tag, byte[] bytes)
-			throws IOException {
-		out.write(tag);
-		writeLength(out, bytes.length);
-		out.write(bytes);
-	}
-
-	void writeDEREncoded(int tag, byte[] bytes) throws IOException {
-		if (_tagged) {
-			int tagNum = _tagNo | BERTags.TAGGED;
-
-			if (_isExplicit) {
-				int newTag = _tagNo | BERTags.CONSTRUCTED | BERTags.TAGGED;
-
-				ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-
-				writeDEREncoded(bOut, tag, bytes);
-
-				writeDEREncoded(_out, newTag, bOut.toByteArray());
-			} else {
-				if ((tag & BERTags.CONSTRUCTED) != 0) {
-					writeDEREncoded(_out, tagNum | BERTags.CONSTRUCTED, bytes);
-				} else {
-					writeDEREncoded(_out, tagNum, bytes);
-				}
-			}
-		} else {
-			writeDEREncoded(_out, tag, bytes);
-		}
-	}
-
-	void writeDEREncoded(OutputStream out, int tag, InputStream in)
-			throws IOException {
-		writeDEREncoded(out, tag, Streams.readAll(in));
-	}
+                ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+                
+                writeDEREncoded(bOut, tag, bytes);
+                
+                writeDEREncoded(_out, newTag, bOut.toByteArray());
+            }
+            else
+            {   
+                if ((tag & BERTags.CONSTRUCTED) != 0)
+                {
+                    writeDEREncoded(_out, tagNum | BERTags.CONSTRUCTED, bytes);
+                }
+                else
+                {
+                    writeDEREncoded(_out, tagNum, bytes);
+                }
+            }
+        }
+        else
+        {
+            writeDEREncoded(_out, tag, bytes);
+        }
+    }
+    
+    void writeDEREncoded(
+        OutputStream out,
+        int          tag,
+        InputStream  in)
+        throws IOException
+    {
+        writeDEREncoded(out, tag, Streams.readAll(in));
+    }
 }

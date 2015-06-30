@@ -12,53 +12,58 @@ import org.ripple.bouncycastle.asn1.x500.DirectoryString;
  *    AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048))
  * </pre>
  */
-public class AdditionalInformationSyntax extends ASN1Object {
-	private DirectoryString information;
+public class AdditionalInformationSyntax
+    extends ASN1Object
+{
+    private DirectoryString information;
 
-	public static AdditionalInformationSyntax getInstance(Object obj) {
-		if (obj instanceof AdditionalInformationSyntax) {
-			return (AdditionalInformationSyntax) obj;
-		}
+    public static AdditionalInformationSyntax getInstance(Object obj)
+    {
+        if (obj instanceof AdditionalInformationSyntax)
+        {
+            return (AdditionalInformationSyntax)obj;
+        }
 
-		if (obj != null) {
-			return new AdditionalInformationSyntax(
-					DirectoryString.getInstance(obj));
-		}
+        if (obj != null)
+        {
+            return new AdditionalInformationSyntax(DirectoryString.getInstance(obj));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private AdditionalInformationSyntax(DirectoryString information) {
-		this.information = information;
-	}
+    private AdditionalInformationSyntax(DirectoryString information)
+    {
+        this.information = information;
+    }
 
-	/**
-	 * Constructor from a given details.
-	 * 
-	 * @param information
-	 *            The describtion of the information.
-	 */
-	public AdditionalInformationSyntax(String information) {
-		this(new DirectoryString(information));
-	}
+    /**
+     * Constructor from a given details.
+     *
+     * @param information The describtion of the information.
+     */
+    public AdditionalInformationSyntax(String information)
+    {
+        this(new DirectoryString(information));
+    }
 
-	public DirectoryString getInformation() {
-		return information;
-	}
+    public DirectoryString getInformation()
+    {
+        return information;
+    }
 
-	/**
-	 * Produce an object suitable for an ASN1OutputStream.
-	 * <p/>
-	 * Returns:
-	 * <p/>
-	 * 
-	 * <pre>
-	 *   AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048))
-	 * </pre>
-	 * 
-	 * @return a DERObject
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		return information.toASN1Primitive();
-	}
+    /**
+     * Produce an object suitable for an ASN1OutputStream.
+     * <p>
+     * Returns:
+     * <pre>
+     *   AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048))
+     * </pre>
+     *
+     * @return a DERObject
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        return information.toASN1Primitive();
+    }
 }

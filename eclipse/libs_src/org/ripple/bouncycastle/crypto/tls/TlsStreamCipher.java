@@ -6,113 +6,163 @@ import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.StreamCipher;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
+import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 import org.ripple.bouncycastle.util.Arrays;
 
-public class TlsStreamCipher implements TlsCipher {
-	protected TlsContext context;
+public class TlsStreamCipher
+    implements TlsCipher
+{
+    protected TlsContext context;
 
-	protected StreamCipher encryptCipher;
-	protected StreamCipher decryptCipher;
+    protected StreamCipher encryptCipher;
+    protected StreamCipher decryptCipher;
 
-	protected TlsMac writeMac;
-	protected TlsMac readMac;
+    protected TlsMac writeMac;
+    protected TlsMac readMac;
 
-	public TlsStreamCipher(TlsContext context, StreamCipher clientWriteCipher,
-			StreamCipher serverWriteCipher, Digest clientWriteDigest,
-			Digest serverWriteDigest, int cipherKeySize) throws IOException {
+    protected boolean usesNonce;
 
-		boolean isServer = context.isServer();
+    public TlsStreamCipher(TlsContext context, StreamCipher clientWriteCipher,
+        StreamCipher serverWriteCipher, Digest clientWriteDigest, Digest serverWriteDigest,
+        int cipherKeySize, boolean usesNonce) throws IOException
+    {
+        boolean isServer = context.isServer();
 
-		this.context = context;
+        this.context = context;
+        this.usesNonce = usesNonce;
 
-		this.encryptCipher = clientWriteCipher;
-		this.decryptCipher = serverWriteCipher;
+        this.encryptCipher = clientWriteCipher;
+        this.decryptCipher = serverWriteCipher;
 
-		int key_block_size = (2 * cipherKeySize)
-				+ clientWriteDigest.getDigestSize()
-				+ serverWriteDigest.getDigestSize();
+        int key_block_size = (2 * cipherKeySize) + clientWriteDigest.getDigestSize()
+            + serverWriteDigest.getDigestSize();
 
-		byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
+        byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
 
-		int offset = 0;
+        int offset = 0;
 
-		// Init MACs
-		TlsMac clientWriteMac = new TlsMac(context, clientWriteDigest,
-				key_block, offset, clientWriteDigest.getDigestSize());
-		offset += clientWriteDigest.getDigestSize();
-		TlsMac serverWriteMac = new TlsMac(context, serverWriteDigest,
-				key_block, offset, serverWriteDigest.getDigestSize());
-		offset += serverWriteDigest.getDigestSize();
+        // Init MACs
+        TlsMac clientWriteMac = new TlsMac(context, clientWriteDigest, key_block, offset,
+            clientWriteDigest.getDigestSize());
+        offset += clientWriteDigest.getDigestSize();
+        TlsMac serverWriteMac = new TlsMac(context, serverWriteDigest, key_block, offset,
+            serverWriteDigest.getDigestSize());
+        offset += serverWriteDigest.getDigestSize();
 
-		// Build keys
-		KeyParameter clientWriteKey = new KeyParameter(key_block, offset,
-				cipherKeySize);
-		offset += cipherKeySize;
-		KeyParameter serverWriteKey = new KeyParameter(key_block, offset,
-				cipherKeySize);
-		offset += cipherKeySize;
+        // Build keys
+        KeyParameter clientWriteKey = new KeyParameter(key_block, offset, cipherKeySize);
+        offset += cipherKeySize;
+        KeyParameter serverWriteKey = new KeyParameter(key_block, offset, cipherKeySize);
+        offset += cipherKeySize;
 
-		if (offset != key_block_size) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        if (offset != key_block_size)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		CipherParameters encryptParams, decryptParams;
-		if (isServer) {
-			this.writeMac = serverWriteMac;
-			this.readMac = clientWriteMac;
-			this.encryptCipher = serverWriteCipher;
-			this.decryptCipher = clientWriteCipher;
-			encryptParams = serverWriteKey;
-			decryptParams = clientWriteKey;
-		} else {
-			this.writeMac = clientWriteMac;
-			this.readMac = serverWriteMac;
-			this.encryptCipher = clientWriteCipher;
-			this.decryptCipher = serverWriteCipher;
-			encryptParams = clientWriteKey;
-			decryptParams = serverWriteKey;
-		}
+        CipherParameters encryptParams, decryptParams;
+        if (isServer)
+        {
+            this.writeMac = serverWriteMac;
+            this.readMac = clientWriteMac;
+            this.encryptCipher = serverWriteCipher;
+            this.decryptCipher = clientWriteCipher;
+            encryptParams = serverWriteKey;
+            decryptParams = clientWriteKey;
+        }
+        else
+        {
+            this.writeMac = clientWriteMac;
+            this.readMac = serverWriteMac;
+            this.encryptCipher = clientWriteCipher;
+            this.decryptCipher = serverWriteCipher;
+            encryptParams = clientWriteKey;
+            decryptParams = serverWriteKey;
+        }
 
-		this.encryptCipher.init(true, encryptParams);
-		this.decryptCipher.init(false, decryptParams);
-	}
+        if (usesNonce)
+        {
+            byte[] dummyNonce = new byte[8];
+            encryptParams = new ParametersWithIV(encryptParams, dummyNonce);
+            decryptParams = new ParametersWithIV(decryptParams, dummyNonce);
+        }
 
-	public int getPlaintextLimit(int ciphertextLimit) {
-		return ciphertextLimit - writeMac.getSize();
-	}
+        this.encryptCipher.init(true, encryptParams);
+        this.decryptCipher.init(false, decryptParams);
+    }
 
-	public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext,
-			int offset, int len) {
-		byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
+    public int getPlaintextLimit(int ciphertextLimit)
+    {
+        return ciphertextLimit - writeMac.getSize();
+    }
 
-		byte[] outbuf = new byte[len + mac.length];
+    public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len)
+    {
+        /*
+         * draft-josefsson-salsa20-tls-04 2.1 Note that Salsa20 requires a 64-bit nonce. That
+         * nonce is updated on the encryption of every TLS record, and is set to be the 64-bit TLS
+         * record sequence number. In case of DTLS the 64-bit nonce is formed as the concatenation
+         * of the 16-bit epoch with the 48-bit sequence number.
+         */
+        if (usesNonce)
+        {
+            updateIV(encryptCipher, true, seqNo);
+        }
 
-		encryptCipher.processBytes(plaintext, offset, len, outbuf, 0);
-		encryptCipher.processBytes(mac, 0, mac.length, outbuf, len);
+        byte[] outBuf = new byte[len + writeMac.getSize()];
 
-		return outbuf;
-	}
+        encryptCipher.processBytes(plaintext, offset, len, outBuf, 0);
 
-	public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext,
-			int offset, int len) throws IOException {
-		int macSize = readMac.getSize();
-		if (len < macSize) {
-			throw new TlsFatalAlert(AlertDescription.decode_error);
-		}
+        byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
+        encryptCipher.processBytes(mac, 0, mac.length, outBuf, len);
 
-		byte[] deciphered = new byte[len];
-		decryptCipher.processBytes(ciphertext, offset, len, deciphered, 0);
+        return outBuf;
+    }
 
-		int macInputLen = len - macSize;
+    public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
+        throws IOException
+    {
+        /*
+         * draft-josefsson-salsa20-tls-04 2.1 Note that Salsa20 requires a 64-bit nonce. That
+         * nonce is updated on the encryption of every TLS record, and is set to be the 64-bit TLS
+         * record sequence number. In case of DTLS the 64-bit nonce is formed as the concatenation
+         * of the 16-bit epoch with the 48-bit sequence number.
+         */
+        if (usesNonce)
+        {
+            updateIV(decryptCipher, false, seqNo);
+        }
 
-		byte[] receivedMac = Arrays.copyOfRange(deciphered, macInputLen, len);
-		byte[] computedMac = readMac.calculateMac(seqNo, type, deciphered, 0,
-				macInputLen);
+        int macSize = readMac.getSize();
+        if (len < macSize)
+        {
+            throw new TlsFatalAlert(AlertDescription.decode_error);
+        }
 
-		if (!Arrays.constantTimeAreEqual(receivedMac, computedMac)) {
-			throw new TlsFatalAlert(AlertDescription.bad_record_mac);
-		}
+        int plaintextLength = len - macSize;
 
-		return Arrays.copyOfRange(deciphered, 0, macInputLen);
-	}
+        byte[] deciphered = new byte[len];
+        decryptCipher.processBytes(ciphertext, offset, len, deciphered, 0);
+        checkMAC(seqNo, type, deciphered, plaintextLength, len, deciphered, 0, plaintextLength);
+        return Arrays.copyOfRange(deciphered, 0, plaintextLength);
+    }
+
+    protected void checkMAC(long seqNo, short type, byte[] recBuf, int recStart, int recEnd, byte[] calcBuf, int calcOff, int calcLen)
+        throws IOException
+    {
+        byte[] receivedMac = Arrays.copyOfRange(recBuf, recStart, recEnd);
+        byte[] computedMac = readMac.calculateMac(seqNo, type, calcBuf, calcOff, calcLen);
+
+        if (!Arrays.constantTimeAreEqual(receivedMac, computedMac))
+        {
+            throw new TlsFatalAlert(AlertDescription.bad_record_mac);
+        }
+    }
+
+    protected void updateIV(StreamCipher cipher, boolean forEncryption, long seqNo)
+    {
+        byte[] nonce = new byte[8];
+        TlsUtils.writeUint64(seqNo, nonce, 0);
+        cipher.init(forEncryption, new ParametersWithIV(null, nonce));
+    }
 }

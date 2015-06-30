@@ -2,11 +2,20 @@ package org.ripple.bouncycastle.crypto.tls;
 
 import org.ripple.bouncycastle.crypto.Digest;
 
-interface TlsHandshakeHash extends Digest {
+public interface TlsHandshakeHash
+    extends Digest
+{
+    void init(TlsContext context);
 
-	void init(TlsContext context);
+    TlsHandshakeHash notifyPRFDetermined();
 
-	TlsHandshakeHash commit();
+    void trackHashAlgorithm(short hashAlgorithm);
 
-	TlsHandshakeHash fork();
+    void sealHashAlgorithms();
+
+    TlsHandshakeHash stopTracking();
+
+    Digest forkPRFHash();
+
+    byte[] getFinalHash(short hashAlgorithm);
 }

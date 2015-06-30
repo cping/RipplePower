@@ -3,6 +3,7 @@ package org.ripple.bouncycastle.asn1.eac;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.SimpleTimeZone;
 
 import org.ripple.bouncycastle.util.Arrays;
@@ -10,78 +11,114 @@ import org.ripple.bouncycastle.util.Arrays;
 /**
  * EAC encoding date object
  */
-public class PackedDate {
-	private byte[] time;
+public class PackedDate
+{
+    private byte[]      time;
 
-	public PackedDate(String time) {
-		this.time = convert(time);
-	}
+    public PackedDate(
+        String time)
+    {
+        this.time = convert(time);
+    }
 
-	/**
-	 * base constructer from a java.util.date object
-	 */
-	public PackedDate(Date time) {
-		SimpleDateFormat dateF = new SimpleDateFormat("yyMMdd'Z'");
+    /**
+     * Base constructor from a java.util.date object.
+     *
+     * @param time a date object representing the time of interest.
+     */
+    public PackedDate(
+        Date time)
+    {
+        SimpleDateFormat dateF = new SimpleDateFormat("yyMMdd'Z'");
 
-		dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
+        dateF.setTimeZone(new SimpleTimeZone(0,"Z"));
 
-		this.time = convert(dateF.format(time));
-	}
+        this.time = convert(dateF.format(time));
+    }
 
-	private byte[] convert(String sTime) {
-		char[] digs = sTime.toCharArray();
-		byte[] date = new byte[6];
+    /**
+     * Base constructor from a java.util.date object. You may need to use this constructor if the default locale
+     * doesn't use a Gregorian calender so that the PackedDate produced is compatible with other ASN.1 implementations.
+     *
+     * @param time a date object representing the time of interest.
+     * @param locale an appropriate Locale for producing an ASN.1 GeneralizedTime value.
+     */
+    public PackedDate(
+        Date time,
+        Locale locale)
+    {
+        SimpleDateFormat dateF = new SimpleDateFormat("yyMMdd'Z'", locale);
 
-		for (int i = 0; i != 6; i++) {
-			date[i] = (byte) (digs[i] - '0');
-		}
+        dateF.setTimeZone(new SimpleTimeZone(0,"Z"));
 
-		return date;
-	}
+        this.time = convert(dateF.format(time));
+    }
 
-	PackedDate(byte[] bytes) {
-		this.time = bytes;
-	}
+    private byte[] convert(String sTime)
+    {
+        char[] digs = sTime.toCharArray();
+        byte[] date = new byte[6];
 
-	/**
-	 * return the time as a date based on whatever a 2 digit year will return.
-	 * For standardised processing use getAdjustedDate().
-	 * 
-	 * @return the resulting date
-	 * @exception java.text.ParseException
-	 *                if the date string cannot be parsed.
-	 */
-	public Date getDate() throws ParseException {
-		SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMdd");
+        for (int i = 0; i != 6; i++)
+        {
+            date[i] = (byte)(digs[i] - '0');
+        }
 
-		return dateF.parse("20" + toString());
-	}
+        return date;
+    }
 
-	public int hashCode() {
-		return Arrays.hashCode(time);
-	}
+    PackedDate(
+        byte[] bytes)
+    {
+        this.time = bytes;
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof PackedDate)) {
-			return false;
-		}
+    /**
+     * return the time as a date based on whatever a 2 digit year will return. For
+     * standardised processing use getAdjustedDate().
+     *
+     * @return the resulting date
+     * @exception java.text.ParseException if the date string cannot be parsed.
+     */
+    public Date getDate()
+        throws ParseException
+    {
+        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMdd");
 
-		PackedDate other = (PackedDate) o;
+        return dateF.parse("20" + toString());
+    }
 
-		return Arrays.areEqual(time, other.time);
-	}
+    public int hashCode()
+    {
+        return Arrays.hashCode(time);
+    }
 
-	public String toString() {
-		char[] dateC = new char[time.length];
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof PackedDate))
+        {
+            return false;
+        }
 
-		for (int i = 0; i != dateC.length; i++) {
-			dateC[i] = (char) ((time[i] & 0xff) + '0');
-		}
+        PackedDate other = (PackedDate)o;
 
-		return new String(dateC);
-	}
+        return Arrays.areEqual(time, other.time);
+    }
 
-	public byte[] getEncoding() {
-		return time;
-	}
+    public String toString() 
+    {
+        char[]  dateC = new char[time.length];
+
+        for (int i = 0; i != dateC.length; i++)
+        {
+            dateC[i] = (char)((time[i] & 0xff) + '0');
+        }
+
+        return new String(dateC);
+    }
+
+    public byte[] getEncoding()
+    {
+        return time;
+    }
 }

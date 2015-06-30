@@ -11,141 +11,185 @@ import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 import org.ripple.bouncycastle.util.Arrays;
 
 /**
- * an implementation of the AES Key Wrapper from the NIST Key Wrap Specification
- * as described in RFC 3394.
+ * an implementation of the AES Key Wrapper from the NIST Key Wrap
+ * Specification as described in RFC 3394.
  * <p>
- * For further details see: <a
- * href="http://www.ietf.org/rfc/rfc3394.txt">http://
- * www.ietf.org/rfc/rfc3394.txt</a> and <a
- * href="http://csrc.nist.gov/encryption/kms/key-wrap.pdf"
- * >http://csrc.nist.gov/encryption/kms/key-wrap.pdf</a>.
+ * For further details see: <a href="http://www.ietf.org/rfc/rfc3394.txt">http://www.ietf.org/rfc/rfc3394.txt</a>
+ * and  <a href="http://csrc.nist.gov/encryption/kms/key-wrap.pdf">http://csrc.nist.gov/encryption/kms/key-wrap.pdf</a>.
  */
-public class RFC3394WrapEngine implements Wrapper {
-	private BlockCipher engine;
-	private KeyParameter param;
-	private boolean forWrapping;
+public class RFC3394WrapEngine
+    implements Wrapper
+{
+    private BlockCipher     engine;
+    private boolean         wrapCipherMode;
+    private KeyParameter    param;
+    private boolean         forWrapping;
 
-	private byte[] iv = { (byte) 0xa6, (byte) 0xa6, (byte) 0xa6, (byte) 0xa6,
-			(byte) 0xa6, (byte) 0xa6, (byte) 0xa6, (byte) 0xa6 };
+    private byte[]          iv = {
+                              (byte)0xa6, (byte)0xa6, (byte)0xa6, (byte)0xa6,
+                              (byte)0xa6, (byte)0xa6, (byte)0xa6, (byte)0xa6 };
 
-	public RFC3394WrapEngine(BlockCipher engine) {
-		this.engine = engine;
-	}
+    /**
+     * Create a RFC 3394 WrapEngine specifying the encrypt for wrapping, decrypt for unwrapping.
+     *
+     * @param engine the block cipher to be used for wrapping.
+     */
+    public RFC3394WrapEngine(BlockCipher engine)
+    {
+        this(engine, false);
+    }
 
-	public void init(boolean forWrapping, CipherParameters param) {
-		this.forWrapping = forWrapping;
+    /**
+     * Create a RFC 3394 WrapEngine specifying the direction for wrapping and unwrapping..
+     *
+     * @param engine the block cipher to be used for wrapping.
+     * @param useReverseDirection true if engine should be used in decryption mode for wrapping, false otherwise.
+     */
+    public RFC3394WrapEngine(BlockCipher engine, boolean useReverseDirection)
+    {
+        this.engine = engine;
+        this.wrapCipherMode = (useReverseDirection) ? false : true;
+    }
 
-		if (param instanceof ParametersWithRandom) {
-			param = ((ParametersWithRandom) param).getParameters();
-		}
+    public void init(
+        boolean             forWrapping,
+        CipherParameters    param)
+    {
+        this.forWrapping = forWrapping;
 
-		if (param instanceof KeyParameter) {
-			this.param = (KeyParameter) param;
-		} else if (param instanceof ParametersWithIV) {
-			this.iv = ((ParametersWithIV) param).getIV();
-			this.param = (KeyParameter) ((ParametersWithIV) param)
-					.getParameters();
-			if (this.iv.length != 8) {
-				throw new IllegalArgumentException("IV not equal to 8");
-			}
-		}
-	}
+        if (param instanceof ParametersWithRandom)
+        {
+            param = ((ParametersWithRandom) param).getParameters();
+        }
 
-	public String getAlgorithmName() {
-		return engine.getAlgorithmName();
-	}
+        if (param instanceof KeyParameter)
+        {
+            this.param = (KeyParameter)param;
+        }
+        else if (param instanceof ParametersWithIV)
+        {
+            this.iv = ((ParametersWithIV)param).getIV();
+            this.param = (KeyParameter)((ParametersWithIV) param).getParameters();
+            if (this.iv.length != 8)
+            {
+               throw new IllegalArgumentException("IV not equal to 8");
+            }
+        }
+    }
 
-	public byte[] wrap(byte[] in, int inOff, int inLen) {
-		if (!forWrapping) {
-			throw new IllegalStateException("not set for wrapping");
-		}
+    public String getAlgorithmName()
+    {
+        return engine.getAlgorithmName();
+    }
 
-		int n = inLen / 8;
+    public byte[] wrap(
+        byte[]  in,
+        int     inOff,
+        int     inLen)
+    {
+        if (!forWrapping)
+        {
+            throw new IllegalStateException("not set for wrapping");
+        }
 
-		if ((n * 8) != inLen) {
-			throw new DataLengthException(
-					"wrap data must be a multiple of 8 bytes");
-		}
+        int     n = inLen / 8;
 
-		byte[] block = new byte[inLen + iv.length];
-		byte[] buf = new byte[8 + iv.length];
+        if ((n * 8) != inLen)
+        {
+            throw new DataLengthException("wrap data must be a multiple of 8 bytes");
+        }
 
-		System.arraycopy(iv, 0, block, 0, iv.length);
-		System.arraycopy(in, 0, block, iv.length, inLen);
+        byte[]  block = new byte[inLen + iv.length];
+        byte[]  buf = new byte[8 + iv.length];
 
-		engine.init(true, param);
+        System.arraycopy(iv, 0, block, 0, iv.length);
+        System.arraycopy(in, inOff, block, iv.length, inLen);
 
-		for (int j = 0; j != 6; j++) {
-			for (int i = 1; i <= n; i++) {
-				System.arraycopy(block, 0, buf, 0, iv.length);
-				System.arraycopy(block, 8 * i, buf, iv.length, 8);
-				engine.processBlock(buf, 0, buf, 0);
+        engine.init(wrapCipherMode, param);
 
-				int t = n * j + i;
-				for (int k = 1; t != 0; k++) {
-					byte v = (byte) t;
+        for (int j = 0; j != 6; j++)
+        {
+            for (int i = 1; i <= n; i++)
+            {
+                System.arraycopy(block, 0, buf, 0, iv.length);
+                System.arraycopy(block, 8 * i, buf, iv.length, 8);
+                engine.processBlock(buf, 0, buf, 0);
 
-					buf[iv.length - k] ^= v;
+                int t = n * j + i;
+                for (int k = 1; t != 0; k++)
+                {
+                    byte    v = (byte)t;
 
-					t >>>= 8;
-				}
+                    buf[iv.length - k] ^= v;
 
-				System.arraycopy(buf, 0, block, 0, 8);
-				System.arraycopy(buf, 8, block, 8 * i, 8);
-			}
-		}
+                    t >>>= 8;
+                }
 
-		return block;
-	}
+                System.arraycopy(buf, 0, block, 0, 8);
+                System.arraycopy(buf, 8, block, 8 * i, 8);
+            }
+        }
 
-	public byte[] unwrap(byte[] in, int inOff, int inLen)
-			throws InvalidCipherTextException {
-		if (forWrapping) {
-			throw new IllegalStateException("not set for unwrapping");
-		}
+        return block;
+    }
 
-		int n = inLen / 8;
+    public byte[] unwrap(
+        byte[]  in,
+        int     inOff,
+        int     inLen)
+        throws InvalidCipherTextException
+    {
+        if (forWrapping)
+        {
+            throw new IllegalStateException("not set for unwrapping");
+        }
 
-		if ((n * 8) != inLen) {
-			throw new InvalidCipherTextException(
-					"unwrap data must be a multiple of 8 bytes");
-		}
+        int     n = inLen / 8;
 
-		byte[] block = new byte[inLen - iv.length];
-		byte[] a = new byte[iv.length];
-		byte[] buf = new byte[8 + iv.length];
+        if ((n * 8) != inLen)
+        {
+            throw new InvalidCipherTextException("unwrap data must be a multiple of 8 bytes");
+        }
 
-		System.arraycopy(in, 0, a, 0, iv.length);
-		System.arraycopy(in, iv.length, block, 0, inLen - iv.length);
+        byte[]  block = new byte[inLen - iv.length];
+        byte[]  a = new byte[iv.length];
+        byte[]  buf = new byte[8 + iv.length];
 
-		engine.init(false, param);
+        System.arraycopy(in, inOff, a, 0, iv.length);
+        System.arraycopy(in, inOff + iv.length, block, 0, inLen - iv.length);
 
-		n = n - 1;
+        engine.init(!wrapCipherMode, param);
 
-		for (int j = 5; j >= 0; j--) {
-			for (int i = n; i >= 1; i--) {
-				System.arraycopy(a, 0, buf, 0, iv.length);
-				System.arraycopy(block, 8 * (i - 1), buf, iv.length, 8);
+        n = n - 1;
 
-				int t = n * j + i;
-				for (int k = 1; t != 0; k++) {
-					byte v = (byte) t;
+        for (int j = 5; j >= 0; j--)
+        {
+            for (int i = n; i >= 1; i--)
+            {
+                System.arraycopy(a, 0, buf, 0, iv.length);
+                System.arraycopy(block, 8 * (i - 1), buf, iv.length, 8);
 
-					buf[iv.length - k] ^= v;
+                int t = n * j + i;
+                for (int k = 1; t != 0; k++)
+                {
+                    byte    v = (byte)t;
 
-					t >>>= 8;
-				}
+                    buf[iv.length - k] ^= v;
 
-				engine.processBlock(buf, 0, buf, 0);
-				System.arraycopy(buf, 0, a, 0, 8);
-				System.arraycopy(buf, 8, block, 8 * (i - 1), 8);
-			}
-		}
+                    t >>>= 8;
+                }
 
-		if (!Arrays.constantTimeAreEqual(a, iv)) {
-			throw new InvalidCipherTextException("checksum failed");
-		}
+                engine.processBlock(buf, 0, buf, 0);
+                System.arraycopy(buf, 0, a, 0, 8);
+                System.arraycopy(buf, 8, block, 8 * (i - 1), 8);
+            }
+        }
 
-		return block;
-	}
+        if (!Arrays.constantTimeAreEqual(a, iv))
+        {
+            throw new InvalidCipherTextException("checksum failed");
+        }
+
+        return block;
+    }
 }

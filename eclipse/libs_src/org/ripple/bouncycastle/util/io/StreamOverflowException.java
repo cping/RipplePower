@@ -2,8 +2,14 @@ package org.ripple.bouncycastle.util.io;
 
 import java.io.IOException;
 
-public class StreamOverflowException extends IOException {
-	public StreamOverflowException(String msg) {
-		super(msg);
-	}
+/**
+ * Exception thrown when too much data is written to an InputStream
+ */
+public class StreamOverflowException
+    extends IOException
+{
+    public StreamOverflowException(String msg)
+    {
+        super(msg);
+    }
 }

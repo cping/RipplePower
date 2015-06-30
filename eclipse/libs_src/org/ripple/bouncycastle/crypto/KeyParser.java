@@ -5,6 +5,8 @@ import java.io.InputStream;
 
 import org.ripple.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
-public interface KeyParser {
-	AsymmetricKeyParameter readKey(InputStream stream) throws IOException;
+public interface KeyParser
+{
+    AsymmetricKeyParameter readKey(InputStream stream)
+        throws IOException;
 }

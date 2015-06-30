@@ -11,116 +11,132 @@ import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.DERTaggedObject;
 
-public class KeyRecRepContent extends ASN1Object {
-	private PKIStatusInfo status;
-	private CMPCertificate newSigCert;
-	private ASN1Sequence caCerts;
-	private ASN1Sequence keyPairHist;
+public class KeyRecRepContent
+    extends ASN1Object
+{
+    private PKIStatusInfo status;
+    private CMPCertificate newSigCert;
+    private ASN1Sequence caCerts;
+    private ASN1Sequence keyPairHist;
 
-	private KeyRecRepContent(ASN1Sequence seq) {
-		Enumeration en = seq.getObjects();
+    private KeyRecRepContent(ASN1Sequence seq)
+    {
+        Enumeration en = seq.getObjects();
 
-		status = PKIStatusInfo.getInstance(en.nextElement());
+        status = PKIStatusInfo.getInstance(en.nextElement());
 
-		while (en.hasMoreElements()) {
-			ASN1TaggedObject tObj = ASN1TaggedObject.getInstance(en
-					.nextElement());
+        while (en.hasMoreElements())
+        {
+            ASN1TaggedObject tObj = ASN1TaggedObject.getInstance(en.nextElement());
 
-			switch (tObj.getTagNo()) {
-			case 0:
-				newSigCert = CMPCertificate.getInstance(tObj.getObject());
-				break;
-			case 1:
-				caCerts = ASN1Sequence.getInstance(tObj.getObject());
-				break;
-			case 2:
-				keyPairHist = ASN1Sequence.getInstance(tObj.getObject());
-				break;
-			default:
-				throw new IllegalArgumentException("unknown tag number: "
-						+ tObj.getTagNo());
-			}
-		}
-	}
+            switch (tObj.getTagNo())
+            {
+            case 0:
+                newSigCert = CMPCertificate.getInstance(tObj.getObject());
+                break;
+            case 1:
+                caCerts = ASN1Sequence.getInstance(tObj.getObject());
+                break;
+            case 2:
+                keyPairHist = ASN1Sequence.getInstance(tObj.getObject());
+                break;
+            default:
+                throw new IllegalArgumentException("unknown tag number: " + tObj.getTagNo());
+            }
+        }
+    }
 
-	public static KeyRecRepContent getInstance(Object o) {
-		if (o instanceof KeyRecRepContent) {
-			return (KeyRecRepContent) o;
-		}
+    public static KeyRecRepContent getInstance(Object o)
+    {
+        if (o instanceof KeyRecRepContent)
+        {
+            return (KeyRecRepContent)o;
+        }
 
-		if (o != null) {
-			return new KeyRecRepContent(ASN1Sequence.getInstance(o));
-		}
+        if (o != null)
+        {
+            return new KeyRecRepContent(ASN1Sequence.getInstance(o));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public PKIStatusInfo getStatus() {
-		return status;
-	}
 
-	public CMPCertificate getNewSigCert() {
-		return newSigCert;
-	}
+    public PKIStatusInfo getStatus()
+    {
+        return status;
+    }
 
-	public CMPCertificate[] getCaCerts() {
-		if (caCerts == null) {
-			return null;
-		}
+    public CMPCertificate getNewSigCert()
+    {
+        return newSigCert;
+    }
 
-		CMPCertificate[] results = new CMPCertificate[caCerts.size()];
+    public CMPCertificate[] getCaCerts()
+    {
+        if (caCerts == null)
+        {
+            return null;
+        }
 
-		for (int i = 0; i != results.length; i++) {
-			results[i] = CMPCertificate.getInstance(caCerts.getObjectAt(i));
-		}
+        CMPCertificate[] results = new CMPCertificate[caCerts.size()];
 
-		return results;
-	}
+        for (int i = 0; i != results.length; i++)
+        {
+            results[i] = CMPCertificate.getInstance(caCerts.getObjectAt(i));
+        }
 
-	public CertifiedKeyPair[] getKeyPairHist() {
-		if (keyPairHist == null) {
-			return null;
-		}
+        return results;
+    }
 
-		CertifiedKeyPair[] results = new CertifiedKeyPair[keyPairHist.size()];
+    public CertifiedKeyPair[] getKeyPairHist()
+    {
+        if (keyPairHist == null)
+        {
+            return null;
+        }
 
-		for (int i = 0; i != results.length; i++) {
-			results[i] = CertifiedKeyPair.getInstance(keyPairHist
-					.getObjectAt(i));
-		}
+        CertifiedKeyPair[] results = new CertifiedKeyPair[keyPairHist.size()];
 
-		return results;
-	}
+        for (int i = 0; i != results.length; i++)
+        {
+            results[i] = CertifiedKeyPair.getInstance(keyPairHist.getObjectAt(i));
+        }
 
-	/**
-	 * <pre>
-	 * KeyRecRepContent ::= SEQUENCE {
-	 *                         status                  PKIStatusInfo,
-	 *                         newSigCert          [0] CMPCertificate OPTIONAL,
-	 *                         caCerts             [1] SEQUENCE SIZE (1..MAX) OF
-	 *                                                           CMPCertificate OPTIONAL,
-	 *                         keyPairHist         [2] SEQUENCE SIZE (1..MAX) OF
-	 *                                                           CertifiedKeyPair OPTIONAL
-	 *              }
-	 * </pre>
-	 * 
-	 * @return a basic ASN.1 object representation.
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
+        return results;
+    }
 
-		v.add(status);
+    /**
+     * <pre>
+     * KeyRecRepContent ::= SEQUENCE {
+     *                         status                  PKIStatusInfo,
+     *                         newSigCert          [0] CMPCertificate OPTIONAL,
+     *                         caCerts             [1] SEQUENCE SIZE (1..MAX) OF
+     *                                                           CMPCertificate OPTIONAL,
+     *                         keyPairHist         [2] SEQUENCE SIZE (1..MAX) OF
+     *                                                           CertifiedKeyPair OPTIONAL
+     *              }
+     * </pre> 
+     * @return a basic ASN.1 object representation.
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-		addOptional(v, 0, newSigCert);
-		addOptional(v, 1, caCerts);
-		addOptional(v, 2, keyPairHist);
+        v.add(status);
 
-		return new DERSequence(v);
-	}
+        addOptional(v, 0, newSigCert);
+        addOptional(v, 1, caCerts);
+        addOptional(v, 2, keyPairHist);
 
-	private void addOptional(ASN1EncodableVector v, int tagNo, ASN1Encodable obj) {
-		if (obj != null) {
-			v.add(new DERTaggedObject(true, tagNo, obj));
-		}
-	}
+        return new DERSequence(v);
+    }
+
+    private void addOptional(ASN1EncodableVector v, int tagNo, ASN1Encodable obj)
+    {
+        if (obj != null)
+        {
+            v.add(new DERTaggedObject(true, tagNo, obj));
+        }
+    }
 }

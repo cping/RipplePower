@@ -2,6 +2,8 @@ package org.ripple.bouncycastle.util;
 
 import java.util.Collection;
 
-public interface Store {
-	Collection getMatches(Selector selector) throws StoreException;
+public interface Store<T>
+{
+    Collection<T> getMatches(Selector<T> selector)
+        throws StoreException;
 }

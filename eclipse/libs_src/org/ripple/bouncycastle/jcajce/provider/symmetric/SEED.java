@@ -12,6 +12,7 @@ import org.ripple.bouncycastle.crypto.BlockCipher;
 import org.ripple.bouncycastle.crypto.CipherKeyGenerator;
 import org.ripple.bouncycastle.crypto.engines.SEEDEngine;
 import org.ripple.bouncycastle.crypto.engines.SEEDWrapEngine;
+import org.ripple.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.ripple.bouncycastle.crypto.macs.GMac;
 import org.ripple.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.ripple.bouncycastle.crypto.modes.GCMBlockCipher;
@@ -23,118 +24,159 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseMac;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvider;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
-import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public final class SEED {
-	private SEED() {
-	}
+public final class SEED
+{
+    private SEED()
+    {
+    }
+    
+    public static class ECB
+        extends BaseBlockCipher
+    {
+        public ECB()
+        {
+            super(new BlockCipherProvider()
+            {
+                public BlockCipher get()
+                {
+                    return new SEEDEngine();
+                }
+            });
+        }
+    }
 
-	public static class ECB extends BaseBlockCipher {
-		public ECB() {
-			super(new BlockCipherProvider() {
-				public BlockCipher get() {
-					return new SEEDEngine();
-				}
-			});
-		}
-	}
+    public static class CBC
+       extends BaseBlockCipher
+    {
+        public CBC()
+        {
+            super(new CBCBlockCipher(new SEEDEngine()), 128);
+        }
+    }
 
-	public static class CBC extends BaseBlockCipher {
-		public CBC() {
-			super(new CBCBlockCipher(new SEEDEngine()), 128);
-		}
-	}
+    public static class Wrap
+        extends BaseWrapCipher
+    {
+        public Wrap()
+        {
+            super(new SEEDWrapEngine());
+        }
+    }
 
-	public static class Wrap extends BaseWrapCipher {
-		public Wrap() {
-			super(new SEEDWrapEngine());
-		}
-	}
+    public static class KeyGen
+        extends BaseKeyGenerator
+    {
+        public KeyGen()
+        {
+            super("SEED", 128, new CipherKeyGenerator());
+        }
+    }
 
-	public static class KeyGen extends BaseKeyGenerator {
-		public KeyGen() {
-			super("SEED", 128, new CipherKeyGenerator());
-		}
-	}
+    public static class GMAC
+        extends BaseMac
+    {
+        public GMAC()
+        {
+            super(new GMac(new GCMBlockCipher(new SEEDEngine())));
+        }
+    }
 
-	public static class GMAC extends BaseMac {
-		public GMAC() {
-			super(new GMac(new GCMBlockCipher(new SEEDEngine())));
-		}
-	}
+    public static class Poly1305
+        extends BaseMac
+    {
+        public Poly1305()
+        {
+            super(new org.ripple.bouncycastle.crypto.macs.Poly1305(new SEEDEngine()));
+        }
+    }
 
-	public static class AlgParamGen extends BaseAlgorithmParameterGenerator {
-		protected void engineInit(AlgorithmParameterSpec genParamSpec,
-				SecureRandom random) throws InvalidAlgorithmParameterException {
-			throw new InvalidAlgorithmParameterException(
-					"No supported AlgorithmParameterSpec for SEED parameter generation.");
-		}
+    public static class Poly1305KeyGen
+        extends BaseKeyGenerator
+    {
+        public Poly1305KeyGen()
+        {
+            super("Poly1305-SEED", 256, new Poly1305KeyGenerator());
+        }
+    }
 
-		protected AlgorithmParameters engineGenerateParameters() {
-			byte[] iv = new byte[16];
+    public static class AlgParamGen
+        extends BaseAlgorithmParameterGenerator
+    {
+        protected void engineInit(
+            AlgorithmParameterSpec genParamSpec,
+            SecureRandom random)
+            throws InvalidAlgorithmParameterException
+        {
+            throw new InvalidAlgorithmParameterException("No supported AlgorithmParameterSpec for SEED parameter generation.");
+        }
 
-			if (random == null) {
-				random = new SecureRandom();
-			}
+        protected AlgorithmParameters engineGenerateParameters()
+        {
+            byte[] iv = new byte[16];
 
-			random.nextBytes(iv);
+            if (random == null)
+            {
+                random = new SecureRandom();
+            }
 
-			AlgorithmParameters params;
+            random.nextBytes(iv);
 
-			try {
-				params = AlgorithmParameters.getInstance("SEED",
-						BouncyCastleProvider.PROVIDER_NAME);
-				params.init(new IvParameterSpec(iv));
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
-			}
+            AlgorithmParameters params;
 
-			return params;
-		}
-	}
+            try
+            {
+                params = createParametersInstance("SEED");
+                params.init(new IvParameterSpec(iv));
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e.getMessage());
+            }
 
-	public static class AlgParams extends IvAlgorithmParameters {
-		protected String engineToString() {
-			return "SEED IV";
-		}
-	}
+            return params;
+        }
+    }
 
-	public static class Mappings extends SymmetricAlgorithmProvider {
-		private static final String PREFIX = SEED.class.getName();
+    public static class AlgParams
+        extends IvAlgorithmParameters
+    {
+        protected String engineToString()
+        {
+            return "SEED IV";
+        }
+    }
 
-		public Mappings() {
-		}
+    public static class Mappings
+        extends SymmetricAlgorithmProvider
+    {
+        private static final String PREFIX = SEED.class.getName();
 
-		public void configure(ConfigurableProvider provider) {
+        public Mappings()
+        {
+        }
 
-			provider.addAlgorithm("AlgorithmParameters.SEED", PREFIX
-					+ "$AlgParams");
-			provider.addAlgorithm("Alg.Alias.AlgorithmParameters."
-					+ KISAObjectIdentifiers.id_seedCBC, "SEED");
+        public void configure(ConfigurableProvider provider)
+        {
 
-			provider.addAlgorithm("AlgorithmParameterGenerator.SEED", PREFIX
-					+ "$AlgParamGen");
-			provider.addAlgorithm("Alg.Alias.AlgorithmParameterGenerator."
-					+ KISAObjectIdentifiers.id_seedCBC, "SEED");
+            provider.addAlgorithm("AlgorithmParameters.SEED", PREFIX + "$AlgParams");
+            provider.addAlgorithm("Alg.Alias.AlgorithmParameters." + KISAObjectIdentifiers.id_seedCBC, "SEED");
 
-			provider.addAlgorithm("Cipher.SEED", PREFIX + "$ECB");
-			provider.addAlgorithm("Cipher." + KISAObjectIdentifiers.id_seedCBC,
-					PREFIX + "$CBC");
+            provider.addAlgorithm("AlgorithmParameterGenerator.SEED", PREFIX + "$AlgParamGen");
+            provider.addAlgorithm("Alg.Alias.AlgorithmParameterGenerator." + KISAObjectIdentifiers.id_seedCBC, "SEED");
 
-			provider.addAlgorithm("Cipher.SEEDWRAP", PREFIX + "$Wrap");
-			provider.addAlgorithm("Alg.Alias.Cipher."
-					+ KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap,
-					"SEEDWRAP");
+            provider.addAlgorithm("Cipher.SEED", PREFIX + "$ECB");
+            provider.addAlgorithm("Cipher." + KISAObjectIdentifiers.id_seedCBC, PREFIX + "$CBC");
 
-			provider.addAlgorithm("KeyGenerator.SEED", PREFIX + "$KeyGen");
-			provider.addAlgorithm("KeyGenerator."
-					+ KISAObjectIdentifiers.id_seedCBC, PREFIX + "$KeyGen");
-			provider.addAlgorithm("KeyGenerator."
-					+ KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap, PREFIX
-					+ "$KeyGen");
+            provider.addAlgorithm("Cipher.SEEDWRAP", PREFIX + "$Wrap");
+            provider.addAlgorithm("Alg.Alias.Cipher." + KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap, "SEEDWRAP");
 
-			addGMacAlgorithm(provider, "SEED", PREFIX + "$GMAC", PREFIX
-					+ "$KeyGen");
-		}
-	}
+            provider.addAlgorithm("KeyGenerator.SEED", PREFIX + "$KeyGen");
+            provider.addAlgorithm("KeyGenerator." + KISAObjectIdentifiers.id_seedCBC, PREFIX + "$KeyGen");
+            provider.addAlgorithm("KeyGenerator." + KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap, PREFIX + "$KeyGen");
+
+            addGMacAlgorithm(provider, "SEED", PREFIX + "$GMAC", PREFIX + "$KeyGen");
+            addPoly1305Algorithm(provider, "SEED", PREFIX + "$Poly1305", PREFIX + "$Poly1305KeyGen");
+        }
+    }
 }

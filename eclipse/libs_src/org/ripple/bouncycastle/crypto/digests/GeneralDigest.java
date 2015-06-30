@@ -2,120 +2,154 @@ package org.ripple.bouncycastle.crypto.digests;
 
 import org.ripple.bouncycastle.crypto.ExtendedDigest;
 import org.ripple.bouncycastle.util.Memoable;
+import org.ripple.bouncycastle.util.Pack;
 
 /**
  * base implementation of MD4 family style digest as outlined in
  * "Handbook of Applied Cryptography", pages 344 - 347.
  */
-public abstract class GeneralDigest implements ExtendedDigest, Memoable {
-	private static final int BYTE_LENGTH = 64;
-	private byte[] xBuf;
-	private int xBufOff;
+public abstract class GeneralDigest
+    implements ExtendedDigest, Memoable
+{
+    private static final int BYTE_LENGTH = 64;
 
-	private long byteCount;
+    private final byte[]  xBuf = new byte[4];
+    private int           xBufOff;
 
-	/**
-	 * Standard constructor
-	 */
-	protected GeneralDigest() {
-		xBuf = new byte[4];
-		xBufOff = 0;
-	}
+    private long    byteCount;
 
-	/**
-	 * Copy constructor. We are using copy constructors in place of the
-	 * Object.clone() interface as this interface is not supported by J2ME.
-	 */
-	protected GeneralDigest(GeneralDigest t) {
-		xBuf = new byte[t.xBuf.length];
+    /**
+     * Standard constructor
+     */
+    protected GeneralDigest()
+    {
+        xBufOff = 0;
+    }
 
-		copyIn(t);
-	}
+    /**
+     * Copy constructor.  We are using copy constructors in place
+     * of the Object.clone() interface as this interface is not
+     * supported by J2ME.
+     */
+    protected GeneralDigest(GeneralDigest t)
+    {
+        copyIn(t);
+    }
 
-	protected void copyIn(GeneralDigest t) {
-		System.arraycopy(t.xBuf, 0, xBuf, 0, t.xBuf.length);
+    protected GeneralDigest(byte[] encodedState)
+    {
+        System.arraycopy(encodedState, 0, xBuf, 0, xBuf.length);
+        xBufOff = Pack.bigEndianToInt(encodedState, 4);
+        byteCount = Pack.bigEndianToLong(encodedState, 8);
+    }
 
-		xBufOff = t.xBufOff;
-		byteCount = t.byteCount;
-	}
+    protected void copyIn(GeneralDigest t)
+    {
+        System.arraycopy(t.xBuf, 0, xBuf, 0, t.xBuf.length);
 
-	public void update(byte in) {
-		xBuf[xBufOff++] = in;
+        xBufOff = t.xBufOff;
+        byteCount = t.byteCount;
+    }
 
-		if (xBufOff == xBuf.length) {
-			processWord(xBuf, 0);
-			xBufOff = 0;
-		}
+    public void update(
+        byte in)
+    {
+        xBuf[xBufOff++] = in;
 
-		byteCount++;
-	}
+        if (xBufOff == xBuf.length)
+        {
+            processWord(xBuf, 0);
+            xBufOff = 0;
+        }
 
-	public void update(byte[] in, int inOff, int len) {
-		//
-		// fill the current word
-		//
-		while ((xBufOff != 0) && (len > 0)) {
-			update(in[inOff]);
+        byteCount++;
+    }
 
-			inOff++;
-			len--;
-		}
+    public void update(
+        byte[]  in,
+        int     inOff,
+        int     len)
+    {
+        //
+        // fill the current word
+        //
+        while ((xBufOff != 0) && (len > 0))
+        {
+            update(in[inOff]);
 
-		//
-		// process whole words.
-		//
-		while (len > xBuf.length) {
-			processWord(in, inOff);
+            inOff++;
+            len--;
+        }
 
-			inOff += xBuf.length;
-			len -= xBuf.length;
-			byteCount += xBuf.length;
-		}
+        //
+        // process whole words.
+        //
+        while (len > xBuf.length)
+        {
+            processWord(in, inOff);
 
-		//
-		// load in the remainder.
-		//
-		while (len > 0) {
-			update(in[inOff]);
+            inOff += xBuf.length;
+            len -= xBuf.length;
+            byteCount += xBuf.length;
+        }
 
-			inOff++;
-			len--;
-		}
-	}
+        //
+        // load in the remainder.
+        //
+        while (len > 0)
+        {
+            update(in[inOff]);
 
-	public void finish() {
-		long bitLength = (byteCount << 3);
+            inOff++;
+            len--;
+        }
+    }
 
-		//
-		// add the pad bytes.
-		//
-		update((byte) 128);
+    public void finish()
+    {
+        long    bitLength = (byteCount << 3);
 
-		while (xBufOff != 0) {
-			update((byte) 0);
-		}
+        //
+        // add the pad bytes.
+        //
+        update((byte)128);
 
-		processLength(bitLength);
+        while (xBufOff != 0)
+        {
+            update((byte)0);
+        }
 
-		processBlock();
-	}
+        processLength(bitLength);
 
-	public void reset() {
-		byteCount = 0;
+        processBlock();
+    }
 
-		xBufOff = 0;
-		for (int i = 0; i < xBuf.length; i++) {
-			xBuf[i] = 0;
-		}
-	}
+    public void reset()
+    {
+        byteCount = 0;
 
-	public int getByteLength() {
-		return BYTE_LENGTH;
-	}
+        xBufOff = 0;
+        for (int i = 0; i < xBuf.length; i++)
+        {
+            xBuf[i] = 0;
+        }
+    }
 
-	protected abstract void processWord(byte[] in, int inOff);
+    protected void populateState(byte[] state)
+    {
+        System.arraycopy(xBuf, 0, state, 0, xBufOff);
+        Pack.intToBigEndian(xBufOff, state, 4);
+        Pack.longToBigEndian(byteCount, state, 8);
+    }
 
-	protected abstract void processLength(long bitLength);
+    public int getByteLength()
+    {
+        return BYTE_LENGTH;
+    }
+    
+    protected abstract void processWord(byte[] in, int inOff);
 
-	protected abstract void processBlock();
+    protected abstract void processLength(long bitLength);
+
+    protected abstract void processBlock();
 }

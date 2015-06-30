@@ -12,7 +12,6 @@ import org.ripple.bouncycastle.asn1.DERSequence;
 
 /**
  * The MonetaryValue object.
- * 
  * <pre>
  * MonetaryValue  ::=  SEQUENCE {
  *       currency              Iso4217CurrencyCode,
@@ -21,57 +20,73 @@ import org.ripple.bouncycastle.asn1.DERSequence;
  * -- value = amount * 10^exponent
  * </pre>
  */
-public class MonetaryValue extends ASN1Object {
-	private Iso4217CurrencyCode currency;
-	private ASN1Integer amount;
-	private ASN1Integer exponent;
+public class MonetaryValue 
+    extends ASN1Object
+{
+    private Iso4217CurrencyCode currency;
+    private ASN1Integer         amount;
+    private ASN1Integer         exponent;
+        
+    public static MonetaryValue getInstance(
+        Object obj)
+    {
+        if (obj instanceof MonetaryValue)
+        {
+            return (MonetaryValue)obj;
+        }
 
-	public static MonetaryValue getInstance(Object obj) {
-		if (obj instanceof MonetaryValue) {
-			return (MonetaryValue) obj;
-		}
-
-		if (obj != null) {
-			return new MonetaryValue(ASN1Sequence.getInstance(obj));
-		}
-
-		return null;
-	}
-
-	private MonetaryValue(ASN1Sequence seq) {
-		Enumeration e = seq.getObjects();
-		// currency
-		currency = Iso4217CurrencyCode.getInstance(e.nextElement());
-		// hashAlgorithm
-		amount = ASN1Integer.getInstance(e.nextElement());
-		// exponent
-		exponent = ASN1Integer.getInstance(e.nextElement());
-	}
-
-	public MonetaryValue(Iso4217CurrencyCode currency, int amount, int exponent) {
-		this.currency = currency;
-		this.amount = new ASN1Integer(amount);
-		this.exponent = new ASN1Integer(exponent);
-	}
-
-	public Iso4217CurrencyCode getCurrency() {
-		return currency;
-	}
-
-	public BigInteger getAmount() {
-		return amount.getValue();
-	}
-
-	public BigInteger getExponent() {
-		return exponent.getValue();
-	}
-
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector seq = new ASN1EncodableVector();
-		seq.add(currency);
-		seq.add(amount);
-		seq.add(exponent);
-
-		return new DERSequence(seq);
-	}
+        if (obj != null)
+        {
+            return new MonetaryValue(ASN1Sequence.getInstance(obj));            
+        }
+        
+        return null;
+    }
+        
+    private MonetaryValue(
+        ASN1Sequence seq)
+    {
+        Enumeration e = seq.getObjects();    
+        // currency
+        currency = Iso4217CurrencyCode.getInstance(e.nextElement());
+        // hashAlgorithm
+        amount = ASN1Integer.getInstance(e.nextElement());
+        // exponent
+        exponent = ASN1Integer.getInstance(e.nextElement());            
+    }
+        
+    public MonetaryValue(
+        Iso4217CurrencyCode currency, 
+        int                 amount, 
+        int                 exponent)
+    {    
+        this.currency = currency;
+        this.amount = new ASN1Integer(amount);
+        this.exponent = new ASN1Integer(exponent);
+    }                    
+             
+    public Iso4217CurrencyCode getCurrency()
+    {
+        return currency;
+    }
+        
+    public BigInteger getAmount()
+    {
+        return amount.getValue();
+    }
+        
+    public BigInteger getExponent()
+    {
+        return exponent.getValue();
+    }   
+    
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector seq = new ASN1EncodableVector();
+        seq.add(currency);
+        seq.add(amount);
+        seq.add(exponent); 
+        
+        return new DERSequence(seq);
+    }
 }

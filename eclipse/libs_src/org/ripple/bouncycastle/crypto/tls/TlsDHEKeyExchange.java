@@ -1,110 +1,102 @@
 package org.ripple.bouncycastle.crypto.tls;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.Vector;
 
-import org.ripple.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.Signer;
-import org.ripple.bouncycastle.crypto.generators.DHKeyPairGenerator;
-import org.ripple.bouncycastle.crypto.io.SignerInputStream;
-import org.ripple.bouncycastle.crypto.params.DHKeyGenerationParameters;
 import org.ripple.bouncycastle.crypto.params.DHParameters;
-import org.ripple.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.ripple.bouncycastle.util.io.TeeInputStream;
 
-public class TlsDHEKeyExchange extends TlsDHKeyExchange {
+public class TlsDHEKeyExchange
+    extends TlsDHKeyExchange
+{
+    protected TlsSignerCredentials serverCredentials = null;
 
-	protected TlsSignerCredentials serverCredentials = null;
+    public TlsDHEKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, DHParameters dhParameters)
+    {
+        super(keyExchange, supportedSignatureAlgorithms, dhParameters);
+    }
 
-	public TlsDHEKeyExchange(int keyExchange,
-			Vector supportedSignatureAlgorithms, DHParameters dhParameters) {
-		super(keyExchange, supportedSignatureAlgorithms, dhParameters);
-	}
+    public void processServerCredentials(TlsCredentials serverCredentials)
+        throws IOException
+    {
+        if (!(serverCredentials instanceof TlsSignerCredentials))
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-	public void processServerCredentials(TlsCredentials serverCredentials)
-			throws IOException {
+        processServerCertificate(serverCredentials.getCertificate());
 
-		if (!(serverCredentials instanceof TlsSignerCredentials)) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        this.serverCredentials = (TlsSignerCredentials)serverCredentials;
+    }
 
-		processServerCertificate(serverCredentials.getCertificate());
+    public byte[] generateServerKeyExchange()
+        throws IOException
+    {
+        if (this.dhParameters == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		this.serverCredentials = (TlsSignerCredentials) serverCredentials;
-	}
+        DigestInputBuffer buf = new DigestInputBuffer();
 
-	public byte[] generateServerKeyExchange() throws IOException {
+        this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(),
+            this.dhParameters, buf);
 
-		if (this.dhParameters == null) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        /*
+         * RFC 5246 4.7. digitally-signed element needs SignatureAndHashAlgorithm from TLS 1.2
+         */
+        SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(
+            context, serverCredentials);
 
-		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        Digest d = TlsUtils.createHash(signatureAndHashAlgorithm);
 
-		DHKeyPairGenerator kpg = new DHKeyPairGenerator();
-		kpg.init(new DHKeyGenerationParameters(context.getSecureRandom(),
-				this.dhParameters));
-		AsymmetricCipherKeyPair kp = kpg.generateKeyPair();
+        SecurityParameters securityParameters = context.getSecurityParameters();
+        d.update(securityParameters.clientRandom, 0, securityParameters.clientRandom.length);
+        d.update(securityParameters.serverRandom, 0, securityParameters.serverRandom.length);
+        buf.updateDigest(d);
 
-		BigInteger Ys = ((DHPublicKeyParameters) kp.getPublic()).getY();
+        byte[] hash = new byte[d.getDigestSize()];
+        d.doFinal(hash, 0);
 
-		TlsDHUtils.writeDHParameter(dhParameters.getP(), buf);
-		TlsDHUtils.writeDHParameter(dhParameters.getG(), buf);
-		TlsDHUtils.writeDHParameter(Ys, buf);
+        byte[] signature = serverCredentials.generateCertificateSignature(hash);
 
-		byte[] digestInput = buf.toByteArray();
+        DigitallySigned signed_params = new DigitallySigned(signatureAndHashAlgorithm, signature);
+        signed_params.encode(buf);
 
-		Digest d = new CombinedHash();
-		SecurityParameters securityParameters = context.getSecurityParameters();
-		d.update(securityParameters.clientRandom, 0,
-				securityParameters.clientRandom.length);
-		d.update(securityParameters.serverRandom, 0,
-				securityParameters.serverRandom.length);
-		d.update(digestInput, 0, digestInput.length);
+        return buf.toByteArray();
+    }
 
-		byte[] hash = new byte[d.getDigestSize()];
-		d.doFinal(hash, 0);
+    public void processServerKeyExchange(InputStream input)
+        throws IOException
+    {
+        SecurityParameters securityParameters = context.getSecurityParameters();
 
-		byte[] sigBytes = serverCredentials.generateCertificateSignature(hash);
-		/*
-		 * TODO RFC 5246 4.7. digitally-signed element needs
-		 * SignatureAndHashAlgorithm prepended from TLS 1.2
-		 */
-		TlsUtils.writeOpaque16(sigBytes, buf);
+        SignerInputBuffer buf = new SignerInputBuffer();
+        InputStream teeIn = new TeeInputStream(input, buf);
 
-		return buf.toByteArray();
-	}
+        ServerDHParams dhParams = ServerDHParams.parse(teeIn);
 
-	public void processServerKeyExchange(InputStream input) throws IOException {
+        DigitallySigned signed_params = DigitallySigned.parse(context, input);
 
-		SecurityParameters securityParameters = context.getSecurityParameters();
+        Signer signer = initVerifyer(tlsSigner, signed_params.getAlgorithm(), securityParameters);
+        buf.updateSigner(signer);
+        if (!signer.verifySignature(signed_params.getSignature()))
+        {
+            throw new TlsFatalAlert(AlertDescription.decrypt_error);
+        }
 
-		Signer signer = initVerifyer(tlsSigner, securityParameters);
-		InputStream sigIn = new SignerInputStream(input, signer);
+        this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(dhParams.getPublicKey());
+        this.dhParameters = validateDHParameters(dhAgreePublicKey.getParameters());
+    }
 
-		BigInteger p = TlsDHUtils.readDHParameter(sigIn);
-		BigInteger g = TlsDHUtils.readDHParameter(sigIn);
-		BigInteger Ys = TlsDHUtils.readDHParameter(sigIn);
-
-		byte[] sigBytes = TlsUtils.readOpaque16(input);
-		if (!signer.verifySignature(sigBytes)) {
-			throw new TlsFatalAlert(AlertDescription.decrypt_error);
-		}
-
-		this.dhAgreeServerPublicKey = validateDHPublicKey(new DHPublicKeyParameters(
-				Ys, new DHParameters(p, g)));
-	}
-
-	protected Signer initVerifyer(TlsSigner tlsSigner,
-			SecurityParameters securityParameters) {
-		Signer signer = tlsSigner.createVerifyer(this.serverPublicKey);
-		signer.update(securityParameters.clientRandom, 0,
-				securityParameters.clientRandom.length);
-		signer.update(securityParameters.serverRandom, 0,
-				securityParameters.serverRandom.length);
-		return signer;
-	}
+    protected Signer initVerifyer(TlsSigner tlsSigner, SignatureAndHashAlgorithm algorithm, SecurityParameters securityParameters)
+    {
+        Signer signer = tlsSigner.createVerifyer(algorithm, this.serverPublicKey);
+        signer.update(securityParameters.clientRandom, 0, securityParameters.clientRandom.length);
+        signer.update(securityParameters.serverRandom, 0, securityParameters.serverRandom.length);
+        return signer;
+    }
 }

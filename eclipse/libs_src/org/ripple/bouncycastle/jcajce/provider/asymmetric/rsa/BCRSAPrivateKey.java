@@ -18,99 +18,128 @@ import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.PKCS12BagAttributeCarrierImpl;
 import org.ripple.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 
-public class BCRSAPrivateKey implements RSAPrivateKey,
-		PKCS12BagAttributeCarrier {
-	static final long serialVersionUID = 5110188922551353628L;
+public class BCRSAPrivateKey
+    implements RSAPrivateKey, PKCS12BagAttributeCarrier
+{
+    static final long serialVersionUID = 5110188922551353628L;
 
-	private static BigInteger ZERO = BigInteger.valueOf(0);
+    private static BigInteger ZERO = BigInteger.valueOf(0);
 
-	protected BigInteger modulus;
-	protected BigInteger privateExponent;
+    protected BigInteger modulus;
+    protected BigInteger privateExponent;
 
-	private transient PKCS12BagAttributeCarrierImpl attrCarrier = new PKCS12BagAttributeCarrierImpl();
+    private transient PKCS12BagAttributeCarrierImpl   attrCarrier = new PKCS12BagAttributeCarrierImpl();
 
-	protected BCRSAPrivateKey() {
-	}
+    protected BCRSAPrivateKey()
+    {
+    }
 
-	BCRSAPrivateKey(RSAKeyParameters key) {
-		this.modulus = key.getModulus();
-		this.privateExponent = key.getExponent();
-	}
+    BCRSAPrivateKey(
+        RSAKeyParameters key)
+    {
+        this.modulus = key.getModulus();
+        this.privateExponent = key.getExponent();
+    }
 
-	BCRSAPrivateKey(RSAPrivateKeySpec spec) {
-		this.modulus = spec.getModulus();
-		this.privateExponent = spec.getPrivateExponent();
-	}
+    BCRSAPrivateKey(
+        RSAPrivateKeySpec spec)
+    {
+        this.modulus = spec.getModulus();
+        this.privateExponent = spec.getPrivateExponent();
+    }
 
-	BCRSAPrivateKey(RSAPrivateKey key) {
-		this.modulus = key.getModulus();
-		this.privateExponent = key.getPrivateExponent();
-	}
+    BCRSAPrivateKey(
+        RSAPrivateKey key)
+    {
+        this.modulus = key.getModulus();
+        this.privateExponent = key.getPrivateExponent();
+    }
 
-	public BigInteger getModulus() {
-		return modulus;
-	}
+    BCRSAPrivateKey(org.ripple.bouncycastle.asn1.pkcs.RSAPrivateKey key)
+    {
+        this.modulus = key.getModulus();
+        this.privateExponent = key.getPrivateExponent();
+    }
 
-	public BigInteger getPrivateExponent() {
-		return privateExponent;
-	}
+    public BigInteger getModulus()
+    {
+        return modulus;
+    }
 
-	public String getAlgorithm() {
-		return "RSA";
-	}
+    public BigInteger getPrivateExponent()
+    {
+        return privateExponent;
+    }
 
-	public String getFormat() {
-		return "PKCS#8";
-	}
+    public String getAlgorithm()
+    {
+        return "RSA";
+    }
 
-	public byte[] getEncoded() {
-		return KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(
-				PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
-				new org.ripple.bouncycastle.asn1.pkcs.RSAPrivateKey(
-						getModulus(), ZERO, getPrivateExponent(), ZERO, ZERO,
-						ZERO, ZERO, ZERO));
-	}
+    public String getFormat()
+    {
+        return "PKCS#8";
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof RSAPrivateKey)) {
-			return false;
-		}
+    public byte[] getEncoded()
+    {
+        return KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), new org.ripple.bouncycastle.asn1.pkcs.RSAPrivateKey(getModulus(), ZERO, getPrivateExponent(), ZERO, ZERO, ZERO, ZERO, ZERO));
+    }
 
-		if (o == this) {
-			return true;
-		}
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof RSAPrivateKey))
+        {
+            return false;
+        }
 
-		RSAPrivateKey key = (RSAPrivateKey) o;
+        if (o == this)
+        {
+            return true;
+        }
 
-		return getModulus().equals(key.getModulus())
-				&& getPrivateExponent().equals(key.getPrivateExponent());
-	}
+        RSAPrivateKey key = (RSAPrivateKey)o;
 
-	public int hashCode() {
-		return getModulus().hashCode() ^ getPrivateExponent().hashCode();
-	}
+        return getModulus().equals(key.getModulus())
+            && getPrivateExponent().equals(key.getPrivateExponent());
+    }
 
-	public void setBagAttribute(ASN1ObjectIdentifier oid,
-			ASN1Encodable attribute) {
-		attrCarrier.setBagAttribute(oid, attribute);
-	}
+    public int hashCode()
+    {
+        return getModulus().hashCode() ^ getPrivateExponent().hashCode();
+    }
 
-	public ASN1Encodable getBagAttribute(ASN1ObjectIdentifier oid) {
-		return attrCarrier.getBagAttribute(oid);
-	}
+    public void setBagAttribute(
+        ASN1ObjectIdentifier oid,
+        ASN1Encodable attribute)
+    {
+        attrCarrier.setBagAttribute(oid, attribute);
+    }
 
-	public Enumeration getBagAttributeKeys() {
-		return attrCarrier.getBagAttributeKeys();
-	}
+    public ASN1Encodable getBagAttribute(
+        ASN1ObjectIdentifier oid)
+    {
+        return attrCarrier.getBagAttribute(oid);
+    }
 
-	private void readObject(ObjectInputStream in) throws IOException,
-			ClassNotFoundException {
-		in.defaultReadObject();
+    public Enumeration getBagAttributeKeys()
+    {
+        return attrCarrier.getBagAttributeKeys();
+    }
 
-		this.attrCarrier = new PKCS12BagAttributeCarrierImpl();
-	}
+    private void readObject(
+        ObjectInputStream   in)
+        throws IOException, ClassNotFoundException
+    {
+        in.defaultReadObject();
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
-	}
+        this.attrCarrier = new PKCS12BagAttributeCarrierImpl();
+    }
+
+    private void writeObject(
+        ObjectOutputStream  out)
+        throws IOException
+    {
+        out.defaultWriteObject();
+    }
 }

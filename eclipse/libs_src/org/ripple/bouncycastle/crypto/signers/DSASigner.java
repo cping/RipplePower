@@ -1,5 +1,8 @@
 package org.ripple.bouncycastle.crypto.signers;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
 import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.DSA;
 import org.ripple.bouncycastle.crypto.params.DSAKeyParameters;
@@ -8,108 +11,156 @@ import org.ripple.bouncycastle.crypto.params.DSAPrivateKeyParameters;
 import org.ripple.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
 /**
  * The Digital Signature Algorithm - as described in "Handbook of Applied
  * Cryptography", pages 452 - 453.
  */
-public class DSASigner implements DSA {
-	DSAKeyParameters key;
+public class DSASigner
+    implements DSA
+{
+    private final DSAKCalculator kCalculator;
 
-	SecureRandom random;
+    private DSAKeyParameters key;
+    private SecureRandom    random;
 
-	public void init(boolean forSigning, CipherParameters param) {
-		if (forSigning) {
-			if (param instanceof ParametersWithRandom) {
-				ParametersWithRandom rParam = (ParametersWithRandom) param;
+    /**
+     * Default configuration, random K values.
+     */
+    public DSASigner()
+    {
+        this.kCalculator = new RandomDSAKCalculator();
+    }
 
-				this.random = rParam.getRandom();
-				this.key = (DSAPrivateKeyParameters) rParam.getParameters();
-			} else {
-				this.random = new SecureRandom();
-				this.key = (DSAPrivateKeyParameters) param;
-			}
-		} else {
-			this.key = (DSAPublicKeyParameters) param;
-		}
-	}
+    /**
+     * Configuration with an alternate, possibly deterministic calculator of K.
+     *
+     * @param kCalculator a K value calculator.
+     */
+    public DSASigner(DSAKCalculator kCalculator)
+    {
+        this.kCalculator = kCalculator;
+    }
 
-	/**
-	 * generate a signature for the given message using the key we were
-	 * initialised with. For conventional DSA the message should be a SHA-1 hash
-	 * of the message of interest.
-	 * 
-	 * @param message
-	 *            the message that will be verified later.
-	 */
-	public BigInteger[] generateSignature(byte[] message) {
-		DSAParameters params = key.getParameters();
-		BigInteger m = calculateE(params.getQ(), message);
-		BigInteger k;
-		int qBitLength = params.getQ().bitLength();
+    public void init(
+        boolean                 forSigning,
+        CipherParameters        param)
+    {
+        SecureRandom providedRandom = null;
 
-		do {
-			k = new BigInteger(qBitLength, random);
-		} while (k.compareTo(params.getQ()) >= 0);
+        if (forSigning)
+        {
+            if (param instanceof ParametersWithRandom)
+            {
+                ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-		BigInteger r = params.getG().modPow(k, params.getP())
-				.mod(params.getQ());
+                this.key = (DSAPrivateKeyParameters)rParam.getParameters();
+                providedRandom = rParam.getRandom();
+            }
+            else
+            {
+                this.key = (DSAPrivateKeyParameters)param;
+            }
+        }
+        else
+        {
+            this.key = (DSAPublicKeyParameters)param;
+        }
 
-		k = k.modInverse(params.getQ()).multiply(
-				m.add(((DSAPrivateKeyParameters) key).getX().multiply(r)));
+        this.random = initSecureRandom(forSigning && !kCalculator.isDeterministic(), providedRandom);
+    }
 
-		BigInteger s = k.mod(params.getQ());
+    /**
+     * generate a signature for the given message using the key we were
+     * initialised with. For conventional DSA the message should be a SHA-1
+     * hash of the message of interest.
+     *
+     * @param message the message that will be verified later.
+     */
+    public BigInteger[] generateSignature(
+        byte[] message)
+    {
+        DSAParameters   params = key.getParameters();
+        BigInteger      q = params.getQ();
+        BigInteger      m = calculateE(q, message);
+        BigInteger      x = ((DSAPrivateKeyParameters)key).getX();
 
-		BigInteger[] res = new BigInteger[2];
+        if (kCalculator.isDeterministic())
+        {
+            kCalculator.init(q, x, message);
+        }
+        else
+        {
+            kCalculator.init(q, random);
+        }
 
-		res[0] = r;
-		res[1] = s;
+        BigInteger  k = kCalculator.nextK();
 
-		return res;
-	}
+        BigInteger  r = params.getG().modPow(k, params.getP()).mod(q);
 
-	/**
-	 * return true if the value r and s represent a DSA signature for the passed
-	 * in message for standard DSA the message should be a SHA-1 hash of the
-	 * real message to be verified.
-	 */
-	public boolean verifySignature(byte[] message, BigInteger r, BigInteger s) {
-		DSAParameters params = key.getParameters();
-		BigInteger m = calculateE(params.getQ(), message);
-		BigInteger zero = BigInteger.valueOf(0);
+        k = k.modInverse(q).multiply(m.add(x.multiply(r)));
 
-		if (zero.compareTo(r) >= 0 || params.getQ().compareTo(r) <= 0) {
-			return false;
-		}
+        BigInteger  s = k.mod(q);
 
-		if (zero.compareTo(s) >= 0 || params.getQ().compareTo(s) <= 0) {
-			return false;
-		}
+        return new BigInteger[]{ r, s };
+    }
 
-		BigInteger w = s.modInverse(params.getQ());
+    /**
+     * return true if the value r and s represent a DSA signature for
+     * the passed in message for standard DSA the message should be a
+     * SHA-1 hash of the real message to be verified.
+     */
+    public boolean verifySignature(
+        byte[]      message,
+        BigInteger  r,
+        BigInteger  s)
+    {
+        DSAParameters   params = key.getParameters();
+        BigInteger      q = params.getQ();
+        BigInteger      m = calculateE(q, message);
+        BigInteger      zero = BigInteger.valueOf(0);
 
-		BigInteger u1 = m.multiply(w).mod(params.getQ());
-		BigInteger u2 = r.multiply(w).mod(params.getQ());
+        if (zero.compareTo(r) >= 0 || q.compareTo(r) <= 0)
+        {
+            return false;
+        }
 
-		u1 = params.getG().modPow(u1, params.getP());
-		u2 = ((DSAPublicKeyParameters) key).getY().modPow(u2, params.getP());
+        if (zero.compareTo(s) >= 0 || q.compareTo(s) <= 0)
+        {
+            return false;
+        }
 
-		BigInteger v = u1.multiply(u2).mod(params.getP()).mod(params.getQ());
+        BigInteger  w = s.modInverse(q);
 
-		return v.equals(r);
-	}
+        BigInteger  u1 = m.multiply(w).mod(q);
+        BigInteger  u2 = r.multiply(w).mod(q);
 
-	private BigInteger calculateE(BigInteger n, byte[] message) {
-		if (n.bitLength() >= message.length * 8) {
-			return new BigInteger(1, message);
-		} else {
-			byte[] trunc = new byte[n.bitLength() / 8];
+        BigInteger p = params.getP();
+        u1 = params.getG().modPow(u1, p);
+        u2 = ((DSAPublicKeyParameters)key).getY().modPow(u2, p);
 
-			System.arraycopy(message, 0, trunc, 0, trunc.length);
+        BigInteger  v = u1.multiply(u2).mod(p).mod(q);
 
-			return new BigInteger(1, trunc);
-		}
-	}
+        return v.equals(r);
+    }
+
+    private BigInteger calculateE(BigInteger n, byte[] message)
+    {
+        if (n.bitLength() >= message.length * 8)
+        {
+            return new BigInteger(1, message);
+        }
+        else
+        {
+            byte[] trunc = new byte[n.bitLength() / 8];
+
+            System.arraycopy(message, 0, trunc, 0, trunc.length);
+
+            return new BigInteger(1, trunc);
+        }
+    }
+
+    protected SecureRandom initSecureRandom(boolean needed, SecureRandom provided)
+    {
+        return !needed ? null : (provided != null) ? provided : new SecureRandom();
+    }
 }

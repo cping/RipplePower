@@ -1,15 +1,21 @@
 package org.ripple.bouncycastle.crypto.params;
 
-public class DSAKeyParameters extends AsymmetricKeyParameter {
-	private DSAParameters params;
+public class DSAKeyParameters
+    extends AsymmetricKeyParameter
+{
+    private DSAParameters    params;
 
-	public DSAKeyParameters(boolean isPrivate, DSAParameters params) {
-		super(isPrivate);
+    public DSAKeyParameters(
+        boolean         isPrivate,
+        DSAParameters   params)
+    {
+        super(isPrivate);
 
-		this.params = params;
-	}
+        this.params = params;
+    }   
 
-	public DSAParameters getParameters() {
-		return params;
-	}
+    public DSAParameters getParameters()
+    {
+        return params;
+    }
 }

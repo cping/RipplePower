@@ -1,65 +1,84 @@
 package org.ripple.bouncycastle.crypto.params;
 
-public class GOST3410ValidationParameters {
-	private int x0;
-	private int c;
-	private long x0L;
-	private long cL;
+public class GOST3410ValidationParameters
+{
+    private int x0;
+    private int c;
+    private long x0L;
+    private long cL;
 
-	public GOST3410ValidationParameters(int x0, int c) {
-		this.x0 = x0;
-		this.c = c;
-	}
 
-	public GOST3410ValidationParameters(long x0L, long cL) {
-		this.x0L = x0L;
-		this.cL = cL;
-	}
+    public GOST3410ValidationParameters(
+        int  x0,
+        int  c)
+    {
+        this.x0 = x0;
+        this.c = c;
+    }
 
-	public int getC() {
-		return c;
-	}
+    public GOST3410ValidationParameters(
+        long  x0L,
+        long  cL)
+    {
+        this.x0L = x0L;
+        this.cL = cL;
+    }
 
-	public int getX0() {
-		return x0;
-	}
+    public int getC()
+    {
+        return c;
+    }
 
-	public long getCL() {
-		return cL;
-	}
+    public int getX0()
+    {
+        return x0;
+    }
 
-	public long getX0L() {
-		return x0L;
-	}
+    public long getCL()
+    {
+        return cL;
+    }
 
-	public boolean equals(Object o) {
-		if (!(o instanceof GOST3410ValidationParameters)) {
-			return false;
-		}
+    public long getX0L()
+    {
+        return x0L;
+    }
 
-		GOST3410ValidationParameters other = (GOST3410ValidationParameters) o;
+    public boolean equals(
+        Object o)
+    {
+        if (!(o instanceof GOST3410ValidationParameters))
+        {
+            return false;
+        }
 
-		if (other.c != this.c) {
-			return false;
-		}
+        GOST3410ValidationParameters  other = (GOST3410ValidationParameters)o;
 
-		if (other.x0 != this.x0) {
-			return false;
-		}
+        if (other.c != this.c)
+        {
+            return false;
+        }
 
-		if (other.cL != this.cL) {
-			return false;
-		}
+        if (other.x0 != this.x0)
+        {
+            return false;
+        }
 
-		if (other.x0L != this.x0L) {
-			return false;
-		}
+        if (other.cL != this.cL)
+        {
+            return false;
+        }
 
-		return true;
-	}
+        if (other.x0L != this.x0L)
+        {
+            return false;
+        }
 
-	public int hashCode() {
-		return x0 ^ c ^ (int) x0L ^ (int) (x0L >> 32) ^ (int) cL
-				^ (int) (cL >> 32);
-	}
+        return true;
+    }
+
+    public int hashCode()
+    {
+        return x0 ^ c ^ (int) x0L ^ (int)(x0L >> 32) ^ (int) cL ^ (int)(cL >> 32);
+    }
 }

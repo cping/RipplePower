@@ -11,64 +11,82 @@ import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class DSAParameter extends ASN1Object {
-	ASN1Integer p, q, g;
+public class DSAParameter
+    extends ASN1Object
+{
+    ASN1Integer      p, q, g;
 
-	public static DSAParameter getInstance(ASN1TaggedObject obj,
-			boolean explicit) {
-		return getInstance(ASN1Sequence.getInstance(obj, explicit));
-	}
+    public static DSAParameter getInstance(
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
+        return getInstance(ASN1Sequence.getInstance(obj, explicit));
+    }
 
-	public static DSAParameter getInstance(Object obj) {
-		if (obj instanceof DSAParameter) {
-			return (DSAParameter) obj;
-		}
+    public static DSAParameter getInstance(
+        Object obj)
+    {
+        if (obj instanceof DSAParameter)
+        {
+            return (DSAParameter)obj;
+        }
+        
+        if(obj != null)
+        {
+            return new DSAParameter(ASN1Sequence.getInstance(obj));
+        }
+        
+        return null;
+    }
 
-		if (obj != null) {
-			return new DSAParameter(ASN1Sequence.getInstance(obj));
-		}
+    public DSAParameter(
+        BigInteger  p,
+        BigInteger  q,
+        BigInteger  g)
+    {
+        this.p = new ASN1Integer(p);
+        this.q = new ASN1Integer(q);
+        this.g = new ASN1Integer(g);
+    }
 
-		return null;
-	}
+    private DSAParameter(
+        ASN1Sequence  seq)
+    {
+        if (seq.size() != 3)
+        {
+            throw new IllegalArgumentException("Bad sequence size: " + seq.size());
+        }
+        
+        Enumeration     e = seq.getObjects();
 
-	public DSAParameter(BigInteger p, BigInteger q, BigInteger g) {
-		this.p = new ASN1Integer(p);
-		this.q = new ASN1Integer(q);
-		this.g = new ASN1Integer(g);
-	}
+        p = ASN1Integer.getInstance(e.nextElement());
+        q = ASN1Integer.getInstance(e.nextElement());
+        g = ASN1Integer.getInstance(e.nextElement());
+    }
 
-	private DSAParameter(ASN1Sequence seq) {
-		if (seq.size() != 3) {
-			throw new IllegalArgumentException("Bad sequence size: "
-					+ seq.size());
-		}
+    public BigInteger getP()
+    {
+        return p.getPositiveValue();
+    }
 
-		Enumeration e = seq.getObjects();
+    public BigInteger getQ()
+    {
+        return q.getPositiveValue();
+    }
 
-		p = ASN1Integer.getInstance(e.nextElement());
-		q = ASN1Integer.getInstance(e.nextElement());
-		g = ASN1Integer.getInstance(e.nextElement());
-	}
+    public BigInteger getG()
+    {
+        return g.getPositiveValue();
+    }
 
-	public BigInteger getP() {
-		return p.getPositiveValue();
-	}
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector  v = new ASN1EncodableVector();
 
-	public BigInteger getQ() {
-		return q.getPositiveValue();
-	}
+        v.add(p);
+        v.add(q);
+        v.add(g);
 
-	public BigInteger getG() {
-		return g.getPositiveValue();
-	}
-
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(p);
-		v.add(q);
-		v.add(g);
-
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 }

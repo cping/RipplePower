@@ -2,16 +2,20 @@ package org.ripple.bouncycastle.jcajce.provider.asymmetric.util;
 
 import java.security.spec.InvalidKeySpecException;
 
-public class ExtendedInvalidKeySpecException extends InvalidKeySpecException {
-	private Throwable cause;
+public class ExtendedInvalidKeySpecException
+    extends InvalidKeySpecException
+{
+    private Throwable cause;
 
-	public ExtendedInvalidKeySpecException(String msg, Throwable cause) {
-		super(msg);
+    public ExtendedInvalidKeySpecException(String msg, Throwable cause)
+    {
+        super(msg);
 
-		this.cause = cause;
-	}
+        this.cause = cause;
+    }
 
-	public Throwable getCause() {
-		return cause;
-	}
+    public Throwable getCause()
+    {
+        return cause;
+    }
 }

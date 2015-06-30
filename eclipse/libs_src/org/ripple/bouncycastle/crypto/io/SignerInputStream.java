@@ -6,32 +6,47 @@ import java.io.InputStream;
 
 import org.ripple.bouncycastle.crypto.Signer;
 
-public class SignerInputStream extends FilterInputStream {
-	protected Signer signer;
+public class SignerInputStream
+    extends FilterInputStream
+{
+    protected Signer signer;
 
-	public SignerInputStream(InputStream stream, Signer signer) {
-		super(stream);
-		this.signer = signer;
-	}
+    public SignerInputStream(
+        InputStream stream,
+        Signer      signer)
+    {
+        super(stream);
+        this.signer = signer;
+    }
 
-	public int read() throws IOException {
-		int b = in.read();
+    public int read()
+        throws IOException
+    {
+        int b = in.read();
 
-		if (b >= 0) {
-			signer.update((byte) b);
-		}
-		return b;
-	}
+        if (b >= 0)
+        {
+            signer.update((byte)b);
+        }
+        return b;
+    }
 
-	public int read(byte[] b, int off, int len) throws IOException {
-		int n = in.read(b, off, len);
-		if (n > 0) {
-			signer.update(b, off, n);
-		}
-		return n;
-	}
+    public int read(
+        byte[] b,
+        int off,
+        int len)
+        throws IOException
+    {
+        int n = in.read(b, off, len);
+        if (n > 0)
+        {
+            signer.update(b, off, n);
+        }
+        return n;
+    }
 
-	public Signer getSigner() {
-		return signer;
-	}
+    public Signer getSigner()
+    {
+        return signer;
+    }
 }

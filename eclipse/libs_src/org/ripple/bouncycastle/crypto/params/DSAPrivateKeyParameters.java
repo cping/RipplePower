@@ -2,16 +2,22 @@ package org.ripple.bouncycastle.crypto.params;
 
 import java.math.BigInteger;
 
-public class DSAPrivateKeyParameters extends DSAKeyParameters {
-	private BigInteger x;
+public class DSAPrivateKeyParameters
+    extends DSAKeyParameters
+{
+    private BigInteger      x;
 
-	public DSAPrivateKeyParameters(BigInteger x, DSAParameters params) {
-		super(true, params);
+    public DSAPrivateKeyParameters(
+        BigInteger      x,
+        DSAParameters   params)
+    {
+        super(true, params);
 
-		this.x = x;
-	}
+        this.x = x;
+    }   
 
-	public BigInteger getX() {
-		return x;
-	}
+    public BigInteger getX()
+    {
+        return x;
+    }
 }

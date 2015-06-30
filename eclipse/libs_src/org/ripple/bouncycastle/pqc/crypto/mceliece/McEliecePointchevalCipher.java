@@ -18,197 +18,224 @@ import org.ripple.bouncycastle.pqc.math.linearalgebra.GF2Vector;
  * details, see D. Engelbert, R. Overbeck, A. Schmidt, "A summary of the
  * development of the McEliece Cryptosystem", technical report.
  */
-public class McEliecePointchevalCipher implements MessageEncryptor {
+public class McEliecePointchevalCipher
+    implements MessageEncryptor
+{
 
-	/**
-	 * The OID of the algorithm.
-	 */
-	public static final String OID = "1.3.6.1.4.1.8301.3.1.3.4.2.2";
 
-	private Digest messDigest;
+    /**
+     * The OID of the algorithm.
+     */
+    public static final String OID = "1.3.6.1.4.1.8301.3.1.3.4.2.2";
 
-	private SecureRandom sr;
+    private Digest messDigest;
 
-	/**
-	 * The McEliece main parameters
-	 */
-	private int n, k, t;
+    private SecureRandom sr;
 
-	McElieceCCA2KeyParameters key;
+    /**
+     * The McEliece main parameters
+     */
+    private int n, k, t;
 
-	public void init(boolean forSigning, CipherParameters param) {
+    McElieceCCA2KeyParameters key;
 
-		if (forSigning) {
-			if (param instanceof ParametersWithRandom) {
-				ParametersWithRandom rParam = (ParametersWithRandom) param;
+    public void init(boolean forSigning,
+                     CipherParameters param)
+    {
 
-				this.sr = rParam.getRandom();
-				this.key = (McElieceCCA2PublicKeyParameters) rParam
-						.getParameters();
-				this.initCipherEncrypt((McElieceCCA2PublicKeyParameters) key);
+        if (forSigning)
+        {
+            if (param instanceof ParametersWithRandom)
+            {
+                ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-			} else {
-				this.sr = new SecureRandom();
-				this.key = (McElieceCCA2PublicKeyParameters) param;
-				this.initCipherEncrypt((McElieceCCA2PublicKeyParameters) key);
-			}
-		} else {
-			this.key = (McElieceCCA2PrivateKeyParameters) param;
-			this.initCipherDecrypt((McElieceCCA2PrivateKeyParameters) key);
-		}
+                this.sr = rParam.getRandom();
+                this.key = (McElieceCCA2PublicKeyParameters)rParam.getParameters();
+                this.initCipherEncrypt((McElieceCCA2PublicKeyParameters)key);
 
-	}
+            }
+            else
+            {
+                this.sr = new SecureRandom();
+                this.key = (McElieceCCA2PublicKeyParameters)param;
+                this.initCipherEncrypt((McElieceCCA2PublicKeyParameters)key);
+            }
+        }
+        else
+        {
+            this.key = (McElieceCCA2PrivateKeyParameters)param;
+            this.initCipherDecrypt((McElieceCCA2PrivateKeyParameters)key);
+        }
 
-	/**
-	 * Return the key size of the given key object.
-	 * 
-	 * @param key
-	 *            the McElieceCCA2KeyParameters object
-	 * @return the key size of the given key object
-	 * @throws IllegalArgumentException
-	 *             if the key is invalid
-	 */
-	public int getKeySize(McElieceCCA2KeyParameters key)
-			throws IllegalArgumentException {
+    }
 
-		if (key instanceof McElieceCCA2PublicKeyParameters) {
-			return ((McElieceCCA2PublicKeyParameters) key).getN();
+    /**
+     * Return the key size of the given key object.
+     *
+     * @param key the McElieceCCA2KeyParameters object
+     * @return the key size of the given key object
+     * @throws IllegalArgumentException if the key is invalid
+     */
+    public int getKeySize(McElieceCCA2KeyParameters key)
+        throws IllegalArgumentException
+    {
 
-		}
-		if (key instanceof McElieceCCA2PrivateKeyParameters) {
-			return ((McElieceCCA2PrivateKeyParameters) key).getN();
-		}
-		throw new IllegalArgumentException("unsupported type");
+        if (key instanceof McElieceCCA2PublicKeyParameters)
+        {
+            return ((McElieceCCA2PublicKeyParameters)key).getN();
 
-	}
+        }
+        if (key instanceof McElieceCCA2PrivateKeyParameters)
+        {
+            return ((McElieceCCA2PrivateKeyParameters)key).getN();
+        }
+        throw new IllegalArgumentException("unsupported type");
 
-	protected int decryptOutputSize(int inLen) {
-		return 0;
-	}
+    }
 
-	protected int encryptOutputSize(int inLen) {
-		return 0;
-	}
 
-	public void initCipherEncrypt(McElieceCCA2PublicKeyParameters pubKey) {
-		this.sr = sr != null ? sr : new SecureRandom();
-		this.messDigest = pubKey.getParameters().getDigest();
-		n = pubKey.getN();
-		k = pubKey.getK();
-		t = pubKey.getT();
-	}
+    protected int decryptOutputSize(int inLen)
+    {
+        return 0;
+    }
 
-	public void initCipherDecrypt(McElieceCCA2PrivateKeyParameters privKey) {
-		this.messDigest = privKey.getParameters().getDigest();
-		n = privKey.getN();
-		k = privKey.getK();
-		t = privKey.getT();
-	}
+    protected int encryptOutputSize(int inLen)
+    {
+        return 0;
+    }
 
-	public byte[] messageEncrypt(byte[] input) throws Exception {
 
-		int kDiv8 = k >> 3;
+    public void initCipherEncrypt(McElieceCCA2PublicKeyParameters pubKey)
+    {
+        this.sr = sr != null ? sr : new SecureRandom();
+        this.messDigest = pubKey.getParameters().getDigest();
+        n = pubKey.getN();
+        k = pubKey.getK();
+        t = pubKey.getT();
+    }
 
-		// generate random r of length k div 8 bytes
-		byte[] r = new byte[kDiv8];
-		sr.nextBytes(r);
+    public void initCipherDecrypt(McElieceCCA2PrivateKeyParameters privKey)
+    {
+        this.messDigest = privKey.getParameters().getDigest();
+        n = privKey.getN();
+        k = privKey.getK();
+        t = privKey.getT();
+    }
 
-		// generate random vector r' of length k bits
-		GF2Vector rPrime = new GF2Vector(k, sr);
+    public byte[] messageEncrypt(byte[] input)
+        throws Exception
+    {
 
-		// convert r' to byte array
-		byte[] rPrimeBytes = rPrime.getEncoded();
+        int kDiv8 = k >> 3;
 
-		// compute (input||r)
-		byte[] mr = ByteUtils.concatenate(input, r);
+        // generate random r of length k div 8 bytes
+        byte[] r = new byte[kDiv8];
+        sr.nextBytes(r);
 
-		// compute H(input||r)
-		messDigest.update(mr, 0, mr.length);
-		byte[] hmr = new byte[messDigest.getDigestSize()];
-		messDigest.doFinal(hmr, 0);
+        // generate random vector r' of length k bits
+        GF2Vector rPrime = new GF2Vector(k, sr);
 
-		// convert H(input||r) to error vector z
-		GF2Vector z = Conversions.encode(n, t, hmr);
+        // convert r' to byte array
+        byte[] rPrimeBytes = rPrime.getEncoded();
 
-		// compute c1 = E(rPrime, z)
-		byte[] c1 = McElieceCCA2Primitives.encryptionPrimitive(
-				(McElieceCCA2PublicKeyParameters) key, rPrime, z).getEncoded();
+        // compute (input||r)
+        byte[] mr = ByteUtils.concatenate(input, r);
 
-		// get PRNG object
-		DigestRandomGenerator sr0 = new DigestRandomGenerator(new SHA1Digest());
+        // compute H(input||r)
+        messDigest.update(mr, 0, mr.length);
+        byte[] hmr = new byte[messDigest.getDigestSize()];
+        messDigest.doFinal(hmr, 0);
 
-		// seed PRNG with r'
-		sr0.addSeedMaterial(rPrimeBytes);
 
-		// generate random c2
-		byte[] c2 = new byte[input.length + kDiv8];
-		sr0.nextBytes(c2);
+        // convert H(input||r) to error vector z
+        GF2Vector z = Conversions.encode(n, t, hmr);
 
-		// XOR with input
-		for (int i = 0; i < input.length; i++) {
-			c2[i] ^= input[i];
-		}
-		// XOR with r
-		for (int i = 0; i < kDiv8; i++) {
-			c2[input.length + i] ^= r[i];
-		}
+        // compute c1 = E(rPrime, z)
+        byte[] c1 = McElieceCCA2Primitives.encryptionPrimitive((McElieceCCA2PublicKeyParameters)key, rPrime,
+            z).getEncoded();
 
-		// return (c1||c2)
-		return ByteUtils.concatenate(c1, c2);
-	}
+        // get PRNG object
+        DigestRandomGenerator sr0 = new DigestRandomGenerator(new SHA1Digest());
 
-	public byte[] messageDecrypt(byte[] input) throws Exception {
+        // seed PRNG with r'
+        sr0.addSeedMaterial(rPrimeBytes);
 
-		int c1Len = (n + 7) >> 3;
-		int c2Len = input.length - c1Len;
+        // generate random c2
+        byte[] c2 = new byte[input.length + kDiv8];
+        sr0.nextBytes(c2);
 
-		// split cipher text (c1||c2)
-		byte[][] c1c2 = ByteUtils.split(input, c1Len);
-		byte[] c1 = c1c2[0];
-		byte[] c2 = c1c2[1];
+        // XOR with input
+        for (int i = 0; i < input.length; i++)
+        {
+            c2[i] ^= input[i];
+        }
+        // XOR with r
+        for (int i = 0; i < kDiv8; i++)
+        {
+            c2[input.length + i] ^= r[i];
+        }
 
-		// decrypt c1 ...
-		GF2Vector c1Vec = GF2Vector.OS2VP(n, c1);
-		GF2Vector[] c1Dec = McElieceCCA2Primitives.decryptionPrimitive(
-				(McElieceCCA2PrivateKeyParameters) key, c1Vec);
-		byte[] rPrimeBytes = c1Dec[0].getEncoded();
-		// ... and obtain error vector z
-		GF2Vector z = c1Dec[1];
+        // return (c1||c2)
+        return ByteUtils.concatenate(c1, c2);
+    }
 
-		// get PRNG object
-		DigestRandomGenerator sr0 = new DigestRandomGenerator(new SHA1Digest());
+    public byte[] messageDecrypt(byte[] input)
+        throws Exception
+    {
 
-		// seed PRNG with r'
-		sr0.addSeedMaterial(rPrimeBytes);
+        int c1Len = (n + 7) >> 3;
+        int c2Len = input.length - c1Len;
 
-		// generate random sequence
-		byte[] mrBytes = new byte[c2Len];
-		sr0.nextBytes(mrBytes);
+        // split cipher text (c1||c2)
+        byte[][] c1c2 = ByteUtils.split(input, c1Len);
+        byte[] c1 = c1c2[0];
+        byte[] c2 = c1c2[1];
 
-		// XOR with c2 to obtain (m||r)
-		for (int i = 0; i < c2Len; i++) {
-			mrBytes[i] ^= c2[i];
-		}
+        // decrypt c1 ...
+        GF2Vector c1Vec = GF2Vector.OS2VP(n, c1);
+        GF2Vector[] c1Dec = McElieceCCA2Primitives.decryptionPrimitive((McElieceCCA2PrivateKeyParameters)key,
+            c1Vec);
+        byte[] rPrimeBytes = c1Dec[0].getEncoded();
+        // ... and obtain error vector z
+        GF2Vector z = c1Dec[1];
 
-		// compute H(m||r)
-		messDigest.update(mrBytes, 0, mrBytes.length);
-		byte[] hmr = new byte[messDigest.getDigestSize()];
-		messDigest.doFinal(hmr, 0);
+        // get PRNG object
+        DigestRandomGenerator sr0 = new DigestRandomGenerator(new SHA1Digest());
 
-		// compute Conv(H(m||r))
-		c1Vec = Conversions.encode(n, t, hmr);
+        // seed PRNG with r'
+        sr0.addSeedMaterial(rPrimeBytes);
 
-		// check that Conv(H(m||r)) = z
-		if (!c1Vec.equals(z)) {
-			throw new Exception("Bad Padding: Invalid ciphertext.");
-		}
+        // generate random sequence
+        byte[] mrBytes = new byte[c2Len];
+        sr0.nextBytes(mrBytes);
 
-		// split (m||r) to obtain m
-		int kDiv8 = k >> 3;
-		byte[][] mr = ByteUtils.split(mrBytes, c2Len - kDiv8);
+        // XOR with c2 to obtain (m||r)
+        for (int i = 0; i < c2Len; i++)
+        {
+            mrBytes[i] ^= c2[i];
+        }
 
-		// return plain text m
-		return mr[0];
-	}
+        // compute H(m||r)
+        messDigest.update(mrBytes, 0, mrBytes.length);
+        byte[] hmr = new byte[messDigest.getDigestSize()];
+        messDigest.doFinal(hmr, 0);
+
+        // compute Conv(H(m||r))
+        c1Vec = Conversions.encode(n, t, hmr);
+
+        // check that Conv(H(m||r)) = z
+        if (!c1Vec.equals(z))
+        {
+            throw new Exception("Bad Padding: Invalid ciphertext.");
+        }
+
+        // split (m||r) to obtain m
+        int kDiv8 = k >> 3;
+        byte[][] mr = ByteUtils.split(mrBytes, c2Len - kDiv8);
+
+        // return plain text m
+        return mr[0];
+    }
+
 
 }

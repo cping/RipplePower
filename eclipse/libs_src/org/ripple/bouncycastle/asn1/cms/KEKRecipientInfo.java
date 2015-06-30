@@ -10,103 +10,124 @@ import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-public class KEKRecipientInfo extends ASN1Object {
-	private ASN1Integer version;
-	private KEKIdentifier kekid;
-	private AlgorithmIdentifier keyEncryptionAlgorithm;
-	private ASN1OctetString encryptedKey;
+/**
+ * <a href="http://tools.ietf.org/html/rfc5652#section-6.2.3">RFC 5652</a>:
+ * Content encryption key delivery mechanisms.
+ * <p>
+ * <pre>
+ * KEKRecipientInfo ::= SEQUENCE {
+ *     version CMSVersion,  -- always set to 4
+ *     kekid KEKIdentifier,
+ *     keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
+ *     encryptedKey EncryptedKey 
+ * }
+ * </pre>
+ */
+public class KEKRecipientInfo
+    extends ASN1Object
+{
+    private ASN1Integer          version;
+    private KEKIdentifier       kekid;
+    private AlgorithmIdentifier keyEncryptionAlgorithm;
+    private ASN1OctetString     encryptedKey;
 
-	public KEKRecipientInfo(KEKIdentifier kekid,
-			AlgorithmIdentifier keyEncryptionAlgorithm,
-			ASN1OctetString encryptedKey) {
-		this.version = new ASN1Integer(4);
-		this.kekid = kekid;
-		this.keyEncryptionAlgorithm = keyEncryptionAlgorithm;
-		this.encryptedKey = encryptedKey;
-	}
+    public KEKRecipientInfo(
+        KEKIdentifier       kekid,
+        AlgorithmIdentifier keyEncryptionAlgorithm,
+        ASN1OctetString     encryptedKey)
+    {
+        this.version = new ASN1Integer(4);
+        this.kekid = kekid;
+        this.keyEncryptionAlgorithm = keyEncryptionAlgorithm;
+        this.encryptedKey = encryptedKey;
+    }
+    
+    public KEKRecipientInfo(
+        ASN1Sequence seq)
+    {
+        version = (ASN1Integer)seq.getObjectAt(0);
+        kekid = KEKIdentifier.getInstance(seq.getObjectAt(1));
+        keyEncryptionAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(2));
+        encryptedKey = (ASN1OctetString)seq.getObjectAt(3);
+    }
 
-	public KEKRecipientInfo(ASN1Sequence seq) {
-		version = (ASN1Integer) seq.getObjectAt(0);
-		kekid = KEKIdentifier.getInstance(seq.getObjectAt(1));
-		keyEncryptionAlgorithm = AlgorithmIdentifier.getInstance(seq
-				.getObjectAt(2));
-		encryptedKey = (ASN1OctetString) seq.getObjectAt(3);
-	}
+    /**
+     * Return a KEKRecipientInfo object from a tagged object.
+     *
+     * @param obj the tagged object holding the object we want.
+     * @param explicit true if the object is meant to be explicitly
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the object held by the
+     *          tagged object cannot be converted.
+     */
+    public static KEKRecipientInfo getInstance(
+        ASN1TaggedObject    obj,
+        boolean             explicit)
+    {
+        return getInstance(ASN1Sequence.getInstance(obj, explicit));
+    }
+    
+    /**
+     * Return a KEKRecipientInfo object from the given object.
+     * <p>
+     * Accepted inputs:
+     * <ul>
+     * <li> null &rarr; null
+     * <li> {@link KEKRecipientInfo} object
+     * <li> {@link org.ripple.bouncycastle.asn1.ASN1Sequence#getInstance(java.lang.Object) ASN1Sequence} input formats with KEKRecipientInfo structure inside
+     * </ul>
+     *
+     * @param obj the object we want converted.
+     * @exception IllegalArgumentException if the object cannot be converted.
+     */
+    public static KEKRecipientInfo getInstance(
+        Object obj)
+    {
+        if (obj instanceof KEKRecipientInfo)
+        {
+            return (KEKRecipientInfo)obj;
+        }
+        
+        if (obj != null)
+        {
+            return new KEKRecipientInfo(ASN1Sequence.getInstance(obj));
+        }
+        
+        return null;
+    }
 
-	/**
-	 * return a KEKRecipientInfo object from a tagged object.
-	 * 
-	 * @param obj
-	 *            the tagged object holding the object we want.
-	 * @param explicit
-	 *            true if the object is meant to be explicitly tagged false
-	 *            otherwise.
-	 * @exception IllegalArgumentException
-	 *                if the object held by the tagged object cannot be
-	 *                converted.
-	 */
-	public static KEKRecipientInfo getInstance(ASN1TaggedObject obj,
-			boolean explicit) {
-		return getInstance(ASN1Sequence.getInstance(obj, explicit));
-	}
+    public ASN1Integer getVersion()
+    {
+        return version;
+    }
+    
+    public KEKIdentifier getKekid()
+    {
+        return kekid;
+    }
 
-	/**
-	 * return a KEKRecipientInfo object from the given object.
-	 * 
-	 * @param obj
-	 *            the object we want converted.
-	 * @exception IllegalArgumentException
-	 *                if the object cannot be converted.
-	 */
-	public static KEKRecipientInfo getInstance(Object obj) {
-		if (obj == null || obj instanceof KEKRecipientInfo) {
-			return (KEKRecipientInfo) obj;
-		}
+    public AlgorithmIdentifier getKeyEncryptionAlgorithm()
+    {
+        return keyEncryptionAlgorithm;
+    }
 
-		if (obj instanceof ASN1Sequence) {
-			return new KEKRecipientInfo((ASN1Sequence) obj);
-		}
+    public ASN1OctetString getEncryptedKey()
+    {
+        return encryptedKey;
+    }
 
-		throw new IllegalArgumentException("Invalid KEKRecipientInfo: "
-				+ obj.getClass().getName());
-	}
+    /** 
+     * Produce an object suitable for an ASN1OutputStream.
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector  v = new ASN1EncodableVector();
 
-	public ASN1Integer getVersion() {
-		return version;
-	}
+        v.add(version);
+        v.add(kekid);
+        v.add(keyEncryptionAlgorithm);
+        v.add(encryptedKey);
 
-	public KEKIdentifier getKekid() {
-		return kekid;
-	}
-
-	public AlgorithmIdentifier getKeyEncryptionAlgorithm() {
-		return keyEncryptionAlgorithm;
-	}
-
-	public ASN1OctetString getEncryptedKey() {
-		return encryptedKey;
-	}
-
-	/**
-	 * Produce an object suitable for an ASN1OutputStream.
-	 * 
-	 * <pre>
-	 * KEKRecipientInfo ::= SEQUENCE {
-	 *     version CMSVersion,  -- always set to 4
-	 *     kekid KEKIdentifier,
-	 *     keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
-	 *     encryptedKey EncryptedKey 
-	 * }
-	 * </pre>
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(version);
-		v.add(kekid);
-		v.add(keyEncryptionAlgorithm);
-		v.add(encryptedKey);
-
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 }

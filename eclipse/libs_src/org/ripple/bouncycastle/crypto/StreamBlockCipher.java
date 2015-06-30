@@ -1,102 +1,58 @@
 package org.ripple.bouncycastle.crypto;
 
 /**
- * a wrapper for block ciphers with a single byte block size, so that they can
- * be treated like stream ciphers.
+ * A parent class for block cipher modes that do not require block aligned data to be processed, but can function in
+ * a streaming mode.
  */
-public class StreamBlockCipher implements StreamCipher {
-	private BlockCipher cipher;
+public abstract class StreamBlockCipher
+    implements BlockCipher, StreamCipher
+{
+    private final BlockCipher cipher;
 
-	private byte[] oneByte = new byte[1];
+    protected StreamBlockCipher(BlockCipher cipher)
+    {
+        this.cipher = cipher;
+    }
 
-	/**
-	 * basic constructor.
-	 * 
-	 * @param cipher
-	 *            the block cipher to be wrapped.
-	 * @exception IllegalArgumentException
-	 *                if the cipher has a block size other than one.
-	 */
-	public StreamBlockCipher(BlockCipher cipher) {
-		if (cipher.getBlockSize() != 1) {
-			throw new IllegalArgumentException("block cipher block size != 1.");
-		}
+    /**
+     * return the underlying block cipher that we are wrapping.
+     *
+     * @return the underlying block cipher that we are wrapping.
+     */
+    public BlockCipher getUnderlyingCipher()
+    {
+        return cipher;
+    }
 
-		this.cipher = cipher;
-	}
+    public final byte returnByte(byte in)
+    {
+        return calculateByte(in);
+    }
 
-	/**
-	 * initialise the underlying cipher.
-	 * 
-	 * @param forEncryption
-	 *            true if we are setting up for encryption, false otherwise.
-	 * @param params
-	 *            the necessary parameters for the underlying cipher to be
-	 *            initialised.
-	 */
-	public void init(boolean forEncryption, CipherParameters params) {
-		cipher.init(forEncryption, params);
-	}
+    public int processBytes(byte[] in, int inOff, int len, byte[] out, int outOff)
+        throws DataLengthException
+    {
+        if (outOff + len > out.length)
+        {
+            throw new DataLengthException("output buffer too short");
+        }
 
-	/**
-	 * return the name of the algorithm we are wrapping.
-	 * 
-	 * @return the name of the algorithm we are wrapping.
-	 */
-	public String getAlgorithmName() {
-		return cipher.getAlgorithmName();
-	}
+        if (inOff + len > in.length)
+        {
+            throw new DataLengthException("input buffer too small");
+        }
 
-	/**
-	 * encrypt/decrypt a single byte returning the result.
-	 * 
-	 * @param in
-	 *            the byte to be processed.
-	 * @return the result of processing the input byte.
-	 */
-	public byte returnByte(byte in) {
-		oneByte[0] = in;
+        int inStart = inOff;
+        int inEnd = inOff + len;
+        int outStart = outOff;
 
-		cipher.processBlock(oneByte, 0, oneByte, 0);
+        while (inStart < inEnd)
+        {
+             out[outStart++] = calculateByte(in[inStart++]);
+        }
 
-		return oneByte[0];
-	}
+        return len;
+    }
 
-	/**
-	 * process a block of bytes from in putting the result into out.
-	 * 
-	 * @param in
-	 *            the input byte array.
-	 * @param inOff
-	 *            the offset into the in array where the data to be processed
-	 *            starts.
-	 * @param len
-	 *            the number of bytes to be processed.
-	 * @param out
-	 *            the output buffer the processed bytes go into.
-	 * @param outOff
-	 *            the offset into the output byte array the processed data stars
-	 *            at.
-	 * @exception DataLengthException
-	 *                if the output buffer is too small.
-	 */
-	public void processBytes(byte[] in, int inOff, int len, byte[] out,
-			int outOff) throws DataLengthException {
-		if (outOff + len > out.length) {
-			throw new DataLengthException(
-					"output buffer too small in processBytes()");
-		}
-
-		for (int i = 0; i != len; i++) {
-			cipher.processBlock(in, inOff + i, out, outOff + i);
-		}
-	}
-
-	/**
-	 * reset the underlying cipher. This leaves it in the same state it was at
-	 * after the last init (if there was one).
-	 */
-	public void reset() {
-		cipher.reset();
-	}
+    protected abstract byte calculateByte(byte b);
 }

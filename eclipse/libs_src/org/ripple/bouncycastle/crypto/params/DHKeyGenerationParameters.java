@@ -4,20 +4,27 @@ import java.security.SecureRandom;
 
 import org.ripple.bouncycastle.crypto.KeyGenerationParameters;
 
-public class DHKeyGenerationParameters extends KeyGenerationParameters {
-	private DHParameters params;
+public class DHKeyGenerationParameters
+    extends KeyGenerationParameters
+{
+    private DHParameters    params;
 
-	public DHKeyGenerationParameters(SecureRandom random, DHParameters params) {
-		super(random, getStrength(params));
+    public DHKeyGenerationParameters(
+        SecureRandom    random,
+        DHParameters    params)
+    {
+        super(random, getStrength(params));
 
-		this.params = params;
-	}
+        this.params = params;
+    }
 
-	public DHParameters getParameters() {
-		return params;
-	}
+    public DHParameters getParameters()
+    {
+        return params;
+    }
 
-	static int getStrength(DHParameters params) {
-		return params.getL() != 0 ? params.getL() : params.getP().bitLength();
-	}
+    static int getStrength(DHParameters params)
+    {
+        return params.getL() != 0 ? params.getL() : params.getP().bitLength();
+    }
 }

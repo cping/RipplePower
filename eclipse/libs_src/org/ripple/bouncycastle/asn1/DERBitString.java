@@ -8,250 +8,311 @@ import java.io.InputStream;
 import org.ripple.bouncycastle.util.Arrays;
 import org.ripple.bouncycastle.util.io.Streams;
 
-public class DERBitString extends ASN1Primitive implements ASN1String {
-	private static final char[] table = { '0', '1', '2', '3', '4', '5', '6',
-			'7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+public class DERBitString
+    extends ASN1Primitive
+    implements ASN1String
+{
+    private static final char[]  table = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+    
+    protected byte[]      data;
+    protected int         padBits;
 
-	protected byte[] data;
-	protected int padBits;
+    /**
+     * @param bitString an int containing the BIT STRING
+     * @return the correct number of pad bits for a bit string defined in
+     * a 32 bit constant
+     */
+    static protected int getPadBits(
+        int bitString)
+    {
+        int val = 0;
+        for (int i = 3; i >= 0; i--) 
+        {
+            //
+            // this may look a little odd, but if it isn't done like this pre jdk1.2
+            // JVM's break!
+            //
+            if (i != 0)
+            {
+                if ((bitString >> (i * 8)) != 0) 
+                {
+                    val = (bitString >> (i * 8)) & 0xFF;
+                    break;
+                }
+            }
+            else
+            {
+                if (bitString != 0)
+                {
+                    val = bitString & 0xFF;
+                    break;
+                }
+            }
+        }
+ 
+        if (val == 0)
+        {
+            return 7;
+        }
 
-	/**
-	 * return the correct number of pad bits for a bit string defined in a 32
-	 * bit constant
-	 */
-	static protected int getPadBits(int bitString) {
-		int val = 0;
-		for (int i = 3; i >= 0; i--) {
-			//
-			// this may look a little odd, but if it isn't done like this pre
-			// jdk1.2
-			// JVM's break!
-			//
-			if (i != 0) {
-				if ((bitString >> (i * 8)) != 0) {
-					val = (bitString >> (i * 8)) & 0xFF;
-					break;
-				}
-			} else {
-				if (bitString != 0) {
-					val = bitString & 0xFF;
-					break;
-				}
-			}
-		}
 
-		if (val == 0) {
-			return 7;
-		}
+        int bits = 1;
 
-		int bits = 1;
+        while (((val <<= 1) & 0xFF) != 0)
+        {
+            bits++;
+        }
 
-		while (((val <<= 1) & 0xFF) != 0) {
-			bits++;
-		}
+        return 8 - bits;
+    }
 
-		return 8 - bits;
-	}
+    /**
+     * @param bitString an int containing the BIT STRING
+     * @return the correct number of bytes for a bit string defined in
+     * a 32 bit constant
+     */
+    static protected byte[] getBytes(int bitString)
+    {
+        int bytes = 4;
+        for (int i = 3; i >= 1; i--)
+        {
+            if ((bitString & (0xFF << (i * 8))) != 0)
+            {
+                break;
+            }
+            bytes--;
+        }
+        
+        byte[] result = new byte[bytes];
+        for (int i = 0; i < bytes; i++)
+        {
+            result[i] = (byte) ((bitString >> (i * 8)) & 0xFF);
+        }
 
-	/**
-	 * return the correct number of bytes for a bit string defined in a 32 bit
-	 * constant
-	 */
-	static protected byte[] getBytes(int bitString) {
-		int bytes = 4;
-		for (int i = 3; i >= 1; i--) {
-			if ((bitString & (0xFF << (i * 8))) != 0) {
-				break;
-			}
-			bytes--;
-		}
+        return result;
+    }
 
-		byte[] result = new byte[bytes];
-		for (int i = 0; i < bytes; i++) {
-			result[i] = (byte) ((bitString >> (i * 8)) & 0xFF);
-		}
+    /**
+     * return a Bit String from the passed in object
+     *
+     * @param obj a DERBitString or an object that can be converted into one.
+     * @exception IllegalArgumentException if the object cannot be converted.
+     * @return a DERBitString instance, or null.
+     */
+    public static DERBitString getInstance(
+        Object  obj)
+    {
+        if (obj == null || obj instanceof DERBitString)
+        {
+            return (DERBitString)obj;
+        }
 
-		return result;
-	}
+        throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
+    }
 
-	/**
-	 * return a Bit String from the passed in object
-	 * 
-	 * @exception IllegalArgumentException
-	 *                if the object cannot be converted.
-	 */
-	public static DERBitString getInstance(Object obj) {
-		if (obj == null || obj instanceof DERBitString) {
-			return (DERBitString) obj;
-		}
+    /**
+     * return a Bit String from a tagged object.
+     *
+     * @param obj the tagged object holding the object we want
+     * @param explicit true if the object is meant to be explicitly
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the tagged object cannot
+     *               be converted.
+     * @return a DERBitString instance, or null.
+     */
+    public static DERBitString getInstance(
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
+        ASN1Primitive o = obj.getObject();
 
-		throw new IllegalArgumentException("illegal object in getInstance: "
-				+ obj.getClass().getName());
-	}
+        if (explicit || o instanceof DERBitString)
+        {
+            return getInstance(o);
+        }
+        else
+        {
+            return fromOctetString(((ASN1OctetString)o).getOctets());
+        }
+    }
+    
+    protected DERBitString(
+        byte    data,
+        int     padBits)
+    {
+        this.data = new byte[1];
+        this.data[0] = data;
+        this.padBits = padBits;
+    }
 
-	/**
-	 * return a Bit String from a tagged object.
-	 * 
-	 * @param obj
-	 *            the tagged object holding the object we want
-	 * @param explicit
-	 *            true if the object is meant to be explicitly tagged false
-	 *            otherwise.
-	 * @exception IllegalArgumentException
-	 *                if the tagged object cannot be converted.
-	 */
-	public static DERBitString getInstance(ASN1TaggedObject obj,
-			boolean explicit) {
-		ASN1Primitive o = obj.getObject();
+    /**
+     * @param data the octets making up the bit string.
+     * @param padBits the number of extra bits at the end of the string.
+     */
+    public DERBitString(
+        byte[]  data,
+        int     padBits)
+    {
+        this.data = data;
+        this.padBits = padBits;
+    }
 
-		if (explicit || o instanceof DERBitString) {
-			return getInstance(o);
-		} else {
-			return fromOctetString(((ASN1OctetString) o).getOctets());
-		}
-	}
+    public DERBitString(
+        byte[]  data)
+    {
+        this(data, 0);
+    }
 
-	protected DERBitString(byte data, int padBits) {
-		this.data = new byte[1];
-		this.data[0] = data;
-		this.padBits = padBits;
-	}
+    public DERBitString(
+        int value)
+    {
+        this.data = getBytes(value);
+        this.padBits = getPadBits(value);
+    }
 
-	/**
-	 * @param data
-	 *            the octets making up the bit string.
-	 * @param padBits
-	 *            the number of extra bits at the end of the string.
-	 */
-	public DERBitString(byte[] data, int padBits) {
-		this.data = data;
-		this.padBits = padBits;
-	}
+    public DERBitString(
+        ASN1Encodable obj)
+        throws IOException
+    {
+        this.data = obj.toASN1Primitive().getEncoded(ASN1Encoding.DER);
+        this.padBits = 0;
+    }
 
-	public DERBitString(byte[] data) {
-		this(data, 0);
-	}
+    public byte[] getBytes()
+    {
+        return data;
+    }
 
-	public DERBitString(int value) {
-		this.data = getBytes(value);
-		this.padBits = getPadBits(value);
-	}
+    public int getPadBits()
+    {
+        return padBits;
+    }
 
-	public DERBitString(ASN1Encodable obj) throws IOException {
-		this.data = obj.toASN1Primitive().getEncoded(ASN1Encoding.DER);
-		this.padBits = 0;
-	}
 
-	public byte[] getBytes() {
-		return data;
-	}
+    /**
+     * @return the value of the bit string as an int (truncating if necessary)
+     */
+    public int intValue()
+    {
+        int value = 0;
+        
+        for (int i = 0; i != data.length && i != 4; i++)
+        {
+            value |= (data[i] & 0xff) << (8 * i);
+        }
+        
+        return value;
+    }
 
-	public int getPadBits() {
-		return padBits;
-	}
+    boolean isConstructed()
+    {
+        return false;
+    }
 
-	/**
-	 * @return the value of the bit string as an int (truncating if necessary)
-	 */
-	public int intValue() {
-		int value = 0;
+    int encodedLength()
+    {
+        return 1 + StreamUtil.calculateBodyLength(data.length + 1) + data.length + 1;
+    }
 
-		for (int i = 0; i != data.length && i != 4; i++) {
-			value |= (data[i] & 0xff) << (8 * i);
-		}
+    void encode(
+        ASN1OutputStream  out)
+        throws IOException
+    {
+        byte[]  bytes = new byte[getBytes().length + 1];
 
-		return value;
-	}
+        bytes[0] = (byte)getPadBits();
+        System.arraycopy(getBytes(), 0, bytes, 1, bytes.length - 1);
 
-	boolean isConstructed() {
-		return false;
-	}
+        out.writeEncoded(BERTags.BIT_STRING, bytes);
+    }
 
-	int encodedLength() {
-		return 1 + StreamUtil.calculateBodyLength(data.length + 1)
-				+ data.length + 1;
-	}
+    public int hashCode()
+    {
+        return padBits ^ Arrays.hashCode(data);
+    }
 
-	void encode(ASN1OutputStream out) throws IOException {
-		byte[] bytes = new byte[getBytes().length + 1];
+    protected boolean asn1Equals(
+        ASN1Primitive  o)
+    {
+        if (!(o instanceof DERBitString))
+        {
+            return false;
+        }
 
-		bytes[0] = (byte) getPadBits();
-		System.arraycopy(getBytes(), 0, bytes, 1, bytes.length - 1);
+        DERBitString other = (DERBitString)o;
 
-		out.writeEncoded(BERTags.BIT_STRING, bytes);
-	}
+        return this.padBits == other.padBits
+            && Arrays.areEqual(this.data, other.data);
+    }
 
-	public int hashCode() {
-		return padBits ^ Arrays.hashCode(data);
-	}
+    public String getString()
+    {
+        StringBuffer          buf = new StringBuffer("#");
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        ASN1OutputStream      aOut = new ASN1OutputStream(bOut);
+        
+        try
+        {
+            aOut.writeObject(this);
+        }
+        catch (IOException e)
+        {
+            throw new ASN1ParsingException("Internal error encoding BitString: " + e.getMessage(), e);
+        }
+        
+        byte[]    string = bOut.toByteArray();
+        
+        for (int i = 0; i != string.length; i++)
+        {
+            buf.append(table[(string[i] >>> 4) & 0xf]);
+            buf.append(table[string[i] & 0xf]);
+        }
+        
+        return buf.toString();
+    }
 
-	protected boolean asn1Equals(ASN1Primitive o) {
-		if (!(o instanceof DERBitString)) {
-			return false;
-		}
+    public String toString()
+    {
+        return getString();
+    }
 
-		DERBitString other = (DERBitString) o;
+    static DERBitString fromOctetString(byte[] bytes)
+    {
+        if (bytes.length < 1)
+        {
+            throw new IllegalArgumentException("truncated BIT STRING detected");
+        }
 
-		return this.padBits == other.padBits
-				&& Arrays.areEqual(this.data, other.data);
-	}
+        int padBits = bytes[0];
+        byte[] data = new byte[bytes.length - 1];
 
-	public String getString() {
-		StringBuffer buf = new StringBuffer("#");
-		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-		ASN1OutputStream aOut = new ASN1OutputStream(bOut);
+        if (data.length != 0)
+        {
+            System.arraycopy(bytes, 1, data, 0, bytes.length - 1);
+        }
 
-		try {
-			aOut.writeObject(this);
-		} catch (IOException e) {
-			throw new RuntimeException("internal error encoding BitString");
-		}
+        return new DERBitString(data, padBits);
+    }
 
-		byte[] string = bOut.toByteArray();
+    static DERBitString fromInputStream(int length, InputStream stream)
+        throws IOException
+    {
+        if (length < 1)
+        {
+            throw new IllegalArgumentException("truncated BIT STRING detected");
+        }
 
-		for (int i = 0; i != string.length; i++) {
-			buf.append(table[(string[i] >>> 4) & 0xf]);
-			buf.append(table[string[i] & 0xf]);
-		}
+        int padBits = stream.read();
+        byte[] data = new byte[length - 1];
 
-		return buf.toString();
-	}
+        if (data.length != 0)
+        {
+            if (Streams.readFully(stream, data) != data.length)
+            {
+                throw new EOFException("EOF encountered in middle of BIT STRING");
+            }
+        }
 
-	public String toString() {
-		return getString();
-	}
-
-	static DERBitString fromOctetString(byte[] bytes) {
-		if (bytes.length < 1) {
-			throw new IllegalArgumentException("truncated BIT STRING detected");
-		}
-
-		int padBits = bytes[0];
-		byte[] data = new byte[bytes.length - 1];
-
-		if (data.length != 0) {
-			System.arraycopy(bytes, 1, data, 0, bytes.length - 1);
-		}
-
-		return new DERBitString(data, padBits);
-	}
-
-	static DERBitString fromInputStream(int length, InputStream stream)
-			throws IOException {
-		if (length < 1) {
-			throw new IllegalArgumentException("truncated BIT STRING detected");
-		}
-
-		int padBits = stream.read();
-		byte[] data = new byte[length - 1];
-
-		if (data.length != 0) {
-			if (Streams.readFully(stream, data) != data.length) {
-				throw new EOFException(
-						"EOF encountered in middle of BIT STRING");
-			}
-		}
-
-		return new DERBitString(data, padBits);
-	}
+        return new DERBitString(data, padBits);
+    }
 }

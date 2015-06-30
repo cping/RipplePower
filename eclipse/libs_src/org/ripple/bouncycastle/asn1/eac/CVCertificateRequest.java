@@ -15,138 +15,156 @@ import org.ripple.bouncycastle.asn1.DEROctetString;
 
 //import java.math.BigInteger;
 
-public class CVCertificateRequest extends ASN1Object {
-	private CertificateBody certificateBody;
 
-	private byte[] innerSignature = null;
-	private byte[] outerSignature = null;
+public class CVCertificateRequest
+    extends ASN1Object
+{
+    private CertificateBody certificateBody;
 
-	private int valid;
+    private byte[] innerSignature = null;
+    private byte[] outerSignature = null;
 
-	private static int bodyValid = 0x01;
-	private static int signValid = 0x02;
+    private int valid;
 
-	private CVCertificateRequest(DERApplicationSpecific request)
-			throws IOException {
-		if (request.getApplicationTag() == EACTags.AUTHENTIFICATION_DATA) {
-			ASN1Sequence seq = ASN1Sequence.getInstance(request
-					.getObject(BERTags.SEQUENCE));
+    private static int bodyValid = 0x01;
+    private static int signValid = 0x02;
 
-			initCertBody(DERApplicationSpecific.getInstance(seq.getObjectAt(0)));
+    private CVCertificateRequest(DERApplicationSpecific request)
+        throws IOException
+    {
+        if (request.getApplicationTag() == EACTags.AUTHENTIFICATION_DATA)
+        {
+            ASN1Sequence seq = ASN1Sequence.getInstance(request.getObject(BERTags.SEQUENCE));
 
-			outerSignature = DERApplicationSpecific.getInstance(
-					seq.getObjectAt(seq.size() - 1)).getContents();
-		} else {
-			initCertBody(request);
-		}
-	}
+            initCertBody(DERApplicationSpecific.getInstance(seq.getObjectAt(0)));
 
-	private void initCertBody(DERApplicationSpecific request)
-			throws IOException {
-		if (request.getApplicationTag() == EACTags.CARDHOLDER_CERTIFICATE) {
-			ASN1Sequence seq = ASN1Sequence.getInstance(request
-					.getObject(BERTags.SEQUENCE));
-			for (Enumeration en = seq.getObjects(); en.hasMoreElements();) {
-				DERApplicationSpecific obj = DERApplicationSpecific
-						.getInstance(en.nextElement());
-				switch (obj.getApplicationTag()) {
-				case EACTags.CERTIFICATE_CONTENT_TEMPLATE:
-					certificateBody = CertificateBody.getInstance(obj);
-					valid |= bodyValid;
-					break;
-				case EACTags.STATIC_INTERNAL_AUTHENTIFICATION_ONE_STEP:
-					innerSignature = obj.getContents();
-					valid |= signValid;
-					break;
-				default:
-					throw new IOException(
-							"Invalid tag, not an CV Certificate Request element:"
-									+ obj.getApplicationTag());
-				}
-			}
-		} else {
-			throw new IOException("not a CARDHOLDER_CERTIFICATE in request:"
-					+ request.getApplicationTag());
-		}
-	}
+            outerSignature = DERApplicationSpecific.getInstance(seq.getObjectAt(seq.size() - 1)).getContents();
+        }
+        else
+        {
+            initCertBody(request);
+        }
+    }
 
-	public static CVCertificateRequest getInstance(Object obj) {
-		if (obj instanceof CVCertificateRequest) {
-			return (CVCertificateRequest) obj;
-		} else if (obj != null) {
-			try {
-				return new CVCertificateRequest(
-						DERApplicationSpecific.getInstance(obj));
-			} catch (IOException e) {
-				throw new ASN1ParsingException("unable to parse data: "
-						+ e.getMessage(), e);
-			}
-		}
+    private void initCertBody(DERApplicationSpecific request)
+        throws IOException
+    {
+        if (request.getApplicationTag() == EACTags.CARDHOLDER_CERTIFICATE)
+        {
+            ASN1Sequence seq = ASN1Sequence.getInstance(request.getObject(BERTags.SEQUENCE));
+            for (Enumeration en = seq.getObjects(); en.hasMoreElements();)
+            {
+                DERApplicationSpecific obj = DERApplicationSpecific.getInstance(en.nextElement());
+                switch (obj.getApplicationTag())
+                {
+                case EACTags.CERTIFICATE_CONTENT_TEMPLATE:
+                    certificateBody = CertificateBody.getInstance(obj);
+                    valid |= bodyValid;
+                    break;
+                case EACTags.STATIC_INTERNAL_AUTHENTIFICATION_ONE_STEP:
+                    innerSignature = obj.getContents();
+                    valid |= signValid;
+                    break;
+                default:
+                    throw new IOException("Invalid tag, not an CV Certificate Request element:" + obj.getApplicationTag());
+                }
+            }
+        }
+        else
+        {
+            throw new IOException("not a CARDHOLDER_CERTIFICATE in request:" + request.getApplicationTag());
+        }
+    }
 
-		return null;
-	}
+    public static CVCertificateRequest getInstance(Object obj)
+    {
+        if (obj instanceof CVCertificateRequest)
+        {
+            return (CVCertificateRequest)obj;
+        }
+        else if (obj != null)
+        {
+            try
+            {
+                return new CVCertificateRequest(DERApplicationSpecific.getInstance(obj));
+            }
+            catch (IOException e)
+            {
+                throw new ASN1ParsingException("unable to parse data: " + e.getMessage(), e);
+            }
+        }
 
-	ASN1ObjectIdentifier signOid = null;
-	ASN1ObjectIdentifier keyOid = null;
+        return null;
+    }
 
-	public static byte[] ZeroArray = new byte[] { 0 };
+    ASN1ObjectIdentifier signOid = null;
+    ASN1ObjectIdentifier keyOid = null;
 
-	String strCertificateHolderReference;
+    public static byte[] ZeroArray = new byte[]{0};
 
-	byte[] encodedAuthorityReference;
 
-	int ProfileId;
+    String strCertificateHolderReference;
 
-	/**
-	 * Returns the body of the certificate template
-	 * 
-	 * @return the body.
-	 */
-	public CertificateBody getCertificateBody() {
-		return certificateBody;
-	}
+    byte[] encodedAuthorityReference;
 
-	/**
-	 * Return the public key data object carried in the request
-	 * 
-	 * @return the public key
-	 */
-	public PublicKeyDataObject getPublicKey() {
-		return certificateBody.getPublicKey();
-	}
+    int ProfileId;
 
-	public byte[] getInnerSignature() {
-		return innerSignature;
-	}
+    /**
+     * Returns the body of the certificate template
+     *
+     * @return the body.
+     */
+    public CertificateBody getCertificateBody()
+    {
+        return certificateBody;
+    }
 
-	public byte[] getOuterSignature() {
-		return outerSignature;
-	}
+    /**
+     * Return the public key data object carried in the request
+     * @return  the public key
+     */
+    public PublicKeyDataObject getPublicKey()
+    {
+        return certificateBody.getPublicKey();
+    }
 
-	byte[] certificate = null;
-	protected String overSignerReference = null;
+    public byte[] getInnerSignature()
+    {
+        return innerSignature;
+    }
 
-	public boolean hasOuterSignature() {
-		return outerSignature != null;
-	}
+    public byte[] getOuterSignature()
+    {
+        return outerSignature;
+    }
 
-	byte[] encoded;
+    byte[] certificate = null;
+    protected String overSignerReference = null;
 
-	PublicKeyDataObject iso7816PubKey = null;
+    public boolean hasOuterSignature()
+    {
+        return outerSignature != null;
+    }
 
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
+    byte[] encoded;
 
-		v.add(certificateBody);
+    PublicKeyDataObject iso7816PubKey = null;
 
-		try {
-			v.add(new DERApplicationSpecific(false,
-					EACTags.STATIC_INTERNAL_AUTHENTIFICATION_ONE_STEP,
-					new DEROctetString(innerSignature)));
-		} catch (IOException e) {
-			throw new IllegalStateException("unable to convert signature!");
-		}
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-		return new DERApplicationSpecific(EACTags.CARDHOLDER_CERTIFICATE, v);
-	}
+        v.add(certificateBody);
+
+        try
+        {
+            v.add(new DERApplicationSpecific(false, EACTags.STATIC_INTERNAL_AUTHENTIFICATION_ONE_STEP, new DEROctetString(innerSignature)));
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("unable to convert signature!");
+        }
+
+        return new DERApplicationSpecific(EACTags.CARDHOLDER_CERTIFICATE, v);
+    }
 }

@@ -11,100 +11,118 @@ import org.ripple.bouncycastle.asn1.BERSequence;
 import org.ripple.bouncycastle.asn1.DEROctetString;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-/**
- * RFC 3274 - CMS Digest Data.
- * 
+/** 
+ * <a href="http://tools.ietf.org/html/rfc5652#section-7">RFC 5652</a> DigestedData object.
  * <pre>
  * DigestedData ::= SEQUENCE {
- *               version CMSVersion,
- *               digestAlgorithm DigestAlgorithmIdentifier,
- *               encapContentInfo EncapsulatedContentInfo,
- *               digest Digest }
+ *       version CMSVersion,
+ *       digestAlgorithm DigestAlgorithmIdentifier,
+ *       encapContentInfo EncapsulatedContentInfo,
+ *       digest Digest }
  * </pre>
  */
-public class DigestedData extends ASN1Object {
-	private ASN1Integer version;
-	private AlgorithmIdentifier digestAlgorithm;
-	private ContentInfo encapContentInfo;
-	private ASN1OctetString digest;
+public class DigestedData
+    extends ASN1Object
+{
+    private ASN1Integer           version;
+    private AlgorithmIdentifier  digestAlgorithm;
+    private ContentInfo          encapContentInfo;
+    private ASN1OctetString      digest;
 
-	public DigestedData(AlgorithmIdentifier digestAlgorithm,
-			ContentInfo encapContentInfo, byte[] digest) {
-		this.version = new ASN1Integer(0);
-		this.digestAlgorithm = digestAlgorithm;
-		this.encapContentInfo = encapContentInfo;
-		this.digest = new DEROctetString(digest);
-	}
+    public DigestedData(
+        AlgorithmIdentifier digestAlgorithm,
+        ContentInfo encapContentInfo,
+        byte[]      digest)
+    {
+        this.version = new ASN1Integer(0);
+        this.digestAlgorithm = digestAlgorithm;
+        this.encapContentInfo = encapContentInfo;
+        this.digest = new DEROctetString(digest);
+    }
 
-	private DigestedData(ASN1Sequence seq) {
-		this.version = (ASN1Integer) seq.getObjectAt(0);
-		this.digestAlgorithm = AlgorithmIdentifier.getInstance(seq
-				.getObjectAt(1));
-		this.encapContentInfo = ContentInfo.getInstance(seq.getObjectAt(2));
-		this.digest = ASN1OctetString.getInstance(seq.getObjectAt(3));
-	}
+    private DigestedData(
+        ASN1Sequence seq)
+    {
+        this.version = (ASN1Integer)seq.getObjectAt(0);
+        this.digestAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(1));
+        this.encapContentInfo = ContentInfo.getInstance(seq.getObjectAt(2));
+        this.digest = ASN1OctetString.getInstance(seq.getObjectAt(3));
+    }
 
-	/**
-	 * return a CompressedData object from a tagged object.
-	 * 
-	 * @param _ato
-	 *            the tagged object holding the object we want.
-	 * @param _explicit
-	 *            true if the object is meant to be explicitly tagged false
-	 *            otherwise.
-	 * @exception IllegalArgumentException
-	 *                if the object held by the tagged object cannot be
-	 *                converted.
-	 */
-	public static DigestedData getInstance(ASN1TaggedObject _ato,
-			boolean _explicit) {
-		return getInstance(ASN1Sequence.getInstance(_ato, _explicit));
-	}
+    /**
+     * Return a DigestedData object from a tagged object.
+     *
+     * @param ato the tagged object holding the object we want.
+     * @param isExplicit true if the object is meant to be explicitly
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the object held by the
+     *          tagged object cannot be converted.
+     */
+    public static DigestedData getInstance(
+        ASN1TaggedObject ato,
+        boolean isExplicit)
+    {
+        return getInstance(ASN1Sequence.getInstance(ato, isExplicit));
+    }
+    
+    /**
+     * Return a DigestedData object from the given object.
+     * <p>
+     * Accepted inputs:
+     * <ul>
+     * <li> null &rarr; null
+     * <li> {@link DigestedData} object
+     * <li> {@link org.ripple.bouncycastle.asn1.ASN1Sequence#getInstance(java.lang.Object) ASN1Sequence} input formats
+     * </ul>
+     *
+     * @param obj the object we want converted.
+     * @exception IllegalArgumentException if the object cannot be converted.
+     */
+    public static DigestedData getInstance(
+        Object obj)
+    {
+        if (obj instanceof DigestedData)
+        {
+            return (DigestedData)obj;
+        }
+        
+        if (obj != null)
+        {
+            return new DigestedData(ASN1Sequence.getInstance(obj));
+        }
+        
+        return null;
+    }
 
-	/**
-	 * return a CompressedData object from the given object.
-	 * 
-	 * @param obj
-	 *            the object we want converted.
-	 * @exception IllegalArgumentException
-	 *                if the object cannot be converted.
-	 */
-	public static DigestedData getInstance(Object obj) {
-		if (obj instanceof DigestedData) {
-			return (DigestedData) obj;
-		}
+    public ASN1Integer getVersion()
+    {
+        return version;
+    }
 
-		if (obj != null) {
-			return new DigestedData(ASN1Sequence.getInstance(obj));
-		}
+    public AlgorithmIdentifier getDigestAlgorithm()
+    {
+        return digestAlgorithm;
+    }
 
-		return null;
-	}
+    public ContentInfo getEncapContentInfo()
+    {
+        return encapContentInfo;
+    }
 
-	public ASN1Integer getVersion() {
-		return version;
-	}
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-	public AlgorithmIdentifier getDigestAlgorithm() {
-		return digestAlgorithm;
-	}
+        v.add(version);
+        v.add(digestAlgorithm);
+        v.add(encapContentInfo);
+        v.add(digest);
 
-	public ContentInfo getEncapContentInfo() {
-		return encapContentInfo;
-	}
+        return new BERSequence(v);
+    }
 
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(version);
-		v.add(digestAlgorithm);
-		v.add(encapContentInfo);
-		v.add(digest);
-
-		return new BERSequence(v);
-	}
-
-	public byte[] getDigest() {
-		return digest.getOctets();
-	}
+    public byte[] getDigest()
+    {
+        return digest.getOctets();
+    }
 }

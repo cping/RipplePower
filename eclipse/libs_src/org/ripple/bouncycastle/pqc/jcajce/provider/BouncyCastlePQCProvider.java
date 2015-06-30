@@ -17,116 +17,141 @@ import org.ripple.bouncycastle.jcajce.provider.config.ProviderConfiguration;
 import org.ripple.bouncycastle.jcajce.provider.util.AlgorithmProvider;
 import org.ripple.bouncycastle.jcajce.provider.util.AsymmetricKeyInfoConverter;
 
-public class BouncyCastlePQCProvider extends Provider implements
-		ConfigurableProvider {
-	private static String info = "BouncyCastle Post-Quantum Security Provider v1.48";
+public class BouncyCastlePQCProvider
+    extends Provider
+    implements ConfigurableProvider
+{
+    private static String info = "BouncyCastle Post-Quantum Security Provider v1.52";
 
-	public static String PROVIDER_NAME = "BCPQC";
+    public static String PROVIDER_NAME = "BCPQC";
 
-	public static final ProviderConfiguration CONFIGURATION = null;
+    public static final ProviderConfiguration CONFIGURATION = null;
 
-	private static final Map keyInfoConverters = new HashMap();
 
-	/*
-	 * Configurable symmetric ciphers
-	 */
-	private static final String ALGORITHM_PACKAGE = "org.bouncycastle.pqc.jcajce.provider.";
-	private static final String[] ALGORITHMS = { "Rainbow", "McEliece" };
+    private static final Map keyInfoConverters = new HashMap();
 
-	/**
-	 * Construct a new provider. This should only be required when using runtime
-	 * registration of the provider using the
-	 * <code>Security.addProvider()</code> mechanism.
-	 */
-	public BouncyCastlePQCProvider() {
-		super(PROVIDER_NAME, 1.48, info);
+    /*
+    * Configurable symmetric ciphers
+    */
+    private static final String ALGORITHM_PACKAGE = "org.bouncycastle.pqc.jcajce.provider.";
+    private static final String[] ALGORITHMS =
+        {
+            "Rainbow", "McEliece"
+        };
 
-		AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
-				setup();
-				return null;
-			}
-		});
-	}
+    /**
+     * Construct a new provider.  This should only be required when
+     * using runtime registration of the provider using the
+     * <code>Security.addProvider()</code> mechanism.
+     */
+    public BouncyCastlePQCProvider()
+    {
+        super(PROVIDER_NAME, 1.52, info);
 
-	private void setup() {
-		loadAlgorithms(ALGORITHM_PACKAGE, ALGORITHMS);
-	}
+        AccessController.doPrivileged(new PrivilegedAction()
+        {
+            public Object run()
+            {
+                setup();
+                return null;
+            }
+        });
+    }
 
-	private void loadAlgorithms(String packageName, String[] names) {
-		for (int i = 0; i != names.length; i++) {
-			Class clazz = null;
-			try {
-				ClassLoader loader = this.getClass().getClassLoader();
+    private void setup()
+    {
+        loadAlgorithms(ALGORITHM_PACKAGE, ALGORITHMS);
+    }
 
-				if (loader != null) {
-					clazz = loader.loadClass(packageName + names[i]
-							+ "$Mappings");
-				} else {
-					clazz = Class.forName(packageName + names[i] + "$Mappings");
-				}
-			} catch (ClassNotFoundException e) {
-				// ignore
-			}
+    private void loadAlgorithms(String packageName, String[] names)
+    {
+        for (int i = 0; i != names.length; i++)
+        {
+            Class clazz = null;
+            try
+            {
+                ClassLoader loader = this.getClass().getClassLoader();
 
-			if (clazz != null) {
-				try {
-					((AlgorithmProvider) clazz.newInstance()).configure(this);
-				} catch (Exception e) { // this should never ever happen!!
-					throw new InternalError("cannot create instance of "
-							+ packageName + names[i] + "$Mappings : " + e);
-				}
-			}
-		}
-	}
+                if (loader != null)
+                {
+                    clazz = loader.loadClass(packageName + names[i] + "$Mappings");
+                }
+                else
+                {
+                    clazz = Class.forName(packageName + names[i] + "$Mappings");
+                }
+            }
+            catch (ClassNotFoundException e)
+            {
+                // ignore
+            }
 
-	public void setParameter(String parameterName, Object parameter) {
-		synchronized (CONFIGURATION) {
-			// ((BouncyCastleProviderConfiguration)CONFIGURATION).setParameter(parameterName,
-			// parameter);
-		}
-	}
+            if (clazz != null)
+            {
+                try
+                {
+                    ((AlgorithmProvider)clazz.newInstance()).configure(this);
+                }
+                catch (Exception e)
+                {   // this should never ever happen!!
+                    throw new InternalError("cannot create instance of "
+                        + packageName + names[i] + "$Mappings : " + e);
+                }
+            }
+        }
+    }
 
-	public boolean hasAlgorithm(String type, String name) {
-		return containsKey(type + "." + name)
-				|| containsKey("Alg.Alias." + type + "." + name);
-	}
+    public void setParameter(String parameterName, Object parameter)
+    {
+        synchronized (CONFIGURATION)
+        {
+            //((BouncyCastleProviderConfiguration)CONFIGURATION).setParameter(parameterName, parameter);
+        }
+    }
 
-	public void addAlgorithm(String key, String value) {
-		if (containsKey(key)) {
-			throw new IllegalStateException("duplicate provider key (" + key
-					+ ") found");
-		}
+    public boolean hasAlgorithm(String type, String name)
+    {
+        return containsKey(type + "." + name) || containsKey("Alg.Alias." + type + "." + name);
+    }
 
-		put(key, value);
-	}
+    public void addAlgorithm(String key, String value)
+    {
+        if (containsKey(key))
+        {
+            throw new IllegalStateException("duplicate provider key (" + key + ") found");
+        }
 
-	public void addKeyInfoConverter(ASN1ObjectIdentifier oid,
-			AsymmetricKeyInfoConverter keyInfoConverter) {
-		keyInfoConverters.put(oid, keyInfoConverter);
-	}
+        put(key, value);
+    }
 
-	public static PublicKey getPublicKey(SubjectPublicKeyInfo publicKeyInfo)
-			throws IOException {
-		AsymmetricKeyInfoConverter converter = (AsymmetricKeyInfoConverter) keyInfoConverters
-				.get(publicKeyInfo.getAlgorithm().getAlgorithm());
+    public void addKeyInfoConverter(ASN1ObjectIdentifier oid, AsymmetricKeyInfoConverter keyInfoConverter)
+    {
+        keyInfoConverters.put(oid, keyInfoConverter);
+    }
 
-		if (converter == null) {
-			return null;
-		}
+    public static PublicKey getPublicKey(SubjectPublicKeyInfo publicKeyInfo)
+        throws IOException
+    {
+        AsymmetricKeyInfoConverter converter = (AsymmetricKeyInfoConverter)keyInfoConverters.get(publicKeyInfo.getAlgorithm().getAlgorithm());
 
-		return converter.generatePublic(publicKeyInfo);
-	}
+        if (converter == null)
+        {
+            return null;
+        }
 
-	public static PrivateKey getPrivateKey(PrivateKeyInfo privateKeyInfo)
-			throws IOException {
-		AsymmetricKeyInfoConverter converter = (AsymmetricKeyInfoConverter) keyInfoConverters
-				.get(privateKeyInfo.getPrivateKeyAlgorithm().getAlgorithm());
+        return converter.generatePublic(publicKeyInfo);
+    }
 
-		if (converter == null) {
-			return null;
-		}
+    public static PrivateKey getPrivateKey(PrivateKeyInfo privateKeyInfo)
+        throws IOException
+    {
+        AsymmetricKeyInfoConverter converter = (AsymmetricKeyInfoConverter)keyInfoConverters.get(privateKeyInfo.getPrivateKeyAlgorithm().getAlgorithm());
 
-		return converter.generatePrivate(privateKeyInfo);
-	}
+        if (converter == null)
+        {
+            return null;
+        }
+
+        return converter.generatePrivate(privateKeyInfo);
+    }
 }

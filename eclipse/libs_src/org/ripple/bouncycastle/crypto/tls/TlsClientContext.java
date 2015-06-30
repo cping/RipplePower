@@ -1,4 +1,6 @@
 package org.ripple.bouncycastle.crypto.tls;
 
-public interface TlsClientContext extends TlsContext {
+public interface TlsClientContext
+    extends TlsContext
+{
 }

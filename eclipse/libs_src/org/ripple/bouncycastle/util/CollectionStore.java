@@ -8,42 +8,55 @@ import java.util.List;
 /**
  * A simple collection backed store.
  */
-public class CollectionStore implements Store {
-	private Collection _local;
+public class CollectionStore<T>
+    implements Store<T>, Iterable<T>
+{
+    private Collection<T> _local;
 
-	/**
-	 * Basic constructor.
-	 * 
-	 * @param collection
-	 *            - initial contents for the store, this is copied.
-	 */
-	public CollectionStore(Collection collection) {
-		_local = new ArrayList(collection);
-	}
+    /**
+     * Basic constructor.
+     *
+     * @param collection - initial contents for the store, this is copied.
+     */
+    public CollectionStore(
+        Collection<T> collection)
+    {
+        _local = new ArrayList<T>(collection);
+    }
 
-	/**
-	 * Return the matches in the collection for the passed in selector.
-	 * 
-	 * @param selector
-	 *            the selector to match against.
-	 * @return a possibly empty collection of matching objects.
-	 */
-	public Collection getMatches(Selector selector) {
-		if (selector == null) {
-			return new ArrayList(_local);
-		} else {
-			List col = new ArrayList();
-			Iterator iter = _local.iterator();
+    /**
+     * Return the matches in the collection for the passed in selector.
+     *
+     * @param selector the selector to match against.
+     * @return a possibly empty collection of matching objects.
+     */
+    public Collection<T> getMatches(Selector<T> selector)
+    {
+        if (selector == null)
+        {
+            return new ArrayList<T>(_local);
+        }
+        else
+        {
+            List<T> col = new ArrayList<T>();
+            Iterator<T> iter = _local.iterator();
 
-			while (iter.hasNext()) {
-				Object obj = iter.next();
+            while (iter.hasNext())
+            {
+                T obj = iter.next();
 
-				if (selector.match(obj)) {
-					col.add(obj);
-				}
-			}
+                if (selector.match(obj))
+                {
+                    col.add(obj);
+                }
+            }
 
-			return col;
-		}
-	}
+            return col;
+        }
+    }
+
+    public Iterator<T> iterator()
+    {
+        return getMatches(null).iterator();
+    }
 }

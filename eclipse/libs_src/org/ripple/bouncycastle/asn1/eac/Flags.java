@@ -3,70 +3,94 @@ package org.ripple.bouncycastle.asn1.eac;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public class Flags {
 
-	int value = 0;
+public class Flags
+{
 
-	public Flags() {
+    int value = 0;
 
-	}
+    public Flags()
+    {
 
-	public Flags(int v) {
-		value = v;
-	}
+    }
 
-	public void set(int flag) {
-		value |= flag;
-	}
+    public Flags(int v)
+    {
+        value = v;
+    }
 
-	public boolean isSet(int flag) {
-		return (value & flag) != 0;
-	}
+    public void set(int flag)
+    {
+        value |= flag;
+    }
 
-	public int getFlags() {
-		return value;
-	}
+    public boolean isSet(int flag)
+    {
+        return (value & flag) != 0;
+    }
 
-	/*
-	 * Java 1.5 String decode(Map<Integer, String> decodeMap) { StringJoiner
-	 * joiner = new StringJoiner(" "); for (int i : decodeMap.keySet()) { if
-	 * (isSet(i)) joiner.add(decodeMap.get(i)); } return joiner.toString(); }
-	 */
+    public int getFlags()
+    {
+        return value;
+    }
 
-	String decode(Hashtable decodeMap) {
-		StringJoiner joiner = new StringJoiner(" ");
-		Enumeration e = decodeMap.keys();
-		while (e.hasMoreElements()) {
-			Integer i = (Integer) e.nextElement();
-			if (isSet(i.intValue())) {
-				joiner.add((String) decodeMap.get(i));
-			}
-		}
-		return joiner.toString();
-	}
+    /* Java 1.5
+     String decode(Map<Integer, String> decodeMap)
+     {
+         StringJoiner joiner = new StringJoiner(" ");
+         for (int i : decodeMap.keySet())
+         {
+             if (isSet(i))
+                 joiner.add(decodeMap.get(i));
+         }
+         return joiner.toString();
+     }
+     */
 
-	private class StringJoiner {
+    String decode(Hashtable decodeMap)
+    {
+        StringJoiner joiner = new StringJoiner(" ");
+        Enumeration e = decodeMap.keys();
+        while (e.hasMoreElements())
+        {
+            Integer i = (Integer)e.nextElement();
+            if (isSet(i.intValue()))
+            {
+                joiner.add((String)decodeMap.get(i));
+            }
+        }
+        return joiner.toString();
+    }
 
-		String mSeparator;
-		boolean First = true;
-		StringBuffer b = new StringBuffer();
+    private class StringJoiner
+    {
 
-		public StringJoiner(String separator) {
-			mSeparator = separator;
-		}
+        String mSeparator;
+        boolean First = true;
+        StringBuffer b = new StringBuffer();
 
-		public void add(String str) {
-			if (First) {
-				First = false;
-			} else {
-				b.append(mSeparator);
-			}
+        public StringJoiner(String separator)
+        {
+            mSeparator = separator;
+        }
 
-			b.append(str);
-		}
+        public void add(String str)
+        {
+            if (First)
+            {
+                First = false;
+            }
+            else
+            {
+                b.append(mSeparator);
+            }
 
-		public String toString() {
-			return b.toString();
-		}
-	}
+            b.append(str);
+        }
+
+        public String toString()
+        {
+            return b.toString();
+        }
+    }
 }

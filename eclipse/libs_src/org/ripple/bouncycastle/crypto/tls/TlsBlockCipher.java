@@ -11,287 +11,384 @@ import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 import org.ripple.bouncycastle.util.Arrays;
 
 /**
- * A generic TLS 1.0-1.1 / SSLv3 block cipher. This can be used for AES or 3DES
- * for example.
+ * A generic TLS 1.0-1.2 / SSLv3 block cipher. This can be used for AES or 3DES for example.
  */
-public class TlsBlockCipher implements TlsCipher {
+public class TlsBlockCipher
+    implements TlsCipher
+{
+    protected TlsContext context;
+    protected byte[] randomData;
+    protected boolean useExplicitIV;
+    protected boolean encryptThenMAC;
 
-	protected TlsContext context;
-	protected byte[] randomData;
-	protected boolean useExplicitIV;
+    protected BlockCipher encryptCipher;
+    protected BlockCipher decryptCipher;
 
-	protected BlockCipher encryptCipher;
-	protected BlockCipher decryptCipher;
+    protected TlsMac writeMac;
+    protected TlsMac readMac;
 
-	protected TlsMac writeMac;
-	protected TlsMac readMac;
+    public TlsMac getWriteMac()
+    {
+        return writeMac;
+    }
 
-	public TlsMac getWriteMac() {
-		return writeMac;
-	}
+    public TlsMac getReadMac()
+    {
+        return readMac;
+    }
 
-	public TlsMac getReadMac() {
-		return readMac;
-	}
+    public TlsBlockCipher(TlsContext context, BlockCipher clientWriteCipher, BlockCipher serverWriteCipher,
+        Digest clientWriteDigest, Digest serverWriteDigest, int cipherKeySize) throws IOException
+    {
+        this.context = context;
 
-	public TlsBlockCipher(TlsContext context, BlockCipher clientWriteCipher,
-			BlockCipher serverWriteCipher, Digest clientWriteDigest,
-			Digest serverWriteDigest, int cipherKeySize) throws IOException {
+        this.randomData = new byte[256];
+        context.getNonceRandomGenerator().nextBytes(randomData);
 
-		this.context = context;
+        this.useExplicitIV = TlsUtils.isTLSv11(context);
+        this.encryptThenMAC = context.getSecurityParameters().encryptThenMAC;
 
-		this.randomData = new byte[256];
-		context.getSecureRandom().nextBytes(randomData);
+        int key_block_size = (2 * cipherKeySize) + clientWriteDigest.getDigestSize()
+            + serverWriteDigest.getDigestSize();
 
-		this.useExplicitIV = ProtocolVersion.TLSv11
-				.isEqualOrEarlierVersionOf(context.getServerVersion()
-						.getEquivalentTLSVersion());
+        // From TLS 1.1 onwards, block ciphers don't need client_write_IV
+        if (!useExplicitIV)
+        {
+            key_block_size += clientWriteCipher.getBlockSize() + serverWriteCipher.getBlockSize();
+        }
 
-		int key_block_size = (2 * cipherKeySize)
-				+ clientWriteDigest.getDigestSize()
-				+ serverWriteDigest.getDigestSize();
+        byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
 
-		// From TLS 1.1 onwards, block ciphers don't need client_write_IV
-		if (!useExplicitIV) {
-			key_block_size += clientWriteCipher.getBlockSize()
-					+ serverWriteCipher.getBlockSize();
-		}
+        int offset = 0;
 
-		byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
+        TlsMac clientWriteMac = new TlsMac(context, clientWriteDigest, key_block, offset,
+            clientWriteDigest.getDigestSize());
+        offset += clientWriteDigest.getDigestSize();
+        TlsMac serverWriteMac = new TlsMac(context, serverWriteDigest, key_block, offset,
+            serverWriteDigest.getDigestSize());
+        offset += serverWriteDigest.getDigestSize();
 
-		int offset = 0;
+        KeyParameter client_write_key = new KeyParameter(key_block, offset, cipherKeySize);
+        offset += cipherKeySize;
+        KeyParameter server_write_key = new KeyParameter(key_block, offset, cipherKeySize);
+        offset += cipherKeySize;
 
-		TlsMac clientWriteMac = new TlsMac(context, clientWriteDigest,
-				key_block, offset, clientWriteDigest.getDigestSize());
-		offset += clientWriteDigest.getDigestSize();
-		TlsMac serverWriteMac = new TlsMac(context, serverWriteDigest,
-				key_block, offset, serverWriteDigest.getDigestSize());
-		offset += serverWriteDigest.getDigestSize();
+        byte[] client_write_IV, server_write_IV;
+        if (useExplicitIV)
+        {
+            client_write_IV = new byte[clientWriteCipher.getBlockSize()];
+            server_write_IV = new byte[serverWriteCipher.getBlockSize()];
+        }
+        else
+        {
+            client_write_IV = Arrays.copyOfRange(key_block, offset, offset + clientWriteCipher.getBlockSize());
+            offset += clientWriteCipher.getBlockSize();
+            server_write_IV = Arrays.copyOfRange(key_block, offset, offset + serverWriteCipher.getBlockSize());
+            offset += serverWriteCipher.getBlockSize();
+        }
 
-		KeyParameter client_write_key = new KeyParameter(key_block, offset,
-				cipherKeySize);
-		offset += cipherKeySize;
-		KeyParameter server_write_key = new KeyParameter(key_block, offset,
-				cipherKeySize);
-		offset += cipherKeySize;
+        if (offset != key_block_size)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		byte[] client_write_IV, server_write_IV;
-		if (useExplicitIV) {
-			client_write_IV = new byte[clientWriteCipher.getBlockSize()];
-			server_write_IV = new byte[serverWriteCipher.getBlockSize()];
-		} else {
-			client_write_IV = Arrays.copyOfRange(key_block, offset, offset
-					+ clientWriteCipher.getBlockSize());
-			offset += clientWriteCipher.getBlockSize();
-			server_write_IV = Arrays.copyOfRange(key_block, offset, offset
-					+ serverWriteCipher.getBlockSize());
-			offset += serverWriteCipher.getBlockSize();
-		}
+        CipherParameters encryptParams, decryptParams;
+        if (context.isServer())
+        {
+            this.writeMac = serverWriteMac;
+            this.readMac = clientWriteMac;
+            this.encryptCipher = serverWriteCipher;
+            this.decryptCipher = clientWriteCipher;
+            encryptParams = new ParametersWithIV(server_write_key, server_write_IV);
+            decryptParams = new ParametersWithIV(client_write_key, client_write_IV);
+        }
+        else
+        {
+            this.writeMac = clientWriteMac;
+            this.readMac = serverWriteMac;
+            this.encryptCipher = clientWriteCipher;
+            this.decryptCipher = serverWriteCipher;
+            encryptParams = new ParametersWithIV(client_write_key, client_write_IV);
+            decryptParams = new ParametersWithIV(server_write_key, server_write_IV);
+        }
 
-		if (offset != key_block_size) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        this.encryptCipher.init(true, encryptParams);
+        this.decryptCipher.init(false, decryptParams);
+    }
 
-		CipherParameters encryptParams, decryptParams;
-		if (context.isServer()) {
-			this.writeMac = serverWriteMac;
-			this.readMac = clientWriteMac;
-			this.encryptCipher = serverWriteCipher;
-			this.decryptCipher = clientWriteCipher;
-			encryptParams = new ParametersWithIV(server_write_key,
-					server_write_IV);
-			decryptParams = new ParametersWithIV(client_write_key,
-					client_write_IV);
-		} else {
-			this.writeMac = clientWriteMac;
-			this.readMac = serverWriteMac;
-			this.encryptCipher = clientWriteCipher;
-			this.decryptCipher = serverWriteCipher;
-			encryptParams = new ParametersWithIV(client_write_key,
-					client_write_IV);
-			decryptParams = new ParametersWithIV(server_write_key,
-					server_write_IV);
-		}
+    public int getPlaintextLimit(int ciphertextLimit)
+    {
+        int blockSize = encryptCipher.getBlockSize();
+        int macSize = writeMac.getSize();
 
-		this.encryptCipher.init(true, encryptParams);
-		this.decryptCipher.init(false, decryptParams);
-	}
+        int plaintextLimit = ciphertextLimit;
 
-	public int getPlaintextLimit(int ciphertextLimit) {
-		int blockSize = encryptCipher.getBlockSize();
-		int macSize = writeMac.getSize();
+        // An explicit IV consumes 1 block
+        if (useExplicitIV)
+        {
+            plaintextLimit -= blockSize;
+        }
 
-		int result = ciphertextLimit - (ciphertextLimit % blockSize) - macSize
-				- 1;
-		if (useExplicitIV) {
-			result -= blockSize;
-		}
+        // Leave room for the MAC, and require block-alignment
+        if (encryptThenMAC)
+        {
+            plaintextLimit -= macSize;
+            plaintextLimit -= plaintextLimit % blockSize;
+        }
+        else
+        {
+            plaintextLimit -= plaintextLimit % blockSize;
+            plaintextLimit -= macSize;
+        }
 
-		return result;
-	}
+        // Minimum 1 byte of padding
+        --plaintextLimit;
 
-	public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext,
-			int offset, int len) {
-		int blockSize = encryptCipher.getBlockSize();
-		int macSize = writeMac.getSize();
+        return plaintextLimit;
+    }
 
-		ProtocolVersion version = context.getServerVersion();
+    public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len)
+    {
+        int blockSize = encryptCipher.getBlockSize();
+        int macSize = writeMac.getSize();
 
-		int padding_length = blockSize - 1 - ((len + macSize) % blockSize);
+        ProtocolVersion version = context.getServerVersion();
 
-		// TODO[DTLS] Consider supporting in DTLS (without exceeding send limit
-		// though)
-		if (!version.isDTLS() && !version.isSSL()) {
-			// Add a random number of extra blocks worth of padding
-			int maxExtraPadBlocks = (255 - padding_length) / blockSize;
-			int actualExtraPadBlocks = chooseExtraPadBlocks(
-					context.getSecureRandom(), maxExtraPadBlocks);
-			padding_length += actualExtraPadBlocks * blockSize;
-		}
+        int enc_input_length = len;
+        if (!encryptThenMAC)
+        {
+            enc_input_length += macSize;
+        }
 
-		int totalSize = len + macSize + padding_length + 1;
-		if (useExplicitIV) {
-			totalSize += blockSize;
-		}
+        int padding_length = blockSize - 1 - (enc_input_length % blockSize);
 
-		byte[] outbuf = new byte[totalSize];
-		int outOff = 0;
+        // TODO[DTLS] Consider supporting in DTLS (without exceeding send limit though)
+        if (!version.isDTLS() && !version.isSSL())
+        {
+            // Add a random number of extra blocks worth of padding
+            int maxExtraPadBlocks = (255 - padding_length) / blockSize;
+            int actualExtraPadBlocks = chooseExtraPadBlocks(context.getSecureRandom(), maxExtraPadBlocks);
+            padding_length += actualExtraPadBlocks * blockSize;
+        }
 
-		if (useExplicitIV) {
-			byte[] explicitIV = new byte[blockSize];
-			context.getSecureRandom().nextBytes(explicitIV);
+        int totalSize = len + macSize + padding_length + 1;
+        if (useExplicitIV)
+        {
+            totalSize += blockSize;
+        }
 
-			encryptCipher.init(true, new ParametersWithIV(null, explicitIV));
+        byte[] outBuf = new byte[totalSize];
+        int outOff = 0;
 
-			System.arraycopy(explicitIV, 0, outbuf, outOff, blockSize);
-			outOff += blockSize;
-		}
+        if (useExplicitIV)
+        {
+            byte[] explicitIV = new byte[blockSize];
+            context.getNonceRandomGenerator().nextBytes(explicitIV);
 
-		byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
+            encryptCipher.init(true, new ParametersWithIV(null, explicitIV));
 
-		System.arraycopy(plaintext, offset, outbuf, outOff, len);
-		System.arraycopy(mac, 0, outbuf, outOff + len, mac.length);
+            System.arraycopy(explicitIV, 0, outBuf, outOff, blockSize);
+            outOff += blockSize;
+        }
 
-		int padOffset = outOff + len + mac.length;
-		for (int i = 0; i <= padding_length; i++) {
-			outbuf[i + padOffset] = (byte) padding_length;
-		}
-		for (int i = outOff; i < totalSize; i += blockSize) {
-			encryptCipher.processBlock(outbuf, i, outbuf, i);
-		}
-		return outbuf;
-	}
+        int blocks_start = outOff;
 
-	public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext,
-			int offset, int len) throws IOException {
-		int blockSize = decryptCipher.getBlockSize();
-		int macSize = readMac.getSize();
+        System.arraycopy(plaintext, offset, outBuf, outOff, len);
+        outOff += len;
 
-		int minLen = Math.max(blockSize, macSize + 1);
-		if (useExplicitIV) {
-			minLen += blockSize;
-		}
+        if (!encryptThenMAC)
+        {
+            byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
+            System.arraycopy(mac, 0, outBuf, outOff, mac.length);
+            outOff += mac.length;
+        }
 
-		if (len < minLen) {
-			throw new TlsFatalAlert(AlertDescription.decode_error);
-		}
+        for (int i = 0; i <= padding_length; i++)
+        {
+            outBuf[outOff++] = (byte)padding_length;
+        }
 
-		if (len % blockSize != 0) {
-			throw new TlsFatalAlert(AlertDescription.decryption_failed);
-		}
+        for (int i = blocks_start; i < outOff; i += blockSize)
+        {
+            encryptCipher.processBlock(outBuf, i, outBuf, i);
+        }
 
-		if (useExplicitIV) {
-			decryptCipher.init(false, new ParametersWithIV(null, ciphertext,
-					offset, blockSize));
+        if (encryptThenMAC)
+        {
+            byte[] mac = writeMac.calculateMac(seqNo, type, outBuf, 0, outOff);
+            System.arraycopy(mac, 0, outBuf, outOff, mac.length);
+            outOff += mac.length;
+        }
 
-			offset += blockSize;
-			len -= blockSize;
-		}
+//        assert outBuf.length == outOff;
 
-		for (int i = 0; i < len; i += blockSize) {
-			decryptCipher.processBlock(ciphertext, offset + i, ciphertext,
-					offset + i);
-		}
+        return outBuf;
+    }
 
-		// If there's anything wrong with the padding, this will return zero
-		int totalPad = checkPaddingConstantTime(ciphertext, offset, len,
-				blockSize, macSize);
+    public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
+        throws IOException
+    {
+        int blockSize = decryptCipher.getBlockSize();
+        int macSize = readMac.getSize();
 
-		int macInputLen = len - totalPad - macSize;
+        int minLen = blockSize;
+        if (encryptThenMAC)
+        {
+            minLen += macSize;
+        }
+        else
+        {
+            minLen = Math.max(minLen, macSize + 1);
+        }
 
-		byte[] decryptedMac = Arrays.copyOfRange(ciphertext, offset
-				+ macInputLen, offset + macInputLen + macSize);
-		byte[] calculatedMac = readMac.calculateMacConstantTime(seqNo, type,
-				ciphertext, offset, macInputLen, len - macSize, randomData);
+        if (useExplicitIV)
+        {
+            minLen += blockSize;
+        }
 
-		boolean badMac = !Arrays.constantTimeAreEqual(calculatedMac,
-				decryptedMac);
+        if (len < minLen)
+        {
+            throw new TlsFatalAlert(AlertDescription.decode_error);
+        }
 
-		if (badMac || totalPad == 0) {
-			throw new TlsFatalAlert(AlertDescription.bad_record_mac);
-		}
+        int blocks_length = len;
+        if (encryptThenMAC)
+        {
+            blocks_length -= macSize;
+        }
 
-		return Arrays.copyOfRange(ciphertext, offset, offset + macInputLen);
-	}
+        if (blocks_length % blockSize != 0)
+        {
+            throw new TlsFatalAlert(AlertDescription.decryption_failed);
+        }
 
-	protected int checkPaddingConstantTime(byte[] buf, int off, int len,
-			int blockSize, int macSize) {
-		int end = off + len;
-		byte lastByte = buf[end - 1];
-		int padlen = lastByte & 0xff;
-		int totalPad = padlen + 1;
+        if (encryptThenMAC)
+        {
+            int end = offset + len;
+            byte[] receivedMac = Arrays.copyOfRange(ciphertext, end - macSize, end);
+            byte[] calculatedMac = readMac.calculateMac(seqNo, type, ciphertext, offset, len - macSize);
 
-		int dummyIndex = 0;
-		byte padDiff = 0;
+            boolean badMac = !Arrays.constantTimeAreEqual(calculatedMac, receivedMac);
+            if (badMac)
+            {
+                /*
+                 * RFC 7366 3. The MAC SHALL be evaluated before any further processing such as
+                 * decryption is performed, and if the MAC verification fails, then processing SHALL
+                 * terminate immediately. For TLS, a fatal bad_record_mac MUST be generated [2]. For
+                 * DTLS, the record MUST be discarded, and a fatal bad_record_mac MAY be generated
+                 * [4]. This immediate response to a bad MAC eliminates any timing channels that may
+                 * be available through the use of manipulated packet data.
+                 */
+                throw new TlsFatalAlert(AlertDescription.bad_record_mac);
+            }
+        }
 
-		if ((context.getServerVersion().isSSL() && totalPad > blockSize)
-				|| (macSize + totalPad > len)) {
-			totalPad = 0;
-		} else {
-			int padPos = end - totalPad;
-			do {
-				padDiff |= (buf[padPos++] ^ lastByte);
-			} while (padPos < end);
+        if (useExplicitIV)
+        {
+            decryptCipher.init(false, new ParametersWithIV(null, ciphertext, offset, blockSize));
 
-			dummyIndex = totalPad;
+            offset += blockSize;
+            blocks_length -= blockSize;
+        }
 
-			if (padDiff != 0) {
-				totalPad = 0;
-			}
-		}
+        for (int i = 0; i < blocks_length; i += blockSize)
+        {
+            decryptCipher.processBlock(ciphertext, offset + i, ciphertext, offset + i);
+        }
 
-		// Run some extra dummy checks so the number of checks is always
-		// constant
-		{
-			byte[] dummyPad = randomData;
-			while (dummyIndex < 256) {
-				padDiff |= (dummyPad[dummyIndex++] ^ lastByte);
-			}
-			// Ensure the above loop is not eliminated
-			dummyPad[0] ^= padDiff;
-		}
+        // If there's anything wrong with the padding, this will return zero
+        int totalPad = checkPaddingConstantTime(ciphertext, offset, blocks_length, blockSize, encryptThenMAC ? 0 : macSize);
+        boolean badMac = (totalPad == 0);
 
-		return totalPad;
-	}
+        int dec_output_length = blocks_length - totalPad;
 
-	protected int chooseExtraPadBlocks(SecureRandom r, int max) {
-		// return r.nextInt(max + 1);
+        if (!encryptThenMAC)
+        {
+            dec_output_length -= macSize;
+            int macInputLen = dec_output_length;
+            int macOff = offset + macInputLen;
+            byte[] receivedMac = Arrays.copyOfRange(ciphertext, macOff, macOff + macSize);
+            byte[] calculatedMac = readMac.calculateMacConstantTime(seqNo, type, ciphertext, offset, macInputLen,
+                blocks_length - macSize, randomData);
 
-		int x = r.nextInt();
-		int n = lowestBitSet(x);
-		return Math.min(n, max);
-	}
+            badMac |= !Arrays.constantTimeAreEqual(calculatedMac, receivedMac);
+        }
 
-	protected int lowestBitSet(int x) {
-		if (x == 0) {
-			return 32;
-		}
+        if (badMac)
+        {
+            throw new TlsFatalAlert(AlertDescription.bad_record_mac);
+        }
 
-		int n = 0;
-		while ((x & 1) == 0) {
-			++n;
-			x >>= 1;
-		}
-		return n;
-	}
+        return Arrays.copyOfRange(ciphertext, offset, offset + dec_output_length);
+    }
+
+    protected int checkPaddingConstantTime(byte[] buf, int off, int len, int blockSize, int macSize)
+    {
+        int end = off + len;
+        byte lastByte = buf[end - 1];
+        int padlen = lastByte & 0xff;
+        int totalPad = padlen + 1;
+
+        int dummyIndex = 0;
+        byte padDiff = 0;
+
+        if ((TlsUtils.isSSL(context) && totalPad > blockSize) || (macSize + totalPad > len))
+        {
+            totalPad = 0;
+        }
+        else
+        {
+            int padPos = end - totalPad;
+            do
+            {
+                padDiff |= (buf[padPos++] ^ lastByte);
+            }
+            while (padPos < end);
+
+            dummyIndex = totalPad;
+
+            if (padDiff != 0)
+            {
+                totalPad = 0;
+            }
+        }
+
+        // Run some extra dummy checks so the number of checks is always constant
+        {
+            byte[] dummyPad = randomData;
+            while (dummyIndex < 256)
+            {
+                padDiff |= (dummyPad[dummyIndex++] ^ lastByte);
+            }
+            // Ensure the above loop is not eliminated
+            dummyPad[0] ^= padDiff;
+        }
+
+        return totalPad;
+    }
+
+    protected int chooseExtraPadBlocks(SecureRandom r, int max)
+    {
+        // return r.nextInt(max + 1);
+
+        int x = r.nextInt();
+        int n = lowestBitSet(x);
+        return Math.min(n, max);
+    }
+
+    protected int lowestBitSet(int x)
+    {
+        if (x == 0)
+        {
+            return 32;
+        }
+
+        int n = 0;
+        while ((x & 1) == 0)
+        {
+            ++n;
+            x >>= 1;
+        }
+        return n;
+    }
 }

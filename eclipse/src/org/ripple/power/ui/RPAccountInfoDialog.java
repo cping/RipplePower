@@ -689,6 +689,9 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 						} catch (Exception ex) {
 							name = "Unkown";
 						}
+						if (name == null || name.equalsIgnoreCase(address)) {
+							name = "Unkown";
+						}
 						_addressNameText.setText(name);
 						// RPAccountInfoDialog.this.revalidate();
 						// RPAccountInfoDialog.this.repaint();

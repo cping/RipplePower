@@ -8,42 +8,46 @@ import java.math.BigInteger;
  * 
  * http://www.gemplus.com/smart/rd/publications/pdf/NS98pkcs.pdf
  */
-public class NaccacheSternKeyParameters extends AsymmetricKeyParameter {
+public class NaccacheSternKeyParameters extends AsymmetricKeyParameter
+{
 
-	private BigInteger g, n;
+    private BigInteger g, n;
 
-	int lowerSigmaBound;
+    int lowerSigmaBound;
 
-	/**
-	 * @param privateKey
-	 */
-	public NaccacheSternKeyParameters(boolean privateKey, BigInteger g,
-			BigInteger n, int lowerSigmaBound) {
-		super(privateKey);
-		this.g = g;
-		this.n = n;
-		this.lowerSigmaBound = lowerSigmaBound;
-	}
+    /**
+     * @param privateKey
+     */
+    public NaccacheSternKeyParameters(boolean privateKey, BigInteger g, BigInteger n, int lowerSigmaBound)
+    {
+        super(privateKey);
+        this.g = g;
+        this.n = n;
+        this.lowerSigmaBound = lowerSigmaBound;
+    }
 
-	/**
-	 * @return Returns the g.
-	 */
-	public BigInteger getG() {
-		return g;
-	}
+    /**
+     * @return Returns the g.
+     */
+    public BigInteger getG()
+    {
+        return g;
+    }
 
-	/**
-	 * @return Returns the lowerSigmaBound.
-	 */
-	public int getLowerSigmaBound() {
-		return lowerSigmaBound;
-	}
+    /**
+     * @return Returns the lowerSigmaBound.
+     */
+    public int getLowerSigmaBound()
+    {
+        return lowerSigmaBound;
+    }
 
-	/**
-	 * @return Returns the n.
-	 */
-	public BigInteger getModulus() {
-		return n;
-	}
+    /**
+     * @return Returns the n.
+     */
+    public BigInteger getModulus()
+    {
+        return n;
+    }
 
 }

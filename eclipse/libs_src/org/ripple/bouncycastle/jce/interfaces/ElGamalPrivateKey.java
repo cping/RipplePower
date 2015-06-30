@@ -1,8 +1,11 @@
 package org.ripple.bouncycastle.jce.interfaces;
 
 import java.math.BigInteger;
-import java.security.PrivateKey;
 
-public interface ElGamalPrivateKey extends ElGamalKey, PrivateKey {
-	public BigInteger getX();
+import javax.crypto.interfaces.DHPrivateKey;
+
+public interface ElGamalPrivateKey
+    extends ElGamalKey, DHPrivateKey
+{
+    public BigInteger getX();
 }

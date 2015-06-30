@@ -17,79 +17,101 @@ import org.ripple.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.BaseKeyFactorySpi;
 
-public class KeyFactorySpi extends BaseKeyFactorySpi {
-	public KeyFactorySpi() {
-	}
+public class KeyFactorySpi
+    extends BaseKeyFactorySpi
+{
+    public KeyFactorySpi()
+    {
+    }
 
-	protected KeySpec engineGetKeySpec(Key key, Class spec)
-			throws InvalidKeySpecException {
-		if (spec.isAssignableFrom(DSAPublicKeySpec.class)
-				&& key instanceof DSAPublicKey) {
-			DSAPublicKey k = (DSAPublicKey) key;
+    protected KeySpec engineGetKeySpec(
+        Key key,
+        Class spec)
+        throws InvalidKeySpecException
+    {
+        if (spec.isAssignableFrom(DSAPublicKeySpec.class) && key instanceof DSAPublicKey)
+        {
+            DSAPublicKey k = (DSAPublicKey)key;
 
-			return new DSAPublicKeySpec(k.getY(), k.getParams().getP(), k
-					.getParams().getQ(), k.getParams().getG());
-		} else if (spec.isAssignableFrom(DSAPrivateKeySpec.class)
-				&& key instanceof java.security.interfaces.DSAPrivateKey) {
-			java.security.interfaces.DSAPrivateKey k = (java.security.interfaces.DSAPrivateKey) key;
+            return new DSAPublicKeySpec(k.getY(), k.getParams().getP(), k.getParams().getQ(), k.getParams().getG());
+        }
+        else if (spec.isAssignableFrom(DSAPrivateKeySpec.class) && key instanceof java.security.interfaces.DSAPrivateKey)
+        {
+            java.security.interfaces.DSAPrivateKey k = (java.security.interfaces.DSAPrivateKey)key;
 
-			return new DSAPrivateKeySpec(k.getX(), k.getParams().getP(), k
-					.getParams().getQ(), k.getParams().getG());
-		}
+            return new DSAPrivateKeySpec(k.getX(), k.getParams().getP(), k.getParams().getQ(), k.getParams().getG());
+        }
 
-		return super.engineGetKeySpec(key, spec);
-	}
+        return super.engineGetKeySpec(key, spec);
+    }
 
-	protected Key engineTranslateKey(Key key) throws InvalidKeyException {
-		if (key instanceof DSAPublicKey) {
-			return new BCDSAPublicKey((DSAPublicKey) key);
-		} else if (key instanceof DSAPrivateKey) {
-			return new BCDSAPrivateKey((DSAPrivateKey) key);
-		}
+    protected Key engineTranslateKey(
+        Key key)
+        throws InvalidKeyException
+    {
+        if (key instanceof DSAPublicKey)
+        {
+            return new BCDSAPublicKey((DSAPublicKey)key);
+        }
+        else if (key instanceof DSAPrivateKey)
+        {
+            return new BCDSAPrivateKey((DSAPrivateKey)key);
+        }
 
-		throw new InvalidKeyException("key type unknown");
-	}
+        throw new InvalidKeyException("key type unknown");
+    }
 
-	public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
-			throws IOException {
-		ASN1ObjectIdentifier algOid = keyInfo.getPrivateKeyAlgorithm()
-				.getAlgorithm();
+    public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
+        throws IOException
+    {
+        ASN1ObjectIdentifier algOid = keyInfo.getPrivateKeyAlgorithm().getAlgorithm();
 
-		if (DSAUtil.isDsaOid(algOid)) {
-			return new BCDSAPrivateKey(keyInfo);
-		} else {
-			throw new IOException("algorithm identifier " + algOid
-					+ " in key not recognised");
-		}
-	}
+        if (DSAUtil.isDsaOid(algOid))
+        {
+            return new BCDSAPrivateKey(keyInfo);
+        }
+        else
+        {
+            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
+        }
+    }
 
-	public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
-			throws IOException {
-		ASN1ObjectIdentifier algOid = keyInfo.getAlgorithm().getAlgorithm();
+    public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
+        throws IOException
+    {
+        ASN1ObjectIdentifier algOid = keyInfo.getAlgorithm().getAlgorithm();
 
-		if (DSAUtil.isDsaOid(algOid)) {
-			return new BCDSAPublicKey(keyInfo);
-		} else {
-			throw new IOException("algorithm identifier " + algOid
-					+ " in key not recognised");
-		}
-	}
+        if (DSAUtil.isDsaOid(algOid))
+        {
+            return new BCDSAPublicKey(keyInfo);
+        }
+        else
+        {
+            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
+        }
+    }
 
-	protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
-			throws InvalidKeySpecException {
-		if (keySpec instanceof DSAPrivateKeySpec) {
-			return new BCDSAPrivateKey((DSAPrivateKeySpec) keySpec);
-		}
+    protected PrivateKey engineGeneratePrivate(
+        KeySpec keySpec)
+        throws InvalidKeySpecException
+    {
+        if (keySpec instanceof DSAPrivateKeySpec)
+        {
+            return new BCDSAPrivateKey((DSAPrivateKeySpec)keySpec);
+        }
 
-		return super.engineGeneratePrivate(keySpec);
-	}
+        return super.engineGeneratePrivate(keySpec);
+    }
 
-	protected PublicKey engineGeneratePublic(KeySpec keySpec)
-			throws InvalidKeySpecException {
-		if (keySpec instanceof DSAPublicKeySpec) {
-			return new BCDSAPublicKey((DSAPublicKeySpec) keySpec);
-		}
+    protected PublicKey engineGeneratePublic(
+        KeySpec keySpec)
+        throws InvalidKeySpecException
+    {
+        if (keySpec instanceof DSAPublicKeySpec)
+        {
+            return new BCDSAPublicKey((DSAPublicKeySpec)keySpec);
+        }
 
-		return super.engineGeneratePublic(keySpec);
-	}
+        return super.engineGeneratePublic(keySpec);
+    }
 }

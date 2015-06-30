@@ -3,252 +3,390 @@ package org.ripple.bouncycastle.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Vector;
 
-public final class Strings {
-	public static String fromUTF8ByteArray(byte[] bytes) {
-		int i = 0;
-		int length = 0;
+public final class Strings
+{
+    private static String LINE_SEPARATOR;
 
-		while (i < bytes.length) {
-			length++;
-			if ((bytes[i] & 0xf0) == 0xf0) {
-				// surrogate pair
-				length++;
-				i += 4;
-			} else if ((bytes[i] & 0xe0) == 0xe0) {
-				i += 3;
-			} else if ((bytes[i] & 0xc0) == 0xc0) {
-				i += 2;
-			} else {
-				i += 1;
-			}
-		}
+    static
+    {
+       try
+       {
+           // the easy way
+           LINE_SEPARATOR = System.getProperty("line.separator");
+       }
+       catch (Exception e)
+       {
+           try
+           {
+               // the harder way
+               LINE_SEPARATOR = String.format("%n");
+           }
+           catch (Exception ef)
+           {
+               LINE_SEPARATOR = "\n";   // we're desperate, use this...
+           }
+       }
+    }
 
-		char[] cs = new char[length];
+    public static String fromUTF8ByteArray(byte[] bytes)
+    {
+        int i = 0;
+        int length = 0;
 
-		i = 0;
-		length = 0;
+        while (i < bytes.length)
+        {
+            length++;
+            if ((bytes[i] & 0xf0) == 0xf0)
+            {
+                // surrogate pair
+                length++;
+                i += 4;
+            }
+            else if ((bytes[i] & 0xe0) == 0xe0)
+            {
+                i += 3;
+            }
+            else if ((bytes[i] & 0xc0) == 0xc0)
+            {
+                i += 2;
+            }
+            else
+            {
+                i += 1;
+            }
+        }
 
-		while (i < bytes.length) {
-			char ch;
+        char[] cs = new char[length];
 
-			if ((bytes[i] & 0xf0) == 0xf0) {
-				int codePoint = ((bytes[i] & 0x03) << 18)
-						| ((bytes[i + 1] & 0x3F) << 12)
-						| ((bytes[i + 2] & 0x3F) << 6) | (bytes[i + 3] & 0x3F);
-				int U = codePoint - 0x10000;
-				char W1 = (char) (0xD800 | (U >> 10));
-				char W2 = (char) (0xDC00 | (U & 0x3FF));
-				cs[length++] = W1;
-				ch = W2;
-				i += 4;
-			} else if ((bytes[i] & 0xe0) == 0xe0) {
-				ch = (char) (((bytes[i] & 0x0f) << 12)
-						| ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f));
-				i += 3;
-			} else if ((bytes[i] & 0xd0) == 0xd0) {
-				ch = (char) (((bytes[i] & 0x1f) << 6) | (bytes[i + 1] & 0x3f));
-				i += 2;
-			} else if ((bytes[i] & 0xc0) == 0xc0) {
-				ch = (char) (((bytes[i] & 0x1f) << 6) | (bytes[i + 1] & 0x3f));
-				i += 2;
-			} else {
-				ch = (char) (bytes[i] & 0xff);
-				i += 1;
-			}
+        i = 0;
+        length = 0;
 
-			cs[length++] = ch;
-		}
+        while (i < bytes.length)
+        {
+            char ch;
 
-		return new String(cs);
-	}
+            if ((bytes[i] & 0xf0) == 0xf0)
+            {
+                int codePoint = ((bytes[i] & 0x03) << 18) | ((bytes[i + 1] & 0x3F) << 12) | ((bytes[i + 2] & 0x3F) << 6) | (bytes[i + 3] & 0x3F);
+                int U = codePoint - 0x10000;
+                char W1 = (char)(0xD800 | (U >> 10));
+                char W2 = (char)(0xDC00 | (U & 0x3FF));
+                cs[length++] = W1;
+                ch = W2;
+                i += 4;
+            }
+            else if ((bytes[i] & 0xe0) == 0xe0)
+            {
+                ch = (char)(((bytes[i] & 0x0f) << 12)
+                    | ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f));
+                i += 3;
+            }
+            else if ((bytes[i] & 0xd0) == 0xd0)
+            {
+                ch = (char)(((bytes[i] & 0x1f) << 6) | (bytes[i + 1] & 0x3f));
+                i += 2;
+            }
+            else if ((bytes[i] & 0xc0) == 0xc0)
+            {
+                ch = (char)(((bytes[i] & 0x1f) << 6) | (bytes[i + 1] & 0x3f));
+                i += 2;
+            }
+            else
+            {
+                ch = (char)(bytes[i] & 0xff);
+                i += 1;
+            }
 
-	public static byte[] toUTF8ByteArray(String string) {
-		return toUTF8ByteArray(string.toCharArray());
-	}
+            cs[length++] = ch;
+        }
 
-	public static byte[] toUTF8ByteArray(char[] string) {
-		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        return new String(cs);
+    }
 
-		try {
-			toUTF8ByteArray(string, bOut);
-		} catch (IOException e) {
-			throw new IllegalStateException(
-					"cannot encode string to byte array!");
-		}
+    public static byte[] toUTF8ByteArray(String string)
+    {
+        return toUTF8ByteArray(string.toCharArray());
+    }
 
-		return bOut.toByteArray();
-	}
+    public static byte[] toUTF8ByteArray(char[] string)
+    {
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-	public static void toUTF8ByteArray(char[] string, OutputStream sOut)
-			throws IOException {
-		char[] c = string;
-		int i = 0;
+        try
+        {
+            toUTF8ByteArray(string, bOut);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("cannot encode string to byte array!");
+        }
 
-		while (i < c.length) {
-			char ch = c[i];
+        return bOut.toByteArray();
+    }
 
-			if (ch < 0x0080) {
-				sOut.write(ch);
-			} else if (ch < 0x0800) {
-				sOut.write(0xc0 | (ch >> 6));
-				sOut.write(0x80 | (ch & 0x3f));
-			}
-			// surrogate pair
-			else if (ch >= 0xD800 && ch <= 0xDFFF) {
-				// in error - can only happen, if the Java String class has a
-				// bug.
-				if (i + 1 >= c.length) {
-					throw new IllegalStateException("invalid UTF-16 codepoint");
-				}
-				char W1 = ch;
-				ch = c[++i];
-				char W2 = ch;
-				// in error - can only happen, if the Java String class has a
-				// bug.
-				if (W1 > 0xDBFF) {
-					throw new IllegalStateException("invalid UTF-16 codepoint");
-				}
-				int codePoint = (((W1 & 0x03FF) << 10) | (W2 & 0x03FF)) + 0x10000;
-				sOut.write(0xf0 | (codePoint >> 18));
-				sOut.write(0x80 | ((codePoint >> 12) & 0x3F));
-				sOut.write(0x80 | ((codePoint >> 6) & 0x3F));
-				sOut.write(0x80 | (codePoint & 0x3F));
-			} else {
-				sOut.write(0xe0 | (ch >> 12));
-				sOut.write(0x80 | ((ch >> 6) & 0x3F));
-				sOut.write(0x80 | (ch & 0x3F));
-			}
+    public static void toUTF8ByteArray(char[] string, OutputStream sOut)
+        throws IOException
+    {
+        char[] c = string;
+        int i = 0;
 
-			i++;
-		}
-	}
+        while (i < c.length)
+        {
+            char ch = c[i];
 
-	/**
-	 * A locale independent version of toUpperCase.
-	 * 
-	 * @param string
-	 *            input to be converted
-	 * @return a US Ascii uppercase version
-	 */
-	public static String toUpperCase(String string) {
-		boolean changed = false;
-		char[] chars = string.toCharArray();
+            if (ch < 0x0080)
+            {
+                sOut.write(ch);
+            }
+            else if (ch < 0x0800)
+            {
+                sOut.write(0xc0 | (ch >> 6));
+                sOut.write(0x80 | (ch & 0x3f));
+            }
+            // surrogate pair
+            else if (ch >= 0xD800 && ch <= 0xDFFF)
+            {
+                // in error - can only happen, if the Java String class has a
+                // bug.
+                if (i + 1 >= c.length)
+                {
+                    throw new IllegalStateException("invalid UTF-16 codepoint");
+                }
+                char W1 = ch;
+                ch = c[++i];
+                char W2 = ch;
+                // in error - can only happen, if the Java String class has a
+                // bug.
+                if (W1 > 0xDBFF)
+                {
+                    throw new IllegalStateException("invalid UTF-16 codepoint");
+                }
+                int codePoint = (((W1 & 0x03FF) << 10) | (W2 & 0x03FF)) + 0x10000;
+                sOut.write(0xf0 | (codePoint >> 18));
+                sOut.write(0x80 | ((codePoint >> 12) & 0x3F));
+                sOut.write(0x80 | ((codePoint >> 6) & 0x3F));
+                sOut.write(0x80 | (codePoint & 0x3F));
+            }
+            else
+            {
+                sOut.write(0xe0 | (ch >> 12));
+                sOut.write(0x80 | ((ch >> 6) & 0x3F));
+                sOut.write(0x80 | (ch & 0x3F));
+            }
 
-		for (int i = 0; i != chars.length; i++) {
-			char ch = chars[i];
-			if ('a' <= ch && 'z' >= ch) {
-				changed = true;
-				chars[i] = (char) (ch - 'a' + 'A');
-			}
-		}
+            i++;
+        }
+    }
 
-		if (changed) {
-			return new String(chars);
-		}
+    /**
+     * A locale independent version of toUpperCase.
+     *
+     * @param string input to be converted
+     * @return a US Ascii uppercase version
+     */
+    public static String toUpperCase(String string)
+    {
+        boolean changed = false;
+        char[] chars = string.toCharArray();
 
-		return string;
-	}
+        for (int i = 0; i != chars.length; i++)
+        {
+            char ch = chars[i];
+            if ('a' <= ch && 'z' >= ch)
+            {
+                changed = true;
+                chars[i] = (char)(ch - 'a' + 'A');
+            }
+        }
 
-	/**
-	 * A locale independent version of toLowerCase.
-	 * 
-	 * @param string
-	 *            input to be converted
-	 * @return a US ASCII lowercase version
-	 */
-	public static String toLowerCase(String string) {
-		boolean changed = false;
-		char[] chars = string.toCharArray();
+        if (changed)
+        {
+            return new String(chars);
+        }
 
-		for (int i = 0; i != chars.length; i++) {
-			char ch = chars[i];
-			if ('A' <= ch && 'Z' >= ch) {
-				changed = true;
-				chars[i] = (char) (ch - 'A' + 'a');
-			}
-		}
+        return string;
+    }
 
-		if (changed) {
-			return new String(chars);
-		}
+    /**
+     * A locale independent version of toLowerCase.
+     *
+     * @param string input to be converted
+     * @return a US ASCII lowercase version
+     */
+    public static String toLowerCase(String string)
+    {
+        boolean changed = false;
+        char[] chars = string.toCharArray();
 
-		return string;
-	}
+        for (int i = 0; i != chars.length; i++)
+        {
+            char ch = chars[i];
+            if ('A' <= ch && 'Z' >= ch)
+            {
+                changed = true;
+                chars[i] = (char)(ch - 'A' + 'a');
+            }
+        }
 
-	public static byte[] toByteArray(char[] chars) {
-		byte[] bytes = new byte[chars.length];
+        if (changed)
+        {
+            return new String(chars);
+        }
 
-		for (int i = 0; i != bytes.length; i++) {
-			bytes[i] = (byte) chars[i];
-		}
+        return string;
+    }
 
-		return bytes;
-	}
+    public static byte[] toByteArray(char[] chars)
+    {
+        byte[] bytes = new byte[chars.length];
 
-	public static byte[] toByteArray(String string) {
-		byte[] bytes = new byte[string.length()];
+        for (int i = 0; i != bytes.length; i++)
+        {
+            bytes[i] = (byte)chars[i];
+        }
 
-		for (int i = 0; i != bytes.length; i++) {
-			char ch = string.charAt(i);
+        return bytes;
+    }
 
-			bytes[i] = (byte) ch;
-		}
+    public static byte[] toByteArray(String string)
+    {
+        byte[] bytes = new byte[string.length()];
 
-		return bytes;
-	}
+        for (int i = 0; i != bytes.length; i++)
+        {
+            char ch = string.charAt(i);
 
-	/**
-	 * Convert an array of 8 bit characters into a string.
-	 * 
-	 * @param bytes
-	 *            8 bit characters.
-	 * @return resulting String.
-	 */
-	public static String fromByteArray(byte[] bytes) {
-		return new String(asCharArray(bytes));
-	}
+            bytes[i] = (byte)ch;
+        }
 
-	/**
-	 * Do a simple conversion of an array of 8 bit characters into a string.
-	 * 
-	 * @param bytes
-	 *            8 bit characters.
-	 * @return resulting String.
-	 */
-	public static char[] asCharArray(byte[] bytes) {
-		char[] chars = new char[bytes.length];
+        return bytes;
+    }
 
-		for (int i = 0; i != chars.length; i++) {
-			chars[i] = (char) (bytes[i] & 0xff);
-		}
+    public static int toByteArray(String s, byte[] buf, int off)
+    {
+        int count = s.length();
+        for (int i = 0; i < count; ++i)
+        {
+            char c = s.charAt(i);
+            buf[off + i] = (byte)c;
+        }
+        return count;
+    }
 
-		return chars;
-	}
+    /**
+     * Convert an array of 8 bit characters into a string.
+     *
+     * @param bytes 8 bit characters.
+     * @return resulting String.
+     */
+    public static String fromByteArray(byte[] bytes)
+    {
+        return new String(asCharArray(bytes));
+    }
 
-	public static String[] split(String input, char delimiter) {
-		Vector v = new Vector();
-		boolean moreTokens = true;
-		String subString;
+    /**
+     * Do a simple conversion of an array of 8 bit characters into a string.
+     *
+     * @param bytes 8 bit characters.
+     * @return resulting String.
+     */
+    public static char[] asCharArray(byte[] bytes)
+    {
+        char[] chars = new char[bytes.length];
 
-		while (moreTokens) {
-			int tokenLocation = input.indexOf(delimiter);
-			if (tokenLocation > 0) {
-				subString = input.substring(0, tokenLocation);
-				v.addElement(subString);
-				input = input.substring(tokenLocation + 1);
-			} else {
-				moreTokens = false;
-				v.addElement(input);
-			}
-		}
+        for (int i = 0; i != chars.length; i++)
+        {
+            chars[i] = (char)(bytes[i] & 0xff);
+        }
 
-		String[] res = new String[v.size()];
+        return chars;
+    }
 
-		for (int i = 0; i != res.length; i++) {
-			res[i] = (String) v.elementAt(i);
-		}
-		return res;
-	}
+    public static String[] split(String input, char delimiter)
+    {
+        Vector v = new Vector();
+        boolean moreTokens = true;
+        String subString;
+
+        while (moreTokens)
+        {
+            int tokenLocation = input.indexOf(delimiter);
+            if (tokenLocation > 0)
+            {
+                subString = input.substring(0, tokenLocation);
+                v.addElement(subString);
+                input = input.substring(tokenLocation + 1);
+            }
+            else
+            {
+                moreTokens = false;
+                v.addElement(input);
+            }
+        }
+
+        String[] res = new String[v.size()];
+
+        for (int i = 0; i != res.length; i++)
+        {
+            res[i] = (String)v.elementAt(i);
+        }
+        return res;
+    }
+
+    public static StringList newList()
+    {
+        return new StringListImpl();
+    }
+
+    public static String lineSeparator()
+    {
+        return LINE_SEPARATOR;
+    }
+
+    private static class StringListImpl
+        extends ArrayList<String>
+        implements StringList
+    {
+        public boolean add(String s)
+        {
+            return super.add(s);
+        }
+
+        public String set(int index, String element)
+        {
+            return super.set(index, element);
+        }
+
+        public void add(int index, String element)
+        {
+            super.add(index, element);
+        }
+
+        public String[] toStringArray()
+        {
+            String[] strs = new String[this.size()];
+
+            for (int i = 0; i != strs.length; i++)
+            {
+                strs[i] = this.get(i);
+            }
+
+            return strs;
+        }
+
+        public String[] toStringArray(int from, int to)
+        {
+            String[] strs = new String[to - from];
+
+            for (int i = from; i != this.size() && i != to; i++)
+            {
+                strs[i - from] = this.get(i);
+            }
+
+            return strs;
+        }
+    }
 }

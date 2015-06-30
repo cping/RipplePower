@@ -27,236 +27,281 @@ import org.ripple.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyParameters;
 import org.ripple.bouncycastle.pqc.crypto.mceliece.McElieceKobaraImaiCipher;
 import org.ripple.bouncycastle.pqc.jcajce.provider.util.AsymmetricHybridCipher;
 
-public class McElieceKobaraImaiCipherSpi extends AsymmetricHybridCipher
-		implements PKCSObjectIdentifiers, X509ObjectIdentifiers {
+public class McElieceKobaraImaiCipherSpi
+    extends AsymmetricHybridCipher
+    implements PKCSObjectIdentifiers, X509ObjectIdentifiers
+{
 
-	// TODO digest needed?
-	private Digest digest;
-	private McElieceKobaraImaiCipher cipher;
+    // TODO digest needed?
+    private Digest digest;
+    private McElieceKobaraImaiCipher cipher;
 
-	/**
-	 * buffer to store the input data
-	 */
-	private ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    /**
+     * buffer to store the input data
+     */
+    private ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
-	public McElieceKobaraImaiCipherSpi() {
-		buf = new ByteArrayOutputStream();
-	}
 
-	protected McElieceKobaraImaiCipherSpi(Digest digest,
-			McElieceKobaraImaiCipher cipher) {
-		this.digest = digest;
-		this.cipher = cipher;
-		buf = new ByteArrayOutputStream();
-	}
+    public McElieceKobaraImaiCipherSpi()
+    {
+        buf = new ByteArrayOutputStream();
+    }
 
-	/**
-	 * Continue a multiple-part encryption or decryption operation.
-	 * 
-	 * @param input
-	 *            byte array containing the next part of the input
-	 * @param inOff
-	 *            index in the array where the input starts
-	 * @param inLen
-	 *            length of the input
-	 * @return the processed byte array.
-	 */
-	public byte[] update(byte[] input, int inOff, int inLen) {
-		buf.write(input, inOff, inLen);
-		return new byte[0];
-	}
+    protected McElieceKobaraImaiCipherSpi(Digest digest, McElieceKobaraImaiCipher cipher)
+    {
+        this.digest = digest;
+        this.cipher = cipher;
+        buf = new ByteArrayOutputStream();
+    }
 
-	/**
-	 * Encrypts or decrypts data in a single-part operation, or finishes a
-	 * multiple-part operation. The data is encrypted or decrypted, depending on
-	 * how this cipher was initialized.
-	 * 
-	 * @param input
-	 *            the input buffer
-	 * @param inOff
-	 *            the offset in input where the input starts
-	 * @param inLen
-	 *            the input length
-	 * @return the new buffer with the result
-	 * @throws BadPaddingException
-	 *             if this cipher is in decryption mode, and (un)padding has
-	 *             been requested, but the decrypted data is not bounded by the
-	 *             appropriate padding bytes
-	 */
-	public byte[] doFinal(byte[] input, int inOff, int inLen)
-			throws BadPaddingException {
-		update(input, inOff, inLen);
-		if (opMode == ENCRYPT_MODE) {
+    /**
+     * Continue a multiple-part encryption or decryption operation.
+     *
+     * @param input byte array containing the next part of the input
+     * @param inOff index in the array where the input starts
+     * @param inLen length of the input
+     * @return the processed byte array.
+     */
+    public byte[] update(byte[] input, int inOff, int inLen)
+    {
+        buf.write(input, inOff, inLen);
+        return new byte[0];
+    }
 
-			try {
-				return cipher.messageEncrypt(this.pad());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 
-		} else if (opMode == DECRYPT_MODE) {
-			byte[] inputOfDecr = buf.toByteArray();
-			buf.reset();
+    /**
+     * Encrypts or decrypts data in a single-part operation, or finishes a
+     * multiple-part operation. The data is encrypted or decrypted, depending on
+     * how this cipher was initialized.
+     *
+     * @param input the input buffer
+     * @param inOff the offset in input where the input starts
+     * @param inLen the input length
+     * @return the new buffer with the result
+     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has
+     * been requested, but the decrypted data is not bounded by
+     * the appropriate padding bytes
+     */
+    public byte[] doFinal(byte[] input, int inOff, int inLen)
+        throws BadPaddingException
+    {
+        update(input, inOff, inLen);
+        if (opMode == ENCRYPT_MODE)
+        {
 
-			try {
-				return unpad(cipher.messageDecrypt(inputOfDecr));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            try
+            {
+                return cipher.messageEncrypt(this.pad());
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
-		}
-		return null;
-	}
+        }
+        else if (opMode == DECRYPT_MODE)
+        {
+            byte[] inputOfDecr = buf.toByteArray();
+            buf.reset();
 
-	protected int encryptOutputSize(int inLen) {
-		return 0;
-	}
+            try
+            {
+                return unpad(cipher.messageDecrypt(inputOfDecr));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
-	protected int decryptOutputSize(int inLen) {
-		return 0;
-	}
+        }
+        return null;
+    }
 
-	protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
-			SecureRandom sr) throws InvalidKeyException,
-			InvalidAlgorithmParameterException {
+    protected int encryptOutputSize(int inLen)
+    {
+        return 0;
+    }
 
-		buf.reset();
-		CipherParameters param;
-		param = McElieceCCA2KeysToParams
-				.generatePublicKeyParameter((PublicKey) key);
+    protected int decryptOutputSize(int inLen)
+    {
+        return 0;
+    }
 
-		param = new ParametersWithRandom(param, sr);
-		digest.reset();
-		cipher.init(true, param);
-	}
+    protected void initCipherEncrypt(Key key, AlgorithmParameterSpec params,
+                                     SecureRandom sr)
+        throws InvalidKeyException,
+        InvalidAlgorithmParameterException
+    {
 
-	protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
-			throws InvalidKeyException, InvalidAlgorithmParameterException {
+        buf.reset();
+        CipherParameters param;
+        param = McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey)key);
 
-		buf.reset();
-		CipherParameters param;
-		param = McElieceCCA2KeysToParams
-				.generatePrivateKeyParameter((PrivateKey) key);
+        param = new ParametersWithRandom(param, sr);
+        digest.reset();
+        cipher.init(true, param);
+    }
 
-		digest.reset();
-		cipher.init(false, param);
-	}
+    protected void initCipherDecrypt(Key key, AlgorithmParameterSpec params)
+        throws InvalidKeyException, InvalidAlgorithmParameterException
+    {
 
-	public String getName() {
-		return "McElieceKobaraImaiCipher";
-	}
+        buf.reset();
+        CipherParameters param;
+        param = McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey)key);
 
-	public int getKeySize(Key key) throws InvalidKeyException {
-		McElieceCCA2KeyParameters mcElieceCCA2KeyParameters;
-		if (key instanceof PublicKey) {
-			mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters) McElieceCCA2KeysToParams
-					.generatePublicKeyParameter((PublicKey) key);
-			return cipher.getKeySize(mcElieceCCA2KeyParameters);
-		} else if (key instanceof PrivateKey) {
-			mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters) McElieceCCA2KeysToParams
-					.generatePrivateKeyParameter((PrivateKey) key);
-			return cipher.getKeySize(mcElieceCCA2KeyParameters);
-		} else {
-			throw new InvalidKeyException();
-		}
+        digest.reset();
+        cipher.init(false, param);
+    }
 
-	}
+    public String getName()
+    {
+        return "McElieceKobaraImaiCipher";
+    }
 
-	/**
-	 * Pad and return the message stored in the message buffer.
-	 * 
-	 * @return the padded message
-	 */
-	private byte[] pad() {
-		buf.write(0x01);
-		byte[] result = buf.toByteArray();
-		buf.reset();
-		return result;
-	}
+    public int getKeySize(Key key)
+        throws InvalidKeyException
+    {
+        McElieceCCA2KeyParameters mcElieceCCA2KeyParameters;
+        if (key instanceof PublicKey)
+        {
+            mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters)McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey)key);
+            return cipher.getKeySize(mcElieceCCA2KeyParameters);
+        }
+        else if (key instanceof PrivateKey)
+        {
+            mcElieceCCA2KeyParameters = (McElieceCCA2KeyParameters)McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey)key);
+            return cipher.getKeySize(mcElieceCCA2KeyParameters);
+        }
+        else
+        {
+            throw new InvalidKeyException();
+        }
 
-	/**
-	 * Unpad a message.
-	 * 
-	 * @param pmBytes
-	 *            the padded message
-	 * @return the message
-	 * @throws BadPaddingException
-	 *             if the padded message is invalid.
-	 */
-	private byte[] unpad(byte[] pmBytes) throws BadPaddingException {
-		// find first non-zero byte
-		int index;
-		for (index = pmBytes.length - 1; index >= 0 && pmBytes[index] == 0; index--) {
-			;
-		}
 
-		// check if padding byte is valid
-		if (pmBytes[index] != 0x01) {
-			throw new BadPaddingException("invalid ciphertext");
-		}
+    }
 
-		// extract and return message
-		byte[] mBytes = new byte[index];
-		System.arraycopy(pmBytes, 0, mBytes, 0, index);
-		return mBytes;
-	}
+    /**
+     * Pad and return the message stored in the message buffer.
+     *
+     * @return the padded message
+     */
+    private byte[] pad()
+    {
+        buf.write(0x01);
+        byte[] result = buf.toByteArray();
+        buf.reset();
+        return result;
+    }
 
-	public byte[] messageEncrypt() throws IllegalBlockSizeException,
-			BadPaddingException, NoSuchAlgorithmException {
-		byte[] output = null;
-		try {
-			output = cipher.messageEncrypt((this.pad()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return output;
-	}
+    /**
+     * Unpad a message.
+     *
+     * @param pmBytes the padded message
+     * @return the message
+     * @throws BadPaddingException if the padded message is invalid.
+     */
+    private byte[] unpad(byte[] pmBytes)
+        throws BadPaddingException
+    {
+        // find first non-zero byte
+        int index;
+        for (index = pmBytes.length - 1; index >= 0 && pmBytes[index] == 0; index--)
+        {
+            ;
+        }
 
-	public byte[] messageDecrypt() throws IllegalBlockSizeException,
-			BadPaddingException, NoSuchAlgorithmException {
-		byte[] output = null;
-		byte[] inputOfDecr = buf.toByteArray();
-		buf.reset();
-		try {
-			output = unpad(cipher.messageDecrypt(inputOfDecr));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return output;
-	}
+        // check if padding byte is valid
+        if (pmBytes[index] != 0x01)
+        {
+            throw new BadPaddingException("invalid ciphertext");
+        }
 
-	static public class McElieceKobaraImai extends McElieceKobaraImaiCipherSpi {
-		public McElieceKobaraImai() {
-			super(new SHA1Digest(), new McElieceKobaraImaiCipher());
-		}
-	}
+        // extract and return message
+        byte[] mBytes = new byte[index];
+        System.arraycopy(pmBytes, 0, mBytes, 0, index);
+        return mBytes;
+    }
 
-	static public class McElieceKobaraImai224 extends
-			McElieceKobaraImaiCipherSpi {
-		public McElieceKobaraImai224() {
-			super(new SHA224Digest(), new McElieceKobaraImaiCipher());
-		}
-	}
 
-	static public class McElieceKobaraImai256 extends
-			McElieceKobaraImaiCipherSpi {
-		public McElieceKobaraImai256() {
-			super(new SHA256Digest(), new McElieceKobaraImaiCipher());
-		}
-	}
+    public byte[] messageEncrypt()
+        throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException
+    {
+        byte[] output = null;
+        try
+        {
+            output = cipher.messageEncrypt((this.pad()));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return output;
+    }
 
-	static public class McElieceKobaraImai384 extends
-			McElieceKobaraImaiCipherSpi {
-		public McElieceKobaraImai384() {
-			super(new SHA384Digest(), new McElieceKobaraImaiCipher());
-		}
-	}
 
-	static public class McElieceKobaraImai512 extends
-			McElieceKobaraImaiCipherSpi {
-		public McElieceKobaraImai512() {
-			super(new SHA512Digest(), new McElieceKobaraImaiCipher());
-		}
-	}
+    public byte[] messageDecrypt()
+        throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException
+    {
+        byte[] output = null;
+        byte[] inputOfDecr = buf.toByteArray();
+        buf.reset();
+        try
+        {
+            output = unpad(cipher.messageDecrypt(inputOfDecr));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
+
+    static public class McElieceKobaraImai
+        extends McElieceKobaraImaiCipherSpi
+    {
+        public McElieceKobaraImai()
+        {
+            super(new SHA1Digest(), new McElieceKobaraImaiCipher());
+        }
+    }
+
+    static public class McElieceKobaraImai224
+        extends McElieceKobaraImaiCipherSpi
+    {
+        public McElieceKobaraImai224()
+        {
+            super(new SHA224Digest(), new McElieceKobaraImaiCipher());
+        }
+    }
+
+    static public class McElieceKobaraImai256
+        extends McElieceKobaraImaiCipherSpi
+    {
+        public McElieceKobaraImai256()
+        {
+            super(new SHA256Digest(), new McElieceKobaraImaiCipher());
+        }
+    }
+
+    static public class McElieceKobaraImai384
+        extends McElieceKobaraImaiCipherSpi
+    {
+        public McElieceKobaraImai384()
+        {
+            super(new SHA384Digest(), new McElieceKobaraImaiCipher());
+        }
+    }
+
+    static public class McElieceKobaraImai512
+        extends McElieceKobaraImaiCipherSpi
+    {
+        public McElieceKobaraImai512()
+        {
+            super(new SHA512Digest(), new McElieceKobaraImaiCipher());
+        }
+    }
+
 
 }

@@ -25,135 +25,201 @@ import javax.crypto.spec.SecretKeySpec;
 import org.ripple.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.ripple.bouncycastle.crypto.InvalidCipherTextException;
 import org.ripple.bouncycastle.crypto.Wrapper;
+import org.ripple.bouncycastle.jcajce.util.BCJcaJceHelper;
+import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public abstract class BaseCipherSpi extends CipherSpi {
-	//
-	// specs we can handle.
-	//
-	private Class[] availableSpecs = { IvParameterSpec.class,
-			PBEParameterSpec.class, RC2ParameterSpec.class,
-			RC5ParameterSpec.class };
+public abstract class BaseCipherSpi
+    extends CipherSpi
+{
+    //
+    // specs we can handle.
+    //
+    private Class[]                 availableSpecs =
+                                    {
+                                        IvParameterSpec.class,
+                                        PBEParameterSpec.class,
+                                        RC2ParameterSpec.class,
+                                        RC5ParameterSpec.class
+                                    };
 
-	protected AlgorithmParameters engineParams = null;
+    private final JcaJceHelper helper = new BCJcaJceHelper();
 
-	protected Wrapper wrapEngine = null;
+    protected AlgorithmParameters     engineParams = null;
 
-	private int ivSize;
-	private byte[] iv;
+    protected Wrapper                 wrapEngine = null;
 
-	protected BaseCipherSpi() {
-	}
+    private int                       ivSize;
+    private byte[]                    iv;
 
-	protected int engineGetBlockSize() {
-		return 0;
-	}
+    protected BaseCipherSpi()
+    {
+    }
 
-	protected byte[] engineGetIV() {
-		return null;
-	}
+    protected int engineGetBlockSize()
+    {
+        return 0;
+    }
 
-	protected int engineGetKeySize(Key key) {
-		return key.getEncoded().length;
-	}
+    protected byte[] engineGetIV()
+    {
+        return null;
+    }
 
-	protected int engineGetOutputSize(int inputLen) {
-		return -1;
-	}
+    protected int engineGetKeySize(
+        Key     key)
+    {
+        return key.getEncoded().length;
+    }
 
-	protected AlgorithmParameters engineGetParameters() {
-		return null;
-	}
+    protected int engineGetOutputSize(
+        int     inputLen)
+    {
+        return -1;
+    }
 
-	protected void engineSetMode(String mode) throws NoSuchAlgorithmException {
-		throw new NoSuchAlgorithmException("can't support mode " + mode);
-	}
+    protected AlgorithmParameters engineGetParameters()
+    {
+        return null;
+    }
 
-	protected void engineSetPadding(String padding)
-			throws NoSuchPaddingException {
-		throw new NoSuchPaddingException("Padding " + padding + " unknown.");
-	}
+    protected final AlgorithmParameters createParametersInstance(String algorithm)
+        throws NoSuchAlgorithmException, NoSuchProviderException
+    {
+        return helper.createAlgorithmParameters(algorithm);
+    }
 
-	protected byte[] engineWrap(Key key) throws IllegalBlockSizeException,
-			InvalidKeyException {
-		byte[] encoded = key.getEncoded();
-		if (encoded == null) {
-			throw new InvalidKeyException("Cannot wrap key, null encoding.");
-		}
+    protected void engineSetMode(
+        String  mode)
+        throws NoSuchAlgorithmException
+    {
+        throw new NoSuchAlgorithmException("can't support mode " + mode);
+    }
 
-		try {
-			if (wrapEngine == null) {
-				return engineDoFinal(encoded, 0, encoded.length);
-			} else {
-				return wrapEngine.wrap(encoded, 0, encoded.length);
-			}
-		} catch (BadPaddingException e) {
-			throw new IllegalBlockSizeException(e.getMessage());
-		}
-	}
+    protected void engineSetPadding(
+        String  padding)
+    throws NoSuchPaddingException
+    {
+        throw new NoSuchPaddingException("Padding " + padding + " unknown.");
+    }
 
-	protected Key engineUnwrap(byte[] wrappedKey, String wrappedKeyAlgorithm,
-			int wrappedKeyType) throws InvalidKeyException {
-		byte[] encoded;
-		try {
-			if (wrapEngine == null) {
-				encoded = engineDoFinal(wrappedKey, 0, wrappedKey.length);
-			} else {
-				encoded = wrapEngine.unwrap(wrappedKey, 0, wrappedKey.length);
-			}
-		} catch (InvalidCipherTextException e) {
-			throw new InvalidKeyException(e.getMessage());
-		} catch (BadPaddingException e) {
-			throw new InvalidKeyException(e.getMessage());
-		} catch (IllegalBlockSizeException e2) {
-			throw new InvalidKeyException(e2.getMessage());
-		}
+    protected byte[] engineWrap(
+        Key     key)
+    throws IllegalBlockSizeException, InvalidKeyException
+    {
+        byte[] encoded = key.getEncoded();
+        if (encoded == null)
+        {
+            throw new InvalidKeyException("Cannot wrap key, null encoding.");
+        }
 
-		if (wrappedKeyType == Cipher.SECRET_KEY) {
-			return new SecretKeySpec(encoded, wrappedKeyAlgorithm);
-		} else if (wrappedKeyAlgorithm.equals("")
-				&& wrappedKeyType == Cipher.PRIVATE_KEY) {
-			/*
-			 * The caller doesn't know the algorithm as it is part of the
-			 * encrypted data.
-			 */
-			try {
-				PrivateKeyInfo in = PrivateKeyInfo.getInstance(encoded);
+        try
+        {
+            if (wrapEngine == null)
+            {
+                return engineDoFinal(encoded, 0, encoded.length);
+            }
+            else
+            {
+                return wrapEngine.wrap(encoded, 0, encoded.length);
+            }
+        }
+        catch (BadPaddingException e)
+        {
+            throw new IllegalBlockSizeException(e.getMessage());
+        }
+    }
 
-				PrivateKey privKey = BouncyCastleProvider.getPrivateKey(in);
+    protected Key engineUnwrap(
+        byte[]  wrappedKey,
+        String  wrappedKeyAlgorithm,
+        int     wrappedKeyType)
+    throws InvalidKeyException
+    {
+        byte[] encoded;
+        try
+        {
+            if (wrapEngine == null)
+            {
+                encoded = engineDoFinal(wrappedKey, 0, wrappedKey.length);
+            }
+            else
+            {
+                encoded = wrapEngine.unwrap(wrappedKey, 0, wrappedKey.length);
+            }
+        }
+        catch (InvalidCipherTextException e)
+        {
+            throw new InvalidKeyException(e.getMessage());
+        }
+        catch (BadPaddingException e)
+        {
+            throw new InvalidKeyException(e.getMessage());
+        }
+        catch (IllegalBlockSizeException e2)
+        {
+            throw new InvalidKeyException(e2.getMessage());
+        }
 
-				if (privKey != null) {
-					return privKey;
-				} else {
-					throw new InvalidKeyException("algorithm "
-							+ in.getPrivateKeyAlgorithm().getAlgorithm()
-							+ " not supported");
-				}
-			} catch (Exception e) {
-				throw new InvalidKeyException("Invalid key encoding.");
-			}
-		} else {
-			try {
-				KeyFactory kf = KeyFactory.getInstance(wrappedKeyAlgorithm,
-						BouncyCastleProvider.PROVIDER_NAME);
+        if (wrappedKeyType == Cipher.SECRET_KEY)
+        {
+            return new SecretKeySpec(encoded, wrappedKeyAlgorithm);
+        }
+        else if (wrappedKeyAlgorithm.equals("") && wrappedKeyType == Cipher.PRIVATE_KEY)
+        {
+            /*
+                 * The caller doesn't know the algorithm as it is part of
+                 * the encrypted data.
+                 */
+            try
+            {
+                PrivateKeyInfo       in = PrivateKeyInfo.getInstance(encoded);
 
-				if (wrappedKeyType == Cipher.PUBLIC_KEY) {
-					return kf.generatePublic(new X509EncodedKeySpec(encoded));
-				} else if (wrappedKeyType == Cipher.PRIVATE_KEY) {
-					return kf.generatePrivate(new PKCS8EncodedKeySpec(encoded));
-				}
-			} catch (NoSuchProviderException e) {
-				throw new InvalidKeyException("Unknown key type "
-						+ e.getMessage());
-			} catch (NoSuchAlgorithmException e) {
-				throw new InvalidKeyException("Unknown key type "
-						+ e.getMessage());
-			} catch (InvalidKeySpecException e2) {
-				throw new InvalidKeyException("Unknown key type "
-						+ e2.getMessage());
-			}
+                PrivateKey privKey = BouncyCastleProvider.getPrivateKey(in);
 
-			throw new InvalidKeyException("Unknown key type " + wrappedKeyType);
-		}
-	}
+                if (privKey != null)
+                {
+                    return privKey;
+                }
+                else
+                {
+                    throw new InvalidKeyException("algorithm " + in.getPrivateKeyAlgorithm().getAlgorithm() + " not supported");
+                }
+            }
+            catch (Exception e)
+            {
+                throw new InvalidKeyException("Invalid key encoding.");
+            }
+        }
+        else
+        {
+            try
+            {
+                KeyFactory kf = helper.createKeyFactory(wrappedKeyAlgorithm);
+
+                if (wrappedKeyType == Cipher.PUBLIC_KEY)
+                {
+                    return kf.generatePublic(new X509EncodedKeySpec(encoded));
+                }
+                else if (wrappedKeyType == Cipher.PRIVATE_KEY)
+                {
+                    return kf.generatePrivate(new PKCS8EncodedKeySpec(encoded));
+                }
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                throw new InvalidKeyException("Unknown key type " + e.getMessage());
+            }
+            catch (InvalidKeySpecException e)
+            {
+                throw new InvalidKeyException("Unknown key type " + e.getMessage());
+            }
+            catch (NoSuchProviderException e)
+            {
+                throw new InvalidKeyException("Unknown key type " + e.getMessage());
+            }
+
+            throw new InvalidKeyException("Unknown key type " + wrappedKeyType);
+        }
+    }
 }

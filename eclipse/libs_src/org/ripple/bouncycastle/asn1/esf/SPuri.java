@@ -3,33 +3,43 @@ package org.ripple.bouncycastle.asn1.esf;
 import org.ripple.bouncycastle.asn1.ASN1Primitive;
 import org.ripple.bouncycastle.asn1.DERIA5String;
 
-public class SPuri {
-	private DERIA5String uri;
+public class SPuri
+{
+    private DERIA5String uri;
 
-	public static SPuri getInstance(Object obj) {
-		if (obj instanceof SPuri) {
-			return (SPuri) obj;
-		} else if (obj instanceof DERIA5String) {
-			return new SPuri(DERIA5String.getInstance(obj));
-		}
+    public static SPuri getInstance(
+        Object obj)
+    {
+        if (obj instanceof SPuri)
+        {
+            return (SPuri) obj;
+        }
+        else if (obj instanceof DERIA5String)
+        {
+            return new SPuri(DERIA5String.getInstance(obj));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public SPuri(DERIA5String uri) {
-		this.uri = uri;
-	}
+    public SPuri(
+        DERIA5String uri)
+    {
+        this.uri = uri;
+    }
 
-	public DERIA5String getUri() {
-		return uri;
-	}
+    public DERIA5String getUri()
+    {
+        return uri;
+    }
 
-	/**
-	 * <pre>
-	 * SPuri ::= IA5String
-	 * </pre>
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		return uri.toASN1Primitive();
-	}
+    /**
+     * <pre>
+     * SPuri ::= IA5String
+     * </pre>
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        return uri.toASN1Primitive();
+    }
 }

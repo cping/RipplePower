@@ -5,138 +5,193 @@ import java.security.SecureRandom;
 
 import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.DSA;
+import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
 import org.ripple.bouncycastle.crypto.params.ECKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 import org.ripple.bouncycastle.math.ec.ECAlgorithms;
 import org.ripple.bouncycastle.math.ec.ECConstants;
+import org.ripple.bouncycastle.math.ec.ECMultiplier;
 import org.ripple.bouncycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.math.ec.FixedPointCombMultiplier;
 
 /**
  * EC-DSA as described in X9.62
  */
-public class ECDSASigner implements ECConstants, DSA {
-	ECKeyParameters key;
+public class ECDSASigner
+    implements ECConstants, DSA
+{
+    private final DSAKCalculator kCalculator;
 
-	SecureRandom random;
+    private ECKeyParameters key;
+    private SecureRandom    random;
 
-	public void init(boolean forSigning, CipherParameters param) {
-		if (forSigning) {
-			if (param instanceof ParametersWithRandom) {
-				ParametersWithRandom rParam = (ParametersWithRandom) param;
+    /**
+     * Default configuration, random K values.
+     */
+    public ECDSASigner()
+    {
+        this.kCalculator = new RandomDSAKCalculator();
+    }
 
-				this.random = rParam.getRandom();
-				this.key = (ECPrivateKeyParameters) rParam.getParameters();
-			} else {
-				this.random = new SecureRandom();
-				this.key = (ECPrivateKeyParameters) param;
-			}
-		} else {
-			this.key = (ECPublicKeyParameters) param;
-		}
-	}
+    /**
+     * Configuration with an alternate, possibly deterministic calculator of K.
+     *
+     * @param kCalculator a K value calculator.
+     */
+    public ECDSASigner(DSAKCalculator kCalculator)
+    {
+        this.kCalculator = kCalculator;
+    }
 
-	// 5.3 pg 28
-	/**
-	 * generate a signature for the given message using the key we were
-	 * initialised with. For conventional DSA the message should be a SHA-1 hash
-	 * of the message of interest.
-	 * 
-	 * @param message
-	 *            the message that will be verified later.
-	 */
-	public BigInteger[] generateSignature(byte[] message) {
-		BigInteger n = key.getParameters().getN();
-		BigInteger e = calculateE(n, message);
-		BigInteger r = null;
-		BigInteger s = null;
+    public void init(
+        boolean                 forSigning,
+        CipherParameters        param)
+    {
+        SecureRandom providedRandom = null;
 
-		// 5.3.2
-		do // generate s
-		{
-			BigInteger k = null;
-			int nBitLength = n.bitLength();
+        if (forSigning)
+        {
+            if (param instanceof ParametersWithRandom)
+            {
+                ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-			do // generate r
-			{
-				do {
-					k = new BigInteger(nBitLength, random);
-				} while (k.equals(ZERO) || k.compareTo(n) >= 0);
+                this.key = (ECPrivateKeyParameters)rParam.getParameters();
+                providedRandom = rParam.getRandom();
+            }
+            else
+            {
+                this.key = (ECPrivateKeyParameters)param;
+            }
+        }
+        else
+        {
+            this.key = (ECPublicKeyParameters)param;
+        }
 
-				ECPoint p = key.getParameters().getG().multiply(k);
+        this.random = initSecureRandom(forSigning && !kCalculator.isDeterministic(), providedRandom);
+    }
 
-				// 5.3.3
-				BigInteger x = p.getX().toBigInteger();
+    // 5.3 pg 28
+    /**
+     * generate a signature for the given message using the key we were
+     * initialised with. For conventional DSA the message should be a SHA-1
+     * hash of the message of interest.
+     *
+     * @param message the message that will be verified later.
+     */
+    public BigInteger[] generateSignature(
+        byte[] message)
+    {
+        ECDomainParameters ec = key.getParameters();
+        BigInteger n = ec.getN();
+        BigInteger e = calculateE(n, message);
+        BigInteger d = ((ECPrivateKeyParameters)key).getD();
 
-				r = x.mod(n);
-			} while (r.equals(ZERO));
+        if (kCalculator.isDeterministic())
+        {
+            kCalculator.init(n, d, message);
+        }
+        else
+        {
+            kCalculator.init(n, random);
+        }
 
-			BigInteger d = ((ECPrivateKeyParameters) key).getD();
+        BigInteger r, s;
 
-			s = k.modInverse(n).multiply(e.add(d.multiply(r))).mod(n);
-		} while (s.equals(ZERO));
+        ECMultiplier basePointMultiplier = createBasePointMultiplier();
 
-		BigInteger[] res = new BigInteger[2];
+        // 5.3.2
+        do // generate s
+        {
+            BigInteger k;
+            do // generate r
+            {
+                k = kCalculator.nextK();
 
-		res[0] = r;
-		res[1] = s;
+                ECPoint p = basePointMultiplier.multiply(ec.getG(), k).normalize();
 
-		return res;
-	}
+                // 5.3.3
+                r = p.getAffineXCoord().toBigInteger().mod(n);
+            }
+            while (r.equals(ZERO));
 
-	// 5.4 pg 29
-	/**
-	 * return true if the value r and s represent a DSA signature for the passed
-	 * in message (for standard DSA the message should be a SHA-1 hash of the
-	 * real message to be verified).
-	 */
-	public boolean verifySignature(byte[] message, BigInteger r, BigInteger s) {
-		BigInteger n = key.getParameters().getN();
-		BigInteger e = calculateE(n, message);
+            s = k.modInverse(n).multiply(e.add(d.multiply(r))).mod(n);
+        }
+        while (s.equals(ZERO));
 
-		// r in the range [1,n-1]
-		if (r.compareTo(ONE) < 0 || r.compareTo(n) >= 0) {
-			return false;
-		}
+        return new BigInteger[]{ r, s };
+    }
 
-		// s in the range [1,n-1]
-		if (s.compareTo(ONE) < 0 || s.compareTo(n) >= 0) {
-			return false;
-		}
+    // 5.4 pg 29
+    /**
+     * return true if the value r and s represent a DSA signature for
+     * the passed in message (for standard DSA the message should be
+     * a SHA-1 hash of the real message to be verified).
+     */
+    public boolean verifySignature(
+        byte[]      message,
+        BigInteger  r,
+        BigInteger  s)
+    {
+        ECDomainParameters ec = key.getParameters();
+        BigInteger n = ec.getN();
+        BigInteger e = calculateE(n, message);
 
-		BigInteger c = s.modInverse(n);
+        // r in the range [1,n-1]
+        if (r.compareTo(ONE) < 0 || r.compareTo(n) >= 0)
+        {
+            return false;
+        }
 
-		BigInteger u1 = e.multiply(c).mod(n);
-		BigInteger u2 = r.multiply(c).mod(n);
+        // s in the range [1,n-1]
+        if (s.compareTo(ONE) < 0 || s.compareTo(n) >= 0)
+        {
+            return false;
+        }
 
-		ECPoint G = key.getParameters().getG();
-		ECPoint Q = ((ECPublicKeyParameters) key).getQ();
+        BigInteger c = s.modInverse(n);
 
-		ECPoint point = ECAlgorithms.sumOfTwoMultiplies(G, u1, Q, u2);
+        BigInteger u1 = e.multiply(c).mod(n);
+        BigInteger u2 = r.multiply(c).mod(n);
 
-		// components must be bogus.
-		if (point.isInfinity()) {
-			return false;
-		}
+        ECPoint G = ec.getG();
+        ECPoint Q = ((ECPublicKeyParameters)key).getQ();
 
-		BigInteger v = point.getX().toBigInteger().mod(n);
+        ECPoint point = ECAlgorithms.sumOfTwoMultiplies(G, u1, Q, u2).normalize();
 
-		return v.equals(r);
-	}
+        // components must be bogus.
+        if (point.isInfinity())
+        {
+            return false;
+        }
 
-	private BigInteger calculateE(BigInteger n, byte[] message) {
-		int log2n = n.bitLength();
-		int messageBitLength = message.length * 8;
+        BigInteger v = point.getAffineXCoord().toBigInteger().mod(n);
 
-		if (log2n >= messageBitLength) {
-			return new BigInteger(1, message);
-		} else {
-			BigInteger trunc = new BigInteger(1, message);
+        return v.equals(r);
+    }
 
-			trunc = trunc.shiftRight(messageBitLength - log2n);
+    protected BigInteger calculateE(BigInteger n, byte[] message)
+    {
+        int log2n = n.bitLength();
+        int messageBitLength = message.length * 8;
 
-			return trunc;
-		}
-	}
+        BigInteger e = new BigInteger(1, message);
+        if (log2n < messageBitLength)
+        {
+            e = e.shiftRight(messageBitLength - log2n);
+        }
+        return e;
+    }
+
+    protected ECMultiplier createBasePointMultiplier()
+    {
+        return new FixedPointCombMultiplier();
+    }
+
+    protected SecureRandom initSecureRandom(boolean needed, SecureRandom provided)
+    {
+        return !needed ? null : (provided != null) ? provided : new SecureRandom();
+    }
 }

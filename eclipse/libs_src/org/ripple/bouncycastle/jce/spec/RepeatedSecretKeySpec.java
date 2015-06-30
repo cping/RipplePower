@@ -1,27 +1,17 @@
 package org.ripple.bouncycastle.jce.spec;
 
-import javax.crypto.SecretKey;
-
 /**
- * A simple object to indicate that a symmetric cipher should reuse the last key
- * provided.
+ * A simple object to indicate that a symmetric cipher should reuse the
+ * last key provided.
+ * @deprecated use super class org.bouncycastle.jcajce.spec.RepeatedSecretKeySpec
  */
-public class RepeatedSecretKeySpec implements SecretKey {
-	private String algorithm;
+public class RepeatedSecretKeySpec
+    extends org.ripple.bouncycastle.jcajce.spec.RepeatedSecretKeySpec
+{
+    private String algorithm;
 
-	public RepeatedSecretKeySpec(String algorithm) {
-		this.algorithm = algorithm;
-	}
-
-	public String getAlgorithm() {
-		return algorithm;
-	}
-
-	public String getFormat() {
-		return null;
-	}
-
-	public byte[] getEncoded() {
-		return null;
-	}
+    public RepeatedSecretKeySpec(String algorithm)
+    {
+        super(algorithm);
+    }
 }

@@ -8,105 +8,116 @@ import org.ripple.bouncycastle.util.Arrays;
 /**
  * A NULL CipherSuite with optional MAC
  */
-public class TlsNullCipher implements TlsCipher {
-	protected TlsContext context;
+public class TlsNullCipher
+    implements TlsCipher
+{
+    protected TlsContext context;
 
-	protected TlsMac writeMac;
-	protected TlsMac readMac;
+    protected TlsMac writeMac;
+    protected TlsMac readMac;
 
-	public TlsNullCipher(TlsContext context) {
-		this.context = context;
-		this.writeMac = null;
-		this.readMac = null;
-	}
+    public TlsNullCipher(TlsContext context)
+    {
+        this.context = context;
+        this.writeMac = null;
+        this.readMac = null;
+    }
 
-	public TlsNullCipher(TlsContext context, Digest clientWriteDigest,
-			Digest serverWriteDigest) throws IOException {
+    public TlsNullCipher(TlsContext context, Digest clientWriteDigest, Digest serverWriteDigest)
+        throws IOException
+    {
+        if ((clientWriteDigest == null) != (serverWriteDigest == null))
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		if ((clientWriteDigest == null) != (serverWriteDigest == null)) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        this.context = context;
 
-		this.context = context;
+        TlsMac clientWriteMac = null, serverWriteMac = null;
 
-		TlsMac clientWriteMac = null, serverWriteMac = null;
+        if (clientWriteDigest != null)
+        {
+            int key_block_size = clientWriteDigest.getDigestSize()
+                + serverWriteDigest.getDigestSize();
+            byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
 
-		if (clientWriteDigest != null) {
+            int offset = 0;
 
-			int key_block_size = clientWriteDigest.getDigestSize()
-					+ serverWriteDigest.getDigestSize();
-			byte[] key_block = TlsUtils.calculateKeyBlock(context,
-					key_block_size);
+            clientWriteMac = new TlsMac(context, clientWriteDigest, key_block, offset,
+                clientWriteDigest.getDigestSize());
+            offset += clientWriteDigest.getDigestSize();
 
-			int offset = 0;
+            serverWriteMac = new TlsMac(context, serverWriteDigest, key_block, offset,
+                serverWriteDigest.getDigestSize());
+            offset += serverWriteDigest.getDigestSize();
 
-			clientWriteMac = new TlsMac(context, clientWriteDigest, key_block,
-					offset, clientWriteDigest.getDigestSize());
-			offset += clientWriteDigest.getDigestSize();
+            if (offset != key_block_size)
+            {
+                throw new TlsFatalAlert(AlertDescription.internal_error);
+            }
+        }
 
-			serverWriteMac = new TlsMac(context, serverWriteDigest, key_block,
-					offset, serverWriteDigest.getDigestSize());
-			offset += serverWriteDigest.getDigestSize();
+        if (context.isServer())
+        {
+            writeMac = serverWriteMac;
+            readMac = clientWriteMac;
+        }
+        else
+        {
+            writeMac = clientWriteMac;
+            readMac = serverWriteMac;
+        }
+    }
 
-			if (offset != key_block_size) {
-				throw new TlsFatalAlert(AlertDescription.internal_error);
-			}
-		}
+    public int getPlaintextLimit(int ciphertextLimit)
+    {
+        int result = ciphertextLimit;
+        if (writeMac != null)
+        {
+            result -= writeMac.getSize();
+        }
+        return result;
+    }
 
-		if (context.isServer()) {
-			writeMac = serverWriteMac;
-			readMac = clientWriteMac;
-		} else {
-			writeMac = clientWriteMac;
-			readMac = serverWriteMac;
-		}
-	}
+    public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len)
+        throws IOException
+    {
+        if (writeMac == null)
+        {
+            return Arrays.copyOfRange(plaintext, offset, offset + len);
+        }
 
-	public int getPlaintextLimit(int ciphertextLimit) {
-		int result = ciphertextLimit;
-		if (writeMac != null) {
-			result -= writeMac.getSize();
-		}
-		return result;
-	}
+        byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
+        byte[] ciphertext = new byte[len + mac.length];
+        System.arraycopy(plaintext, offset, ciphertext, 0, len);
+        System.arraycopy(mac, 0, ciphertext, len, mac.length);
+        return ciphertext;
+    }
 
-	public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext,
-			int offset, int len) throws IOException {
+    public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
+        throws IOException
+    {
+        if (readMac == null)
+        {
+            return Arrays.copyOfRange(ciphertext, offset, offset + len);
+        }
 
-		if (writeMac == null) {
-			return Arrays.copyOfRange(plaintext, offset, offset + len);
-		}
+        int macSize = readMac.getSize();
+        if (len < macSize)
+        {
+            throw new TlsFatalAlert(AlertDescription.decode_error);
+        }
 
-		byte[] mac = writeMac.calculateMac(seqNo, type, plaintext, offset, len);
-		byte[] ciphertext = new byte[len + mac.length];
-		System.arraycopy(plaintext, offset, ciphertext, 0, len);
-		System.arraycopy(mac, 0, ciphertext, len, mac.length);
-		return ciphertext;
-	}
+        int macInputLen = len - macSize;
 
-	public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext,
-			int offset, int len) throws IOException {
+        byte[] receivedMac = Arrays.copyOfRange(ciphertext, offset + macInputLen, offset + len);
+        byte[] computedMac = readMac.calculateMac(seqNo, type, ciphertext, offset, macInputLen);
 
-		if (readMac == null) {
-			return Arrays.copyOfRange(ciphertext, offset, offset + len);
-		}
+        if (!Arrays.constantTimeAreEqual(receivedMac, computedMac))
+        {
+            throw new TlsFatalAlert(AlertDescription.bad_record_mac);
+        }
 
-		int macSize = readMac.getSize();
-		if (len < macSize) {
-			throw new TlsFatalAlert(AlertDescription.decode_error);
-		}
-
-		int macInputLen = len - macSize;
-
-		byte[] receivedMac = Arrays.copyOfRange(ciphertext, offset
-				+ macInputLen, offset + len);
-		byte[] computedMac = readMac.calculateMac(seqNo, type, ciphertext,
-				offset, macInputLen);
-
-		if (!Arrays.constantTimeAreEqual(receivedMac, computedMac)) {
-			throw new TlsFatalAlert(AlertDescription.bad_record_mac);
-		}
-
-		return Arrays.copyOfRange(ciphertext, offset, offset + macInputLen);
-	}
+        return Arrays.copyOfRange(ciphertext, offset, offset + macInputLen);
+    }
 }

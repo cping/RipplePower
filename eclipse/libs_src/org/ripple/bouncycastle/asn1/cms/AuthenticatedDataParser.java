@@ -13,8 +13,7 @@ import org.ripple.bouncycastle.asn1.BERTags;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
- * Produce an object suitable for an ASN1OutputStream.
- * 
+ * Parse {@link AuthenticatedData} stream.
  * <pre>
  * AuthenticatedData ::= SEQUENCE {
  *       version CMSVersion,
@@ -26,142 +25,182 @@ import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
  *       authAttrs [2] IMPLICIT AuthAttributes OPTIONAL,
  *       mac MessageAuthenticationCode,
  *       unauthAttrs [3] IMPLICIT UnauthAttributes OPTIONAL }
- * 
+ *
  * AuthAttributes ::= SET SIZE (1..MAX) OF Attribute
- * 
+ *
  * UnauthAttributes ::= SET SIZE (1..MAX) OF Attribute
- * 
+ *
  * MessageAuthenticationCode ::= OCTET STRING
  * </pre>
  */
-public class AuthenticatedDataParser {
-	private ASN1SequenceParser seq;
-	private ASN1Integer version;
-	private ASN1Encodable nextObject;
-	private boolean originatorInfoCalled;
+public class AuthenticatedDataParser
+{
+    private ASN1SequenceParser seq;
+    private ASN1Integer version;
+    private ASN1Encodable nextObject;
+    private boolean originatorInfoCalled;
 
-	public AuthenticatedDataParser(ASN1SequenceParser seq) throws IOException {
-		this.seq = seq;
-		this.version = ASN1Integer.getInstance(seq.readObject());
-	}
+    public AuthenticatedDataParser(
+        ASN1SequenceParser seq)
+        throws IOException
+    {
+        this.seq = seq;
+        this.version = ASN1Integer.getInstance(seq.readObject());
+    }
 
-	public ASN1Integer getVersion() {
-		return version;
-	}
+    public ASN1Integer getVersion()
+    {
+        return version;
+    }
 
-	public OriginatorInfo getOriginatorInfo() throws IOException {
-		originatorInfoCalled = true;
+    public OriginatorInfo getOriginatorInfo()
+        throws IOException
+    {
+        originatorInfoCalled = true;
 
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		if (nextObject instanceof ASN1TaggedObjectParser
-				&& ((ASN1TaggedObjectParser) nextObject).getTagNo() == 0) {
-			ASN1SequenceParser originatorInfo = (ASN1SequenceParser) ((ASN1TaggedObjectParser) nextObject)
-					.getObjectParser(BERTags.SEQUENCE, false);
-			nextObject = null;
-			return OriginatorInfo.getInstance(originatorInfo.toASN1Primitive());
-		}
+        if (nextObject instanceof ASN1TaggedObjectParser && ((ASN1TaggedObjectParser)nextObject).getTagNo() == 0)
+        {
+            ASN1SequenceParser originatorInfo = (ASN1SequenceParser) ((ASN1TaggedObjectParser)nextObject).getObjectParser(BERTags.SEQUENCE, false);
+            nextObject = null;
+            return OriginatorInfo.getInstance(originatorInfo.toASN1Primitive());
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public ASN1SetParser getRecipientInfos() throws IOException {
-		if (!originatorInfoCalled) {
-			getOriginatorInfo();
-		}
+    public ASN1SetParser getRecipientInfos()
+        throws IOException
+    {
+        if (!originatorInfoCalled)
+        {
+            getOriginatorInfo();
+        }
 
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		ASN1SetParser recipientInfos = (ASN1SetParser) nextObject;
-		nextObject = null;
-		return recipientInfos;
-	}
+        ASN1SetParser recipientInfos = (ASN1SetParser)nextObject;
+        nextObject = null;
+        return recipientInfos;
+    }
 
-	public AlgorithmIdentifier getMacAlgorithm() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+    public AlgorithmIdentifier getMacAlgorithm()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		if (nextObject != null) {
-			ASN1SequenceParser o = (ASN1SequenceParser) nextObject;
-			nextObject = null;
-			return AlgorithmIdentifier.getInstance(o.toASN1Primitive());
-		}
+        if (nextObject != null)
+        {
+            ASN1SequenceParser o = (ASN1SequenceParser)nextObject;
+            nextObject = null;
+            return AlgorithmIdentifier.getInstance(o.toASN1Primitive());
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public AlgorithmIdentifier getDigestAlgorithm() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+    public AlgorithmIdentifier getDigestAlgorithm()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		if (nextObject instanceof ASN1TaggedObjectParser) {
-			AlgorithmIdentifier obj = AlgorithmIdentifier.getInstance(
-					(ASN1TaggedObject) nextObject.toASN1Primitive(), false);
-			nextObject = null;
-			return obj;
-		}
+        if (nextObject instanceof ASN1TaggedObjectParser)
+        {
+            AlgorithmIdentifier obj = AlgorithmIdentifier.getInstance((ASN1TaggedObject)nextObject.toASN1Primitive(), false);
+            nextObject = null;
+            return obj;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public ContentInfoParser getEnapsulatedContentInfo() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+    /**
+     * @deprecated use getEncapsulatedContentInfo()
+     */
+    public ContentInfoParser getEnapsulatedContentInfo()
+        throws IOException
+    {
+        return getEncapsulatedContentInfo();
+    }
 
-		if (nextObject != null) {
-			ASN1SequenceParser o = (ASN1SequenceParser) nextObject;
-			nextObject = null;
-			return new ContentInfoParser(o);
-		}
+    public ContentInfoParser getEncapsulatedContentInfo()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		return null;
-	}
+        if (nextObject != null)
+        {
+            ASN1SequenceParser o = (ASN1SequenceParser)nextObject;
+            nextObject = null;
+            return new ContentInfoParser(o);
+        }
 
-	public ASN1SetParser getAuthAttrs() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+        return null;
+    }
 
-		if (nextObject instanceof ASN1TaggedObjectParser) {
-			ASN1Encodable o = nextObject;
-			nextObject = null;
-			return (ASN1SetParser) ((ASN1TaggedObjectParser) o)
-					.getObjectParser(BERTags.SET, false);
-		}
+    public ASN1SetParser getAuthAttrs()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		return null;
-	}
+        if (nextObject instanceof ASN1TaggedObjectParser)
+        {
+            ASN1Encodable o = nextObject;
+            nextObject = null;
+            return (ASN1SetParser)((ASN1TaggedObjectParser)o).getObjectParser(BERTags.SET, false);
+        }
 
-	public ASN1OctetString getMac() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+        return null;
+    }
 
-		ASN1Encodable o = nextObject;
-		nextObject = null;
+    public ASN1OctetString getMac()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		return ASN1OctetString.getInstance(o.toASN1Primitive());
-	}
+        ASN1Encodable o = nextObject;
+        nextObject = null;
 
-	public ASN1SetParser getUnauthAttrs() throws IOException {
-		if (nextObject == null) {
-			nextObject = seq.readObject();
-		}
+        return ASN1OctetString.getInstance(o.toASN1Primitive());
+    }
 
-		if (nextObject != null) {
-			ASN1Encodable o = nextObject;
-			nextObject = null;
-			return (ASN1SetParser) ((ASN1TaggedObjectParser) o)
-					.getObjectParser(BERTags.SET, false);
-		}
+    public ASN1SetParser getUnauthAttrs()
+        throws IOException
+    {
+        if (nextObject == null)
+        {
+            nextObject = seq.readObject();
+        }
 
-		return null;
-	}
+        if (nextObject != null)
+        {
+            ASN1Encodable o = nextObject;
+            nextObject = null;
+            return (ASN1SetParser)((ASN1TaggedObjectParser)o).getObjectParser(BERTags.SET, false);
+        }
+
+        return null;
+    }
 }

@@ -1,5 +1,16 @@
 package org.ripple.bouncycastle.util.io.pem;
 
-public interface PemObjectGenerator {
-	PemObject generate() throws PemGenerationException;
+/**
+ * Base interface for generators of PEM objects.
+ */
+public interface PemObjectGenerator
+{
+    /**
+     * Generate a PEM object.
+     *
+     * @return the generated object.
+     * @throws PemGenerationException on failure.
+     */
+    PemObject generate()
+        throws PemGenerationException;
 }

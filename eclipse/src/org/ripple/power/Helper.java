@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -71,6 +72,327 @@ public class Helper {
 	private static final String UTF8 = "UTF-8";
 	private static final String STATIC_SALT = "{'[R^*&843HGihp3p5l3e%g!o@t@o!mono$ ^f442Axs092aBGJZawW ]\"}";
 
+    /** Constant -1 */
+    public static final BigInteger NEGATIVE_ONE = BigInteger.valueOf(-1);
+
+    /** Constant 1,000 */
+    private static final BigInteger DISPLAY_1K = new BigInteger("1000");
+
+    /** Constant 1,000,000 */
+    private static final BigInteger DISPLAY_1M = new BigInteger("1000000");
+
+    /** Constant 1,000,000,000 */
+    private static final BigInteger DISPLAY_1G = new BigInteger("1000000000");
+
+    /** Constant 1,000,000,000,000 */
+    private static final BigInteger DISPLAY_1T = new BigInteger("1000000000000");
+
+    /** Constant 1,000,000,000,000,000 */
+    private static final BigInteger DISPLAY_1P = new BigInteger("1000000000000000");
+
+    /** Bit masks (Low-order bit is bit 0 and high-order bit is bit 7) */
+    private static final int bitMask[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+
+    /** Instance of a SHA-256 digest which we will use as needed */
+    private static final MessageDigest digest;
+    
+    static {
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);  // Can't happen.
+        }
+    }
+
+    public static final BigInteger COIN = new BigInteger("100000000", 10);
+
+    public static final BigInteger CENT = new BigInteger("1000000", 10);
+
+    public static byte[] singleDigest(byte[] input) {
+        return singleDigest(input, 0, input.length);
+    }
+
+    public static byte[] singleDigest(byte[] input, int offset, int length) {
+        byte[] bytes;
+        synchronized (digest) {
+            digest.reset();
+            digest.update(input, offset, length);
+            bytes = digest.digest();
+        }
+        return bytes;
+    }
+
+    public static byte[] singleDigest(List<byte[]> inputList) {
+        byte[] bytes;
+        synchronized(digest) {
+            digest.reset();
+            for(byte[] input:inputList){
+                digest.update(input, 0, input.length);
+            }
+            bytes = digest.digest();
+        }
+        return bytes;
+    }
+
+  
+    public static byte[] doubleDigest(List<byte[]> inputList) {
+        byte[] bytes;
+        synchronized(digest) {
+            digest.reset();
+            for(byte[] input:inputList){
+                digest.update(input, 0, input.length);
+            }
+            byte[] first = digest.digest();
+            bytes = digest.digest(first);
+        }
+        return bytes;
+    }
+
+
+    public static byte[] doubleDigestTwoBuffers(byte[]input1, int offset1, int length1,
+                                                byte[]input2, int offset2, int length2) {
+        byte[] bytes;
+        synchronized (digest) {
+            digest.reset();
+            digest.update(input1, offset1, length1);
+            digest.update(input2, offset2, length2);
+            byte[]first = digest.digest();
+            bytes = digest.digest(first);
+        }
+        return bytes;
+    }
+
+    public static byte[] sha1Hash(byte[] input) {
+        byte[] out;
+        try {
+            MessageDigest sDigest = MessageDigest.getInstance("SHA-1");
+            out = sDigest.digest(input);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);    
+        }
+        return out;
+    }
+
+    public static byte[] hash160(byte[] input) {
+        byte[] out = new byte[20];
+        RIPEMD160Digest rDigest = new RIPEMD160Digest();
+        rDigest.update(input, 0, input.length);
+        rDigest.doFinal(out, 0);
+        return out;
+    }
+
+    public static byte[] sha256Hash160(byte[] input) {
+        byte[] out = new byte[20];
+        synchronized(digest) {
+            digest.reset();
+            byte[] sha256 = digest.digest(input);
+            RIPEMD160Digest rDigest = new RIPEMD160Digest();
+            rDigest.update(sha256, 0, sha256.length);
+            rDigest.doFinal(out, 0);
+        }
+        return out;
+    }
+
+    public static String bytesToHexString(byte[] bytes) {
+        StringBuilder buf = new StringBuilder(bytes.length*2);
+        for (byte b : bytes) {
+            String s = Integer.toString(0xFF&b, 16);
+            if (s.length() < 2)
+                buf.append('0');
+            buf.append(s);
+        }
+        return buf.toString();
+    }
+
+    public static byte[] bigIntegerToBytes(BigInteger bigInteger, int numBytes) {
+        if (bigInteger == null)
+            return null;
+        byte[] bigBytes = bigInteger.toByteArray();
+        byte[] bytes = new byte[numBytes];
+        int start = (bigBytes.length==numBytes+1) ? 1 : 0;
+        int length = Math.min(bigBytes.length, numBytes);
+        System.arraycopy(bigBytes, start, bytes, numBytes-length, length);
+        return bytes;
+    }
+
+    public static String numberToShortString(BigInteger number) {
+        int scale;
+        String suffix;
+        BigDecimal work;
+        if (number.compareTo(DISPLAY_1P) >= 0) {
+            scale = 15;
+            suffix = "P";
+        } else if (number.compareTo(DISPLAY_1T) >= 0) {
+            scale = 12;
+            suffix = "T";
+        } else if (number.compareTo(DISPLAY_1G) >= 0) {
+            scale = 9;
+            suffix = "G";
+        } else if (number.compareTo(DISPLAY_1M) >= 0) {
+            scale = 6;
+            suffix = "M";
+        } else if (number.compareTo(DISPLAY_1K) >= 0) {
+            scale = 3;
+            suffix = "K";
+        } else {
+            scale = 0;
+            suffix = "";
+        }
+        if (scale != 0)
+            work = new BigDecimal(number, scale);
+        else
+            work = new BigDecimal(number);
+
+        return String.format("%3.3f%s", work.floatValue(), suffix);
+    }
+
+    public static boolean checkBitLE(byte[] data, int index) {
+        return (data[index>>>3] & bitMask[7&index]) != 0;
+    }
+
+    public static void setBitLE(byte[] data, int index) {
+        data[index>>>3] |= bitMask[7&index];
+    }
+
+    public static BigInteger decodeCompactBits(long compact) {
+        int size = ((int)(compact>>24)) & 0xFF;
+        byte[] bytes = new byte[4 + size];
+        bytes[3] = (byte)size;
+        if (size>=1) bytes[4] = (byte)((compact>>16) & 0xFF);
+        if (size>=2) bytes[5] = (byte)((compact>>8) & 0xFF);
+        if (size>=3) bytes[6] = (byte)(compact & 0xFF);
+        return decodeMPI(bytes, true);
+    }
+
+    public static BigInteger decodeMPI(byte[] mpi, boolean hasLength) {
+        byte[] buf;
+        if (hasLength) {
+            int length = (int)readUint32BE(mpi, 0);
+            buf = new byte[length];
+            System.arraycopy(mpi, 4, buf, 0, length);
+        } else {
+            buf = mpi;
+        }
+        if (buf.length == 0)
+            return BigInteger.ZERO;
+        boolean isNegative = (buf[0] & 0x80) == 0x80;
+        if (isNegative)
+            buf[0] &= 0x7f;
+        BigInteger result = new BigInteger(buf);
+        return isNegative ? result.negate() : result;
+    }
+
+    public static byte[] encodeMPI(BigInteger value, boolean includeLength) {
+        byte[] bytes;
+        if (value.equals(BigInteger.ZERO)) {
+            if (!includeLength)
+                bytes = new byte[] {};
+            else
+                bytes = new byte[] {0x00, 0x00, 0x00, 0x00};
+        } else {
+            boolean isNegative = value.signum()<0;
+            if (isNegative)
+                value = value.negate();
+            byte[] array = value.toByteArray();
+            int length = array.length;
+            if ((array[0]&0x80) == 0x80)
+                length++;
+            if (includeLength) {
+                bytes = new byte[length+4];
+                System.arraycopy(array, 0, bytes, length-array.length+3, array.length);
+                uint32ToByteArrayBE(length, bytes, 0);
+                if (isNegative)
+                    bytes[4] |= 0x80;
+            } else {
+                if (length != array.length) {
+                    bytes = new byte[length];
+                    System.arraycopy(array, 0, bytes, 1, array.length);
+                } else {
+                    bytes = array;
+                }
+                if (isNegative)
+                    bytes[0] |= 0x80;
+            }
+        }
+        return bytes;
+    }
+
+    public static byte[] reverseBytes(byte[] bytes) {
+        byte[] buf = new byte[bytes.length];
+        for (int i=0; i<bytes.length; i++)
+            buf[i] = bytes[bytes.length-1-i];
+        return buf;
+    }
+
+    public static byte[] reverseBytes(byte[] bytes, int offset, int length) {
+        byte[] buf = new byte[length];
+        for (int i=0; i<length; i++)
+            buf[i] = bytes[offset+length-1-i];
+        return buf;
+    }
+
+    public static byte[] reverseDwordBytes(byte[] bytes, int trimLength) {
+        byte[] rev = new byte[trimLength >= 0 && bytes.length > trimLength ? trimLength : bytes.length];
+        for (int i = 0; i < rev.length; i += 4) {
+            System.arraycopy(bytes, i, rev, i , 4);
+            for (int j = 0; j < 4; j++) {
+                rev[i + j] = bytes[i + 3 - j];
+            }
+        }
+        return rev;
+    }
+
+    public static long readUint32LE(byte[] bytes, int offset) {
+        return ((long)bytes[offset++]&0x00FFL) |
+               (((long)bytes[offset++]&0x00FFL) << 8) |
+               (((long)bytes[offset++]&0x00FFL) << 16) |
+               (((long)bytes[offset]&0x00FFL) << 24);
+    }
+
+    public static long readUint32BE(byte[] bytes, int offset) {
+        return (((long)bytes[offset++]&0x00FFL) << 24) |
+                (((long)bytes[offset++]&0x00FFL) << 16) |
+                (((long)bytes[offset++]&0x00FFL) << 8) |
+                ((long)bytes[offset]&0x00FFL);
+    }
+
+    public static void uint32ToByteArrayLE(long val, byte[] out, int offset) {
+        out[offset++] = (byte)val;
+        out[offset++] = (byte)(val >> 8);
+        out[offset++] = (byte)(val >> 16);
+        out[offset] = (byte)(val >> 24);
+    }
+
+    public static void uint32ToByteArrayBE(long val, byte[] out, int offset) {
+        out[offset++] = (byte)(val>>24);
+        out[offset++] = (byte)(val>>16);
+        out[offset++] = (byte)(val>>8);
+        out[offset] = (byte)val;
+    }
+
+    public static long readUint64LE(byte[] bytes, int offset) {
+        return ((long)bytes[offset++]&0x00FFL) |
+               (((long)bytes[offset++]&0x00FFL) << 8) |
+               (((long)bytes[offset++]&0x00FFL) << 16) |
+               (((long)bytes[offset++]&0x00FFL) << 24) |
+               (((long)bytes[offset++]&0x00FFL) << 32) |
+               (((long)bytes[offset++]&0x00FFL) << 40) |
+               (((long)bytes[offset++]&0x00FFL) << 48) |
+               (((long)bytes[offset]&0x00FFL) << 56);
+    }
+
+
+    public static void uint64ToByteArrayLE(long val, byte[] out, int offset) {
+        out[offset++] = (byte)val;
+        out[offset++] = (byte)(val >> 8);
+        out[offset++] = (byte)(val >> 16);
+        out[offset++] = (byte)(val >> 24);
+        out[offset++] = (byte)(val >> 32);
+        out[offset++] = (byte)(val >> 40);
+        out[offset++] = (byte)(val >> 48);
+        out[offset] = (byte)(val >> 56);
+    }
+    
 	private static String mix(String str) {
 		String result = str;
 		String holder;

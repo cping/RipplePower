@@ -16,161 +16,182 @@ import org.ripple.bouncycastle.pqc.math.linearalgebra.GF2mField;
 import org.ripple.bouncycastle.pqc.math.linearalgebra.Permutation;
 import org.ripple.bouncycastle.pqc.math.linearalgebra.PolynomialGF2mSmallM;
 
-public class McEliecePrivateKey extends ASN1Object {
-	private ASN1ObjectIdentifier oid;
-	private int n;
-	private int k;
-	private byte[] encField;
-	private byte[] encGp;
-	private byte[] encSInv;
-	private byte[] encP1;
-	private byte[] encP2;
-	private byte[] encH;
-	private byte[][] encqInv;
+public class McEliecePrivateKey
+    extends ASN1Object
+{
+    private ASN1ObjectIdentifier oid;
+    private int n;
+    private int k;
+    private byte[] encField;
+    private byte[] encGp;
+    private byte[] encSInv;
+    private byte[] encP1;
+    private byte[] encP2;
+    private byte[] encH;
+    private byte[][] encqInv;
 
-	public McEliecePrivateKey(ASN1ObjectIdentifier oid, int n, int k,
-			GF2mField field, PolynomialGF2mSmallM goppaPoly, GF2Matrix sInv,
-			Permutation p1, Permutation p2, GF2Matrix h,
-			PolynomialGF2mSmallM[] qInv) {
-		this.oid = oid;
-		this.n = n;
-		this.k = k;
-		this.encField = field.getEncoded();
-		this.encGp = goppaPoly.getEncoded();
-		this.encSInv = sInv.getEncoded();
-		this.encP1 = p1.getEncoded();
-		this.encP2 = p2.getEncoded();
-		this.encH = h.getEncoded();
-		this.encqInv = new byte[qInv.length][];
 
-		for (int i = 0; i != qInv.length; i++) {
-			encqInv[i] = qInv[i].getEncoded();
-		}
-	}
+    public McEliecePrivateKey(ASN1ObjectIdentifier oid, int n, int k, GF2mField field, PolynomialGF2mSmallM goppaPoly, GF2Matrix sInv, Permutation p1, Permutation p2, GF2Matrix h, PolynomialGF2mSmallM[] qInv)
+    {
+        this.oid = oid;
+        this.n = n;
+        this.k = k;
+        this.encField = field.getEncoded();
+        this.encGp = goppaPoly.getEncoded();
+        this.encSInv = sInv.getEncoded();
+        this.encP1 = p1.getEncoded();
+        this.encP2 = p2.getEncoded();
+        this.encH = h.getEncoded();
+        this.encqInv = new byte[qInv.length][];
 
-	public static McEliecePrivateKey getInstance(Object o) {
-		if (o instanceof McEliecePrivateKey) {
-			return (McEliecePrivateKey) o;
-		} else if (o != null) {
-			return new McEliecePrivateKey(ASN1Sequence.getInstance(o));
-		}
+        for (int i = 0; i != qInv.length; i++)
+        {
+            encqInv[i] = qInv[i].getEncoded();
+        }
+    }
 
-		return null;
-	}
+    public static McEliecePrivateKey getInstance(Object o)
+    {
+        if (o instanceof McEliecePrivateKey)
+        {
+            return (McEliecePrivateKey)o;
+        }
+        else if (o != null)
+        {
+            return new McEliecePrivateKey(ASN1Sequence.getInstance(o));
+        }
 
-	private McEliecePrivateKey(ASN1Sequence seq) {
-		// <oidString>
-		oid = ((ASN1ObjectIdentifier) seq.getObjectAt(0));
+        return null;
+    }
 
-		BigInteger bigN = ((ASN1Integer) seq.getObjectAt(1)).getValue();
-		n = bigN.intValue();
+    private McEliecePrivateKey(ASN1Sequence seq)
+    {
+        // <oidString>
+        oid = ((ASN1ObjectIdentifier)seq.getObjectAt(0));
 
-		BigInteger bigK = ((ASN1Integer) seq.getObjectAt(2)).getValue();
-		k = bigK.intValue();
+        BigInteger bigN = ((ASN1Integer)seq.getObjectAt(1)).getValue();
+        n = bigN.intValue();
 
-		encField = ((ASN1OctetString) seq.getObjectAt(3)).getOctets();
+        BigInteger bigK = ((ASN1Integer)seq.getObjectAt(2)).getValue();
+        k = bigK.intValue();
 
-		encGp = ((ASN1OctetString) seq.getObjectAt(4)).getOctets();
+        encField = ((ASN1OctetString)seq.getObjectAt(3)).getOctets();
 
-		encSInv = ((ASN1OctetString) seq.getObjectAt(5)).getOctets();
+        encGp = ((ASN1OctetString)seq.getObjectAt(4)).getOctets();
 
-		encP1 = ((ASN1OctetString) seq.getObjectAt(6)).getOctets();
+        encSInv = ((ASN1OctetString)seq.getObjectAt(5)).getOctets();
 
-		encP2 = ((ASN1OctetString) seq.getObjectAt(7)).getOctets();
+        encP1 = ((ASN1OctetString)seq.getObjectAt(6)).getOctets();
 
-		encH = ((ASN1OctetString) seq.getObjectAt(8)).getOctets();
+        encP2 = ((ASN1OctetString)seq.getObjectAt(7)).getOctets();
 
-		ASN1Sequence asnQInv = (ASN1Sequence) seq.getObjectAt(9);
-		encqInv = new byte[asnQInv.size()][];
-		for (int i = 0; i < asnQInv.size(); i++) {
-			encqInv[i] = ((ASN1OctetString) asnQInv.getObjectAt(i)).getOctets();
-		}
-	}
+        encH = ((ASN1OctetString)seq.getObjectAt(8)).getOctets();
 
-	public ASN1ObjectIdentifier getOID() {
-		return oid;
-	}
+        ASN1Sequence asnQInv = (ASN1Sequence)seq.getObjectAt(9);
+        encqInv = new byte[asnQInv.size()][];
+        for (int i = 0; i < asnQInv.size(); i++)
+        {
+            encqInv[i] = ((ASN1OctetString)asnQInv.getObjectAt(i)).getOctets();
+        }
+    }
 
-	public int getN() {
-		return n;
-	}
+    public ASN1ObjectIdentifier getOID()
+    {
+        return oid;
+    }
 
-	public int getK() {
-		return k;
-	}
+    public int getN()
+    {
+        return n;
+    }
 
-	public GF2mField getField() {
-		return new GF2mField(encField);
-	}
+    public int getK()
+    {
+        return k;
+    }
 
-	public PolynomialGF2mSmallM getGoppaPoly() {
-		return new PolynomialGF2mSmallM(this.getField(), encGp);
-	}
+    public GF2mField getField()
+    {
+        return new GF2mField(encField);
+    }
 
-	public GF2Matrix getSInv() {
-		return new GF2Matrix(encSInv);
-	}
+    public PolynomialGF2mSmallM getGoppaPoly()
+    {
+        return new PolynomialGF2mSmallM(this.getField(), encGp);
+    }
 
-	public Permutation getP1() {
-		return new Permutation(encP1);
-	}
+    public GF2Matrix getSInv()
+    {
+        return new GF2Matrix(encSInv);
+    }
 
-	public Permutation getP2() {
-		return new Permutation(encP2);
-	}
+    public Permutation getP1()
+    {
+        return new Permutation(encP1);
+    }
 
-	public GF2Matrix getH() {
-		return new GF2Matrix(encH);
-	}
+    public Permutation getP2()
+    {
+        return new Permutation(encP2);
+    }
 
-	public PolynomialGF2mSmallM[] getQInv() {
-		PolynomialGF2mSmallM[] qInv = new PolynomialGF2mSmallM[encqInv.length];
-		GF2mField field = this.getField();
+    public GF2Matrix getH()
+    {
+        return new GF2Matrix(encH);
+    }
 
-		for (int i = 0; i < encqInv.length; i++) {
-			qInv[i] = new PolynomialGF2mSmallM(field, encqInv[i]);
-		}
+    public PolynomialGF2mSmallM[] getQInv()
+    {
+        PolynomialGF2mSmallM[] qInv = new PolynomialGF2mSmallM[encqInv.length];
+        GF2mField field = this.getField();
 
-		return qInv;
-	}
+        for (int i = 0; i < encqInv.length; i++)
+        {
+            qInv[i] = new PolynomialGF2mSmallM(field, encqInv[i]);
+        }
 
-	public ASN1Primitive toASN1Primitive() {
+        return qInv;
+    }
 
-		ASN1EncodableVector v = new ASN1EncodableVector();
-		// encode <oidString>
-		v.add(oid);
-		// encode <n>
-		v.add(new ASN1Integer(n));
+    public ASN1Primitive toASN1Primitive()
+    {
 
-		// encode <k>
-		v.add(new ASN1Integer(k));
+        ASN1EncodableVector v = new ASN1EncodableVector();
+        // encode <oidString>
+        v.add(oid);
+        // encode <n>
+        v.add(new ASN1Integer(n));
 
-		// encode <fieldPoly>
-		v.add(new DEROctetString(encField));
+        // encode <k>
+        v.add(new ASN1Integer(k));
 
-		// encode <goppaPoly>
-		v.add(new DEROctetString(encGp));
+        // encode <fieldPoly>
+        v.add(new DEROctetString(encField));
 
-		// encode <sInv>
-		v.add(new DEROctetString(encSInv));
+        // encode <goppaPoly>
+        v.add(new DEROctetString(encGp));
 
-		// encode <p1>
-		v.add(new DEROctetString(encP1));
+        // encode <sInv>
+        v.add(new DEROctetString(encSInv));
 
-		// encode <p2>
-		v.add(new DEROctetString(encP2));
+        // encode <p1>
+        v.add(new DEROctetString(encP1));
 
-		// encode <h>
-		v.add(new DEROctetString(encH));
+        // encode <p2>
+        v.add(new DEROctetString(encP2));
 
-		// encode <q>
-		ASN1EncodableVector asnQInv = new ASN1EncodableVector();
-		for (int i = 0; i < encqInv.length; i++) {
-			asnQInv.add(new DEROctetString(encqInv[i]));
-		}
+        // encode <h>
+        v.add(new DEROctetString(encH));
 
-		v.add(new DERSequence(asnQInv));
+        // encode <q>
+        ASN1EncodableVector asnQInv = new ASN1EncodableVector();
+        for (int i = 0; i < encqInv.length; i++)
+        {
+            asnQInv.add(new DEROctetString(encqInv[i]));
+        }
 
-		return new DERSequence(v);
-	}
+        v.add(new DERSequence(asnQInv));
+
+        return new DERSequence(v);
+    }
 }

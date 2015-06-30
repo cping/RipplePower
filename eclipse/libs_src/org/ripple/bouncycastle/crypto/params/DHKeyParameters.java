@@ -1,39 +1,54 @@
 package org.ripple.bouncycastle.crypto.params;
 
-public class DHKeyParameters extends AsymmetricKeyParameter {
-	private DHParameters params;
 
-	protected DHKeyParameters(boolean isPrivate, DHParameters params) {
-		super(isPrivate);
+public class DHKeyParameters
+    extends AsymmetricKeyParameter
+{
+    private DHParameters    params;
 
-		this.params = params;
-	}
+    protected DHKeyParameters(
+        boolean         isPrivate,
+        DHParameters    params)
+    {
+        super(isPrivate);
 
-	public DHParameters getParameters() {
-		return params;
-	}
+        this.params = params;
+    }   
 
-	public boolean equals(Object obj) {
-		if (!(obj instanceof DHKeyParameters)) {
-			return false;
-		}
+    public DHParameters getParameters()
+    {
+        return params;
+    }
 
-		DHKeyParameters dhKey = (DHKeyParameters) obj;
+    public boolean equals(
+        Object  obj)
+    {
+        if (!(obj instanceof DHKeyParameters))
+        {
+            return false;
+        }
 
-		if (params == null) {
-			return dhKey.getParameters() == null;
-		} else {
-			return params.equals(dhKey.getParameters());
-		}
-	}
+        DHKeyParameters    dhKey = (DHKeyParameters)obj;
 
-	public int hashCode() {
-		int code = isPrivate() ? 0 : 1;
-
-		if (params != null) {
-			code ^= params.hashCode();
-		}
-
-		return code;
-	}
+        if (params == null)
+        {
+            return dhKey.getParameters() == null;
+        }
+        else
+        { 
+            return params.equals(dhKey.getParameters());
+        }
+    }
+    
+    public int hashCode()
+    {
+        int code = isPrivate() ? 0 : 1;
+        
+        if (params != null)
+        {
+            code ^= params.hashCode();
+        }
+        
+        return code;
+    }
 }

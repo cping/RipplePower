@@ -8,134 +8,166 @@ import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.DERTaggedObject;
 
-public class Accuracy extends ASN1Object {
-	ASN1Integer seconds;
 
-	ASN1Integer millis;
+public class Accuracy
+    extends ASN1Object
+{
+    ASN1Integer seconds;
 
-	ASN1Integer micros;
+    ASN1Integer millis;
 
-	// constantes
-	protected static final int MIN_MILLIS = 1;
+    ASN1Integer micros;
 
-	protected static final int MAX_MILLIS = 999;
+    // constantes
+    protected static final int MIN_MILLIS = 1;
 
-	protected static final int MIN_MICROS = 1;
+    protected static final int MAX_MILLIS = 999;
 
-	protected static final int MAX_MICROS = 999;
+    protected static final int MIN_MICROS = 1;
 
-	protected Accuracy() {
-	}
+    protected static final int MAX_MICROS = 999;
 
-	public Accuracy(ASN1Integer seconds, ASN1Integer millis, ASN1Integer micros) {
-		this.seconds = seconds;
+    protected Accuracy()
+    {
+    }
 
-		// Verifications
-		if (millis != null
-				&& (millis.getValue().intValue() < MIN_MILLIS || millis
-						.getValue().intValue() > MAX_MILLIS)) {
-			throw new IllegalArgumentException(
-					"Invalid millis field : not in (1..999)");
-		} else {
-			this.millis = millis;
-		}
+    public Accuracy(
+        ASN1Integer seconds,
+        ASN1Integer millis,
+        ASN1Integer micros)
+    {
+        this.seconds = seconds;
 
-		if (micros != null
-				&& (micros.getValue().intValue() < MIN_MICROS || micros
-						.getValue().intValue() > MAX_MICROS)) {
-			throw new IllegalArgumentException(
-					"Invalid micros field : not in (1..999)");
-		} else {
-			this.micros = micros;
-		}
+        //Verifications
+        if (millis != null
+                && (millis.getValue().intValue() < MIN_MILLIS || millis
+                        .getValue().intValue() > MAX_MILLIS))
+        {
+            throw new IllegalArgumentException(
+                    "Invalid millis field : not in (1..999)");
+        }
+        else
+        {
+            this.millis = millis;
+        }
 
-	}
+        if (micros != null
+                && (micros.getValue().intValue() < MIN_MICROS || micros
+                        .getValue().intValue() > MAX_MICROS))
+        {
+            throw new IllegalArgumentException(
+                    "Invalid micros field : not in (1..999)");
+        }
+        else
+        {
+            this.micros = micros;
+        }
 
-	private Accuracy(ASN1Sequence seq) {
-		seconds = null;
-		millis = null;
-		micros = null;
+    }
 
-		for (int i = 0; i < seq.size(); i++) {
-			// seconds
-			if (seq.getObjectAt(i) instanceof ASN1Integer) {
-				seconds = (ASN1Integer) seq.getObjectAt(i);
-			} else if (seq.getObjectAt(i) instanceof DERTaggedObject) {
-				DERTaggedObject extra = (DERTaggedObject) seq.getObjectAt(i);
+    private Accuracy(ASN1Sequence seq)
+    {
+        seconds = null;
+        millis = null;
+        micros = null;
 
-				switch (extra.getTagNo()) {
-				case 0:
-					millis = ASN1Integer.getInstance(extra, false);
-					if (millis.getValue().intValue() < MIN_MILLIS
-							|| millis.getValue().intValue() > MAX_MILLIS) {
-						throw new IllegalArgumentException(
-								"Invalid millis field : not in (1..999).");
-					}
-					break;
-				case 1:
-					micros = ASN1Integer.getInstance(extra, false);
-					if (micros.getValue().intValue() < MIN_MICROS
-							|| micros.getValue().intValue() > MAX_MICROS) {
-						throw new IllegalArgumentException(
-								"Invalid micros field : not in (1..999).");
-					}
-					break;
-				default:
-					throw new IllegalArgumentException("Invalig tag number");
-				}
-			}
-		}
-	}
+        for (int i = 0; i < seq.size(); i++)
+        {
+            // seconds
+            if (seq.getObjectAt(i) instanceof ASN1Integer)
+            {
+                seconds = (ASN1Integer) seq.getObjectAt(i);
+            }
+            else if (seq.getObjectAt(i) instanceof DERTaggedObject)
+            {
+                DERTaggedObject extra = (DERTaggedObject) seq.getObjectAt(i);
 
-	public static Accuracy getInstance(Object o) {
-		if (o instanceof Accuracy) {
-			return (Accuracy) o;
-		}
+                switch (extra.getTagNo())
+                {
+                case 0:
+                    millis = ASN1Integer.getInstance(extra, false);
+                    if (millis.getValue().intValue() < MIN_MILLIS
+                            || millis.getValue().intValue() > MAX_MILLIS)
+                    {
+                        throw new IllegalArgumentException(
+                                "Invalid millis field : not in (1..999).");
+                    }
+                    break;
+                case 1:
+                    micros = ASN1Integer.getInstance(extra, false);
+                    if (micros.getValue().intValue() < MIN_MICROS
+                            || micros.getValue().intValue() > MAX_MICROS)
+                    {
+                        throw new IllegalArgumentException(
+                                "Invalid micros field : not in (1..999).");
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalig tag number");
+                }
+            }
+        }
+    }
 
-		if (o != null) {
-			return new Accuracy(ASN1Sequence.getInstance(o));
-		}
+    public static Accuracy getInstance(Object o)
+    {
+        if (o instanceof Accuracy)
+        {
+            return (Accuracy) o;
+        }
 
-		return null;
-	}
+        if (o != null)
+        {
+            return new Accuracy(ASN1Sequence.getInstance(o));
+        }
 
-	public ASN1Integer getSeconds() {
-		return seconds;
-	}
+        return null;
+    }
 
-	public ASN1Integer getMillis() {
-		return millis;
-	}
+    public ASN1Integer getSeconds()
+    {
+        return seconds;
+    }
 
-	public ASN1Integer getMicros() {
-		return micros;
-	}
+    public ASN1Integer getMillis()
+    {
+        return millis;
+    }
 
-	/**
-	 * <pre>
-	 * Accuracy ::= SEQUENCE {
-	 *             seconds        INTEGER              OPTIONAL,
-	 *             millis     [0] INTEGER  (1..999)    OPTIONAL,
-	 *             micros     [1] INTEGER  (1..999)    OPTIONAL
-	 *             }
-	 * </pre>
-	 */
-	public ASN1Primitive toASN1Primitive() {
+    public ASN1Integer getMicros()
+    {
+        return micros;
+    }
 
-		ASN1EncodableVector v = new ASN1EncodableVector();
+    /**
+     * <pre>
+     * Accuracy ::= SEQUENCE {
+     *             seconds        INTEGER              OPTIONAL,
+     *             millis     [0] INTEGER  (1..999)    OPTIONAL,
+     *             micros     [1] INTEGER  (1..999)    OPTIONAL
+     *             }
+     * </pre>
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
 
-		if (seconds != null) {
-			v.add(seconds);
-		}
+        ASN1EncodableVector v = new ASN1EncodableVector();
+        
+        if (seconds != null)
+        {
+            v.add(seconds);
+        }
+        
+        if (millis != null)
+        {
+            v.add(new DERTaggedObject(false, 0, millis));
+        }
+        
+        if (micros != null)
+        {
+            v.add(new DERTaggedObject(false, 1, micros));
+        }
 
-		if (millis != null) {
-			v.add(new DERTaggedObject(false, 0, millis));
-		}
-
-		if (micros != null) {
-			v.add(new DERTaggedObject(false, 1, micros));
-		}
-
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 }

@@ -11,6 +11,7 @@ import org.ripple.bouncycastle.crypto.BlockCipher;
 import org.ripple.bouncycastle.crypto.BufferedBlockCipher;
 import org.ripple.bouncycastle.crypto.CipherKeyGenerator;
 import org.ripple.bouncycastle.crypto.engines.RC6Engine;
+import org.ripple.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.ripple.bouncycastle.crypto.macs.GMac;
 import org.ripple.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.ripple.bouncycastle.crypto.modes.CFBBlockCipher;
@@ -25,103 +26,155 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvide
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public final class RC6 {
-	private RC6() {
-	}
+public final class RC6
+{
+    private RC6()
+    {
+    }
+    
+    public static class ECB
+        extends BaseBlockCipher
+    {
+        public ECB()
+        {
+            super(new BlockCipherProvider()
+            {
+                public BlockCipher get()
+                {
+                    return new RC6Engine();
+                }
+            });
+        }
+    }
 
-	public static class ECB extends BaseBlockCipher {
-		public ECB() {
-			super(new BlockCipherProvider() {
-				public BlockCipher get() {
-					return new RC6Engine();
-				}
-			});
-		}
-	}
+    public static class CBC
+       extends BaseBlockCipher
+    {
+        public CBC()
+        {
+            super(new CBCBlockCipher(new RC6Engine()), 128);
+        }
+    }
 
-	public static class CBC extends BaseBlockCipher {
-		public CBC() {
-			super(new CBCBlockCipher(new RC6Engine()), 128);
-		}
-	}
+    static public class CFB
+        extends BaseBlockCipher
+    {
+        public CFB()
+        {
+            super(new BufferedBlockCipher(new CFBBlockCipher(new RC6Engine(), 128)), 128);
+        }
+    }
 
-	static public class CFB extends BaseBlockCipher {
-		public CFB() {
-			super(new BufferedBlockCipher(new CFBBlockCipher(new RC6Engine(),
-					128)), 128);
-		}
-	}
+    static public class OFB
+        extends BaseBlockCipher
+    {
+        public OFB()
+        {
+            super(new BufferedBlockCipher(new OFBBlockCipher(new RC6Engine(), 128)), 128);
+        }
+    }
 
-	static public class OFB extends BaseBlockCipher {
-		public OFB() {
-			super(new BufferedBlockCipher(new OFBBlockCipher(new RC6Engine(),
-					128)), 128);
-		}
-	}
+    public static class GMAC
+        extends BaseMac
+    {
+        public GMAC()
+        {
+            super(new GMac(new GCMBlockCipher(new RC6Engine())));
+        }
+    }
 
-	public static class GMAC extends BaseMac {
-		public GMAC() {
-			super(new GMac(new GCMBlockCipher(new RC6Engine())));
-		}
-	}
+    public static class Poly1305
+        extends BaseMac
+    {
+        public Poly1305()
+        {
+            super(new org.ripple.bouncycastle.crypto.macs.Poly1305(new RC6Engine()));
+        }
+    }
 
-	public static class KeyGen extends BaseKeyGenerator {
-		public KeyGen() {
-			super("RC6", 256, new CipherKeyGenerator());
-		}
-	}
+    public static class Poly1305KeyGen
+        extends BaseKeyGenerator
+    {
+        public Poly1305KeyGen()
+        {
+            super("Poly1305-RC6", 256, new Poly1305KeyGenerator());
+        }
+    }
 
-	public static class AlgParamGen extends BaseAlgorithmParameterGenerator {
-		protected void engineInit(AlgorithmParameterSpec genParamSpec,
-				SecureRandom random) throws InvalidAlgorithmParameterException {
-			throw new InvalidAlgorithmParameterException(
-					"No supported AlgorithmParameterSpec for RC6 parameter generation.");
-		}
+    public static class KeyGen
+        extends BaseKeyGenerator
+    {
+        public KeyGen()
+        {
+            super("RC6", 256, new CipherKeyGenerator());
+        }
+    }
 
-		protected AlgorithmParameters engineGenerateParameters() {
-			byte[] iv = new byte[16];
+    public static class AlgParamGen
+        extends BaseAlgorithmParameterGenerator
+    {
+        protected void engineInit(
+            AlgorithmParameterSpec genParamSpec,
+            SecureRandom random)
+            throws InvalidAlgorithmParameterException
+        {
+            throw new InvalidAlgorithmParameterException("No supported AlgorithmParameterSpec for RC6 parameter generation.");
+        }
 
-			if (random == null) {
-				random = new SecureRandom();
-			}
+        protected AlgorithmParameters engineGenerateParameters()
+        {
+            byte[]  iv = new byte[16];
 
-			random.nextBytes(iv);
+            if (random == null)
+            {
+                random = new SecureRandom();
+            }
 
-			AlgorithmParameters params;
+            random.nextBytes(iv);
 
-			try {
-				params = AlgorithmParameters.getInstance("RC6",
-						BouncyCastleProvider.PROVIDER_NAME);
-				params.init(new IvParameterSpec(iv));
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
-			}
+            AlgorithmParameters params;
 
-			return params;
-		}
-	}
+            try
+            {
+                params = createParametersInstance("RC6");
+                params.init(new IvParameterSpec(iv));
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e.getMessage());
+            }
 
-	public static class AlgParams extends IvAlgorithmParameters {
-		protected String engineToString() {
-			return "RC6 IV";
-		}
-	}
+            return params;
+        }
+    }
 
-	public static class Mappings extends SymmetricAlgorithmProvider {
-		private static final String PREFIX = RC6.class.getName();
+    public static class AlgParams
+        extends IvAlgorithmParameters
+    {
+        protected String engineToString()
+        {
+            return "RC6 IV";
+        }
+    }
 
-		public Mappings() {
-		}
+    public static class Mappings
+        extends SymmetricAlgorithmProvider
+    {
+        private static final String PREFIX = RC6.class.getName();
 
-		public void configure(ConfigurableProvider provider) {
+        public Mappings()
+        {
+        }
 
-			provider.addAlgorithm("Cipher.RC6", PREFIX + "$ECB");
-			provider.addAlgorithm("KeyGenerator.RC6", PREFIX + "$KeyGen");
-			provider.addAlgorithm("AlgorithmParameters.RC6", PREFIX
-					+ "$AlgParams");
+        public void configure(ConfigurableProvider provider)
+        {
 
-			addGMacAlgorithm(provider, "RC6", PREFIX + "$GMAC", PREFIX
-					+ "$KeyGen");
-		}
-	}
+            provider.addAlgorithm("Cipher.RC6", PREFIX + "$ECB");
+            provider.addAlgorithm("KeyGenerator.RC6", PREFIX + "$KeyGen");
+            provider.addAlgorithm("AlgorithmParameters.RC6", PREFIX + "$AlgParams");
+
+            addGMacAlgorithm(provider, "RC6", PREFIX + "$GMAC", PREFIX + "$KeyGen");
+            addPoly1305Algorithm(provider, "RC6", PREFIX + "$Poly1305", PREFIX + "$Poly1305KeyGen");
+        }
+    }
 }

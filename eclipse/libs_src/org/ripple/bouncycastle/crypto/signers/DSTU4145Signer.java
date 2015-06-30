@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 
 import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.DSA;
+import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
 import org.ripple.bouncycastle.crypto.params.ECKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -12,132 +13,158 @@ import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 import org.ripple.bouncycastle.math.ec.ECAlgorithms;
 import org.ripple.bouncycastle.math.ec.ECCurve;
 import org.ripple.bouncycastle.math.ec.ECFieldElement;
+import org.ripple.bouncycastle.math.ec.ECMultiplier;
 import org.ripple.bouncycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * DSTU 4145-2002
  * <p>
- * National Ukrainian standard of digital signature based on elliptic curves
- * (DSTU 4145-2002).
+ * National Ukrainian standard of digital signature based on elliptic curves (DSTU 4145-2002).
  * </p>
  */
-public class DSTU4145Signer implements DSA {
-	private static final BigInteger ONE = BigInteger.valueOf(1);
+public class DSTU4145Signer
+    implements DSA
+{
+    private static final BigInteger ONE = BigInteger.valueOf(1);
 
-	private ECKeyParameters key;
-	private SecureRandom random;
+    private ECKeyParameters key;
+    private SecureRandom random;
 
-	public void init(boolean forSigning, CipherParameters param) {
-		if (forSigning) {
-			if (param instanceof ParametersWithRandom) {
-				ParametersWithRandom rParam = (ParametersWithRandom) param;
+    public void init(boolean forSigning, CipherParameters param)
+    {
+        if (forSigning)
+        {
+            if (param instanceof ParametersWithRandom)
+            {
+                ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-				this.random = rParam.getRandom();
-				param = rParam.getParameters();
-			} else {
-				this.random = new SecureRandom();
-			}
+                this.random = rParam.getRandom();
+                param = rParam.getParameters();
+            }
+            else
+            {
+                this.random = new SecureRandom();
+            }
 
-			this.key = (ECPrivateKeyParameters) param;
-		} else {
-			this.key = (ECPublicKeyParameters) param;
-		}
+            this.key = (ECPrivateKeyParameters)param;
+        }
+        else
+        {
+            this.key = (ECPublicKeyParameters)param;
+        }
 
-	}
+    }
 
-	public BigInteger[] generateSignature(byte[] message) {
-		ECFieldElement h = hash2FieldElement(key.getParameters().getCurve(),
-				message);
-		if (h.toBigInteger().signum() == 0) {
-			h = key.getParameters().getCurve().fromBigInteger(ONE);
-		}
+    public BigInteger[] generateSignature(byte[] message)
+    {
+        ECDomainParameters ec = key.getParameters();
 
-		BigInteger e, r, s;
-		ECFieldElement Fe, y;
+        ECCurve curve = ec.getCurve();
 
-		do {
-			do {
-				do {
-					e = generateRandomInteger(key.getParameters().getN(),
-							random);
-					Fe = key.getParameters().getG().multiply(e).getX();
-				} while (Fe.toBigInteger().signum() == 0);
+        ECFieldElement h = hash2FieldElement(curve, message);
+        if (h.isZero())
+        {
+            h = curve.fromBigInteger(ONE);
+        }
 
-				y = h.multiply(Fe);
-				r = fieldElement2Integer(key.getParameters().getN(), y);
-			} while (r.signum() == 0);
+        BigInteger n = ec.getN();
+        BigInteger e, r, s;
+        ECFieldElement Fe, y;
 
-			s = r.multiply(((ECPrivateKeyParameters) key).getD()).add(e)
-					.mod(key.getParameters().getN());
-		} while (s.signum() == 0);
+        BigInteger d = ((ECPrivateKeyParameters)key).getD();
 
-		return new BigInteger[] { r, s };
-	}
+        ECMultiplier basePointMultiplier = createBasePointMultiplier();
 
-	public boolean verifySignature(byte[] message, BigInteger r, BigInteger s) {
-		if (r.signum() == 0 || s.signum() == 0) {
-			return false;
-		}
-		if (r.compareTo(key.getParameters().getN()) >= 0
-				|| s.compareTo(key.getParameters().getN()) >= 0) {
-			return false;
-		}
+        do
+        {
+            do
+            {
+                do
+                {
+                    e = generateRandomInteger(n, random);
+                    Fe = basePointMultiplier.multiply(ec.getG(), e).normalize().getAffineXCoord();
+                }
+                while (Fe.isZero());
 
-		ECFieldElement h = hash2FieldElement(key.getParameters().getCurve(),
-				message);
-		if (h.toBigInteger().signum() == 0) {
-			h = key.getParameters().getCurve().fromBigInteger(ONE);
-		}
+                y = h.multiply(Fe);
+                r = fieldElement2Integer(n, y);
+            }
+            while (r.signum() == 0);
 
-		ECPoint R = ECAlgorithms.sumOfTwoMultiplies(key.getParameters().getG(),
-				s, ((ECPublicKeyParameters) key).getQ(), r);
+            s = r.multiply(d).add(e).mod(n);
+        }
+        while (s.signum() == 0);
 
-		// components must be bogus.
-		if (R.isInfinity()) {
-			return false;
-		}
+        return new BigInteger[]{r, s};
+    }
 
-		ECFieldElement y = h.multiply(R.getX());
-		return fieldElement2Integer(key.getParameters().getN(), y).compareTo(r) == 0;
-	}
+    public boolean verifySignature(byte[] message, BigInteger r, BigInteger s)
+    {
+        if (r.signum() <= 0 || s.signum() <= 0)
+        {
+            return false;
+        }
 
-	/**
-	 * Generates random integer such, than its bit length is less than that of n
-	 */
-	private static BigInteger generateRandomInteger(BigInteger n,
-			SecureRandom random) {
-		return new BigInteger(n.bitLength() - 1, random);
-	}
+        ECDomainParameters parameters = key.getParameters();
 
-	private static void reverseBytes(byte[] bytes) {
-		byte tmp;
+        BigInteger n = parameters.getN();
+        if (r.compareTo(n) >= 0 || s.compareTo(n) >= 0)
+        {
+            return false;
+        }
 
-		for (int i = 0; i < bytes.length / 2; i++) {
-			tmp = bytes[i];
-			bytes[i] = bytes[bytes.length - 1 - i];
-			bytes[bytes.length - 1 - i] = tmp;
-		}
-	}
+        ECCurve curve = parameters.getCurve();
 
-	private static ECFieldElement hash2FieldElement(ECCurve curve, byte[] hash) {
-		byte[] data = Arrays.clone(hash);
-		reverseBytes(data);
-		BigInteger num = new BigInteger(1, data);
-		while (num.bitLength() >= curve.getFieldSize()) {
-			num = num.clearBit(num.bitLength() - 1);
-		}
+        ECFieldElement h = hash2FieldElement(curve, message);
+        if (h.isZero())
+        {
+            h = curve.fromBigInteger(ONE);
+        }
 
-		return curve.fromBigInteger(num);
-	}
+        ECPoint R = ECAlgorithms.sumOfTwoMultiplies(parameters.getG(), s, ((ECPublicKeyParameters)key).getQ(), r).normalize();
 
-	private static BigInteger fieldElement2Integer(BigInteger n,
-			ECFieldElement fieldElement) {
-		BigInteger num = fieldElement.toBigInteger();
-		while (num.bitLength() >= n.bitLength()) {
-			num = num.clearBit(num.bitLength() - 1);
-		}
+        // components must be bogus.
+        if (R.isInfinity())
+        {
+            return false;
+        }
 
-		return num;
-	}
+        ECFieldElement y = h.multiply(R.getAffineXCoord());
+        return fieldElement2Integer(n, y).compareTo(r) == 0;
+    }
+
+    protected ECMultiplier createBasePointMultiplier()
+    {
+        return new FixedPointCombMultiplier();
+    }
+
+    /**
+     * Generates random integer such, than its bit length is less than that of n
+     */
+    private static BigInteger generateRandomInteger(BigInteger n, SecureRandom random)
+    {
+        return new BigInteger(n.bitLength() - 1, random);
+    }
+
+    private static ECFieldElement hash2FieldElement(ECCurve curve, byte[] hash)
+    {
+        byte[] data = Arrays.reverse(hash);
+        return curve.fromBigInteger(truncate(new BigInteger(1, data), curve.getFieldSize()));
+    }
+
+    private static BigInteger fieldElement2Integer(BigInteger n, ECFieldElement fe)
+    {
+        return truncate(fe.toBigInteger(), n.bitLength() - 1);
+    }
+
+    private static BigInteger truncate(BigInteger x, int bitLength)
+    {
+        if (x.bitLength() > bitLength)
+        {
+            x = x.mod(ONE.shiftLeft(bitLength));
+        }
+        return x;
+    }
 }

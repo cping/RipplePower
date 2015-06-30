@@ -4,14 +4,23 @@ import org.ripple.bouncycastle.crypto.DSA;
 import org.ripple.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.ripple.bouncycastle.crypto.signers.ECDSASigner;
+import org.ripple.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
-public class TlsECDSASigner extends TlsDSASigner {
+public class TlsECDSASigner
+    extends TlsDSASigner
+{
+    public boolean isValidPublicKey(AsymmetricKeyParameter publicKey)
+    {
+        return publicKey instanceof ECPublicKeyParameters;
+    }
 
-	public boolean isValidPublicKey(AsymmetricKeyParameter publicKey) {
-		return publicKey instanceof ECPublicKeyParameters;
-	}
+    protected DSA createDSAImpl(short hashAlgorithm)
+    {
+        return new ECDSASigner(new HMacDSAKCalculator(TlsUtils.createHash(hashAlgorithm)));
+    }
 
-	protected DSA createDSAImpl() {
-		return new ECDSASigner();
-	}
+    protected short getSignatureAlgorithm()
+    {
+        return SignatureAlgorithm.ecdsa;
+    }
 }

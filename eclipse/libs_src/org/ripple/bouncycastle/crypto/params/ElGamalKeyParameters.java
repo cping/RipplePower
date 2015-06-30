@@ -1,33 +1,47 @@
 package org.ripple.bouncycastle.crypto.params;
 
-public class ElGamalKeyParameters extends AsymmetricKeyParameter {
-	private ElGamalParameters params;
 
-	protected ElGamalKeyParameters(boolean isPrivate, ElGamalParameters params) {
-		super(isPrivate);
+public class ElGamalKeyParameters
+    extends AsymmetricKeyParameter
+{
+    private ElGamalParameters    params;
 
-		this.params = params;
-	}
+    protected ElGamalKeyParameters(
+        boolean         isPrivate,
+        ElGamalParameters    params)
+    {
+        super(isPrivate);
 
-	public ElGamalParameters getParameters() {
-		return params;
-	}
+        this.params = params;
+    }   
 
-	public int hashCode() {
-		return (params != null) ? params.hashCode() : 0;
-	}
+    public ElGamalParameters getParameters()
+    {
+        return params;
+    }
 
-	public boolean equals(Object obj) {
-		if (!(obj instanceof ElGamalKeyParameters)) {
-			return false;
-		}
+    public int hashCode()
+    {
+        return (params != null) ? params.hashCode() : 0;
+    }
 
-		ElGamalKeyParameters dhKey = (ElGamalKeyParameters) obj;
+    public boolean equals(
+        Object  obj)
+    {
+        if (!(obj instanceof ElGamalKeyParameters))
+        {
+            return false;
+        }
 
-		if (params == null) {
-			return dhKey.getParameters() == null;
-		} else {
-			return params.equals(dhKey.getParameters());
-		}
-	}
+        ElGamalKeyParameters    dhKey = (ElGamalKeyParameters)obj;
+
+        if (params == null)
+        {
+            return dhKey.getParameters() == null;
+        }
+        else
+        { 
+            return params.equals(dhKey.getParameters());
+        }
+    }
 }

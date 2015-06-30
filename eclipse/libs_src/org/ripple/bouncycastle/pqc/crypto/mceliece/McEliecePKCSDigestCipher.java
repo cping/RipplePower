@@ -1,5 +1,6 @@
 package org.ripple.bouncycastle.pqc.crypto.mceliece;
 
+
 import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.params.AsymmetricKeyParameter;
@@ -7,95 +8,121 @@ import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 import org.ripple.bouncycastle.pqc.crypto.MessageEncryptor;
 
 // TODO should implement some interface?
-public class McEliecePKCSDigestCipher {
+public class McEliecePKCSDigestCipher
+{
 
-	private final Digest messDigest;
+    private final Digest messDigest;
 
-	private final MessageEncryptor mcElieceCipher;
+    private final MessageEncryptor mcElieceCipher;
 
-	private boolean forEncrypting;
+    private boolean forEncrypting;
 
-	public McEliecePKCSDigestCipher(MessageEncryptor mcElieceCipher,
-			Digest messDigest) {
-		this.mcElieceCipher = mcElieceCipher;
-		this.messDigest = messDigest;
-	}
 
-	public void init(boolean forEncrypting, CipherParameters param) {
+    public McEliecePKCSDigestCipher(MessageEncryptor mcElieceCipher, Digest messDigest)
+    {
+        this.mcElieceCipher = mcElieceCipher;
+        this.messDigest = messDigest;
+    }
 
-		this.forEncrypting = forEncrypting;
-		AsymmetricKeyParameter k;
 
-		if (param instanceof ParametersWithRandom) {
-			k = (AsymmetricKeyParameter) ((ParametersWithRandom) param)
-					.getParameters();
-		} else {
-			k = (AsymmetricKeyParameter) param;
-		}
+    public void init(boolean forEncrypting,
+                     CipherParameters param)
+    {
 
-		if (forEncrypting && k.isPrivate()) {
-			throw new IllegalArgumentException(
-					"Encrypting Requires Public Key.");
-		}
+        this.forEncrypting = forEncrypting;
+        AsymmetricKeyParameter k;
 
-		if (!forEncrypting && !k.isPrivate()) {
-			throw new IllegalArgumentException(
-					"Decrypting Requires Private Key.");
-		}
+        if (param instanceof ParametersWithRandom)
+        {
+            k = (AsymmetricKeyParameter)((ParametersWithRandom)param).getParameters();
+        }
+        else
+        {
+            k = (AsymmetricKeyParameter)param;
+        }
 
-		reset();
+        if (forEncrypting && k.isPrivate())
+        {
+            throw new IllegalArgumentException("Encrypting Requires Public Key.");
+        }
 
-		mcElieceCipher.init(forEncrypting, param);
-	}
+        if (!forEncrypting && !k.isPrivate())
+        {
+            throw new IllegalArgumentException("Decrypting Requires Private Key.");
+        }
 
-	public byte[] messageEncrypt() {
-		if (!forEncrypting) {
-			throw new IllegalStateException(
-					"McEliecePKCSDigestCipher not initialised for encrypting.");
-		}
+        reset();
 
-		byte[] hash = new byte[messDigest.getDigestSize()];
-		messDigest.doFinal(hash, 0);
-		byte[] enc = null;
+        mcElieceCipher.init(forEncrypting, param);
+    }
 
-		try {
-			enc = mcElieceCipher.messageEncrypt(hash);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		return enc;
-	}
+    public byte[] messageEncrypt()
+    {
+        if (!forEncrypting)
+        {
+            throw new IllegalStateException("McEliecePKCSDigestCipher not initialised for encrypting.");
+        }
 
-	public byte[] messageDecrypt(byte[] ciphertext) {
-		byte[] output = null;
-		if (forEncrypting) {
-			throw new IllegalStateException(
-					"McEliecePKCSDigestCipher not initialised for decrypting.");
-		}
+        byte[] hash = new byte[messDigest.getDigestSize()];
+        messDigest.doFinal(hash, 0);
+        byte[] enc = null;
 
-		try {
-			output = mcElieceCipher.messageDecrypt(ciphertext);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try
+        {
+            enc = mcElieceCipher.messageEncrypt(hash);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-		return output;
-	}
 
-	public void update(byte b) {
-		messDigest.update(b);
+        return enc;
+    }
 
-	}
 
-	public void update(byte[] in, int off, int len) {
-		messDigest.update(in, off, len);
+    public byte[] messageDecrypt(byte[] ciphertext)
+    {
+        byte[] output = null;
+        if (forEncrypting)
+        {
+            throw new IllegalStateException("McEliecePKCSDigestCipher not initialised for decrypting.");
+        }
 
-	}
 
-	public void reset() {
-		messDigest.reset();
+        try
+        {
+            output = mcElieceCipher.messageDecrypt(ciphertext);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-	}
+
+        return output;
+    }
+
+
+    public void update(byte b)
+    {
+        messDigest.update(b);
+
+    }
+
+    public void update(byte[] in, int off, int len)
+    {
+        messDigest.update(in, off, len);
+
+    }
+
+
+    public void reset()
+    {
+        messDigest.reset();
+
+    }
+
 
 }

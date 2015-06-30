@@ -15,47 +15,58 @@ import org.ripple.bouncycastle.crypto.params.DSAPrivateKeyParameters;
 import org.ripple.bouncycastle.crypto.params.DSAPublicKeyParameters;
 
 /**
- * utility class for converting jce/jca DSA objects objects into their
- * org.bouncycastle.crypto counterparts.
+ * utility class for converting jce/jca DSA objects
+ * objects into their org.bouncycastle.crypto counterparts.
  */
-public class DSAUtil {
-	public static final ASN1ObjectIdentifier[] dsaOids = {
-			X9ObjectIdentifiers.id_dsa, OIWObjectIdentifiers.dsaWithSHA1 };
+public class DSAUtil
+{
+    public static final ASN1ObjectIdentifier[] dsaOids =
+    {
+        X9ObjectIdentifiers.id_dsa,
+        OIWObjectIdentifiers.dsaWithSHA1
+    };
 
-	public static boolean isDsaOid(ASN1ObjectIdentifier algOid) {
-		for (int i = 0; i != dsaOids.length; i++) {
-			if (algOid.equals(dsaOids[i])) {
-				return true;
-			}
-		}
+    public static boolean isDsaOid(
+        ASN1ObjectIdentifier algOid)
+    {
+        for (int i = 0; i != dsaOids.length; i++)
+        {
+            if (algOid.equals(dsaOids[i]))
+            {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	static public AsymmetricKeyParameter generatePublicKeyParameter(
-			PublicKey key) throws InvalidKeyException {
-		if (key instanceof DSAPublicKey) {
-			DSAPublicKey k = (DSAPublicKey) key;
+    static public AsymmetricKeyParameter generatePublicKeyParameter(
+        PublicKey    key)
+        throws InvalidKeyException
+    {
+        if (key instanceof DSAPublicKey)
+        {
+            DSAPublicKey    k = (DSAPublicKey)key;
 
-			return new DSAPublicKeyParameters(k.getY(), new DSAParameters(k
-					.getParams().getP(), k.getParams().getQ(), k.getParams()
-					.getG()));
-		}
+            return new DSAPublicKeyParameters(k.getY(),
+                new DSAParameters(k.getParams().getP(), k.getParams().getQ(), k.getParams().getG()));
+        }
 
-		throw new InvalidKeyException("can't identify DSA public key: "
-				+ key.getClass().getName());
-	}
+        throw new InvalidKeyException("can't identify DSA public key: " + key.getClass().getName());
+    }
 
-	static public AsymmetricKeyParameter generatePrivateKeyParameter(
-			PrivateKey key) throws InvalidKeyException {
-		if (key instanceof DSAPrivateKey) {
-			DSAPrivateKey k = (DSAPrivateKey) key;
+    static public AsymmetricKeyParameter generatePrivateKeyParameter(
+        PrivateKey    key)
+        throws InvalidKeyException
+    {
+        if (key instanceof DSAPrivateKey)
+        {
+            DSAPrivateKey    k = (DSAPrivateKey)key;
 
-			return new DSAPrivateKeyParameters(k.getX(), new DSAParameters(k
-					.getParams().getP(), k.getParams().getQ(), k.getParams()
-					.getG()));
-		}
-
-		throw new InvalidKeyException("can't identify DSA private key.");
-	}
+            return new DSAPrivateKeyParameters(k.getX(),
+                new DSAParameters(k.getParams().getP(), k.getParams().getQ(), k.getParams().getG()));
+        }
+                        
+        throw new InvalidKeyException("can't identify DSA private key.");
+    }
 }

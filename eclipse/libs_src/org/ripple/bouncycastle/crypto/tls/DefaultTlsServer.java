@@ -5,386 +5,161 @@ import java.io.IOException;
 import org.ripple.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.ripple.bouncycastle.crypto.params.DHParameters;
 
-public abstract class DefaultTlsServer extends AbstractTlsServer {
+public abstract class DefaultTlsServer
+    extends AbstractTlsServer
+{
+    public DefaultTlsServer()
+    {
+        super();
+    }
 
-	public DefaultTlsServer() {
-		super();
-	}
+    public DefaultTlsServer(TlsCipherFactory cipherFactory)
+    {
+        super(cipherFactory);
+    }
 
-	public DefaultTlsServer(TlsCipherFactory cipherFactory) {
-		super(cipherFactory);
-	}
+    protected TlsSignerCredentials getDSASignerCredentials()
+        throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.internal_error);
+    }
 
-	protected TlsEncryptionCredentials getRSAEncryptionCredentials()
-			throws IOException {
-		throw new TlsFatalAlert(AlertDescription.internal_error);
-	}
+    protected TlsSignerCredentials getECDSASignerCredentials()
+        throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.internal_error);
+    }
 
-	protected TlsSignerCredentials getRSASignerCredentials() throws IOException {
-		throw new TlsFatalAlert(AlertDescription.internal_error);
-	}
+    protected TlsEncryptionCredentials getRSAEncryptionCredentials()
+        throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.internal_error);
+    }
 
-	protected DHParameters getDHParameters() {
-		return DHStandardGroups.rfc5114_1024_160;
-	}
+    protected TlsSignerCredentials getRSASignerCredentials()
+        throws IOException
+    {
+        throw new TlsFatalAlert(AlertDescription.internal_error);
+    }
 
-	protected int[] getCipherSuites() {
-		return new int[] { CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-				CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-				CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
-				CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
-				CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
-				CipherSuite.TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA,
-				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
-				CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-				CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA, };
-	}
+    protected DHParameters getDHParameters()
+    {
+        return DHStandardGroups.rfc5114_2048_256;
+    }
 
-	public TlsCredentials getCredentials() throws IOException {
+    protected int[] getCipherSuites()
+    {
+        return new int[]
+        {
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256,
+            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+            CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
+            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+        };
+    }
 
-		switch (selectedCipherSuite) {
-		case CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_NULL_MD5:
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA256:
-		case CipherSuite.TLS_RSA_WITH_RC4_128_MD5:
-		case CipherSuite.TLS_RSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_RSA_WITH_SEED_CBC_SHA:
-			return getRSAEncryptionCredentials();
+    public TlsCredentials getCredentials()
+        throws IOException
+    {
+        int keyExchangeAlgorithm = TlsUtils.getKeyExchangeAlgorithm(selectedCipherSuite);
 
-		case CipherSuite.TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_SEED_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:
-			return getRSASignerCredentials();
+        switch (keyExchangeAlgorithm)
+        {
+        case KeyExchangeAlgorithm.DH_DSS:
+        case KeyExchangeAlgorithm.DHE_DSS:
+            return getDSASignerCredentials();
 
-		default:
-			/*
-			 * Note: internal error here; selected a key exchange we don't
-			 * implement!
-			 */
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
-	}
+        case KeyExchangeAlgorithm.ECDH_ECDSA:
+        case KeyExchangeAlgorithm.ECDHE_ECDSA:
+            return getECDSASignerCredentials();
 
-	public TlsKeyExchange getKeyExchange() throws IOException {
+        case KeyExchangeAlgorithm.DHE_RSA:
+        case KeyExchangeAlgorithm.ECDHE_RSA:
+            return getRSASignerCredentials();
 
-		switch (selectedCipherSuite) {
-		case CipherSuite.TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DH_DSS_WITH_SEED_CBC_SHA:
-			return createDHKeyExchange(KeyExchangeAlgorithm.DH_DSS);
+        case KeyExchangeAlgorithm.RSA:
+            return getRSAEncryptionCredentials();
 
-		case CipherSuite.TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_SEED_CBC_SHA:
-			return createDHKeyExchange(KeyExchangeAlgorithm.DH_RSA);
+        default:
+            /* Note: internal error here; selected a key exchange we don't implement! */
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
+    }
 
-		case CipherSuite.TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_SEED_CBC_SHA:
-			return createDHEKeyExchange(KeyExchangeAlgorithm.DHE_DSS);
+    public TlsKeyExchange getKeyExchange()
+        throws IOException
+    {
+        int keyExchangeAlgorithm = TlsUtils.getKeyExchangeAlgorithm(selectedCipherSuite);
 
-		case CipherSuite.TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_SEED_CBC_SHA:
-			return createDHEKeyExchange(KeyExchangeAlgorithm.DHE_RSA);
+        switch (keyExchangeAlgorithm)
+        {
+        case KeyExchangeAlgorithm.DH_DSS:
+        case KeyExchangeAlgorithm.DH_RSA:
+            return createDHKeyExchange(keyExchangeAlgorithm);
 
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_RC4_128_SHA:
-			return createECDHKeyExchange(KeyExchangeAlgorithm.ECDH_ECDSA);
+        case KeyExchangeAlgorithm.DHE_DSS:
+        case KeyExchangeAlgorithm.DHE_RSA:
+            return createDHEKeyExchange(keyExchangeAlgorithm);
 
-		case CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDH_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_RC4_128_SHA:
-			return createECDHKeyExchange(KeyExchangeAlgorithm.ECDH_RSA);
+        case KeyExchangeAlgorithm.ECDH_ECDSA:
+        case KeyExchangeAlgorithm.ECDH_RSA:
+            return createECDHKeyExchange(keyExchangeAlgorithm);
 
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA:
-			return createECDHEKeyExchange(KeyExchangeAlgorithm.ECDHE_ECDSA);
+        case KeyExchangeAlgorithm.ECDHE_ECDSA:
+        case KeyExchangeAlgorithm.ECDHE_RSA:
+            return createECDHEKeyExchange(keyExchangeAlgorithm);
 
-		case CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA:
-			return createECDHEKeyExchange(KeyExchangeAlgorithm.ECDHE_RSA);
+        case KeyExchangeAlgorithm.RSA:
+            return createRSAKeyExchange();
 
-		case CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_NULL_MD5:
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA256:
-		case CipherSuite.TLS_RSA_WITH_RC4_128_MD5:
-		case CipherSuite.TLS_RSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_RSA_WITH_SEED_CBC_SHA:
-			return createRSAKeyExchange();
+        default:
+            /*
+             * Note: internal error here; the TlsProtocol implementation verifies that the
+             * server-selected cipher suite was in the list of client-offered cipher suites, so if
+             * we now can't produce an implementation, we shouldn't have offered it!
+             */
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
+    }
 
-		default:
-			/*
-			 * Note: internal error here; selected a key exchange we don't
-			 * implement!
-			 */
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
-	}
+    protected TlsKeyExchange createDHKeyExchange(int keyExchange)
+    {
+        return new TlsDHKeyExchange(keyExchange, supportedSignatureAlgorithms, getDHParameters());
+    }
 
-	public TlsCipher getCipher() throws IOException {
+    protected TlsKeyExchange createDHEKeyExchange(int keyExchange)
+    {
+        return new TlsDHEKeyExchange(keyExchange, supportedSignatureAlgorithms, getDHParameters());
+    }
 
-		switch (selectedCipherSuite) {
-		case CipherSuite.TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm._3DES_EDE_CBC, MACAlgorithm.hmac_sha1);
+    protected TlsKeyExchange createECDHKeyExchange(int keyExchange)
+    {
+        return new TlsECDHKeyExchange(keyExchange, supportedSignatureAlgorithms, namedCurves, clientECPointFormats,
+            serverECPointFormats);
+    }
 
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_128_CBC, MACAlgorithm.hmac_sha1);
+    protected TlsKeyExchange createECDHEKeyExchange(int keyExchange)
+    {
+        return new TlsECDHEKeyExchange(keyExchange, supportedSignatureAlgorithms, namedCurves, clientECPointFormats,
+            serverECPointFormats);
+    }
 
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_128_CBC, MACAlgorithm.hmac_sha256);
-
-		case CipherSuite.TLS_DH_DSS_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_128_GCM, MACAlgorithm._null);
-
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_256_CBC, MACAlgorithm.hmac_sha1);
-
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256:
-		case CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_256_CBC, MACAlgorithm.hmac_sha256);
-
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_256_CBC, MACAlgorithm.hmac_sha384);
-
-		case CipherSuite.TLS_DH_DSS_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DH_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DHE_DSS_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:
-		case CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.AES_256_GCM, MACAlgorithm._null);
-
-		case CipherSuite.TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_128_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.CAMELLIA_128_CBC,
-					MACAlgorithm.hmac_sha1);
-
-		case CipherSuite.TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_CAMELLIA_256_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.CAMELLIA_256_CBC,
-					MACAlgorithm.hmac_sha1);
-
-		case CipherSuite.TLS_RSA_WITH_NULL_MD5:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.NULL, MACAlgorithm.hmac_md5);
-
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_NULL_SHA:
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.NULL, MACAlgorithm.hmac_sha1);
-
-		case CipherSuite.TLS_RSA_WITH_NULL_SHA256:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.NULL, MACAlgorithm.hmac_sha256);
-
-		case CipherSuite.TLS_RSA_WITH_RC4_128_MD5:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.RC4_128, MACAlgorithm.hmac_md5);
-
-		case CipherSuite.TLS_ECDH_ECDSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_ECDH_RSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA:
-		case CipherSuite.TLS_RSA_WITH_RC4_128_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.RC4_128, MACAlgorithm.hmac_sha1);
-
-		case CipherSuite.TLS_DH_DSS_WITH_SEED_CBC_SHA:
-		case CipherSuite.TLS_DH_RSA_WITH_SEED_CBC_SHA:
-		case CipherSuite.TLS_DHE_DSS_WITH_SEED_CBC_SHA:
-		case CipherSuite.TLS_DHE_RSA_WITH_SEED_CBC_SHA:
-		case CipherSuite.TLS_RSA_WITH_SEED_CBC_SHA:
-			return cipherFactory.createCipher(context,
-					EncryptionAlgorithm.SEED_CBC, MACAlgorithm.hmac_sha1);
-
-		default:
-			/*
-			 * Note: internal error here; selected a cipher suite we don't
-			 * implement!
-			 */
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
-	}
-
-	protected TlsKeyExchange createDHKeyExchange(int keyExchange) {
-		return new TlsDHKeyExchange(keyExchange, supportedSignatureAlgorithms,
-				getDHParameters());
-	}
-
-	protected TlsKeyExchange createDHEKeyExchange(int keyExchange) {
-		return new TlsDHEKeyExchange(keyExchange, supportedSignatureAlgorithms,
-				getDHParameters());
-	}
-
-	protected TlsKeyExchange createECDHKeyExchange(int keyExchange) {
-		return new TlsECDHKeyExchange(keyExchange,
-				supportedSignatureAlgorithms, namedCurves,
-				clientECPointFormats, serverECPointFormats);
-	}
-
-	protected TlsKeyExchange createECDHEKeyExchange(int keyExchange) {
-		return new TlsECDHEKeyExchange(keyExchange,
-				supportedSignatureAlgorithms, namedCurves,
-				clientECPointFormats, serverECPointFormats);
-	}
-
-	protected TlsKeyExchange createRSAKeyExchange() {
-		return new TlsRSAKeyExchange(supportedSignatureAlgorithms);
-	}
+    protected TlsKeyExchange createRSAKeyExchange()
+    {
+        return new TlsRSAKeyExchange(supportedSignatureAlgorithms);
+    }
 }

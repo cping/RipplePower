@@ -4,36 +4,45 @@ import java.io.ByteArrayOutputStream;
 
 import org.ripple.bouncycastle.crypto.Digest;
 
-public class NullDigest implements Digest {
-	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-	public String getAlgorithmName() {
-		return "NULL";
-	}
+public class NullDigest
+    implements Digest
+{
+    private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-	public int getDigestSize() {
-		return bOut.size();
-	}
+    public String getAlgorithmName()
+    {
+        return "NULL";
+    }
 
-	public void update(byte in) {
-		bOut.write(in);
-	}
+    public int getDigestSize()
+    {
+        return bOut.size();
+    }
 
-	public void update(byte[] in, int inOff, int len) {
-		bOut.write(in, inOff, len);
-	}
+    public void update(byte in)
+    {
+        bOut.write(in);
+    }
 
-	public int doFinal(byte[] out, int outOff) {
-		byte[] res = bOut.toByteArray();
+    public void update(byte[] in, int inOff, int len)
+    {
+        bOut.write(in, inOff, len);
+    }
 
-		System.arraycopy(res, 0, out, outOff, res.length);
+    public int doFinal(byte[] out, int outOff)
+    {
+        byte[] res = bOut.toByteArray();
 
-		reset();
+        System.arraycopy(res, 0, out, outOff, res.length);
 
-		return res.length;
-	}
+        reset();
+        
+        return res.length;
+    }
 
-	public void reset() {
-		bOut.reset();
-	}
+    public void reset()
+    {
+        bOut.reset();
+    }
 }

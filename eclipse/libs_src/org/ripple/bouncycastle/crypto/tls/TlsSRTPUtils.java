@@ -10,72 +10,65 @@ import org.ripple.bouncycastle.util.Integers;
 /**
  * RFC 5764 DTLS Extension to Establish Keys for SRTP.
  */
-public class TlsSRTPUtils {
+public class TlsSRTPUtils
+{
+    public static final Integer EXT_use_srtp = Integers.valueOf(ExtensionType.use_srtp);
 
-	public static final Integer EXT_use_srtp = Integers
-			.valueOf(ExtensionType.use_srtp);
+    public static void addUseSRTPExtension(Hashtable extensions, UseSRTPData useSRTPData)
+        throws IOException
+    {
+        extensions.put(EXT_use_srtp, createUseSRTPExtension(useSRTPData));
+    }
 
-	public static void addUseSRTPExtension(Hashtable extensions,
-			UseSRTPData useSRTPData) throws IOException {
+    public static UseSRTPData getUseSRTPExtension(Hashtable extensions)
+        throws IOException
+    {
+        byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_use_srtp);
+        return extensionData == null ? null : readUseSRTPExtension(extensionData);
+    }
 
-		extensions.put(EXT_use_srtp, createUseSRTPExtension(useSRTPData));
-	}
+    public static byte[] createUseSRTPExtension(UseSRTPData useSRTPData)
+        throws IOException
+    {
+        if (useSRTPData == null)
+        {
+            throw new IllegalArgumentException("'useSRTPData' cannot be null");
+        }
 
-	public static UseSRTPData getUseSRTPExtension(Hashtable extensions)
-			throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
-		if (extensions == null) {
-			return null;
-		}
-		byte[] extensionValue = (byte[]) extensions.get(EXT_use_srtp);
-		if (extensionValue == null) {
-			return null;
-		}
-		return readUseSRTPExtension(extensionValue);
-	}
+        // SRTPProtectionProfiles
+        TlsUtils.writeUint16ArrayWithUint16Length(useSRTPData.getProtectionProfiles(), buf);
 
-	public static byte[] createUseSRTPExtension(UseSRTPData useSRTPData)
-			throws IOException {
+        // srtp_mki
+        TlsUtils.writeOpaque8(useSRTPData.getMki(), buf);
 
-		if (useSRTPData == null) {
-			throw new IllegalArgumentException("'useSRTPData' cannot be null");
-		}
+        return buf.toByteArray();
+    }
 
-		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    public static UseSRTPData readUseSRTPExtension(byte[] extensionData)
+        throws IOException
+    {
+        if (extensionData == null)
+        {
+            throw new IllegalArgumentException("'extensionData' cannot be null");
+        }
 
-		// SRTPProtectionProfiles
-		int[] protectionProfiles = useSRTPData.getProtectionProfiles();
-		TlsUtils.writeUint16(2 * protectionProfiles.length, buf);
-		TlsUtils.writeUint16Array(protectionProfiles, buf);
+        ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
 
-		// srtp_mki
-		TlsUtils.writeOpaque8(useSRTPData.getMki(), buf);
+        // SRTPProtectionProfiles
+        int length = TlsUtils.readUint16(buf);
+        if (length < 2 || (length & 1) != 0)
+        {
+            throw new TlsFatalAlert(AlertDescription.decode_error);
+        }
+        int[] protectionProfiles = TlsUtils.readUint16Array(length / 2, buf);
 
-		return buf.toByteArray();
-	}
+        // srtp_mki
+        byte[] mki = TlsUtils.readOpaque8(buf);
 
-	public static UseSRTPData readUseSRTPExtension(byte[] extensionValue)
-			throws IOException {
+        TlsProtocol.assertEmpty(buf);
 
-		if (extensionValue == null) {
-			throw new IllegalArgumentException(
-					"'extensionValue' cannot be null");
-		}
-
-		ByteArrayInputStream buf = new ByteArrayInputStream(extensionValue);
-
-		// SRTPProtectionProfiles
-		int length = TlsUtils.readUint16(buf);
-		if (length < 2 || (length & 1) != 0) {
-			throw new TlsFatalAlert(AlertDescription.decode_error);
-		}
-		int[] protectionProfiles = TlsUtils.readUint16Array(length / 2, buf);
-
-		// srtp_mki
-		byte[] mki = TlsUtils.readOpaque8(buf);
-
-		TlsProtocol.assertEmpty(buf);
-
-		return new UseSRTPData(protectionProfiles, mki);
-	}
+        return new UseSRTPData(protectionProfiles, mki);
+    }
 }

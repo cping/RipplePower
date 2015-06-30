@@ -117,7 +117,7 @@ public class RPPasswordDialog extends JDialog {
 					return;
 				}
 				passwordEntered = true;
-				dispose();
+				SwingUtils.close(RPPasswordDialog.this);
 
 			}
 		});

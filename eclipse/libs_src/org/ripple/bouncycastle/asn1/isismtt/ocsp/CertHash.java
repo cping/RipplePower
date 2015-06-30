@@ -19,9 +19,6 @@ import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
  * the expiry of the corresponding certificate. Hence, clients MUST support this
  * extension. If a positive statement of availability is to be delivered, this
  * extension syntax and OID MUST be used.
- * <p/>
- * <p/>
- * 
  * <pre>
  *     CertHash ::= SEQUENCE {
  *       hashAlgorithm AlgorithmIdentifier,
@@ -29,92 +26,95 @@ import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
  *     }
  * </pre>
  */
-public class CertHash extends ASN1Object {
+public class CertHash
+    extends ASN1Object
+{
 
-	private AlgorithmIdentifier hashAlgorithm;
-	private byte[] certificateHash;
+    private AlgorithmIdentifier hashAlgorithm;
+    private byte[] certificateHash;
 
-	public static CertHash getInstance(Object obj) {
-		if (obj == null || obj instanceof CertHash) {
-			return (CertHash) obj;
-		}
+    public static CertHash getInstance(Object obj)
+    {
+        if (obj == null || obj instanceof CertHash)
+        {
+            return (CertHash)obj;
+        }
 
-		if (obj instanceof ASN1Sequence) {
-			return new CertHash((ASN1Sequence) obj);
-		}
+        if (obj instanceof ASN1Sequence)
+        {
+            return new CertHash((ASN1Sequence)obj);
+        }
 
-		throw new IllegalArgumentException("illegal object in getInstance: "
-				+ obj.getClass().getName());
-	}
+        throw new IllegalArgumentException("illegal object in getInstance: "
+            + obj.getClass().getName());
+    }
 
-	/**
-	 * Constructor from ASN1Sequence.
-	 * <p/>
-	 * The sequence is of type CertHash:
-	 * <p/>
-	 * 
-	 * <pre>
-	 *     CertHash ::= SEQUENCE {
-	 *       hashAlgorithm AlgorithmIdentifier,
-	 *       certificateHash OCTET STRING
-	 *     }
-	 * </pre>
-	 * 
-	 * @param seq
-	 *            The ASN.1 sequence.
-	 */
-	private CertHash(ASN1Sequence seq) {
-		if (seq.size() != 2) {
-			throw new IllegalArgumentException("Bad sequence size: "
-					+ seq.size());
-		}
-		hashAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(0));
-		certificateHash = DEROctetString.getInstance(seq.getObjectAt(1))
-				.getOctets();
-	}
+    /**
+     * Constructor from ASN1Sequence.
+     * <p>
+     * The sequence is of type CertHash:
+     * <pre>
+     *     CertHash ::= SEQUENCE {
+     *       hashAlgorithm AlgorithmIdentifier,
+     *       certificateHash OCTET STRING
+     *     }
+     * </pre>
+     * </p>
+     * @param seq The ASN.1 sequence.
+     */
+    private CertHash(ASN1Sequence seq)
+    {
+        if (seq.size() != 2)
+        {
+            throw new IllegalArgumentException("Bad sequence size: "
+                + seq.size());
+        }
+        hashAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(0));
+        certificateHash = DEROctetString.getInstance(seq.getObjectAt(1)).getOctets();
+    }
 
-	/**
-	 * Constructor from a given details.
-	 * 
-	 * @param hashAlgorithm
-	 *            The hash algorithm identifier.
-	 * @param certificateHash
-	 *            The hash of the whole DER encoding of the certificate.
-	 */
-	public CertHash(AlgorithmIdentifier hashAlgorithm, byte[] certificateHash) {
-		this.hashAlgorithm = hashAlgorithm;
-		this.certificateHash = new byte[certificateHash.length];
-		System.arraycopy(certificateHash, 0, this.certificateHash, 0,
-				certificateHash.length);
-	}
+    /**
+     * Constructor from a given details.
+     *
+     * @param hashAlgorithm   The hash algorithm identifier.
+     * @param certificateHash The hash of the whole DER encoding of the certificate.
+     */
+    public CertHash(AlgorithmIdentifier hashAlgorithm, byte[] certificateHash)
+    {
+        this.hashAlgorithm = hashAlgorithm;
+        this.certificateHash = new byte[certificateHash.length];
+        System.arraycopy(certificateHash, 0, this.certificateHash, 0,
+            certificateHash.length);
+    }
 
-	public AlgorithmIdentifier getHashAlgorithm() {
-		return hashAlgorithm;
-	}
+    public AlgorithmIdentifier getHashAlgorithm()
+    {
+        return hashAlgorithm;
+    }
 
-	public byte[] getCertificateHash() {
-		return certificateHash;
-	}
+    public byte[] getCertificateHash()
+    {
+        return certificateHash;
+    }
 
-	/**
-	 * Produce an object suitable for an ASN1OutputStream.
-	 * <p/>
-	 * Returns:
-	 * <p/>
-	 * 
-	 * <pre>
-	 *     CertHash ::= SEQUENCE {
-	 *       hashAlgorithm AlgorithmIdentifier,
-	 *       certificateHash OCTET STRING
-	 *     }
-	 * </pre>
-	 * 
-	 * @return a DERObject
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector vec = new ASN1EncodableVector();
-		vec.add(hashAlgorithm);
-		vec.add(new DEROctetString(certificateHash));
-		return new DERSequence(vec);
-	}
+    /**
+     * Produce an object suitable for an ASN1OutputStream.
+     * <p>
+     * Returns:
+     * <pre>
+     *     CertHash ::= SEQUENCE {
+     *       hashAlgorithm AlgorithmIdentifier,
+     *       certificateHash OCTET STRING
+     *     }
+     * </pre>
+     *
+     * @return a DERObject
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector vec = new ASN1EncodableVector();
+        vec.add(hashAlgorithm);
+        vec.add(new DEROctetString(certificateHash));
+        return new DERSequence(vec);
+    }
 }

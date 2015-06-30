@@ -1,49 +1,108 @@
 package org.ripple.bouncycastle.crypto.tls;
 
-public class SecurityParameters {
+import org.ripple.bouncycastle.util.Arrays;
 
-	int entity = -1;
-	int prfAlgorithm = -1;
-	short compressionAlgorithm = -1;
-	int verifyDataLength = -1;
-	byte[] masterSecret = null;
-	byte[] clientRandom = null;
-	byte[] serverRandom = null;
+public class SecurityParameters
+{
+    int entity = -1;
+    int cipherSuite = -1;
+    short compressionAlgorithm = CompressionMethod._null;
+    int prfAlgorithm = -1;
+    int verifyDataLength = -1;
+    byte[] masterSecret = null;
+    byte[] clientRandom = null;
+    byte[] serverRandom = null;
+    byte[] sessionHash = null;
+    byte[] pskIdentity = null;
+    byte[] srpIdentity = null;
 
-	/**
-	 * @return {@link ConnectionEnd}
-	 */
-	public int getEntity() {
-		return entity;
-	}
+    // TODO Keep these internal, since it's maybe not the ideal place for them
+    short maxFragmentLength = -1;
+    boolean truncatedHMac = false;
+    boolean encryptThenMAC = false;
+    boolean extendedMasterSecret = false;
 
-	/**
-	 * @return {@link PRFAlgorithm}
-	 */
-	public int getPrfAlgorithm() {
-		return prfAlgorithm;
-	}
+    void clear()
+    {
+        if (this.masterSecret != null)
+        {
+            Arrays.fill(this.masterSecret, (byte)0);
+            this.masterSecret = null;
+        }
+    }
 
-	/**
-	 * @return {@link CompressionMethod}
-	 */
-	public short getCompressionAlgorithm() {
-		return compressionAlgorithm;
-	}
+    /**
+     * @return {@link ConnectionEnd}
+     */
+    public int getEntity()
+    {
+        return entity;
+    }
 
-	public int getVerifyDataLength() {
-		return verifyDataLength;
-	}
+    /**
+     * @return {@link CipherSuite}
+     */
+    public int getCipherSuite()
+    {
+        return cipherSuite;
+    }
 
-	public byte[] getMasterSecret() {
-		return masterSecret;
-	}
+    /**
+     * @return {@link CompressionMethod}
+     */
+    public short getCompressionAlgorithm()
+    {
+        return compressionAlgorithm;
+    }
 
-	public byte[] getClientRandom() {
-		return clientRandom;
-	}
+    /**
+     * @return {@link PRFAlgorithm}
+     */
+    public int getPrfAlgorithm()
+    {
+        return prfAlgorithm;
+    }
 
-	public byte[] getServerRandom() {
-		return serverRandom;
-	}
+    public int getVerifyDataLength()
+    {
+        return verifyDataLength;
+    }
+
+    public byte[] getMasterSecret()
+    {
+        return masterSecret;
+    }
+
+    public byte[] getClientRandom()
+    {
+        return clientRandom;
+    }
+
+    public byte[] getServerRandom()
+    {
+        return serverRandom;
+    }
+
+    public byte[] getSessionHash()
+    {
+        return sessionHash;
+    }
+
+    /**
+     * @deprecated Use {@link SecurityParameters#getPSKIdentity()) 
+     */
+    public byte[] getPskIdentity()
+    {
+        return pskIdentity;
+    }
+
+    public byte[] getPSKIdentity()
+    {
+        return pskIdentity;
+    }
+
+    public byte[] getSRPIdentity()
+    {
+        return srpIdentity;
+    }
 }

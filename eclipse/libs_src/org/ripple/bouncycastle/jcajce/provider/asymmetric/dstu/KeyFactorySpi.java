@@ -21,132 +21,146 @@ import org.ripple.bouncycastle.jce.spec.ECParameterSpec;
 import org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec;
 import org.ripple.bouncycastle.jce.spec.ECPublicKeySpec;
 
-public class KeyFactorySpi extends BaseKeyFactorySpi {
-	public KeyFactorySpi() {
-	}
+public class KeyFactorySpi
+    extends BaseKeyFactorySpi
+{
+    public KeyFactorySpi()
+    {
+    }
 
-	protected KeySpec engineGetKeySpec(Key key, Class spec)
-			throws InvalidKeySpecException {
-		if (spec.isAssignableFrom(java.security.spec.ECPublicKeySpec.class)
-				&& key instanceof ECPublicKey) {
-			ECPublicKey k = (ECPublicKey) key;
-			if (k.getParams() != null) {
-				return new java.security.spec.ECPublicKeySpec(k.getW(),
-						k.getParams());
-			} else {
-				ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION
-						.getEcImplicitlyCa();
+    protected KeySpec engineGetKeySpec(
+        Key key,
+        Class spec)
+        throws InvalidKeySpecException
+    {
+        if (spec.isAssignableFrom(java.security.spec.ECPublicKeySpec.class) && key instanceof ECPublicKey)
+        {
+            ECPublicKey k = (ECPublicKey)key;
+            if (k.getParams() != null)
+            {
+                return new java.security.spec.ECPublicKeySpec(k.getW(), k.getParams());
+            }
+            else
+            {
+                ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION.getEcImplicitlyCa();
 
-				return new java.security.spec.ECPublicKeySpec(k.getW(),
-						EC5Util.convertSpec(
-								EC5Util.convertCurve(implicitSpec.getCurve(),
-										implicitSpec.getSeed()), implicitSpec));
-			}
-		} else if (spec
-				.isAssignableFrom(java.security.spec.ECPrivateKeySpec.class)
-				&& key instanceof ECPrivateKey) {
-			ECPrivateKey k = (ECPrivateKey) key;
+                return new java.security.spec.ECPublicKeySpec(k.getW(), EC5Util.convertSpec(EC5Util.convertCurve(implicitSpec.getCurve(), implicitSpec.getSeed()), implicitSpec));
+            }
+        }
+        else if (spec.isAssignableFrom(java.security.spec.ECPrivateKeySpec.class) && key instanceof ECPrivateKey)
+        {
+            ECPrivateKey k = (ECPrivateKey)key;
 
-			if (k.getParams() != null) {
-				return new java.security.spec.ECPrivateKeySpec(k.getS(),
-						k.getParams());
-			} else {
-				ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION
-						.getEcImplicitlyCa();
+            if (k.getParams() != null)
+            {
+                return new java.security.spec.ECPrivateKeySpec(k.getS(), k.getParams());
+            }
+            else
+            {
+                ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION.getEcImplicitlyCa();
 
-				return new java.security.spec.ECPrivateKeySpec(k.getS(),
-						EC5Util.convertSpec(
-								EC5Util.convertCurve(implicitSpec.getCurve(),
-										implicitSpec.getSeed()), implicitSpec));
-			}
-		} else if (spec
-				.isAssignableFrom(org.ripple.bouncycastle.jce.spec.ECPublicKeySpec.class)
-				&& key instanceof ECPublicKey) {
-			ECPublicKey k = (ECPublicKey) key;
-			if (k.getParams() != null) {
-				return new org.ripple.bouncycastle.jce.spec.ECPublicKeySpec(
-						EC5Util.convertPoint(k.getParams(), k.getW(), false),
-						EC5Util.convertSpec(k.getParams(), false));
-			} else {
-				ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION
-						.getEcImplicitlyCa();
+                return new java.security.spec.ECPrivateKeySpec(k.getS(), EC5Util.convertSpec(EC5Util.convertCurve(implicitSpec.getCurve(), implicitSpec.getSeed()), implicitSpec));
+            }
+        }
+        else if (spec.isAssignableFrom(org.ripple.bouncycastle.jce.spec.ECPublicKeySpec.class) && key instanceof ECPublicKey)
+        {
+            ECPublicKey k = (ECPublicKey)key;
+            if (k.getParams() != null)
+            {
+                return new org.ripple.bouncycastle.jce.spec.ECPublicKeySpec(EC5Util.convertPoint(k.getParams(), k.getW(), false), EC5Util.convertSpec(k.getParams(), false));
+            }
+            else
+            {
+                ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION.getEcImplicitlyCa();
 
-				return new org.ripple.bouncycastle.jce.spec.ECPublicKeySpec(
-						EC5Util.convertPoint(k.getParams(), k.getW(), false),
-						implicitSpec);
-			}
-		} else if (spec
-				.isAssignableFrom(org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec.class)
-				&& key instanceof ECPrivateKey) {
-			ECPrivateKey k = (ECPrivateKey) key;
+                return new org.ripple.bouncycastle.jce.spec.ECPublicKeySpec(EC5Util.convertPoint(k.getParams(), k.getW(), false), implicitSpec);
+            }
+        }
+        else if (spec.isAssignableFrom(org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec.class) && key instanceof ECPrivateKey)
+        {
+            ECPrivateKey k = (ECPrivateKey)key;
 
-			if (k.getParams() != null) {
-				return new org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec(
-						k.getS(), EC5Util.convertSpec(k.getParams(), false));
-			} else {
-				ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION
-						.getEcImplicitlyCa();
+            if (k.getParams() != null)
+            {
+                return new org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec(k.getS(), EC5Util.convertSpec(k.getParams(), false));
+            }
+            else
+            {
+                ECParameterSpec implicitSpec = BouncyCastleProvider.CONFIGURATION.getEcImplicitlyCa();
 
-				return new org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec(
-						k.getS(), implicitSpec);
-			}
-		}
+                return new org.ripple.bouncycastle.jce.spec.ECPrivateKeySpec(k.getS(), implicitSpec);
+            }
+        }
 
-		return super.engineGetKeySpec(key, spec);
-	}
+        return super.engineGetKeySpec(key, spec);
+    }
 
-	protected Key engineTranslateKey(Key key) throws InvalidKeyException {
-		throw new InvalidKeyException("key type unknown");
-	}
+    protected Key engineTranslateKey(
+        Key key)
+        throws InvalidKeyException
+    {
+        throw new InvalidKeyException("key type unknown");
+    }
 
-	protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
-			throws InvalidKeySpecException {
-		if (keySpec instanceof ECPrivateKeySpec) {
-			return new BCDSTU4145PrivateKey((ECPrivateKeySpec) keySpec);
-		} else if (keySpec instanceof java.security.spec.ECPrivateKeySpec) {
-			return new BCDSTU4145PrivateKey(
-					(java.security.spec.ECPrivateKeySpec) keySpec);
-		}
+    protected PrivateKey engineGeneratePrivate(
+        KeySpec keySpec)
+        throws InvalidKeySpecException
+    {
+        if (keySpec instanceof ECPrivateKeySpec)
+        {
+            return new BCDSTU4145PrivateKey((ECPrivateKeySpec)keySpec);
+        }
+        else if (keySpec instanceof java.security.spec.ECPrivateKeySpec)
+        {
+            return new BCDSTU4145PrivateKey((java.security.spec.ECPrivateKeySpec)keySpec);
+        }
 
-		return super.engineGeneratePrivate(keySpec);
-	}
+        return super.engineGeneratePrivate(keySpec);
+    }
 
-	protected PublicKey engineGeneratePublic(KeySpec keySpec)
-			throws InvalidKeySpecException {
-		if (keySpec instanceof ECPublicKeySpec) {
-			return new BCDSTU4145PublicKey((ECPublicKeySpec) keySpec);
-		} else if (keySpec instanceof java.security.spec.ECPublicKeySpec) {
-			return new BCDSTU4145PublicKey(
-					(java.security.spec.ECPublicKeySpec) keySpec);
-		}
+    protected PublicKey engineGeneratePublic(
+        KeySpec keySpec)
+        throws InvalidKeySpecException
+    {
+        if (keySpec instanceof ECPublicKeySpec)
+        {
+            return new BCDSTU4145PublicKey((ECPublicKeySpec)keySpec);
+        }
+        else if (keySpec instanceof java.security.spec.ECPublicKeySpec)
+        {
+            return new BCDSTU4145PublicKey((java.security.spec.ECPublicKeySpec)keySpec);
+        }
 
-		return super.engineGeneratePublic(keySpec);
-	}
+        return super.engineGeneratePublic(keySpec);
+    }
 
-	public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
-			throws IOException {
-		ASN1ObjectIdentifier algOid = keyInfo.getPrivateKeyAlgorithm()
-				.getAlgorithm();
+    public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
+        throws IOException
+    {
+        ASN1ObjectIdentifier algOid = keyInfo.getPrivateKeyAlgorithm().getAlgorithm();
 
-		if (algOid.equals(UAObjectIdentifiers.dstu4145le)
-				|| algOid.equals(UAObjectIdentifiers.dstu4145be)) {
-			return new BCDSTU4145PrivateKey(keyInfo);
-		} else {
-			throw new IOException("algorithm identifier " + algOid
-					+ " in key not recognised");
-		}
-	}
+        if (algOid.equals(UAObjectIdentifiers.dstu4145le) || algOid.equals(UAObjectIdentifiers.dstu4145be))
+        {
+            return new BCDSTU4145PrivateKey(keyInfo);
+        }
+        else
+        {
+            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
+        }
+    }
 
-	public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
-			throws IOException {
-		ASN1ObjectIdentifier algOid = keyInfo.getAlgorithm().getAlgorithm();
+    public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
+        throws IOException
+    {
+        ASN1ObjectIdentifier algOid = keyInfo.getAlgorithm().getAlgorithm();
 
-		if (algOid.equals(UAObjectIdentifiers.dstu4145le)
-				|| algOid.equals(UAObjectIdentifiers.dstu4145be)) {
-			return new BCDSTU4145PublicKey(keyInfo);
-		} else {
-			throw new IOException("algorithm identifier " + algOid
-					+ " in key not recognised");
-		}
-	}
+        if (algOid.equals(UAObjectIdentifiers.dstu4145le) || algOid.equals(UAObjectIdentifiers.dstu4145be))
+        {
+            return new BCDSTU4145PublicKey(keyInfo);
+        }
+        else
+        {
+            throw new IOException("algorithm identifier " + algOid + " in key not recognised");
+        }
+    }
 }

@@ -5,312 +5,359 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.ripple.bouncycastle.crypto.Digest;
-
 /**
- * An implementation of the TLS 1.0/1.1/1.2 record layer, allowing downgrade to
- * SSLv3.
+ * An implementation of the TLS 1.0/1.1/1.2 record layer, allowing downgrade to SSLv3.
  */
-class RecordStream {
+class RecordStream
+{
+    private static int DEFAULT_PLAINTEXT_LIMIT = (1 << 14);
 
-	private static int PLAINTEXT_LIMIT = (1 << 14);
-	private static int COMPRESSED_LIMIT = PLAINTEXT_LIMIT + 1024;
-	private static int CIPHERTEXT_LIMIT = COMPRESSED_LIMIT + 1024;
+    private TlsProtocol handler;
+    private InputStream input;
+    private OutputStream output;
+    private TlsCompression pendingCompression = null, readCompression = null, writeCompression = null;
+    private TlsCipher pendingCipher = null, readCipher = null, writeCipher = null;
+    private long readSeqNo = 0, writeSeqNo = 0;
+    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-	private TlsProtocol handler;
-	private InputStream input;
-	private OutputStream output;
-	private TlsCompression pendingCompression = null, readCompression = null,
-			writeCompression = null;
-	private TlsCipher pendingCipher = null, readCipher = null,
-			writeCipher = null;
-	private long readSeqNo = 0, writeSeqNo = 0;
-	private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private TlsHandshakeHash handshakeHash = null;
 
-	private TlsContext context = null;
-	private TlsHandshakeHash hash = null;
+    private ProtocolVersion readVersion = null, writeVersion = null;
+    private boolean restrictReadVersion = true;
 
-	private ProtocolVersion readVersion = null, writeVersion = null;
-	private boolean restrictReadVersion = true;
+    private int plaintextLimit, compressedLimit, ciphertextLimit;
 
-	RecordStream(TlsProtocol handler, InputStream input, OutputStream output) {
-		this.handler = handler;
-		this.input = input;
-		this.output = output;
-		this.readCompression = new TlsNullCompression();
-		this.writeCompression = this.readCompression;
-		this.readCipher = new TlsNullCipher(context);
-		this.writeCipher = this.readCipher;
-	}
+    RecordStream(TlsProtocol handler, InputStream input, OutputStream output)
+    {
+        this.handler = handler;
+        this.input = input;
+        this.output = output;
+        this.readCompression = new TlsNullCompression();
+        this.writeCompression = this.readCompression;
+    }
 
-	void init(TlsContext context) {
-		this.context = context;
-		this.hash = new DeferredHash();
-		this.hash.init(context);
-	}
+    void init(TlsContext context)
+    {
+        this.readCipher = new TlsNullCipher(context);
+        this.writeCipher = this.readCipher;
+        this.handshakeHash = new DeferredHash();
+        this.handshakeHash.init(context);
 
-	ProtocolVersion getReadVersion() {
-		return readVersion;
-	}
+        setPlaintextLimit(DEFAULT_PLAINTEXT_LIMIT);
+    }
 
-	void setReadVersion(ProtocolVersion readVersion) {
-		this.readVersion = readVersion;
-	}
+    int getPlaintextLimit()
+    {
+        return plaintextLimit;
+    }
 
-	void setWriteVersion(ProtocolVersion writeVersion) {
-		this.writeVersion = writeVersion;
-	}
+    void setPlaintextLimit(int plaintextLimit)
+    {
+        this.plaintextLimit = plaintextLimit;
+        this.compressedLimit = this.plaintextLimit + 1024;
+        this.ciphertextLimit = this.compressedLimit + 1024;
+    }
 
-	/**
-	 * RFC 5246 E.1. "Earlier versions of the TLS specification were not fully
-	 * clear on what the record layer version number (TLSPlaintext.version)
-	 * should contain when sending ClientHello (i.e., before it is known which
-	 * version of the protocol will be employed). Thus, TLS servers compliant
-	 * with this specification MUST accept any value {03,XX} as the record layer
-	 * version number for ClientHello."
-	 */
-	void setRestrictReadVersion(boolean enabled) {
-		this.restrictReadVersion = enabled;
-	}
+    ProtocolVersion getReadVersion()
+    {
+        return readVersion;
+    }
 
-	void notifyHelloComplete() {
-		this.hash = this.hash.commit();
-	}
+    void setReadVersion(ProtocolVersion readVersion)
+    {
+        this.readVersion = readVersion;
+    }
 
-	void setPendingConnectionState(TlsCompression tlsCompression,
-			TlsCipher tlsCipher) {
-		this.pendingCompression = tlsCompression;
-		this.pendingCipher = tlsCipher;
-	}
+    void setWriteVersion(ProtocolVersion writeVersion)
+    {
+        this.writeVersion = writeVersion;
+    }
 
-	void sentWriteCipherSpec() throws IOException {
-		if (pendingCompression == null || pendingCipher == null) {
-			throw new TlsFatalAlert(AlertDescription.handshake_failure);
-		}
-		this.writeCompression = this.pendingCompression;
-		this.writeCipher = this.pendingCipher;
-		this.writeSeqNo = 0;
-	}
+    /**
+     * RFC 5246 E.1. "Earlier versions of the TLS specification were not fully clear on what the
+     * record layer version number (TLSPlaintext.version) should contain when sending ClientHello
+     * (i.e., before it is known which version of the protocol will be employed). Thus, TLS servers
+     * compliant with this specification MUST accept any value {03,XX} as the record layer version
+     * number for ClientHello."
+     */
+    void setRestrictReadVersion(boolean enabled)
+    {
+        this.restrictReadVersion = enabled;
+    }
 
-	void receivedReadCipherSpec() throws IOException {
-		if (pendingCompression == null || pendingCipher == null) {
-			throw new TlsFatalAlert(AlertDescription.handshake_failure);
-		}
-		this.readCompression = this.pendingCompression;
-		this.readCipher = this.pendingCipher;
-		this.readSeqNo = 0;
-	}
+    void setPendingConnectionState(TlsCompression tlsCompression, TlsCipher tlsCipher)
+    {
+        this.pendingCompression = tlsCompression;
+        this.pendingCipher = tlsCipher;
+    }
 
-	void finaliseHandshake() throws IOException {
-		if (readCompression != pendingCompression
-				|| writeCompression != pendingCompression
-				|| readCipher != pendingCipher || writeCipher != pendingCipher) {
-			throw new TlsFatalAlert(AlertDescription.handshake_failure);
-		}
-		pendingCompression = null;
-		pendingCipher = null;
-	}
+    void sentWriteCipherSpec()
+        throws IOException
+    {
+        if (pendingCompression == null || pendingCipher == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.handshake_failure);
+        }
+        this.writeCompression = this.pendingCompression;
+        this.writeCipher = this.pendingCipher;
+        this.writeSeqNo = 0;
+    }
 
-	public void readRecord() throws IOException {
+    void receivedReadCipherSpec()
+        throws IOException
+    {
+        if (pendingCompression == null || pendingCipher == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.handshake_failure);
+        }
+        this.readCompression = this.pendingCompression;
+        this.readCipher = this.pendingCipher;
+        this.readSeqNo = 0;
+    }
 
-		short type = TlsUtils.readUint8(input);
+    void finaliseHandshake()
+        throws IOException
+    {
+        if (readCompression != pendingCompression || writeCompression != pendingCompression
+            || readCipher != pendingCipher || writeCipher != pendingCipher)
+        {
+            throw new TlsFatalAlert(AlertDescription.handshake_failure);
+        }
+        this.pendingCompression = null;
+        this.pendingCipher = null;
+    }
 
-		// TODO In earlier RFCs, it was "SHOULD ignore"; should this be
-		// version-dependent?
-		/*
-		 * RFC 5246 6. If a TLS implementation receives an unexpected record
-		 * type, it MUST send an unexpected_message alert.
-		 */
-		checkType(type, AlertDescription.unexpected_message);
+    boolean readRecord()
+        throws IOException
+    {
+        byte[] recordHeader = TlsUtils.readAllOrNothing(5, input);
+        if (recordHeader == null)
+        {
+            return false;
+        }
 
-		if (!restrictReadVersion) {
-			int version = TlsUtils.readVersionRaw(input);
-			if ((version & 0xffffff00) != 0x0300) {
-				throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-			}
-		} else {
-			ProtocolVersion version = TlsUtils.readVersion(input);
-			if (readVersion == null) {
-				readVersion = version;
-			} else if (!version.equals(readVersion)) {
-				throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-			}
-		}
+        short type = TlsUtils.readUint8(recordHeader, 0);
 
-		int length = TlsUtils.readUint16(input);
-		byte[] plaintext = decodeAndVerify(type, input, length);
-		handler.processRecord(type, plaintext, 0, plaintext.length);
-	}
+        /*
+         * RFC 5246 6. If a TLS implementation receives an unexpected record type, it MUST send an
+         * unexpected_message alert.
+         */
+        checkType(type, AlertDescription.unexpected_message);
 
-	protected byte[] decodeAndVerify(short type, InputStream input, int len)
-			throws IOException {
+        if (!restrictReadVersion)
+        {
+            int version = TlsUtils.readVersionRaw(recordHeader, 1);
+            if ((version & 0xffffff00) != 0x0300)
+            {
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+            }
+        }
+        else
+        {
+            ProtocolVersion version = TlsUtils.readVersion(recordHeader, 1);
+            if (readVersion == null)
+            {
+                readVersion = version;
+            }
+            else if (!version.equals(readVersion))
+            {
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+            }
+        }
 
-		checkLength(len, CIPHERTEXT_LIMIT, AlertDescription.record_overflow);
+        int length = TlsUtils.readUint16(recordHeader, 3);
+        byte[] plaintext = decodeAndVerify(type, input, length);
+        handler.processRecord(type, plaintext, 0, plaintext.length);
+        return true;
+    }
 
-		byte[] buf = TlsUtils.readFully(len, input);
-		byte[] decoded = readCipher.decodeCiphertext(readSeqNo++, type, buf, 0,
-				buf.length);
+    byte[] decodeAndVerify(short type, InputStream input, int len)
+        throws IOException
+    {
+        checkLength(len, ciphertextLimit, AlertDescription.record_overflow);
 
-		checkLength(decoded.length, COMPRESSED_LIMIT,
-				AlertDescription.record_overflow);
+        byte[] buf = TlsUtils.readFully(len, input);
+        byte[] decoded = readCipher.decodeCiphertext(readSeqNo++, type, buf, 0, buf.length);
 
-		/*
-		 * TODO RFC5264 6.2.2. Implementation note: Decompression functions are
-		 * responsible for ensuring that messages cannot cause internal buffer
-		 * overflows.
-		 */
-		OutputStream cOut = readCompression.decompress(buffer);
-		if (cOut != buffer) {
-			cOut.write(decoded, 0, decoded.length);
-			cOut.flush();
-			decoded = getBufferContents();
-		}
+        checkLength(decoded.length, compressedLimit, AlertDescription.record_overflow);
 
-		/*
-		 * RFC 5264 6.2.2. If the decompression function encounters a
-		 * TLSCompressed.fragment that would decompress to a length in excess of
-		 * 2^14 bytes, it should report a fatal decompression failure error.
-		 */
-		checkLength(decoded.length, PLAINTEXT_LIMIT,
-				AlertDescription.decompression_failure);
+        /*
+         * TODO RFC5264 6.2.2. Implementation note: Decompression functions are responsible for
+         * ensuring that messages cannot cause internal buffer overflows.
+         */
+        OutputStream cOut = readCompression.decompress(buffer);
+        if (cOut != buffer)
+        {
+            cOut.write(decoded, 0, decoded.length);
+            cOut.flush();
+            decoded = getBufferContents();
+        }
 
-		return decoded;
-	}
+        /*
+         * RFC 5264 6.2.2. If the decompression function encounters a TLSCompressed.fragment that
+         * would decompress to a length in excess of 2^14 bytes, it should report a fatal
+         * decompression failure error.
+         */
+        checkLength(decoded.length, plaintextLimit, AlertDescription.decompression_failure);
 
-	protected void writeRecord(short type, byte[] plaintext,
-			int plaintextOffset, int plaintextLength) throws IOException {
+        /*
+         * RFC 5264 6.2.1 Implementations MUST NOT send zero-length fragments of Handshake, Alert,
+         * or ChangeCipherSpec content types.
+         */
+        if (decoded.length < 1 && type != ContentType.application_data)
+        {
+            throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        }
 
-		/*
-		 * RFC 5264 6. Implementations MUST NOT send record types not defined in
-		 * this document unless negotiated by some extension.
-		 */
-		checkType(type, AlertDescription.internal_error);
+        return decoded;
+    }
 
-		/*
-		 * RFC 5264 6.2.1 The length should not exceed 2^14.
-		 */
-		checkLength(plaintextLength, PLAINTEXT_LIMIT,
-				AlertDescription.internal_error);
+    void writeRecord(short type, byte[] plaintext, int plaintextOffset, int plaintextLength)
+        throws IOException
+    {
+        // Never send anything until a valid ClientHello has been received
+        if (writeVersion == null)
+        {
+            return;
+        }
 
-		/*
-		 * RFC 5264 6.2.1 Implementations MUST NOT send zero-length fragments of
-		 * Handshake, Alert, or ChangeCipherSpec content types.
-		 */
-		if (plaintextLength < 1 && type != ContentType.application_data) {
-			throw new TlsFatalAlert(AlertDescription.internal_error);
-		}
+        /*
+         * RFC 5264 6. Implementations MUST NOT send record types not defined in this document
+         * unless negotiated by some extension.
+         */
+        checkType(type, AlertDescription.internal_error);
 
-		if (type == ContentType.handshake) {
-			updateHandshakeData(plaintext, plaintextOffset, plaintextLength);
-		}
+        /*
+         * RFC 5264 6.2.1 The length should not exceed 2^14.
+         */
+        checkLength(plaintextLength, plaintextLimit, AlertDescription.internal_error);
 
-		OutputStream cOut = writeCompression.compress(buffer);
+        /*
+         * RFC 5264 6.2.1 Implementations MUST NOT send zero-length fragments of Handshake, Alert,
+         * or ChangeCipherSpec content types.
+         */
+        if (plaintextLength < 1 && type != ContentType.application_data)
+        {
+            throw new TlsFatalAlert(AlertDescription.internal_error);
+        }
 
-		byte[] ciphertext;
-		if (cOut == buffer) {
-			ciphertext = writeCipher.encodePlaintext(writeSeqNo++, type,
-					plaintext, plaintextOffset, plaintextLength);
-		} else {
-			cOut.write(plaintext, plaintextOffset, plaintextLength);
-			cOut.flush();
-			byte[] compressed = getBufferContents();
+        if (type == ContentType.handshake)
+        {
+            updateHandshakeData(plaintext, plaintextOffset, plaintextLength);
+        }
 
-			/*
-			 * RFC5264 6.2.2. Compression must be lossless and may not increase
-			 * the content length by more than 1024 bytes.
-			 */
-			checkLength(compressed.length, plaintextLength + 1024,
-					AlertDescription.internal_error);
+        OutputStream cOut = writeCompression.compress(buffer);
 
-			ciphertext = writeCipher.encodePlaintext(writeSeqNo++, type,
-					compressed, 0, compressed.length);
-		}
+        byte[] ciphertext;
+        if (cOut == buffer)
+        {
+            ciphertext = writeCipher.encodePlaintext(writeSeqNo++, type, plaintext, plaintextOffset, plaintextLength);
+        }
+        else
+        {
+            cOut.write(plaintext, plaintextOffset, plaintextLength);
+            cOut.flush();
+            byte[] compressed = getBufferContents();
 
-		/*
-		 * RFC 5264 6.2.3. The length may not exceed 2^14 + 2048.
-		 */
-		checkLength(ciphertext.length, CIPHERTEXT_LIMIT,
-				AlertDescription.internal_error);
+            /*
+             * RFC5264 6.2.2. Compression must be lossless and may not increase the content length
+             * by more than 1024 bytes.
+             */
+            checkLength(compressed.length, plaintextLength + 1024, AlertDescription.internal_error);
 
-		byte[] record = new byte[ciphertext.length + 5];
-		TlsUtils.writeUint8(type, record, 0);
-		TlsUtils.writeVersion(writeVersion, record, 1);
-		TlsUtils.writeUint16(ciphertext.length, record, 3);
-		System.arraycopy(ciphertext, 0, record, 5, ciphertext.length);
-		output.write(record);
-		output.flush();
-	}
+            ciphertext = writeCipher.encodePlaintext(writeSeqNo++, type, compressed, 0, compressed.length);
+        }
 
-	void updateHandshakeData(byte[] message, int offset, int len) {
-		hash.update(message, offset, len);
-	}
+        /*
+         * RFC 5264 6.2.3. The length may not exceed 2^14 + 2048.
+         */
+        checkLength(ciphertext.length, ciphertextLimit, AlertDescription.internal_error);
 
-	/**
-	 * 'sender' only relevant to SSLv3
-	 */
-	byte[] getCurrentHash(byte[] sender) {
-		TlsHandshakeHash d = hash.fork();
+        byte[] record = new byte[ciphertext.length + 5];
+        TlsUtils.writeUint8(type, record, 0);
+        TlsUtils.writeVersion(writeVersion, record, 1);
+        TlsUtils.writeUint16(ciphertext.length, record, 3);
+        System.arraycopy(ciphertext, 0, record, 5, ciphertext.length);
+        output.write(record);
+        output.flush();
+    }
 
-		if (context.getServerVersion().isSSL()) {
-			if (sender != null) {
-				d.update(sender, 0, sender.length);
-			}
-		}
+    void notifyHelloComplete()
+    {
+        this.handshakeHash = handshakeHash.notifyPRFDetermined();
+    }
 
-		return doFinal(d);
-	}
+    TlsHandshakeHash getHandshakeHash()
+    {
+        return handshakeHash;
+    }
 
-	protected void close() throws IOException {
-		IOException e = null;
-		try {
-			input.close();
-		} catch (IOException ex) {
-			e = ex;
-		}
-		try {
-			output.close();
-		} catch (IOException ex) {
-			e = ex;
-		}
-		if (e != null) {
-			throw e;
-		}
-	}
+    TlsHandshakeHash prepareToFinish()
+    {
+        TlsHandshakeHash result = handshakeHash;
+        this.handshakeHash = handshakeHash.stopTracking();
+        return result;
+    }
 
-	protected void flush() throws IOException {
-		output.flush();
-	}
+    void updateHandshakeData(byte[] message, int offset, int len)
+    {
+        handshakeHash.update(message, offset, len);
+    }
 
-	private byte[] getBufferContents() {
-		byte[] contents = buffer.toByteArray();
-		buffer.reset();
-		return contents;
-	}
+    void safeClose()
+    {
+        try
+        {
+            input.close();
+        }
+        catch (IOException e)
+        {
+        }
 
-	private static byte[] doFinal(Digest d) {
-		byte[] bs = new byte[d.getDigestSize()];
-		d.doFinal(bs, 0);
-		return bs;
-	}
+        try
+        {
+            output.close();
+        }
+        catch (IOException e)
+        {
+        }
+    }
 
-	private static void checkType(short type, short alertDescription)
-			throws IOException {
+    void flush()
+        throws IOException
+    {
+        output.flush();
+    }
 
-		switch (type) {
-		case ContentType.change_cipher_spec:
-		case ContentType.alert:
-		case ContentType.handshake:
-		case ContentType.application_data:
-			break;
-		default:
-			throw new TlsFatalAlert(alertDescription);
-		}
-	}
+    private byte[] getBufferContents()
+    {
+        byte[] contents = buffer.toByteArray();
+        buffer.reset();
+        return contents;
+    }
 
-	private static void checkLength(int length, int limit,
-			short alertDescription) throws IOException {
-		if (length > limit) {
-			throw new TlsFatalAlert(alertDescription);
-		}
-	}
+    private static void checkType(short type, short alertDescription)
+        throws IOException
+    {
+        switch (type)
+        {
+        case ContentType.application_data:
+        case ContentType.alert:
+        case ContentType.change_cipher_spec:
+        case ContentType.handshake:
+        case ContentType.heartbeat:
+            break;
+        default:
+            throw new TlsFatalAlert(alertDescription);
+        }
+    }
+
+    private static void checkLength(int length, int limit, short alertDescription)
+        throws IOException
+    {
+        if (length > limit)
+        {
+            throw new TlsFatalAlert(alertDescription);
+        }
+    }
 }

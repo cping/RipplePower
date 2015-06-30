@@ -1,103 +1,207 @@
 package org.ripple.bouncycastle.crypto.tls;
 
-import java.io.ByteArrayOutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.ripple.bouncycastle.crypto.Digest;
+import org.ripple.bouncycastle.util.Shorts;
 
 /**
  * Buffers input until the hash algorithm is determined.
  */
-class DeferredHash implements TlsHandshakeHash {
+class DeferredHash
+    implements TlsHandshakeHash
+{
+    protected static final int BUFFERING_HASH_LIMIT = 4;
 
-	protected TlsContext context;
+    protected TlsContext context;
 
-	private ByteArrayOutputStream buf = new ByteArrayOutputStream();
-	private int prfAlgorithm = -1;
-	private Digest hash = null;
+    private DigestInputBuffer buf;
+    private Hashtable hashes;
+    private Short prfHashAlgorithm;
 
-	DeferredHash() {
-		this.buf = new ByteArrayOutputStream();
-		this.hash = null;
-	}
+    DeferredHash()
+    {
+        this.buf = new DigestInputBuffer();
+        this.hashes = new Hashtable();
+        this.prfHashAlgorithm = null;
+    }
 
-	private DeferredHash(Digest hash) {
-		this.buf = null;
-		this.hash = hash;
-	}
+    private DeferredHash(Short prfHashAlgorithm, Digest prfHash)
+    {
+        this.buf = null;
+        this.hashes = new Hashtable();
+        this.prfHashAlgorithm = prfHashAlgorithm;
+        hashes.put(prfHashAlgorithm, prfHash);
+    }
 
-	public void init(TlsContext context) {
-		this.context = context;
-	}
+    public void init(TlsContext context)
+    {
+        this.context = context;
+    }
 
-	public TlsHandshakeHash commit() {
+    public TlsHandshakeHash notifyPRFDetermined()
+    {
+        int prfAlgorithm = context.getSecurityParameters().getPrfAlgorithm();
+        if (prfAlgorithm == PRFAlgorithm.tls_prf_legacy)
+        {
+            CombinedHash legacyHash = new CombinedHash();
+            legacyHash.init(context);
+            buf.updateDigest(legacyHash);
+            return legacyHash.notifyPRFDetermined();
+        }
 
-		int prfAlgorithm = context.getSecurityParameters().getPrfAlgorithm();
+        this.prfHashAlgorithm = Shorts.valueOf(TlsUtils.getHashAlgorithmForPRFAlgorithm(prfAlgorithm));
 
-		Digest prfHash = TlsUtils.createPRFHash(prfAlgorithm);
+        checkTrackingHash(prfHashAlgorithm);
 
-		byte[] data = buf.toByteArray();
-		prfHash.update(data, 0, data.length);
+        return this;
+    }
 
-		if (prfHash instanceof TlsHandshakeHash) {
-			TlsHandshakeHash tlsPRFHash = (TlsHandshakeHash) prfHash;
-			tlsPRFHash.init(context);
-			return tlsPRFHash.commit();
-		}
+    public void trackHashAlgorithm(short hashAlgorithm)
+    {
+        if (buf == null)
+        {
+            throw new IllegalStateException("Too late to track more hash algorithms");
+        }
 
-		this.prfAlgorithm = prfAlgorithm;
-		this.hash = prfHash;
-		this.buf = null;
+        checkTrackingHash(Shorts.valueOf(hashAlgorithm));
+    }
 
-		return this;
-	}
+    public void sealHashAlgorithms()
+    {
+        checkStopBuffering();
+    }
 
-	public TlsHandshakeHash fork() {
-		checkHash();
-		return new DeferredHash(TlsUtils.clonePRFHash(prfAlgorithm, hash));
-	}
+    public TlsHandshakeHash stopTracking()
+    {
+        Digest prfHash = TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest)hashes.get(prfHashAlgorithm));
+        if (buf != null)
+        {
+            buf.updateDigest(prfHash);
+        }
+        DeferredHash result = new DeferredHash(prfHashAlgorithm, prfHash);
+        result.init(context);
+        return result;
+    }
 
-	public String getAlgorithmName() {
-		checkHash();
-		return hash.getAlgorithmName();
-	}
+    public Digest forkPRFHash()
+    {
+        checkStopBuffering();
 
-	public int getDigestSize() {
-		checkHash();
-		return hash.getDigestSize();
-	}
+        if (buf != null)
+        {
+            Digest prfHash = TlsUtils.createHash(prfHashAlgorithm.shortValue());
+            buf.updateDigest(prfHash);
+            return prfHash;
+        }
 
-	public void update(byte input) {
-		if (hash == null) {
-			buf.write(input);
-		} else {
-			hash.update(input);
-		}
-	}
+        return TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest)hashes.get(prfHashAlgorithm));
+    }
 
-	public void update(byte[] input, int inOff, int len) {
-		if (hash == null) {
-			buf.write(input, inOff, len);
-		} else {
-			hash.update(input, inOff, len);
-		}
-	}
+    public byte[] getFinalHash(short hashAlgorithm)
+    {
+        Digest d = (Digest)hashes.get(Shorts.valueOf(hashAlgorithm));
+        if (d == null)
+        {
+            throw new IllegalStateException("HashAlgorithm " + hashAlgorithm + " is not being tracked");
+        }
 
-	public int doFinal(byte[] output, int outOff) {
-		checkHash();
-		return hash.doFinal(output, outOff);
-	}
+        d = TlsUtils.cloneHash(hashAlgorithm, d);
+        if (buf != null)
+        {
+            buf.updateDigest(d);
+        }
 
-	public void reset() {
-		if (hash == null) {
-			buf.reset();
-		} else {
-			hash.reset();
-		}
-	}
+        byte[] bs = new byte[d.getDigestSize()];
+        d.doFinal(bs, 0);
+        return bs;
+    }
 
-	protected void checkHash() {
-		if (hash == null) {
-			throw new IllegalStateException("No hash algorithm has been set");
-		}
-	}
+    public String getAlgorithmName()
+    {
+        throw new IllegalStateException("Use fork() to get a definite Digest");
+    }
+
+    public int getDigestSize()
+    {
+        throw new IllegalStateException("Use fork() to get a definite Digest");
+    }
+
+    public void update(byte input)
+    {
+        if (buf != null)
+        {
+            buf.write(input);
+            return;
+        }
+
+        Enumeration e = hashes.elements();
+        while (e.hasMoreElements())
+        {
+            Digest hash = (Digest)e.nextElement();
+            hash.update(input);
+        }
+    }
+
+    public void update(byte[] input, int inOff, int len)
+    {
+        if (buf != null)
+        {
+            buf.write(input, inOff, len);
+            return;
+        }
+
+        Enumeration e = hashes.elements();
+        while (e.hasMoreElements())
+        {
+            Digest hash = (Digest)e.nextElement();
+            hash.update(input, inOff, len);
+        }
+    }
+
+    public int doFinal(byte[] output, int outOff)
+    {
+        throw new IllegalStateException("Use fork() to get a definite Digest");
+    }
+
+    public void reset()
+    {
+        if (buf != null)
+        {
+            buf.reset();
+            return;
+        }
+
+        Enumeration e = hashes.elements();
+        while (e.hasMoreElements())
+        {
+            Digest hash = (Digest)e.nextElement();
+            hash.reset();
+        }
+    }
+
+    protected void checkStopBuffering()
+    {
+        if (buf != null && hashes.size() <= BUFFERING_HASH_LIMIT)
+        {
+            Enumeration e = hashes.elements();
+            while (e.hasMoreElements())
+            {
+                Digest hash = (Digest)e.nextElement();
+                buf.updateDigest(hash);
+            }
+
+            this.buf = null;
+        }
+    }
+
+    protected void checkTrackingHash(Short hashAlgorithm)
+    {
+        if (!hashes.containsKey(hashAlgorithm))
+        {
+            Digest hash = TlsUtils.createHash(hashAlgorithm.shortValue());
+            hashes.put(hashAlgorithm, hash);
+        }
+    }
 }

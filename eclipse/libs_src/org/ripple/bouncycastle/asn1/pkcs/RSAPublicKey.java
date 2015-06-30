@@ -11,70 +11,85 @@ import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERSequence;
 
-public class RSAPublicKey extends ASN1Object {
-	private BigInteger modulus;
-	private BigInteger publicExponent;
+public class RSAPublicKey
+    extends ASN1Object
+{
+    private BigInteger modulus;
+    private BigInteger publicExponent;
 
-	public static RSAPublicKey getInstance(ASN1TaggedObject obj,
-			boolean explicit) {
-		return getInstance(ASN1Sequence.getInstance(obj, explicit));
-	}
+    public static RSAPublicKey getInstance(
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
+        return getInstance(ASN1Sequence.getInstance(obj, explicit));
+    }
 
-	public static RSAPublicKey getInstance(Object obj) {
-		if (obj instanceof RSAPublicKey) {
-			return (RSAPublicKey) obj;
-		}
+    public static RSAPublicKey getInstance(
+        Object obj)
+    {
+        if (obj instanceof RSAPublicKey)
+        {
+            return (RSAPublicKey)obj;
+        }
 
-		if (obj != null) {
-			return new RSAPublicKey(ASN1Sequence.getInstance(obj));
-		}
+        if (obj != null)
+        {
+            return new RSAPublicKey(ASN1Sequence.getInstance(obj));
+        }
+        
+        return null;
+    }
+    
+    public RSAPublicKey(
+        BigInteger modulus,
+        BigInteger publicExponent)
+    {
+        this.modulus = modulus;
+        this.publicExponent = publicExponent;
+    }
 
-		return null;
-	}
+    private RSAPublicKey(
+        ASN1Sequence seq)
+    {
+        if (seq.size() != 2)
+        {
+            throw new IllegalArgumentException("Bad sequence size: "
+                    + seq.size());
+        }
 
-	public RSAPublicKey(BigInteger modulus, BigInteger publicExponent) {
-		this.modulus = modulus;
-		this.publicExponent = publicExponent;
-	}
+        Enumeration e = seq.getObjects();
 
-	private RSAPublicKey(ASN1Sequence seq) {
-		if (seq.size() != 2) {
-			throw new IllegalArgumentException("Bad sequence size: "
-					+ seq.size());
-		}
+        modulus = ASN1Integer.getInstance(e.nextElement()).getPositiveValue();
+        publicExponent = ASN1Integer.getInstance(e.nextElement()).getPositiveValue();
+    }
 
-		Enumeration e = seq.getObjects();
+    public BigInteger getModulus()
+    {
+        return modulus;
+    }
 
-		modulus = ASN1Integer.getInstance(e.nextElement()).getPositiveValue();
-		publicExponent = ASN1Integer.getInstance(e.nextElement())
-				.getPositiveValue();
-	}
+    public BigInteger getPublicExponent()
+    {
+        return publicExponent;
+    }
 
-	public BigInteger getModulus() {
-		return modulus;
-	}
+    /**
+     * This outputs the key in PKCS1v2 format.
+     * <pre>
+     *      RSAPublicKey ::= SEQUENCE {
+     *                          modulus INTEGER, -- n
+     *                          publicExponent INTEGER, -- e
+     *                      }
+     * </pre>
+     * <p>
+     */
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-	public BigInteger getPublicExponent() {
-		return publicExponent;
-	}
+        v.add(new ASN1Integer(getModulus()));
+        v.add(new ASN1Integer(getPublicExponent()));
 
-	/**
-	 * This outputs the key in PKCS1v2 format.
-	 * 
-	 * <pre>
-	 *      RSAPublicKey ::= SEQUENCE {
-	 *                          modulus INTEGER, -- n
-	 *                          publicExponent INTEGER, -- e
-	 *                      }
-	 * </pre>
-	 * <p>
-	 */
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(new ASN1Integer(getModulus()));
-		v.add(new ASN1Integer(getPublicExponent()));
-
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 }
