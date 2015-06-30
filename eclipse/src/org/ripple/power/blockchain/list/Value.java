@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ripple.power.Helper;
 import org.ripple.power.utils.ByteUtils;
-import org.spongycastle.util.encoders.Hex;
+import org.ripple.bouncycastle.util.encoders.Hex;
 
 public class Value {
 

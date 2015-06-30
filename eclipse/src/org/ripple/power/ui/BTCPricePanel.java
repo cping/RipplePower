@@ -161,11 +161,22 @@ public class BTCPricePanel extends JPanel {
 
 	public void stop() {
 		_loading = false;
+		try {
+			_post.interrupt();
+			_post = null;
+		} catch (Exception ex) {
+		}
 	}
+
+	private Thread _post;
 
 	private void update() {
 
-		LSystem.postThread(new Updateable() {
+		if (_post != null) {
+			stop();
+		}
+
+		_post = LSystem.postThread(new Updateable() {
 
 			@Override
 			public void action(Object o) {
@@ -280,7 +291,9 @@ public class BTCPricePanel extends JPanel {
 
 					}
 				}
+
 			}
+
 		});
 
 	}

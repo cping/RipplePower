@@ -4,10 +4,10 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 import org.ripple.power.utils.CollectionUtils;
-import org.spongycastle.asn1.sec.SECNamedCurves;
-import org.spongycastle.asn1.x9.X9ECParameters;
-import org.spongycastle.crypto.params.ECDomainParameters;
-import org.spongycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.asn1.sec.SECNamedCurves;
+import org.ripple.bouncycastle.asn1.x9.X9ECParameters;
+import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
+import org.ripple.bouncycastle.math.ec.ECPoint;
 
 public class RippleGenerator {
 	public static ECDomainParameters SECP256K1_PARAMS;

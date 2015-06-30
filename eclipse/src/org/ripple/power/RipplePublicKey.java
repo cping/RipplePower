@@ -1,6 +1,6 @@
 package org.ripple.power;
 
-import org.spongycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.math.ec.ECPoint;
 
 public class RipplePublicKey extends RippleIdentifier {
 

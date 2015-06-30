@@ -121,7 +121,7 @@ public class BTCTopPanel extends JPanel {
 				if (i < arrays.size()) {
 					String key = (String) arrays.getKey(i);
 					chart.addPoint(new ChartValue(key, Float
-							.parseFloat((String) arrays.getValue(key)) / 10000f));
+							.parseFloat((String) arrays.getValue(key))));
 				}
 			}
 		}

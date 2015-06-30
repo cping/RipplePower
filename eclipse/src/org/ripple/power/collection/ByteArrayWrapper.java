@@ -2,7 +2,8 @@ package org.ripple.power.collection;
 
 import java.util.Arrays;
 
-import org.spongycastle.util.encoders.Hex;
+import org.ripple.bouncycastle.util.encoders.Hex;
+
 
 public class ByteArrayWrapper implements Comparable<ByteArrayWrapper> {
 

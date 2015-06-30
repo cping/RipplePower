@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.ripple.power.RippleSchemas.BinaryFormatField;
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.DERInteger;
-import org.spongycastle.asn1.DERSequenceGenerator;
-import org.spongycastle.asn1.DLSequence;
-import org.spongycastle.crypto.params.ECPrivateKeyParameters;
-import org.spongycastle.crypto.params.ECPublicKeyParameters;
-import org.spongycastle.crypto.signers.ECDSASigner;
-import org.spongycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.asn1.ASN1InputStream;
+import org.ripple.bouncycastle.asn1.DERInteger;
+import org.ripple.bouncycastle.asn1.DERSequenceGenerator;
+import org.ripple.bouncycastle.asn1.DLSequence;
+import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.ripple.bouncycastle.crypto.signers.ECDSASigner;
+import org.ripple.bouncycastle.math.ec.ECPoint;
 
 public class RippleSigner {
 	RipplePrivateKey privateKey;
@@ -105,7 +105,6 @@ public class RippleSigner {
 			decoder.close();
 		}
 
-		@SuppressWarnings("deprecation")
 		public byte[] encodeToDER() {
 			try {
 				ByteArrayOutputStream bos = new ByteArrayOutputStream(72);

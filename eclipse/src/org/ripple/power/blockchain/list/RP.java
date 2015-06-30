@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
-import static org.spongycastle.util.Arrays.concatenate;
-import static org.spongycastle.util.BigIntegers.asUnsignedByteArray;
+import static org.ripple.bouncycastle.util.Arrays.concatenate;
+import static org.ripple.bouncycastle.util.BigIntegers.asUnsignedByteArray;
 import org.ripple.power.utils.ByteUtils;
 
 public class RP {

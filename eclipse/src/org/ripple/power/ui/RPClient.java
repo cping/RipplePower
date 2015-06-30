@@ -103,7 +103,10 @@ public class RPClient {
 		// keypair（最早是没有的，不知道rl又换了什么……），似乎遇到java的bug了，目前验证ripple.com站的ssl证书会溢出，然后报错的是sun.security.ssl.SSLSocketImpl部分，私有代码想修改都不行，只能过几天换成openssl直接读吧……
 		HttpRequest request = HttpRequest.get(url);
 		request.trustAllHosts();
-		request.trustAllCerts();
+		try {
+			request.trustAllCerts();
+		} catch (Exception ex) {
+		}
 		boolean ok = false;
 		try {
 			ok = request.ok();

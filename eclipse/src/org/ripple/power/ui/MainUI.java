@@ -131,6 +131,7 @@ public class MainUI {
 				System.setProperty("sun.java2d.translaccel", "true");
 				System.setProperty("sun.java2d.ddforcevram", "true");
 			} else if (LSystem.isAnyMac()) {
+			    System.setProperty("com.apple.mrj.application.apple.menu.about.name", "RipplePower");
 				System.setProperty("apple.awt.showGrowBox", "false");
 				System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
 				System.setProperty("apple.awt.graphics.EnableLazyDrawing",

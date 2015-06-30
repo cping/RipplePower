@@ -49,12 +49,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.UIResource;
 
+import org.ripple.bouncycastle.util.encoders.Hex;
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
-import org.spongycastle.util.encoders.Hex;
 
 public class UIRes {
 

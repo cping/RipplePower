@@ -1,7 +1,7 @@
 package org.ripple.power.blockchain.list;
 
-import static org.spongycastle.util.Arrays.concatenate;
-import static org.spongycastle.util.encoders.Hex.encode;
+import static org.ripple.bouncycastle.util.Arrays.concatenate;
+import static org.ripple.bouncycastle.util.encoders.Hex.encode;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;

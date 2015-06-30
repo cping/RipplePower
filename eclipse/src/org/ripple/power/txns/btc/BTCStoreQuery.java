@@ -29,6 +29,8 @@ public class BTCStoreQuery {
 		_cnyList.add(new BTCPrice(BTCStore.COINBASE));
 		_cnyList.add(new BTCPrice(BTCStore.HUOBI));
 		_cnyList.add(new BTCPrice(BTCStore.OKCOIN));
+		_cnyList.add(new BTCPrice(BTCStore.BTC38));
+		_cnyList.add(new BTCPrice(BTCStore.BTER));
 		_cnyList.add(new BTCPrice(BTCStore.BITCOIN_AVERAGE));
 		_cnyList.add(new BTCPrice(BTCStore.BITCOIN_AVERAGE_GLOBAL));
 
@@ -79,6 +81,8 @@ public class BTCStoreQuery {
 	}
 
 	final static String BITSTAMP = "https://www.bitstamp.net/api/ticker/";
+	final static String BTC38 = "http://api.btc38.com/v1/ticker.php?c=btc";
+	final static String BTER = "http://data.bter.com/api/1/ticker/btc_cny";
 	final static String COINBASE = "https://coinbase.com/api/v1/prices/spot_rate?currency=%s";
 	final static String BITCOIN_AVERAGE = "https://api.bitcoinaverage.com/ticker/%s";
 	final static String BITCOINDE = "https://bitcoinapi.de/widget/current-btc-price/rate.json";
@@ -128,6 +132,20 @@ public class BTCStoreQuery {
 			switch (store) {
 			case BITSTAMP:
 				result = HttpRequest.getHttps(BTCStoreQuery.BITSTAMP);
+				if (result != null && result.indexOf("error") == -1) {
+					JSONObject obj = new JSONObject(result);
+					result = obj.optString("last");
+				}
+				break;
+			case BTC38:
+				result = HttpRequest.getHttps(BTCStoreQuery.BTC38);
+				if (result != null && result.indexOf("error") == -1) {
+					JSONObject obj = new JSONObject(result);
+					result = obj.optJSONObject("ticker").optString("last");
+				}
+				break;
+			case BTER:
+				result = HttpRequest.getHttps(BTCStoreQuery.BTER);
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("last");
@@ -316,7 +334,7 @@ public class BTCStoreQuery {
 				break;
 			case CEXIO:
 				result = HttpRequest.getHttps(String.format(
-						"https://cex.io/api/last_price/BTC/%s", _cur));
+						BTCStoreQuery.CEXIO, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("lprice");

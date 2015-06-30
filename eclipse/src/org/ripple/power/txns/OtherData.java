@@ -314,7 +314,7 @@ public class OtherData {
 				+ name + "-" + limit + "d.json";
 		HttpRequest request = HttpRequest.get(s);
 		request.accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		request.userAgent("Moziaalla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
+		request.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
 		request.acceptEncoding("gzip, deflate");
 		request.acceptLanguage("en-US,en;q=0.5");
 		request.acceptCharset("ISO-8859-1,utf-8;q=0.7,*;q=0.7");
@@ -613,6 +613,7 @@ public class OtherData {
 		return getCapitalization(day, name, -1);
 	}
 
+	//coinmarketcap data not update……
 	public static ArrayMap getCapitalization(int day, String name,
 			int trend_limit) throws Exception {
 		if (name == null) {
@@ -642,14 +643,14 @@ public class OtherData {
 			if (trend_limit > 0) {
 				for (int i = arrays.length() - trend_limit; i < arrays.length(); i++) {
 					JSONArray result = arrays.getJSONArray(i);
-					list.put(result.getLong(0), result.getLong(1));
+					list.put(result.getLong(0), result.getDouble(1));
 				}
 			} else {
 				for (int i = 0; i < arrays.length(); i++) {
 					JSONArray result = arrays.getJSONArray(i);
 					String key = YYYY_MM_DD_HHMM.format(new Date(result
 							.getLong(0)));
-					String value = String.valueOf(result.getLong(1));
+					String value = String.valueOf(result.getDouble(1));
 					list.put(key, value);
 				}
 			}

@@ -2,7 +2,7 @@ package org.ripple.power.blockchain.list;
 
 import java.io.Serializable;
 
-import org.spongycastle.util.encoders.Hex;
+import org.ripple.bouncycastle.util.encoders.Hex;
 
 public class DecodeResult implements Serializable {
 

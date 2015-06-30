@@ -48,8 +48,6 @@ public abstract class SoundBox {
 
 	public static final int SOUNDTYPE_AAC = 8;
 
-	public static final int SOUNDTYPE_MOD = 9;
-
 	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(
 			9);
 
@@ -62,7 +60,6 @@ public abstract class SoundBox {
 		supportedFiles.put("aiff", new Integer(SOUNDTYPE_AIFF));
 		supportedFiles.put("aac", new Integer(SOUNDTYPE_AAC));
 		supportedFiles.put("rmf", new Integer(SOUNDTYPE_RMF));
-		supportedFiles.put("mod", new Integer(SOUNDTYPE_MOD));
 	}
 
 	public static boolean isSupportedFile(String fileName) {
@@ -94,9 +91,6 @@ public abstract class SoundBox {
 					break;
 				case SOUNDTYPE_OGG:
 					players[currentPlayer] = new LOggSound();
-					break;
-				case SOUNDTYPE_MOD:
-					players[currentPlayer] = new LModSound();
 					break;
 				case SOUNDTYPE_MP3:
 					players[currentPlayer] = new LMP3Sound();

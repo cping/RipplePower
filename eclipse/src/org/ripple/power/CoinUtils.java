@@ -1,22 +1,41 @@
 package org.ripple.power;
 
+import org.ripple.bouncycastle.asn1.ASN1InputStream;
+import org.ripple.bouncycastle.asn1.DERInteger;
+import org.ripple.bouncycastle.asn1.DERSequenceGenerator;
+import org.ripple.bouncycastle.asn1.DLSequence;
+import org.ripple.bouncycastle.asn1.sec.SECNamedCurves;
+import org.ripple.bouncycastle.asn1.x9.X9ECParameters;
+import org.ripple.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.ripple.bouncycastle.crypto.engines.AESEngine;
+import org.ripple.bouncycastle.crypto.generators.SCrypt;
+import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
+import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.ripple.bouncycastle.crypto.params.KeyParameter;
+import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
+import org.ripple.bouncycastle.crypto.signers.ECDSASigner;
+import org.ripple.bouncycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.util.Arrays;
 import org.ripple.power.utils.KeyPair;
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.DERInteger;
-import org.spongycastle.asn1.DERSequenceGenerator;
-import org.spongycastle.asn1.DLSequence;
-import org.spongycastle.asn1.sec.SECNamedCurves;
-import org.spongycastle.asn1.x9.X9ECParameters;
-import org.spongycastle.crypto.digests.RIPEMD160Digest;
-import org.spongycastle.crypto.engines.AESEngine;
-import org.spongycastle.crypto.generators.SCrypt;
-import org.spongycastle.crypto.params.ECDomainParameters;
-import org.spongycastle.crypto.params.ECPrivateKeyParameters;
-import org.spongycastle.crypto.params.ECPublicKeyParameters;
-import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.crypto.params.ParametersWithRandom;
-import org.spongycastle.crypto.signers.ECDSASigner;
-import org.spongycastle.math.ec.ECPoint;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -431,7 +450,6 @@ public final class CoinUtils {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static byte[] sign(BigInteger privateKey, byte[] input) {
 		synchronized (EC_PARAMS) {
 			ECDSASigner signer = new ECDSASigner();
@@ -506,7 +524,6 @@ public final class CoinUtils {
 		return bytes;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static String bip38GetIntermediateCode(String password)
 			throws InterruptedException {
 		try {
@@ -530,7 +547,6 @@ public final class CoinUtils {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static KeyPair bip38GenerateKeyPair(String intermediateCode,
 			boolean compressedPublicKey) throws InterruptedException, Exception {
 		byte[] intermediateBytes = decodeBase58(intermediateCode);
@@ -635,7 +651,6 @@ public final class CoinUtils {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static String bip38DecryptConfirmation(String confirmationCode,
 			String password) throws Exception {
 		byte[] confirmationBytes = decodeBase58(confirmationCode);
@@ -768,7 +783,6 @@ public final class CoinUtils {
 		return privateKeyBytes;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static KeyPair bip38Decrypt(String encryptedPrivateKey,
 			String password) throws InterruptedException, Exception {
 		byte[] encryptedPrivateKeyBytes = decodeBase58(encryptedPrivateKey);
@@ -804,7 +818,7 @@ public final class CoinUtils {
 					System.arraycopy(
 							doubleSha256(keyPair.address.getBytes("UTF-8")), 0,
 							addressHashCalculated, 0, 4);
-					if (!org.spongycastle.util.Arrays.areEqual(
+					if (!Arrays.areEqual(
 							addressHashCalculated, addressHash)) {
 						throw new RuntimeException("Bad password");
 					}

@@ -2,8 +2,8 @@ package org.ripple.power;
 
 import java.math.BigInteger;
 
-import org.spongycastle.crypto.digests.SHA3Digest;
-import org.spongycastle.util.encoders.Hex;
+import org.ripple.bouncycastle.crypto.digests.SHA3Digest;
+import org.ripple.bouncycastle.util.encoders.Hex;
 
 public class SHA3 {
 

@@ -2,22 +2,22 @@ package org.ripple.power.wallet;
 
 import java.security.SecureRandom;
 import java.io.UnsupportedEncodingException;
-
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
+import org.ripple.bouncycastle.crypto.BufferedBlockCipher;
+import org.ripple.bouncycastle.crypto.CipherParameters;
+import org.ripple.bouncycastle.crypto.PBEParametersGenerator;
+import org.ripple.bouncycastle.crypto.engines.AESFastEngine;
+import org.ripple.bouncycastle.crypto.generators.OpenSSLPBEParametersGenerator;
+import org.ripple.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.ripple.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 import org.ripple.power.CoinUtils;
 import org.ripple.power.config.LSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongycastle.crypto.BufferedBlockCipher;
-import org.spongycastle.crypto.CipherParameters;
-import org.spongycastle.crypto.PBEParametersGenerator;
-import org.spongycastle.crypto.engines.AESFastEngine;
-import org.spongycastle.crypto.generators.OpenSSLPBEParametersGenerator;
-import org.spongycastle.crypto.modes.CBCBlockCipher;
-import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.spongycastle.crypto.params.ParametersWithIV;
+
 
 public class OpenSSL {
 	private Logger log = LoggerFactory.getLogger(OpenSSL.class);

@@ -54,12 +54,14 @@ public class LWaveSound implements Sound {
 
 			if ((format.getEncoding() == AudioFormat.Encoding.ULAW)
 					|| (format.getEncoding() == AudioFormat.Encoding.ALAW)) {
-
 				AudioFormat temp = new AudioFormat(
 						AudioFormat.Encoding.PCM_SIGNED,
 						format.getSampleRate(),
 						format.getSampleSizeInBits() * 2, format.getChannels(),
 						format.getFrameSize() * 2, format.getFrameRate(), true);
+				if (ain != null) {
+					ain.close();
+				}
 				ain = AudioSystem.getAudioInputStream(temp, ain);
 				format = temp;
 			}

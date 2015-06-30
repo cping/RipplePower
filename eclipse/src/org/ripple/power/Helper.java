@@ -33,9 +33,9 @@ import org.ripple.power.blockchain.list.RP;
 import org.ripple.power.collection.ByteArrayWrapper;
 import org.ripple.power.collection.LRUMap;
 import org.ripple.power.utils.ByteUtils;
-import org.spongycastle.crypto.Digest;
-import org.spongycastle.crypto.digests.RIPEMD160Digest;
-import org.spongycastle.util.encoders.Hex;
+import org.ripple.bouncycastle.crypto.Digest;
+import org.ripple.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.ripple.bouncycastle.util.encoders.Hex;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Helper {

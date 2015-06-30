@@ -44,7 +44,6 @@ import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,7 +64,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONObject;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -274,25 +272,10 @@ public class HttpRequest {
 			"SSL_RSA_WITH_RC4_128_MD5" };
 
 	private static SSLSocketFactory getTrustedFactory()
-			throws HttpRequestException {
+			throws Exception {
 		System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
 		if (TRUSTED_FACTORY == null) {
-			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-
-				public X509Certificate[] getAcceptedIssuers() {
-					return new X509Certificate[0];
-				}
-
-				public void checkClientTrusted(X509Certificate[] chain,
-						String authType) {
-
-				}
-
-				public void checkServerTrusted(X509Certificate[] chain,
-						String authType) {
-
-				}
-			} };
+			final TrustManager[] trustAllCerts = new TrustManager[] { new RippleTrustManager.LocalStoreX509TrustManager() };
 			try {
 				String algorithm = Security
 						.getProperty("ssl.KeyManagerFactory.algorithm");
@@ -1830,7 +1813,7 @@ public class HttpRequest {
 		return this;
 	}
 
-	public HttpRequest trustAllCerts() throws HttpRequestException {
+	public HttpRequest trustAllCerts() throws Exception {
 		final HttpURLConnection connection = getConnection();
 		if (connection instanceof HttpsURLConnection) {
 			((HttpsURLConnection) connection)

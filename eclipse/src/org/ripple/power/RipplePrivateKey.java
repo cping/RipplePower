@@ -2,8 +2,8 @@ package org.ripple.power;
 
 import java.math.BigInteger;
 
-import org.spongycastle.crypto.params.ECPrivateKeyParameters;
-import org.spongycastle.math.ec.ECPoint;
+import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.ripple.bouncycastle.math.ec.ECPoint;
 
 public class RipplePrivateKey extends RippleIdentifier {
 	/**
@@ -57,7 +57,6 @@ public class RipplePrivateKey extends RippleIdentifier {
 		BigInteger privateBI = new BigInteger(1, this.payloadBytes);
 		ECPoint uncompressed = RippleGenerator.SECP256K1_PARAMS.getG()
 				.multiply(privateBI);
-		@SuppressWarnings("deprecation")
 		ECPoint publicPoint = new ECPoint.Fp(
 				RippleGenerator.SECP256K1_PARAMS.getCurve(),
 				uncompressed.getX(), uncompressed.getY(), true);
