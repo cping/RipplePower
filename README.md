@@ -1,4 +1,12 @@
-﻿Please see [XRPMoon.com](http://www.xrpmoon.com/blog) for downloads, build and installation instructions and other documentation.
+﻿# Download RipplePower
+
+Desktop Version [Demo](https://github.com/cping/RipplePower/releases/download/0.1.1/demo-0.1.1.rar)
+
+Android Version (work in progress)
+
+IOS Version (work in progress)
+
+Please see [XRPMoon.com](http://www.xrpmoon.com/blog) for downloads, build and installation instructions and other documentation.
 
 # Ripple Desktop Client (100% Java)
 
