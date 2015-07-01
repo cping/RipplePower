@@ -1259,4 +1259,11 @@ public final class LSystem {
 	public static String getAppPassword() {
 		return applicationPassword.trim();
 	}
+	
+	public static void sleep(long sleep){
+		try {
+			Thread.sleep(sleep);
+		} catch (InterruptedException e) {
+		}
+	}
 }

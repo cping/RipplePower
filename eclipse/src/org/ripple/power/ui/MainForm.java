@@ -324,7 +324,7 @@ public class MainForm extends JFrame implements ActionListener {
 		if (mainPanel != null) {
 			mainPanel.removeTrayIcon();
 		}
-		dispose();
+		SwingUtils.close(this);
 		LSystem.shutdown();
 
 	}

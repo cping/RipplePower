@@ -16,6 +16,17 @@ import org.bootstrap.ui.NavlinkUI;
 
 public class RPNavlink extends JButton {
 
+	public static interface Click {
+
+		public void down();
+
+		public void up();
+		
+		public void move();
+
+		public void exit();
+	}
+
 	/**
 	 * 
 	 */
@@ -31,6 +42,7 @@ public class RPNavlink extends JButton {
 
 	private JPanel containerPanel;
 	private JPanel linkPanel;
+	private Click click;
 
 	public RPNavbar getNavbar() {
 		return navbar;
@@ -112,6 +124,9 @@ public class RPNavlink extends JButton {
 			private int cursorSave;
 
 			public void mouseEntered(MouseEvent e) {
+				if (click != null) {
+					click.move();
+				}
 				colorSave = RPNavlink.this.getForeground();
 				cursorSave = RPNavlink.this.getCursor().getType();
 				RPNavlink.this.setCursor(Cursor
@@ -121,22 +136,34 @@ public class RPNavlink extends JButton {
 			}
 
 			public void mouseExited(MouseEvent e) {
+				if (click != null) {
+					click.exit();
+				}
 				RPNavlink.this.setForeground(colorSave);
 				RPNavlink.this
 						.setCursor(Cursor.getPredefinedCursor(cursorSave));
 			}
 
 			public void mouseReleased(MouseEvent e) {
-
+				if (click != null) {
+					click.up();
+				}
 			}
 
 			public void mousePressed(MouseEvent e) {
 				route();
+				if (click != null) {
+					click.down();
+				}
 			}
 
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
+	}
+	
+	public void setClick(Click click){
+		this.click = click;
 	}
 
 	@Override

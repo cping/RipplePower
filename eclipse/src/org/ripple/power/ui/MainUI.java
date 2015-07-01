@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -21,6 +22,7 @@ import org.ripple.power.config.ApplicationInfo;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.GraphicTool;
 import org.ripple.power.helper.HelperDialog;
+import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Updateable;
@@ -36,8 +38,9 @@ import org.ripple.power.utils.SwingUtils;
 import net.miginfocom.swing.MigLayout;
 
 public class MainUI {
-	
-	private BTCPanel btcPanel ;
+
+	private BTCPanel btcPanel;
+
 	class HIRipple extends AVGScreen {
 
 		int type;
@@ -131,7 +134,9 @@ public class MainUI {
 				System.setProperty("sun.java2d.translaccel", "true");
 				System.setProperty("sun.java2d.ddforcevram", "true");
 			} else if (LSystem.isAnyMac()) {
-			    System.setProperty("com.apple.mrj.application.apple.menu.about.name", "RipplePower");
+				System.setProperty(
+						"com.apple.mrj.application.apple.menu.about.name",
+						"RipplePower");
 				System.setProperty("apple.awt.showGrowBox", "false");
 				System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
 				System.setProperty("apple.awt.graphics.EnableLazyDrawing",
@@ -259,9 +264,38 @@ public class MainUI {
 		navLinkList.add(welcomeLink);
 
 		// ripple
-		Icon iconXRP = UIRes.getImage("icons/ripple.png");
-		RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
+		final Icon iconXrpIcon = UIRes.getImage("icons/ripple.png");
+		final RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
 				form.getMainPanel());
+		xrpLink.setClick(new RPNavlink.Click() {
+
+			final AnimationIcon iconBtcRotating = new AnimationIcon(
+					iconXrpIcon, xrpLink, true);
+
+			@Override
+			public void up() {
+
+			}
+
+			@Override
+			public void down() {
+
+			}
+
+			@Override
+			public void move() {
+				iconBtcRotating.start();
+				xrpLink.setIcon(iconBtcRotating);
+
+			}
+
+			@Override
+			public void exit() {
+				iconBtcRotating.stop();
+				xrpLink.setIcon(iconXrpIcon);
+			}
+		});
+
 		xrpLink.addActionListener(new ActionListener() {
 
 			@Override
@@ -270,51 +304,67 @@ public class MainUI {
 
 					@Override
 					public void action(Object o) {
-						LSystem.postThread(new Updateable() {
-
-							@Override
-							public void action(Object o) {
-								HelperDialog.showDialog();
-								RPJSonLog.showDialog();
-								HoldXRPDialog.showDialog();
-								RPOtherServicesDialog.showDialog();
-								try {
-									Thread.sleep(LSystem.SECOND * 3);
-								} catch (InterruptedException e) {
-								}
-								HelperDialog.get();
-								try {
-									Thread.sleep(LSystem.SECOND);
-								} catch (InterruptedException e) {
-								}
-								RPJSonLog.get();
-								try {
-									Thread.sleep(LSystem.SECOND);
-								} catch (InterruptedException e) {
-								}
-								HoldXRPDialog.get();
-								try {
-									Thread.sleep(LSystem.SECOND);
-								} catch (InterruptedException e) {
-								}
-								RPOtherServicesDialog.get();
-							}
-						});
-
+						PriceMonitor.get();
+						HelperDialog.showDialog();
+						RPJSonLog.showDialog();
+						HoldXRPDialog.showDialog();
+						RPOtherServicesDialog.showDialog();
+						LSystem.sleep(LSystem.SECOND);
+						HelperDialog.get();
+						LSystem.sleep(LSystem.SECOND);
+						RPJSonLog.get();
+						LSystem.sleep(LSystem.SECOND);
+						HoldXRPDialog.get();
+						LSystem.sleep(LSystem.SECOND);
+						RPOtherServicesDialog.get();
 					}
 				};
 				LSystem.postThread(update);
 			}
 		});
-		xrpLink.setIcon(iconXRP);
+		xrpLink.setIcon(iconXrpIcon);
 		xrpLink.setForeground(UIConfig.getBrandColor());
 		xrpLink.setFont(navLinkFont);
 		navLinkList.add(xrpLink);
 
 		// bitcoin
-		Icon iconBtc = UIRes.getImage("icons/btc.png");
 		btcPanel = new BTCPanel();
+
+		final Icon iconBtcIcon = UIRes.getImage("icons/btc.png");
+
 		final RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, btcPanel);
+		btcLink.setClick(new RPNavlink.Click() {
+
+			final AnimationIcon iconBtcRotating = new AnimationIcon(
+					iconBtcIcon, btcLink, true);
+
+			@Override
+			public void up() {
+
+			}
+
+			@Override
+			public void down() {
+
+			}
+
+			@Override
+			public void move() {
+				iconBtcRotating.start();
+				btcLink.setIcon(iconBtcRotating);
+
+			}
+
+			@Override
+			public void exit() {
+				iconBtcRotating.stop();
+				btcLink.setIcon(iconBtcIcon);
+			}
+		});
+
+		btcLink.setIcon(iconBtcIcon);
+		btcLink.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
 		btcLink.addActionListener(new ActionListener() {
 
 			@Override
@@ -335,7 +385,7 @@ public class MainUI {
 
 			}
 		});
-		btcLink.setIcon(iconBtc);
+
 		btcLink.setForeground(UIConfig.getBrandColor());
 		btcLink.setFont(navLinkFont);
 		navLinkList.add(btcLink);

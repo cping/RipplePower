@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -32,7 +33,6 @@ import org.bootstrap.style.FontStyle;
 import org.bootstrap.style.FontStyleIcon;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.RPClipboard;
-import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
@@ -413,188 +413,208 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private void submitActionCommand(String actionName) {
-		try {
-			if (actionName.equals(CommandFlag.Ripple_Blockchain)) {
-				RPToast.playWorking(LSystem.applicationMain);
-				return;
-			}
-			if (actionName.equals(CommandFlag.Todo)) {
-				LSystem.postThread(new Updateable() {
+	private void submitActionCommand(final String actionName) {
+		SwingUtilities.invokeLater(new Runnable() {
 
-					@Override
-					public void action(Object o) {
-						RPTodoFrame.get();
+			@Override
+			public void run() {
+
+				try {
+					if (actionName.equals(CommandFlag.Ripple_Blockchain)) {
+						RPToast.playWorking(LSystem.applicationMain);
+						return;
 					}
-				});
-				return;
-			}
-			if (actionName.equals(CommandFlag.Download)) {
-				LSystem.postThread(new Updateable() {
+					if (actionName.equals(CommandFlag.Todo)) {
+						LSystem.postThread(new Updateable() {
 
-					@Override
-					public void action(Object o) {
-						RPDownloadDialog.showDialog(LSystem.applicationMain);
+							@Override
+							public void action(Object o) {
+								RPTodoFrame.get();
+							}
+						});
+						return;
 					}
-				});
-				return;
-			}
-			if (actionName.equals(CommandFlag.Editor)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"Edit Ripple script and running.", Style.SUCCESS)
-						.display();
-				EditorDialog.showDialog(LSystem.applicationMain);
-				return;
-			}
-			if (actionName.equals(CommandFlag.RippledNodeS)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"Please select a node go to Ripple Network.",
-						Style.SUCCESS).display();
-				RPSRippledDialog.showDialog(LangConfig.get(
-						RPSRippledDialog.class, "update_node", "Rippled Node"),
-						LSystem.applicationMain);
+					if (actionName.equals(CommandFlag.Download)) {
+						LSystem.postThread(new Updateable() {
 
-				return;
-			}
-			if (actionName.equals(CommandFlag.HistoricalPrices)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"Historical price charts.", Style.SUCCESS).display();
-				RPChartsHistoryDialog.showDialog(LSystem.applicationMain);
-				return;
-			}
-			if (actionName.equals(CommandFlag.AddAddress)) {
-				RPSelectAddressDialog.showDialog("Select Wallet Mode",
-						LSystem.applicationMain);
-				return;
-			}
-			if (actionName.equals(CommandFlag.Backup)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"Backup your wallet file.", Style.SUCCESS).display();
-				String path = Backup.create();
-				if (path != null) {
-					UIRes.showInfoMessage(
-							this,
-							UIMessage.info,
-							String.format(
+							@Override
+							public void action(Object o) {
+								RPDownloadDialog
+										.showDialog(LSystem.applicationMain);
+							}
+						});
+						return;
+					}
+					if (actionName.equals(CommandFlag.Editor)) {
+						RPToast.makeText(LSystem.applicationMain,
+								"Edit Ripple script and running.",
+								Style.SUCCESS).display();
+						EditorDialog.showDialog(LSystem.applicationMain);
+						return;
+					}
+					if (actionName.equals(CommandFlag.RippledNodeS)) {
+						RPToast.makeText(LSystem.applicationMain,
+								"Please select a node go to Ripple Network.",
+								Style.SUCCESS).display();
+						RPSRippledDialog.showDialog(LangConfig.get(
+								RPSRippledDialog.class, "update_node",
+								"Rippled Node"), LSystem.applicationMain);
+
+						return;
+					}
+					if (actionName.equals(CommandFlag.HistoricalPrices)) {
+						RPToast.makeText(LSystem.applicationMain,
+								"Historical price charts.", Style.SUCCESS)
+								.display();
+						RPChartsHistoryDialog
+								.showDialog(LSystem.applicationMain);
+						return;
+					}
+					if (actionName.equals(CommandFlag.AddAddress)) {
+						RPSelectAddressDialog.showDialog("Select Wallet Mode",
+								LSystem.applicationMain);
+						return;
+					}
+					if (actionName.equals(CommandFlag.Backup)) {
+						RPToast.makeText(LSystem.applicationMain,
+								"Backup your wallet file.", Style.SUCCESS)
+								.display();
+						String path = Backup.create();
+						if (path != null) {
+							UIRes.showInfoMessage(
+									MainPanel.this,
+									UIMessage.info,
+									String.format(
+											LangConfig
+													.get(this, "back1",
+															"Successful backup, the backup is saved in %s"),
+											path));
+						} else {
+							UIRes.showErrorMessage(
+									MainPanel.this,
+									UIMessage.error,
 									LangConfig
-											.get(this, "back1",
-													"Successful backup, the backup is saved in %s"),
-									path));
-				} else {
-					UIRes.showErrorMessage(this, UIMessage.error, LangConfig
-							.get(this, "back2",
-									"Backup fails, wallet file does not exist"));
-				}
-				return;
-			}
-			if (actionName.equals(CommandFlag.ExchangeRate)) {
-				RPToast.makeText(LSystem.applicationMain,
-						"View the current exchange rate.", Style.SUCCESS)
-						.display();
-				RPExchangeRateViewDialog.showDialog(
-						LangConfig.get(this, "exchange_rate", "Exchange Rate"),
-						LSystem.applicationMain);
-				return;
-			}
-			int row = table.getSelectedRow();
-			if (row < 0 && !actionName.equals(CommandFlag.AddAddress)) {
-				if (actionName.equals(CommandFlag.Donation)) {
-					LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
-							"cping", "Thank you donate to RipplePower", 100);
-					return;
-				}
-				if (actionName.equals(CommandFlag.DetailsAddress)) {
-					RPToast.makeText(LSystem.applicationMain,
-							"View Ripple address details.", Style.SUCCESS)
-							.display();
-					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
-							LangConfig.get(RPAccountInfoDialog.class,
-									"details", "Address details info"), "");
-					return;
-				}
-				if (actionName.equals(CommandFlag.Gateway)) {
-					RPToast.makeText(LSystem.applicationMain,
-							"Gateway Management and settings.", Style.SUCCESS)
-							.display();
-					RPGatewayDialog.showDialog(LangConfig
-							.get(RPGatewayDialog.class, "title",
+											.get(this, "back2",
+													"Backup fails, wallet file does not exist"));
+						}
+						return;
+					}
+					if (actionName.equals(CommandFlag.ExchangeRate)) {
+						RPToast.makeText(LSystem.applicationMain,
+								"View the current exchange rate.",
+								Style.SUCCESS).display();
+						RPExchangeRateViewDialog.showDialog(LangConfig.get(
+								this, "exchange_rate", "Exchange Rate"),
+								LSystem.applicationMain);
+						return;
+					}
+					int row = table.getSelectedRow();
+					if (row < 0 && !actionName.equals(CommandFlag.AddAddress)) {
+						if (actionName.equals(CommandFlag.Donation)) {
+							LSystem.sendRESTCoin(
+									"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
+									"cping", "Thank you donate to RipplePower",
+									100);
+							return;
+						}
+						if (actionName.equals(CommandFlag.DetailsAddress)) {
+							RPToast.makeText(LSystem.applicationMain,
+									"View Ripple address details.",
+									Style.SUCCESS).display();
+							RPAccountInfoDialog.showDialog(
+									LSystem.applicationMain, LangConfig.get(
+											RPAccountInfoDialog.class,
+											"details", "Address details info"),
+									"");
+							return;
+						}
+						if (actionName.equals(CommandFlag.Gateway)) {
+							RPToast.makeText(LSystem.applicationMain,
+									"Gateway Management and settings.",
+									Style.SUCCESS).display();
+							RPGatewayDialog.showDialog(LangConfig.get(
+									RPGatewayDialog.class, "title",
 									"Gateway Operation"),
-							LSystem.applicationMain, null);
-					return;
-				}
-				if (actionName.equals(CommandFlag.Exchange)) {
-					RPToast.makeText(LSystem.applicationMain,
-							"Go to currency exchange trading network.",
-							Style.SUCCESS).display();
-					RPExchangeDialog.showDialog(LangConfig.get(this,
-							"rippletrade", "Ripple Trading Network"),
-							LSystem.applicationMain, null);
-					return;
-				} else {
-					RPToast.makeText(
-							LSystem.applicationMain,
-							LangConfig
-									.get(this, "stop_cmd",
-											"You have not selected any address, so the command can not complete !"),
-							Style.ERROR).display();
-					return;
-				}
-			} else if (actionName.equals(CommandFlag.Donation)) {
-				row = table.convertRowIndexToModel(row);
-				WalletItem item = WalletCache.get().readRow(row);
-				BigDecimal number = new BigDecimal(item.getAmount());
-				if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
-					UIRes.showWarningMessage(this, LangConfig.get(this,
-							"txfails", "Transaction fails"), LangConfig.get(
-							this, "stop1",
-							"XRP little amount, not suitable for donation-_-"));
+									LSystem.applicationMain, null);
+							return;
+						}
+						if (actionName.equals(CommandFlag.Exchange)) {
+							RPToast.makeText(LSystem.applicationMain,
+									"Go to currency exchange trading network.",
+									Style.SUCCESS).display();
+							RPExchangeDialog.showDialog(LangConfig.get(this,
+									"rippletrade", "Ripple Trading Network"),
+									LSystem.applicationMain, null);
+							return;
+						} else {
+							RPToast.makeText(
+									LSystem.applicationMain,
+									LangConfig
+											.get(this, "stop_cmd",
+													"You have not selected any address, so the command can not complete !"),
+									Style.ERROR).display();
+							return;
+						}
+					} else if (actionName.equals(CommandFlag.Donation)) {
+						row = table.convertRowIndexToModel(row);
+						WalletItem item = WalletCache.get().readRow(row);
+						BigDecimal number = new BigDecimal(item.getAmount());
+						if (number.compareTo(BigDecimal.valueOf(30)) < 1) {
+							UIRes.showWarningMessage(
+									MainPanel.this,
+									LangConfig.get(this, "txfails",
+											"Transaction fails"),
+									LangConfig
+											.get(this, "stop1",
+													"XRP little amount, not suitable for donation-_-"));
 
-				} else {
-					RPXRPSendDialog.showDialog(item.getPublicKey()
-							+ " XRP Donation", LSystem.applicationMain, item,
-							"rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "10",
-							LSystem.getFee());
-				}
-			} else if (actionName.equals(CommandFlag.AddAddress)) {
+						} else {
+							RPXRPSendDialog.showDialog(item.getPublicKey()
+									+ " XRP Donation", LSystem.applicationMain,
+									item, "rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
+									"10", LSystem.getFee());
+						}
+					} else if (actionName.equals(CommandFlag.AddAddress)) {
 
-			} else {
+					} else {
 
-				row = table.convertRowIndexToModel(row);
+						row = table.convertRowIndexToModel(row);
 
-				WalletItem item = WalletCache.get().readRow(row);
+						WalletItem item = WalletCache.get().readRow(row);
 
-				String action = actionName;
-				switch (action) {
-				case CommandFlag.SendCoin:
-					RPSelectMoneyDialog.showDialog(LangConfig.get(this, "send",
-							"Please select the currency you want to send"),
-							LSystem.applicationMain, item);
-					break;
-				case CommandFlag.Exchange:
-					RPToast.makeText(LSystem.applicationMain,
-							"Go to currency exchange trading network.",
-							Style.SUCCESS).display();
-					RPExchangeDialog.showDialog(
-							LangConfig.get(this, "rippletrade",
-									"Ripple Trading Network")
-									+ "("
-									+ item.getPublicKey() + ")",
-							LSystem.applicationMain, item);
-					break;
-				case CommandFlag.Gateway:
-					RPToast.makeText(LSystem.applicationMain,
-							"Gateway Management and settings.", Style.SUCCESS)
-							.display();
-					RPGatewayDialog.showDialog(
-							LangConfig.get(RPGatewayDialog.class, "title",
-									"Gateway Operation")
-									+ "("
-									+ item.getPublicKey() + ")",
-							LSystem.applicationMain, item);
-					break;
-				case CommandFlag.Secret:
-					int index = UIRes
-							.showConfirmMessage(
+						String action = actionName;
+						switch (action) {
+						case CommandFlag.SendCoin:
+							RPSelectMoneyDialog.showDialog(
+									LangConfig
+											.get(this, "send",
+													"Please select the currency you want to send"),
+									LSystem.applicationMain, item);
+							break;
+						case CommandFlag.Exchange:
+							RPToast.makeText(LSystem.applicationMain,
+									"Go to currency exchange trading network.",
+									Style.SUCCESS).display();
+							RPExchangeDialog.showDialog(
+									LangConfig.get(this, "rippletrade",
+											"Ripple Trading Network")
+											+ "("
+											+ item.getPublicKey() + ")",
+									LSystem.applicationMain, item);
+							break;
+						case CommandFlag.Gateway:
+							RPToast.makeText(LSystem.applicationMain,
+									"Gateway Management and settings.",
+									Style.SUCCESS).display();
+							RPGatewayDialog.showDialog(
+									LangConfig.get(RPGatewayDialog.class,
+											"title", "Gateway Operation")
+											+ "("
+											+ item.getPublicKey() + ")",
+									LSystem.applicationMain, item);
+							break;
+						case CommandFlag.Secret:
+							int index = UIRes.showConfirmMessage(
 									LSystem.applicationMain,
 									LangConfig.get(this, "show", "Show")
 											+ LangConfig.get(this, "secret",
@@ -606,10 +626,9 @@ public class MainPanel extends JPanel implements ActionListener {
 									LangConfig.get(this, "show", "Show"),
 									UIMessage.cancel);
 
-					if (index == 0) {
+							if (index == 0) {
 
-						index = UIRes
-								.showConfirmMessage(
+								index = UIRes.showConfirmMessage(
 										LSystem.applicationMain,
 										LangConfig.get(this, "show", "Show")
 												+ LangConfig.get(this,
@@ -621,51 +640,53 @@ public class MainPanel extends JPanel implements ActionListener {
 										LangConfig.get(this, "image",
 												"Paper Wallet"));
 
-						if (index == 0) {
-							RPInput input = new RPInput();
-							input.getBigTextInput(
-									new RPInput.TextInputListener() {
+								if (index == 0) {
+									RPInput input = new RPInput();
+									input.getBigTextInput(
+											new RPInput.TextInputListener() {
 
-										@Override
-										public void input(String text) {
-											if (text.length() > 0) {
-												RPClipboard clipboard = new RPClipboard();
-												clipboard
-														.setClipboardContents(text);
-											}
-										}
+												@Override
+												public void input(String text) {
+													if (text.length() > 0) {
+														RPClipboard clipboard = new RPClipboard();
+														clipboard
+																.setClipboardContents(text);
+													}
+												}
 
-										@Override
-										public void canceled() {
+												@Override
+												public void canceled() {
 
-										}
-									}, String.format("%s", WalletCache.get()
-											.readRow(row).getPublicKey()),
-									WalletCache.get().readRow(row)
-											.getPrivateKey(),
-									new Object[] { LangConfig.get(this, "copy",
-											"Copy") });
-						} else if (index == 1) {
-							RPPaperDialog dialog = new RPPaperDialog(
-									LSystem.applicationMain, 0, WalletCache
-											.get().readRow(row).getPrivateKey());
-							dialog.setModal(true);
-							dialog.setVisible(true);
-						}
-					}
-					break;
-				case CommandFlag.DetailsAddress:
-					RPToast.makeText(LSystem.applicationMain,
-							"View Ripple address details.", Style.SUCCESS)
-							.display();
-					RPAccountInfoDialog.showDialog(LSystem.applicationMain,
-							LangConfig.get(RPAccountInfoDialog.class,
-									"details", "Address details info"), item
-									.getPublicKey());
-					break;
-				case CommandFlag.DelAddress:
-					int delete_address = UIRes
-							.showConfirmMessage(
+												}
+											}, String.format("%s", WalletCache
+													.get().readRow(row)
+													.getPublicKey()),
+											WalletCache.get().readRow(row)
+													.getPrivateKey(),
+											new Object[] { LangConfig.get(this,
+													"copy", "Copy") });
+								} else if (index == 1) {
+									RPPaperDialog dialog = new RPPaperDialog(
+											LSystem.applicationMain, 0,
+											WalletCache.get().readRow(row)
+													.getPrivateKey());
+									dialog.setModal(true);
+									dialog.setVisible(true);
+								}
+							}
+							break;
+						case CommandFlag.DetailsAddress:
+							RPToast.makeText(LSystem.applicationMain,
+									"View Ripple address details.",
+									Style.SUCCESS).display();
+							RPAccountInfoDialog.showDialog(
+									LSystem.applicationMain, LangConfig.get(
+											RPAccountInfoDialog.class,
+											"details", "Address details info"),
+									item.getPublicKey());
+							break;
+						case CommandFlag.DelAddress:
+							int delete_address = UIRes.showConfirmMessage(
 									LSystem.applicationMain,
 									LangConfig.get(this, "del_address",
 											"Del Address"),
@@ -675,22 +696,20 @@ public class MainPanel extends JPanel implements ActionListener {
 													"Delete the address, which means you will never lose this address, whether you want to continue?"),
 									new Object[] { UIMessage.ok,
 											UIMessage.cancel });
-					if (delete_address == 0) {
-						synchronized (this) {
-							WalletCache.get().deleted(row);
-							walletChanged();
+							if (delete_address == 0) {
+								synchronized (this) {
+									WalletCache.get().deleted(row);
+									walletChanged();
+								}
+							}
+							break;
 						}
 					}
-					break;
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-
-		}
-
-		PriceMonitor.get();
-
+		});
 	}
 
 	@Override
