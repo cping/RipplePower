@@ -16,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -29,8 +30,12 @@ import org.ripple.power.txns.AccountLine;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
+import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
@@ -581,193 +586,199 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 			final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
-
-		String address = _addressText.getText().trim();
-
-		AccountInfo info_tmp = reset(address);
-
-		if (info_tmp != null) {
-			info.copy(info_tmp);
-			if (info.balance != null) {
-				synchronized (_accountLineItems) {
-					_accountLineItems.clear();
-					_accountLineItems
-							.add(new AccountLine("RippleLabels",
-									LSystem.nativeCurrency.toUpperCase(),
-									info.balance));
-					tableModel.update();
-				}
-			}
-			_addressNameText.setText(info.address);
-			if (info.lines.size() > 0) {
-				synchronized (_accountLineItems) {
-					_accountLineItems.clear();
-					_accountLineItems
-							.add(new AccountLine("RippleLabels",
-									LSystem.nativeCurrency.toUpperCase(),
-									info.balance));
-					_accountLineItems.addAll(info.lines);
-				}
-				tableModel.update();
-			}
-			if (info.debt.size() > 0) {
-				synchronized (_accountLineItems2) {
-					_accountLineItems2.clear();
-					for (String cur : info.debt.keySet()) {
-						AccountLine line = new AccountLine(address, cur,
-								String.valueOf(info.debt.get(cur)));
-						_accountLineItems2.add(line);
-					}
-				}
-				tableModel2.update();
-			}
-			if (info.transactions.size() > 0) {
-				synchronized (_accountLineItems3) {
-					_accountLineItems3.clear();
-					int count = 0;
-					for (TransactionTx tx : info.transactions) {
-						if ("Payment".equals(tx.clazz)) {
-							addList(_accountLineItems3, tx, count++);
-						}
-					}
-				}
-				tableModel3.update();
-			}
-			return;
-		}
-
-		Updateable updateAll = new Updateable() {
-
+		SwingUtilities.invokeLater(new Runnable() {
+			
 			@Override
-			public void action(Object o) {
-				String addressTmp = _addressText.getText().trim();
-				// revalidate();
-				// repaint();
-				final WaitDialog waitDialog = WaitDialog
-						.showDialog(RPAccountInfoDialog.this);
-				_waitDialogs.add(waitDialog);
-				// revalidate();
-				// repaint();
-				if (addressTmp.startsWith("~")) {
-					try {
-						addressTmp = NameFind.getAddress(addressTmp);
-					} catch (Exception ex) {
-						RPToast.makeText(RPAccountInfoDialog.this,
-								UIMessage.errAddress, Style.ERROR).display();
-						return;
-					}
-				}
-				if (!AccountFind.isRippleAddress(addressTmp)) {
-					RPToast.makeText(RPAccountInfoDialog.this,
-							UIMessage.errAddress, Style.ERROR).display();
-					return;
-				}
-				final String address = addressTmp;
-				AccountFind find = new AccountFind();
-				// revalidate();
-				// repaint();
-				Updateable update_info = new Updateable() {
+			public void run() {
 
-					@Override
-					public void action(Object res) {
-						if (info.count < 2) {
-							if (info.balance != null) {
-								synchronized (_accountLineItems) {
-									_accountLineItems.clear();
-									_accountLineItems.add(new AccountLine(
-											"RippleLabels",
-											LSystem.nativeCurrency
-													.toUpperCase(),
+
+				String address = _addressText.getText().trim();
+
+				AccountInfo info_tmp = reset(address);
+
+				if (info_tmp != null) {
+					info.copy(info_tmp);
+					if (info.balance != null) {
+						synchronized (_accountLineItems) {
+							_accountLineItems.clear();
+							_accountLineItems
+									.add(new AccountLine("RippleLabels",
+											LSystem.nativeCurrency.toUpperCase(),
 											info.balance));
-									tableModel.update();
-								}
-							}
-						}
-						String name = null;
-						try {
-							name = NameFind.getName(address);
-						} catch (Exception ex) {
-							name = "Unkown";
-						}
-						if (name == null || name.equalsIgnoreCase(address)) {
-							name = "Unkown";
-						}
-						_addressNameText.setText(name);
-						// RPAccountInfoDialog.this.revalidate();
-						// RPAccountInfoDialog.this.repaint();
-					}
-				};
-
-				Updateable update_line = new Updateable() {
-
-					@Override
-					public void action(Object res) {
-						if (info.lines.size() > 0) {
-							synchronized (_accountLineItems) {
-								_accountLineItems.clear();
-								_accountLineItems.add(new AccountLine(
-										"RippleLabels", LSystem.nativeCurrency
-												.toUpperCase(), info.balance));
-								_accountLineItems.addAll(info.lines);
-							}
 							tableModel.update();
 						}
-						if (info.debt.size() > 0) {
-							synchronized (_accountLineItems2) {
-								_accountLineItems2.clear();
-								for (String cur : info.debt.keySet()) {
-									AccountLine line = new AccountLine(address,
-											cur, String.valueOf(info.debt
-													.get(cur)));
-									_accountLineItems2.add(line);
+					}
+					_addressNameText.setText(info.address);
+					if (info.lines.size() > 0) {
+						synchronized (_accountLineItems) {
+							_accountLineItems.clear();
+							_accountLineItems
+									.add(new AccountLine("RippleLabels",
+											LSystem.nativeCurrency.toUpperCase(),
+											info.balance));
+							_accountLineItems.addAll(info.lines);
+						}
+						tableModel.update();
+					}
+					if (info.debt.size() > 0) {
+						synchronized (_accountLineItems2) {
+							_accountLineItems2.clear();
+							for (String cur : info.debt.keySet()) {
+								AccountLine line = new AccountLine(address, cur,
+										String.valueOf(info.debt.get(cur)));
+								_accountLineItems2.add(line);
+							}
+						}
+						tableModel2.update();
+					}
+					if (info.transactions.size() > 0) {
+						synchronized (_accountLineItems3) {
+							_accountLineItems3.clear();
+							int count = 0;
+							for (TransactionTx tx : info.transactions) {
+								if ("Payment".equals(tx.clazz)) {
+									addList(_accountLineItems3, tx, count++);
 								}
 							}
-							tableModel2.update();
 						}
-						// RPAccountInfoDialog.this.revalidate();
-						// RPAccountInfoDialog.this.repaint();
+						tableModel3.update();
 					}
-				};
+					return;
+				}
 
-				Updateable update_tx = new Updateable() {
+				Updateable updateAll = new Updateable() {
 
 					@Override
-					public void action(Object res) {
-						if (info.transactions.size() > 0) {
-							synchronized (_accountLineItems3) {
-								_accountLineItems3.clear();
-								int count = 0;
-								for (TransactionTx tx : info.transactions) {
-									if ("Payment".equals(tx.clazz)) {
-										addList(_accountLineItems3, tx, count++);
+					public void action(Object o) {
+						String addressTmp = _addressText.getText().trim();
+						// revalidate();
+						// repaint();
+						final WaitDialog waitDialog = WaitDialog
+								.showDialog(RPAccountInfoDialog.this);
+						_waitDialogs.add(waitDialog);
+						// revalidate();
+						// repaint();
+						if (addressTmp.startsWith("~")) {
+							try {
+								addressTmp = NameFind.getAddress(addressTmp);
+							} catch (Exception ex) {
+								RPToast.makeText(RPAccountInfoDialog.this,
+										UIMessage.errAddress, Style.ERROR).display();
+								return;
+							}
+						}
+						if (!AccountFind.isRippleAddress(addressTmp)) {
+							RPToast.makeText(RPAccountInfoDialog.this,
+									UIMessage.errAddress, Style.ERROR).display();
+							return;
+						}
+						final String address = addressTmp;
+						AccountFind find = new AccountFind();
+						// revalidate();
+						// repaint();
+						Updateable update_info = new Updateable() {
+
+							@Override
+							public void action(Object res) {
+								if (info.count < 2) {
+									if (info.balance != null) {
+										synchronized (_accountLineItems) {
+											_accountLineItems.clear();
+											_accountLineItems.add(new AccountLine(
+													"RippleLabels",
+													LSystem.nativeCurrency
+															.toUpperCase(),
+													info.balance));
+											tableModel.update();
+										}
 									}
 								}
+								String name = null;
+								try {
+									name = NameFind.getName(address);
+								} catch (Exception ex) {
+									name = "Unkown";
+								}
+								if (name == null || name.equalsIgnoreCase(address)) {
+									name = "Unkown";
+								}
+								_addressNameText.setText(name);
+								// RPAccountInfoDialog.this.revalidate();
+								// RPAccountInfoDialog.this.repaint();
 							}
-							tableModel3.update();
-							addStorage(new Store(address,
-									new AccountInfo().copy(info)));
-						}
-						waitDialog.closeDialog();
-						/*
-						 * RPAccountInfoDialog.this.revalidate();
-						 * RPAccountInfoDialog.this.repaint(); if
-						 * (LSystem.applicationMain != null) {
-						 * LSystem.applicationMain.revalidate();
-						 * LSystem.applicationMain.repaint(); }
-						 */
+						};
+
+						Updateable update_line = new Updateable() {
+
+							@Override
+							public void action(Object res) {
+								if (info.lines.size() > 0) {
+									synchronized (_accountLineItems) {
+										_accountLineItems.clear();
+										_accountLineItems.add(new AccountLine(
+												"RippleLabels", LSystem.nativeCurrency
+														.toUpperCase(), info.balance));
+										_accountLineItems.addAll(info.lines);
+									}
+									tableModel.update();
+								}
+								if (info.debt.size() > 0) {
+									synchronized (_accountLineItems2) {
+										_accountLineItems2.clear();
+										for (String cur : info.debt.keySet()) {
+											AccountLine line = new AccountLine(address,
+													cur, String.valueOf(info.debt
+															.get(cur)));
+											_accountLineItems2.add(line);
+										}
+									}
+									tableModel2.update();
+								}
+								// RPAccountInfoDialog.this.revalidate();
+								// RPAccountInfoDialog.this.repaint();
+							}
+						};
+
+						Updateable update_tx = new Updateable() {
+
+							@Override
+							public void action(Object res) {
+								if (info.transactions.size() > 0) {
+									synchronized (_accountLineItems3) {
+										_accountLineItems3.clear();
+										int count = 0;
+										for (TransactionTx tx : info.transactions) {
+											if ("Payment".equals(tx.clazz)) {
+												addList(_accountLineItems3, tx, count++);
+											}
+										}
+									}
+									tableModel3.update();
+									addStorage(new Store(address,
+											new AccountInfo().copy(info)));
+								}
+								waitDialog.closeDialog();
+								/*
+								 * RPAccountInfoDialog.this.revalidate();
+								 * RPAccountInfoDialog.this.repaint(); if
+								 * (LSystem.applicationMain != null) {
+								 * LSystem.applicationMain.revalidate();
+								 * LSystem.applicationMain.repaint(); }
+								 */
+							}
+
+						};
+
+						find.processInfo(address, info, update_info);
+						find.processLines(address, info, update_line);
+						find.processTx(address, info, update_tx);
+						// revalidate();
+						// repaint();
 					}
-
 				};
-
-				find.processInfo(address, info, update_info);
-				find.processLines(address, info, update_line);
-				find.processTx(address, info, update_tx);
-				// revalidate();
-				// repaint();
+				LSystem.postThread(updateAll);
 			}
-		};
-		LSystem.postThread(updateAll);
-
+		});
 	}
 
 	public AccountInfo getAccountinfo() {

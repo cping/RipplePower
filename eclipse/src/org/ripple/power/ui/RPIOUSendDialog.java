@@ -32,6 +32,8 @@ import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;

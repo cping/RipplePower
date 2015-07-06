@@ -17,7 +17,6 @@ import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
-
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
@@ -25,6 +24,9 @@ import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.chart.ChartValue;
 import org.ripple.power.ui.graphics.chart.ChartValueSerie;
 import org.ripple.power.ui.graphics.chart.LineChartCanvas;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPChartsHistoryDialog extends JDialog implements WindowListener {

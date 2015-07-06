@@ -2,16 +2,17 @@ package org.ripple.power.ui.projector;
 
 import java.awt.Dimension;
 import java.awt.Window;
+
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPDialogTool;
 import org.ripple.power.ui.UIConfig;
-import org.ripple.power.ui.WaitDialog;
 import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.projector.core.LHandler;
 import org.ripple.power.ui.projector.core.graphics.Screen;
+import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.wallet.WalletItem;
 
 public class UIScene extends JPanel {

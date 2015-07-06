@@ -12,8 +12,10 @@ import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
+import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.wallet.WalletItem;
 

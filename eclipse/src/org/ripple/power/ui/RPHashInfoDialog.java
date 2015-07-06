@@ -17,7 +17,12 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.ui.RPToast.Style;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPTextArea;
+import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
+import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 

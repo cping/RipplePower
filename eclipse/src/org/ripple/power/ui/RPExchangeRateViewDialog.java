@@ -22,6 +22,12 @@ import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.HtmlRenderer;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPList;
+import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 

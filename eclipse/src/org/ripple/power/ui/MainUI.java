@@ -14,6 +14,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -33,6 +34,10 @@ import org.ripple.power.ui.projector.action.avg.AVGScreen;
 import org.ripple.power.ui.projector.action.avg.command.Command;
 import org.ripple.power.ui.projector.core.graphics.component.LMessage;
 import org.ripple.power.ui.projector.core.graphics.component.LSelect;
+import org.ripple.power.ui.view.AnimationIcon;
+import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.RPScrollPane;
+import org.ripple.power.ui.view.RPSplash;
 import org.ripple.power.utils.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -254,7 +259,7 @@ public class MainUI {
 			public void actionPerformed(ActionEvent e) {
 				HelperDialog.hideDialog();
 				RPJSonLog.hideDialog();
-				HoldXRPDialog.hideDialog();
+				RPHoldXRPDialog.hideDialog();
 				RPOtherServicesDialog.hideDialog();
 			}
 		});
@@ -300,26 +305,38 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Updateable update = new Updateable() {
-
+				
+				SwingUtilities.invokeLater(new Runnable() {
+					
 					@Override
-					public void action(Object o) {
-						PriceMonitor.get();
-						HelperDialog.showDialog();
-						RPJSonLog.showDialog();
-						HoldXRPDialog.showDialog();
-						RPOtherServicesDialog.showDialog();
-						LSystem.sleep(LSystem.SECOND);
-						HelperDialog.get();
-						LSystem.sleep(LSystem.SECOND);
-						RPJSonLog.get();
-						LSystem.sleep(LSystem.SECOND);
-						HoldXRPDialog.get();
-						LSystem.sleep(LSystem.SECOND);
-						RPOtherServicesDialog.get();
+					public void run() {
+
+						Updateable update = new Updateable() {
+
+							@Override
+							public void action(Object o) {
+								PriceMonitor.get();
+								HelperDialog.showDialog();
+								RPJSonLog.showDialog();
+								RPHoldXRPDialog.showDialog();
+								RPOtherServicesDialog.showDialog();
+								LSystem.sleep(LSystem.SECOND);
+								HelperDialog.get();
+								LSystem.sleep(LSystem.SECOND);
+								RPJSonLog.get();
+								LSystem.sleep(LSystem.SECOND);
+								RPHoldXRPDialog.get();
+								LSystem.sleep(LSystem.SECOND);
+								RPOtherServicesDialog.get();
+							}
+						};
+
+					
+						LSystem.postThread(update);
+						
 					}
-				};
-				LSystem.postThread(update);
+				});
+				
 			}
 		});
 		xrpLink.setIcon(iconXrpIcon);
@@ -370,19 +387,27 @@ public class MainUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				LSystem.postThread(new Updateable() {
-
+				SwingUtilities.invokeLater(new Runnable() {
+					
 					@Override
-					public void action(Object o) {
-						btcPanel.stop();
-						btcLink.setLinkPanel(btcPanel = new BTCPanel());
-						HelperDialog.hideDialog();
-						RPJSonLog.hideDialog();
-						HoldXRPDialog.hideDialog();
-						RPOtherServicesDialog.hideDialog();
+					public void run() {
+
+						LSystem.postThread(new Updateable() {
+
+							@Override
+							public void action(Object o) {
+								btcPanel.stop();
+								btcLink.setLinkPanel(btcPanel = new BTCPanel());
+								HelperDialog.hideDialog();
+								RPJSonLog.hideDialog();
+								RPHoldXRPDialog.hideDialog();
+								RPOtherServicesDialog.hideDialog();
+							}
+						});
+
 					}
 				});
-
+				
 			}
 		});
 

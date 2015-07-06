@@ -56,7 +56,9 @@ public final class LSystem {
 	public static int DEFAULT_MAX_FPS = 60;
 
 	public static float EMULATOR_BUTTIN_SCALE = 1f;
-
+	
+	public static int COMPONENT_CORNER_RADIUS = 10;
+	  
 	public static RectBox screenRect;
 
 	public static boolean isPaused;

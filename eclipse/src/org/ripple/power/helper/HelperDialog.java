@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.RPPushTool;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.view.RPPushTool;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 

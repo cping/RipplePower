@@ -14,9 +14,10 @@ import org.ripple.power.ui.graphics.chart.BarChartCanvas;
 import org.ripple.power.ui.graphics.chart.ChartValue;
 import org.ripple.power.ui.graphics.chart.ChartValueSerie;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.view.RPPushTool;
 import org.ripple.power.wallet.WalletCache;
 
-public class HoldXRPDialog {
+public class RPHoldXRPDialog {
 
 	private static RPPushTool instance = null;
 

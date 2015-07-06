@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 
 import org.bootstrap.ui.ButtonUI;
+import org.ripple.power.ui.view.SoundButtonListener;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class RPButton extends JButton {

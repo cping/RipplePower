@@ -3,10 +3,11 @@ package org.ripple.power.ui;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.JPanel;
+
+import org.ripple.power.ui.view.RoundedPanel;
 
 
-public class BTCPanel extends JPanel {
+public class BTCPanel extends RoundedPanel {
 
 	/**
 	 * 

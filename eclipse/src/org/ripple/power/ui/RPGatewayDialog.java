@@ -33,6 +33,12 @@ import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TrustSet;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPList;
+import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 

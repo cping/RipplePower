@@ -9,6 +9,8 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.config.ProxySettings;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 

@@ -16,6 +16,10 @@ import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.ui.view.ABaseDialog;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPList;
+import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.MathUtils;
 
 public class RPPriceWarningDialog extends ABaseDialog {

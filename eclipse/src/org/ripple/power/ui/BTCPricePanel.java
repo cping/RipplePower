@@ -29,7 +29,7 @@ public class BTCPricePanel extends JPanel {
 	private RPCButton _resetButton;
 	private RPCScrollPane _srcoll;
 	private RPComboBox _curComboBox;
-	private AddressTable _priceTable;
+
 	private ArrayList<BTCPrice> _prices = new ArrayList<BTCPrice>(40);
 	private boolean _loading = false;
 
@@ -76,14 +76,16 @@ public class BTCPricePanel extends JPanel {
 			return _prices.size();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row > getRowCount()) {
 				throw new IndexOutOfBoundsException("Table row " + row
 						+ " is not valid");
 			}
+			ArrayList<BTCPrice> temp = (ArrayList<BTCPrice>) _prices.clone(); 
 			Object value = null;
-			BTCPrice item = (BTCPrice) _prices.get(row);
+			BTCPrice item = (BTCPrice) temp.get(row);
 			switch (column) {
 			case 0:
 				value = item.store;
@@ -113,6 +115,27 @@ public class BTCPricePanel extends JPanel {
 		setPreferredSize(dim);
 		setSize(dim);
 		setLocation(5, 5);
+
+		Class<?>[] columnClasses = { String.class, String.class };
+		String[] columnNames = { "Store", "Price" };
+		int[] columnTypes = { AddressTable.NAME, AddressTable.AMOUNT };
+
+		final AccountTableModel tableModel = new AccountTableModel(columnNames,
+				columnClasses);
+		final AddressTable priceTable = new AddressTable(tableModel,
+				columnTypes);
+		priceTable.setFont(UIRes.getFont());
+		priceTable.setRowSorter(new TableRowSorter<TableModel>(tableModel));
+		priceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		_srcoll = new RPCScrollPane(priceTable, new LColor(220, 220, 220),
+				LColor.black, 240, false);
+
+		_srcoll.setViewportView(priceTable);
+
+		add(_srcoll);
+		_srcoll.setBounds(10, 60, 400, 360);
+
 		_resetButton = new RPCButton();
 
 		_curComboBox = new RPComboBox();
@@ -126,7 +149,7 @@ public class BTCPricePanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				update();
+				update(tableModel);
 			}
 		});
 
@@ -136,26 +159,8 @@ public class BTCPricePanel extends JPanel {
 		add(_curComboBox);
 		_curComboBox.setBounds(300, 10, 110, 40);
 
-		Class<?>[] columnClasses = { String.class, String.class };
-		String[] columnNames = { "Store", "Price" };
-		int[] columnTypes = { AddressTable.NAME, AddressTable.AMOUNT };
-
-		AccountTableModel tableModel = new AccountTableModel(columnNames,
-				columnClasses);
-		_priceTable = new AddressTable(tableModel, columnTypes);
-		_priceTable.setFont(UIRes.getFont());
-		_priceTable.setRowSorter(new TableRowSorter<TableModel>(tableModel));
-		_priceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		_srcoll = new RPCScrollPane(_priceTable, new LColor(220, 220, 220),
-				LColor.black, 240, false);
-
-		_srcoll.setViewportView(_priceTable);
-
-		add(_srcoll);
-		_srcoll.setBounds(10, 60, 400, 360);
 		setBackground(UIConfig.dialogbackground);
-		update();
+		update(tableModel);
 
 	}
 
@@ -170,7 +175,7 @@ public class BTCPricePanel extends JPanel {
 
 	private Thread _post;
 
-	private void update() {
+	private void update(final AccountTableModel model) {
 
 		if (_post != null) {
 			stop();
@@ -183,7 +188,7 @@ public class BTCPricePanel extends JPanel {
 				if (!_loading) {
 					synchronized (_prices) {
 						_prices.clear();
-						_priceTable.updateUI();
+						model.update();
 						_loading = true;
 						String item = (String) _curComboBox.getSelectedItem();
 						switch (item) {
@@ -195,7 +200,7 @@ public class BTCPricePanel extends JPanel {
 									synchronized (_prices) {
 										try {
 											_prices.add(price);
-											_priceTable.updateUI();
+											model.update();
 										} catch (Throwable t) {
 
 										}
@@ -216,7 +221,7 @@ public class BTCPricePanel extends JPanel {
 								public void update(BTCPrice price) {
 									synchronized (_prices) {
 										_prices.add(price);
-										_priceTable.updateUI();
+										model.update();
 									}
 								}
 
@@ -234,7 +239,7 @@ public class BTCPricePanel extends JPanel {
 								public void update(BTCPrice price) {
 									synchronized (_prices) {
 										_prices.add(price);
-										_priceTable.updateUI();
+										model.update();
 									}
 								}
 
@@ -252,7 +257,7 @@ public class BTCPricePanel extends JPanel {
 								public void update(BTCPrice price) {
 									synchronized (_prices) {
 										_prices.add(price);
-										_priceTable.updateUI();
+										model.update();
 									}
 								}
 
@@ -273,7 +278,7 @@ public class BTCPricePanel extends JPanel {
 													.isNumber(price.price)) {
 										synchronized (_prices) {
 											_prices.add(price);
-											_priceTable.updateUI();
+											model.update();
 										}
 									}
 								}

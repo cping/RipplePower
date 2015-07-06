@@ -5,7 +5,8 @@ import java.awt.Window;
 import javax.swing.SwingUtilities;
 
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.RPToast.Style;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.RPToast.Style;
 
 public class UIMessage {
 

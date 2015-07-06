@@ -330,5 +330,13 @@
     }],
     "hotwallets": [],
     "domain": "digital-gate.kr"
+  },{
+    "name": "RippleHarbor",
+    "accounts": [{
+    "address": "rfhsvVV8FtpaZnKUqHtneremwq8byphJ48",
+    "currencies": ["SGD","NZD"]
+    }],
+    "hotwallets": [],
+    "domain": ""
   }
 ]

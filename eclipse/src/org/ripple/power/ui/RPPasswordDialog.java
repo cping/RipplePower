@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 

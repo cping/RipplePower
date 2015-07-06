@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.Component;
 import java.awt.Graphics;

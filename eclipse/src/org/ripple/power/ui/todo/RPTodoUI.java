@@ -2,12 +2,12 @@ package org.ripple.power.ui.todo;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.ui.ABaseDialog;
 import org.ripple.power.ui.RPRippledMemoDialog;
 import org.ripple.power.ui.RPSelectWalletDialog;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletItem;
 

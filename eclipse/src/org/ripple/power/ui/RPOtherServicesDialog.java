@@ -14,6 +14,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.view.RPPushTool;
 
 public class RPOtherServicesDialog extends JPanel {
 	/**

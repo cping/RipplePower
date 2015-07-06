@@ -19,8 +19,8 @@ import mediaframe.mpeg4.video.VideoFrame;
 import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.WaitAnimation;
 import org.ripple.power.ui.graphics.LGraphics;
+import org.ripple.power.ui.view.WaitAnimation;
 import org.ripple.power.utils.DateUtils;
 import org.ripple.power.utils.GraphicsUtils;
 

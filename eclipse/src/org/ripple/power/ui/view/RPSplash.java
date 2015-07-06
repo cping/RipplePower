@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -12,11 +12,12 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-
 import java.awt.Window;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.UIConfig;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;

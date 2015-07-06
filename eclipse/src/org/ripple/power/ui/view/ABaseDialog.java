@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.Window;
 import java.awt.Frame;
@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
+import org.ripple.power.ui.UIMessage;
 import org.ripple.power.utils.SwingUtils;
 
 public abstract class ABaseDialog extends JDialog {

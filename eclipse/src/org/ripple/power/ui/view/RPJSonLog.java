@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -8,8 +8,8 @@ import javax.swing.ImageIcon;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.StringUtils;
 
 public class RPJSonLog {

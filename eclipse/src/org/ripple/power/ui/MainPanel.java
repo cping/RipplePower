@@ -37,10 +37,16 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.ui.RPToast.Style;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.ui.view.Panels;
+import org.ripple.power.ui.view.RPInput;
+import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.RPPopMenuItem;
+import org.ripple.power.ui.view.RPPopupMenu;
+import org.ripple.power.ui.view.RPToast;
+import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.wallet.Backup;
 import org.ripple.power.wallet.WalletCache;
@@ -128,7 +134,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		if (walletLabel != null) {
 			if (!speedFlag.equalsIgnoreCase(name)) {
 				walletLabel
-						.setIcon(OtherImages.getSpeedImage(speedFlag = name));
+						.setIcon(Panels.getSpeedImage(speedFlag = name));
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.bootstrap.ui.CalloutBorder;
+import org.ripple.power.ui.UIConfig;
 
 import net.miginfocom.swing.MigLayout;
 

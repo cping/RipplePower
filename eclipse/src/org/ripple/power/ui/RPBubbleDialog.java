@@ -27,6 +27,8 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.sound.LWaveSound;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.RPTextArea;
 
 public class RPBubbleDialog {
 

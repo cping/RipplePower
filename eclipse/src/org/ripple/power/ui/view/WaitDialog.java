@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.RPDialogTool;
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.Cycle;
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LGraphics;

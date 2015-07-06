@@ -5,10 +5,12 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.ui.view.WaitDialog;
 
 public class RPPayPortDialog extends JPanel {
 

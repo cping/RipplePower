@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
-
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,6 +22,8 @@ import javax.swing.border.LineBorder;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.UIConfig;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
 import org.ripple.power.utils.SwingUtils;

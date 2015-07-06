@@ -1,5 +1,6 @@
 package org.ripple.power.ui;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
@@ -23,8 +24,34 @@ public class RPCButton extends JButton {
 		this("");
 	}
 
-	public RPCButton(ImageIcon icon) {
-		super(icon);
+	private void initString() {
+		setForeground(new LColor(255, 255, 255));
+		setBackground(new LColor(18, 18, 18));
+		setContentAreaFilled(true);
+		setFocusPainted(false);
+		Border line = BorderFactory.createLineBorder(new LColor(80, 80, 80));
+		Border empty = new EmptyBorder(4, 4, 4, 4);
+		CompoundBorder border = new CompoundBorder(line, empty);
+		setBorder(border);
+
+		getModel().addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (model.isRollover()) {
+					setBackground(new LColor(120, 20, 20));
+				} else if (model.isArmed() || model.isPressed()) {
+					setBackground(new LColor(0, 0, 0));
+				} else if (model.isSelected()) {
+					setBackground(new LColor(0, 0, 0));
+				} else {
+					setBackground(new LColor(18, 18, 18));
+				}
+			}
+		});
+	}
+
+	private void initImage() {
 		setForeground(LColor.black);
 		setBackground(LColor.white);
 		setContentAreaFilled(true);
@@ -53,29 +80,17 @@ public class RPCButton extends JButton {
 
 	public RPCButton(String name) {
 		super(name);
-		setForeground(new LColor(255, 255, 255));
-		setBackground(new LColor(18, 18, 18));
-		setContentAreaFilled(true);
-		setFocusPainted(false);
-		Border line = BorderFactory.createLineBorder(new LColor(80, 80, 80));
-		Border empty = new EmptyBorder(4, 4, 4, 4);
-		CompoundBorder border = new CompoundBorder(line, empty);
-		setBorder(border);
-
-		getModel().addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ButtonModel model = (ButtonModel) e.getSource();
-				if (model.isRollover()) {
-					setBackground(new LColor(120, 20, 20));
-				} else if (model.isArmed() || model.isPressed()) {
-					setBackground(new LColor(0, 0, 0));
-				} else if (model.isSelected()) {
-					setBackground(new LColor(0, 0, 0));
-				} else {
-					setBackground(new LColor(18, 18, 18));
-				}
-			}
-		});
+		initString();
 	}
+
+	public RPCButton(Action action) {
+		super(action);
+		initString();
+	}
+
+	public RPCButton(ImageIcon icon) {
+		super(icon);
+		initImage();
+	}
+
 }

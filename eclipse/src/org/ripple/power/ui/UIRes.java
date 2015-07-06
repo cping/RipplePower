@@ -54,6 +54,7 @@ import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LImage;
+import org.ripple.power.ui.view.IDialog;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class UIRes {

@@ -16,11 +16,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.RPJSonLog;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -142,8 +144,13 @@ public class MainForm extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPJSonLog.get();
+				SwingUtilities.invokeLater(new Runnable() {
 
+					@Override
+					public void run() {
+						RPJSonLog.get();
+					}
+				});
 			}
 		});
 		menu.add(menuItem);
@@ -153,7 +160,13 @@ public class MainForm extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPOtherServicesDialog.get();
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						RPOtherServicesDialog.get();
+					}
+				});
 
 			}
 		});

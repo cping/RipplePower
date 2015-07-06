@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import org.ripple.power.ui.graphics.LColor;
 

@@ -23,6 +23,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 

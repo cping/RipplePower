@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.view;
 
 import javax.swing.*;
 import javax.swing.text.*;
