@@ -1,7 +1,6 @@
 package org.ripple.power.utils;
 
 import java.io.*;
-
 import java.security.*;
 import java.security.cert.*;
 
@@ -9,7 +8,9 @@ import javax.net.ssl.*;
 
 public class InstallCert {
 
-	public static void main(String[] args) throws Exception {
+	
+	public static void install(String[] args) throws Exception{
+
 		String host;
 		int port;
 		char[] passphrase;
@@ -41,7 +42,7 @@ public class InstallCert {
 		ks.load(in, passphrase);
 		in.close();
 
-		SSLContext context = SSLContext.getInstance("TLSv1.2");
+		SSLContext context = SSLContext.getInstance("TLS");
 		TrustManagerFactory tmf = TrustManagerFactory
 				.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		tmf.init(ks);
@@ -117,6 +118,7 @@ public class InstallCert {
 		System.out
 				.println("Added certificate to keystore 'jssecacerts' using alias '"
 						+ alias + "'");
+	
 	}
 
 	private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
@@ -156,5 +158,7 @@ public class InstallCert {
 			tm.checkServerTrusted(chain, authType);
 		}
 	}
+	
+	
 
 }

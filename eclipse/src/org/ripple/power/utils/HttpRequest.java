@@ -42,7 +42,6 @@ import java.nio.charset.CharsetEncoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,10 +59,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 
 import org.json.JSONObject;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -72,6 +68,8 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
 public class HttpRequest {
+
+	private final RippleTrustManager rippleManager = new RippleTrustManager();
 
 	public static final class JSSEProvider extends Provider {
 
@@ -114,33 +112,45 @@ public class HttpRequest {
 	 * @throws Exception
 	 */
 	public synchronized static String fix_ssl_open(String url) throws Exception {
+		HttpRequest request = HttpRequest.get(url);
 		try {
-			File file = NativeSupport.export("res/tmpfix/temp_fix_ssl",
-					"ssl_fix", "temp_fix_ssl.exe");
-			Runtime run = Runtime.getRuntime();
-			Process process = run.exec(file.getAbsolutePath() + " " + url);
-			process.waitFor();
-			InputStream ins = process.getInputStream();
-			InputStreamReader str = new InputStreamReader(ins);
-			BufferedReader br = new BufferedReader(str);
-			StringBuilder sbr = new StringBuilder();
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				sbr.append(line);
-				sbr.append(LSystem.LS);
-			}
-			process.waitFor();
-			return sbr.toString();
-		} catch (Throwable ex) {
-			HttpRequest request = HttpRequest.get(url);
-			request.trustAllCerts();
-			request.trustAllHosts();
 			if (request.ok()) {
 				return request.body();
+			}
+		} catch (Throwable ex) {
+			if (LSystem.isWindows()) {
+				try {
+					File file = NativeSupport.export(
+							"res/tmpfix/temp_fix_ssl", "ssl_fix",
+							"temp_fix_ssl.exe");
+					Runtime run = Runtime.getRuntime();
+					Process process = run.exec(file.getAbsolutePath() + " "
+							+ url);
+					InputStream ins = process.getInputStream();
+					InputStreamReader str = new InputStreamReader(ins);
+					BufferedReader br = new BufferedReader(str);
+					StringBuilder sbr = new StringBuilder();
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sbr.append(line);
+						sbr.append(LSystem.LS);
+					}
+					return sbr.toString();
+				} catch (Error t) {
+					request = HttpRequest.get(url);
+					request.trustAllCerts();
+					request.trustAllHosts();
+					if (request.ok()) {
+						return request.body();
+					} else {
+						throw ex;
+					}
+				}
 			} else {
-				throw ex;
+				return null;
 			}
 		}
+		return url;
 	}
 
 	public static String getHttps(String url) {
@@ -247,8 +257,6 @@ public class HttpRequest {
 
 	private static final String[] EMPTY_STRINGS = new String[0];
 
-	private static SSLSocketFactory TRUSTED_FACTORY;
-
 	private static HostnameVerifier TRUSTED_VERIFIER;
 
 	private static String getValidCharset(final String charset) {
@@ -270,36 +278,6 @@ public class HttpRequest {
 			"TLS_ECDHE_ECDSA_WITH_RC4_128_SHA", "TLS_RSA_WITH_AES_128_CBC_SHA",
 			"SSL_RSA_WITH_3DES_EDE_CBC_SHA", "SSL_RSA_WITH_RC4_128_SHA",
 			"SSL_RSA_WITH_RC4_128_MD5" };
-
-	private static SSLSocketFactory getTrustedFactory()
-			throws Exception {
-		System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
-		if (TRUSTED_FACTORY == null) {
-			final TrustManager[] trustAllCerts = new TrustManager[] { new RippleTrustManager.LocalStoreX509TrustManager() };
-			try {
-				String algorithm = Security
-						.getProperty("ssl.KeyManagerFactory.algorithm");
-				if (algorithm == null) {
-					algorithm = "SunX509";
-				}
-
-				SSLContext context = SSLContext.getInstance("TLSv1.2");
-				context.init(null, trustAllCerts, new SecureRandom());
-				TRUSTED_FACTORY = context.getSocketFactory();
-				// final SSLSocket socket = (SSLSocket)
-				// TRUSTED_FACTORY.createSocket();
-				// socket.setEnabledCipherSuites(ENABLED_CIPHERS);
-				// socket.setUseClientMode(true);
-			} catch (Exception e) {
-				IOException ioException = new IOException(
-						"Security exception configuring SSL context");
-				ioException.initCause(e);
-				throw new HttpRequestException(ioException);
-			}
-		}
-
-		return TRUSTED_FACTORY;
-	}
 
 	private static HostnameVerifier getTrustedVerifier() {
 		if (TRUSTED_VERIFIER == null)
@@ -954,10 +932,10 @@ public class HttpRequest {
 	}
 
 	public int code() throws IOException {
-
 		closeOutput();
-		return getConnection().getResponseCode();
-
+		HttpURLConnection connection = getConnection();
+		int result = connection.getResponseCode();
+		return result;
 	}
 
 	public HttpRequest code(final AtomicInteger output)
@@ -1816,8 +1794,13 @@ public class HttpRequest {
 	public HttpRequest trustAllCerts() throws Exception {
 		final HttpURLConnection connection = getConnection();
 		if (connection instanceof HttpsURLConnection) {
-			((HttpsURLConnection) connection)
-					.setSSLSocketFactory(getTrustedFactory());
+			try {
+				((HttpsURLConnection) connection)
+						.setSSLSocketFactory(rippleManager.getSSLContent()
+								.getSocketFactory());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return this;
 	}

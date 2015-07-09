@@ -16,6 +16,11 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.ripple.power.ui.UIRes;
+
+
 public class AjaxHttpRequest {
 
 	public static final int STATE_UNINITIALIZED = 0;
@@ -51,6 +56,8 @@ public class AjaxHttpRequest {
 	protected String requestUserName;
 	protected String requestPassword;
 
+	private RippleTrustManager rippleManager = new RippleTrustManager();
+	
 	@SuppressWarnings("rawtypes")
 	public AjaxHttpRequest() {
 		requestHeadersMap = new LinkedHashMap();
@@ -95,6 +102,12 @@ public class AjaxHttpRequest {
 			this.requestURL = url;
 			this.requestUserName = userName;
 			this.requestPassword = password;
+			if(url.getProtocol().equalsIgnoreCase("https")){
+				rippleManager.setCertificate("ca", UIRes.getStream("ripple.cer"));
+				((HttpsURLConnection) connection)
+				.setSSLSocketFactory(rippleManager.getSSLContent()
+						.getSocketFactory());
+			}
 		}
 		this.changeState(AjaxHttpRequest.STATE_LOADING, 0, null, null);
 	}

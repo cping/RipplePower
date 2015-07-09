@@ -32,11 +32,17 @@ public class History {
 		this(def_historyApi, account);
 	}
 
-	public JSONObject getHistory() {
+	public JSONObject getHistory()  {
 		String url = _baseUrl + "accounts/" + this._account + "/transactions";
-		String result = HttpRequest.getHttps(url);
-		if (result != null) {
-			return new JSONObject(result);
+		System.out.println(url);
+		String result;
+		try {
+			result = HttpRequest.fix_ssl_open(url);
+			if (result != null) {
+				return new JSONObject(result);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -56,5 +62,4 @@ public class History {
 	public String getAccount() {
 		return _account;
 	}
-
 }
