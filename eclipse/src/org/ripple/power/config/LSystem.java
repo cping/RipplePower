@@ -49,19 +49,62 @@ import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
-	final static public String FRAMEWORK_IMG_NAME = "assets/loon_";
+	private final static String USER_HOME_NAME = System
+			.getProperty("user.home");
+	private static String BTC_PATH = System.getProperty("bitcoin.datadir");
+
+	public final static String FRAMEWORK_IMG_NAME = "assets/loon_";
 
 	public static boolean AUTO_REPAINT;
 
 	public static int DEFAULT_MAX_FPS = 60;
 
 	public static float EMULATOR_BUTTIN_SCALE = 1f;
-	
+
 	public static int COMPONENT_CORNER_RADIUS = 10;
-	  
+
 	public static RectBox screenRect;
 
 	public static boolean isPaused;
+
+	// 数据存储空间定位
+	public static String getDirectory() {
+		if (applicationDataDirectory != null) {
+			return applicationDataDirectory;
+		}
+
+		if (LSystem.isWindows()) {
+			applicationDataDirectory = System.getenv("APPDATA")
+					+ File.separator + applicationName;
+		} else {
+			if (LSystem.isAnyMac()) {
+				applicationDataDirectory = USER_HOME_NAME
+						+ "/Library/Application Support/" + applicationName;
+			} else {
+				applicationDataDirectory = USER_HOME_NAME + "/"
+						+ applicationName;
+			}
+		}
+		return applicationDataDirectory;
+	}
+
+	private final static String BTC_WALLET = "BTCWallet";
+
+	public static String getBitcionDirectory() {
+		if (BTC_PATH == null) {
+			if (LSystem.isWindows()) {
+				BTC_PATH = USER_HOME_NAME + "\\Appdata\\Roaming\\" + BTC_WALLET;
+			} else if (LSystem.isLinux()) {
+				BTC_PATH = USER_HOME_NAME + "/." + BTC_WALLET;
+			} else if (LSystem.isAnyMac()) {
+				BTC_PATH = USER_HOME_NAME + "/Library/Application Support/"
+						+ BTC_WALLET;
+			} else {
+				BTC_PATH = USER_HOME_NAME + "/" + BTC_WALLET;
+			}
+		}
+		return BTC_PATH;
+	}
 
 	/**
 	 * 返回一个Random对象
@@ -1000,29 +1043,6 @@ public final class LSystem {
 		}
 	}
 
-	// 数据存储空间定位
-	public static String getDirectory() {
-		if (applicationDataDirectory != null) {
-			return applicationDataDirectory;
-		}
-		String operatingSystemName = System.getProperty("os.name");
-		if (operatingSystemName != null
-				&& operatingSystemName.startsWith("Windows")) {
-			applicationDataDirectory = System.getenv("APPDATA")
-					+ File.separator + applicationName;
-		} else {
-			if (operatingSystemName != null
-					&& operatingSystemName.startsWith("Mac")) {
-				applicationDataDirectory = System.getProperty("user.home")
-						+ "/Library/Application Support/" + applicationName;
-			} else {
-				applicationDataDirectory = System.getProperty("user.home")
-						+ "/" + applicationName;
-			}
-		}
-		return applicationDataDirectory;
-	}
-
 	public static String getLanguage() {
 		return java.util.Locale.getDefault().getDisplayName();
 	}
@@ -1261,8 +1281,8 @@ public final class LSystem {
 	public static String getAppPassword() {
 		return applicationPassword.trim();
 	}
-	
-	public static void sleep(long sleep){
+
+	public static void sleep(long sleep) {
 		try {
 			Thread.sleep(sleep);
 		} catch (InterruptedException e) {

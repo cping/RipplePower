@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.ripple.power.config.LSystem;
+
 /**
  * <p>The 'version' message is exchanged when two nodes connect.  It identifies
  * the services provided by the nodes and the latest block each has seen.  A node
@@ -95,7 +97,7 @@ public class VersionMessage {
         //
         // Set the agent name
         //
-        String agentName = String.format("/%s/%s/", NetParams.APPLICATION_NAME, NetParams.LIBRARY_NAME);
+        String agentName = String.format("/%s/%s/",LSystem.applicationName, LSystem.applicationVersion);
         msgBuffer.putString(agentName);
         //
         // Set the chain height and transaction relay flag

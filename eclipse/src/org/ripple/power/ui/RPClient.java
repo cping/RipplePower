@@ -48,10 +48,9 @@ public class RPClient {
 	public static ArrayList<String> getRLNodes(boolean flag) {
 		ArrayList<String> tmp = new ArrayList<String>(40);
 		tmp.add("wss://localhost:443");
-		tmp.add(applicationRippleLabes[0]);
-		tmp.add(applicationRippleLabes[1]);
-		tmp.add(applicationRippleLabes[2]);
-		tmp.add(applicationRippleLabes[3]);
+		for (String rippled : applicationRippleLabes) {
+			tmp.add(rippled);
+		}
 		if (flag) {
 			try {
 				ArrayList<String> list = RPClient.loadRLNodes();

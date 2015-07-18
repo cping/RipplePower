@@ -1,9 +1,7 @@
 package org.ripple.power.txns.btc;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Properties;
 
 import org.ripple.power.Helper;
 
@@ -23,12 +21,6 @@ public class NetParams {
 
     /** Our supported services */
     public static long SUPPORTED_SERVICES = 0;
-
-    /** Library identifier */
-    public static String LIBRARY_NAME = "BitcoinCore:?.?";
-
-    /** Application identifier */
-    public static String APPLICATION_NAME = "??";
 
     /** Production network magic number */
     public static final long MAGIC_NUMBER_PRODNET = 0xd9b4bef9L;
@@ -108,14 +100,12 @@ public class NetParams {
      * library routines.
      *
      * @param       testNetwork             TRUE for the test network, FALSE for the production network
-     * @param       applicationName         Application name
      * @param       minProtocolVersion      Minimum supported protocol version
      * @param       supportedServices       Supported services
      * @throws      ClassNotFoundException  org.ScripterRon.BitcoinCore.NetParams class not found
      * @throws      IOException             Unable read application properties
      */
-    public static void configure(boolean testNetwork, int minProtocolVersion,
-                                            String applicationName, long supportedServices)
+    public static void configure(boolean testNetwork, int minProtocolVersion, long supportedServices)
                                             throws ClassNotFoundException, IOException {
         //
         // Initialize data arreas for the desired network
@@ -136,25 +126,7 @@ public class NetParams {
             MAX_TARGET_DIFFICULTY = MAX_DIFFICULTY_PRODNET;
         }
         PROOF_OF_WORK_LIMIT = Helper.decodeCompactBits(MAX_TARGET_DIFFICULTY);
-        //
-        // Get the library build properties
-        //
-        Class<?> thisClass = Class.forName("org.ScripterRon.BitcoinCore.NetParams");
-        String applicationID;
-        String applicationVersion;
-        try (InputStream classStream = thisClass.getClassLoader().getResourceAsStream("META-INF/bitcoincore.properties")) {
-            if (classStream == null)
-                throw new IOException("Library build properties not found");
-            Properties applicationProperties = new Properties();
-            applicationProperties.load(classStream);
-            applicationID = applicationProperties.getProperty("application.id");
-            applicationVersion = applicationProperties.getProperty("application.version");
-        }
-        LIBRARY_NAME = String.format("%s:%s", applicationID, applicationVersion);
-        //
-        // Set the application properties
-        //
-        APPLICATION_NAME = applicationName;
+  
         MIN_PROTOCOL_VERSION = Math.max(MIN_PROTOCOL_VERSION, minProtocolVersion);
         SUPPORTED_SERVICES = supportedServices;
     }
