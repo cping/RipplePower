@@ -21,6 +21,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ripple.power.config.ApplicationInfo;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Model;
 import org.ripple.power.helper.GraphicTool;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.hft.PriceMonitor;
@@ -280,12 +281,17 @@ public class MainUI {
 
 			@Override
 			public void up() {
-
+				LSystem.current = Model.Ripple;
+				HelperDialog.showDialog();
+				HelperDialog.showDialog();
+				RPJSonLog.showDialog();
+				RPHoldXRPDialog.showDialog();			
+				RPOtherServicesDialog.showDialog();
 			}
 
 			@Override
 			public void down() {
-
+				
 			}
 
 			@Override
@@ -306,9 +312,9 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				SwingUtilities.invokeLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
 
@@ -317,27 +323,34 @@ public class MainUI {
 							@Override
 							public void action(Object o) {
 								PriceMonitor.get();
-								HelperDialog.showDialog();
-								RPJSonLog.showDialog();
-								RPHoldXRPDialog.showDialog();
-								RPOtherServicesDialog.showDialog();
-								LSystem.sleep(LSystem.SECOND);
-								HelperDialog.get();
-								LSystem.sleep(LSystem.SECOND);
-								RPJSonLog.get();
-								LSystem.sleep(LSystem.SECOND);
-								RPHoldXRPDialog.get();
-								LSystem.sleep(LSystem.SECOND);
-								RPOtherServicesDialog.get();
+								if (LSystem.current == Model.Ripple) {
+									HelperDialog.showDialog();
+									LSystem.sleep(LSystem.SECOND);
+								}
+								if (LSystem.current == Model.Ripple) {
+									HelperDialog.get();
+									LSystem.sleep(LSystem.SECOND);
+								}
+								if (LSystem.current == Model.Ripple) {
+									RPJSonLog.get();
+									LSystem.sleep(LSystem.SECOND);
+								}
+								if (LSystem.current == Model.Ripple) {
+									RPHoldXRPDialog.get();
+									LSystem.sleep(LSystem.SECOND);
+								}
+								if (LSystem.current == Model.Ripple) {
+									RPOtherServicesDialog.get();
+									LSystem.sleep(LSystem.SECOND);
+								}
 							}
 						};
 
-					
 						LSystem.postThread(update);
-						
+
 					}
 				});
-				
+
 			}
 		});
 		xrpLink.setIcon(iconXrpIcon);
@@ -358,12 +371,17 @@ public class MainUI {
 
 			@Override
 			public void up() {
-
+				LSystem.current = Model.Bitcoin;
+				HelperDialog.hideDialog();
+				HelperDialog.hideDialog();
+				RPJSonLog.hideDialog();
+				RPHoldXRPDialog.hideDialog();			
+				RPOtherServicesDialog.hideDialog();
 			}
 
 			@Override
 			public void down() {
-
+				
 			}
 
 			@Override
@@ -389,7 +407,7 @@ public class MainUI {
 			public void actionPerformed(ActionEvent e) {
 
 				SwingUtilities.invokeLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
 
@@ -408,7 +426,7 @@ public class MainUI {
 
 					}
 				});
-				
+
 			}
 		});
 

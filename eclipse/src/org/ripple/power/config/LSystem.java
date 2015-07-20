@@ -50,8 +50,11 @@ import org.ripple.power.wallet.WalletCache;
 
 public final class LSystem {
 
+	public static Model current = Model.Ripple;
+	
 	private final static String USER_HOME_NAME = System
 			.getProperty("user.home");
+
 	private static String BTC_PATH = System.getProperty("bitcoin.datadir");
 
 	public final static String FRAMEWORK_IMG_NAME = "assets/loon_";
@@ -439,7 +442,7 @@ public final class LSystem {
 
 	public static final String applicationName = "RipplePower";
 
-	public static final String applicationVersion = "Demo 0.1.1";
+	public static final String applicationVersion = "Demo 0.1.2";
 
 	public static final String walletName = "ripple_wallet.dat";
 
@@ -581,14 +584,6 @@ public final class LSystem {
 			sbr.delete(sbr.length() - 1, sbr.length());
 		}
 		return sbr.toString();
-	}
-
-	public static void putThread(final Runnable runnable) {
-		ThreadPoolService.addWork(runnable);
-	}
-
-	public static void submitThread() {
-		ThreadPoolService.exectueAll();
 	}
 
 	public static Thread postThread(final Updateable update) {

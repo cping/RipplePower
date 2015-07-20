@@ -43,7 +43,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.DirectColorModel;
 import java.awt.image.ImageProducer;
 import java.awt.image.MemoryImageSource;
@@ -1642,10 +1647,10 @@ final public class GraphicsUtils {
 				width, 0);
 		WritableRaster writableRaster1 = img1.getRaster();
 		DataBuffer dataBuffer1 = writableRaster1.getDataBuffer();
-		int[] basePixels1 = AWTDataBufferHelper.getDataInt(dataBuffer1);
+		int[] basePixels1 = getDataInt(dataBuffer1);
 		WritableRaster writableRaster2 = img2.getRaster();
 		DataBuffer dataBuffer2 = writableRaster2.getDataBuffer();
-		int[] basePixels2 = AWTDataBufferHelper.getDataInt(dataBuffer2);
+		int[] basePixels2 = getDataInt(dataBuffer2);
 		int length = basePixels2.length;
 		for (int i = 0; i < length; i++) {
 			if (basePixels2[i] >= LColor.getRGB(200, 200, 200)) {
@@ -1827,7 +1832,7 @@ final public class GraphicsUtils {
 	final static public void transparencyColor(BufferedImage img, int color) {
 		WritableRaster writableRaster = img.getRaster();
 		DataBuffer dataBuffer = writableRaster.getDataBuffer();
-		int[] basePixels = AWTDataBufferHelper.getDataInt(dataBuffer);
+		int[] basePixels = getDataInt(dataBuffer);
 		int length = basePixels.length;
 		for (int i = 0; i < length; i++) {
 			if (basePixels[i] == color) {
@@ -1971,6 +1976,48 @@ final public class GraphicsUtils {
 		return images;
 	}
 
+	public static Object getData(final DataBuffer db) {
+		if (db instanceof DataBufferByte) {
+			return ((DataBufferByte) db).getData();
+		} else if (db instanceof DataBufferUShort) {
+			return ((DataBufferUShort) db).getData();
+		} else if (db instanceof DataBufferShort) {
+			return ((DataBufferShort) db).getData();
+		} else if (db instanceof DataBufferInt) {
+			return ((DataBufferInt) db).getData();
+		} else if (db instanceof DataBufferFloat) {
+			return ((DataBufferFloat) db).getData();
+		} else if (db instanceof DataBufferDouble) {
+			return ((DataBufferDouble) db).getData();
+		} else {
+			throw new RuntimeException("Not found DataBuffer class !");
+		}
+	}
+
+	public static int[] getDataInt(final DataBuffer db) {
+		return ((DataBufferInt) db).getData();
+	}
+
+	public static byte[] getDataByte(final DataBuffer db) {
+		return ((DataBufferByte) db).getData();
+	}
+
+	public static short[] getDataShort(final DataBuffer db) {
+		return ((DataBufferShort) db).getData();
+	}
+
+	public static short[] getDataUShort(final DataBuffer db) {
+		return ((DataBufferUShort) db).getData();
+	}
+
+	public static double[] getDataDouble(final DataBuffer db) {
+		return ((DataBufferDouble) db).getData();
+	}
+
+	public static float[] getDataFloat(final DataBuffer db) {
+		return ((DataBufferFloat) db).getData();
+	}
+	
 	/**
 	 * 清空image缓存
 	 * 
