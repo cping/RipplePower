@@ -3,6 +3,7 @@ package org.ripple.power.txns.btc;
 import java.math.BigInteger;
 import java.util.List;
 
+
 public class StoredHeader extends BlockHeader {
 
     private boolean onChain;

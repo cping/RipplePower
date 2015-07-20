@@ -58,11 +58,8 @@ public class RPBubbleDialog {
 
 		public void run() {
 			for (int i = 0; i <= height; i += 10) {
-				try {
-					this.setLocation(x, y - i);
-					Thread.sleep(5);
-				} catch (InterruptedException ex) {
-				}
+				this.setLocation(x, y - i);
+				LSystem.sleep(5);
 			}
 			wave.playSound("jump.wav");
 		}
@@ -80,17 +77,14 @@ public class RPBubbleDialog {
 				y = this.getY();
 				int ybottom = (int) dim.getHeight() - screenInsets.bottom;
 				for (int i = 0; i <= ybottom - y; i += 10) {
-					try {
 						setLocation(x, y + i);
-						Thread.sleep(5);
-					} catch (InterruptedException ex) {
-					}
+						LSystem.sleep(5);
 				}
 				dispose();
 			}
 		}
-		
-		public boolean isClosed(){
+
+		public boolean isClosed() {
 			return closed;
 		}
 
@@ -272,10 +266,7 @@ public class RPBubbleDialog {
 			Updateable update = new Updateable() {
 				@Override
 				public void action(Object o) {
-					try {
-						Thread.sleep(LSystem.SECOND * 20);
-					} catch (InterruptedException e) {
-					}
+					LSystem.sleep(LSystem.SECOND * 20);
 					_tpDialog.close();
 				}
 			};

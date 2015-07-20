@@ -295,67 +295,6 @@ public class OtherData {
 		return null;
 	}
 
-	public static JSONObject getCoinmarketcapTo(int limit, String name)
-			throws HttpRequestException, JSONException, IOException {
-		return getCoinmarketcapTo(limit, name, null);
-	}
-
-	public static JSONObject getCoinmarketcapTo(int limit, String name,
-			String jsonKey) throws HttpRequestException, JSONException,
-			IOException {
-		if (name == null) {
-			return null;
-		}
-		name = name.trim().toLowerCase();
-		if (_coin_names.containsKey(name)) {
-			name = _coin_names.get(name);
-		}
-		String s = "http://coinmarketcap.com/static/generated_pages/currencies/datapoints/"
-				+ name + "-" + limit + "d.json";
-		HttpRequest request = HttpRequest.get(s);
-		request.accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		request.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
-		request.acceptEncoding("gzip, deflate");
-		request.acceptLanguage("en-US,en;q=0.5");
-		request.acceptCharset("ISO-8859-1,utf-8;q=0.7,*;q=0.7");
-		request.acceptGzipEncoding();
-		if (request.ok()) {
-			request.uncompress(true);
-			if (jsonKey == null) {
-				return new JSONObject(request.body());
-			} else {
-				InputStreamReader reader = new InputStreamReader(
-						request.stream());
-				StringBuilder sbr = new StringBuilder();
-				boolean flag = false;
-				boolean brackets = false;
-				for (;;) {
-					char ch = (char) reader.read();
-					if (ch < 0) {
-						break;
-					}
-					if (!flag && sbr.indexOf(jsonKey) != -1) {
-						flag = true;
-					}
-					if (flag) {
-						if (!brackets && ch == '[') {
-							brackets = true;
-						}
-						if (brackets && ch == '"') {
-							sbr.delete(sbr.length() - 2, sbr.length());
-							sbr.append('}');
-							return new JSONObject(sbr.toString());
-						}
-					}
-					sbr.append(ch);
-				}
-				reader.close();
-				return new JSONObject(sbr);
-			}
-		}
-		return null;
-	}
-
 	public static CoinmarketcapData getCoinmarketcapTo(String cur, String name)
 			throws HttpRequestException, JSONException, IOException {
 		if (cur == null || name == null) {
@@ -613,7 +552,7 @@ public class OtherData {
 		return getCapitalization(day, name, -1);
 	}
 
-	//coinmarketcap data not update……
+	// coinmarketcap data not update……
 	public static ArrayMap getCapitalization(int day, String name,
 			int trend_limit) throws Exception {
 		if (name == null) {
@@ -623,23 +562,13 @@ public class OtherData {
 		if (_coin_names.containsKey(name)) {
 			name = _coin_names.get(name);
 		}
-		final String jsonKey = "market_cap_by_available_supply_data";
-		JSONObject o = (getCoinmarketcapTo(day, name, jsonKey));
-		if (o == null) {
-			CoinmarketcapData data = getCoinmarketcapTo("usd", name);
-			if (data != null) {
-				_coin_names.put(name, data.name);
-				name = data.name;
-				o = (getCoinmarketcapTo(1, name));
-			}
-		}
-		if (o == null) {
-			return null;
-		}
+
 		DateFormat YYYY_MM_DD_HHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ArrayMap list = new ArrayMap(100);
-		if (o.has(jsonKey)) {
-			JSONArray arrays = o.getJSONArray(jsonKey);
+		JSONArray arrays = CoinmarketcapAPI
+				.getCoinmarketcapMarketCap(name, day);
+
+		if (arrays != null) {
 			if (trend_limit > 0) {
 				for (int i = arrays.length() - trend_limit; i < arrays.length(); i++) {
 					JSONArray result = arrays.getJSONArray(i);
@@ -655,6 +584,7 @@ public class OtherData {
 				}
 			}
 		}
+
 		return list;
 	}
 

@@ -8,6 +8,7 @@ import java.awt.Window;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
@@ -19,7 +20,9 @@ import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.MathUtils;
 
 public class WaitDialog {
+	
 	private static WaitDialog lock = null;
+	
 	private boolean isRunning = false;
 
 	private RPDialogTool tool;
@@ -133,16 +136,21 @@ public class WaitDialog {
 									(h - font.getHeight()) / 2 + 15);
 							g.setAntiAlias(false);
 						}
-						if (panel != null && isRunning
-								&& panel.getGraphics() != null) {
-							panel.update(panel.getGraphics());
-							panel.repaint();
-						}
-						repaint();
-						try {
-							Thread.sleep(45);
-						} catch (InterruptedException e) {
-						}
+						SwingUtilities.invokeLater(new Runnable() {
+							
+							@Override
+							public void run() {
+								if (panel != null && isRunning
+										&& panel.getGraphics() != null) {
+									panel.update(panel.getGraphics());
+									panel.repaint();
+								}
+								repaint();
+							
+							}
+						});
+				
+						LSystem.sleep(45);
 					}
 				}
 			};

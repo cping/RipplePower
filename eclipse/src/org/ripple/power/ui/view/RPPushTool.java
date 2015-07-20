@@ -69,11 +69,8 @@ public class RPPushTool {
 
 		public void run() {
 			for (int i = 0; i <= endTop; i += 10) {
-				try {
-					this.setLocation(x, y - i);
-					Thread.sleep(5);
-				} catch (InterruptedException ex) {
-				}
+				this.setLocation(x, y - i);
+				LSystem.sleep(5);
 			}
 		}
 

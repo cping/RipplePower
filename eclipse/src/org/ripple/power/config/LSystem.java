@@ -32,6 +32,7 @@ import org.ripple.power.i18n.Language;
 import org.ripple.power.timer.NanoTimer;
 import org.ripple.power.timer.SystemTimer;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.ui.MainForm;
 import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.projector.UIContext;
@@ -91,6 +92,7 @@ public final class LSystem {
 	private final static String BTC_WALLET = "BTCWallet";
 
 	public static String getBitcionDirectory() {
+		BTC_PATH = System.getProperty("bitcoin.datadir");
 		if (BTC_PATH == null) {
 			if (LSystem.isWindows()) {
 				BTC_PATH = USER_HOME_NAME + "\\Appdata\\Roaming\\" + BTC_WALLET;
@@ -1039,6 +1041,7 @@ public final class LSystem {
 				SwingUtils.close(LSystem.applicationMain);
 			}
 			ApplicationInfo.unlock();
+			BTCLoader.shutdown();
 			System.exit(-1);
 		}
 	}

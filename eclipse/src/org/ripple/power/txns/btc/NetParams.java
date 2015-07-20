@@ -11,10 +11,10 @@ import org.ripple.power.Helper;
 public class NetParams {
 
     /** Protocol version */
-    public static final int PROTOCOL_VERSION = 70002;
+    public static final int PROTOCOL_VERSION = 70001;
 
     /** Minimum acceptable protocol version */
-    public static int MIN_PROTOCOL_VERSION = 60001;
+    public static int MIN_PROTOCOL_VERSION = 70001;
 
     /** Peer provides network services */
     public static final long NODE_NETWORK = 1;

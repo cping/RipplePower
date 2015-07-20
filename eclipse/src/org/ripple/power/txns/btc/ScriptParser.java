@@ -42,13 +42,16 @@ public class ScriptParser {
         List<StackElement> elemStack = new ArrayList<>(25);
         List<StackElement> altStack = new ArrayList<>(5);
         byte[] inputScriptBytes = txInput.getScriptBytes();
-        if (inputScriptBytes.length != 0)
+        if (inputScriptBytes.length != 0){
             scriptStack.add(inputScriptBytes);
+        }
         byte[] outputScriptBytes = txOutput.getScriptBytes();
-        if (outputScriptBytes.length != 0)
+        if (outputScriptBytes.length != 0){
             scriptStack.add(outputScriptBytes);
-        if (verboseDebug)
+        }
+        if (verboseDebug){
             System.out.printf("Processing scripts for transaction %s\n", tx.getHashAsString());
+        }
         //
         // The result is FALSE if there are no scripts to process since an empty stack
         // is the same as FALSE

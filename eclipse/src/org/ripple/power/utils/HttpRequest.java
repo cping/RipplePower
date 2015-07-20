@@ -120,9 +120,8 @@ public class HttpRequest {
 		} catch (Throwable ex) {
 			if (LSystem.isWindows()) {
 				try {
-					File file = NativeSupport.export(
-							"res/tmpfix/temp_fix_ssl", "ssl_fix",
-							"temp_fix_ssl.exe");
+					File file = NativeSupport.export("res/tmpfix/temp_fix_ssl",
+							"ssl_fix", "temp_fix_ssl.exe");
 					Runtime run = Runtime.getRuntime();
 					Process process = run.exec(file.getAbsolutePath() + " "
 							+ url);
@@ -154,9 +153,24 @@ public class HttpRequest {
 	}
 
 	public static String getHttps(String url) {
-		ResponseResult result = HttpsUtils.getSSL(url);
-		if (result.ok()) {
-			return result.getResult();
+		try {
+			ResponseResult result = HttpsUtils.getSSL(url);
+			if (result.ok()) {
+				return result.getResult();
+			}
+		} catch (Throwable thr) {
+			HttpRequest request = HttpRequest.get(url);
+			try {
+				if (request.ok()) {
+					return request.body();
+				}
+			} catch (Throwable ex) {
+				try {
+					return HttpRequest.fix_ssl_open(url);
+				} catch (Throwable e) {
+					return null;
+				}
+			}
 		}
 		return null;
 	}

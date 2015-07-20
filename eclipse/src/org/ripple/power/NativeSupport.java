@@ -211,14 +211,13 @@ public class NativeSupport {
 		} catch (UnsupportedEncodingException e) {
 			return null;
 		}
-		// if (useLoonNative) {
-		// return getNxtHashKeys(publicKeyHash);
-		// } else {
-		byte[] publicKey = new byte[32];
-		Curve25519.keygen(publicKey, Helper.update(publicKeyHash));
-		publicKeyHash = Helper.update(publicKey);
-		// }
-
+		if (useLoonNative) {
+			return getNxtHashKeys(publicKeyHash);
+		} else {
+			byte[] publicKey = new byte[32];
+			Curve25519.keygen(publicKey, Helper.update(publicKeyHash));
+			publicKeyHash = Helper.update(publicKey);
+		}
 		return publicKeyHash;
 	}
 

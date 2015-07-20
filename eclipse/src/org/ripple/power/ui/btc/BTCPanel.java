@@ -1,9 +1,10 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.btc;
 
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
 
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.view.RoundedPanel;
 
 
@@ -23,7 +24,6 @@ public class BTCPanel extends RoundedPanel {
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		panel = new BTCTopPanel();
 		add(panel);
-		repaint();
 	}
 	
 	public void stop(){

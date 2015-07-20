@@ -811,7 +811,14 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 
 		public void walletChanged() {
-			fireTableDataChanged();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					fireTableDataChanged();
+				}
+			});
+	
 		}
 
 	}

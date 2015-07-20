@@ -2,7 +2,8 @@ package org.ripple.power.txns.btc;
 
 import java.math.BigInteger;
 
-public class ReceiveTransaction extends WalletTransaction {
+
+public class ReceiveTransaction extends BlockTransaction {
 
     private int txIndex;
 

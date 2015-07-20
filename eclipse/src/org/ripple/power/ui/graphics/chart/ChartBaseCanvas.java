@@ -4,11 +4,13 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JPanel;
+
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.LImage;
 
-public class ChartBaseCanvas extends java.awt.Canvas {
+public class ChartBaseCanvas extends JPanel {
 
 	/**
 	 * 

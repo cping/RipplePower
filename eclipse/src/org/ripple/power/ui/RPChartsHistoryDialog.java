@@ -11,7 +11,7 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
@@ -36,8 +36,7 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 	private static final long serialVersionUID = 1L;
 	private RPCheckBox _autoRefreshCheckBox;
 	private RPCheckBox _matchBTCCheckBox;
-	private javax.swing.JPanel _chartOnePanel;
-	private javax.swing.JPanel _chartTwoPanel;
+
 	private RPLabel _currencyLabel;
 	private RPCButton _okButton;
 	private RPCButton _exitButton;
@@ -46,7 +45,6 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 	private RPLabel jLabel1;
 	private RPLabel jLabel2;
 	private RPLabel jLabel3;
-	private javax.swing.JPanel _chartThreePanel;
 	private javax.swing.JSeparator jSeparator1;
 
 	private LineChartCanvas chartOneCanvas;
@@ -65,35 +63,79 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
-	private static LineChartCanvas addChart(LineChartCanvas canvas,
-			JPanel panel, ChartValueSerie my, ChartValueSerie btc) {
+	private LineChartCanvas addChart(LineChartCanvas canvas, int w, int h,
+			ChartValueSerie my, ChartValueSerie btc) {
 		if (canvas == null) {
-			canvas = new LineChartCanvas(panel.getWidth(), panel.getHeight());
+			canvas = new LineChartCanvas(w, h);
 			canvas.setTextVis(false, false, false, false);
 			canvas.setAxisVis(false);
 			canvas.setBackground(UIConfig.background);
 			canvas.addSerie(my);
-			panel.add(canvas);
-			LineChartCanvas chart = new LineChartCanvas(panel.getWidth(),
-					panel.getHeight());
+
+			LineChartCanvas chart = new LineChartCanvas(w, h);
 			chart.setTextVis(false, false, false, false);
 			chart.setAxisVis(false);
 			chart.addSerie(btc);
 			canvas.joinLine(chart);
 		} else {
-			canvas.update(panel.getGraphics());
+			RPChartsHistoryDialog.this.repaint();
+			canvas.validate();
 			canvas.repaint();
 		}
 		return canvas;
 	}
 
 	private void initChart() {
-		chartOneCanvas = addChart(chartOneCanvas, _chartOnePanel, chartsOne,
+		chartOneCanvas = addChart(chartOneCanvas, 730, 130, chartsOne,
 				chartsOnebtc);
-		chartTwoCanvas = addChart(chartTwoCanvas, _chartTwoPanel, chartsTwo,
+		chartTwoCanvas = addChart(chartTwoCanvas, 730, 130, chartsTwo,
 				chartsTwobtc);
-		chartThreeCanvas = addChart(chartThreeCanvas, _chartThreePanel,
-				chartsThree, chartsThreebtc);
+		chartThreeCanvas = addChart(chartThreeCanvas, 730, 130, chartsThree,
+				chartsThreebtc);
+
+		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(
+				chartThreeCanvas);
+		chartThreeCanvas.setLayout(jPanel2Layout);
+		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 730,
+				Short.MAX_VALUE));
+		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 130,
+				Short.MAX_VALUE));
+
+		getContentPane().add(chartThreeCanvas);
+		chartThreeCanvas.setBounds(10, 340, 730, 130);
+
+		chartOneCanvas.setBackground(new java.awt.Color(51, 51, 51));
+
+		javax.swing.GroupLayout _chartOnePanelLayout = new javax.swing.GroupLayout(
+				chartOneCanvas);
+		chartOneCanvas.setLayout(_chartOnePanelLayout);
+		_chartOnePanelLayout.setHorizontalGroup(_chartOnePanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 730, Short.MAX_VALUE));
+		_chartOnePanelLayout.setVerticalGroup(_chartOnePanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 130, Short.MAX_VALUE));
+
+		getContentPane().add(chartOneCanvas);
+		chartOneCanvas.setBounds(10, 20, 730, 130);
+
+		chartTwoCanvas.setBackground(new java.awt.Color(51, 51, 51));
+
+		javax.swing.GroupLayout _chartTwoPanelLayout = new javax.swing.GroupLayout(
+				chartTwoCanvas);
+		chartTwoCanvas.setLayout(_chartTwoPanelLayout);
+		_chartTwoPanelLayout.setHorizontalGroup(_chartTwoPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 730, Short.MAX_VALUE));
+		_chartTwoPanelLayout.setVerticalGroup(_chartTwoPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 130, Short.MAX_VALUE));
+
+		getContentPane().add(chartTwoCanvas);
+		chartTwoCanvas.setBounds(10, 180, 730, 130);
+
 	}
 
 	public RPChartsHistoryDialog(Window parent) {
@@ -121,9 +163,6 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 
 	private void initComponents() {
 
-		_chartThreePanel = new javax.swing.JPanel();
-		_chartOnePanel = new javax.swing.JPanel();
-		_chartTwoPanel = new javax.swing.JPanel();
 		_okButton = new RPCButton();
 		_exitButton = new RPCButton();
 		_currencyLabel = new RPLabel();
@@ -137,51 +176,6 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 		Font font = UIRes.getFont();
 
 		getContentPane().setLayout(null);
-
-		_chartThreePanel.setBackground(new java.awt.Color(51, 51, 51));
-
-		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(
-				_chartThreePanel);
-		_chartThreePanel.setLayout(jPanel2Layout);
-		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 730,
-				Short.MAX_VALUE));
-		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 130,
-				Short.MAX_VALUE));
-
-		getContentPane().add(_chartThreePanel);
-		_chartThreePanel.setBounds(10, 340, 730, 130);
-
-		_chartOnePanel.setBackground(new java.awt.Color(51, 51, 51));
-
-		javax.swing.GroupLayout _chartOnePanelLayout = new javax.swing.GroupLayout(
-				_chartOnePanel);
-		_chartOnePanel.setLayout(_chartOnePanelLayout);
-		_chartOnePanelLayout.setHorizontalGroup(_chartOnePanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 730, Short.MAX_VALUE));
-		_chartOnePanelLayout.setVerticalGroup(_chartOnePanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 130, Short.MAX_VALUE));
-
-		getContentPane().add(_chartOnePanel);
-		_chartOnePanel.setBounds(10, 20, 730, 130);
-
-		_chartTwoPanel.setBackground(new java.awt.Color(51, 51, 51));
-
-		javax.swing.GroupLayout _chartTwoPanelLayout = new javax.swing.GroupLayout(
-				_chartTwoPanel);
-		_chartTwoPanel.setLayout(_chartTwoPanelLayout);
-		_chartTwoPanelLayout.setHorizontalGroup(_chartTwoPanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 730, Short.MAX_VALUE));
-		_chartTwoPanelLayout.setVerticalGroup(_chartTwoPanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 130, Short.MAX_VALUE));
-
-		getContentPane().add(_chartTwoPanel);
-		_chartTwoPanel.setBounds(10, 180, 730, 130);
 
 		_okButton.setFont(font); // NOI18N
 		_okButton.setText(UIMessage.ok);
@@ -205,13 +199,13 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 					public void action(Object o) {
 						try {
 							addData(chartsOne, 1, cur, match, chartsOnebtc);
-							chartOneCanvas = addChart(chartOneCanvas,
-									_chartOnePanel, chartsOne, chartsOnebtc);
+							chartOneCanvas = addChart(chartOneCanvas, 730, 130,
+									chartsOne, chartsOnebtc);
 						} catch (Exception e) {
 							try {
 								addData(chartsOne, 1, cur, match, chartsOnebtc);
-								chartOneCanvas = addChart(chartOneCanvas,
-										_chartOnePanel, chartsOne, chartsOnebtc);
+								chartOneCanvas = addChart(chartOneCanvas, 730,
+										130, chartsOne, chartsOnebtc);
 							} catch (Exception ex) {
 								RPToast.makeText(RPChartsHistoryDialog.this,
 										e.getMessage(), RPToast.Style.ERROR)
@@ -220,13 +214,13 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 						}
 						try {
 							addData(chartsTwo, 7, cur, match, chartsTwobtc);
-							chartTwoCanvas = addChart(chartTwoCanvas,
-									_chartTwoPanel, chartsTwo, chartsTwobtc);
+							chartTwoCanvas = addChart(chartTwoCanvas, 730, 130,
+									chartsTwo, chartsTwobtc);
 						} catch (Exception e) {
 							try {
 								addData(chartsTwo, 7, cur, match, chartsTwobtc);
-								chartTwoCanvas = addChart(chartTwoCanvas,
-										_chartTwoPanel, chartsTwo, chartsTwobtc);
+								chartTwoCanvas = addChart(chartTwoCanvas, 730,
+										130, chartsTwo, chartsTwobtc);
 							} catch (Exception ex) {
 								RPToast.makeText(RPChartsHistoryDialog.this,
 										e.getMessage(), RPToast.Style.ERROR)
@@ -235,16 +229,14 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 						}
 						try {
 							addData(chartsThree, 30, cur, match, chartsThreebtc);
-							chartThreeCanvas = addChart(chartThreeCanvas,
-									_chartThreePanel, chartsThree,
-									chartsThreebtc);
+							chartThreeCanvas = addChart(chartThreeCanvas, 730,
+									130, chartsThree, chartsThreebtc);
 						} catch (Exception e) {
 							try {
 								addData(chartsThree, 30, cur, match,
 										chartsThreebtc);
 								chartThreeCanvas = addChart(chartThreeCanvas,
-										_chartThreePanel, chartsThree,
-										chartsThreebtc);
+										730, 130, chartsThree, chartsThreebtc);
 							} catch (Exception ex) {
 								RPToast.makeText(RPChartsHistoryDialog.this,
 										e.getMessage(), RPToast.Style.ERROR)
@@ -350,8 +342,9 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 
 			}
 		});
-		pack();
 		initChart();
+		pack();
+
 		Updateable update = new Updateable() {
 
 			@Override
@@ -370,52 +363,57 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 
 				}
 				for (; !_closed;) {
-					if (_autoRefreshCheckBox.isSelected()) {
-						final String cur = (String) _cComboBox
-								.getSelectedItem();
-						final boolean match = _matchBTCCheckBox.isSelected()
-								&& !"bitcoin".equalsIgnoreCase(cur);
-						try {
-							addData(chartsOne, 1, cur, match, chartsOnebtc);
-							addData(chartsTwo, 7, cur, match, chartsTwobtc);
-							addData(chartsThree, 30, cur, match, chartsThreebtc);
-						} catch (Exception ex) {
-							RPToast.makeText(RPChartsHistoryDialog.this,
-									ex.getMessage(), RPToast.Style.ERROR)
-									.display();
-						}
-					}
-					if (_chartOnePanel != null
-							&& _chartOnePanel.getGraphics() != null) {
-						if (chartOneCanvas != null) {
-							chartOneCanvas.update(_chartOnePanel.getGraphics());
-						}
-					}
-					if (_chartTwoPanel != null
-							&& _chartTwoPanel.getGraphics() != null) {
-						if (chartTwoCanvas != null) {
-							chartTwoCanvas.update(_chartTwoPanel.getGraphics());
-						}
-					}
-					if (_chartThreePanel != null
-							&& _chartThreePanel.getGraphics() != null) {
-						if (chartThreeCanvas != null) {
-							chartThreeCanvas.update(_chartThreePanel
-									.getGraphics());
-						}
-					}
-					try {
-						Thread.sleep(LSystem.SECOND);
-					} catch (InterruptedException e) {
-					}
 
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							if (_autoRefreshCheckBox.isSelected()) {
+								final String cur = (String) _cComboBox
+										.getSelectedItem();
+								final boolean match = _matchBTCCheckBox
+										.isSelected()
+										&& !"bitcoin".equalsIgnoreCase(cur);
+								try {
+									addData(chartsOne, 1, cur, match,
+											chartsOnebtc);
+									addData(chartsTwo, 7, cur, match,
+											chartsTwobtc);
+									addData(chartsThree, 30, cur, match,
+											chartsThreebtc);
+								} catch (Exception ex) {
+									RPToast.makeText(
+											RPChartsHistoryDialog.this,
+											ex.getMessage(),
+											RPToast.Style.ERROR).display();
+								}
+							}
+							
+							RPChartsHistoryDialog.this.repaint();
+			
+							if (chartOneCanvas != null) {
+								chartOneCanvas.repaint();
+							}
+
+							if (chartTwoCanvas != null) {
+								chartTwoCanvas.repaint();
+							}
+
+							if (chartThreeCanvas != null) {
+								chartThreeCanvas.repaint();
+							}
+
+						}
+					});
+
+					LSystem.sleep(LSystem.SECOND);
 				}
 			}
 		};
 		LSystem.postThread(update);
 	}
 
-	private static void addData(ChartValueSerie chart, int day, String cur,
+	private void addData(ChartValueSerie chart, int day, String cur,
 			boolean match, ChartValueSerie btcchart) throws Exception {
 		ArrayMap arrays = OtherData.getCapitalization(day, cur);
 		if (arrays != null && arrays.size() > 0) {

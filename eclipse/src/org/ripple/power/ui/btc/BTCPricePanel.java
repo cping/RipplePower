@@ -1,4 +1,4 @@
-package org.ripple.power.ui;
+package org.ripple.power.ui.btc;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -16,6 +17,11 @@ import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.btc.BTCMonitor;
 import org.ripple.power.txns.btc.BTCPrice;
 import org.ripple.power.txns.btc.BTCStoreQuery;
+import org.ripple.power.ui.RPCButton;
+import org.ripple.power.ui.RPCScrollPane;
+import org.ripple.power.ui.RPComboBox;
+import org.ripple.power.ui.UIConfig;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.utils.StringUtils;
@@ -101,7 +107,14 @@ public class BTCPricePanel extends JPanel {
 		}
 
 		public void update() {
-			fireTableDataChanged();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					fireTableDataChanged();
+				}
+			});
+
 		}
 
 	}

@@ -38,6 +38,14 @@ public final class AddressTable extends ColorTable {
 
 	public static final int INFO = 9;
 
+	public static final int INTEGER = 10;
+	
+	public static final int SERVICES = 11;
+	
+    public static final int HASH = 12;
+    
+    public static final int MESSAGE = 13;
+    
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
@@ -106,6 +114,20 @@ public final class AddressTable extends ColorTable {
 			case INFO:
 				column.setCellRenderer(new InfoRenderer(JLabel.LEFT));
 				break;
+			case INTEGER:
+				value = "mmmmmn";
+				break;
+            case SERVICES:                                 
+                column.setCellRenderer(new StringRenderer(JLabel.CENTER));
+                value = "Mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm";
+                break;
+            case HASH:                                         
+                column.setCellRenderer(new StringRenderer(JLabel.RIGHT));
+                value = "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn";
+                break;
+            case MESSAGE:                                    
+                value = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+                break;
 			default:
 				throw new IllegalArgumentException("Unsupported column type "
 						+ columnTypes[i]);

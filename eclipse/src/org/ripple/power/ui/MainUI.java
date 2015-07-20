@@ -27,6 +27,7 @@ import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.btc.BTCPanel;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.projector.UIScene;

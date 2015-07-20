@@ -2,7 +2,7 @@ package org.ripple.power.txns.btc;
 
 import java.math.BigInteger;
 
-public class WalletTransaction {
+public class BlockTransaction {
 
 	protected Sha256Hash normID;
 
@@ -16,7 +16,7 @@ public class WalletTransaction {
 
 	protected BigInteger value;
 
-	public WalletTransaction(Sha256Hash normID, Sha256Hash txHash, long txTime,
+	public BlockTransaction(Sha256Hash normID, Sha256Hash txHash, long txTime,
 			Sha256Hash blockHash, Address address, BigInteger value) {
 		this.normID = normID;
 		this.txHash = txHash;

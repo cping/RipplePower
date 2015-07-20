@@ -46,6 +46,7 @@ public class ErrorLog {
 				System.err.println(ex.getMessage());
 			}
 		}
+		exc.printStackTrace();
 	}
 
 }

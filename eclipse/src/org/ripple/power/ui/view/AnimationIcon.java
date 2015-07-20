@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.ripple.power.utils.GraphicsUtils;
@@ -47,7 +48,14 @@ public class AnimationIcon implements Icon {
 			}
 		});
 
-		component.repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				component.repaint();
+			}
+		});
+		
 
 		timer.setRepeats(repeat);
 		timer.start();
@@ -62,10 +70,17 @@ public class AnimationIcon implements Icon {
 			stepCount = 0;
 
 		}
-		component.repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				component.repaint();
+			}
+		});
+		
 	}
 
-	public void decrementRotation(JComponent component) {
+	public void decrementRotation(final JComponent component) {
 		theta -= delta;
 		if (stepCount == 0) {
 			theta = 2 * Math.PI - delta;
@@ -73,7 +88,14 @@ public class AnimationIcon implements Icon {
 		} else {
 			stepCount--;
 		}
-		component.repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				component.repaint();
+			}
+		});
+		
 	}
 
 	public void fixRotation() {

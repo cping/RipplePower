@@ -194,12 +194,12 @@ public class HttpsUtils {
 		return responseObject;
 	}
 
-	public static ResponseResult getSSL(String url) {
+	public static ResponseResult getSSL(String url) throws Exception {
 		return getSSL(url, LSystem.encoding, LSystem.encoding);
 	}
 
 	public static ResponseResult getSSL(String url, String paramsCharset,
-			String resultCharset) {
+			String resultCharset) throws Exception {
 		if (url == null || "".equals(url)) {
 			return null;
 		}
@@ -226,7 +226,7 @@ public class HttpsUtils {
 				responseObject.setResult(responseStr);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception(e.getMessage()); 
 		} finally {
 			abortConnection(hg, httpClient);
 		}

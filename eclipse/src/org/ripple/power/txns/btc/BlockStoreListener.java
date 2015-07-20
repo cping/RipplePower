@@ -1,6 +1,6 @@
 package org.ripple.power.txns.btc;
 
-public interface WalletListener {
+public interface BlockStoreListener {
 
     public void addChainBlock(StoredHeader blockHeader);
 
