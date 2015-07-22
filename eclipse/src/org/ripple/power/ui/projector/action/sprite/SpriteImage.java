@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.ui.graphics.LImage;
-import org.ripple.power.ui.graphics.SerializablelImage;
 import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.projector.core.LObject;
 import org.ripple.power.utils.CollectionUtils;
@@ -30,7 +29,7 @@ public class SpriteImage extends LObject implements ISprite {
 
 	public boolean visible = true;
 
-	public SerializablelImage serializablelImage;
+	public BufferedImage serializablelImage;
 
 	private boolean isOpaque = true;
 
@@ -86,7 +85,7 @@ public class SpriteImage extends LObject implements ISprite {
 		this.setLocation(x, y);
 		this.width = image.width;
 		this.height = image.height;
-		this.bind(image.serializablelImage.getImage());
+		this.bind(image.serializablelImage);
 	}
 
 	public SpriteImage(int x, int y, int width, int height) {
@@ -133,8 +132,7 @@ public class SpriteImage extends LObject implements ISprite {
 			awtImage = GraphicsUtils.newAwtARGBImage(pixels, width, height,
 					size);
 		}
-		serializablelImage = new SerializablelImage(awtImage);
-		image = new LImage(serializablelImage.getImage());
+		image = new LImage(serializablelImage = awtImage);
 	}
 
 	/**
@@ -233,7 +231,7 @@ public class SpriteImage extends LObject implements ISprite {
 	 */
 	public void createUI(LGraphics g) {
 		if (visible) {
-			g.drawImage(serializablelImage.getImage(), x(), y());
+			g.drawImage(serializablelImage, x(), y());
 		}
 	}
 
@@ -441,7 +439,7 @@ public class SpriteImage extends LObject implements ISprite {
 	}
 
 	public BufferedImage getImage() {
-		return serializablelImage.getImage();
+		return serializablelImage;
 	}
 
 	public void update(long timer) {
@@ -554,7 +552,7 @@ public class SpriteImage extends LObject implements ISprite {
 	}
 
 	public LImage getBitmap() {
-		return new LImage(serializablelImage.getImage());
+		return new LImage(serializablelImage);
 	}
 
 	public LImage getLImage() {

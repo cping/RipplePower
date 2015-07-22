@@ -577,15 +577,15 @@ public class Sprite extends LObject implements ISprite, LTrans {
 		switch (filterType) {
 		case ImageFilterType.NoneFilter:
 			if (LTrans.TRANS_NONE == transform) {
-				g.drawImage(image.serializablelImage.getImage(), x(), y());
+				g.drawImage(image.serializablelImage, x(), y());
 			} else {
-				g.drawRegion(image.serializablelImage.getImage(), 0, 0,
+				g.drawRegion(image.serializablelImage, 0, 0,
 						getWidth(), getHeight(), transform, x(), y(),
 						LGraphics.TOP | LGraphics.LEFT);
 			}
 			return;
 		default:
-			Image tmp = factory.doFilter(image.serializablelImage.getImage(),
+			Image tmp = factory.doFilter(image.serializablelImage,
 					filterType);
 			if (LTrans.TRANS_NONE == transform) {
 				g.drawImage(tmp, x(), y());

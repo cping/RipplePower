@@ -259,6 +259,7 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				LSystem.current = Model.Welcome;
 				HelperDialog.hideDialog();
 				RPJSonLog.hideDialog();
 				RPHoldXRPDialog.hideDialog();

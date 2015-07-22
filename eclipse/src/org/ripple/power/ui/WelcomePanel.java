@@ -10,10 +10,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.bootstrap.ui.RoundRectBorder;
+import org.ripple.power.config.LSystem;
 
 import net.miginfocom.swing.MigLayout;
 
-public class WelcomePanel extends JPanel implements ActionListener{
+public class WelcomePanel extends JPanel implements ActionListener {
 
 	/**
 	 * 
@@ -56,22 +57,22 @@ public class WelcomePanel extends JPanel implements ActionListener{
 		brandPanel.add(downloadLabel,
 				"cell 0 3 1 1, grow, gapleft 40%, gapright 40%");
 
-		JLabel versionLabel = new JLabel("Currently v0.1");
+		JLabel versionLabel = new JLabel(String.format("Currently %s %s",
+				LSystem.applicationName, LSystem.applicationVersion));
 		versionLabel.setForeground(Color.decode("#846CAF"));
-		versionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+		versionLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 		versionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		brandPanel.add(versionLabel,
 				"cell 0 4 1 1, grow, gapleft 40%, gapright 40%");
 
 		JLabel designLabel = new JLabel(
-				"<html><center><font color=#484848 size=7>软件声明</font><br><font color=gray size=5>此应用为RippleLabs官方Ripple-lib-java包的具体实现，在此桌面应用中直接使用了官方的相关jar，此应用作者实际只提供了桌面操作与官方API的组合，没有自行修改或提供任何实际的发送或接收代码.</font></center></html>");
+				"<html><center><font color=#484848 size=7>Software Explain</font><br><br><font color=gray size=5>1. That GitHub will deliver the code faithfully (If you download it and run it locally, this is a one-time event)<br>2. That WSS/SSL infrastructure is secure and transaction data generated only locally<br>3. That your computer setup is trustworthy<br>4. That ripple-lib-java is trustworthy<br>5. That the code I wrote is trustworthy (all open source code in github)</font></center></html>");
 		designLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		add(designLabel, "cell 0 1 1 1, grow, gapleft 20%, gapright 20%");
+		add(designLabel, "cell 0 1 0 1, grow, gapleft 20%, gapright 20%");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 }
