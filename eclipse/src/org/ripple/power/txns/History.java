@@ -62,4 +62,5 @@ public class History {
 	public String getAccount() {
 		return _account;
 	}
+	
 }

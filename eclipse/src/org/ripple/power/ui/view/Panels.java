@@ -19,6 +19,7 @@ import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.LImage;
@@ -161,7 +162,7 @@ public class Panels {
 
 		if (isDeferredHideEventInProgress()) {
 
-			SwingUtilities.invokeLater(new Runnable() {
+			LSystem.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 

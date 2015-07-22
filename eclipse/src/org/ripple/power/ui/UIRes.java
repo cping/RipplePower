@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +50,7 @@ import javax.swing.plaf.UIResource;
 
 import org.ripple.bouncycastle.util.encoders.Hex;
 import org.ripple.power.collection.ArrayByte;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LImage;
@@ -535,7 +535,7 @@ public class UIRes {
 	}
 
 	public static void requestFocusInWindow(final Component c) {
-		invokeAndWait(new Runnable() {
+		LSystem.invokeAndWait(new Runnable() {
 			public void run() {
 				c.requestFocusInWindow();
 			}
@@ -550,26 +550,6 @@ public class UIRes {
 
 	public static void showNormalCursor(Component component) {
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR), component);
-	}
-
-	public static void invokeLater(Runnable runnable) {
-		if (!SwingUtilities.isEventDispatchThread()) {
-			SwingUtilities.invokeLater(runnable);
-		} else {
-			runnable.run();
-		}
-	}
-
-	public static void invokeAndWait(Runnable runnable) {
-		if (!SwingUtilities.isEventDispatchThread()) {
-			try {
-				SwingUtilities.invokeAndWait(runnable);
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
-		} else {
-			runnable.run();
-		}
 	}
 
 	public static void showWaitCursor(Component component) {
@@ -611,7 +591,7 @@ public class UIRes {
 
 			}
 		};
-		invokeAndWait(runnable);
+		LSystem.invokeAndWait(runnable);
 
 		return dialogReturnValue;
 	}

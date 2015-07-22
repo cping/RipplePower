@@ -111,7 +111,7 @@ public final class BTCWallet extends JFrame implements ActionListener, Connectio
     @Override
     public void addChainBlock(StoredHeader blockHeader) {
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    	LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -129,7 +129,7 @@ public final class BTCWallet extends JFrame implements ActionListener, Connectio
 
     @Override
     public void txUpdated() {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    	LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -144,7 +144,7 @@ public final class BTCWallet extends JFrame implements ActionListener, Connectio
     @Override
     public void rescanCompleted() {
  
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    	LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -381,7 +381,7 @@ public final class BTCWallet extends JFrame implements ActionListener, Connectio
 
         if (!synchronizingTitle && BTCLoader.networkChainHeight > BTCLoader.blockStore.getChainHeight()) {
             synchronizingTitle = true;
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            LSystem.invokeLater(new Runnable() {
 				
 				@Override
 				public void run() {

@@ -103,9 +103,10 @@ public class HttpRequest {
 	}
 
 	/**
-	 * java默认提供的ssl解析协议不全，无法正确解析ripplelabs目前使用的ssl报文，暂时先凑活着来……(但是android上没问题)
+	 * javase默认提供的ssl解析协议不全，无法正确解析ripplelabs目前使用的ssl报文，暂时先凑活着来……(但是android上没问题)
 	 * 
-	 * 只是临时补丁，等待oracle修正ssl中，除了java，用c#和node.js、python解析ripple的https站点无此问题……
+	 * 只是临时补丁，等待oracle修正ssl中，除了java，用c#和node.js、python解析ripple的https站点也无此问题,
+	 * 万恶的oracle……
 	 * 
 	 * @param url
 	 * @return
@@ -123,8 +124,8 @@ public class HttpRequest {
 					File file = NativeSupport.export("res/tmpfix/temp_fix_ssl",
 							"ssl_fix", "temp_fix_ssl.exe");
 					Runtime run = Runtime.getRuntime();
-					Process process = run.exec(file.getAbsolutePath() + " "
-							+ url);
+					Process process = run.exec(String.format("%s %s",
+							file.getAbsolutePath(), url));
 					InputStream ins = process.getInputStream();
 					InputStreamReader str = new InputStreamReader(ins);
 					BufferedReader br = new BufferedReader(str);
@@ -159,17 +160,10 @@ public class HttpRequest {
 				return result.getResult();
 			}
 		} catch (Throwable thr) {
-			HttpRequest request = HttpRequest.get(url);
 			try {
-				if (request.ok()) {
-					return request.body();
-				}
-			} catch (Throwable ex) {
-				try {
-					return HttpRequest.fix_ssl_open(url);
-				} catch (Throwable e) {
-					return null;
-				}
+				return HttpRequest.fix_ssl_open(url);
+			} catch (Throwable e) {
+				return null;
 			}
 		}
 		return null;
@@ -1818,7 +1812,22 @@ public class HttpRequest {
 		}
 		return this;
 	}
+	
+	public HttpRequest trustAllCerts(String ca) throws Exception {
+		final HttpURLConnection connection = getConnection();
+		if (connection instanceof HttpsURLConnection) {
+			try {
 
+				((HttpsURLConnection) connection)
+						.setSSLSocketFactory(rippleManager.getSSLContent()
+								.getSocketFactory());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return this;
+	}
+	
 	public HttpRequest trustAllHosts() {
 		final HttpURLConnection connection = getConnection();
 		if (connection instanceof HttpsURLConnection) {

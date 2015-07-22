@@ -11,7 +11,6 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
 
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
@@ -364,7 +363,7 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 				}
 				for (; !_closed;) {
 
-					SwingUtilities.invokeLater(new Runnable() {
+					LSystem.invokeLater(new Runnable() {
 
 						@Override
 						public void run() {

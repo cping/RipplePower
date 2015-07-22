@@ -30,4 +30,8 @@ public class BTCPanel extends RoundedPanel {
 		panel.stop();
 	}
 
+	public void start(){
+		panel.start();
+	}
+
 }

@@ -9,9 +9,9 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class AnimationIcon implements Icon {
@@ -48,7 +48,7 @@ public class AnimationIcon implements Icon {
 			}
 		});
 
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -70,7 +70,7 @@ public class AnimationIcon implements Icon {
 			stepCount = 0;
 
 		}
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -88,7 +88,7 @@ public class AnimationIcon implements Icon {
 		} else {
 			stepCount--;
 		}
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {

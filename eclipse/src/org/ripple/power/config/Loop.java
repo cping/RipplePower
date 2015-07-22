@@ -141,12 +141,6 @@ public abstract class Loop {
 		synchronized (_synch) {
 			_isRunning = false;
 			_isDestroy = true;
-			while (_isDestroy) {
-				try {
-					_synch.wait();
-				} catch (InterruptedException ex) {
-				}
-			}
 		}
 	}
 

@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -420,7 +419,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	}
 
 	private void submitActionCommand(final String actionName) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
@@ -811,7 +810,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 
 		public void walletChanged() {
-			SwingUtilities.invokeLater(new Runnable() {
+			LSystem.invokeLater(new Runnable() {
 				
 				@Override
 				public void run() {

@@ -14,7 +14,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -38,6 +37,7 @@ import org.ripple.power.ui.projector.core.graphics.component.LMessage;
 import org.ripple.power.ui.projector.core.graphics.component.LSelect;
 import org.ripple.power.ui.view.AnimationIcon;
 import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.RPPushTool;
 import org.ripple.power.ui.view.RPScrollPane;
 import org.ripple.power.ui.view.RPSplash;
 import org.ripple.power.utils.SwingUtils;
@@ -270,10 +270,14 @@ public class MainUI {
 		welcomeLink.route();
 		navLinkList.add(welcomeLink);
 
+		// bitcoin
+		btcPanel = new BTCPanel();
+
 		// ripple
 		final Icon iconXrpIcon = UIRes.getImage("icons/ripple.png");
 		final RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
 				form.getMainPanel());
+
 		xrpLink.setClick(new RPNavlink.Click() {
 
 			final AnimationIcon iconBtcRotating = new AnimationIcon(
@@ -285,13 +289,16 @@ public class MainUI {
 				HelperDialog.showDialog();
 				HelperDialog.showDialog();
 				RPJSonLog.showDialog();
-				RPHoldXRPDialog.showDialog();			
+				RPHoldXRPDialog.showDialog();
 				RPOtherServicesDialog.showDialog();
+				if (btcPanel != null) {
+					btcPanel.stop();
+				}
 			}
 
 			@Override
 			public void down() {
-				
+
 			}
 
 			@Override
@@ -313,7 +320,7 @@ public class MainUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
@@ -324,11 +331,12 @@ public class MainUI {
 							public void action(Object o) {
 								PriceMonitor.get();
 								if (LSystem.current == Model.Ripple) {
-									HelperDialog.showDialog();
-									LSystem.sleep(LSystem.SECOND);
-								}
-								if (LSystem.current == Model.Ripple) {
-									HelperDialog.get();
+									RPPushTool rpp = HelperDialog.get();
+									if ((rpp.obj != null)
+											&& (rpp.obj instanceof HelperDialog)) {
+										HelperDialog dialog = (HelperDialog) rpp.obj;
+										dialog.setMessage("Hello, Ripple World ! Right and Justice are on our side ! This is a Java Version Ripple Desktop Client for interacting with the Ripple network .");
+									}
 									LSystem.sleep(LSystem.SECOND);
 								}
 								if (LSystem.current == Model.Ripple) {
@@ -358,9 +366,6 @@ public class MainUI {
 		xrpLink.setFont(navLinkFont);
 		navLinkList.add(xrpLink);
 
-		// bitcoin
-		btcPanel = new BTCPanel();
-
 		final Icon iconBtcIcon = UIRes.getImage("icons/btc.png");
 
 		final RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, btcPanel);
@@ -373,15 +378,17 @@ public class MainUI {
 			public void up() {
 				LSystem.current = Model.Bitcoin;
 				HelperDialog.hideDialog();
-				HelperDialog.hideDialog();
 				RPJSonLog.hideDialog();
-				RPHoldXRPDialog.hideDialog();			
+				RPHoldXRPDialog.hideDialog();
 				RPOtherServicesDialog.hideDialog();
+				if (btcPanel != null) {
+					btcPanel.start();
+				}
 			}
 
 			@Override
 			public void down() {
-				
+
 			}
 
 			@Override
@@ -406,7 +413,7 @@ public class MainUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {

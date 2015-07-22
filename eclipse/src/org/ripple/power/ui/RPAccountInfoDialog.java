@@ -16,7 +16,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -586,7 +585,7 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 			final AccountTableModel tableModel,
 			final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {

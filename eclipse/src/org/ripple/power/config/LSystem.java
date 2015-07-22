@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -589,22 +590,42 @@ public final class LSystem {
 	public static Thread postThread(final Updateable update) {
 		Thread thread = new Thread() {
 			public void run() {
-				if (update != null) {
-					update.action(null);
-				}
+					if (update != null) {
+						update.action(null);
+					}
 			}
 		};
 		thread.start();
 		return thread;
 	}
 
+	public static void invokeLater(Runnable runnable) {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(runnable);
+		} else {
+			runnable.run();
+		}
+	}
+
+	public static void invokeAndWait(Runnable runnable) {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			try {
+				SwingUtilities.invokeAndWait(runnable);
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+			}
+		} else {
+			runnable.run();
+		}
+	}
+	
 	public static void invokeLater(final Updateable update) {
-		SwingUtilities.invokeLater(new Runnable() {
+		invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (update != null) {
-					update.action(null);
-				}
+					if (update != null) {
+						update.action(null);
+					}
 			}
 		});
 	}

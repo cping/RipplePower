@@ -8,7 +8,6 @@ import java.awt.Window;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
@@ -136,7 +135,7 @@ public class WaitDialog {
 									(h - font.getHeight()) / 2 + 15);
 							g.setAntiAlias(false);
 						}
-						SwingUtilities.invokeLater(new Runnable() {
+						LSystem.invokeLater(new Runnable() {
 							
 							@Override
 							public void run() {

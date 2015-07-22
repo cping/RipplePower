@@ -10,12 +10,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.OverlayLayout;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.LColor;
 
 public class RPInput {
@@ -29,7 +29,7 @@ public class RPInput {
 
 	public void getTextInput(final TextInputListener listener,
 			final String title, final String text) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			public void run() {
 				final String output = JOptionPane.showInputDialog(null, title,
 						text);
@@ -44,7 +44,7 @@ public class RPInput {
 
 	public void getBigTextInput(final TextInputListener listener,
 			final String title, final String placeholder, final Object[] objs) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				JPanel panel = new JPanel(new FlowLayout());

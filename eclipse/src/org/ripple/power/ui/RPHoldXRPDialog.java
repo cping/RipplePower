@@ -6,8 +6,6 @@ import java.awt.Toolkit;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import javax.swing.SwingUtilities;
-
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.Updateable;
@@ -92,7 +90,7 @@ public class RPHoldXRPDialog {
 							textDisplay.message = "Hold XRP " + (result + "%");
 							textDisplay.x = (canvas.getWidth() - textDisplay.font
 									.stringWidth(textDisplay.message)) / 2;
-							SwingUtilities.invokeLater(new Runnable() {
+							LSystem.invokeLater(new Runnable() {
 								
 								@Override
 								public void run() {

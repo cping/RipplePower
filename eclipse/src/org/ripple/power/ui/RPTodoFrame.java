@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
-import javax.swing.*;
-
+import org.ripple.power.config.LSystem;
 import org.ripple.power.nodejs.JSPlugin;
 import org.ripple.power.nodejs.JSPluginTool;
 import org.ripple.power.nodejs.SimplePluginManager;
@@ -20,7 +19,7 @@ public class RPTodoFrame extends JSPluginTool {
 	}
 
 	public void launch() {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			public void run() {
 				mainFrame.initUI();
 			}

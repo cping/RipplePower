@@ -16,7 +16,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
@@ -144,7 +143,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
@@ -160,7 +159,7 @@ public class MainForm extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {

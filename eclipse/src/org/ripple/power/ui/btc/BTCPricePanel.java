@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.Model;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.btc.BTCMonitor;
 import org.ripple.power.txns.btc.BTCPrice;
@@ -38,7 +38,8 @@ public class BTCPricePanel extends JPanel {
 
 	private ArrayList<BTCPrice> _prices = new ArrayList<BTCPrice>(40);
 	private boolean _loading = false;
-
+	private AccountTableModel tableModel;
+	
 	class AccountTableModel extends AbstractTableModel {
 
 		/**
@@ -89,7 +90,7 @@ public class BTCPricePanel extends JPanel {
 				throw new IndexOutOfBoundsException("Table row " + row
 						+ " is not valid");
 			}
-			ArrayList<BTCPrice> temp = (ArrayList<BTCPrice>) _prices.clone(); 
+			ArrayList<BTCPrice> temp = (ArrayList<BTCPrice>) _prices.clone();
 			Object value = null;
 			BTCPrice item = (BTCPrice) temp.get(row);
 			switch (column) {
@@ -107,8 +108,8 @@ public class BTCPricePanel extends JPanel {
 		}
 
 		public void update() {
-			SwingUtilities.invokeLater(new Runnable() {
-				
+			LSystem.invokeLater(new Runnable() {
+
 				@Override
 				public void run() {
 					fireTableDataChanged();
@@ -133,7 +134,7 @@ public class BTCPricePanel extends JPanel {
 		String[] columnNames = { "Store", "Price" };
 		int[] columnTypes = { AddressTable.NAME, AddressTable.AMOUNT };
 
-		final AccountTableModel tableModel = new AccountTableModel(columnNames,
+		this.tableModel = new AccountTableModel(columnNames,
 				columnClasses);
 		final AddressTable priceTable = new AddressTable(tableModel,
 				columnTypes);
@@ -188,7 +189,11 @@ public class BTCPricePanel extends JPanel {
 
 	private Thread _post;
 
-	private void update(final AccountTableModel model) {
+	public void start() {
+		downloadStorePrice(this.tableModel);
+	}
+	
+	public void downloadStorePrice(final AccountTableModel model) {
 
 		if (_post != null) {
 			stop();
@@ -199,120 +204,127 @@ public class BTCPricePanel extends JPanel {
 			@Override
 			public void action(Object o) {
 				if (!_loading) {
-					synchronized (_prices) {
-						_prices.clear();
-						model.update();
-						_loading = true;
-						String item = (String) _curComboBox.getSelectedItem();
-						switch (item) {
-						case "USD":
-							BTCStoreQuery.getUSDPrices(new BTCMonitor() {
+					if (LSystem.current == Model.Bitcoin) {
+						synchronized (_prices) {
+							_prices.clear();
+							model.update();
+							_loading = true;
+							String item = (String) _curComboBox
+									.getSelectedItem();
+							switch (item) {
+							case "USD":
+								BTCStoreQuery.getUSDPrices(new BTCMonitor() {
 
-								@Override
-								public void update(BTCPrice price) {
-									synchronized (_prices) {
-										try {
-											_prices.add(price);
-											model.update();
-										} catch (Throwable t) {
+									@Override
+									public void update(BTCPrice price) {
+										synchronized (_prices) {
+											try {
+												_prices.add(price);
+												model.update();
+											} catch (Throwable t) {
 
+											}
 										}
 									}
-								}
 
-								@Override
-								public void end() {
-									_loading = false;
-								}
-
-							}, false);
-							break;
-						case "CNY":
-							BTCStoreQuery.getCNYPrices(new BTCMonitor() {
-
-								@Override
-								public void update(BTCPrice price) {
-									synchronized (_prices) {
-										_prices.add(price);
-										model.update();
+									@Override
+									public void end() {
+										_loading = false;
 									}
-								}
 
-								@Override
-								public void end() {
-									_loading = false;
-								}
+								}, false);
+								break;
+							case "CNY":
+								BTCStoreQuery.getCNYPrices(new BTCMonitor() {
 
-							}, false);
-							break;
-						case "JPY":
-							BTCStoreQuery.getJPYPrices(new BTCMonitor() {
-
-								@Override
-								public void update(BTCPrice price) {
-									synchronized (_prices) {
-										_prices.add(price);
-										model.update();
-									}
-								}
-
-								@Override
-								public void end() {
-									_loading = false;
-								}
-
-							}, false);
-							break;
-						case "EUR":
-							BTCStoreQuery.getEURPrices(new BTCMonitor() {
-
-								@Override
-								public void update(BTCPrice price) {
-									synchronized (_prices) {
-										_prices.add(price);
-										model.update();
-									}
-								}
-
-								@Override
-								public void end() {
-									_loading = false;
-								}
-
-							}, false);
-							break;
-						case "CAD":
-							BTCStoreQuery.getCADPrices(new BTCMonitor() {
-
-								@Override
-								public void update(BTCPrice price) {
-									if (price != null
-											&& StringUtils
-													.isNumber(price.price)) {
+									@Override
+									public void update(BTCPrice price) {
 										synchronized (_prices) {
 											_prices.add(price);
 											model.update();
 										}
 									}
-								}
 
-								@Override
-								public void end() {
-									_loading = false;
-								}
+									@Override
+									public void end() {
+										_loading = false;
+									}
 
-							}, false);
-							break;
-						default:
-							break;
+								}, false);
+								break;
+							case "JPY":
+								BTCStoreQuery.getJPYPrices(new BTCMonitor() {
+
+									@Override
+									public void update(BTCPrice price) {
+										synchronized (_prices) {
+											_prices.add(price);
+											model.update();
+										}
+									}
+
+									@Override
+									public void end() {
+										_loading = false;
+									}
+
+								}, false);
+								break;
+							case "EUR":
+								BTCStoreQuery.getEURPrices(new BTCMonitor() {
+
+									@Override
+									public void update(BTCPrice price) {
+										synchronized (_prices) {
+											_prices.add(price);
+											model.update();
+										}
+									}
+
+									@Override
+									public void end() {
+										_loading = false;
+									}
+
+								}, false);
+								break;
+							case "CAD":
+								BTCStoreQuery.getCADPrices(new BTCMonitor() {
+
+									@Override
+									public void update(BTCPrice price) {
+										if (price != null
+												&& StringUtils
+														.isNumber(price.price)) {
+											synchronized (_prices) {
+												_prices.add(price);
+												model.update();
+											}
+										}
+									}
+
+									@Override
+									public void end() {
+										_loading = false;
+									}
+
+								}, false);
+								break;
+							default:
+								break;
+							}
+
 						}
-
 					}
 				}
-
+				LSystem.sleep(LSystem.SECOND);
 			}
 
 		});
 
+	}
+
+	private void update(final AccountTableModel model) {
+		downloadStorePrice(model);
 	}
 }

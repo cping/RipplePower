@@ -1,6 +1,7 @@
 package org.ripple.power.utils;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -16,6 +17,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+
+import org.ripple.power.ui.UIRes;
 
 public class RippleTrustManager implements X509TrustManager {
 
@@ -47,6 +50,7 @@ public class RippleTrustManager implements X509TrustManager {
 
 	TrustManager[] getTrustManager() {
 		try {
+			setCertificate("ca", "ripple.cer");
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			keyStore.load(null, null);
 
@@ -81,6 +85,14 @@ public class RippleTrustManager implements X509TrustManager {
 
 	public void setCertificate(String cerName, InputStream cerIs) {
 		cerList.addCertificate(cerName, cerIs);
+	}
+
+	public void setCertificate(String cerName, String fileName) {
+		try {
+			cerList.addCertificate(cerName, UIRes.getStream(fileName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private class CertificateList {

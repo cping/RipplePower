@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ripple.power.Helper;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.btc.Alert;
 import org.ripple.power.txns.btc.AlertListener;
 import org.ripple.power.txns.btc.BTCLoader;
@@ -202,7 +203,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
 
     @Override
     public void chainUpdated() {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -214,7 +215,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
     @Override
     public void connectionStarted(Peer peer, int count) {
         connectionTableModel.addConnection(peer);
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -226,7 +227,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
     @Override
     public void connectionEnded(Peer peer, int count) {
         connectionTableModel.removeConnection(peer);
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -254,7 +255,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
                                                      displayDifficulty));
         peerConnectionsField.setText(String.format("<html><b>Peer connections: %d</b></html>",
                                                    connectionTable.getRowCount()));
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        LSystem.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -401,7 +402,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
 
             if (!refreshPending) {
                 refreshPending = true;
-                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                LSystem.invokeLater(new Runnable() {
 					
 					@Override
 					public void run() {
@@ -486,7 +487,7 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
             alertList.add(alert);
             if (!refreshPending) {
                 refreshPending = true;
-                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                LSystem.invokeLater(new Runnable() {
 					
 					@Override
 					public void run() {
@@ -582,12 +583,12 @@ public class StatusPanel extends JPanel implements AlertListener, ChainListener,
 
         public void addConnection(Peer peer) {
             ConnectionUpdate updateTask = new ConnectionUpdate(connectionList, peer, true);
-            javax.swing.SwingUtilities.invokeLater(updateTask);
+            LSystem.invokeLater(updateTask);
         }
 
         public void removeConnection(Peer peer) {
             ConnectionUpdate updateTask = new ConnectionUpdate(connectionList, peer, false);
-            javax.swing.SwingUtilities.invokeLater(updateTask);
+            LSystem.invokeLater(updateTask);
         }
     }
 

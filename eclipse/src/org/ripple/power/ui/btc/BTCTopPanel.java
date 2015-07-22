@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
@@ -47,6 +46,13 @@ public class BTCTopPanel extends JPanel {
 		}
 	}
 
+	public void start() {
+		isRunning = true;
+		if (price != null) {
+			price.start();
+		}
+	}
+	
 	public BTCTopPanel() {
 		super(null);
 		frameWidth = LSystem.applicationMain.getWidth();
@@ -69,7 +75,7 @@ public class BTCTopPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BTCLoader.start(new String[] {});
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
@@ -125,7 +131,7 @@ public class BTCTopPanel extends JPanel {
 			canvas.addSerie(my);
 		} else {
 			final LineChartCanvas tmp = canvas;
-			SwingUtilities.invokeLater(new Runnable() {
+			LSystem.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {

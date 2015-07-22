@@ -30,7 +30,17 @@ import org.ripple.power.utils.SwingUtils;
 
 public class RPPushTool {
 
+	public static interface ClosedListener {
+
+		public void closed();
+
+	}
+
 	public final static int TITLE_SIZE = 30;
+
+	private ClosedListener listener;
+
+	public Object obj = null;
 
 	public static class TipDialog extends JDialog {
 		/**
@@ -179,6 +189,9 @@ public class RPPushTool {
 				@Override
 				public void mouseClicked(final MouseEvent e) {
 					_tpDialog.close();
+					if (listener != null) {
+						listener.closed();
+					}
 				}
 
 				@Override
@@ -214,6 +227,9 @@ public class RPPushTool {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				_tpDialog.close();
+				if (listener != null) {
+					listener.closed();
+				}
 			}
 
 			@Override
@@ -309,5 +325,13 @@ public class RPPushTool {
 				h
 						+ (bottom ? (RPPushTool.TITLE_SIZE * 2)
 								: RPPushTool.TITLE_SIZE), ac);
+	}
+
+	public ClosedListener getListener() {
+		return listener;
+	}
+
+	public void setListener(ClosedListener listener) {
+		this.listener = listener;
 	}
 }

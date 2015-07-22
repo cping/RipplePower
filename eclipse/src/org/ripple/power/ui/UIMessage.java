@@ -2,8 +2,7 @@ package org.ripple.power.ui;
 
 import java.awt.Window;
 
-import javax.swing.SwingUtilities;
-
+import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.view.RPToast;
 import org.ripple.power.ui.view.RPToast.Style;
@@ -115,7 +114,7 @@ public class UIMessage {
 	}
 
 	public final static void infoMessage(final Window parent, final String text) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.SUCCESS).display();
 				if (parent != null) {
@@ -127,7 +126,7 @@ public class UIMessage {
 	}
 
 	public final static void alertMessage(final Window parent, final String text) {
-		SwingUtilities.invokeLater(new Runnable() {
+		LSystem.invokeLater(new Runnable() {
 			public void run() {
 				RPToast.makeText(parent, text, Style.ERROR).display();
 				if (parent != null) {

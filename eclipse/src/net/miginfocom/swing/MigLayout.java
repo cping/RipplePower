@@ -38,6 +38,9 @@ import net.miginfocom.layout.*;
 
 import javax.swing.*;
 import javax.swing.Timer;
+
+import org.ripple.power.config.LSystem;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -496,7 +499,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 					new MyDebugRepaintListener());
 
 			if (parent != null) {
-				SwingUtilities.invokeLater(new Runnable() {
+				LSystem.invokeLater(new Runnable() {
 					public void run() {
 						Container p = parent.getParent();
 						if (p != null) {
@@ -660,7 +663,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 						(Component) containerWrapper.getComponent()));
 				if (win != null) {
 					if (win.isVisible()) {
-						SwingUtilities.invokeLater(new Runnable() {
+						LSystem.invokeLater(new Runnable() {
 							public void run() {
 								adjustWindowSize(containerWrapper);
 							}
