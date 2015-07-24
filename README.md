@@ -1,6 +1,6 @@
 ﻿# Download RipplePower
 
-Desktop Version [Demo](https://github.com/cping/RipplePower/releases/download/0.1.2/demo.zip)
+Desktop Version [Demo](https://github.com/cping/RipplePower/releases/download/0.1.3/demo-0.1.3.zip)
 
 Android Version (work in progress)
 
