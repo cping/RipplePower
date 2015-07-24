@@ -23,9 +23,6 @@ package com.google.zxing;
  */
 public enum BarcodeFormat {
 
-	/** Aztec 2D barcode format. */
-	AZTEC,
-
 	/** CODABAR 1D format. */
 	CODABAR,
 

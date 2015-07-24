@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Loop;
+import org.ripple.power.config.Model;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Updateable;
@@ -241,6 +242,13 @@ public class HelperDialog extends JPanel {
 		}
 	}
 
+	public static boolean isSystemVisible() {
+		if (instance != null) {
+			return instance.isVisible();
+		}
+		return false;
+	}
+
 	public synchronized static RPPushTool get() {
 		if (instance == null) {
 			instance = load();
@@ -404,11 +412,22 @@ public class HelperDialog extends JPanel {
 		}
 	}
 
-	public static void main(String[] args) {
-		RPPushTool rpp = HelperDialog.get();
+	public static void setHelperMessage(RPPushTool rpp, String message) {
 		if ((rpp.obj != null) && (rpp.obj instanceof HelperDialog)) {
 			HelperDialog dialog = (HelperDialog) rpp.obj;
-			dialog.setMessage("Hello, Ripple World ! Right and Justice are on our side !");
+			dialog.setMessage(message);
+		}
+	}
+	
+	public static void setSystemHelperMessage(String message){
+		if (LSystem.current == Model.Ripple) {
+			if (HelperDialog.isSystemVisible()) {
+				RPPushTool rpp = HelperDialog.get();
+				HelperDialog
+						.setHelperMessage(
+								rpp,
+								message);
+			}
 		}
 	}
 

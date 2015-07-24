@@ -13,7 +13,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -43,7 +42,7 @@ public class SignDialog extends JDialog implements ActionListener {
 
     private final JTextField signatureField;
 
-    public SignDialog(JFrame parent) {
+    public SignDialog(JDialog parent) {
         super(parent, "Sign Message", Dialog.ModalityType.DOCUMENT_MODAL);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         String[] keyLabels = new String[BTCLoader.keys.size()];
@@ -86,7 +85,7 @@ public class SignDialog extends JDialog implements ActionListener {
         setContentPane(contentPane);
     }
 
-    public static void showDialog(JFrame parent) {
+    public static void showDialog(JDialog parent) {
         try {
             JDialog dialog = new SignDialog(parent);
             dialog.pack();

@@ -559,7 +559,7 @@ public class BTCLoader {
 		if (propFile != null) {
 			saveProperties();
 		}
-		log.info("JavaBitcoin shutdown completed");
+		log.info("RipplePower shutdown completed");
 		if (LogManager.getLogManager() instanceof LogManagerOverride)
 			((LogManagerOverride) LogManager.getLogManager()).logShutdown();
 
@@ -568,7 +568,7 @@ public class BTCLoader {
 	public static void saveProperties() {
 		try {
 			try (FileOutputStream out = new FileOutputStream(propFile)) {
-				properties.store(out, "JavaBitcoin Properties");
+				properties.store(out, "RipplePower Properties");
 			}
 		} catch (Exception exc) {
 			ErrorLog.logException(
@@ -578,15 +578,6 @@ public class BTCLoader {
 
 	private static void processArguments(String[] args)
 			throws UnknownHostException {
-		//
-		// PROD indicates we should use the production network
-		// TEST indicates we should use the test network
-		// LOAD indicates we should load the block chain from the reference
-		// client data directory
-		// RETRY indicates we should retry a block that is currently held
-		// MIGRATE indicate we should migrate a LevelDB database to an H2
-		// database
-		//
 		switch (args[0].toLowerCase()) {
 		case "bootstrap":
 			createBootstrap = true;

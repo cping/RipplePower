@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.hft.TraderProcess;
 import org.ripple.power.i18n.LangConfig;
@@ -325,6 +326,8 @@ public class RPExchangeDialog extends JDialog implements WindowListener {
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();
+		
+		HelperDialog.setSystemHelperMessage("In the Ripple network, Start online trading . ");
 	}
 
 	private void initComponents() {

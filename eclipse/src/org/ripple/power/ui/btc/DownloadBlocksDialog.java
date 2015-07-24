@@ -15,6 +15,7 @@ import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
+import org.ripple.power.utils.SwingUtils;
 
 public final class DownloadBlocksDialog extends ABaseDialog implements
 		ActionListener {
@@ -56,7 +57,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 			String action = ae.getActionCommand();
 			switch (action) {
 			case "exit":
-				exitProgram();
+				exit();
 				break;
 			}
 		} catch (Exception exc) {
@@ -65,8 +66,9 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 		}
 	}
 
-	private void exitProgram() throws IOException {
+	private void exit() throws IOException {
 		BTCLoader.shutdown();
+		SwingUtils.close(this);
 	}
 
 	private class ApplicationWindowListener extends WindowAdapter {
@@ -91,7 +93,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 		@Override
 		public void windowClosing(WindowEvent we) {
 			try {
-				exitProgram();
+				exit();
 			} catch (Exception exc) {
 				ErrorLog.logException(
 						"Exception while closing application window", exc);

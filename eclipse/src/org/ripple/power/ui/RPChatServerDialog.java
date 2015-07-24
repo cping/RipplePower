@@ -212,7 +212,10 @@ public class RPChatServerDialog extends ABaseDialog implements ActionListener {
 		} else if (obj == sysMessage || obj == sysMessageButton) {
 			sendSystemMessage();
 		} else if (obj == myIP) {
-			info("Net IP:" + IP46Utils.getLocalIP());
+			try {
+				info("Net IP:" + IP46Utils.getLocalIP());
+			} catch (Exception exc) {
+			}
 		}
 	}
 

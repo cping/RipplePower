@@ -338,5 +338,13 @@
     }],
     "hotwallets": [],
     "domain": ""
+  },{
+    "name": "Senderas",
+    "accounts": [{
+    "address": "rJypGvB8H2JBj1QVYofUTU8kFtWLspNWqs",
+    "currencies": ["GBP"]
+    }],
+    "hotwallets": [],
+    "domain": "www.senderas.com"
   }
 ]

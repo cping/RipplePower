@@ -1,5 +1,6 @@
 package org.ripple.power.utils;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.utils.HttpRequest.HttpRequestException;
 
 public class IP46Utils {
 
@@ -272,7 +274,7 @@ public class IP46Utils {
 				: randomInet6Address();
 	}
 
-	public static String getLocalIP() {
+	public static String getLocalIP() throws HttpRequestException, IOException {
 		String result = "";
 		String html = "";
 		html = getIpCheckReps("http://1111.ip138.com/ic.asp");
@@ -300,16 +302,12 @@ public class IP46Utils {
 		return ip.trim();
 	}
 
-	public static String getIpCheckReps(String url) {
+	public static String getIpCheckReps(String url) throws HttpRequestException, IOException {
 		HttpRequest request = HttpRequest.get(url);
 		String result = "";
-		try {
 			if (request.ok()) {
 				result = request.body();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		return result;
 	}
 

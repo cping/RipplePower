@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
@@ -505,8 +506,10 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 			}
 		});
 		pack();
+		
+		HelperDialog.setSystemHelperMessage("View the Ripple address detail data [ if your using a Ripple Labs public node , please update node to the s2.ripple.com view all history , s1.ripple.com only save one month's transactions ] . ");
 
-	}// </editor-fold>
+	}
 
 	private JPopupMenu _popMenu = new JPopupMenu();
 

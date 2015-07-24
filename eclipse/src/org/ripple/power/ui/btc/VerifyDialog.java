@@ -8,7 +8,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,7 +36,7 @@ public class VerifyDialog extends JDialog implements ActionListener {
 
 	private final JTextField signatureField;
 
-	public VerifyDialog(JFrame parent) {
+	public VerifyDialog(JDialog parent) {
 		super(parent, "Verify Message", Dialog.ModalityType.DOCUMENT_MODAL);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addressField = new JTextField("", 34);
@@ -72,7 +71,7 @@ public class VerifyDialog extends JDialog implements ActionListener {
 		setContentPane(contentPane);
 	}
 
-	public static void showDialog(JFrame parent) {
+	public static void showDialog(JDialog parent) {
 		try {
 			JDialog dialog = new VerifyDialog(parent);
 			dialog.pack();

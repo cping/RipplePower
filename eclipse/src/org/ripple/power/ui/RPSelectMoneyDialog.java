@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.view.RPToast;
@@ -141,6 +142,8 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		setBackground(UIConfig.dialogbackground);
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
+		
+		HelperDialog.setSystemHelperMessage("Send XRP / IOU to the specified Ripple address or Ripple account name . ");
 	}
 
 	@Override

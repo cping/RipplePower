@@ -30,6 +30,8 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _ripple_bitcoin_news;
 	private RPCButton _script_editor;
 	private RPCButton _p2pchat;
+	private RPCButton _btc38forRippleFox;
+	private RPCButton _botTraded;
 
 	private static RPPushTool instance = null;
 
@@ -63,7 +65,7 @@ public class RPOtherServicesDialog extends JPanel {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
 			return RPPushTool.pop(new Point(
 					(size.width - services.getWidth()) - 10, size.getHeight()),
-					(int) (screenInsets.bottom + services.getHeight() + 150),
+					(int) (screenInsets.bottom + services.getHeight() + 70),
 					"Other Apps/Services", services);
 		} else {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
@@ -75,7 +77,7 @@ public class RPOtherServicesDialog extends JPanel {
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 465);
+		Dimension dim = new Dimension(246, 565);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -94,14 +96,17 @@ public class RPOtherServicesDialog extends JPanel {
 		_script_editor = new RPCButton();
 		_downloader = new RPCButton();
 		_p2pchat = new RPCButton();
+		_btc38forRippleFox = new RPCButton();
+		_botTraded = new RPCButton();
 
 		setLayout(null);
+		int size = 10;
 
 		_rippleTrade.setText(LangConfig.get(this, "rl",
 				"RippleTrade(RL Server)"));
 		_rippleTrade.setFont(font);
 		add(_rippleTrade);
-		_rippleTrade.setBounds(10, 10, 224, 34);
+		_rippleTrade.setBounds(10, size, 224, 34);
 		_rippleTrade.addActionListener(new ActionListener() {
 
 			@Override
@@ -111,90 +116,25 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		_xrp2vpn.setText(LangConfig.get(this, "vpn", "XRP Buy VPN"));
-		_xrp2vpn.setFont(font);
-		add(_xrp2vpn);
-		_xrp2vpn.setBounds(10, 160, 224, 34);
-		_xrp2vpn.addActionListener(new ActionListener() {
+		_botTraded.setText("BOT Trading");
+		_botTraded.setFont(font);
+		add(_botTraded);
+		_botTraded.setBounds(10, size += 50, 224, 34);
+		_botTraded.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://www.privateinternetaccess.com/pages/buy-vpn");
-
-			}
-		});
-
-		_ripple_bitcoin_news.setText(LangConfig.get(this, "news",
-				"Ripple/Bitcoin News"));
-		_ripple_bitcoin_news.setFont(font);
-		add(_ripple_bitcoin_news);
-		_ripple_bitcoin_news.setBounds(10, 210, 224, 34);
-		_ripple_bitcoin_news.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPNewsDialog.showDialog();
-
-			}
-		});
-
-		_script_editor.setText(LangConfig.get(this, "script",
-				"Ripple Script Editor"));
-		_script_editor.setFont(font);
-		add(_script_editor);
-		_script_editor.setBounds(10, 260, 224, 34);
-		_script_editor.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				EditorDialog.showDialog(LSystem.applicationMain);
-			}
-		});
-
-		_activeRipple.setText(LangConfig.get(this, "tools",
-				"Ripple Trading Tools"));
-		_activeRipple.setFont(font);
-		add(_activeRipple);
-		_activeRipple.setBounds(10, 310, 224, 34);
-		_activeRipple.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPTradingToolsDialog.showDialog(
-						"Ripple Trading Tools(Developing)",
-						LSystem.applicationMain);
-			}
-		});
-
-		_downloader.setText(LangConfig.get(this, "download", "Downloader"));
-		_downloader.setFont(font);
-		add(_downloader);
-		_downloader.setBounds(10, 360, 224, 34);
-		_downloader.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPDownloadDialog.showDialog(LSystem.applicationMain);
-			}
-		});
-
-		_p2pchat.setText(LangConfig.get(this, "chat", "Ripple P2P Chat"));
-		_p2pchat.setFont(font);
-		add(_p2pchat);
-		_p2pchat.setBounds(10, 410, 224, 34);
-		_p2pchat.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPSelectChatDialog.showDialog("P2P Chat",
-						LSystem.applicationMain);
+				if (LSystem.applicationMain != null) {
+					UIMessage.infoMessage(LSystem.applicationMain,
+							"The next version open function......");
+				}
 			}
 		});
 
 		_btc2ripple_sn.setText(LangConfig.get(this, "pay", "Pay Money"));
 		_btc2ripple_sn.setFont(font);
 		add(_btc2ripple_sn);
-		_btc2ripple_sn.setBounds(10, 60, 224, 34);
+		_btc2ripple_sn.setBounds(10, size += 50, 224, 34);
 		_btc2ripple_sn.addActionListener(new ActionListener() {
 
 			@Override
@@ -207,7 +147,7 @@ public class RPOtherServicesDialog extends JPanel {
 		_btc2ripple_co.setText(LangConfig.get(this, "todo", "Encryp Todo"));
 		_btc2ripple_co.setFont(font);
 		add(_btc2ripple_co);
-		_btc2ripple_co.setBounds(10, 110, 224, 34);
+		_btc2ripple_co.setBounds(10, size += 50, 224, 34);
 		_btc2ripple_co.addActionListener(new ActionListener() {
 
 			@Override
@@ -221,6 +161,99 @@ public class RPOtherServicesDialog extends JPanel {
 					}
 				});
 
+			}
+		});
+
+		_xrp2vpn.setText(LangConfig.get(this, "vpn", "XRP Buy VPN"));
+		_xrp2vpn.setFont(font);
+		add(_xrp2vpn);
+		_xrp2vpn.setBounds(10, size += 50, 224, 34);
+		_xrp2vpn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://www.privateinternetaccess.com/pages/buy-vpn");
+
+			}
+		});
+
+		_btc38forRippleFox.setText("RippleFox Send to BTC38");
+		_btc38forRippleFox.setFont(font);
+		add(_btc38forRippleFox);
+		_btc38forRippleFox.setBounds(10, size += 50, 224, 34);
+		_btc38forRippleFox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.openURL("https://ripplefox.com/cny/btc38");
+
+			}
+		});
+
+		_ripple_bitcoin_news.setText(LangConfig.get(this, "news",
+				"Ripple/Bitcoin News"));
+		_ripple_bitcoin_news.setFont(font);
+		add(_ripple_bitcoin_news);
+		_ripple_bitcoin_news.setBounds(10, size += 50, 224, 34);
+		_ripple_bitcoin_news.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPNewsDialog.showDialog();
+
+			}
+		});
+
+		_script_editor.setText(LangConfig.get(this, "script",
+				"Ripple Script Editor"));
+		_script_editor.setFont(font);
+		add(_script_editor);
+		_script_editor.setBounds(10, size += 50, 224, 34);
+		_script_editor.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EditorDialog.showDialog(LSystem.applicationMain);
+			}
+		});
+
+		_activeRipple.setText(LangConfig.get(this, "tools",
+				"Ripple Trading Tools"));
+		_activeRipple.setFont(font);
+		add(_activeRipple);
+		_activeRipple.setBounds(10, size += 50, 224, 34);
+		_activeRipple.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPTradingToolsDialog.showDialog(
+						"Ripple Trading Tools(Developing)",
+						LSystem.applicationMain);
+			}
+		});
+
+		_downloader.setText(LangConfig.get(this, "download", "Downloader"));
+		_downloader.setFont(font);
+		add(_downloader);
+		_downloader.setBounds(10, size += 50, 224, 34);
+		_downloader.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPDownloadDialog.showDialog(LSystem.applicationMain);
+			}
+		});
+
+		_p2pchat.setText(LangConfig.get(this, "chat", "Ripple P2P Chat"));
+		_p2pchat.setFont(font);
+		add(_p2pchat);
+		_p2pchat.setBounds(10, size += 50, 224, 34);
+		_p2pchat.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RPSelectChatDialog.showDialog("P2P Chat",
+						LSystem.applicationMain);
 			}
 		});
 

@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -54,7 +53,7 @@ public class ReceiveAddressDialog extends JDialog implements ActionListener {
 
     private final JScrollPane scrollPane;
 
-    public ReceiveAddressDialog(JFrame parent) {
+    public ReceiveAddressDialog(JDialog parent) {
         super(parent, "Receive Addresses", Dialog.ModalityType.DOCUMENT_MODAL);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         tableModel = new AddressTableModel(columnNames, columnClasses);
@@ -82,7 +81,7 @@ public class ReceiveAddressDialog extends JDialog implements ActionListener {
         setContentPane(contentPane);
     }
 
-    public static void showDialog(JFrame parent) {
+    public static void showDialog(JDialog parent) {
         try {
             JDialog dialog = new ReceiveAddressDialog(parent);
             dialog.pack();

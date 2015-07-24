@@ -23,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
@@ -132,6 +133,8 @@ public class RPGatewayDialog extends JDialog implements WindowListener {
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
+		
+		HelperDialog.setSystemHelperMessage("Set or Add and Create Ripple Gateway . ");
 
 	}
 

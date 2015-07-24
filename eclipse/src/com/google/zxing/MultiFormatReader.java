@@ -16,7 +16,6 @@
 
 package com.google.zxing;
 
-import com.google.zxing.aztec.AztecReader;
 import com.google.zxing.datamatrix.DataMatrixReader;
 import com.google.zxing.maxicode.MaxiCodeReader;
 import com.google.zxing.oned.MultiFormatOneDReader;
@@ -136,9 +135,6 @@ public final class MultiFormatReader implements Reader {
 			if (formats.contains(BarcodeFormat.DATA_MATRIX)) {
 				readers.add(new DataMatrixReader());
 			}
-			if (formats.contains(BarcodeFormat.AZTEC)) {
-				readers.add(new AztecReader());
-			}
 			if (formats.contains(BarcodeFormat.MAXICODE)) {
 				readers.add(new MaxiCodeReader());
 			}
@@ -154,7 +150,6 @@ public final class MultiFormatReader implements Reader {
 
 			readers.add(new QRCodeReader());
 			readers.add(new DataMatrixReader());
-			readers.add(new AztecReader());
 			readers.add(new MaxiCodeReader());
 
 			if (tryHarder) {

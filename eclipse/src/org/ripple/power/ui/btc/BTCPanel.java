@@ -15,14 +15,14 @@ public class BTCPanel extends RoundedPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private BTCTopPanel panel;
+	private BTCCmdPanel panel;
 
 	public BTCPanel() {
 		super(new BorderLayout());
 		setOpaque(true);
 		setBackground(UIConfig.background);
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		panel = new BTCTopPanel();
+		panel = new BTCCmdPanel();
 		add(panel);
 	}
 	

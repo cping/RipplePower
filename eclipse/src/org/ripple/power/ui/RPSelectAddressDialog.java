@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import org.ripple.power.RippleBlobObj;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.view.RPToast;
 import org.ripple.power.ui.view.WaitDialog;
@@ -115,6 +116,8 @@ public class RPSelectAddressDialog extends JPanel {
 		this.setBackground(UIConfig.dialogbackground);
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
+	
+		HelperDialog.setSystemHelperMessage("Ripple secret create or import , The Ripple secret is stored Your Computer . Your are the sole owner , will not be uploaded to the Ripple network .");
 	}
 
 }
