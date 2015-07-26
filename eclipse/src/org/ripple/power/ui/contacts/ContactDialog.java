@@ -373,7 +373,7 @@ public class ContactDialog extends ABaseDialog {
 						}
 						firstNameTextField.setVisible(true);
 						repaint();
-						printAll(getGraphics());
+						//printAll(getGraphics());
 					}
 				}
 			}
@@ -513,13 +513,13 @@ public class ContactDialog extends ABaseDialog {
 					if (first == null || first.length() == 0) {
 						firstNameTextField.setText("Error!");
 						repaint();
-						printAll(getGraphics());
+						//printAll(getGraphics());
 						throw new Exception("First Name exception !");
 					}
 					if (last == null || last.length() == 0) {
 						lastNameTextField.setText("Error!");
 						repaint();
-						printAll(getGraphics());
+						//printAll(getGraphics());
 						throw new Exception("Last Name exception !");
 					}
 					if (!AccountFind.isRippleAddress(rippleAddress)) {
@@ -528,14 +528,14 @@ public class ContactDialog extends ABaseDialog {
 						} catch (Exception ex) {
 							rippleTextField.setText("Error!");
 							repaint();
-							printAll(getGraphics());
+							//printAll(getGraphics());
 							throw new Exception("Ripple Address exception !");
 						}
 					}
 					if (!StringUtils.isEmail(email)) {
 						emailTextField.setText("Error!");
 						repaint();
-						printAll(getGraphics());
+						//printAll(getGraphics());
 						throw new Exception("Email exception !");
 					}
 		
@@ -793,7 +793,7 @@ public class ContactDialog extends ABaseDialog {
 		comboBox.setVisible(true);
 
 		repaint();
-		printAll(getGraphics());
+	//	printAll(getGraphics());
 	}
 
 	@SuppressWarnings("unchecked")

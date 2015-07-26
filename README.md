@@ -1,4 +1,4 @@
-﻿# RipplePower-Ripple-Client
+﻿# RipplePower-Ripple-Client(Ripple local wallet)
 
 RipplePower is a Ripple(Rippled Server) API Client for the Java language licensed under Apache License 2.0
 
