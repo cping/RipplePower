@@ -23,6 +23,7 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
@@ -132,35 +133,6 @@ public class HttpsUtils {
 		}
 	}
 
-	public static String httpByGet2StringSSL(String url, String paramsCharset,
-			String resultCharset) {
-		if (url == null || "".equals(url)) {
-			return null;
-		}
-		String responseStr = null;
-		HttpClient httpClient = null;
-		HttpGet hg = null;
-		try {
-			httpClient = getNewHttpClient();
-			hg = new HttpGet(url);
-			HttpResponse response = httpClient.execute(hg);
-			if (response != null) {
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
-				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			abortConnection(hg, httpClient);
-		}
-		return responseStr;
-	}
-
 	public static ResponseResult getSSL(String url, String paramsCharset,
 			String resultCharset, HttpClient httpClient) {
 		if (url == null || "".equals(url)) {
@@ -177,12 +149,16 @@ public class HttpsUtils {
 				responseObject.setUri(hg.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
@@ -216,17 +192,21 @@ public class HttpsUtils {
 				responseObject.setUri(hg.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
 		} catch (Exception e) {
-			throw new Exception(e.getMessage()); 
+			throw new Exception(e.getMessage());
 		} finally {
 			abortConnection(hg, httpClient);
 		}
@@ -265,12 +245,16 @@ public class HttpsUtils {
 				responseObject.setUri(hp.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
@@ -312,12 +296,16 @@ public class HttpsUtils {
 				responseObject.setUri(hp.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
@@ -359,12 +347,16 @@ public class HttpsUtils {
 				responseObject.setUri(hp.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
@@ -399,12 +391,16 @@ public class HttpsUtils {
 				responseObject.setUri(hp.getURI().toString());
 				responseObject.setStatusCode(response.getStatusLine()
 						.getStatusCode());
-				if (resultCharset == null || "".equals(resultCharset)) {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							LSystem.encoding);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					if (resultCharset == null || "".equals(resultCharset)) {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), LSystem.encoding);
+					} else {
+						responseStr = EntityUtils.toString(
+								response.getEntity(), resultCharset);
+					}
 				} else {
-					responseStr = EntityUtils.toString(response.getEntity(),
-							resultCharset);
+					responseStr = null;
 				}
 				responseObject.setResult(responseStr);
 			}
@@ -466,7 +462,10 @@ public class HttpsUtils {
 			HttpParams params = new BasicHttpParams();
 			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-			HttpProtocolParams.setUserAgent(params, "Mozilla/5.0 (Windows; Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
+			HttpProtocolParams
+					.setUserAgent(
+							params,
+							"Mozilla/5.0 (Windows; Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory
 					.getSocketFactory(), 80));
@@ -476,6 +475,10 @@ public class HttpsUtils {
 			@SuppressWarnings("resource")
 			DefaultHttpClient httpClient = new DefaultHttpClient(ccm, params);
 			httpClient.setCookieStore(new BasicCookieStore());
+			httpClient.getParams().setParameter(
+					CoreConnectionPNames.CONNECTION_TIMEOUT, 5000);
+			httpClient.getParams().setParameter(
+					CoreConnectionPNames.SO_TIMEOUT, 5000);
 			return new DefaultHttpClient(ccm, params);
 		} catch (Exception e) {
 			return new DefaultHttpClient();

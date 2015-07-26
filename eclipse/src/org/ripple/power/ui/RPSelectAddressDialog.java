@@ -83,7 +83,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// closeDialog();
+				closeDialog();
 				RPToast.makeText(LSystem.applicationMain,
 						"Here import or create your Ripple address.",
 						Style.SUCCESS).display();
@@ -101,7 +101,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// closeDialog();
+				closeDialog();
 				RPToast.makeText(
 						LSystem.applicationMain,
 						"Here import or create your "
@@ -119,5 +119,4 @@ public class RPSelectAddressDialog extends JPanel {
 	
 		HelperDialog.setSystemHelperMessage("Ripple secret create or import , The Ripple secret is stored Your Computer . Your are the sole owner , will not be uploaded to the Ripple network .");
 	}
-
 }

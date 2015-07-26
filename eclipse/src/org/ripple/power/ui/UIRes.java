@@ -566,8 +566,14 @@ public class UIRes {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				showNormalCursor(parent);
-				JOptionPane pane = new JOptionPane(message, messageType,
-						optionType, UIManager.getIcon(icon), args);
+				JOptionPane pane = null;
+				if (args == null || args.length == 0) {
+					pane = new JOptionPane(message, messageType, optionType,
+							UIManager.getIcon(icon), new Object[] { "OK" });
+				} else {
+					pane = new JOptionPane(message, messageType, optionType,
+							UIManager.getIcon(icon), args);
+				}
 				pane.setWantsInput(wantsInput);
 				pane.setFont(UIRes.getFont());
 
@@ -575,6 +581,7 @@ public class UIRes {
 
 				dialog.setFont(UIRes.getFont());
 				dialog.setIconImage(UIRes.icon);
+
 				if (message instanceof IDialog) {
 					((IDialog) message).setDialog(dialog);
 				}

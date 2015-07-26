@@ -22,10 +22,9 @@ public class NameFind {
 				name = name.substring(1, name.length());
 			}
 			String web = page + "/user/" + name;
-			HttpRequest request = HttpRequest.get(web);
-			if (request.ok()) {
-				String jsonResult = request.body();
-				JSONObject obj = new JSONObject(jsonResult);
+			result = HttpRequest.getHttps(web);
+			if (result != null) {
+				JSONObject obj = new JSONObject(result);
 				result = obj.optString("address", null);
 				if (result != null) {
 					_caches.put(name, result);
@@ -52,11 +51,10 @@ public class NameFind {
 	public static String getName(String address) throws Exception {
 		String result = _caches.get(address);
 		if (result == null) {
-			HttpRequest request = HttpRequest.get(page + "/authinfo?username="
+			result = HttpRequest.getHttps(page + "/authinfo?username="
 					+ address);
-			if (request.ok()) {
-				String jsonResult = request.body();
-				JSONObject obj = new JSONObject(jsonResult);
+			if (result != null) {
+				JSONObject obj = new JSONObject(result);
 				result = obj.getString("username");
 				if (result != null) {
 					_caches.put(address, result);

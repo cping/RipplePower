@@ -332,14 +332,6 @@ public class MainUI {
 							public void action(Object o) {
 								PriceMonitor.get();
 								if (LSystem.current == Model.Ripple) {
-									RPPushTool rpp = HelperDialog.get();
-									HelperDialog
-											.setHelperMessage(
-													rpp,
-													"Hello, Ripple World ! Right and Justice are on our side ! This is a Java Version Ripple Desktop Client for interacting with the Ripple network .");
-									LSystem.sleep(LSystem.SECOND);
-								}
-								if (LSystem.current == Model.Ripple) {
 									RPJSonLog.get();
 									LSystem.sleep(LSystem.SECOND);
 								}
@@ -349,6 +341,14 @@ public class MainUI {
 								}
 								if (LSystem.current == Model.Ripple) {
 									RPOtherServicesDialog.get();
+									LSystem.sleep(LSystem.SECOND);
+								}
+								if (LSystem.current == Model.Ripple) {
+									RPPushTool rpp = HelperDialog.get();
+									HelperDialog
+											.setHelperMessage(
+													rpp,
+													"Hello, Ripple World ! Right and Justice are on our side ! This is a Java Version Ripple Desktop Client for interacting with the Ripple network .");
 									LSystem.sleep(LSystem.SECOND);
 								}
 							}

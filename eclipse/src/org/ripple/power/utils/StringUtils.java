@@ -34,6 +34,12 @@ import com.google.common.base.Strings;
 
 final public class StringUtils {
 
+	public final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile(
+			"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+			Pattern.CASE_INSENSITIVE);
+	public final static Pattern VALID_PHONE_REGEX = Pattern
+			.compile("^\\(\\d{3}\\)\\d{3}\\-\\d{4}$");
+
 	private static final String whiteRange = "\\p{javaWhitespace}\\p{Zs}";
 	private static final Pattern whiteStart = Pattern.compile("^[" + whiteRange
 			+ "]+");
@@ -808,4 +814,13 @@ final public class StringUtils {
 		return s != null ? s.replaceAll("\\s+", " ") : null;
 	}
 
+	public static boolean isEmail(String emailStr) {
+		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+		return matcher.find();
+	}
+
+	public static boolean isPhone(String phoneStr) {
+		Matcher matcher = VALID_PHONE_REGEX.matcher(phoneStr);
+		return matcher.find();
+	}
 }

@@ -574,7 +574,7 @@ public class MainPanel extends JPanel implements ActionListener {
 													"XRP little amount, not suitable for donation-_-"));
 
 						} else {
-							RPXRPSendDialog.showDialog(item.getPublicKey()
+							RPSendXRPDialog.showDialog(item.getPublicKey()
 									+ " XRP Donation", LSystem.applicationMain,
 									item, "rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
 									"10", LSystem.getFee());

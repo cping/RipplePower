@@ -430,6 +430,9 @@ public class BTCStoreQuery {
 		} catch (Throwable ex) {
 			return result;
 		}
+		if (result.indexOf("http") != -1 || result.indexOf("https") != -1) {
+			return "unkown";
+		}
 		return result;
 	}
 

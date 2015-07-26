@@ -116,4 +116,8 @@ public class RPSelectWalletDialog extends ABaseDialog {
 
 		pack();
 	}
+	
+	public void closeDialog(){
+		SwingUtils.close(this);
+	}
 }

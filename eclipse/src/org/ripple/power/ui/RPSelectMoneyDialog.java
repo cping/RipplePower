@@ -142,8 +142,9 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		setBackground(UIConfig.dialogbackground);
 		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
 				LSystem.MINUTE);
-		
-		HelperDialog.setSystemHelperMessage("Send XRP / IOU to the specified Ripple address or Ripple account name . ");
+
+		HelperDialog
+				.setSystemHelperMessage("Send XRP / IOU to the specified Ripple address or Ripple account name . ");
 	}
 
 	@Override
@@ -152,6 +153,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 			return;
 		}
 		String eve = ae.getActionCommand();
+		closeDialog();
 		if ("xrp".equalsIgnoreCase(eve)) {
 			BigDecimal number = new BigDecimal(_item.getAmount());
 			if (number.compareTo(BigDecimal.ZERO) < 1) {
@@ -162,7 +164,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 			} else {
 				RPToast.makeText(LSystem.applicationMain, "Send XRP.",
 						Style.SUCCESS).display();
-				RPXRPSendDialog.showDialog(
+				RPSendXRPDialog.showDialog(
 						_item.getPublicKey()
 								+ " "
 								+ LangConfig.get(MainPanel.class, "send_xrp",
@@ -172,7 +174,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		} else if ("iou".equalsIgnoreCase(eve)) {
 			RPToast.makeText(LSystem.applicationMain, "Send IOU.",
 					Style.SUCCESS).display();
-			RPIOUSendDialog
+			RPSendIOUDialog
 					.showDialog(
 							_item.getPublicKey()
 									+ " "
@@ -191,9 +193,8 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 					Style.SUCCESS).display();
 			RPSendFlagsDialog.showDialog(_item.getPublicKey() + " Send Flags",
 					LSystem.applicationMain, _item);
-		} else if ("exit".equalsIgnoreCase(eve)) {
-			closeDialog();
 		}
+	
 	}
 
 }

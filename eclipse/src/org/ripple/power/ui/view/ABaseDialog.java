@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.utils.SwingUtils;
 
@@ -25,6 +26,10 @@ public abstract class ABaseDialog extends JDialog {
 
 	public ABaseDialog() throws HeadlessException {
 		super();
+	}
+
+	public ABaseDialog(String title) {
+		super(LSystem.applicationMain, title);
 	}
 
 	public ABaseDialog(Window parent, String title, ModalityType modal)

@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.contacts.ContactDialog;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
 import org.ripple.power.ui.view.RPPushTool;
@@ -32,6 +33,7 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _p2pchat;
 	private RPCButton _btc38forRippleFox;
 	private RPCButton _botTraded;
+	private RPCButton _contacts;
 
 	private static RPPushTool instance = null;
 
@@ -65,7 +67,7 @@ public class RPOtherServicesDialog extends JPanel {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
 			return RPPushTool.pop(new Point(
 					(size.width - services.getWidth()) - 10, size.getHeight()),
-					(int) (screenInsets.bottom + services.getHeight() + 70),
+					(int) (screenInsets.bottom + services.getHeight() + 40),
 					"Other Apps/Services", services);
 		} else {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
@@ -77,7 +79,7 @@ public class RPOtherServicesDialog extends JPanel {
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 565);
+		Dimension dim = new Dimension(246, 615);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -98,6 +100,7 @@ public class RPOtherServicesDialog extends JPanel {
 		_p2pchat = new RPCButton();
 		_btc38forRippleFox = new RPCButton();
 		_botTraded = new RPCButton();
+		_contacts = new RPCButton();
 
 		setLayout(null);
 		int size = 10;
@@ -113,6 +116,25 @@ public class RPOtherServicesDialog extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				LSystem.openURL("https://www.rippletrade.com");
 
+			}
+		});
+
+		_contacts.setText("Contacts");
+		_contacts.setFont(font);
+		add(_contacts);
+		_contacts.setBounds(10, size += 50, 224, 34);
+		_contacts.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LSystem.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						ContactDialog.showDialog("Ripple Contacts",
+								LSystem.applicationMain);
+					}
+				});
 			}
 		});
 
