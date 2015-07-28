@@ -14,7 +14,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -24,6 +23,7 @@ import javax.swing.WindowConstants;
 import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.txns.btc.ECException;
 import org.ripple.power.txns.btc.ECKey;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ButtonPane;
 
@@ -104,8 +104,7 @@ public class SignDialog extends JDialog implements ActionListener {
                 case "sign":
                     String message = messageField.getText();
                     if (message.length() == 0) {
-                        JOptionPane.showMessageDialog(this, "You must enter the message text to sign", "Error",
-                                                      JOptionPane.ERROR_MESSAGE);
+                        UIRes.showErrorMessage(this, "Error", "You must enter the message text to sign");
                     } else {
                         int index = nameField.getSelectedIndex();
                         ECKey key = BTCLoader.keys.get(index);

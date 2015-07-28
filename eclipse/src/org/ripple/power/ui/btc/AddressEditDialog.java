@@ -9,13 +9,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.txns.btc.Address;
 import org.ripple.power.txns.btc.AddressFormatException;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.ButtonPane;
@@ -109,23 +109,22 @@ public class AddressEditDialog extends ABaseDialog implements ActionListener {
         String name = nameField.getText();
         String addr = addressField.getText();
         if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must specify a name", "Error", JOptionPane.ERROR_MESSAGE);
+            UIRes.showErrorMessage(this, "Error", "You must specify a name");
             return false;
         }
         if (name.length() > 64) {
-            JOptionPane.showMessageDialog(this, "The name must be 64 characters or less", "Error",
-                                          JOptionPane.ERROR_MESSAGE);
+        	UIRes.showErrorMessage(this,"Error", "The name must be 64 characters or less");
             return false;
         }
         if (addr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must specify an address", "Error", JOptionPane.ERROR_MESSAGE);
+        	UIRes.showErrorMessage(this,  "Error","You must specify an address");
             return false;
         }
         boolean valid = true;
         try {
             updatedAddress = new Address(addr, name);
         } catch (AddressFormatException exc) {
-            JOptionPane.showMessageDialog(this, "Address is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+        	UIRes.showErrorMessage(this, "Error", "Address is not valid");
             valid = false;
         }
         return valid;

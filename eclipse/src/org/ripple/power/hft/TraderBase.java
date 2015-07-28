@@ -4,10 +4,6 @@ import org.ripple.power.config.Loop;
 
 public abstract class TraderBase extends Loop {
 
-	public enum TradeType {
-		BUY, SELL
-	}
-
 	public static boolean equals(float value, float other) {
 		return equals(value, other, 0.01f);
 	}

@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.view.RPLabel;
@@ -94,28 +93,25 @@ public class RPPasswordDialog extends JDialog {
 				char[] chars = _password1Text.getText().toCharArray();
 				String pass = new String(chars);
 				if (chars.length < 8) {
-					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Not be less than 8 characters !", UIMessage.error,
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(RPPasswordDialog.this, UIMessage.error,
+							"Not be less than 8 characters !");
 					return;
 				}
 				if (StringUtils.isAlphabet(pass)) {
-					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Full English is not allowed !", UIMessage.error,
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(RPPasswordDialog.this,
+							"Full English is not allowed !", UIMessage.error);
 					return;
 				}
 				if (StringUtils.isNumber(pass)) {
-					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Full Numeric is not allowed !", UIMessage.error,
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(RPPasswordDialog.this,UIMessage.error,
+							"Full Numeric is not allowed !");
 					return;
 				}
 
 				if (!_password1Text.getText().equals(_password2Text.getText())) {
-					JOptionPane.showMessageDialog(RPPasswordDialog.this,
-							"Two passwords are not the same !",
-							UIMessage.error, JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(RPPasswordDialog.this,UIMessage.error,
+							"Two passwords are not the same !"
+							);
 					return;
 				}
 				passwordEntered = true;

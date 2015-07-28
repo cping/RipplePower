@@ -17,7 +17,6 @@ import java.net.UnknownHostException;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -335,10 +334,10 @@ public class RPChatClientDialog extends ABaseDialog implements ActionListener {
 			sendMessage();
 			clientMessage.setText("");
 		} else if (obj == exitButton) {
-			int j = JOptionPane.showConfirmDialog(this, "Want to quit?",
-					"Exit", JOptionPane.YES_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (j == JOptionPane.YES_OPTION) {
+			int j = UIRes.showConfirmMessage(this,"Exit",  "Want to quit?",
+					"YES",
+					"NO");
+			if (j == 0) {
 				if (type == 1) {
 					disConnect();
 				}

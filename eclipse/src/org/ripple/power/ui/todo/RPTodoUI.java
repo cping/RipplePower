@@ -21,7 +21,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -315,7 +315,7 @@ public class RPTodoUI extends ABaseDialog {
 				int y = UIRes.showConfirmMessage(RPTodoUI.this, "Exit",
 						"Confirm Exit Todo Frame ?", UIMessage.ok,
 						UIMessage.cancel);
-				if (y == JOptionPane.YES_OPTION) {
+				if (y == 0) {
 					SwingUtils.close(RPTodoUI.this);
 				}
 			}

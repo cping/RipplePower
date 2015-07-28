@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
@@ -179,9 +178,8 @@ public final class BitcoinWalletDialog extends JDialog implements
 				break;
 			case "sign message":
 				if (BTCLoader.keys.isEmpty()) {
-					JOptionPane.showMessageDialog(this,
-							"There are no keys defined", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this,"Error",
+							"There are no keys defined");
 				} else {
 					SignDialog.showDialog(this);
 				}
@@ -235,8 +233,8 @@ public final class BitcoinWalletDialog extends JDialog implements
 				keyText.delete(0, keyText.length());
 			}
 		}
-		JOptionPane.showMessageDialog(this, "Keys exported to BTCWallet.keys",
-				"Keys Exported", JOptionPane.INFORMATION_MESSAGE);
+		UIRes.showInfoMessage(this,"Keys Exported", "Keys exported to BTCWallet.keys"
+				);
 	}
 
 	private void importDefPrivateKeys() throws IOException,
@@ -244,9 +242,8 @@ public final class BitcoinWalletDialog extends JDialog implements
 		File keyFile = new File(LSystem.getBitcionDirectory() + LSystem.FS
 				+ "BTCWallet.keys");
 		if (!keyFile.exists()) {
-			JOptionPane.showMessageDialog(this,
-					"BTCWallet.keys does not exist", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this,"Error",
+					"BTCWallet.keys does not exist");
 			return;
 		}
 
@@ -310,13 +307,11 @@ public final class BitcoinWalletDialog extends JDialog implements
 							}
 						}
 					} else {
-						JOptionPane
-								.showMessageDialog(
-										this,
+						UIRes.showErrorMessage(
+										this, "Error",
 										String.format(
 												"Address %s does not match imported private key",
-												importedAddress), "Error",
-										JOptionPane.ERROR_MESSAGE);
+												importedAddress));
 					}
 					foundKey = false;
 					importedLabel = "";
@@ -326,9 +321,8 @@ public final class BitcoinWalletDialog extends JDialog implements
 				}
 			}
 		}
-		JOptionPane.showMessageDialog(this,
-				"Keys imported from BTCWallet.keys", "Keys Imported",
-				JOptionPane.INFORMATION_MESSAGE);
+		UIRes.showInfoMessage(this,"Keys Imported",
+				"Keys imported from BTCWallet.keys");
 	}
 
 	private void rescan() throws BlockStoreException {

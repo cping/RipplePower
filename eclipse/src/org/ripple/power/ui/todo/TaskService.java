@@ -1,7 +1,6 @@
 package org.ripple.power.ui.todo;
 
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 
 import org.ripple.power.config.task.Task;
 import org.ripple.power.config.task.TaskContext;
@@ -9,6 +8,7 @@ import org.ripple.power.config.task.TaskListener;
 import org.ripple.power.config.task.TaskManager;
 import org.ripple.power.email.MailSender;
 import org.ripple.power.email.SimpleTextMail;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.DateUtils;
 
 public class TaskService {
@@ -63,8 +63,8 @@ public class TaskService {
 			MailSender sender = new MailSender(mail);
 			boolean st = sender.send();
 			if (st) {
-				JOptionPane.showMessageDialog(null, "mail is sent",
-						"mail is sent!!", JOptionPane.INFORMATION_MESSAGE);
+				UIRes.showInfoMessage(null, "mail is sent",
+						"mail is sent!!");
 			}
 		}
 

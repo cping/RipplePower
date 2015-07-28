@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -122,15 +121,15 @@ public class MainUI {
 			return;
 		}
 		if (!LSystem.isMinJavaVersion(1, 6)) {
-			JOptionPane
-					.showMessageDialog(
-							null,
+			UIRes
+					.showErrorMessage(
+							null,"Java Version Error",
 							"The minimum required Java version is 1.6.\n"
 									+ "The reported version is "
 									+ System.getProperty("java.vm.version")
 									+ ".\n\nPlease download and install the latest Java "
-									+ "version\nfrom http://java.sun.com and try again.\n\n",
-							"Java Version Error", JOptionPane.ERROR_MESSAGE);
+									+ "version\nfrom http://java.sun.com and try again.\n\n"
+							);
 
 			System.exit(1);
 		}

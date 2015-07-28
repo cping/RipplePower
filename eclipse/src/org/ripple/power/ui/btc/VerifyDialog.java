@@ -9,7 +9,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -18,6 +17,7 @@ import javax.swing.WindowConstants;
 
 import org.ripple.power.txns.btc.ECKey;
 import org.ripple.power.txns.btc.SignatureException;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ButtonPane;
 
@@ -92,26 +92,21 @@ public class VerifyDialog extends JDialog implements ActionListener {
 				String address = addressField.getText();
 				String signature = signatureField.getText();
 				if (address.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							"You must enter the signing address", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this, "Error",
+							"You must enter the signing address");
 				} else if (message.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							"You must enter the message text to verify",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this, "Error",
+							"You must enter the message text to verify");
 				} else if (signature.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							"You must enter the message signature", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this, "Error",
+							"You must enter the message signature");
 				} else {
 					if (ECKey.verifyMessage(address, message, signature)) {
-						JOptionPane.showMessageDialog(this,
-								"The signature is valid", "Valid Signature",
-								JOptionPane.INFORMATION_MESSAGE);
+						UIRes.showErrorMessage(this, "Valid Signature",
+								"The signature is valid");
 					} else {
-						JOptionPane.showMessageDialog(this,
-								"The signature is not valid",
-								"Invalid Signature", JOptionPane.ERROR_MESSAGE);
+						UIRes.showErrorMessage(this, "Invalid Signature",
+								"The signature is not valid");
 					}
 				}
 				break;
@@ -121,8 +116,8 @@ public class VerifyDialog extends JDialog implements ActionListener {
 				break;
 			}
 		} catch (SignatureException exc) {
-			JOptionPane.showMessageDialog(this, "The signature is not valid",
-					"Invalid Signature", JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Invalid Signature",
+					"The signature is not valid");
 		} catch (Exception exc) {
 			ErrorLog.logException("Exception while processing action event",
 					exc);

@@ -2,9 +2,6 @@ package org.ripple.power.utils;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -25,20 +22,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -280,41 +273,6 @@ public class SwingUtils {
 
 	public static JFrame getJFrame(Component cmp) {
 		return (JFrame) SwingUtilities.getWindowAncestor(cmp);
-	}
-
-	public static void browse(String url, Component msgParent) {
-		boolean error = false;
-
-		if (Desktop.isDesktopSupported()
-				&& Desktop.getDesktop().isSupported(Action.BROWSE)) {
-			try {
-				Desktop.getDesktop().browse(new URI(url));
-			} catch (URISyntaxException ex) {
-				throw new RuntimeException(ex);
-			} catch (IOException ex) {
-				error = true;
-			}
-		} else {
-			error = true;
-		}
-
-		if (error) {
-			String msg = "Impossible to open the default browser from the application.\nSorry.";
-			JOptionPane.showMessageDialog(msgParent, msg);
-		}
-	}
-
-	public static void addBrowseBehavior(final Component cmp, final String url) {
-		if (url == null)
-			return;
-		cmp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		cmp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				JFrame frame = getJFrame(cmp);
-				browse(url, frame);
-			}
-		});
 	}
 
 	public static void packLater(final Window win, final Component parent) {

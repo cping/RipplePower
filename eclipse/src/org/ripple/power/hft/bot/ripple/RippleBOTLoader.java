@@ -1,10 +1,10 @@
-package org.ripple.power.hft.bot;
+package org.ripple.power.hft.bot.ripple;
 
 import org.ripple.power.config.Loop;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Updateable;
 
-public class BOTLoader extends Loop {
+public class RippleBOTLoader extends Loop {
 
 	@Override
 	public void runTaskTimer(LTimerContext context) {

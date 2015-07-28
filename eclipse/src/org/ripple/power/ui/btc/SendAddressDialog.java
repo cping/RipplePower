@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -23,6 +22,7 @@ import javax.swing.table.TableRowSorter;
 import org.ripple.power.txns.btc.Address;
 import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.txns.btc.BlockStoreException;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.ButtonPane;
@@ -104,8 +104,7 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 			} else {
 				int row = table.getSelectedRow();
 				if (row < 0) {
-					JOptionPane.showMessageDialog(this, "No entry selected",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this,"Error",  "No entry selected");
 				} else {
 					row = table.convertRowIndexToModel(row);
 					Address addr = BTCLoader.addresses.get(row);
@@ -150,9 +149,8 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 					if (chkAddr.equals(address))
 						continue;
 					if (chkAddr.getLabel().compareToIgnoreCase(label) == 0) {
-						JOptionPane.showMessageDialog(this,
-								"Duplicate name specified", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						UIRes.showErrorMessage(this,"Error",
+								"Duplicate name specified");
 						valid = false;
 						break;
 					}

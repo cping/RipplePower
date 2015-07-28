@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import org.ripple.power.CoinUtils;
 import org.ripple.power.Helper;
@@ -87,7 +86,7 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		setPreferredSize(dim);
 		setSize(dim);
 		initUI();
-		
+
 	}
 
 	private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -244,9 +243,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			try {
 				String[] res = text.split(" ");
 				if (res.length < 3) {
-					JOptionPane.showMessageDialog(this,
-							"Less than three words, The phrase is malformed !",
-							UIMessage.error, JOptionPane.ERROR_MESSAGE);
+					UIRes.showErrorMessage(this, UIMessage.error,
+							"Less than three words, The phrase is malformed !");
 					return;
 				}
 				PasswordMnemonic mnemonic = new PasswordMnemonic();
@@ -258,15 +256,13 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				privateAddressText.setText(splits[1]);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this,
-						"The phrase can not be decrypted !", UIMessage.error,
-						JOptionPane.ERROR_MESSAGE);
+				UIRes.showErrorMessage(this, UIMessage.error,
+						"The phrase can not be decrypted !");
 				return;
 			}
 		} else {
-			JOptionPane.showMessageDialog(this,
-					"Less than three words, The phrase is malformed !",
-					UIMessage.error, JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"Less than three words, The phrase is malformed !");
 		}
 	}
 
@@ -276,9 +272,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pInput = false;
 		String pri = privateAddressText.getText();
 		if (!AccountFind.isRippleSecret(pri)) {
-			JOptionPane.showMessageDialog(this,
-					"This is not a Ripple Address Secret !", UIMessage.error,
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"This is not a Ripple Address Secret !");
 			return;
 		} else {
 			try {
@@ -295,9 +290,8 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this,
-						"Private Key data exception, the import failed !",
-						UIMessage.error, JOptionPane.ERROR_MESSAGE);
+				UIRes.showErrorMessage(this, UIMessage.error,
+						"Private Key data exception, the import failed !");
 			}
 		}
 	}
@@ -324,11 +318,11 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(
+				UIRes.showErrorMessage(
 						this,
+						UIMessage.error,
 						"Private Key data exception, the import failed !"
-								+ ex.getMessage(), UIMessage.error,
-						JOptionPane.ERROR_MESSAGE);
+								+ ex.getMessage());
 			}
 		}
 	}
@@ -337,20 +331,16 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 		pInput = false;
 		String password = passwordText.getText();
 		if (password.length() < 6) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"Brain wallet password at least not less than six figures!",
-							UIMessage.error, JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"Brain wallet password at least not less than six figures!");
 			brainError = true;
 		} else if (StringUtils.isAlphabet(password)) {
-			JOptionPane.showMessageDialog(this,
-					"All alphabet are not allowed !", UIMessage.error,
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"All alphabet are not allowed !");
 			brainError = true;
 		} else if (StringUtils.isNumber(password)) {
-			JOptionPane.showMessageDialog(this, "All number are not allowed !",
-					UIMessage.error, JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"All number are not allowed !");
 			brainError = true;
 		}
 		if (!brainError && password.length() > 5) {
@@ -369,11 +359,11 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(
+				UIRes.showErrorMessage(
 						this,
+						UIMessage.error,
 						"Private Key data exception, the import failed !"
-								+ ex.getMessage(), UIMessage.error,
-						JOptionPane.ERROR_MESSAGE);
+								+ ex.getMessage());
 			}
 		}
 	}
@@ -653,21 +643,20 @@ public class RPAddressDialog extends JDialog implements ActionListener {
 			String context = copy.toString();
 			if (context.length() > 0) {
 				clip.setClipboardContents(context);
-				JOptionPane.showMessageDialog(this,
-						"Current data has been saved to the clipboard",
-						UIMessage.info, JOptionPane.INFORMATION_MESSAGE);
+				UIRes.showInfoMessage(this,UIMessage.info,
+						"Current data has been saved to the clipboard"
+						);
 			} else {
-				JOptionPane.showMessageDialog(this, "No data can be copy",
-						UIMessage.warning, JOptionPane.WARNING_MESSAGE);
+				UIRes.showWarningMessage(this,UIMessage.warning, "No data can be copy"
+						);
 			}
 		} catch (Exception ex) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"Failure, the current data can not be saved to the clipboard !",
-							UIMessage.info, JOptionPane.ERROR_MESSAGE);
+			UIRes
+					.showErrorMessage(
+							this,UIMessage.error,
+							"Failure, the current data can not be saved to the clipboard !"
+							);
 			return;
 		}
 	}
-
 }

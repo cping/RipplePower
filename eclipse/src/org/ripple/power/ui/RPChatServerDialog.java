@@ -11,7 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -176,10 +175,10 @@ public class RPChatServerDialog extends ABaseDialog implements ActionListener {
 		if (obj == startServer) {
 			startService();
 		} else if (obj == stopServer) {
-			int j = JOptionPane.showConfirmDialog(this, "Stop the service ?",
-					"Stop Server", JOptionPane.YES_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (j == JOptionPane.YES_OPTION) {
+			int j = UIRes.showConfirmMessage(this,"Stop Server",  "Stop the service ?",
+					"YES",
+					"NO");
+			if (j == 0) {
 				stopService();
 			}
 		} else if (obj == portSet) {
@@ -202,10 +201,10 @@ public class RPChatServerDialog extends ABaseDialog implements ActionListener {
 			input.getBigTextInput(in, "Open Port", String.valueOf(port),
 					new Object[] { UIMessage.ok });
 		} else if (obj == exitButton) {
-			int j = JOptionPane.showConfirmDialog(this, "Want to quit ?",
-					"Exit", JOptionPane.YES_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (j == JOptionPane.YES_OPTION) {
+			int j = UIRes.showConfirmMessage(this,"Exit",  "Want to quit ?",
+					"YES",
+					"NO");
+			if (j == 0) {
 				stopService();
 				SwingUtils.close(this);
 			}

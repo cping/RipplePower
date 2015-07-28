@@ -18,7 +18,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,6 +35,7 @@ import org.ripple.power.txns.btc.ECKey;
 import org.ripple.power.txns.btc.ReceiveTransaction;
 import org.ripple.power.txns.btc.SendTransaction;
 import org.ripple.power.ui.UIConfig;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.ButtonPane;
@@ -106,12 +106,11 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		blockLabel = new JLabel(getBlockText(), SwingConstants.CENTER);
 		statusPane.add(blockLabel);
 
-		ButtonPane buttonPane = new ButtonPane(this, 20,new String[] {
-				"New Address", "new address" }, new String[] {
-				"Copy TxID", "copy txid" }, new String[] { "Move to Safe",
-				"move to safe" }, new String[] { "Move to Wallet",
-				"move to blockStore" });
-	
+		ButtonPane buttonPane = new ButtonPane(this, 20, new String[] {
+				"New Address", "new address" }, new String[] { "Copy TxID",
+				"copy txid" }, new String[] { "Move to Safe", "move to safe" },
+				new String[] { "Move to Wallet", "move to blockStore" });
+
 		buttonPane.setBackground(UIConfig.dialogbackground);
 
 		add(statusPane);
@@ -128,14 +127,13 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		try {
 			int row = table.getSelectedRow();
 			if (row < 0) {
-				JOptionPane.showMessageDialog(this, "No transaction selected",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				UIRes.showErrorMessage(this, "Error", "No transaction selected");
 			} else {
 				row = table.convertRowIndexToModel(row);
 				String action = ae.getActionCommand();
 				switch (action) {
 				case "new address":
-					
+
 					break;
 				case "copy txid":
 					String address = (String) tableModel.getValueAt(row, 1);
@@ -186,24 +184,19 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	private boolean moveToSafe(int row) throws BlockStoreException {
 		BlockTransaction tx = tableModel.getTransaction(row);
 		if (!(tx instanceof ReceiveTransaction)) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"The safe contains coins that you have received and not spent",
-							"Error", JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Error",
+					"The safe contains coins that you have received and not spent");
 			return false;
 		}
 		ReceiveTransaction rcvTx = (ReceiveTransaction) tx;
 		if (rcvTx.inSafe()) {
-			JOptionPane.showMessageDialog(this,
-					"The transaction is already in the safe", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Error",
+					"The transaction is already in the safe");
 			return false;
 		}
 		if (rcvTx.isSpent()) {
-			JOptionPane.showMessageDialog(this,
-					"The coins have already been spent", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Error",
+					"The coins have already been spent");
 			return false;
 		}
 		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(),
@@ -217,18 +210,14 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	private boolean moveToWallet(int row) throws BlockStoreException {
 		BlockTransaction tx = tableModel.getTransaction(row);
 		if (!(tx instanceof ReceiveTransaction)) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"The safe contains coins that you have received and not spent",
-							"Error", JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Error",
+					"The safe contains coins that you have received and not spent");
 			return false;
 		}
 		ReceiveTransaction rcvTx = (ReceiveTransaction) tx;
 		if (!rcvTx.inSafe()) {
-			JOptionPane.showMessageDialog(this,
-					"The transaction is not in the safe", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			UIRes.showErrorMessage(this, "Error",
+					"The transaction is not in the safe");
 			return false;
 		}
 		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(),

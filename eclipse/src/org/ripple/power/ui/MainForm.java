@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
@@ -379,9 +378,7 @@ public class MainForm extends JFrame implements ActionListener {
 				.maxMemory() / (1024.0 * 1024.0)));
 
 		info.append("</html>");
-		JOptionPane.showMessageDialog(this, info.toString(),
-				"About RipplePower(Ripple&Bitcoin) Wallet",
-				JOptionPane.INFORMATION_MESSAGE);
+		UIRes.showInfoMessage(this, "About RipplePower(Ripple&Bitcoin) Wallet", info.toString());
 	}
 
 	/**

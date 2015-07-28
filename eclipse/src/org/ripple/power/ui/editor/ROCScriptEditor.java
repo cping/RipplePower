@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -24,6 +23,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
 
 public class ROCScriptEditor extends JPanel {
@@ -259,9 +259,9 @@ public class ROCScriptEditor extends JPanel {
 	public boolean close() {
 		boolean savedSuccessfully = true;
 		if (_isEdited) {
-			if (JOptionPane.showConfirmDialog(this.getParent().getParent(),
+			if (UIRes.showConfirmMessage(this.getParent().getParent(),"Confirm",
 					"Do you want to save changes to the current file?",
-					"Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					 "YES","NO") == 0) {
 				savedSuccessfully = this.saveFile();
 			}
 		}
