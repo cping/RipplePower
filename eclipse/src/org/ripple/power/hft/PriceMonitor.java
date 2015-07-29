@@ -11,7 +11,7 @@ import org.ripple.power.timer.LTimer;
 import org.ripple.power.timer.LTimerContext;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.IssuedCurrency;
-import org.ripple.power.txns.RippleMarket;
+import org.ripple.power.txns.RippleChartsAPI;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.RPBubbleDialog;
 import org.ripple.power.utils.DateUtils;
@@ -118,7 +118,7 @@ public class PriceMonitor extends Loop {
 		for (PriceMonitorItem item : loops) {
 			if (item.delay.action(context)) {
 				double value = -1;
-				Object result = RippleMarket.getExchange(item.currency);
+				Object result = RippleChartsAPI.getExchange(item.currency);
 				if (result != null) {
 					if (result instanceof JSONArray) {
 						value = ((JSONArray) result).getJSONObject(0)
@@ -165,7 +165,7 @@ public class PriceMonitor extends Loop {
 	private void initCheck() {
 		for (PriceMonitorItem item : loops) {
 			double value = -1;
-			Object result = RippleMarket.getExchange(item.currency);
+			Object result = RippleChartsAPI.getExchange(item.currency);
 			if (result != null) {
 				if (result instanceof JSONArray) {
 					value = ((JSONArray) result).getJSONObject(0).getDouble(

@@ -16,7 +16,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.RippleItem;
-import org.ripple.power.txns.RippleMarket;
+import org.ripple.power.txns.RippleChartsAPI;
 import org.ripple.power.utils.MathUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletItem;
@@ -480,7 +480,7 @@ public class TraderNxN {
 			double thirdBuyPrice, int thirdBuyQuantity, double thirdSellPrice,
 			int thirdSellQuantity) {
 
-		ArrayList<RippleItem> src_list = RippleMarket.getExchangeRateItems(
+		ArrayList<RippleItem> src_list = RippleChartsAPI.getExchangeRateItems(
 				currency, issuer);
 
 		if (src_list.size() > 0) {

@@ -1,9 +1,9 @@
 package org.ripple.power.txns;
 
 import org.json.JSONObject;
+import org.ripple.power.txns.data.ServerStateResponse;
 import org.ripple.power.utils.HttpRequest;
 
-//does not include payment of class REST API, feel safe low......
 public class RippleRestAPI {
 
 	private final static String page = "https://api.ripple.com/v1/";
@@ -18,7 +18,11 @@ public class RippleRestAPI {
 		if (ok) {
 			return new JSONObject(request.body());
 		} else {
-			return new JSONObject(HttpRequest.fix_ssl_open(url));
+			String result = HttpRequest.fix_ssl_open(url);
+			if (result == null) {
+				return null;
+			}
+			return new JSONObject(result);
 		}
 	}
 
@@ -81,7 +85,7 @@ public class RippleRestAPI {
 	public static JSONObject findXRPPaths(String address, String destination) {
 		return findPaths(address, destination, "1+XRP");
 	}
-	
+
 	public static JSONObject fee() {
 		try {
 			String url = page + "transaction-fee";
@@ -90,13 +94,22 @@ public class RippleRestAPI {
 			return null;
 		}
 	}
-	
+
 	public static JSONObject payments(String address) {
 		try {
-			String url = page + "accounts/"+address+"/payments";
+			String url = page + "accounts/" + address + "/payments";
 			return open_rest(url);
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static ServerStateResponse getServerState() {
+		ServerStateResponse state = new ServerStateResponse();
+		JSONObject obj = server();
+		if (obj != null) {
+			state.from(obj);
+		}
+		return state;
 	}
 }

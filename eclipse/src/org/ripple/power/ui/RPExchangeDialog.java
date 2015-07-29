@@ -41,7 +41,7 @@ import org.ripple.power.txns.OfferCancel;
 import org.ripple.power.txns.OfferCreate;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.OtherData;
-import org.ripple.power.txns.RippleMarket;
+import org.ripple.power.txns.RippleChartsAPI;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.OfferPrice.OfferFruit;
 import org.ripple.power.txns.Updateable;
@@ -1040,7 +1040,7 @@ public class RPExchangeDialog extends JDialog implements WindowListener {
 					&& (LSystem.nativeCurrency.equalsIgnoreCase(cData.name) || "ripple"
 							.equalsIgnoreCase(cData.name))) {
 				double price = Double.parseDouble(cData.price);
-				double realPrice = RippleMarket.getXRPtoUSD();
+				double realPrice = RippleChartsAPI.getXRPtoUSD();
 				price = Math.max(price, realPrice);
 				cData.price = LSystem.getNumberShort(price);
 			}

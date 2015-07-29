@@ -282,7 +282,7 @@ public class OtherData {
 					// Prevent coinmarketcap price fixing
 					if (LSystem.nativeCurrency.equalsIgnoreCase(name)
 							|| "ripple".equalsIgnoreCase(name)) {
-						realprice = RippleMarket.getXRPtoUSD();
+						realprice = RippleChartsAPI.getXRPtoUSD();
 					}
 					result = Math.max(result, realprice);
 					addStorage(new Store(result, name + "coin"));
