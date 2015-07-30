@@ -126,7 +126,7 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 				value = item.getIssuer();
 				break;
 			case 2:
-				value = item.getAmount();
+				value = item.getBalance();
 				break;
 			default:
 				throw new IndexOutOfBoundsException("Table column " + column
@@ -200,7 +200,7 @@ public class RPAccountInfoDialog extends JDialog implements WindowListener {
 				value = item.getIssuer();
 				break;
 			case 2:
-				value = item.getAmount();
+				value = item.getBalance();
 				break;
 			default:
 				throw new IndexOutOfBoundsException("Table column " + column

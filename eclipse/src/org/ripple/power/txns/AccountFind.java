@@ -22,7 +22,7 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
-	public static int LIMIT_TX = 50;
+	public static int LIMIT_TX = 200;
 
 	private static AccountFind instance = null;
 
@@ -852,11 +852,14 @@ public class AccountFind {
 							long quality_in = getLong(node, "quality_in");
 							String account = getStringObject(node, "account");
 							String currency = getStringObject(node, "currency");
-							String amount = getStringObject(node, "balance");
+							String balance = getStringObject(node, "balance");
 							String limit_peer = getStringObject(node,
 									"limit_peer");
+							boolean no_ripple = node.optBoolean("no_ripple");
+							boolean peer_authorized = node
+									.optBoolean("peer_authorized");
 
-							Double number = Double.valueOf(amount);
+							Double number = Double.valueOf(balance);
 
 							Double limit_peer_number = Double
 									.valueOf(limit_peer);
@@ -864,9 +867,11 @@ public class AccountFind {
 							// get IOU
 							if (number > 0) {
 								AccountLine line = new AccountLine();
+								line.peer_authorized = peer_authorized;
+								line.no_ripple = no_ripple;
 								line.issuer = account;
 								line.currency = currency;
-								line.amount = LSystem.getNumberShort(amount);
+								line.balance = LSystem.getNumberShort(balance);
 								line.limit = limit;
 								line.quality_in = quality_in;
 								line.quality_out = quality_out;
@@ -896,9 +901,11 @@ public class AccountFind {
 								// set Trust
 							} else if (number == 0) {
 								AccountLine line = new AccountLine();
+								line.peer_authorized = peer_authorized;
+								line.no_ripple = no_ripple;
 								line.issuer = account;
 								line.currency = currency;
-								line.amount = amount;
+								line.balance = balance;
 								line.limit = limit;
 								line.quality_in = quality_in;
 								line.quality_out = quality_out;
@@ -1113,6 +1120,7 @@ public class AccountFind {
 		if (client != null) {
 			Request req = client.newRequest(Command.account_offers);
 			req.json("account", srcAddress);
+			req.json("ledger_index", "current");
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 				@Override
 				public void called(Response response) {
@@ -1139,6 +1147,7 @@ public class AccountFind {
 		if (client != null) {
 			Request req = client.newRequest(Command.account_lines);
 			req.json("account", srcAddress);
+			req.json("ledger", "current");
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 				@Override
 				public void called(Response response) {
@@ -1160,11 +1169,98 @@ public class AccountFind {
 		}
 	}
 
+	public void currencies(String srcAddress, final Rollback back) {
+		RPClient client = RPClient.ripple();
+		if (client != null) {
+			Request req = client.newRequest(Command.account_currencies);
+			req.json("account", srcAddress);
+			req.json("strict", true);
+			req.json("ledger_index", "validated");
+			req.json("account_index", 0);
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.success(response.message);
+					}
+				}
+			});
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.error(response.message);
+					}
+				}
+			});
+			req.request();
+		}
+	}
+
+	public void objects(String srcAddress, final int limit, final Rollback back) {
+		RPClient client = RPClient.ripple();
+		if (client != null) {
+			Request req = client.newRequest(Command.account_objects);
+			req.json("account", srcAddress);
+			req.json("type", "state");
+			req.json("ledger_index", "validated");
+			req.json("limit", limit);
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.success(response.message);
+					}
+				}
+			});
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.error(response.message);
+					}
+				}
+			});
+			req.request();
+		}
+	}
+
+	public void noripple_check(String srcAddress, final int limit, final Rollback back) {
+		RPClient client = RPClient.ripple();
+		if (client != null) {
+			Request req = client.newRequest(Command.noripple_check);
+			req.json("account", srcAddress);
+			req.json("role", "gateway");
+			req.json("ledger_index", "current");
+			req.json("limit", limit);
+			req.json("transactions", true);
+			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.success(response.message);
+					}
+				}
+			});
+			req.once(Request.OnError.class, new Request.OnError() {
+				@Override
+				public void called(Response response) {
+					if (back != null) {
+						back.error(response.message);
+					}
+				}
+			});
+			req.request();
+		}
+	}
+	
 	public void info(String srcAddress, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.account_info);
 			req.json("account", srcAddress);
+			req.json("strict", true);
+			req.json("ledger_index", "validated");
 			req.once(Request.OnSuccess.class, new Request.OnSuccess() {
 				@Override
 				public void called(Response response) {

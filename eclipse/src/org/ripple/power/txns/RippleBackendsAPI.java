@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.ripple.power.txns.data.AccountInfoRequest;
 import org.ripple.power.txns.data.AccountInfoResponse;
 import org.ripple.power.txns.data.AccountLinesResponse;
+import org.ripple.power.txns.data.OffersResponse;
+import org.ripple.power.txns.data.OrderInfoRequest;
 import org.ripple.power.ui.RPClient;
 
 import com.ripple.client.enums.Command;
@@ -109,4 +111,49 @@ public class RippleBackendsAPI {
 		return null;
 	}
 	
+
+	public OffersResponse getActiveOrders(final String address,
+			final Updateable update) {
+		if (!AccountFind.isRippleAddress(address)) {
+			throw new RuntimeException("not ripple address !");
+		}
+		final OffersResponse offers = new OffersResponse();
+		// rippled
+		switch (model) {
+		case Rippled:
+			RPClient client = RPClient.ripple();
+			if (client != null) {
+				Request req = client.newRequest(Command.account_offers);
+				req.json("account", address);
+				req.once(Request.OnSuccess.class, new Request.OnSuccess() {
+					@Override
+					public void called(Response response) {
+						JSONObject result = response.message;
+
+						if (result != null) {
+							offers.from(result);
+						}
+						if (update != null) {
+							update.action(result);
+						}
+
+					}
+				});
+				req.once(Request.OnError.class, new Request.OnError() {
+					@Override
+					public void called(Response response) {
+
+						if (update != null) {
+							update.action(response.error_message);
+						}
+					}
+				});
+				req.request();
+			}
+			break;
+		default:
+			break;
+		}
+		return null;
+	}
 }

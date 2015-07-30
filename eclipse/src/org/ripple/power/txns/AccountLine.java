@@ -4,21 +4,23 @@ public class AccountLine {
 
 	String issuer;
 	String currency;
-	String amount;
+	String balance;
 	String limit_peer;
 	String limit;
 	long quality_out = 0;
 	long quality_in = 0;
+	boolean no_ripple = false;
+	boolean peer_authorized = false;
 	private IssuedCurrency _currency;
 
 	public AccountLine() {
 
 	}
 
-	public AccountLine(String issuer, String currency, String amount) {
+	public AccountLine(String issuer, String currency, String balance) {
 		this.issuer = issuer;
 		this.currency = currency;
-		this.amount = amount;
+		this.balance = balance;
 	}
 
 	public String toString() {
@@ -27,7 +29,7 @@ public class AccountLine {
 
 	public IssuedCurrency get() {
 		if (_currency == null) {
-			_currency = new IssuedCurrency(amount, issuer, currency);
+			_currency = new IssuedCurrency(balance, issuer, currency);
 			_currency.tag = this;
 		}
 		return _currency;
@@ -41,8 +43,8 @@ public class AccountLine {
 		return currency;
 	}
 
-	public String getAmount() {
-		return amount;
+	public String getBalance() {
+		return balance;
 	}
 
 	public String getLimitpeer() {
@@ -60,7 +62,19 @@ public class AccountLine {
 	public long getQuality_in() {
 		return quality_in;
 	}
+	
+	public boolean getNo_ripple(){
+		return no_ripple;
+	}
 
+	public boolean isPeer_authorized() {
+		return peer_authorized;
+	}
+
+	public void setPeer_authorized(boolean peer_authorized) {
+		this.peer_authorized = peer_authorized;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
@@ -71,9 +85,9 @@ public class AccountLine {
 		}
 		AccountLine line = (AccountLine) o;
 		int count = 0;
-		if (line.amount != null && line.amount.equals(amount)) {
+		if (line.balance != null && line.balance.equals(balance)) {
 			count++;
-		} else if (line.amount == null && amount == null) {
+		} else if (line.balance == null && balance == null) {
 			count++;
 		}
 		if (line.currency != null && line.currency.equals(currency)) {
@@ -99,5 +113,6 @@ public class AccountLine {
 		}
 		return count == 6;
 	}
+
 
 }

@@ -1189,7 +1189,7 @@ public class RPExchangeDialog extends JDialog implements WindowListener {
 								if (line.getCurrency().equals(dstCurName)) {
 									dst = true;
 									double a = Double.parseDouble(line
-											.getAmount());
+											.getBalance());
 									double b = Double.parseDouble(myBuy);
 									if (b > a) {
 										dialog.closeDialog();
@@ -1274,7 +1274,7 @@ public class RPExchangeDialog extends JDialog implements WindowListener {
 								if (line.getCurrency().equals(srcCurName)) {
 									src = true;
 									double a = Double.parseDouble(line
-											.getAmount());
+											.getBalance());
 									double b = Double.parseDouble(mySell);
 									if (b > a) {
 										dialog.closeDialog();

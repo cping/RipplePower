@@ -546,7 +546,7 @@ public class TraderProcess extends TraderBase {
 									.getCurrency())
 									&& task.equals(line.getIssuer())) {
 								float srcIouValue = Float.parseFloat(line
-										.getAmount());
+										.getBalance());
 								task.real_max_value = srcIouValue;
 							}
 						}

@@ -203,7 +203,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 					cur = new IssuedCurrency(amount, line.getIssuer(), line
 							.getCurrency());
 					Double a = Double.parseDouble(amount);
-					Double b = Double.parseDouble(line.getAmount());
+					Double b = Double.parseDouble(line.getBalance());
 					if (a > b) {
 						UIMessage.alertMessage(get().getDialog(),
 								UIMessage.errNotMoney);
