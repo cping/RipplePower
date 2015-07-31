@@ -251,6 +251,7 @@ public abstract class OfferPrice {
 		}
 
 		private Client client;
+		private int limit = 30;
 		private final BookEvents callback;
 		public Issue first, second;
 		public STArray asks, bids;
@@ -258,6 +259,12 @@ public abstract class OfferPrice {
 
 		public OrderBooks(Client client, Issue first, Issue second,
 				BookEvents callback) {
+			this(client, first, second, 30, callback);
+		}
+
+		public OrderBooks(Client client, Issue first, Issue second, int limit,
+				BookEvents callback) {
+			this.limit = limit;
 			this.client = client;
 			this.first = first;
 			this.second = second;
@@ -286,6 +293,7 @@ public abstract class OfferPrice {
 				} else {
 					request = client.requestBookOffers(getIssue, payIssue);
 				}
+				request.json("limit", limit);
 				request.once(Request.OnResponse.class,
 						new Request.OnResponse() {
 							@Override

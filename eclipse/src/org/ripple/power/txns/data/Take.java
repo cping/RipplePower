@@ -2,8 +2,10 @@ package org.ripple.power.txns.data;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.IssuedCurrency;
 
 public class Take {
+	
 	public String value;
 	public String currency;
 	public String issuer;
@@ -20,6 +22,14 @@ public class Take {
 				this.currency = LSystem.nativeCurrency;
 				this.issuer = "Ripple Labs";
 			}
+		}
+	}
+
+	public IssuedCurrency getIssuedCurrency() {
+		if (LSystem.nativeCurrency.equalsIgnoreCase(currency)) {
+			return new IssuedCurrency(value, true);
+		} else {
+			return new IssuedCurrency(value, issuer, currency);
 		}
 	}
 }

@@ -41,14 +41,15 @@ public class RPClient {
 	private final ArrayList<Updateable> _longloads = new ArrayList<Updateable>(
 			10);
 
-	private final static String[] applicationRippleLabes = new String[] {
+	private final static String[] applicationPublicNodes = new String[] {
 			"wss://s1.ripple.com:443", "wss://s2.ripple.com:443",
-			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443" };
+			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443",
+			"wss://ripplenode.io:5006"};
 
 	public static ArrayList<String> getRLNodes(boolean flag) {
 		ArrayList<String> tmp = new ArrayList<String>(40);
 		tmp.add("wss://localhost:443");
-		for (String rippled : applicationRippleLabes) {
+		for (String rippled : applicationPublicNodes) {
 			tmp.add(rippled);
 		}
 		if (flag) {
@@ -79,8 +80,8 @@ public class RPClient {
 				&& result.length() > 6) {
 			return result;
 		} else {
-			return applicationRippleLabes[MathUtils.random(0,
-					applicationRippleLabes.length - 1)];
+			return applicationPublicNodes[MathUtils.random(0,
+					applicationPublicNodes.length - 1)];
 		}
 	}
 

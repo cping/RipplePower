@@ -67,6 +67,10 @@ public class IssuedCurrency {
 	public final static IssuedCurrency RIPPLECHINA_CNY = new IssuedCurrency(
 			"razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA", "CNY");
 
+	// RippleFox
+	public final static IssuedCurrency RIPPLEFOX_CNY = new IssuedCurrency(
+			"rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y", "CNY");
+	
 	public BigDecimal amount;
 	public RippleAddress issuer;
 	public String currency;

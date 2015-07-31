@@ -11,7 +11,7 @@ public class CurrencyUtils {
 
 	private static final BigDecimal MILLION = new BigDecimal("1000000");
 
-	public static IssuedCurrency getAmount(Object jsonDenominatedAmount) {
+	public static IssuedCurrency getIssuedCurrency(Object jsonDenominatedAmount) {
 		if (jsonDenominatedAmount == null) {
 			return null;
 		}

@@ -305,7 +305,7 @@ public class AccountFind {
 						transactionTx.flagsName = "Empty";
 					}
 					if (result.has("SendMax")) {
-						transactionTx.sendMax = CurrencyUtils.getAmount(result
+						transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(result
 								.get("SendMax"));
 					}
 					transactionTx.signingPubKey = getStringObject(result,
@@ -322,10 +322,10 @@ public class AccountFind {
 						IssuedCurrency currency = null;
 						String counterparty = null;
 						if (meta != null && meta.has("DeliveredAmount")) {
-							currency = CurrencyUtils.getAmount(getObject(meta,
+							currency = CurrencyUtils.getIssuedCurrency(getObject(meta,
 									"DeliveredAmount"));
 						} else {
-							currency = CurrencyUtils.getAmount(getObject(
+							currency = CurrencyUtils.getIssuedCurrency(getObject(
 									result, "Amount"));
 						}
 						transactionTx.currency = currency;
@@ -335,15 +335,15 @@ public class AccountFind {
 						Object limitAmount = getObject(result, "LimitAmount");
 						if (limitAmount != null) {
 							transactionTx.currency = CurrencyUtils
-									.getAmount(limitAmount);
+									.getIssuedCurrency(limitAmount);
 							transactionTx.trusted = transactionTx.currency.issuer
 									.toString();
 						}
 						break;
 					case "OfferCreate":
-						transactionTx.get = CurrencyUtils.getAmount(getObject(
+						transactionTx.get = CurrencyUtils.getIssuedCurrency(getObject(
 								result, "TakerGets"));
-						transactionTx.pay = CurrencyUtils.getAmount(getObject(
+						transactionTx.pay = CurrencyUtils.getIssuedCurrency(getObject(
 								result, "TakerPays"));
 						break;
 					case "OfferCancel":
@@ -363,10 +363,10 @@ public class AccountFind {
 											"Account");
 									if (ffactount.equals(transactionTx.account)) {
 										transactionTx.get = CurrencyUtils
-												.getAmount(getObject(ff,
+												.getIssuedCurrency(getObject(ff,
 														"TakerGets"));
 										transactionTx.pay = CurrencyUtils
-												.getAmount(getObject(ff,
+												.getIssuedCurrency(getObject(ff,
 														"TakerPays"));
 									}
 								}
@@ -526,7 +526,7 @@ public class AccountFind {
 													transactionTx.flagsName = "Empty";
 												}
 												if (tx.has("SendMax")) {
-													transactionTx.sendMax = CurrencyUtils.getAmount(tx
+													transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(tx
 															.get("SendMax"));
 												}
 												transactionTx.signingPubKey = getStringObject(
@@ -617,15 +617,15 @@ public class AccountFind {
 																				"TakerGetsCurrency");
 
 																		node.balance = CurrencyUtils
-																				.getAmount(getObject(
+																				.getIssuedCurrency(getObject(
 																						fields,
 																						"Balance"));
 																		node.highLimit = CurrencyUtils
-																				.getAmount(getObject(
+																				.getIssuedCurrency(getObject(
 																						fields,
 																						"HighLimit"));
 																		node.lowLimit = CurrencyUtils
-																				.getAmount(getObject(
+																				.getIssuedCurrency(getObject(
 																						fields,
 																						"LowLimit"));
 
@@ -652,11 +652,11 @@ public class AccountFind {
 																				"TransferRate");
 
 																		node.takerGets = CurrencyUtils
-																				.getAmount(getObject(
+																				.getIssuedCurrency(getObject(
 																						fields,
 																						"TakerGets"));
 																		node.takerPays = CurrencyUtils
-																				.getAmount(getObject(
+																				.getIssuedCurrency(getObject(
 																						fields,
 																						"TakerPays"));
 																		if (fields
@@ -695,12 +695,12 @@ public class AccountFind {
 													if (meta != null
 															&& meta.has("DeliveredAmount")) {
 														currency = CurrencyUtils
-																.getAmount(getObject(
+																.getIssuedCurrency(getObject(
 																		meta,
 																		"DeliveredAmount"));
 													} else {
 														currency = CurrencyUtils
-																.getAmount(getObject(
+																.getIssuedCurrency(getObject(
 																		tx,
 																		"Amount"));
 													}
@@ -738,18 +738,18 @@ public class AccountFind {
 															tx, "LimitAmount");
 													if (limitAmount != null) {
 														transactionTx.currency = CurrencyUtils
-																.getAmount(limitAmount);
+																.getIssuedCurrency(limitAmount);
 														transactionTx.trusted = transactionTx.currency.issuer
 																.toString();
 													}
 													break;
 												case "OfferCreate":
 													transactionTx.get = CurrencyUtils
-															.getAmount(getObject(
+															.getIssuedCurrency(getObject(
 																	tx,
 																	"TakerGets"));
 													transactionTx.pay = CurrencyUtils
-															.getAmount(getObject(
+															.getIssuedCurrency(getObject(
 																	tx,
 																	"TakerPays"));
 													break;
@@ -778,11 +778,11 @@ public class AccountFind {
 																if (ffactount
 																		.equals(transactionTx.account)) {
 																	transactionTx.get = CurrencyUtils
-																			.getAmount(getObject(
+																			.getIssuedCurrency(getObject(
 																					ff,
 																					"TakerGets"));
 																	transactionTx.pay = CurrencyUtils
-																			.getAmount(getObject(
+																			.getIssuedCurrency(getObject(
 																					ff,
 																					"TakerPays"));
 																}
@@ -1033,8 +1033,8 @@ public class AccountFind {
 							Object taker_pays = getObject(o, "taker_pays");
 
 							BookOffer offer = new BookOffer(CurrencyUtils
-									.getAmount(taker_gets), CurrencyUtils
-									.getAmount(taker_pays), seq, flags);
+									.getIssuedCurrency(taker_gets), CurrencyUtils
+									.getIssuedCurrency(taker_pays), seq, flags);
 
 							accountinfo.bookOffers.add(offer);
 

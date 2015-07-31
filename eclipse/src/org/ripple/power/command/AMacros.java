@@ -79,7 +79,7 @@ public abstract class AMacros implements IMacros {
 		String result = name + "[" + idx + "]" + "." + key;
 		if (obj.has(key)) {
 			if (useCur) {
-				setVar(type, result, CurrencyUtils.getAmount(obj.get(key)));
+				setVar(type, result, CurrencyUtils.getIssuedCurrency(obj.get(key)));
 			} else {
 				setVar(type, result, obj.get(key));
 			}
