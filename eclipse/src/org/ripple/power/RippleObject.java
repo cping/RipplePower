@@ -66,7 +66,6 @@ public class RippleObject {
 	}
 
 	public void putField(BinaryFormatField field, Object value) {
-
 		fields.put(field, value);
 	}
 

@@ -5,11 +5,30 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.IssuedCurrency;
 
 public class Take {
-	
+
 	public String value;
 	public String currency;
 	public String issuer;
 
+	public Take(String v, String c, String i) {
+		this.value = v;
+		this.currency = c;
+		this.issuer = i;
+	}
+
+	public Take(String c, String i) {
+		this.currency = c;
+		this.issuer = i;
+	}
+
+	public Take(String v) {
+		this.value = v;
+		this.currency = LSystem.nativeCurrency;
+	}
+
+	public Take() {
+	}
+	
 	public void from(Object obj) {
 		if (obj != null) {
 			if (obj instanceof JSONObject) {
@@ -23,6 +42,17 @@ public class Take {
 				this.issuer = "Ripple Labs";
 			}
 		}
+	}
+
+	public JSONObject getJSON() {
+		JSONObject obj = new JSONObject();
+		if (LSystem.nativeCurrency.equalsIgnoreCase(this.currency)) {
+			obj.put("currency", LSystem.nativeCurrency.toUpperCase());
+		} else {
+			obj.put("currency", this.currency.toUpperCase());
+			obj.put("issuer", this.issuer);
+		}
+		return obj;
 	}
 
 	public IssuedCurrency getIssuedCurrency() {

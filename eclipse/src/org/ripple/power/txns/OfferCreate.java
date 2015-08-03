@@ -166,13 +166,20 @@ public class OfferCreate {
 	public static void set(final RippleSeedAddress seed,
 			final IssuedCurrency src, final IssuedCurrency dst,
 			final String fee, float scale, final Rollback back) {
-		OfferCreate.set(seed, src, dst, fee, -1, back);
+		OfferCreate.set(seed, src, dst, fee, -1, scale, back);
 	}
 
 	public static void set(final RippleSeedAddress seed,
 			final IssuedCurrency src, final IssuedCurrency dst,
 			final String fee, final long offerSequence, final float scale,
 			final Rollback back) {
+		OfferCreate.set(seed, src, dst, fee, offerSequence, scale, 0, back);
+	}
+
+	public static void set(final RippleSeedAddress seed,
+			final IssuedCurrency src, final IssuedCurrency dst,
+			final String fee, final long offerSequence, final float scale,
+			final long flags, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -187,6 +194,9 @@ public class OfferCreate {
 							seed.getPublicRippleAddress());
 					if (scale > 0) {
 						dst.scale(scale);
+					}
+					if (flags != 0) {
+						item.putField(BinaryFormatField.Flags, flags);
 					}
 					item.putField(BinaryFormatField.TakerPays, src);
 					item.putField(BinaryFormatField.TakerGets, dst);

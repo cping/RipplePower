@@ -346,5 +346,13 @@
     }],
     "hotwallets": [],
     "domain": "www.senderas.com"
+  },{
+    "name": "Xagate",
+    "accounts": [{
+    "address": "rGgS5Hw3PhSp3VNT43PDTXze9YfdthHUH",
+    "currencies": ["XAG","XAU","XPT","XPD","BTC","LTC","NXT","CAD"]
+    }],
+    "hotwallets": [],
+    "domain": "xagate.com"
   }
 ]
