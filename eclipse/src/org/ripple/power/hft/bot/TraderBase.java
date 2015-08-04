@@ -8,8 +8,8 @@ public abstract class TraderBase implements ITrader {
 	protected int _intervalMs;
 	protected boolean _cleanup;
 	private BotLog _log;
-	
-	public TraderBase(BotLog log){
+
+	public TraderBase(BotLog log) {
 		this._log = log;
 	}
 
@@ -30,8 +30,8 @@ public abstract class TraderBase implements ITrader {
 	protected abstract void check();
 
 	protected void log(String message, Object... args) {
-		if(_log!=null){
-			_log.log(message, args);
+		if (_log != null) {
+			_log.mes(message, args);
 		}
 	}
 

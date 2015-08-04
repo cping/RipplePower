@@ -16,6 +16,7 @@ import org.ripple.power.txns.data.MarketDepthAsksResponse;
 import org.ripple.power.txns.data.MarketDepthBidsResponse;
 import org.ripple.power.txns.data.NewOrderResponse;
 import org.ripple.power.txns.data.Offer;
+import org.ripple.power.txns.data.OfferListener;
 import org.ripple.power.txns.data.OffersResponse;
 import org.ripple.power.txns.data.RippleResult;
 import org.ripple.power.txns.data.RippleResultListener;
@@ -127,7 +128,7 @@ public class RippleBackendsAPI {
 		}
 		return null;
 	}
-
+	
 	public OffersResponse getActiveOrders(final String address,
 			final Updateable update) {
 		if (!AccountFind.isRippleAddress(address)) {
@@ -434,8 +435,21 @@ public class RippleBackendsAPI {
 		return asks;
 	}
 
+	public Market getSynMarketDepth(String takerAddress, final Take gets,
+			final Take pays, final int limit) {
+		Market market = getMarketDepth(takerAddress, gets, pays, limit, null);
+		for (; market.count < 2;) {
+		}
+		return market;
+	}
+
 	public Market getMarketDepth(String takerAddress, final Take gets,
 			final Take pays, final int limit) {
+		return getMarketDepth(takerAddress, gets, pays, limit, null);
+	}
+
+	public Market getMarketDepth(String takerAddress, final Take gets,
+			final Take pays, final int limit, final OfferListener listener) {
 		final Market market = new Market();
 		// rippled
 		switch (model) {
@@ -446,8 +460,11 @@ public class RippleBackendsAPI {
 				public void action(Object o) {
 					if (o instanceof MarketDepthBidsResponse) {
 						market.Bids = ((MarketDepthBidsResponse) o).result.offers;
+						if (listener != null) {
+							listener.bids(market.Bids);
+						}
 					}
-
+					market.count++;
 				}
 			});
 			getAsks(takerAddress, gets, pays, limit, new Updateable() {
@@ -456,19 +473,22 @@ public class RippleBackendsAPI {
 				public void action(Object o) {
 					if (o instanceof MarketDepthAsksResponse) {
 						market.Asks = ((MarketDepthAsksResponse) o).result.offers;
+						if (listener != null) {
+							listener.asks(market.Asks);
+						}
 					}
+					market.count++;
 				}
 			});
-
 		default:
 			break;
 		}
 		return market;
 	}
 
-	public RippleResult PlaceOrder(final RippleSeedAddress seed,
+	public RippleResult placeOrder(final RippleSeedAddress seed,
 			IssuedCurrency pays, IssuedCurrency gets, long flags,
-			RippleResultListener listener) {
+			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		OfferCreate.set(seed, pays, gets, LSystem.getFee(), -1, 1.0001f, flags,
 				new Rollback() {
@@ -479,18 +499,52 @@ public class RippleBackendsAPI {
 						newOrder.from(res);
 						result.data = newOrder;
 						result.success = true;
+						if (listener != null) {
+							listener.update(result);
+						}
 					}
 
 					@Override
 					public void error(JSONObject res) {
 						result.data = -1;
 						result.success = false;
+						if (listener != null) {
+							listener.update(result);
+						}
 					}
 				});
 		return result;
 	}
 
-	public RippleResult PlaceXRPBuyOrder(final RippleSeedAddress seed,
+	public long placeSynXRPBuyOrder(final RippleSeedAddress seed, double price,
+			double amount, String curreny, String issuer) {
+		RippleResult result = placeXRPBuyOrder(seed, price, amount, curreny,
+				issuer, null);
+		for (; result.data == null;) {
+		}
+		if (result.success) {
+			if (result.data instanceof NewOrderResponse) {
+				return ((NewOrderResponse) result.data).result.tx_json.Sequence;
+			}
+		}
+		return -1;
+	}
+
+	public long placeSynXRPSellOrder(final RippleSeedAddress seed,
+			double amountFiat, double amountXrp, String curreny, String issuer) {
+		RippleResult result = placeXRPSellOrder(seed, amountFiat, amountXrp,
+				curreny, issuer, null);
+		for (; result.data == null;) {
+		}
+		if (result.success) {
+			if (result.data instanceof NewOrderResponse) {
+				return ((NewOrderResponse) result.data).result.tx_json.Sequence;
+			}
+		}
+		return -1;
+	}
+
+	public RippleResult placeXRPBuyOrder(final RippleSeedAddress seed,
 			double price, double amount, String curreny, String issuer,
 			RippleResultListener listener) {
 		long amountXrpDrops = (long) Math.round(amount * Const.DROPS_IN_XRP);
@@ -498,10 +552,10 @@ public class RippleBackendsAPI {
 		IssuedCurrency pays = new IssuedCurrency(String.valueOf(amountXrpDrops));
 		IssuedCurrency gets = new IssuedCurrency(String.valueOf(xrp_num_format
 				.format(amountFiat)), issuer, curreny);
-		return PlaceOrder(seed, pays, gets, 0, listener);
+		return placeOrder(seed, pays, gets, 0, listener);
 	}
 
-	public RippleResult PlaceXRPSellOrder(final RippleSeedAddress seed,
+	public RippleResult placeXRPSellOrder(final RippleSeedAddress seed,
 			double amountFiat, double amountXrp, String curreny, String issuer,
 			RippleResultListener listener) {
 		long amountXrpDrops = (long) Math.round(amountXrp * Const.DROPS_IN_XRP);
@@ -509,11 +563,35 @@ public class RippleBackendsAPI {
 				.format(amountXrpDrops)), issuer, curreny);
 		IssuedCurrency gets = new IssuedCurrency(String.valueOf(amountXrpDrops));
 		// flags == 2147483648(sell)
-		return PlaceOrder(seed, pays, gets, 2147483648l, listener);
+		return placeOrder(seed, pays, gets, 2147483648l, listener);
+	}
+
+	public long updateSynSellOrder(final RippleSeedAddress seed, int orderId,
+			double price, double amount, String curreny, String issuer) {
+		if (cancelSynOrder(seed, orderId)) {
+			long id = placeSynXRPSellOrder(seed, price, amount, curreny, issuer);
+			if (id == -1) {
+				return orderId;
+			}
+			return id;
+		}
+		return orderId;
+	}
+
+	public boolean cancelSynOrder(final RippleSeedAddress seed, long orderId) {
+		RippleResult result = cancelOrder(seed, orderId, null);
+		for (; result.data == null;) {
+		}
+		if (result.success) {
+			if (result.data instanceof CancelOrderResponse) {
+				return ((CancelOrderResponse) result.data).result.getResultOK();
+			}
+		}
+		return false;
 	}
 
 	public RippleResult cancelOrder(final RippleSeedAddress seed, long orderId,
-			RippleResultListener listener) {
+			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		OfferCancel.set(seed, orderId, LSystem.getFee(), new Rollback() {
 
@@ -523,12 +601,18 @@ public class RippleBackendsAPI {
 				cancelOrder.from(res);
 				result.data = cancelOrder;
 				result.success = true;
+				if (listener != null) {
+					listener.update(result);
+				}
 			}
 
 			@Override
 			public void error(JSONObject res) {
 				result.data = -1;
 				result.success = false;
+				if (listener != null) {
+					listener.update(result);
+				}
 			}
 		});
 		return result;
