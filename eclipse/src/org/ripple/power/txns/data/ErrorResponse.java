@@ -1,5 +1,7 @@
 package org.ripple.power.txns.data;
 
+import org.json.JSONObject;
+
 public class ErrorResponse {
 
 	public String error;
@@ -9,7 +11,8 @@ public class ErrorResponse {
 	public Object request;
 	public String status;
 	public String type;
-	boolean isCritical() {
+	
+	public boolean isCritical() {
 		// "tooBusy"
 		if (8 == error_code || 9 == error_code) {
 			return false;
@@ -28,6 +31,17 @@ public class ErrorResponse {
 			return false;
 		}
 		return true;
+	}
+	
+	public void form(JSONObject obj){
+		if(obj!=null){
+			this.id = obj.optInt("id");
+			this.error = obj.optString("error");
+			this.error_message = obj.optString("error_message");
+			this.request = obj.opt("request");
+			this.status = obj.optString("status");
+			this.type = obj.optString("type");
+		}
 	}
 
 }

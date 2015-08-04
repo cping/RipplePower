@@ -6,9 +6,10 @@ import java.util.List;
 import org.json.JSONObject;
 import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.txns.data.AccountInfoRequest;
 import org.ripple.power.txns.data.AccountInfoResponse;
 import org.ripple.power.txns.data.AccountLinesResponse;
+import org.ripple.power.txns.data.CancelOrderResponse;
+import org.ripple.power.txns.data.CandlesResponse;
 import org.ripple.power.txns.data.Line;
 import org.ripple.power.txns.data.Market;
 import org.ripple.power.txns.data.MarketDepthAsksResponse;
@@ -20,9 +21,6 @@ import org.ripple.power.txns.data.RippleResult;
 import org.ripple.power.txns.data.RippleResultListener;
 import org.ripple.power.txns.data.Take;
 import org.ripple.power.ui.RPClient;
-import org.ripple.power.ui.view.RPToast;
-import org.ripple.power.ui.view.RPToast.Style;
-import org.ripple.power.utils.StringUtils;
 
 import com.ripple.client.enums.Command;
 import com.ripple.client.requests.Request;
@@ -40,7 +38,7 @@ public class RippleBackendsAPI {
 
 	public Model model = Model.Rippled;
 
-	public AccountInfoRequest getAccountInfo(final String address,
+	public AccountInfoResponse getAccountInfo(final String address,
 			final Updateable update) {
 		if (!AccountFind.isRippleAddress(address)) {
 			throw new RuntimeException("not ripple address !");
@@ -83,7 +81,7 @@ public class RippleBackendsAPI {
 			break;
 		}
 
-		return null;
+		return accountInfo;
 	}
 
 	public AccountLinesResponse getAccountLines(final String address,
@@ -478,6 +476,7 @@ public class RippleBackendsAPI {
 					@Override
 					public void success(JSONObject res) {
 						NewOrderResponse newOrder = new NewOrderResponse();
+						newOrder.from(res);
 						result.data = newOrder;
 						result.success = true;
 					}
@@ -509,7 +508,34 @@ public class RippleBackendsAPI {
 		IssuedCurrency pays = new IssuedCurrency(String.valueOf(xrp_num_format
 				.format(amountXrpDrops)), issuer, curreny);
 		IssuedCurrency gets = new IssuedCurrency(String.valueOf(amountXrpDrops));
-		//flags == 2147483648(sell)
+		// flags == 2147483648(sell)
 		return PlaceOrder(seed, pays, gets, 2147483648l, listener);
+	}
+
+	public RippleResult cancelOrder(final RippleSeedAddress seed, long orderId,
+			RippleResultListener listener) {
+		final RippleResult result = new RippleResult();
+		OfferCancel.set(seed, orderId, LSystem.getFee(), new Rollback() {
+
+			@Override
+			public void success(JSONObject res) {
+				CancelOrderResponse cancelOrder = new CancelOrderResponse();
+				cancelOrder.from(res);
+				result.data = cancelOrder;
+				result.success = true;
+			}
+
+			@Override
+			public void error(JSONObject res) {
+				result.data = -1;
+				result.success = false;
+			}
+		});
+		return result;
+	}
+
+	public CandlesResponse getTradeStatistics(long time, String curreny,
+			String issuer) {
+		return RippleChartsAPI.getTradeStatistics(curreny, issuer, time);
 	}
 }

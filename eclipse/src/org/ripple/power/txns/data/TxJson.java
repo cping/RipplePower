@@ -2,7 +2,7 @@ package org.ripple.power.txns.data;
 
 import org.json.JSONObject;
 
-public class NOR_TxJson {
+public class TxJson {
 	public String Account;
 	public String Fee;
 	public long Flags;

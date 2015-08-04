@@ -11,6 +11,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.txns.data.AccountOffersResponse;
+import org.ripple.power.txns.data.CandlesResponse;
+import org.ripple.power.txns.data.MarketsRespone;
+import org.ripple.power.txns.data.TotalNetworkValueResponse;
+import org.ripple.power.txns.data.TransactionStatsResponse;
 import org.ripple.power.utils.HttpRequest;
 
 import com.ripple.core.coretypes.RippleDate;
@@ -18,11 +23,18 @@ import com.ripple.core.coretypes.RippleDate;
 public class RippleChartsAPI {
 
 	public static enum Model {
-		ALL, YEAR, MONTH, WEEK, DAY,HOUR
+		ALL, YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND
 	}
 
-	// 用于获取指定类型的历史交易记录（比如24小时交易等）
-	private final static String CHARTS_URL = "http://api.ripplecharts.com/api/";
+	private static String CHARTS_URL = "http://api.ripplecharts.com/api/";
+
+	public static void setDataAPI_URL(String url) {
+		CHARTS_URL = url;
+	}
+
+	public static String getDataAPI_URL() {
+		return CHARTS_URL;
+	}
 
 	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
 			"yyyy-MM-dd");
@@ -63,141 +75,129 @@ public class RippleChartsAPI {
 	}
 
 	public static Object offers_exercised24hour(IssuedCurrency issued) {
-		return offers_exercised24hour(LSystem.nativeCurrency, issued.currency,
-				issued.issuer.toString());
+		return offers_exercised24hour(IssuedCurrency.BASE, issued);
 	}
 
 	public static ArrayList<RippleItem> offers_exercised24hour_items(
 			String currency, String issuer) {
-		Object o = offers_exercised24hour(LSystem.nativeCurrency, currency,
-				issuer);
+		Object o = offers_exercised24hour(IssuedCurrency.BASE,
+				new IssuedCurrency(issuer, currency));
 		return jsonToItems(o);
 	}
 
 	public static ArrayList<RippleItem> offers_exercised24hour_items(
 			IssuedCurrency issued) {
-		Object o = offers_exercised24hour(LSystem.nativeCurrency,
-				issued.currency, issued.issuer.toString());
+		Object o = offers_exercised24hour(IssuedCurrency.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercised24hour(String basecur, String cur,
-			String issuer) {
+	public static Object offers_exercised24hour(IssuedCurrency basecur,
+			IssuedCurrency counter) {
 		Calendar calone = Calendar.getInstance();
 		calone.add(Calendar.DATE, -1);
 		String yesterday = dateformat.format(calone.getTime());
 		Calendar caltwo = Calendar.getInstance();
 		caltwo.setTime(RippleDate.now());
 		String day = dateformat.format(caltwo.getTime());
-		return offers_exercised(basecur, cur, issuer, yesterday, day, true);
+		return offers_exercised(basecur, counter, yesterday, day, true);
 	}
 
 	public static Object offers_exercisedYear(IssuedCurrency issued) {
-		return offers_exercisedYear(LSystem.nativeCurrency, issued.currency,
-				issued.issuer.toString());
+		return offers_exercisedYear(IssuedCurrency.BASE, issued);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedYear_items(
 			String currency, String issuer) {
-		Object o = offers_exercisedYear(LSystem.nativeCurrency, currency,
-				issuer);
+		Object o = offers_exercisedYear(IssuedCurrency.BASE,
+				new IssuedCurrency(issuer, currency));
 		return jsonToItems(o);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedYear_items(
 			IssuedCurrency issued) {
-		Object o = offers_exercisedYear(LSystem.nativeCurrency,
-				issued.currency, issued.issuer.toString());
+		Object o = offers_exercisedYear(IssuedCurrency.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedYear(String basecur, String cur,
-			String issuer) {
+	public static Object offers_exercisedYear(IssuedCurrency basecur,
+			IssuedCurrency counter) {
 		Calendar calone = Calendar.getInstance();
 		calone.add(Calendar.DATE, -365);
 		String yesterday = dateformat.format(calone.getTime());
 		Calendar caltwo = Calendar.getInstance();
 		caltwo.setTime(RippleDate.now());
 		String day = dateformat.format(caltwo.getTime());
-		return offers_exercised(basecur, cur, issuer, yesterday, day, false);
+		return offers_exercised(basecur, counter, yesterday, day, false);
 	}
 
 	public static Object offers_exercisedMonth(IssuedCurrency issued) {
-		return offers_exercisedMonth(LSystem.nativeCurrency, issued.currency,
-				issued.issuer.toString());
+		return offers_exercisedMonth(IssuedCurrency.BASE, issued);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedMonth_items(
 			String currency, String issuer) {
-		Object o = offers_exercisedMonth(LSystem.nativeCurrency, currency,
-				issuer);
+		Object o = offers_exercisedMonth(IssuedCurrency.BASE,
+				new IssuedCurrency(issuer, currency));
 		return jsonToItems(o);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedMonth_items(
 			IssuedCurrency issued) {
-		Object o = offers_exercisedMonth(LSystem.nativeCurrency,
-				issued.currency, issued.issuer.toString());
+		Object o = offers_exercisedMonth(IssuedCurrency.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedMonth(String basecur, String cur,
-			String issuer) {
+	public static Object offers_exercisedMonth(IssuedCurrency basecur,
+			IssuedCurrency counter) {
 		Calendar calone = Calendar.getInstance();
 		calone.add(Calendar.DATE, -30);
 		String yesterday = dateformat.format(calone.getTime());
 		Calendar caltwo = Calendar.getInstance();
 		caltwo.setTime(RippleDate.now());
 		String day = dateformat.format(caltwo.getTime());
-		return offers_exercised(basecur, cur, issuer, yesterday, day, false);
+		return offers_exercised(basecur, counter, yesterday, day, false);
 	}
 
 	public static Object offers_exercisedWeek(IssuedCurrency issued) {
-		return offers_exercisedWeek(LSystem.nativeCurrency, issued.currency,
-				issued.issuer.toString());
+		return offers_exercisedWeek(IssuedCurrency.BASE, issued);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedWeek_items(
 			String currency, String issuer) {
-		Object o = offers_exercisedWeek(LSystem.nativeCurrency, currency,
-				issuer);
+		Object o = offers_exercisedWeek(IssuedCurrency.BASE,
+				new IssuedCurrency(issuer, currency));
 		return jsonToItems(o);
 	}
 
 	public static ArrayList<RippleItem> offers_exercisedWeek_items(
 			IssuedCurrency issued) {
-		Object o = offers_exercisedWeek(LSystem.nativeCurrency,
-				issued.currency, issued.issuer.toString());
+		Object o = offers_exercisedWeek(IssuedCurrency.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedWeek(String basecur, String cur,
-			String issuer) {
+	public static Object offers_exercisedWeek(IssuedCurrency basecur,
+			IssuedCurrency counter) {
 		Calendar calone = Calendar.getInstance();
 		calone.add(Calendar.DATE, -7);
 		String yesterday = dateformat.format(calone.getTime());
 		Calendar caltwo = Calendar.getInstance();
 		caltwo.setTime(RippleDate.now());
 		String day = dateformat.format(caltwo.getTime());
-		return offers_exercised(basecur, cur, issuer, yesterday, day, false);
+		return offers_exercised(basecur, counter, yesterday, day, false);
 	}
 
-	public static Object offers_exercised(String basecur, String cur,
-			String issuer, String start, String end, boolean hour) {
+	public static Object offers_exercised(IssuedCurrency basecur,
+			IssuedCurrency counter, String start, String end, boolean hour) {
 		JSONObject data = new JSONObject();
-		JSONObject base = new JSONObject();
-		base.put("currency", basecur);
-		JSONObject counter = new JSONObject();
-		counter.put("currency", cur);
-		counter.put("issuer", issuer);
-		data.put("base", base);
-		data.put("counter", counter);
+		data.put("base", basecur.getBase());
+		data.put("counter", counter.getBase());
 		data.put("startTime", start);
 		data.put("endTime", end);
 		if (hour) {
 			data.put("timeIncrement", "minute");
 			data.put("timeMultiple", 5);
 		}
+		data.put("format", "json");
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "offers_exercised");
 		String result = request.send(data);
 		if (result.startsWith("[")) {
@@ -209,49 +209,12 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object total_network_value() {
-		HttpRequest request = HttpRequest.post(CHARTS_URL
-				+ "total_network_value");
-		String result = request.body();
-		if (result.startsWith("[")) {
-			return new JSONArray(result);
-		} else if (result.startsWith("{")) {
-			return new JSONObject(result);
-		} else {
-			return result;
-		}
-	}
-
-	public static Object top_markets() {
-		HttpRequest request = HttpRequest.post(CHARTS_URL + "top_markets");
-		String result = request.body();
-		if (result.startsWith("[")) {
-			return new JSONArray(result);
-		} else if (result.startsWith("{")) {
-			return new JSONObject(result);
-		} else {
-			return result;
-		}
-	}
-
-	public static Object total_value_sent() {
-		HttpRequest request = HttpRequest.post(CHARTS_URL + "total_value_sent");
-		String result = request.body();
-		if (result.startsWith("[")) {
-			return new JSONArray(result);
-		} else if (result.startsWith("{")) {
-			return new JSONObject(result);
-		} else {
-			return result;
-		}
-	}
-
-	public static Object historicalMetrics(String cur, String issuer) {
+	public static Object historicalMetrics(String curreny, String issuer) {
 		HttpRequest request = HttpRequest
 				.post(CHARTS_URL + "historicalMetrics");
 		JSONObject data = new JSONObject();
 		JSONObject exchange = new JSONObject();
-		exchange.put("currency", cur);
+		exchange.put("currency", curreny.toUpperCase());
 		exchange.put("issuer", issuer);
 		Calendar calone = Calendar.getInstance();
 		calone.add(Calendar.DATE, -1);
@@ -274,9 +237,8 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object getExchangeRates(final String currency,
-			final String issuer) {
-
+	public static Object getExchangeRates(final String basecur,
+			final String currency, final String issuer) {
 		Date now = new Date();
 		String startTime = iso8601
 				.format(new Date(now.getTime() - LSystem.DAY));
@@ -288,10 +250,10 @@ public class RippleChartsAPI {
 		data.put("timeMultiple", 1);
 		data.put("descending", false);
 		JSONObject base = new JSONObject();
-		base.put("currency", LSystem.nativeCurrency);
+		base.put("currency", basecur.toUpperCase());
 		JSONObject trade = new JSONObject();
 		trade.put("currency", currency);
-		trade.put("issuer", issuer);
+		trade.put("issuer", issuer.toUpperCase());
 		data.put("base", base);
 		data.put("counter", trade);
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "offers_exercised");
@@ -307,7 +269,7 @@ public class RippleChartsAPI {
 
 	public static ArrayList<RippleItem> getExchangeRateItems(
 			final String currency, final String issuer) {
-		Object o = getExchangeRates(currency, issuer);
+		Object o = getExchangeRates(LSystem.nativeCurrency, currency, issuer);
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
 			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
@@ -421,38 +383,22 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object accountscreated() {
-		HttpRequest request = HttpRequest.post(CHARTS_URL + "accountscreated");
-		String result = request.body();
-		if (result.startsWith("[")) {
-			return new JSONArray(result);
-		} else if (result.startsWith("{")) {
-			return new JSONObject(result);
-		} else {
-			return result;
-		}
-	}
-
-	public static Object getExchange(IssuedCurrency cur) {
+	public static Object getExchange(IssuedCurrency curreny) {
 		ArrayList<IssuedCurrency> issueds = new ArrayList<IssuedCurrency>();
-		issueds.add(cur);
-		return getExchange(issueds);
+		issueds.add(curreny);
+		return getExchange(IssuedCurrency.BASE, issueds);
 	}
 
-	public static Object getExchange(ArrayList<IssuedCurrency> curs) {
+	public static Object getExchange(IssuedCurrency basecur,
+			ArrayList<IssuedCurrency> counters) {
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "exchange_rates");
 		JSONObject obj = new JSONObject();
 		JSONArray arrays = new JSONArray();
-		if (curs != null) {
-			for (IssuedCurrency currency : curs) {
+		if (counters != null) {
+			for (IssuedCurrency counter : counters) {
 				JSONObject item = new JSONObject();
-				JSONObject base = new JSONObject();
-				base.put("currency", currency.currency);
-				base.put("issuer", currency.issuer.toString());
-				JSONObject counter = new JSONObject();
-				counter.put("currency", LSystem.nativeCurrency);
-				item.put("base", base);
-				item.put("counter", counter);
+				item.put("base", basecur.getBase());
+				item.put("counter", counter.getBase());
 				arrays.put(item);
 			}
 		}
@@ -469,7 +415,7 @@ public class RippleChartsAPI {
 
 	public static double getXRPto(ArrayList<IssuedCurrency> list) {
 		double a = -1, b = -1;
-		Object result = getExchange(list);
+		Object result = getExchange(IssuedCurrency.BASE, list);
 		if (result != null) {
 			if (result instanceof JSONArray) {
 				a = ((JSONArray) result).getJSONObject(0).getDouble("rate");
@@ -529,6 +475,7 @@ public class RippleChartsAPI {
 			obj.put("startTime", "2013-01-01T00:00:00.000Z");
 			obj.put("endTime", dateformat.format(rippleDate.getTime()));
 			obj.put("timeIncrement", "all");
+			break;
 		case DAY:
 			calone.add(Calendar.DATE, -count);
 			obj.put("startTime", dateformat.format(calone.getTime()));
@@ -536,19 +483,19 @@ public class RippleChartsAPI {
 			obj.put("timeIncrement", "day");
 			break;
 		case WEEK:
-			calone.add(Calendar.WEDNESDAY, -count);
+			calone.add(Calendar.DATE, -(count * 7));
 			obj.put("startTime", dateformat.format(calone.getTime()));
 			obj.put("endTime", dateformat.format(rippleDate.getTime()));
 			obj.put("timeIncrement", "week");
 			break;
 		case MONTH:
-			calone.add(Calendar.WEDNESDAY, -(count * 4));
+			calone.add(Calendar.MONTH, -count);
 			obj.put("startTime", dateformat.format(calone.getTime()));
 			obj.put("endTime", dateformat.format(rippleDate.getTime()));
 			obj.put("timeIncrement", "week");
 			break;
 		case YEAR:
-			calone.add(Calendar.DATE, -(count * 365));
+			calone.add(Calendar.YEAR, -count);
 			obj.put("startTime", dateformat.format(calone.getTime()));
 			obj.put("endTime", dateformat.format(rippleDate.getTime()));
 			obj.put("timeIncrement", "day");
@@ -572,5 +519,223 @@ public class RippleChartsAPI {
 		return result;
 	}
 
+	public static CandlesResponse getTradeStatistics(String currency,
+			String issuer, long time) {
+		return getTradeStatistics(IssuedCurrency.BASE, new IssuedCurrency(
+				issuer, currency), time);
+	}
 
+	public static CandlesResponse getTradeStatistics(IssuedCurrency basecur,
+			IssuedCurrency counter, long time) {
+		Date now = new Date();
+		String endTime = iso8601.format(now);
+		String startTime = endTime;
+		if (time > 0) {
+			startTime = iso8601.format(new Date(now.getTime() - time));
+		} else {
+			startTime = iso8601.format(new Date(now.getTime() - LSystem.DAY));
+		}
+		JSONObject data = new JSONObject();
+		data.put("base", basecur.getBase());
+		data.put("counter", counter.getBase());
+		data.put("startTime", startTime);
+		data.put("endTime", endTime);
+		data.put("timeIncrement", "minute");
+		data.put("timeMultiple", 5);
+		data.put("format", "json");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "offers_exercised");
+		String result = request.send(data);
+		CandlesResponse candles = new CandlesResponse();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				candles.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				candles.from(new JSONObject(result));
+			}
+		}
+		return candles;
+	}
+
+	public static AccountOffersResponse account_offers_exercised(
+			String account, long time, int limit) {
+		Date now = new Date();
+		String endTime = iso8601.format(now);
+		String startTime = endTime;
+		if (time > 0) {
+			startTime = iso8601.format(new Date(now.getTime() - time));
+		} else {
+			startTime = iso8601.format(new Date(now.getTime() - LSystem.DAY));
+		}
+		JSONObject data = new JSONObject();
+		data.put("account", account);
+		data.put("startTime", startTime);
+		data.put("endTime", endTime);
+		data.put("offset", 0);
+		data.put("limit", limit);
+		data.put("format", "json");
+		HttpRequest request = HttpRequest.post(CHARTS_URL
+				+ "account_offers_exercised");
+		String result = request.send(data);
+		AccountOffersResponse accountOffers = new AccountOffersResponse();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				accountOffers.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				accountOffers.from(new JSONObject(result));
+			}
+		}
+		return accountOffers;
+	}
+
+	public static MarketsRespone top_markets(IssuedCurrency exchange, long time) {
+		Date now = new Date();
+		String startTime = iso8601.format(new Date(now.getTime() - time));
+		JSONObject data = new JSONObject();
+		data.put("startTime", startTime);
+		data.put("exchange", exchange.getBase());
+		data.put("interval", "week");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "top_markets");
+		String result = request.send(data);
+		MarketsRespone topMarkets = new MarketsRespone();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				topMarkets.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				topMarkets.from(new JSONObject(result));
+			}
+		}
+		return topMarkets;
+	}
+
+	public static TotalNetworkValueResponse total_network_value(
+			IssuedCurrency exchange) {
+		return total_network_value(exchange, LSystem.DAY);
+	}
+
+	public static TotalNetworkValueResponse total_network_value(
+			IssuedCurrency exchange, long time) {
+		Date now = new Date();
+		String timer = iso8601.format(new Date(now.getTime() - time));
+		JSONObject data = new JSONObject();
+		data.put("time", timer);
+		data.put("exchange", exchange.getBase());
+		HttpRequest request = HttpRequest.post(CHARTS_URL
+				+ "total_network_value");
+		String result = request.send(data);
+		TotalNetworkValueResponse totalNetwork = new TotalNetworkValueResponse();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				totalNetwork.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				totalNetwork.from(new JSONObject(result));
+			}
+		}
+		return totalNetwork;
+	}
+
+	public static TotalNetworkValueResponse total_value_sent(
+			IssuedCurrency exchange) {
+		return total_value_sent(exchange, Model.MONTH, LSystem.YEAR);
+	}
+
+	public static TotalNetworkValueResponse total_value_sent(
+			IssuedCurrency exchange, Model model, long time) {
+		Date now = new Date();
+		String timer = iso8601.format(new Date(now.getTime() - time));
+		JSONObject data = new JSONObject();
+		data.put("startTime", timer);
+		data.put("exchange", exchange.getBase());
+		switch (model) {
+		case DAY:
+			data.put("interval", "day");
+			break;
+		case WEEK:
+			data.put("interval", "week");
+			break;
+		case MONTH:
+			data.put("interval", "month");
+			break;
+		default:
+			data.put("interval", "day");
+			break;
+		}
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "total_value_sent");
+		String result = request.send(data);
+		TotalNetworkValueResponse totalNetwork = new TotalNetworkValueResponse();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				totalNetwork.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				totalNetwork.from(new JSONObject(result));
+			}
+		}
+		return totalNetwork;
+	}
+
+	public static Object transaction_stats24hour(int limit) {
+		Calendar calone = Calendar.getInstance();
+		calone.add(Calendar.DATE, -1);
+		String startTime = iso8601.format(calone.getTime());
+		Calendar caltwo = Calendar.getInstance();
+		caltwo.setTime(RippleDate.now());
+		String endTime = iso8601.format(caltwo.getTime());
+		return transaction_stats(startTime, endTime, limit, Model.HOUR);
+	}
+
+	public static Object transaction_statsWeek(int limit) {
+		Calendar calone = Calendar.getInstance();
+		calone.add(Calendar.DATE, -7);
+		String startTime = iso8601.format(calone.getTime());
+		Calendar caltwo = Calendar.getInstance();
+		caltwo.setTime(RippleDate.now());
+		String endTime = iso8601.format(caltwo.getTime());
+		return transaction_stats(startTime, endTime, limit, Model.WEEK);
+	}
+
+	public static Object transaction_statsMonth(int limit) {
+		Calendar calone = Calendar.getInstance();
+		calone.add(Calendar.MONTH, -1);
+		String startTime = iso8601.format(calone.getTime());
+		Calendar caltwo = Calendar.getInstance();
+		caltwo.setTime(RippleDate.now());
+		String endTime = iso8601.format(caltwo.getTime());
+		return transaction_stats(startTime, endTime, limit, Model.MONTH);
+	}
+
+	public static Object transaction_statsYear(int limit) {
+		Calendar calone = Calendar.getInstance();
+		calone.add(Calendar.YEAR, -1);
+		String startTime = iso8601.format(calone.getTime());
+		Calendar caltwo = Calendar.getInstance();
+		caltwo.setTime(RippleDate.now());
+		String endTime = iso8601.format(caltwo.getTime());
+		return transaction_stats(startTime, endTime, limit, Model.YEAR);
+	}
+
+	public static TransactionStatsResponse transaction_stats(String startTime,
+			String endTime, int limit, Model model) {
+		JSONObject data = new JSONObject();
+		data.put("startTime", startTime);
+		data.put("endTime", endTime);
+		if (model != null) {
+			data.put("timeIncrement", model.toString().toLowerCase());
+		}
+		data.put("descending", true);
+		data.put("reduce", false);
+		data.put("limit", limit);
+		data.put("offset", 0);
+		data.put("format", "json");
+		HttpRequest request = HttpRequest
+				.post(CHARTS_URL + "transaction_stats");
+		String result = request.send(data);
+		TransactionStatsResponse transactionStats = new TransactionStatsResponse();
+		if (result != null && result.indexOf("\"") != -1) {
+			if (result.startsWith("[")) {
+				transactionStats.from(new JSONArray(result));
+			} else if (result.startsWith("{")) {
+				transactionStats.from(new JSONObject(result));
+			}
+		}
+		return transactionStats;
+	}
 }

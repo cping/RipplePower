@@ -1698,16 +1698,16 @@ public class HttpRequest {
 	}
 
 	public String send(JSONObject obj) {
-
 		StringBuffer sbr = new StringBuffer();
 		try {
 			HttpURLConnection c = getConnection();
-			String charEncoding = "iso-8859-1";
+			String charEncoding = "UTF-8";
 			c.setDoOutput(true);
 			c.setUseCaches(false);
 			c.setRequestMethod(this.requestMethod);
 			c.setRequestProperty("Content-type", "application/json; charset="
 					+ "UTF-8");
+			c.setRequestProperty("Accept-Encoding","gzip, deflate");
 			if (this.requestMethod != "GET" && obj != null) {
 				String data = obj.toString();
 				c.setDoInput(true);
@@ -1722,9 +1722,15 @@ public class HttpRequest {
 				return String.valueOf(code);
 			}
 			try {
-				BufferedReader rd = new BufferedReader(new InputStreamReader(
-						c.getInputStream()));
-				String line;
+				InputStream is = null;
+				if ("gzip".equals(c.getContentEncoding())) {
+					is = new GZIPInputStream(c.getInputStream());
+				} else {
+					is = c.getInputStream();
+				}
+				BufferedReader rd = new BufferedReader(
+						new InputStreamReader(is));
+				String line = null;
 				while ((line = rd.readLine()) != null) {
 					sbr.append(line);
 				}
@@ -1812,7 +1818,7 @@ public class HttpRequest {
 		}
 		return this;
 	}
-	
+
 	public HttpRequest trustAllCerts(String ca) throws Exception {
 		final HttpURLConnection connection = getConnection();
 		if (connection instanceof HttpsURLConnection) {
@@ -1827,7 +1833,7 @@ public class HttpRequest {
 		}
 		return this;
 	}
-	
+
 	public HttpRequest trustAllHosts() {
 		final HttpURLConnection connection = getConnection();
 		if (connection instanceof HttpsURLConnection) {

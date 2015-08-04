@@ -7,35 +7,29 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 
-public class CandlesResponse {
+public class AccountOffersResponse {
 
+	public String account;
 	public String startTime;
 	public String endTime;
-	public String base;
-	public String counter;
-	public String timeIncrement;
-	public List<Candle> results = new ArrayList<Candle>(
+	public List<AccountOffersResult> results = new ArrayList<AccountOffersResult>(
 			LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	public void from(Object obj) {
 		if (obj != null) {
 			if (obj instanceof JSONObject) {
-				JSONObject result = (JSONObject) obj;
+				JSONObject result = (JSONObject)obj;
+				this.account = result.optString("account");
 				this.startTime = result.optString("startTime");
 				this.endTime = result.optString("endTime");
-				this.base = result.optString("base");
-				this.counter = result.optString("counter");
-				this.timeIncrement = result.optString("timeIncrement");
 				JSONArray arrays = result.optJSONArray("results");
 				if (arrays != null) {
 					int size = arrays.length();
 					for (int i = 0; i < size; i++) {
-						JSONObject candle = arrays.getJSONObject(i);
-						Candle can = new Candle();
-						can.from(candle);
-						results.add(can);
+						AccountOffersResult currency = new AccountOffersResult();
+						currency.from(arrays.getJSONObject(i));
+						results.add(currency);
 					}
-
 				}
 			}
 		}

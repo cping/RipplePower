@@ -39,6 +39,9 @@ public class IssuedCurrency {
 	// enter an account with a trust line containing XAU (-0.5%pa) -> hex:
 	private final static String XAU_05PA = "0158415500000000C1F76FF6ECB0BAC600000000";
 
+	// base
+	public final static IssuedCurrency BASE = new IssuedCurrency("0");
+
 	// Bitstamp
 	public final static IssuedCurrency BITSTAMP_USD = new IssuedCurrency(
 			"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "USD");
@@ -70,10 +73,10 @@ public class IssuedCurrency {
 	// RippleFox
 	public final static IssuedCurrency RIPPLEFOX_CNY = new IssuedCurrency(
 			"rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y", "CNY");
-	
+
 	public BigDecimal amount;
 	public RippleAddress issuer;
-	public String currency;
+	public String currency = LSystem.nativeCurrency.toUpperCase();
 	public static final int MIN_SCALE = -96;
 	public static final int MAX_SCALE = 80;
 
@@ -220,8 +223,14 @@ public class IssuedCurrency {
 	}
 
 	public void copyFrom(JSONObject jsonDenomination) {
-		issuer = new RippleAddress(((String) jsonDenomination.get("issuer")));
-		String currencyStr = ((String) jsonDenomination.get("currency"));
+		if (jsonDenomination == null) {
+			return;
+		}
+		String issuerStr = jsonDenomination.optString("issuer");
+		if (!StringUtils.isEmpty(issuerStr)) {
+			issuer = new RippleAddress(issuerStr);
+		}
+		String currencyStr = jsonDenomination.optString("currency");
 		if (XAU_05PA.equals(currencyStr)) {
 			currency = "XAU (-0.5%pa)";
 		} else if (currencyStr.length() > 3
@@ -235,8 +244,8 @@ public class IssuedCurrency {
 		} else {
 			currency = currencyStr;
 		}
-		String amountStr = LSystem.getNumberShort((String) jsonDenomination
-				.get("value"));
+		String amountStr = LSystem.getNumberShort(jsonDenomination.optString(
+				"value", "0"));
 		amount = new BigDecimal(amountStr);
 	}
 
@@ -312,5 +321,19 @@ public class IssuedCurrency {
 					AccountID.fromAddress(issuer.toString()));
 		}
 		return null;
+	}
+
+	public JSONObject getBase() {
+		if (currency == null) {
+			currency = LSystem.nativeCurrency.toUpperCase();
+		}
+		JSONObject obj = new JSONObject();
+		if (LSystem.nativeCurrency.equalsIgnoreCase(currency)) {
+			obj.put("currency", currency.toUpperCase());
+		} else {
+			obj.put("currency", currency.toUpperCase());
+			obj.put("issuer", issuer.toString());
+		}
+		return obj;
 	}
 }

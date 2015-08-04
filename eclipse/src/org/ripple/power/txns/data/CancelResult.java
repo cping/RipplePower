@@ -3,21 +3,16 @@ package org.ripple.power.txns.data;
 import org.json.JSONObject;
 import org.ripple.power.txns.Const;
 
-public class OrderData {
+public class CancelResult {
+
 	public String engine_result;
 	public int engine_result_code;
 	public String engine_result_message;
 	public String tx_blob;
-	public TxJson tx_json = new TxJson();
+	public TxJson tx_json;
 
-	public ResponseKind getResponseKind() {
-		if (0 == engine_result_code) {
-			return ResponseKind.Success;
-		}
-		if (Const.OkResultCodes.contains(engine_result)) {
-			return ResponseKind.NonCriticalError;
-		}
-		return ResponseKind.FatalError;
+	public boolean getResultOK() {
+		return Const.OkResultCodes.contains(engine_result);
 	}
 
 	public void from(JSONObject obj) {
