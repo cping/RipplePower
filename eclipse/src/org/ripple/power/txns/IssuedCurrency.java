@@ -8,6 +8,7 @@ import org.ripple.power.CoinUtils;
 import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.nodejs.BigNumber;
+import org.ripple.power.txns.data.Take;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.AccountID;
@@ -336,4 +337,18 @@ public class IssuedCurrency {
 		}
 		return obj;
 	}
+
+	public Take getTake() {
+		if (currency == null) {
+			currency = LSystem.nativeCurrency.toUpperCase();
+		}
+		Take take = null;
+		if (LSystem.nativeCurrency.equalsIgnoreCase(currency)) {
+			take = new Take(amount.toString());
+		} else {
+			take = new Take(amount.toString(), currency, issuer.toString());
+		}
+		return take;
+	}
+
 }

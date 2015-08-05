@@ -11,10 +11,9 @@ import java.util.TimeZone;
 
 final public class DateUtils {
 
-	/**
-	 * 中国时区设置
-	 */
-	private static final TimeZone timeZone = TimeZone.getTimeZone("GMT+08:00");
+	private static final TimeZone CN = TimeZone.getTimeZone("GMT+08:00");
+
+	private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
 	final static private String flag = ":";
 
@@ -25,8 +24,13 @@ final public class DateUtils {
 
 	public static final SimpleDateFormat standardDateFormat = new SimpleDateFormat(
 			STANDARD_DATE_PATTERN);
+
 	public static final SimpleDateFormat fileNameDateFormat = new SimpleDateFormat(
 			FILENAME_DATE_PATTERN);
+	static{
+		standardDateFormat.setTimeZone(UTC);
+		fileNameDateFormat.setTimeZone(UTC);
+	}
 
 	private Calendar calendar;
 	private static TimeZone timezone;
@@ -348,13 +352,22 @@ final public class DateUtils {
 	 * 
 	 * @return
 	 */
-	public static String toFormatDate(long msel) {
+	public static String toCNFormatDate(long msel) {
 		Date date = new Date(msel);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		formatter.setTimeZone(timeZone);
+		formatter.setTimeZone(CN);
 		return formatter.format(date);
 	}
 
+	public static Calendar getUTCCalendar() {
+		TimeZone.setDefault(UTC);
+		return new GregorianCalendar(UTC);
+	}
+
+	public static Calendar getCNCalendar() {
+		TimeZone.setDefault(CN);
+		return new GregorianCalendar(CN);
+	}
 	/**
 	 * 清除0返回
 	 * 
@@ -1062,11 +1075,11 @@ final public class DateUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String toTomorrow(String strDate) throws Exception {
+	public static String toCNTomorrow(String strDate) throws Exception {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		Date date = formatter.parse(strDate);
 		long temp = date.getTime() + 24 * 3600 * 1000;
-		return toFormatDate(temp);
+		return toCNFormatDate(temp);
 	}
 
 	/**

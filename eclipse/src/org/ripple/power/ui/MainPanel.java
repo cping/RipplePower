@@ -132,8 +132,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	public void setSpeedIcon(String name) {
 		if (walletLabel != null) {
 			if (!speedFlag.equalsIgnoreCase(name)) {
-				walletLabel
-						.setIcon(Panels.getSpeedImage(speedFlag = name));
+				walletLabel.setIcon(Panels.getSpeedImage(speedFlag = name));
 			}
 		}
 	}
@@ -810,14 +809,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 
 		public void walletChanged() {
-			LSystem.invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					fireTableDataChanged();
-				}
-			});
-	
+			fireTableDataChanged();
 		}
 
 	}

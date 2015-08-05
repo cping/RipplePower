@@ -199,6 +199,21 @@ public class RPConfig {
 		return getFloatValue(name, 0f);
 	}
 
+	public double getDoubleValue(String name, float fallback) {
+		String v = null;
+		synchronized (pConfigItems) {
+			v = pConfigItems.get(name);
+		}
+		if (v == null) {
+			return fallback;
+		}
+		return Double.parseDouble(v);
+	}
+
+	public double getDoubleValue(String name) {
+		return getFloatValue(name, 0f);
+	}
+
 	public float getFloatValue(String name, float fallback) {
 		String v = null;
 		synchronized (pConfigItems) {

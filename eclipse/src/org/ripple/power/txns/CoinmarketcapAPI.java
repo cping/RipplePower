@@ -1,17 +1,15 @@
 package org.ripple.power.txns;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import org.json.JSONArray;
+import org.ripple.power.utils.DateUtils;
 import org.ripple.power.utils.HttpRequest;
 
 public class CoinmarketcapAPI {
 
-	public static GregorianCalendar getCoinmarketcapCalendar(int offsetDay) {
-		GregorianCalendar cal = new GregorianCalendar(
-				TimeZone.getTimeZone("GMT"));
+	public static Calendar getCoinmarketcapCalendar(int offsetDay) {
+		Calendar cal = DateUtils.getUTCCalendar();
 		if (offsetDay != 0) {
 			cal.add(Calendar.DATE, offsetDay);
 		}

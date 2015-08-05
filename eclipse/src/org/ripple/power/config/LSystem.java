@@ -443,7 +443,7 @@ public final class LSystem {
 
 	public static final String applicationName = "RipplePower";
 
-	public static final String applicationVersion = "Demo 0.1.3";
+	public static final String applicationVersion = "Demo 0.1.4";
 
 	public static final String walletName = "ripple_wallet.dat";
 

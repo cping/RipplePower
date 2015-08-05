@@ -20,6 +20,8 @@
  */
 package org.ripple.power.utils;
 
+import java.math.BigDecimal;
+
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.geom.RectBox;
 
@@ -308,6 +310,12 @@ public class MathUtils {
 			s = (s + div(n, s)) >> 1;
 		}
 		return s;
+	}
+
+	public static double round(double num, int scale) {
+		BigDecimal obj1 = new BigDecimal(num);
+		BigDecimal obj2 = new BigDecimal(1);
+		return obj1.divide(obj2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 
 	public static double round(double n) {

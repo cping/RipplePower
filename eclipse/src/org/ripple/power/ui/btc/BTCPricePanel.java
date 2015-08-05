@@ -39,7 +39,7 @@ public class BTCPricePanel extends JPanel {
 	private ArrayList<BTCPrice> _prices = new ArrayList<BTCPrice>(40);
 	private boolean _loading = false;
 	private AccountTableModel tableModel;
-	
+
 	class AccountTableModel extends AbstractTableModel {
 
 		/**
@@ -108,14 +108,7 @@ public class BTCPricePanel extends JPanel {
 		}
 
 		public void update() {
-			LSystem.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					fireTableDataChanged();
-				}
-			});
-
+			fireTableDataChanged();
 		}
 
 	}
@@ -134,8 +127,7 @@ public class BTCPricePanel extends JPanel {
 		String[] columnNames = { "Store", "Price" };
 		int[] columnTypes = { AddressTable.NAME, AddressTable.AMOUNT };
 
-		this.tableModel = new AccountTableModel(columnNames,
-				columnClasses);
+		this.tableModel = new AccountTableModel(columnNames, columnClasses);
 		final AddressTable priceTable = new AddressTable(tableModel,
 				columnTypes);
 		priceTable.setFont(UIRes.getFont());
@@ -192,7 +184,7 @@ public class BTCPricePanel extends JPanel {
 	public void start() {
 		downloadStorePrice(this.tableModel);
 	}
-	
+
 	public void downloadStorePrice(final AccountTableModel model) {
 
 		if (_post != null) {
