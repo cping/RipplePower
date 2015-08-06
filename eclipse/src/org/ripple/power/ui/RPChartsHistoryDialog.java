@@ -19,6 +19,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.OtherData;
 import org.ripple.power.txns.OtherData.CoinmarketcapData;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.chart.ChartValue;
 import org.ripple.power.ui.graphics.chart.ChartValueSerie;
@@ -156,7 +157,7 @@ public class RPChartsHistoryDialog extends JDialog implements WindowListener {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("RPChartsHistoryDialog Exception", exc);
 		}
 	}
 

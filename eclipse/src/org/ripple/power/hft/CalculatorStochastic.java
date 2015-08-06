@@ -39,11 +39,11 @@ public class CalculatorStochastic {
 		outNb.value = noOutEle;
 		for (int index = 0; index <= endIndex; index++) {
 			closePriceInput[index] = instrumentAo.getPriceList().get(index)
-					.getClosePrice();
+					.close;
 			hiPriceInput[index] = instrumentAo.getPriceList().get(index)
-					.getHighPrice();
+					.high;
 			lowPriceInput[index] = instrumentAo.getPriceList().get(index)
-					.getLowPrice();
+					.low;
 		}
 		RetCode retCode = core.stoch(startIndex, endIndex, hiPriceInput,
 				lowPriceInput, closePriceInput, optInFastK_Period,

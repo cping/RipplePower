@@ -52,7 +52,7 @@ import org.ripple.power.wallet.WalletCache;
 public final class LSystem {
 
 	public static Model current = Model.Ripple;
-	
+
 	private final static String USER_HOME_NAME = System
 			.getProperty("user.home");
 
@@ -73,7 +73,7 @@ public final class LSystem {
 	public static boolean isPaused;
 
 	// 数据存储空间定位
-	public static String getDirectory() {
+	public static String getRippleDirectory() {
 		if (applicationDataDirectory != null) {
 			return applicationDataDirectory;
 		}
@@ -590,9 +590,9 @@ public final class LSystem {
 	public static Thread postThread(final Updateable update) {
 		Thread thread = new Thread() {
 			public void run() {
-					if (update != null) {
-						update.action(null);
-					}
+				if (update != null) {
+					update.action(null);
+				}
 			}
 		};
 		thread.start();
@@ -618,14 +618,14 @@ public final class LSystem {
 			runnable.run();
 		}
 	}
-	
+
 	public static void invokeLater(final Updateable update) {
 		invokeLater(new Runnable() {
 			@Override
 			public void run() {
-					if (update != null) {
-						update.action(null);
-					}
+				if (update != null) {
+					update.action(null);
+				}
 			}
 		});
 	}
@@ -663,7 +663,11 @@ public final class LSystem {
 	}
 
 	public static String getCurrentDirectory() {
-		return getProperty("user.dir", "");
+		String dir = getProperty("user.dir", null);
+		if (dir == null) {
+			return new File(".").getAbsolutePath();
+		}
+		return dir;
 	}
 
 	public static File getUserHomeDir() {

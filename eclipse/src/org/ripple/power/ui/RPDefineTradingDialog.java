@@ -14,6 +14,7 @@ import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPList;
@@ -94,7 +95,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("RPDefineTradingDialog Exception", exc);
 		}
 	}
 

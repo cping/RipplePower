@@ -2,7 +2,7 @@ package org.ripple.power.txns.data;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.hft.bot.IMarketOrder;
+import org.ripple.power.hft.IMarketOrder;
 import org.ripple.power.txns.Const;
 
 public class Ask implements IMarketOrder {

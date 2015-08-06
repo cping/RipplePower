@@ -37,6 +37,7 @@ import org.ripple.power.qr.EncoderDecoder;
 import org.ripple.power.txns.CommandFlag;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.editor.EditorDialog;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.Panels;
@@ -507,7 +508,7 @@ public class MainPanel extends JPanel implements ActionListener {
 						RPToast.makeText(LSystem.applicationMain,
 								"View the current exchange rate.",
 								Style.SUCCESS).display();
-						RPExchangeRateViewDialog.showDialog(LangConfig.get(
+						RPExchangeMinRateViewDialog.showDialog(LangConfig.get(
 								this, "exchange_rate", "Exchange Rate"),
 								LSystem.applicationMain);
 						return;
@@ -546,7 +547,7 @@ public class MainPanel extends JPanel implements ActionListener {
 							RPToast.makeText(LSystem.applicationMain,
 									"Go to currency exchange trading network.",
 									Style.SUCCESS).display();
-							RPExchangeDialog.showDialog(LangConfig.get(this,
+							RPExchangeMinDialog.showDialog(LangConfig.get(this,
 									"rippletrade", "Ripple Trading Network"),
 									LSystem.applicationMain, null);
 							return;
@@ -599,7 +600,7 @@ public class MainPanel extends JPanel implements ActionListener {
 							RPToast.makeText(LSystem.applicationMain,
 									"Go to currency exchange trading network.",
 									Style.SUCCESS).display();
-							RPExchangeDialog.showDialog(
+							RPExchangeMinDialog.showDialog(
 									LangConfig.get(this, "rippletrade",
 											"Ripple Trading Network")
 											+ "("
@@ -710,7 +711,7 @@ public class MainPanel extends JPanel implements ActionListener {
 						}
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					ErrorLog.get().logException("MainPanel Exception", ex);
 				}
 			}
 		});

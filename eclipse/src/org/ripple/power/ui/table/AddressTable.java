@@ -45,6 +45,8 @@ public final class AddressTable extends ColorTable {
     public static final int HASH = 12;
     
     public static final int MESSAGE = 13;
+
+    public static final int YESNO = 14;
     
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
@@ -92,7 +94,6 @@ public final class AddressTable extends ColorTable {
 
 			case AMOUNT:// 钱数
 				column.setCellRenderer(new AmountRenderer());
-
 				value = "0.000000";
 				break;
 
@@ -127,6 +128,10 @@ public final class AddressTable extends ColorTable {
                 break;
             case MESSAGE:                                    
                 value = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+                break;
+            case YESNO:                
+                column.setCellRenderer(new YesNoRenderer());
+                value = "mmmmmn";
                 break;
 			default:
 				throw new IllegalArgumentException("Unsupported column type "

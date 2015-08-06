@@ -470,6 +470,12 @@ public class RippleBackendsAPI {
 		return asks;
 	}
 
+	public Market getSynXRPMarketDepth(String takerAddress, final Take gets,
+			final int limit) {
+		return getSynMarketDepth(takerAddress, IssuedCurrency.BASE.getTake(),
+				gets, limit);
+	}
+
 	public Market getSynMarketDepth(String takerAddress, final Take pays,
 			final Take gets, final int limit) {
 		Market market = getMarketDepth(takerAddress, pays, gets, limit, null);
@@ -640,7 +646,8 @@ public class RippleBackendsAPI {
 
 	public long updateSynXRPSellOrder(final RippleSeedAddress seed,
 			long orderId, double price, double amount, IssuedCurrency dst) {
-		return updateSynXRPSellOrder(orderId, price, amount, dst.currency,dst.issuer.toString());
+		return updateSynXRPSellOrder(orderId, price, amount, dst.currency,
+				dst.issuer.toString());
 	}
 
 	public long updateSynXRPSellOrder(long orderId, double price,
@@ -665,8 +672,8 @@ public class RippleBackendsAPI {
 		return orderId;
 	}
 
-	public long updateSynXRPBuyOrder(long orderId, double price,
-			double amount, IssuedCurrency dst) {
+	public long updateSynXRPBuyOrder(long orderId, double price, double amount,
+			IssuedCurrency dst) {
 		if (_seed != null) {
 			return updateSynXRPBuyOrder(_seed, orderId, price, amount, dst);
 		}
@@ -675,9 +682,10 @@ public class RippleBackendsAPI {
 
 	public long updateSynXRPBuyOrder(final RippleSeedAddress seed,
 			long orderId, double price, double amount, IssuedCurrency dst) {
-		return updateSynXRPBuyOrder(orderId, price, amount, dst.currency,dst.issuer.toString());
+		return updateSynXRPBuyOrder(orderId, price, amount, dst.currency,
+				dst.issuer.toString());
 	}
-	
+
 	public long updateSynXRPBuyOrder(long orderId, double price, double amount,
 			String curreny, String issuer) {
 		if (_seed != null) {

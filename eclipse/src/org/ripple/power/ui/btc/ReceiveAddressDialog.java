@@ -88,7 +88,7 @@ public class ReceiveAddressDialog extends JDialog implements ActionListener {
             dialog.setLocationRelativeTo(parent);
             dialog.setVisible(true);
         } catch (Exception exc) {
-            ErrorLog.logException("Exception while displaying dialog", exc);
+            ErrorLog.get().logException("Exception while displaying dialog", exc);
         }
     }
 
@@ -123,9 +123,9 @@ public class ReceiveAddressDialog extends JDialog implements ActionListener {
                 }
             }
         } catch (BlockStoreException exc) {
-            ErrorLog.logException("Unable to update blockStore database", exc);
+            ErrorLog.get().logException("Unable to update blockStore database", exc);
         } catch (Exception exc) {
-        	ErrorLog.logException("Exception while processing action event", exc);
+        	ErrorLog.get().logException("Exception while processing action event", exc);
         }
     }
 

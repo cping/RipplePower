@@ -78,7 +78,7 @@ public class AddressEditDialog extends ABaseDialog implements ActionListener {
             dialog.setVisible(true);
             updatedAddress = dialog.updatedAddress;
         } catch (Exception exc) {
-            ErrorLog.logException("Exception while displaying dialog", exc);
+        	ErrorLog.get().logException("Exception while displaying dialog", exc);
         }
         return updatedAddress;
     }
@@ -101,7 +101,7 @@ public class AddressEditDialog extends ABaseDialog implements ActionListener {
                     break;
             }
         } catch (Exception exc) {
-        	ErrorLog.logException("Exception while processing action event", exc);
+        	ErrorLog.get().logException("Exception while processing action event", exc);
         }
     }
 

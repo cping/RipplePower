@@ -1395,4 +1395,68 @@ final public class DateUtils {
 		return timeString;
 	}
 
+	public static String getSqlDateString(Calendar c) {
+		try {
+			String year = new Integer(c.get(Calendar.YEAR)).toString();
+			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
+			String day = new Integer(c.get(Calendar.DATE)).toString();
+			if (month.length() == 1)
+				month = "0" + month;
+			if (day.length() == 1) 
+				day = "0" + day;
+			String date = year + "-" + month + "-" + day;
+			return date;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	
+	public static String getSqlDateTimeString(Calendar c) {
+		try {
+			String year = new Integer(c.get(Calendar.YEAR)).toString();
+			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
+			String day = new Integer(c.get(Calendar.DATE)).toString();
+			String hour = new Integer(c.get(Calendar.HOUR_OF_DAY)).toString();
+			String minute = new Integer(c.get(Calendar.MINUTE)).toString();
+			String second = new Integer(c.get(Calendar.SECOND)).toString();
+			if (month.length() == 1)
+				month = "0" + month;
+			if (day.length() == 1) 
+				day = "0" + day;
+			if (hour.length() == 1) 
+				hour = "0" + hour;
+			if (minute.length() == 1)
+				minute = "0" + minute;
+			if (second.length() == 1)
+				second = "0" + second;
+			String date = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+			return date;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public static String getGUIDateString(Calendar c) {
+		try {
+			String year = new Integer(c.get(Calendar.YEAR)).toString();
+			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
+			String day = new Integer(c.get(Calendar.DATE)).toString();
+			if (month.length() == 1)
+				month = "0" + month;
+			if (day.length() == 1) 
+				day = "0" + day;
+			String date = month + "-" + day + "-" + year;
+			return date;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 }

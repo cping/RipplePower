@@ -22,6 +22,7 @@ import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.RPComboBox;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
@@ -58,7 +59,7 @@ public class ContactDialog extends ABaseDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("ContactDialog Exception", exc);
 		}
 	}
 

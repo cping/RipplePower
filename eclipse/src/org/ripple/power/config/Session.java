@@ -157,7 +157,7 @@ public class Session {
 		if (name == null) {
 			throw new RuntimeException("session name can not exist !");
 		}
-		this._tempFile = new File(LSystem.getDirectory(), STORE_FILENAME_PREFIX
+		this._tempFile = new File(LSystem.getRippleDirectory(), STORE_FILENAME_PREFIX
 				+ name + STORE_FILENAME_SUFFIX);
 		this._properties = makeProperties();
 		this.name = name;

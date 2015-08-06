@@ -14,7 +14,9 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
 import org.ripple.power.config.LSystem;
+import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.UIMessage;
+import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.SwingUtils;
 
 public abstract class ABaseDialog extends JDialog {
@@ -24,47 +26,63 @@ public abstract class ABaseDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private void init(){
+		addWindowListener(HelperWindow.get());
+		setIconImage(UIRes.getIcon());
+		setResizable(false);
+	}
+	
 	public ABaseDialog() throws HeadlessException {
 		super();
+		init();
 	}
 
 	public ABaseDialog(String title) {
 		super(LSystem.applicationMain, title);
+		init();
 	}
 
 	public ABaseDialog(Window parent, String title, ModalityType modal)
 			throws HeadlessException {
 		super(parent, title, modal);
+		init();
 	}
 
 	public ABaseDialog(Window parent, String title) throws HeadlessException {
 		super(parent, title);
+		init();
 	}
 
 	public ABaseDialog(Window parent) throws HeadlessException {
 		super(parent);
+		init();
 	}
 
 	public ABaseDialog(Frame parent, boolean modal) throws HeadlessException {
 		super(parent, modal);
+		init();
 	}
 
 	public ABaseDialog(Frame parent, String title, boolean modal,
 			GraphicsConfiguration gc) {
 		super(parent, title, modal, gc);
+		init();
 	}
 
 	public ABaseDialog(Frame parent, String title, boolean modal)
 			throws HeadlessException {
 		super(parent, title, modal);
+		init();
 	}
 
 	public ABaseDialog(Frame parent, String title) throws HeadlessException {
 		super(parent, title);
+		init();
 	}
 
 	public ABaseDialog(Frame parent) throws HeadlessException {
 		super(parent);
+		init();
 	}
 
 	protected JRootPane createRootPane() {

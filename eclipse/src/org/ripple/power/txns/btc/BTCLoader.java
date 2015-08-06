@@ -571,7 +571,7 @@ public class BTCLoader {
 				properties.store(out, "RipplePower Properties");
 			}
 		} catch (Exception exc) {
-			ErrorLog.logException(
+			ErrorLog.get().logException(
 					"Exception while saving application properties", exc);
 		}
 	}

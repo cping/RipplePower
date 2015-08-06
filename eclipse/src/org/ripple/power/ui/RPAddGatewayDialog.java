@@ -327,7 +327,6 @@ public class RPAddGatewayDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addGateway();
-
 			}
 		});
 

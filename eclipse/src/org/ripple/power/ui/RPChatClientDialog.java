@@ -28,7 +28,7 @@ import org.ripple.power.server.chat.MessageClient;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.view.ABaseDialog;
-import org.ripple.power.ui.view.EmptyToolBarBorder;
+import org.ripple.power.ui.view.EmptyBarBorder;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextArea;
 import org.ripple.power.ui.view.RPTextBox;
@@ -186,7 +186,7 @@ public class RPChatClientDialog extends ABaseDialog implements ActionListener {
 		exitButton = new RPCButton("Exit UI");
 
 		toolBar.setBackground(UIConfig.dialogbackground);
-		toolBar.setBorder(new EmptyToolBarBorder());
+		toolBar.setBorder(new EmptyBarBorder());
 		toolBar.add(userButton);
 		toolBar.add(connectButton);
 		toolBar.addSeparator();

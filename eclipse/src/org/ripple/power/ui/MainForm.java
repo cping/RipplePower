@@ -1,6 +1,7 @@
 package org.ripple.power.ui;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.SystemTray;
@@ -19,8 +20,10 @@ import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.view.RPJSonLog;
+import org.ripple.power.ui.view.WaitCursorEventQueue;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
@@ -66,26 +69,23 @@ public class MainForm extends JFrame implements ActionListener {
 		setIconImage(UIConfig.getDefaultAppIcon());
 		getContentPane().setBackground(LColor.WHITE);
 		loadRipplePower();
+		EventQueue waitQue = new WaitCursorEventQueue(500);
+		Toolkit.getDefaultToolkit().getSystemEventQueue().push(waitQue);
 	}
 
 	private void loadRipplePower() {
 		LSystem.applicationMain = this;
 		try {
 			checkWalletPassword();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
 			WalletCache.loadDefWallet();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ErrorLog.get().logException("Wallet Exception", ex);
 		}
-
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		try {
 			SwingUtils.importFont(UIRes.getStream("fonts/squarefont.ttf"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException ex) {
+			ErrorLog.get().logException("font Exception", ex);
 		}
 		int frameX = 0;
 		int frameY = 0;
@@ -309,7 +309,7 @@ public class MainForm extends JFrame implements ActionListener {
 				break;
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			ErrorLog.get().logException("MainForm Exception", ex);
 		}
 	}
 

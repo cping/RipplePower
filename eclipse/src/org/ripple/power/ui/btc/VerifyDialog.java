@@ -78,7 +78,7 @@ public class VerifyDialog extends JDialog implements ActionListener {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while displaying dialog", exc);
+			ErrorLog.get().logException("Exception while displaying dialog", exc);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class VerifyDialog extends JDialog implements ActionListener {
 			UIRes.showErrorMessage(this, "Invalid Signature",
 					"The signature is not valid");
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while processing action event",
+			ErrorLog.get().logException("Exception while processing action event",
 					exc);
 		}
 	}

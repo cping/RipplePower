@@ -2,7 +2,7 @@ package org.ripple.power.txns.data;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.hft.bot.TradeType;
+import org.ripple.power.hft.TradeType;
 import org.ripple.power.txns.Const;
 
 public class Offer {

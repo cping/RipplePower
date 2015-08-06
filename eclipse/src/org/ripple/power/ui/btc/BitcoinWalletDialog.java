@@ -198,13 +198,13 @@ public final class BitcoinWalletDialog extends JDialog implements
 				break;
 			}
 		} catch (IOException exc) {
-			ErrorLog.logException("Unable to process key file", exc);
+			ErrorLog.get().logException("Unable to process key file", exc);
 		} catch (AddressFormatException exc) {
-			ErrorLog.logException("Key format is not valid", exc);
+			ErrorLog.get().logException("Key format is not valid", exc);
 		} catch (BlockStoreException exc) {
-			ErrorLog.logException("Unable to perform database operation", exc);
+			ErrorLog.get().logException("Unable to perform database operation", exc);
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while processing action event",
+			ErrorLog.get().logException("Exception while processing action event",
 					exc);
 		}
 	}
@@ -363,7 +363,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 			try {
 				exit();
 			} catch (Exception exc) {
-				ErrorLog.logException(
+				ErrorLog.get().logException(
 						"Exception while closing application window", exc);
 			}
 		}
@@ -410,7 +410,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 					}
 				}
 			} catch (BlockStoreException exc) {
-				ErrorLog.logException("Unable to get send transaction list",
+				ErrorLog.get().logException("Unable to get send transaction list",
 						exc);
 			}
 		}

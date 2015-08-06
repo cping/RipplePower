@@ -16,7 +16,7 @@ import org.ripple.power.utils.MathUtils;
 public class WalletCache {
 
 	public static void loadDefWallet() throws Exception {
-		String fileName = LSystem.getDirectory() + LSystem.FS
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS
 				+ LSystem.walletName;
 		File file = new File(fileName);
 		if (file.exists() && file.length() > 0) {
@@ -25,7 +25,7 @@ public class WalletCache {
 	}
 
 	public static void saveDefWallet() throws Exception {
-		String fileName = LSystem.getDirectory() + LSystem.FS
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS
 				+ LSystem.walletName;
 		File file = new File(fileName);
 		get().save(file);
@@ -90,7 +90,7 @@ public class WalletCache {
 				pCaches.remove(idx);
 			}
 			if (pCaches.size() == 0) {
-				String fileName = LSystem.getDirectory() + LSystem.FS
+				String fileName = LSystem.getRippleDirectory() + LSystem.FS
 						+ LSystem.walletName;
 				File file = new File(fileName);
 				if (file.exists()) {

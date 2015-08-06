@@ -21,6 +21,7 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 
@@ -39,8 +40,8 @@ public class ContactShowDialog extends ABaseDialog {
 		try {
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception exc) {
+			ErrorLog.get().logException("ContactShowDialog Exception", exc);
 		}
 	}
 

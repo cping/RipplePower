@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ripple.power.txns.data.Candle;
+
 public class InstrumentAo implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String symbolName;
-	private List<Price> priceList;
+	private List<Candle> priceList;
 
-	public void setPriceList(Collection<Price> priceList) {
-		this.priceList = new ArrayList<Price>(priceList);
+	public void setPriceList(Collection<Candle> priceList) {
+		this.priceList = new ArrayList<Candle>(priceList);
 	}
 
 	public void setSymbolName(String symbolName) {
@@ -25,7 +27,7 @@ public class InstrumentAo implements Serializable {
 		return symbolName;
 	}
 
-	public List<Price> getPriceList() {
+	public List<Candle> getPriceList() {
 		return priceList;
 	}
 
@@ -36,7 +38,7 @@ public class InstrumentAo implements Serializable {
 		this.symbolName = symbolName;
 	}
 
-	public Price getCurrentPrice() {
+	public Candle getCurrentPrice() {
 		int index = priceList.size() - 1;
 		return priceList.get(index);
 	}

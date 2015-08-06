@@ -159,9 +159,9 @@ public class TransactionPanel extends JPanel implements ActionListener {
 				}
 			}
 		} catch (BlockStoreException exc) {
-			ErrorLog.logException("Unable to update blockStore", exc);
+			ErrorLog.get().logException("Unable to update blockStore", exc);
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while processing action event",
+			ErrorLog.get().logException("Exception while processing action event",
 					exc);
 		}
 	}
@@ -312,7 +312,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 					}
 				}
 			} catch (BlockStoreException exc) {
-				ErrorLog.logException("Unable to build transaction list", exc);
+				ErrorLog.get().logException("Unable to build transaction list", exc);
 			}
 		}
 
@@ -432,7 +432,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 						}
 					}
 				} catch (BlockStoreException exc) {
-					ErrorLog.logException("Unable to get transaction depth",
+					ErrorLog.get().logException("Unable to get transaction depth",
 							exc);
 					value = "Unknown";
 				}

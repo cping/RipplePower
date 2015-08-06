@@ -61,7 +61,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 				break;
 			}
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while processing action event",
+			ErrorLog.get().logException("Exception while processing action event",
 					exc);
 		}
 	}
@@ -95,7 +95,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 			try {
 				exit();
 			} catch (Exception exc) {
-				ErrorLog.logException(
+				ErrorLog.get().logException(
 						"Exception while closing application window", exc);
 			}
 		}

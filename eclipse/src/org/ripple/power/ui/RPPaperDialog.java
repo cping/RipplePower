@@ -181,7 +181,7 @@ public class RPPaperDialog extends JDialog implements ActionListener {
 				return;
 			}
 		}
-		JFileChooser jFileChooser = new JFileChooser(LSystem.getDirectory());
+		JFileChooser jFileChooser = new JFileChooser(LSystem.getRippleDirectory());
 		jFileChooser.setFileFilter(new MyFileFilter());
 		jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		if (modelFlag == 0) {

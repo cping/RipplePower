@@ -15,6 +15,7 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.BTC2Ripple;
 import org.ripple.power.txns.History;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.ui.view.RPToast;
@@ -59,7 +60,7 @@ public class RPConfigDialog extends JDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("RPConfigDialog Exception", exc);
 		}
 	}
 

@@ -28,7 +28,7 @@ public class CalculatorRSI {
 		outNb.value = noOutEle;
 		for (int index = 0; index <= endIndex; index++) {
 			closePriceInput[index] = instrumentAo.getPriceList().get(index)
-					.getClosePrice();
+					.close;
 		}
 		RetCode retCode = core.rsi(startIndex, endIndex, closePriceInput,
 				rsiPeriod, strtOutIndex, outNb, outResult);

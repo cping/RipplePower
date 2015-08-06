@@ -12,10 +12,11 @@ import org.json.JSONArray;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
-import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
+import org.ripple.power.txns.RipplePriceMonitor;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPList;
@@ -73,7 +74,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("RPPriceWarningDialog Exception", exc);
 		}
 	}
 
@@ -427,7 +428,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 					session.save();
 					alert(UIMessage.save);
 
-					PriceMonitor.get().reset();
+					RipplePriceMonitor.get().reset();
 				}
 			}
 		});

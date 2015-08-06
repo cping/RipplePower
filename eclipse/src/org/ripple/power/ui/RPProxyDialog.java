@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.ProxySettings;
 import org.ripple.power.helper.HelperWindow;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
@@ -50,7 +51,7 @@ public class RPProxyDialog extends JDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("RPProxyDialog Exception", exc);
 		}
 	}
 

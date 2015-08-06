@@ -1,8 +1,10 @@
 package org.ripple.power.hft;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ripple.power.collection.ArrayUtils;
+import org.ripple.power.txns.data.Candle;
 
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
@@ -160,8 +162,8 @@ public class AnalysisData {
 		return (high + low + last) / 3.0d;
 	}
 
-	public static double getTypicalPrice(Coin coin) {
-		return (coin.getHighPrice() + coin.getLowPrice() + coin.getLastPrice()) / 3.0d;
+	public static double getTypicalPrice(Candle candle) {
+		return (candle.high + candle.low + candle.close) / 3.0d;
 	}
 
 	public static MACD.Result createMACDFix(List<Double> values, int period) {
@@ -189,5 +191,256 @@ public class AnalysisData {
 				outMACDSignal[outNbElement.value - 1],
 				outMACDHist[outNbElement.value - 1]);
 	}
+
+
+	public static double MILLISECONDS_PER_YEAR = 1000 * 60 * 60 * 24 * 365;
+
+	public static double convertTimeToExpiry(long aTimeToExpiry) {
+		return aTimeToExpiry / MILLISECONDS_PER_YEAR;
+	}
+
+	public static double getd1(double aUnderlyingPrice, double aStrikePrice,
+			double aAnnualRate, double aVolatility, double myTimeToExpiry) {
+		return (Math.log(aUnderlyingPrice / aStrikePrice) + (aAnnualRate + aVolatility
+				* aVolatility / 2)
+				* myTimeToExpiry)
+				/ (aVolatility * Math.sqrt(myTimeToExpiry));
+	}
+
+	public static double getd2(double aVolatility, double myTimeToExpiry,
+			double d1) {
+		return d1 - aVolatility * Math.sqrt(myTimeToExpiry);
+	}
+
+	public static double getCallOptionPrice(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		return aUnderlyingPrice * AnalysisData.cdf(d1) - aStrikePrice
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				* AnalysisData.cdf(d2);
+	}
+
+	public static double getPutOptionPrice(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		return (1 - AnalysisData.cdf(d2)) * aStrikePrice
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				- (1 - AnalysisData.cdf(d1)) * aUnderlyingPrice;
+	}
+
+
+	public static double getCallDelta(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+
+		return AnalysisData.cdf(d1);
+	}
+
+	public static double getPutDelta(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		return getCallDelta(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, aTimeToExpiry) - 1;
+	}
+
+	public static double getGamma(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+
+		return AnalysisData.dcdf(d1)
+				/ (aUnderlyingPrice * aVolatility * Math.sqrt(myTimeToExpiry));
+	}
+
+
+	public static double getVega(double aUnderlyingPrice, double aStrikePrice,
+			double aAnnualRate, double aVolatility, long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+
+		return AnalysisData.dcdf(d1) * aUnderlyingPrice
+				* Math.sqrt(myTimeToExpiry);
+	}
+
+	public static double getCallTheta(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		double firstTerm = -aUnderlyingPrice * AnalysisData.dcdf(d1)
+				* aVolatility / ((2 * Math.sqrt(myTimeToExpiry)));
+
+		double secondTerm = aAnnualRate * aStrikePrice
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				* AnalysisData.cdf(d2);
+
+		return firstTerm - secondTerm;
+	}
+
+	public static double getPutTheta(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		double firstTerm = -aUnderlyingPrice * AnalysisData.dcdf(d1)
+				* aVolatility / ((2 * Math.sqrt(myTimeToExpiry)));
+
+		double secondTerm = aAnnualRate * aStrikePrice
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				* AnalysisData.cdf(-d2);
+
+		return firstTerm + secondTerm;
+	}
+
+
+	public static double getCallRho(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		return aStrikePrice * myTimeToExpiry
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				* AnalysisData.cdf(d2);
+	}
+
+	public static double getPutRho(double aUnderlyingPrice,
+			double aStrikePrice, double aAnnualRate, double aVolatility,
+			long aTimeToExpiry) {
+		double myTimeToExpiry = convertTimeToExpiry(aTimeToExpiry);
+
+		double d1 = getd1(aUnderlyingPrice, aStrikePrice, aAnnualRate,
+				aVolatility, myTimeToExpiry);
+		double d2 = getd2(aVolatility, myTimeToExpiry, d1);
+
+		return -aStrikePrice * myTimeToExpiry
+				* Math.exp(-aAnnualRate * myTimeToExpiry)
+				* AnalysisData.cdf(-d2);
+
+	}
+
+
+	public static List<Integer> negativeWeightCycle(double[][] adjacenyMatrix,
+			int source) throws IllegalArgumentException {
+		if (adjacenyMatrix.length == 0
+				|| adjacenyMatrix.length != adjacenyMatrix[0].length) {
+			throw new IllegalArgumentException(
+					"Adjaceny Matrix is not a square matrix!");
+		}
+
+		int[] predecessors = new int[adjacenyMatrix.length];
+		double[] distance = new double[adjacenyMatrix.length];
+		double[][] logValMat = createLogValueMatrix(adjacenyMatrix);
+
+		for (int j = 0; j < adjacenyMatrix.length; j++) {
+			distance[j] = Double.MAX_VALUE;
+		}
+		distance[source] = 0;
+
+		for (int i = 0; i < logValMat.length - 1; i++) {
+			relaxEdges(logValMat, distance, predecessors);
+		}
+
+		return findNegativeWeightCycle(logValMat, distance, predecessors);
+	}
+
+	private static double[][] createLogValueMatrix(double[][] adjacenyMatrix) {
+		double[][] logValMat = adjacenyMatrix.clone();
+		for (int i = 0; i < adjacenyMatrix.length; i++) {
+			for (int j = 0; j < adjacenyMatrix[0].length; j++) {
+				double weight = adjacenyMatrix[i][j];
+				if (weight > 0) {
+					logValMat[i][j] = -Math.log(weight);
+				} else {
+					logValMat[i][j] = Double.MAX_VALUE;
+				}
+			}
+		}
+		return logValMat;
+	}
+
+	private static void relaxEdges(double[][] logValMat, double[] distance,
+			int[] predecessors) {
+
+		for (int v = 0; v < logValMat.length; v++) {
+			for (int j = 0; j < logValMat.length; j++) {
+				double weight = logValMat[v][j];
+				if (weight < Double.MAX_VALUE) {
+					if (weight + distance[v] < distance[j]) {
+						distance[j] = distance[v] + weight;
+						predecessors[j] = v;
+					}
+				}
+			}
+		}
+	}
+
+	private static List<Integer> findNegativeWeightCycle(double[][] logValMat,
+			double[] distance, int[] predecessors) {
+
+		for (int v = 0; v < logValMat.length; v++) {
+			for (int j = 0; j < logValMat[0].length; j++) {
+				double weight = logValMat[v][j];
+				if (weight < Double.MAX_VALUE) {
+					if (weight + distance[v] < distance[j]) {
+						predecessors[j] = v;
+						return createCycleFromPredecessors(predecessors, j);
+					}
+				}
+			}
+		}
+		return new LinkedList<Integer>();
+	}
+
+	public static List<Integer> createCycleFromPredecessors(int[] predecessors,
+			int end) {
+		LinkedList<Integer> path = new LinkedList<>();
+		boolean[] visited = new boolean[predecessors.length];
+		int current = end;
+		while (true) {
+			if (visited[current]) {
+				LinkedList<Integer> cycle = new LinkedList<Integer>();
+				cycle.addFirst(current);
+				for (Integer item : path) {
+					cycle.add(item);
+					if (item.intValue() == current) {
+						break;
+					}
+				}
+				return cycle;
+			}
+			path.addFirst(current);
+			visited[current] = true;
+			current = predecessors[current];
+		}
+	}
+
 
 }

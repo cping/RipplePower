@@ -92,7 +92,7 @@ public class SignDialog extends JDialog implements ActionListener {
             dialog.setLocationRelativeTo(parent);
             dialog.setVisible(true);
         } catch (Exception exc) {
-            ErrorLog.logException("Exception while displaying dialog", exc);
+            ErrorLog.get().logException("Exception while displaying dialog", exc);
         }
     }
 
@@ -124,9 +124,9 @@ public class SignDialog extends JDialog implements ActionListener {
                     break;
             }
         } catch (ECException exc) {
-            ErrorLog.logException("Unable to sign message", exc);
+            ErrorLog.get().logException("Unable to sign message", exc);
         } catch (Exception exc) {
-            ErrorLog.logException("Exception while processing action event", exc);
+            ErrorLog.get().logException("Exception while processing action event", exc);
         }
     }
 }

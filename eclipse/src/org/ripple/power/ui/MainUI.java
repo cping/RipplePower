@@ -1,7 +1,6 @@
 package org.ripple.power.ui;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -22,9 +21,9 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Model;
 import org.ripple.power.helper.GraphicTool;
 import org.ripple.power.helper.HelperDialog;
-import org.ripple.power.hft.PriceMonitor;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.timer.LTimerContext;
+import org.ripple.power.txns.RipplePriceMonitor;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.btc.BTCPanel;
 import org.ripple.power.ui.graphics.LColor;
@@ -85,10 +84,7 @@ public class MainUI {
 			if (scene != null) {
 				scene.closeDialog();
 				for (; !scene.get().isClose();) {
-					try {
-						Thread.sleep(30);
-					} catch (InterruptedException e) {
-					}
+					LSystem.sleep(LSystem.SECOND);
 				}
 			}
 			Updateable update = new Updateable() {
@@ -113,23 +109,31 @@ public class MainUI {
 
 	private MainForm form;
 
-	public static void main(String[] args) throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException,
-			UnsupportedLookAndFeelException {
+	public static void main(String[] args) {
+		LSystem.invokeAndWait(new Runnable() {
+			
+			@Override
+			public void run() {
+				app();
+			}
+		});
+
+	}
+
+	public static void app() {
 		if (ApplicationInfo.lock()) {
 			UIMessage.alertMessage(null, "Not start multiple instances !");
 			return;
 		}
 		if (!LSystem.isMinJavaVersion(1, 6)) {
-			UIRes
-					.showErrorMessage(
-							null,"Java Version Error",
-							"The minimum required Java version is 1.6.\n"
-									+ "The reported version is "
-									+ System.getProperty("java.vm.version")
-									+ ".\n\nPlease download and install the latest Java "
-									+ "version\nfrom http://java.sun.com and try again.\n\n"
-							);
+			UIRes.showErrorMessage(
+					null,
+					"Java Version Error",
+					"The minimum required Java version is 1.6.\n"
+							+ "The reported version is "
+							+ System.getProperty("java.vm.version")
+							+ ".\n\nPlease download and install the latest Java "
+							+ "version\nfrom http://java.sun.com and try again.\n\n");
 
 			System.exit(1);
 		}
@@ -162,16 +166,11 @@ public class MainUI {
 			}
 		} catch (SecurityException se) {
 		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(new MetalLookAndFeel());
-					new MainUI();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			UIManager.setLookAndFeel(new MetalLookAndFeel());
+		} catch (UnsupportedLookAndFeelException e) {
+		}
+		new MainUI();
 	}
 
 	public MainUI() {
@@ -329,7 +328,7 @@ public class MainUI {
 
 							@Override
 							public void action(Object o) {
-								PriceMonitor.get();
+								RipplePriceMonitor.get();
 								if (LSystem.current == Model.Ripple) {
 									RPJSonLog.get();
 									LSystem.sleep(LSystem.SECOND);

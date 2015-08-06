@@ -9,7 +9,7 @@ import org.ripple.power.config.LSystem;
 public class Backup {
 
 	public static String create() {
-		String fileName = LSystem.getDirectory() + LSystem.FS
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS
 				+ LSystem.walletName;
 		File file = new File(fileName);
 		if (file.exists() && file.length() > 0) {

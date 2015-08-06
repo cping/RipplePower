@@ -32,7 +32,7 @@ public class CalculatorBollingerBands {
 		double[] closePriceInput = new double[endIndex + 1];
 		for (int index = 0; index <= endIndex; index++) {
 			closePriceInput[index] = instrumentAo.getPriceList().get(index)
-					.getClosePrice();
+					.close;
 		}
 		RetCode retCode = core.bbands(startIndex, endIndex, closePriceInput,
 				optInTimePeriod, optInNbDevUp, optInNbDevDn, optInMAType,

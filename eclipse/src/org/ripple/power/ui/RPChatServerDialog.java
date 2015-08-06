@@ -20,7 +20,7 @@ import org.ripple.power.server.Node;
 import org.ripple.power.server.LinkList;
 import org.ripple.power.server.chat.ChatMessage;
 import org.ripple.power.ui.view.ABaseDialog;
-import org.ripple.power.ui.view.EmptyToolBarBorder;
+import org.ripple.power.ui.view.EmptyBarBorder;
 import org.ripple.power.ui.view.RPInput;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextArea;
@@ -86,7 +86,7 @@ public class RPChatServerDialog extends ABaseDialog implements ActionListener {
 		myIP = new RPCButton("My IP");
 		exitButton = new RPCButton("Exit UI");
 
-		toolBar.setBorder(new EmptyToolBarBorder());
+		toolBar.setBorder(new EmptyBarBorder());
 		toolBar.setBackground(UIConfig.dialogbackground);
 
 		toolBar.add(portSet);

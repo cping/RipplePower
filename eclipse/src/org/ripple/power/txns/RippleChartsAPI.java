@@ -740,7 +740,6 @@ public class RippleChartsAPI {
 		HttpRequest request = HttpRequest
 				.post(CHARTS_URL + "transaction_stats");
 		String result = request.send(data);
-		System.out.println(result);
 		TransactionStatsResponse transactionStats = new TransactionStatsResponse();
 		if (result != null && result.indexOf("\"") != -1) {
 			if (result.startsWith("[")) {

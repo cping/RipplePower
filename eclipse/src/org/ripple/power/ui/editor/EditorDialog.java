@@ -25,6 +25,7 @@ import org.ripple.power.txns.RippleMacros;
 import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIMessage;
+import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.view.JConsole;
 import org.ripple.power.ui.view.RPList;
@@ -356,7 +357,7 @@ public class EditorDialog extends JDialog {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			ErrorLog.get().logException("EditorDialog Exception", exc);
 		}
 	}
 
@@ -425,7 +426,7 @@ public class EditorDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jFileChooser = new JFileChooser(LSystem
-						.getDirectory());
+						.getRippleDirectory());
 				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
 				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jFileChooser.setDialogTitle("Save ROC Script");
@@ -453,7 +454,7 @@ public class EditorDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jFileChooser = new JFileChooser(LSystem
-						.getDirectory());
+						.getRippleDirectory());
 				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
 				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jFileChooser.setDialogTitle("Open ROC Script");

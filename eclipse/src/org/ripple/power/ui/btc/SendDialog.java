@@ -108,7 +108,7 @@ public class SendDialog extends JDialog implements ActionListener {
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while displaying dialog", exc);
+			ErrorLog.get().logException("Exception while displaying dialog", exc);
 		}
 	}
 
@@ -139,9 +139,9 @@ public class SendDialog extends JDialog implements ActionListener {
 		} catch (AddressFormatException exc) {
 			UIRes.showErrorMessage(this, "Error", "Send address is not valid");
 		} catch (BlockStoreException exc) {
-			ErrorLog.logException("Unable to process send request", exc);
+			ErrorLog.get().logException("Unable to process send request", exc);
 		} catch (Exception exc) {
-			ErrorLog.logException("Exception while processing action event",
+			ErrorLog.get().logException("Exception while processing action event",
 					exc);
 		}
 	}

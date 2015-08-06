@@ -27,7 +27,7 @@ public class SafeData {
 	private static final String TABLE = "SAFE_TABLE";
 
 	public SafeData() {
-		this(LSystem.getDirectory() + "/" + DEFAULT_FILE_NAME);
+		this(LSystem.getRippleDirectory() + "/" + DEFAULT_FILE_NAME);
 	}
 
 	public SafeData(String dbPath) {
