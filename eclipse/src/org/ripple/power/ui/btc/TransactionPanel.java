@@ -36,9 +36,9 @@ import org.ripple.power.txns.btc.ReceiveTransaction;
 import org.ripple.power.txns.btc.SendTransaction;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class TransactionPanel extends JPanel implements ActionListener {
 

@@ -24,8 +24,8 @@ import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.txns.btc.ECException;
 import org.ripple.power.txns.btc.ECKey;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class SignDialog extends JDialog implements ActionListener {
 

@@ -36,8 +36,8 @@ import org.ripple.power.txns.btc.Peer;
 import org.ripple.power.txns.btc.SendTransaction;
 import org.ripple.power.txns.btc.StoredHeader;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.Menus;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
 public final class BitcoinWalletDialog extends JDialog implements

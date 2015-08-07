@@ -26,10 +26,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.ripple.power.config.LSystem;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPDownloadDialog extends ABaseDialog implements Observer {

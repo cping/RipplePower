@@ -6,16 +6,16 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.i18n.LangConfig;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPPasswordDialog extends JDialog {
+public class RPPasswordDialog extends ABaseDialog {
 
 	private static final long serialVersionUID = 1L;
 	private RPCButton _cancelButton;

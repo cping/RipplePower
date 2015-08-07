@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,13 +20,14 @@ import org.ripple.power.news.NewsParser;
 import org.ripple.power.news.NewsParser.News;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPList;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 
-public class RPNewsDialog extends JDialog {
+public class RPNewsDialog extends ABaseDialog {
 
 	/**
 	 * 

@@ -22,10 +22,10 @@ import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.RPComboBox;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.StringUtils;
 

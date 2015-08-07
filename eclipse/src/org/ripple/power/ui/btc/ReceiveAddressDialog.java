@@ -27,9 +27,9 @@ import org.ripple.power.txns.btc.FilterLoadMessage;
 import org.ripple.power.txns.btc.Message;
 import org.ripple.power.txns.btc.BlockStoreException;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class ReceiveAddressDialog extends JDialog implements ActionListener {
 

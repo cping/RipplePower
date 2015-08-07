@@ -14,11 +14,11 @@ import org.ripple.power.config.Session;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.txns.Currencies;
 import org.ripple.power.txns.Gateway;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPList;
 import org.ripple.power.ui.view.RPTextBox;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class RPDefineTradingDialog extends ABaseDialog {

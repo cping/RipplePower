@@ -10,13 +10,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextArea;
 import org.ripple.power.ui.view.RPTextBox;
@@ -26,7 +25,7 @@ import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPHashInfoDialog extends JDialog implements WindowListener {
+public class RPHashInfoDialog extends ABaseDialog implements WindowListener {
 
 	/**
 	 * 

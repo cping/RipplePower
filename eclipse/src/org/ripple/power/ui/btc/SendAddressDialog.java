@@ -23,9 +23,9 @@ import org.ripple.power.txns.btc.Address;
 import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.txns.btc.BlockStoreException;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.table.AddressTable;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class SendAddressDialog extends JDialog implements ActionListener {
 

@@ -13,8 +13,8 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.txns.btc.BTCLoader;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
 public final class DownloadBlocksDialog extends ABaseDialog implements

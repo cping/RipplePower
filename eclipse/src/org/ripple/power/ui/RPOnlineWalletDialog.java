@@ -10,8 +10,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-
 import org.ripple.power.RippleBlobObj;
 import org.ripple.power.RippleBlobObj.UnlockInfoRes;
 import org.ripple.power.config.LSystem;
@@ -20,6 +18,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPPasswordText;
 import org.ripple.power.ui.view.RPTextBox;
@@ -30,7 +29,7 @@ import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;
 
-public class RPOnlineWalletDialog extends JDialog implements WindowListener{
+public class RPOnlineWalletDialog extends ABaseDialog implements WindowListener{
 	/**
 	 * 
 	 */

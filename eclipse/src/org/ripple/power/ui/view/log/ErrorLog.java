@@ -1,4 +1,4 @@
-package org.ripple.power.ui.errors;
+package org.ripple.power.ui.view.log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

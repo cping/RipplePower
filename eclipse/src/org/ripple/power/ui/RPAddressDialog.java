@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.CoinUtils;
@@ -24,6 +23,7 @@ import org.ripple.power.password.PasswordCrackerBF;
 import org.ripple.power.password.PasswordEasy;
 import org.ripple.power.password.PasswordMnemonic;
 import org.ripple.power.txns.AccountFind;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPRadioButton;
 import org.ripple.power.ui.view.RPTextArea;
@@ -36,7 +36,7 @@ import org.ripple.power.wallet.WalletCache;
 
 import com.ripple.config.Config;
 
-public class RPAddressDialog extends JDialog implements ActionListener {
+public class RPAddressDialog extends ABaseDialog implements ActionListener {
 
 	private RPCButton _resetButton;
 	private RPCButton _exitButton;

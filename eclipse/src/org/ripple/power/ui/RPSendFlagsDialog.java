@@ -11,8 +11,6 @@ import java.awt.event.WindowListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-
 import org.json.JSONObject;
 import org.ripple.power.blockchain.RippleMemoEncode;
 import org.ripple.power.config.LSystem;
@@ -25,6 +23,7 @@ import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.TransactionFlagMap;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPJSonLog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
@@ -37,7 +36,7 @@ import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 
-public class RPSendFlagsDialog extends JDialog implements WindowListener{
+public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 	/**
 	 * 
 	 */

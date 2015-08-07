@@ -18,8 +18,8 @@ import javax.swing.WindowConstants;
 import org.ripple.power.txns.btc.ECKey;
 import org.ripple.power.txns.btc.SignatureException;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class VerifyDialog extends JDialog implements ActionListener {
 

@@ -7,21 +7,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.Gateway;
 import org.ripple.power.txns.NameFind;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPList;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPAddGatewayDialog extends JDialog {
+public class RPAddGatewayDialog extends ABaseDialog {
 
 	/**
 	 * 

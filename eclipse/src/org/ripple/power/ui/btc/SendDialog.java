@@ -32,8 +32,8 @@ import org.ripple.power.txns.btc.Transaction;
 import org.ripple.power.txns.btc.TransactionOutput;
 import org.ripple.power.txns.btc.VerificationException;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class SendDialog extends JDialog implements ActionListener {
 

@@ -6,18 +6,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.ui.errors.ErrorLog;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPSRippledDialog extends JDialog {
+public class RPSRippledDialog extends ABaseDialog {
 
 	/**
 	 * 

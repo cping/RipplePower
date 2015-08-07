@@ -25,7 +25,7 @@ import java.util.logging.LogManager;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

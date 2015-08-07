@@ -10,8 +10,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-
 import org.json.JSONObject;
 import org.ripple.power.blockchain.RippleMemoDecodes;
 import org.ripple.power.blockchain.RippleMemoEncode;
@@ -24,6 +22,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.Payment;
 import org.ripple.power.txns.Rollback;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.HtmlRenderer;
 import org.ripple.power.ui.view.RPJSonLog;
 import org.ripple.power.ui.view.RPLabel;
@@ -40,7 +39,7 @@ import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 
-public class RPRippledMemoDialog extends JDialog implements WindowListener {
+public class RPRippledMemoDialog extends ABaseDialog implements WindowListener {
 	/**
 	 * 
 	 */

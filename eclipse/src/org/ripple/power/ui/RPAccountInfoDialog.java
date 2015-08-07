@@ -12,7 +12,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
@@ -31,6 +30,7 @@ import org.ripple.power.txns.NameFind;
 import org.ripple.power.txns.TransactionTx;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.table.AddressTable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.ui.view.RPToast;
@@ -39,7 +39,7 @@ import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPAccountInfoDialog extends JDialog implements WindowListener {
+public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 	/**
 	 * 
 	 */

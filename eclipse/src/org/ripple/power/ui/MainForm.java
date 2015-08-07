@@ -20,10 +20,10 @@ import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.view.RPJSonLog;
 import org.ripple.power.ui.view.WaitCursorEventQueue;
+import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCache;

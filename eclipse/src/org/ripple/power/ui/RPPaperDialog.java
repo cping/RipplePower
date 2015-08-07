@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
@@ -21,12 +20,13 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.print.PrintImageOutput;
 import org.ripple.power.qr.EncoderDecoder;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.SwingUtils;
 import org.ripple.power.wallet.WalletCryptos;
 
-public class RPPaperDialog extends JDialog implements ActionListener {
+public class RPPaperDialog extends ABaseDialog implements ActionListener {
 
 	/**
 	 * 

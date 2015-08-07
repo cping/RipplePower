@@ -16,9 +16,9 @@ import javax.swing.WindowConstants;
 import org.ripple.power.txns.btc.Address;
 import org.ripple.power.txns.btc.AddressFormatException;
 import org.ripple.power.ui.UIRes;
-import org.ripple.power.ui.errors.ErrorLog;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.ButtonPane;
+import org.ripple.power.ui.view.log.ErrorLog;
 
 public class AddressEditDialog extends ABaseDialog implements ActionListener {
 

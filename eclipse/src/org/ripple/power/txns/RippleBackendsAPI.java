@@ -30,15 +30,6 @@ import com.ripple.client.responses.Response;
 //select rippled api or ripple rest api
 public class RippleBackendsAPI {
 
-	private RippleSeedAddress _seed;
-
-	public RippleBackendsAPI(RippleSeedAddress seed) {
-		this._seed = seed;
-	}
-
-	public RippleBackendsAPI() {
-	}
-
 	private final static DecimalFormat xrp_num_format = new DecimalFormat(
 			"0.00000");
 
@@ -47,6 +38,22 @@ public class RippleBackendsAPI {
 	}
 
 	public Model model = Model.Rippled;
+
+	private boolean _testing = false;
+
+	private RippleSeedAddress _seed;
+
+	public RippleBackendsAPI(RippleSeedAddress seed) {
+		this(seed, false);
+	}
+
+	public RippleBackendsAPI(RippleSeedAddress seed, boolean test) {
+		this._seed = seed;
+		this._testing = test;
+	}
+
+	public RippleBackendsAPI() {
+	}
 
 	public AccountInfoResponse getAccountInfo(final String address,
 			final Updateable update) {
@@ -531,6 +538,12 @@ public class RippleBackendsAPI {
 			IssuedCurrency pays, IssuedCurrency gets, long flags,
 			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
+		if (_testing) {
+			NewOrderResponse newOrder = new NewOrderResponse();
+			result.data = newOrder;
+			result.success = true;
+			return result;
+		}
 		OfferCreate.set(seed, pays, gets, LSystem.getFee(), -1, 1.0001f, flags,
 				new Rollback() {
 
@@ -731,6 +744,12 @@ public class RippleBackendsAPI {
 	public RippleResult cancelOrder(final RippleSeedAddress seed, long orderId,
 			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
+		if (_testing) {
+			CancelOrderResponse cancelOrder = new CancelOrderResponse();
+			result.data = cancelOrder;
+			result.success = true;
+			return result;
+		}
 		OfferCancel.set(seed, orderId, LSystem.getFee(), new Rollback() {
 
 			@Override
@@ -770,4 +789,13 @@ public class RippleBackendsAPI {
 		return RippleChartsAPI.getTradeStatistics(IssuedCurrency.BASE, counter,
 				time);
 	}
+
+	public boolean isTesting() {
+		return _testing;
+	}
+
+	public RippleSeedAddress getAccountSeed() {
+		return _seed;
+	}
+
 }
