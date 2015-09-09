@@ -114,7 +114,7 @@ public class RipplePriceMonitor extends Loop {
 		for (PriceMonitorItem item : loops) {
 			if (item.delay.action(context)) {
 				double value = -1;
-				Object result = RippleChartsAPI.getExchange(item.currency);
+				Object result = RippleChartsAPI.getExchangeRates(item.currency);
 				if (result != null) {
 					if (result instanceof JSONArray) {
 						value = ((JSONArray) result).getJSONObject(0)
@@ -161,7 +161,7 @@ public class RipplePriceMonitor extends Loop {
 	private void initCheck() {
 		for (PriceMonitorItem item : loops) {
 			double value = -1;
-			Object result = RippleChartsAPI.getExchange(item.currency);
+			Object result = RippleChartsAPI.getExchangeRates(item.currency);
 			if (result != null) {
 				if (result instanceof JSONArray) {
 					value = ((JSONArray) result).getJSONObject(0).getDouble(

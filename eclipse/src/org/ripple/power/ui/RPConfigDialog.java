@@ -14,7 +14,7 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.BTC2Ripple;
-import org.ripple.power.txns.History;
+import org.ripple.power.txns.RippleHistoryAPI;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.ui.view.RPToast;
@@ -249,7 +249,7 @@ public class RPConfigDialog extends JDialog {
 		_historyLabel.setBounds(10, 60, 120, 20);
 
 		_historyText.setFont(font); // NOI18N
-		_historyText.setText(History.def_historyApi);
+		_historyText.setText(RippleHistoryAPI.def_historyApi);
 		getContentPane().add(_historyText);
 		_historyText.setBounds(130, 60, 300, 22);
 		getContentPane().setBackground(UIConfig.dialogbackground);

@@ -27,8 +27,9 @@ public class Take {
 	}
 
 	public Take() {
+		this.currency = LSystem.nativeCurrency;
 	}
-	
+
 	public void from(Object obj) {
 		if (obj != null) {
 			if (obj instanceof JSONObject) {
@@ -60,6 +61,15 @@ public class Take {
 			return new IssuedCurrency(value, true);
 		} else {
 			return new IssuedCurrency(value, issuer, currency);
+		}
+	}
+
+	@Override
+	public String toString() {
+		if (LSystem.nativeCurrency.equalsIgnoreCase(currency)) {
+			return currency.toUpperCase();
+		} else {
+			return currency.toUpperCase() + '+' + issuer;
 		}
 	}
 }

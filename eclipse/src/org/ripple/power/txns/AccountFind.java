@@ -22,6 +22,9 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
+	//目前data.ripple.com中提供的数据不是实时的
+	public static boolean importDataApi = true;
+
 	public static int LIMIT_TX = 200;
 
 	private static AccountFind instance = null;
@@ -305,8 +308,8 @@ public class AccountFind {
 						transactionTx.flagsName = "Empty";
 					}
 					if (result.has("SendMax")) {
-						transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(result
-								.get("SendMax"));
+						transactionTx.sendMax = CurrencyUtils
+								.getIssuedCurrency(result.get("SendMax"));
 					}
 					transactionTx.signingPubKey = getStringObject(result,
 							"SigningPubKey");
@@ -322,11 +325,13 @@ public class AccountFind {
 						IssuedCurrency currency = null;
 						String counterparty = null;
 						if (meta != null && meta.has("DeliveredAmount")) {
-							currency = CurrencyUtils.getIssuedCurrency(getObject(meta,
-									"DeliveredAmount"));
+							currency = CurrencyUtils
+									.getIssuedCurrency(getObject(meta,
+											"DeliveredAmount"));
 						} else {
-							currency = CurrencyUtils.getIssuedCurrency(getObject(
-									result, "Amount"));
+							currency = CurrencyUtils
+									.getIssuedCurrency(getObject(result,
+											"Amount"));
 						}
 						transactionTx.currency = currency;
 						transactionTx.counterparty = counterparty;
@@ -341,10 +346,12 @@ public class AccountFind {
 						}
 						break;
 					case "OfferCreate":
-						transactionTx.get = CurrencyUtils.getIssuedCurrency(getObject(
-								result, "TakerGets"));
-						transactionTx.pay = CurrencyUtils.getIssuedCurrency(getObject(
-								result, "TakerPays"));
+						transactionTx.get = CurrencyUtils
+								.getIssuedCurrency(getObject(result,
+										"TakerGets"));
+						transactionTx.pay = CurrencyUtils
+								.getIssuedCurrency(getObject(result,
+										"TakerPays"));
 						break;
 					case "OfferCancel":
 						JSONArray affectedNodes = getArray(meta,
@@ -363,11 +370,11 @@ public class AccountFind {
 											"Account");
 									if (ffactount.equals(transactionTx.account)) {
 										transactionTx.get = CurrencyUtils
-												.getIssuedCurrency(getObject(ff,
-														"TakerGets"));
+												.getIssuedCurrency(getObject(
+														ff, "TakerGets"));
 										transactionTx.pay = CurrencyUtils
-												.getIssuedCurrency(getObject(ff,
-														"TakerPays"));
+												.getIssuedCurrency(getObject(
+														ff, "TakerPays"));
 									}
 								}
 							}
@@ -418,8 +425,20 @@ public class AccountFind {
 	public AccountInfo processTx(final String address, final long min,
 			final long max, final long limit, final AccountInfo accountinfo,
 			final Updateable update, final boolean loadAffectedNodes) {
+
 		final ArrayList<IssuedCurrency> issues = new ArrayList<IssuedCurrency>(
 				10);
+
+		if (importDataApi) {
+			JSONObject json = RippleDataApi.transactionsFind(accountinfo,
+					issues, address);
+
+			if (json != null && accountinfo.transactions.size() > 0) {
+				update.action(json);
+				return accountinfo;
+			}
+		}
+
 		Updateable updateable = new Updateable() {
 
 			@Override
@@ -526,8 +545,9 @@ public class AccountFind {
 													transactionTx.flagsName = "Empty";
 												}
 												if (tx.has("SendMax")) {
-													transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(tx
-															.get("SendMax"));
+													transactionTx.sendMax = CurrencyUtils
+															.getIssuedCurrency(tx
+																	.get("SendMax"));
 												}
 												transactionTx.signingPubKey = getStringObject(
 														tx, "SigningPubKey");
@@ -1032,9 +1052,10 @@ public class AccountFind {
 							Object taker_gets = getObject(o, "taker_gets");
 							Object taker_pays = getObject(o, "taker_pays");
 
-							BookOffer offer = new BookOffer(CurrencyUtils
-									.getIssuedCurrency(taker_gets), CurrencyUtils
-									.getIssuedCurrency(taker_pays), seq, flags);
+							BookOffer offer = new BookOffer(
+									CurrencyUtils.getIssuedCurrency(taker_gets),
+									CurrencyUtils.getIssuedCurrency(taker_pays),
+									seq, flags);
 
 							accountinfo.bookOffers.add(offer);
 
@@ -1225,7 +1246,8 @@ public class AccountFind {
 		}
 	}
 
-	public void noripple_check(String srcAddress, final int limit, final Rollback back) {
+	public void noripple_check(String srcAddress, final int limit,
+			final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.noripple_check);
@@ -1253,7 +1275,7 @@ public class AccountFind {
 			req.request();
 		}
 	}
-	
+
 	public void info(String srcAddress, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {

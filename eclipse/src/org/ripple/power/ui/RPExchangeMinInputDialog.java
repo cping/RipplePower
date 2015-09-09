@@ -13,7 +13,6 @@ import java.awt.event.WindowListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 
 import org.ripple.power.config.LSystem;
@@ -21,21 +20,23 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.OfferPrice;
 import org.ripple.power.txns.Updateable;
+import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
 import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
+import org.ripple.power.utils.SwingUtils;
 
-public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
+public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListener{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private RPCButton _okButton;
-	private RPLabel jLabel1;
-	private RPLabel jLabel2;
-	private RPLabel jLabel3;
+	private RPLabel _oneLabel;
+	private RPLabel _twoLabel;
+	private RPLabel _threeLabel;
 	private RPTextBox _curPriceText;
 	private RPTextBox _countText;
 	private RPTextBox _countPriceText;
@@ -109,7 +110,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 
 	private void initComponents() {
 
-		jLabel1 = new RPLabel();
+		_oneLabel = new RPLabel();
 		_curPriceText = new RPTextBox();
 		_curPriceText.setText("0");
 		_curPriceText.addKeyListener(new KeyListener() {
@@ -129,10 +130,10 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 
 			}
 		});
-		jLabel2 = new RPLabel();
+		_twoLabel = new RPLabel();
 		_countText = new RPTextBox();
 		_countText.setText("0");
-		jLabel3 = new RPLabel();
+		_threeLabel = new RPLabel();
 		_countPriceText = new RPTextBox();
 		_countPriceText.setText("0");
 		_countPriceText.setEnabled(false);
@@ -149,6 +150,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 					String price = _countPriceText.getText().trim();
 					_textBContext.setText(price);
 				}
+				SwingUtils.close(RPExchangeMinInputDialog.this);
 			}
 		});
 
@@ -172,14 +174,14 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 
 		Font font = GraphicsUtils.getFont(12);
 
-		jLabel1.setFont(font);
-		jLabel1.setText(LangConfig.get(this, "price", "Currency Price"));
+		_oneLabel.setFont(font);
+		_oneLabel.setText(LangConfig.get(this, "price", "Currency Price"));
 
-		jLabel2.setFont(font);
-		jLabel2.setText(LangConfig.get(this, "count", "Total"));
+		_twoLabel.setFont(font);
+		_twoLabel.setText(LangConfig.get(this, "count", "Total"));
 
-		jLabel3.setFont(font);
-		jLabel3.setText(LangConfig.get(this, "all", "Total price"));
+		_threeLabel.setFont(font);
+		_threeLabel.setText(LangConfig.get(this, "all", "Total price"));
 
 		_okButton.setText(UIMessage.ok);
 		_okButton.setFont(UIRes.getFont());
@@ -198,7 +200,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 												.addGroup(
 														layout.createSequentialGroup()
 																.addComponent(
-																		jLabel1,
+																		_oneLabel,
 																		javax.swing.GroupLayout.PREFERRED_SIZE,
 																		88,
 																		javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -209,7 +211,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 												.addGroup(
 														layout.createSequentialGroup()
 																.addComponent(
-																		jLabel2,
+																		_twoLabel,
 																		javax.swing.GroupLayout.PREFERRED_SIZE,
 																		88,
 																		javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -223,7 +225,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 												.addGroup(
 														layout.createSequentialGroup()
 																.addComponent(
-																		jLabel3,
+																		_threeLabel,
 																		javax.swing.GroupLayout.PREFERRED_SIZE,
 																		88,
 																		javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -254,7 +256,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 								.addGroup(
 										layout.createParallelGroup(
 												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(jLabel1)
+												.addComponent(_oneLabel)
 												.addComponent(
 														_curPriceText,
 														javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -264,7 +266,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 								.addGroup(
 										layout.createParallelGroup(
 												javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(jLabel2)
+												.addComponent(_twoLabel)
 												.addComponent(
 														_countText,
 														javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -274,7 +276,7 @@ public class RPExchangeMinInputDialog extends JDialog implements WindowListener{
 								.addGroup(
 										layout.createParallelGroup(
 												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(jLabel3)
+												.addComponent(_threeLabel)
 												.addComponent(
 														_countPriceText,
 														javax.swing.GroupLayout.PREFERRED_SIZE,

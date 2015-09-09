@@ -102,6 +102,14 @@ public class MainPanel extends JPanel implements ActionListener {
 							"Public Key",
 							new ImageIcon(EncoderDecoder.getEncoder(
 									item.getPublicKey(), 128, 128)));
+					//when user double click
+					if((e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2)){
+						RPAccountInfoDialog.showDialog(
+								LSystem.applicationMain, LangConfig.get(
+										RPAccountInfoDialog.class,
+										"details", "Address details info"),
+								item.getPublicKey());
+					}
 				}
 			}
 		}

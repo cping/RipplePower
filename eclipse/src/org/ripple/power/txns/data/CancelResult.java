@@ -9,7 +9,7 @@ public class CancelResult {
 	public int engine_result_code;
 	public String engine_result_message;
 	public String tx_blob;
-	public TxJson tx_json;
+	public TxJson tx_json = new TxJson();
 
 	public boolean getResultOK() {
 		return Const.OkResultCodes.contains(engine_result);

@@ -243,7 +243,7 @@ public class RippleChartsAPI {
 		Calendar now = DateUtils.getUTCCalendar();
 		String startTime = iso8601.format(new Date(now.getTimeInMillis()
 				- LSystem.DAY));
-		String endTime = iso8601.format(now);
+		String endTime = iso8601.format(now.getTime());
 		JSONObject data = new JSONObject();
 		data.put("startTime", startTime);
 		data.put("endTime", endTime);
@@ -384,13 +384,20 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object getExchange(IssuedCurrency curreny) {
+	public static Object getExchangeRates(IssuedCurrency curreny) {
 		ArrayList<IssuedCurrency> issueds = new ArrayList<IssuedCurrency>();
 		issueds.add(curreny);
-		return getExchange(IssuedCurrency.BASE, issueds);
+		return getExchangeRates(IssuedCurrency.BASE, issueds);
 	}
 
-	public static Object getExchange(IssuedCurrency basecur,
+	public static Object getExchangeRates(IssuedCurrency base,
+			IssuedCurrency counter) {
+		ArrayList<IssuedCurrency> issueds = new ArrayList<IssuedCurrency>();
+		issueds.add(counter);
+		return getExchangeRates(base, issueds);
+	}
+
+	public static Object getExchangeRates(IssuedCurrency basecur,
 			ArrayList<IssuedCurrency> counters) {
 		HttpRequest request = HttpRequest.post(CHARTS_URL + "exchange_rates");
 		JSONObject obj = new JSONObject();
@@ -416,7 +423,7 @@ public class RippleChartsAPI {
 
 	public static double getXRPto(ArrayList<IssuedCurrency> list) {
 		double a = -1, b = -1;
-		Object result = getExchange(IssuedCurrency.BASE, list);
+		Object result = getExchangeRates(IssuedCurrency.BASE, list);
 		if (result != null) {
 			if (result instanceof JSONArray) {
 				a = ((JSONArray) result).getJSONObject(0).getDouble("rate");
@@ -537,8 +544,7 @@ public class RippleChartsAPI {
 		String endTime = iso8601.format(now.getTime());
 		String startTime = endTime;
 		if (time > 0) {
-			startTime = iso8601
-					.format(new Date(now.getTimeInMillis() - time));
+			startTime = iso8601.format(new Date(now.getTimeInMillis() - time));
 		} else {
 			startTime = iso8601.format(new Date(now.getTimeInMillis()
 					- LSystem.DAY));
@@ -571,8 +577,7 @@ public class RippleChartsAPI {
 		String endTime = iso8601.format(now.getTime());
 		String startTime = endTime;
 		if (time > 0) {
-			startTime = iso8601
-					.format(new Date(now.getTimeInMillis() - time));
+			startTime = iso8601.format(new Date(now.getTimeInMillis() - time));
 		} else {
 			startTime = iso8601.format(new Date(now.getTimeInMillis()
 					- LSystem.DAY));
@@ -600,8 +605,8 @@ public class RippleChartsAPI {
 
 	public static MarketsRespone top_markets(IssuedCurrency exchange, long time) {
 		Calendar now = DateUtils.getUTCCalendar();
-		String startTime = iso8601.format(new Date(now.getTimeInMillis()
-				- time));
+		String startTime = iso8601
+				.format(new Date(now.getTimeInMillis() - time));
 		JSONObject data = new JSONObject();
 		data.put("startTime", startTime);
 		data.put("exchange", exchange.getBase());
@@ -750,4 +755,5 @@ public class RippleChartsAPI {
 		}
 		return transactionStats;
 	}
+
 }

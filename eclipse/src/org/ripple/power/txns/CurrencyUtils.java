@@ -20,8 +20,12 @@ public class CurrencyUtils {
 			amount.copyFrom((JSONObject) jsonDenominatedAmount);
 			return amount;
 		} else {
-			return new IssuedCurrency(
-					LSystem.getNumberShort((String) jsonDenominatedAmount));
+			String result = (String) jsonDenominatedAmount;
+			if (result != null && result.length() > 0) {
+				return new IssuedCurrency(LSystem.getNumberShort(result));
+			} else {
+				return null;
+			}
 		}
 	}
 

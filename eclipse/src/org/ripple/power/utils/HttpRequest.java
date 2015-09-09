@@ -890,6 +890,8 @@ public class HttpRequest {
 		return new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(httpProxyHost,
 				httpProxyPort));
 	}
+	
+	public static int timeout = 15000;
 
 	private HttpURLConnection createConnection() {
 		try {
@@ -905,8 +907,8 @@ public class HttpRequest {
 				}
 			}
 			connection.setRequestMethod(requestMethod);
-			connection.setConnectTimeout(15000);
-			connection.setReadTimeout(15000);
+			connection.setConnectTimeout(timeout);
+			connection.setReadTimeout(timeout);
 			if (LSystem.applicationProxy != null
 					&& LSystem.applicationProxy.isProxyWithAuthentication()) {
 				connection.setRequestProperty("Proxy-Authorization", "Basic "
