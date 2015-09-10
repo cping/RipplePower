@@ -16,7 +16,7 @@ import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.Currency;
 import com.ripple.core.coretypes.Issue;
 
-public class IssuedCurrency {
+public class IssuedCurrency extends RippleDefault {
 
 	boolean isHighNodeIssuer(BigNumber finalBalance, BigNumber previousBalance,
 			BigNumber highLimit, BigNumber lowLimit) {
@@ -39,41 +39,6 @@ public class IssuedCurrency {
 
 	// enter an account with a trust line containing XAU (-0.5%pa) -> hex:
 	private final static String XAU_05PA = "0158415500000000C1F76FF6ECB0BAC600000000";
-
-	// base
-	public final static IssuedCurrency BASE = new IssuedCurrency("0");
-
-	// Bitstamp
-	public final static IssuedCurrency BITSTAMP_USD = new IssuedCurrency(
-			"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "USD");
-	public final static IssuedCurrency BITSTAMP_BTC = new IssuedCurrency(
-			"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "BTC");
-
-	// SnapSwap
-	public final static IssuedCurrency SNAPSWAP_USD = new IssuedCurrency(
-			"rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q", "USD");
-	public final static IssuedCurrency SNAPSWAP_BTC = new IssuedCurrency(
-			"rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q", "BTC");
-
-	// Ripple Trade Japan
-	public final static IssuedCurrency RTJ_JPY = new IssuedCurrency(
-			"rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6", "JPY");
-
-	// TokyoJPY
-	public final static IssuedCurrency TOKYOJPY_JPY = new IssuedCurrency(
-			"r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN", "JPY");
-
-	// RippleCN
-	public final static IssuedCurrency RIPPLECN_CNY = new IssuedCurrency(
-			"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK", "CNY");
-
-	// RippleChina
-	public final static IssuedCurrency RIPPLECHINA_CNY = new IssuedCurrency(
-			"razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA", "CNY");
-
-	// RippleFox
-	public final static IssuedCurrency RIPPLEFOX_CNY = new IssuedCurrency(
-			"rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y", "CNY");
 
 	public BigDecimal amount;
 	public RippleAddress issuer;
@@ -324,7 +289,7 @@ public class IssuedCurrency {
 		return null;
 	}
 
-	public JSONObject getBase() {
+	public JSONObject getJSON() {
 		if (currency == null) {
 			currency = LSystem.nativeCurrency.toUpperCase();
 		}

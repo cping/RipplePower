@@ -4,10 +4,10 @@ import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.hft.BOT_SET;
 import org.ripple.power.hft.BotLog;
 import org.ripple.power.hft.TraderBase;
-import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.RippleBackendsAPI;
 import org.ripple.power.txns.data.Market;
 import org.ripple.power.txns.data.Offer;
+import org.ripple.power.txns.data.Take;
 
 public class ArbitrageTrader extends TraderBase {
 	private final String _baseCurrency;
@@ -32,8 +32,8 @@ public class ArbitrageTrader extends TraderBase {
 		_arbCurrency = set.arbCurrency;
 		_arbGateway = set.arbGateway;
 
-		this._pay = new IssuedCurrency(set.baseGateway, set.baseCurrency);
-		this._get = new IssuedCurrency(set.arbGateway, set.arbCurrency);
+		this._pay = new Take(set.baseCurrency,set.baseGateway);
+		this._get = new Take(set.arbCurrency,set.arbGateway);
 
 		this._parity = Double.parseDouble(set.parity);
 		this._arbFactor = Double.parseDouble(set.arbFactor);
@@ -43,7 +43,7 @@ public class ArbitrageTrader extends TraderBase {
 	protected void check() {
 
 		Market baseMarket = _rippleApi.getSynXRPMarketDepth(null,
-				_pay.getTake(), query_limit);
+				_pay, query_limit);
 
 		if (null == baseMarket || null == baseMarket.Asks
 				|| null == baseMarket.Bids) {
@@ -51,7 +51,7 @@ public class ArbitrageTrader extends TraderBase {
 		}
 
 		Market arbMarket = _rippleApi.getSynXRPMarketDepth(null,
-				_get.getTake(), query_limit);
+				_get, query_limit);
 
 		if (null == arbMarket || null == arbMarket.Asks
 				|| null == arbMarket.Bids) {

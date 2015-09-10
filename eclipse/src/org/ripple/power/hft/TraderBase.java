@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ripple.power.RippleSeedAddress;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.txns.IssuedCurrency;
 import org.ripple.power.txns.RippleBackendsAPI;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.txns.data.Ask;
@@ -13,6 +12,7 @@ import org.ripple.power.txns.data.Bid;
 import org.ripple.power.txns.data.Candle;
 import org.ripple.power.txns.data.Offer;
 import org.ripple.power.txns.data.OffersResponse;
+import org.ripple.power.txns.data.Take;
 import org.ripple.power.utils.DateUtils;
 
 import com.ripple.core.coretypes.RippleDate;
@@ -35,8 +35,8 @@ public abstract class TraderBase implements ITrader {
 	protected RippleSeedAddress _seed;
 	protected BOT_SET _set;
 
-	protected IssuedCurrency _pay;
-	protected IssuedCurrency _get;
+	protected Take _pay;
+	protected Take _get;
 
 	protected int query_limit = 15;
 

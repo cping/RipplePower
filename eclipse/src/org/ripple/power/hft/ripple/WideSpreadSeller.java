@@ -13,6 +13,7 @@ import org.ripple.power.txns.data.Bid;
 import org.ripple.power.txns.data.CandlesResponse;
 import org.ripple.power.txns.data.Market;
 import org.ripple.power.txns.data.Offer;
+import org.ripple.power.txns.data.Take;
 import org.ripple.power.utils.MathUtils;
 
 public class WideSpreadSeller extends TraderBase {
@@ -47,8 +48,8 @@ public class WideSpreadSeller extends TraderBase {
 			}
 			this._gateway_address = set.arbGateway;
 			this._currencyCode = set.arbCurrency;
-			this._pay = new IssuedCurrency(set.baseGateway, set.baseCurrency);
-			this._get = new IssuedCurrency(set.arbGateway, set.arbCurrency);
+			this._pay = new Take(set.baseCurrency,set.baseGateway);
+			this._get = new Take(set.arbCurrency,set.arbGateway);
 		} else {
 			if (set.gateway_address == null) {
 				throw new BOTException(
@@ -57,7 +58,7 @@ public class WideSpreadSeller extends TraderBase {
 			this._gateway_address = set.gateway_address;
 			this._currencyCode = set.currency_code;
 			this._pay = IssuedCurrency.BASE;
-			this._get = new IssuedCurrency(set.gateway_address, _currencyCode);
+			this._get = new Take( _currencyCode,set.gateway_address);
 		}
 	}
 
@@ -66,8 +67,8 @@ public class WideSpreadSeller extends TraderBase {
 
 		CandlesResponse candles = _rippleApi.getTradeStatistics(
 				LSystem.DAY * 2, _get);
-		Market market = _rippleApi.getSynMarketDepth(null, _pay.getTake(),
-				_get.getTake(), query_limit);
+		Market market = _rippleApi.getSynMarketDepth(null, _pay,
+				_get, query_limit);
 
 		if (market == null) {
 			return;

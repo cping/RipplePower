@@ -46,9 +46,12 @@ public class Take {
 	}
 
 	public JSONObject getJSON() {
+		if (currency == null) {
+			currency = LSystem.nativeCurrency.toUpperCase();
+		}
 		JSONObject obj = new JSONObject();
 		if (LSystem.nativeCurrency.equalsIgnoreCase(this.currency)) {
-			obj.put("currency", LSystem.nativeCurrency.toUpperCase());
+			obj.put("currency",this.currency.toUpperCase());
 		} else {
 			obj.put("currency", this.currency.toUpperCase());
 			obj.put("issuer", this.issuer);
@@ -64,6 +67,31 @@ public class Take {
 		}
 	}
 
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Take)) {
+			return false;
+		}
+		Take take = (Take) o;
+		int count = 0;
+		if ((take.currency == this.currency)
+				|| (take.currency != null && take.currency
+						.equals(this.currency))) {
+			count++;
+		}
+		if ((take.issuer == this.issuer)
+				|| (take.issuer != null && take.issuer.equals(this.issuer))) {
+			count++;
+		}
+		if ((take.value == this.value)
+				|| (take.value != null && take.value.equals(this.value))) {
+			count++;
+		}
+		return count == 3;
+	};
+
 	@Override
 	public String toString() {
 		if (LSystem.nativeCurrency.equalsIgnoreCase(currency)) {
@@ -72,4 +100,5 @@ public class Take {
 			return currency.toUpperCase() + '+' + issuer;
 		}
 	}
+
 }

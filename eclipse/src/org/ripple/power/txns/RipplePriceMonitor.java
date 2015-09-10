@@ -9,6 +9,7 @@ import org.ripple.power.config.Loop;
 import org.ripple.power.config.Session;
 import org.ripple.power.timer.LTimer;
 import org.ripple.power.timer.LTimerContext;
+import org.ripple.power.txns.data.Take;
 import org.ripple.power.ui.RPBubbleDialog;
 import org.ripple.power.utils.DateUtils;
 
@@ -18,7 +19,7 @@ public class RipplePriceMonitor extends Loop {
 
 	class PriceMonitorItem {
 
-		IssuedCurrency currency;
+		Take currency;
 
 		LTimer delay;
 
@@ -87,8 +88,8 @@ public class RipplePriceMonitor extends Loop {
 										String delay = res.substring(idx + 1,
 												res.length());
 										PriceMonitorItem item = new PriceMonitorItem();
-										item.currency = new IssuedCurrency(
-												address, cur);
+										item.currency = new Take(
+												 cur,address);
 										item.delay = new LTimer(
 												Long.parseLong(delay));
 										item.query = query;
