@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.Session;
+import org.ripple.power.txns.data.Take;
 import org.ripple.power.ui.UIRes;
 
 public class Gateway {
@@ -305,6 +306,25 @@ public class Gateway {
 			}
 		}
 		return gateways;
+	}
+
+	public static ArrayList<Take> getTakes() {
+		ArrayList<Take> takes = new ArrayList<Take>();
+		ArrayList<Gateway> list = Gateway.get();
+		for (Gateway gateway : list) {
+			ArrayList<Item> items = gateway.accounts;
+			for (Item item : items) {
+				ArrayList<String> curs = item.currencies;
+				for (String currency : curs) {
+					Take take = new Take(currency, item.address);
+					if (!takes.contains(take)) {
+						take.tag = gateway.name;
+						takes.add(take);
+					}
+				}
+			}
+		}
+		return takes;
 	}
 
 }

@@ -6,6 +6,8 @@ import org.ripple.power.txns.IssuedCurrency;
 
 public class Take {
 
+	public Object tag;
+	
 	public String value;
 	public String currency;
 	public String issuer;
