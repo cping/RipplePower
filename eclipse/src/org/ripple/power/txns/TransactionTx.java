@@ -3,6 +3,7 @@ package org.ripple.power.txns;
 import java.util.ArrayList;
 
 import org.json.JSONObject;
+import org.ripple.power.txns.data.Meta;
 
 public class TransactionTx {
 
@@ -76,8 +77,10 @@ public class TransactionTx {
 
 	public String account;
 
-	public String meda;
+	public String metaString;
 
+	public Meta meta;
+	
 	public String signingPubKey;
 
 	public String txnSignature;

@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.txns.data.AccountResponse;
 import org.ripple.power.txns.data.ExchangesResponse;
+import org.ripple.power.txns.data.Meta;
 import org.ripple.power.txns.data.Take;
 import org.ripple.power.txns.data.TransactionsResponse;
 import org.ripple.power.utils.HttpRequest;
@@ -72,7 +73,7 @@ public class RippleDataApi {
 		}
 		return null;
 	}
-	
+
 	public static double exchange_rates(Take base, Take counter) {
 		String link = DATA_URL
 				+ String.format("/v2/exchange_rates/%s/%s", base, counter);
@@ -82,7 +83,7 @@ public class RippleDataApi {
 		}
 		return -1;
 	}
-	
+
 	public static ExchangesResponse exchanges(String address) {
 		if (!AccountFind.isRippleAddress(address)) {
 			return null;
@@ -154,7 +155,9 @@ public class RippleDataApi {
 				transactionTx.txnSignature = tx.optString("TxnSignature");
 
 				if (meta != null) {
-					transactionTx.meda = meta.toString();
+					transactionTx.metaString = meta.toString();
+					transactionTx.meta = new Meta();
+					transactionTx.meta.from(meta);
 
 					if (meta.has("AffectedNodes")) {
 						JSONArray affectedNodes = meta
@@ -363,8 +366,7 @@ public class RippleDataApi {
 		if (!AccountFind.isRippleAddress(address)) {
 			return null;
 		}
-		String link = DATA_URL
-				+ String.format("/v2/accounts/%s", address);
+		String link = DATA_URL + String.format("/v2/accounts/%s", address);
 		String result = open(link);
 		if (result != null) {
 			AccountResponse response = new AccountResponse();
@@ -372,5 +374,9 @@ public class RippleDataApi {
 			return response;
 		}
 		return null;
+	}
+	
+	public static void main(String[]args){
+		RippleDataApi.transactions("r3kmLJN5D28dHuH8vZNUZpMC43pEHpaocV");
 	}
 }

@@ -10,6 +10,7 @@ import org.ripple.power.blockchain.RippleMemoDecode;
 import org.ripple.power.blockchain.RippleMemoDecodes;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.TransactionTx.Memo;
+import org.ripple.power.txns.data.Meta;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base58Coder;
 
@@ -22,7 +23,7 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class AccountFind {
 
-	//目前data.ripple.com中提供的数据不是实时的
+	// 目前data.ripple.com中提供的数据不是实时的
 	public static boolean importDataApi = true;
 
 	public static int LIMIT_TX = 200;
@@ -268,7 +269,9 @@ public class AccountFind {
 					String type = getStringObject(result, "TransactionType");
 
 					if (meta != null) {
-						transactionTx.meda = meta.toString();
+						transactionTx.metaString = meta.toString();
+						transactionTx.meta = new Meta();
+						transactionTx.meta.from(meta);
 					}
 
 					transactionTx.account = getStringObject(result, "Account");
@@ -555,8 +558,12 @@ public class AccountFind {
 														tx, "TxnSignature");
 
 												if (meta != null) {
-													transactionTx.meda = meta
+
+													transactionTx.metaString = meta
 															.toString();
+													transactionTx.meta = new Meta();
+													transactionTx.meta
+															.from(meta);
 
 													if (loadAffectedNodes
 															&& meta.has("AffectedNodes")) {

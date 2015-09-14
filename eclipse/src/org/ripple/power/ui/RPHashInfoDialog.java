@@ -322,7 +322,7 @@ public class RPHashInfoDialog extends ABaseDialog implements WindowListener {
 		if (tx.hash != null && tx.hash.length() != 0) {
 			_hashFindText.setText(tx.hash);
 		}
-		_MetaText.setText(tx.meda);
+		_MetaText.setText(tx.metaString);
 		_DateText.setText(tx.date);
 		_OfferSequenceText.setText(String.valueOf(tx.offersSequence));
 		_inLedgerText.setText(String.valueOf(tx.inLedger));
