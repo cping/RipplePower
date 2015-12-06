@@ -3,7 +3,7 @@
 for %%X in (java.exe) do (set IS_JAVA_IN_PATH=%%~$PATH:X)
 
 IF defined IS_JAVA_IN_PATH (
-	start "RipplePower" java -cp demo.jar;libs\*;conf org.ripple.power.ui.MainUI
+	start "RipplePower" java -cp RipplePowerPC_Demo.jar;libs\*;conf org.ripple.power.ui.MainUI
 ) ELSE (
 	IF EXIST "%PROGRAMFILES%\Java\jre7" (
 		start "NXT NRS" "%PROGRAMFILES%\Java\jre7\bin\java.exe" -cp demo.jar;libs\*;conf org.ripple.power.ui.MainUI

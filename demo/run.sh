@@ -1,2 +1,2 @@
 #!/bin/sh
-java -cp demo.jar;libs\*;conf org.ripple.power.ui.MainUI
+java -cp RipplePowerPC_Demo.jar;libs\*;conf org.ripple.power.ui.MainUI
