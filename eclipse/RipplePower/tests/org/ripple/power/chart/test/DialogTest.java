@@ -116,7 +116,6 @@ public class DialogTest {
 		frame.setPreferredSize(size);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-	
 		// RPTradingToolsDialog.showDialog("FFFFFFFFF", frame);
 		// RPPayPortDialog.showDialog("FFFFFFFFFFFF", frame);
 
