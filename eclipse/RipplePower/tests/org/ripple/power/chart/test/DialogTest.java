@@ -23,7 +23,6 @@ import org.ripple.power.ui.RPDefineTradingDialog;
 import org.ripple.power.ui.RPDownloadDialog;
 import org.ripple.power.ui.RPHashInfoDialog;
 import org.ripple.power.ui.RPNewsDialog;
-import org.ripple.power.ui.RPOnlineWalletDialog;
 import org.ripple.power.ui.RPOtherServicesDialog;
 import org.ripple.power.ui.RPSendIOUDialog;
 import org.ripple.power.ui.RPPayPortDialog;

@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import org.ripple.power.CoinUtils;
 import org.ripple.power.RippleAddress;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.nodejs.BigNumber;
 import org.ripple.power.txns.data.Take;
+import org.ripple.power.utils.BigNumber;
 import org.ripple.power.utils.StringUtils;
 
 import com.ripple.core.coretypes.AccountID;

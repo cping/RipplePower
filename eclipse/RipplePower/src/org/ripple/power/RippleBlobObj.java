@@ -1,14 +1,12 @@
 package org.ripple.power;
 
 import org.json.JSONObject;
-
 import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.nodejs.BigNumber;
-import org.ripple.power.nodejs.BitArray;
-import org.ripple.power.nodejs.HMAC;
-import org.ripple.power.nodejs.JSCrypt;
 import org.ripple.power.password.PasswordEasy;
+import org.ripple.power.utils.BigNumber;
+import org.ripple.power.utils.BitArray;
+import org.ripple.power.utils.HMAC;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.StringUtils;
 
@@ -119,35 +117,6 @@ public class RippleBlobObj {
 
 	public RippleBlobObj() {
 		this(def_authinfo_url);
-	}
-
-	public UnlockInfoRes unlock(final String username, final String secret)
-			throws Exception {
-		return unlock(username, secret, def_domain, def_pakdf_name);
-	}
-
-	public UnlockInfoRes unlock(final String username, final String secret,
-			final String domain, final String pakdfName) throws Exception {
-		BlobInfoRes info = load(username, secret, domain, pakdfName);
-		if (info != null && info.success) {
-			String result = JSCrypt.decrypt(info.key, info.blob);
-			JSONObject json = new JSONObject(result);
-			UnlockInfoRes res = new UnlockInfoRes();
-			res.blob = info;
-			res.account_id = json.getString("account_id");
-			res.auth_secret = json.getString("auth_secret");
-			res.email = json.getString("email");
-			res.created = json.getString("created");
-			AuthInfoRes unlock_info = derive(username, secret, domain,
-					pakdfName, UNLOCK);
-			if (unlock_info != null && unlock_info.result.length == 1) {
-				String unlock = unlock_info.result[0];
-				res.ripple_secret = JSCrypt.decrypt(unlock,
-						info.encrypted_secret);
-			}
-			return res;
-		}
-		return null;
 	}
 
 	public BlobInfoRes load(final String username, final String secret)

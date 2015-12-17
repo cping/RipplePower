@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import org.ripple.power.RippleBlobObj;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.ui.graphics.LImage;
@@ -94,6 +93,7 @@ public class RPSelectAddressDialog extends JPanel {
 		add(_localButton);
 		_localButton.setBounds(20, 20, 335, 63);
 		_onlineButton.setText("Online Wallet");
+		_onlineButton.setEnabled(false);
 		_onlineButton.setFont(font);
 		add(_onlineButton);
 		_onlineButton.setBounds(20, 100, 335, 56);
@@ -101,16 +101,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				closeDialog();
-				RPToast.makeText(
-						LSystem.applicationMain,
-						"Here import or create your "
-								+ RippleBlobObj.def_authinfo_url
-								+ " account data.", Style.SUCCESS).display();
-				RPOnlineWalletDialog.showDialog("Online Wallet("
-						+ RippleBlobObj.def_authinfo_url + " Service)",
-						LSystem.applicationMain);
-
+				
 			}
 		});
 		this.setBackground(UIConfig.dialogbackground);

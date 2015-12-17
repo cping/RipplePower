@@ -321,8 +321,6 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
-		addPopMenu(LangConfig.get(this, "todo", "Encrypt Todo"),
-				CommandFlag.Todo);
 		addPopMenu(LangConfig.get(this, "editor", "Editor Script"),
 				CommandFlag.Editor);
 		addPopMenu(LangConfig.get(this, "download", "Download"),
@@ -435,16 +433,6 @@ public class MainPanel extends JPanel implements ActionListener {
 				try {
 					if (actionName.equals(CommandFlag.Ripple_Blockchain)) {
 						RPToast.playWorking(LSystem.applicationMain);
-						return;
-					}
-					if (actionName.equals(CommandFlag.Todo)) {
-						LSystem.postThread(new Updateable() {
-
-							@Override
-							public void action(Object o) {
-								RPTodoFrame.get();
-							}
-						});
 						return;
 					}
 					if (actionName.equals(CommandFlag.Download)) {

@@ -21,9 +21,6 @@ import org.ripple.power.collection.ArrayByte;
 import org.ripple.power.collection.ArraySlice;
 import org.ripple.power.collection.LongArray;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.nodejs.BigNumber;
-import org.ripple.power.nodejs.BitArray;
-import org.ripple.power.nodejs.JSCrypt;
 import org.ripple.power.txns.RippleHistoryAPI;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.utils.Base64Coder;
@@ -87,10 +84,7 @@ public class BlobTest {
 		// ));
 
 		RippleBlobObj rp = new RippleBlobObj();
-		UnlockInfoRes res = rp.unlock("htp0943562", "testing0oopg141");
-		if (res != null) {
-			System.out.println(res.ripple_secret);
-		}
+	
 		/*
 		 * LongArray key = BigNumber .hex_toBits(
 		 * "3b3a53bf1d4d753800044e6f8219cf97d10752850b961ce6f330a74039eeb3f1");

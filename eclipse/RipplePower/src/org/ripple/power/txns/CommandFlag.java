@@ -7,8 +7,6 @@ public class CommandFlag {
 
 	public static final String Ripple_Blockchain = "Ripple_Blockchain";
 
-	public static final String Todo = "Todo";
-
 	public static final String Download = "Download";
 
 	public static final String SendCoin = "Sendcoin";

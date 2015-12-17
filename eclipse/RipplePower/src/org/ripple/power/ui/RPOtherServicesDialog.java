@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.contacts.ContactDialog;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
@@ -22,7 +21,7 @@ public class RPOtherServicesDialog extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private RPCButton _btc2ripple_co;
+
 	private RPCButton _btc2ripple_sn;
 	private RPCButton _rippleTrade;
 	private RPCButton _activeRipple;
@@ -79,7 +78,7 @@ public class RPOtherServicesDialog extends JPanel {
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 615);
+		Dimension dim = new Dimension(246, 570);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -93,7 +92,6 @@ public class RPOtherServicesDialog extends JPanel {
 		_activeRipple = new RPCButton();
 		_xrp2vpn = new RPCButton();
 		_btc2ripple_sn = new RPCButton();
-		_btc2ripple_co = new RPCButton();
 		_ripple_bitcoin_news = new RPCButton();
 		_script_editor = new RPCButton();
 		_downloader = new RPCButton();
@@ -163,26 +161,6 @@ public class RPOtherServicesDialog extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				RPPayPortDialog
 						.showDialog("Pay Money", LSystem.applicationMain);
-			}
-		});
-
-		_btc2ripple_co.setText(LangConfig.get(this, "todo", "Encryp Todo"));
-		_btc2ripple_co.setFont(font);
-		add(_btc2ripple_co);
-		_btc2ripple_co.setBounds(10, size += 50, 224, 34);
-		_btc2ripple_co.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				LSystem.postThread(new Updateable() {
-
-					@Override
-					public void action(Object o) {
-						RPTodoFrame.get();
-					}
-				});
-
 			}
 		});
 

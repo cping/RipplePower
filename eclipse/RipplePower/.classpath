@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="/jcoinlibs/libs/commons-math3-3.5.jar"/>
 	<classpathentry kind="lib" path="/jcoinlibs/libs/fluent-hc-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/jcoinlibs/libs/guava-16.0.1.jar"/>
-	<classpathentry kind="lib" path="/jcoinlibs/libs/h2-1.4.187.jar"/>
 	<classpathentry kind="lib" path="/jcoinlibs/libs/httpclient-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/jcoinlibs/libs/httpclient-cache-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/jcoinlibs/libs/httpcore-4.3.jar"/>
