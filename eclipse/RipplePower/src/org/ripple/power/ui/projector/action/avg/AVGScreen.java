@@ -15,10 +15,6 @@ import org.ripple.power.ui.projector.action.avg.command.CommandType;
 import org.ripple.power.ui.projector.action.sprite.ISprite;
 import org.ripple.power.ui.projector.action.sprite.Sprites;
 import org.ripple.power.ui.projector.action.sprite.effect.FadeEffect;
-import org.ripple.power.ui.projector.action.sprite.effect.FreedomEffect;
-import org.ripple.power.ui.projector.action.sprite.effect.PetalKernel;
-import org.ripple.power.ui.projector.action.sprite.effect.RainKernel;
-import org.ripple.power.ui.projector.action.sprite.effect.SnowKernel;
 import org.ripple.power.ui.projector.core.graphics.Desktop;
 import org.ripple.power.ui.projector.core.graphics.LComponent;
 import org.ripple.power.ui.projector.core.graphics.Screen;
@@ -292,66 +288,11 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						scrFlag = true;
 						break;
 					}
-					if (cmdFlag.equalsIgnoreCase(CommandType.L_SNOW)
-							|| cmdFlag.equalsIgnoreCase(CommandType.L_RAIN)
-							|| cmdFlag.equalsIgnoreCase(CommandType.L_PETAL)) {
-						if (sprites != null) {
-							boolean flag = false;
-							ISprite[] ss = sprites.getSprites();
-
-							for (int i = 0; i < ss.length; i++) {
-								ISprite s = ss[i];
-								if (s instanceof FreedomEffect) {
-									flag = true;
-									break;
-								}
-							}
-							if (!flag) {
-								if (cmdFlag
-										.equalsIgnoreCase(CommandType.L_SNOW)) {
-									sprites.add(FreedomEffect.getSnowEffect());
-								} else if (cmdFlag
-										.equalsIgnoreCase(CommandType.L_RAIN)) {
-									sprites.add(FreedomEffect.getRainEffect());
-								} else if (cmdFlag
-										.equalsIgnoreCase(CommandType.L_PETAL)) {
-									sprites.add(FreedomEffect.getPetalEffect());
-								}
-							}
-
-						}
-						continue;
-					}
+		
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_SNOWSTOP)
 							|| cmdFlag.equalsIgnoreCase(CommandType.L_RAINSTOP)
 							|| cmdFlag
 									.equalsIgnoreCase(CommandType.L_PETALSTOP)) {
-						if (sprites != null) {
-							ISprite[] ss = sprites.getSprites();
-
-							for (int i = 0; i < ss.length; i++) {
-								ISprite s = ss[i];
-								if (s instanceof FreedomEffect) {
-									if (cmdFlag
-											.equalsIgnoreCase(CommandType.L_SNOWSTOP)) {
-										if (((FreedomEffect) s).getKernels()[0] instanceof SnowKernel) {
-											sprites.remove(s);
-										}
-									} else if (cmdFlag
-											.equalsIgnoreCase(CommandType.L_RAINSTOP)) {
-										if (((FreedomEffect) s).getKernels()[0] instanceof RainKernel) {
-											sprites.remove(s);
-										}
-									} else if (cmdFlag
-											.equalsIgnoreCase(CommandType.L_PETALSTOP)) {
-										if (((FreedomEffect) s).getKernels()[0] instanceof PetalKernel) {
-											sprites.remove(s);
-										}
-									}
-								}
-							}
-
-						}
 						continue;
 					}
 

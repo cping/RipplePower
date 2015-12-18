@@ -68,12 +68,6 @@ public interface CommandType {
 
 	String L_DEL = "del";
 
-	String L_SNOW = "snow";
-
-	String L_RAIN = "rain";
-
-	String L_PETAL = "petal";
-
 	String L_SNOWSTOP = "snowstop";
 
 	String L_RAINSTOP = "rainstop";
