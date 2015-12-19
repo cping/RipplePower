@@ -6,6 +6,7 @@ import org.ripple.power.utils.HttpRequest;
 
 public class RippleRestAPI {
 
+	public static String test_url = "https://api.altnet.rippletest.net:5990/";
 	private final static String page = "https://api.ripple.com/v1/";
 
 	private static JSONObject open_rest(String url) throws Exception {

@@ -1,5 +1,12 @@
 ﻿# RipplePower-Ripple-Client(Ripple local wallet)
 
+#2015-12-19
+
+正在整理代码，开始继续搞客户端，Java的PC版完整工程及需要的jar都在eclipse包下，直接导入项目（同时导入那两个）既可开发。另外，最新那边Ripple开了C#支持库的坑，所以明年我也开C#版客户端……
+
+C#版支持库地址：https://github.com/ripple/ripple-dot-net/
+___________
+
 RipplePower is a Ripple(Rippled Server) API Client for the Java language licensed under Apache License 2.0
 
 RipplePower core includes software from the Ripple-lib-java to parse Ripple-JSON-RPC response from the any Rippled API. You can see the open source code at https://github.com/ripple/ripple-lib-java

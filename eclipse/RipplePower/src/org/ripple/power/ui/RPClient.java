@@ -42,9 +42,11 @@ public class RPClient {
 			10);
 
 	private final static String[] applicationPublicNodes = new String[] {
-			"wss://s1.ripple.com:443",
-			"wss://s2.ripple.com:443", "wss://s-west.ripple.com:443",
-			"wss://s-east.ripple.com:443", "wss://ripplenode.io:5006" };
+			"wss://s1.ripple.com:51233", "wss://s2.ripple.com:51233",
+			"wss://s-west.ripple.com:51233", "wss://s-east.ripple.com:51233",
+			"wss://s1.ripple.com:443", "wss://s2.ripple.com:443",
+			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443",
+			"wss://r.ripple.com:443", "wss://ripplenode.io:5006" };
 
 	public static ArrayList<String> getRLNodes(boolean flag) {
 		ArrayList<String> tmp = new ArrayList<String>(40);
