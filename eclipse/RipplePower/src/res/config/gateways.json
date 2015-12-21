@@ -363,5 +363,23 @@
     }],
     "hotwallets": [],
     "domain": "exrp.co.kr"
+  },
+   {
+    "name": "RippleCentral24_2",
+    "accounts": [{
+        "address": "rM1JztoSdHmX2EPnRGRYmKQvkxZ2hnrWsn",
+        "currencies": ["JPY"]
+    }],
+    "hotwallets": [],
+    "domain": "http://ripplecentral24.jp"
+  },
+   {
+    "name": "Rippleok",
+    "accounts": [{
+        "address": "rXzxK7wpKLZ99qwXNiy5nFQUhYxFZq3Rd",
+        "currencies": ["CNY"]
+    }],
+    "hotwallets": [],
+    "domain": ""
   }
 ]
