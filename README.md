@@ -5,6 +5,15 @@
 正在整理代码，开始继续搞客户端，Java的PC版完整工程及需要的jar都在eclipse包下，直接导入项目（同时导入那两个）既可开发。另外，最新那边Ripple开了C#支持库的坑，所以明年我也开C#版客户端……
 
 C#版支持库地址：https://github.com/ripple/ripple-dot-net/
+
+官方的本地钱包源码在此：https://github.com/ripple/ripple-client-desktop
+
+另外推荐两个第三方的Ripple应用:
+
+在线交易情况，推荐使用heartbit开发的(此站2016年也会开放在线钱包): http://heartbit.io/app
+在线钱包，推荐使用gatehub.net的: http://heartbit.io/app
+
+PS: Ripple官方建议迁移到gatehub不是没道理的，因为此站确实比Ripple官方的钱包实用和安全，比如我曾经尝试多代理IP穷举此站ID，结果几次访问后测试的存在ID立刻被封，并且要求邮件确认解封（而Ripple官方在线钱包多IP是可以穷举的，只是慢点）。当然，更主要的就是交易责任的转移，美帝对于“类似洗钱”的行为限制太多，大家都懂的，Ripple官方在线钱包要求实名后本来就没什么人用了，而前端转到gatehub就没Ripple官方的事情，可以专心搞后台……
 ___________
 
 RipplePower is a Ripple(Rippled Server) API Client for the Java language licensed under Apache License 2.0
