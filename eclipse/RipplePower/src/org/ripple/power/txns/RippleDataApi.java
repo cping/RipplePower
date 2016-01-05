@@ -1,9 +1,12 @@
 package org.ripple.power.txns;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.data.AccountResponse;
 import org.ripple.power.txns.data.ExchangesResponse;
 import org.ripple.power.txns.data.Meta;
@@ -28,6 +31,21 @@ public class RippleDataApi {
 
 	private static String open(String site) {
 		HttpRequest request = HttpRequest.get(site);
+		request.acceptGzipEncoding();
+		String result = null;
+		try {
+			request.uncompress(true);
+			if (request.ok()) {
+				result = request.body();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private static String open(String site, Map<?, ?> maps) {
+		HttpRequest request = HttpRequest.get(site, maps, true);
 		request.acceptGzipEncoding();
 		String result = null;
 		try {
@@ -375,9 +393,72 @@ public class RippleDataApi {
 		}
 		return null;
 	}
-	
-	public static void main(String[]args){
-		TransactionsResponse response= RippleDataApi.transactions("r3kmLJN5D28dHuH8vZNUZpMC43pEHpaocV");
-		System.out.println(response.json);
+
+	public static CurrencyGateway gateways() {
+		String link = DATA_URL + "/v2/gateways";
+		String result = open(link);
+		if (result != null) {
+			CurrencyGateway gateway = new CurrencyGateway();
+			gateway.copyFrom(new JSONObject(result));
+			return gateway;
+		}
+		return null;
+	}
+
+	public static CurrencyGateway.Item currencyTogateways(String curName) {
+		return gateways().find(curName);
+	}
+
+	/**
+	 * 以指定网关数据为标准，转换一种货币价格为另外一种的
+	 * 
+	 * @param amount
+	 * @param baseCurrency
+	 * @param baseIssuer
+	 * @param exCurrency
+	 * @param exIssuer
+	 * @return
+	 */
+	public static Normalize normalize(double amount, String baseCurrency,
+			String baseIssuer, String exCurrency, String exIssuer) {
+		String link = DATA_URL + "/v2/normalize";
+		Map<Object, Object> maps = new HashMap<Object, Object>();
+		maps.put("amount", amount);
+		if (LSystem.nativeCurrency.equalsIgnoreCase(baseCurrency)) {
+			maps.put("currency", LSystem.nativeCurrency.toUpperCase());
+		} else {
+			maps.put("currency", baseCurrency.toUpperCase());
+			maps.put("issuer", baseIssuer);
+		}
+		maps.put("exchange_currency", exCurrency.toUpperCase());
+		maps.put("exchange_issuer", exIssuer.toUpperCase());
+		String result = open(link, maps);
+		if (result != null) {
+			Normalize normalize = new Normalize();
+			normalize.copyFrom(new JSONObject(result));
+			return normalize;
+		}
+		return null;
+	}
+
+	/**
+	 * 以本地默认货币（默认即XRP）获得指定网关货币的汇率
+	 * 
+	 * @param amount
+	 * @param exCurrency
+	 * @param exIssuer
+	 * @return
+	 */
+	public static Normalize normalizeNative(double amount, String exCurrency,
+			String exIssuer) {
+		return normalize(amount, LSystem.nativeCurrency, null, exCurrency,
+				exIssuer);
+	}
+
+	// rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B
+	public static void main(String[] args) {
+		System.out.println(RippleDataApi.normalize(100, "BTC",
+				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "USD",
+				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
 	}
 }
