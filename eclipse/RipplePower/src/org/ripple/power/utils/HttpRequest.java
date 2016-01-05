@@ -891,7 +891,7 @@ public class HttpRequest {
 				httpProxyPort));
 	}
 	
-	public static int timeout = 15000;
+	public static int timeout = 30000;
 
 	private HttpURLConnection createConnection() {
 		try {

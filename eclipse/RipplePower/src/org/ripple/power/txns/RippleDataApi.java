@@ -15,8 +15,8 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class RippleDataApi {
 
-	// 目前此这地址获得的并非全部为实时数据
-	private static String DATA_URL = "https://data.ripple.com";
+	// PS:Java环境下SSL支持有限，不能使用https读取此站，否则解码协议时会崩……dotNet下无事……我给oracle提交bug没人理我……
+	private static String DATA_URL = "http://data.ripple.com";
 
 	public static void setDataAPI_URL(String url) {
 		DATA_URL = url;
@@ -377,6 +377,7 @@ public class RippleDataApi {
 	}
 	
 	public static void main(String[]args){
-		RippleDataApi.transactions("r3kmLJN5D28dHuH8vZNUZpMC43pEHpaocV");
+		TransactionsResponse response= RippleDataApi.transactions("r3kmLJN5D28dHuH8vZNUZpMC43pEHpaocV");
+		System.out.println(response.json);
 	}
 }

@@ -11,9 +11,11 @@ public class TransactionsResponse {
 	public int count;
 	public String marker;
 	public ArrayList<Transaction> transactions = new ArrayList<Transaction>(20);
+	public JSONObject json;
 
 	public void from(JSONObject obj) {
 		if (obj != null) {
+			this.json = obj;
 			this.result = obj.optBoolean("result");
 			this.count = obj.optInt("count");
 			this.marker = obj.optString("marker");
