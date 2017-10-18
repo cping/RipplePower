@@ -10,7 +10,7 @@ RipplePower core includes software from the Ripple-lib-java to parse Ripple-JSON
 
 # Download RipplePower
 
-Desktop Version [Demo](https://raw.githubusercontent.com/cping/RipplePower/master/eclipse/demo/RipplePower-Desktop-0.1.4.jar)
+Desktop Version [Demo](https://raw.githubusercontent.com/cping/RipplePower/master/demo/RipplePower-Desktop-0.1.4.jar)
 
 Android Version (work in progress)
 
