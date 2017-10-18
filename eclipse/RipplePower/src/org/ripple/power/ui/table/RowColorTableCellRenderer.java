@@ -10,8 +10,7 @@ import javax.swing.table.TableCellRenderer;
 import org.ripple.power.txns.AccountFind;
 import org.ripple.power.utils.GraphicsUtils;
 
-public class RowColorTableCellRenderer extends JLabel implements
-		TableCellRenderer {
+public class RowColorTableCellRenderer extends JLabel implements TableCellRenderer {
 
 	/**
 	 * 
@@ -29,8 +28,8 @@ public class RowColorTableCellRenderer extends JLabel implements
 		setFont(defFont);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
 		boolean flag = false;
 		if (table instanceof RowColorModel) {
 			RowColorModel model = (RowColorModel) table;

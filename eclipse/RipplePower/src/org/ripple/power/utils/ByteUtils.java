@@ -55,23 +55,23 @@ public class ByteUtils {
 	}
 
 	public static int leb2int(final byte[] x, final int offset) {
-		return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8)
-				| ((x[offset + 2] & 0xFF) << 16) | (x[offset + 3] << 24);
+		return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8) | ((x[offset + 2] & 0xFF) << 16)
+				| (x[offset + 3] << 24);
 	}
 
 	public static int beb2int(final byte[] x, final int offset) {
-		return (x[offset] << 24) | ((x[offset + 1] & 0xFF) << 16)
-				| ((x[offset + 2] & 0xFF) << 8) | (x[offset + 3] & 0xFF);
+		return (x[offset] << 24) | ((x[offset + 1] & 0xFF) << 16) | ((x[offset + 2] & 0xFF) << 8)
+				| (x[offset + 3] & 0xFF);
 	}
 
 	public static int leb2int(final InputStream is) throws IOException {
-		return (readByte(is) & 0xFF) | ((readByte(is) & 0xFF) << 8)
-				| ((readByte(is) & 0xFF) << 16) | (readByte(is) << 24);
+		return (readByte(is) & 0xFF) | ((readByte(is) & 0xFF) << 8) | ((readByte(is) & 0xFF) << 16)
+				| (readByte(is) << 24);
 	}
 
 	public static int beb2int(final InputStream is) throws IOException {
-		return (readByte(is) << 24) | ((readByte(is) & 0xFF) << 16)
-				| ((readByte(is) & 0xFF) << 8) | (readByte(is) & 0xFF);
+		return (readByte(is) << 24) | ((readByte(is) & 0xFF) << 16) | ((readByte(is) & 0xFF) << 8)
+				| (readByte(is) & 0xFF);
 	}
 
 	public static int leb2int(final byte[] x, final int offset, final int n)
@@ -82,11 +82,10 @@ public class ByteUtils {
 		case 2:
 			return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8);
 		case 3:
-			return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8)
-					| ((x[offset + 2] & 0xFF) << 16);
+			return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8) | ((x[offset + 2] & 0xFF) << 16);
 		case 4:
-			return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8)
-					| ((x[offset + 2] & 0xFF) << 16) | (x[offset + 3] << 24);
+			return (x[offset] & 0xFF) | ((x[offset + 1] & 0xFF) << 8) | ((x[offset + 2] & 0xFF) << 16)
+					| (x[offset + 3] << 24);
 		default:
 			throw new IllegalArgumentException("No bytes specified");
 		}
@@ -100,49 +99,33 @@ public class ByteUtils {
 		case 2:
 			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8);
 		case 3:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16);
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16);
 		case 4:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
 					| ((x[offset + 3] & 0xFFL) << 24);
 		case 5:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
-					| ((x[offset + 3] & 0xFFL) << 24)
-					| ((x[offset + 4] & 0xFFL) << 32);
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
+					| ((x[offset + 3] & 0xFFL) << 24) | ((x[offset + 4] & 0xFFL) << 32);
 		case 6:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
-					| ((x[offset + 3] & 0xFFL) << 24)
-					| ((x[offset + 4] & 0xFFL) << 32)
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
+					| ((x[offset + 3] & 0xFFL) << 24) | ((x[offset + 4] & 0xFFL) << 32)
 					| ((x[offset + 5] & 0xFFL) << 40);
 		case 7:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
-					| ((x[offset + 3] & 0xFFL) << 24)
-					| ((x[offset + 4] & 0xFFL) << 32)
-					| ((x[offset + 5] & 0xFFL) << 40)
-					| ((x[offset + 6] & 0xFFL) << 48);
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
+					| ((x[offset + 3] & 0xFFL) << 24) | ((x[offset + 4] & 0xFFL) << 32)
+					| ((x[offset + 5] & 0xFFL) << 40) | ((x[offset + 6] & 0xFFL) << 48);
 		case 8:
-			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
-					| ((x[offset + 3] & 0xFFL) << 24)
-					| ((x[offset + 4] & 0xFFL) << 32)
-					| ((x[offset + 5] & 0xFFL) << 40)
-					| ((x[offset + 6] & 0xFFL) << 48)
-					| ((long) x[offset + 7] << 56);
+			return (x[offset] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
+					| ((x[offset + 3] & 0xFFL) << 24) | ((x[offset + 4] & 0xFFL) << 32)
+					| ((x[offset + 5] & 0xFFL) << 40) | ((x[offset + 6] & 0xFFL) << 48) | ((long) x[offset + 7] << 56);
 		default:
 			throw new IllegalArgumentException("No bytes specified");
 		}
 	}
 
 	public static long leb2long(InputStream is) throws IOException {
-		return (readByte(is) & 0xFFL) | ((readByte(is) & 0xFFL) << 8)
-				| ((readByte(is) & 0xFFL) << 16)
-				| ((readByte(is) & 0xFFL) << 24)
-				| ((readByte(is) & 0xFFL) << 32)
-				| ((readByte(is) & 0xFFL) << 40)
+		return (readByte(is) & 0xFFL) | ((readByte(is) & 0xFFL) << 8) | ((readByte(is) & 0xFFL) << 16)
+				| ((readByte(is) & 0xFFL) << 24) | ((readByte(is) & 0xFFL) << 32) | ((readByte(is) & 0xFFL) << 40)
 				| ((readByte(is) & 0xFFL) << 48) | (readByte(is) << 56);
 	}
 
@@ -154,36 +137,31 @@ public class ByteUtils {
 		case 2:
 			return ((x[offset] & 0xFF) << 8) | (x[offset + 1] & 0xFF);
 		case 3:
-			return ((x[offset] & 0xFF) << 16) | ((x[offset + 1] & 0xFF) << 8)
-					| (x[offset + 2] & 0xFF);
+			return ((x[offset] & 0xFF) << 16) | ((x[offset + 1] & 0xFF) << 8) | (x[offset + 2] & 0xFF);
 		case 4:
-			return (x[offset] << 24) | ((x[offset + 1] & 0xFF) << 16)
-					| ((x[offset + 2] & 0xFF) << 8) | (x[offset + 3] & 0xFF);
+			return (x[offset] << 24) | ((x[offset + 1] & 0xFF) << 16) | ((x[offset + 2] & 0xFF) << 8)
+					| (x[offset + 3] & 0xFF);
 		default:
 			throw new IllegalArgumentException("No bytes specified");
 		}
 	}
 
-	public static void short2leb(final short x, final byte[] buf,
-			final int offset) {
+	public static void short2leb(final short x, final byte[] buf, final int offset) {
 		buf[offset] = (byte) x;
 		buf[offset + 1] = (byte) (x >> 8);
 	}
 
-	public static void short2beb(final short x, final byte[] buf,
-			final int offset) {
+	public static void short2beb(final short x, final byte[] buf, final int offset) {
 		buf[offset] = (byte) (x >> 8);
 		buf[offset + 1] = (byte) x;
 	}
 
-	public static void short2leb(final short x, final OutputStream os)
-			throws IOException {
+	public static void short2leb(final short x, final OutputStream os) throws IOException {
 		os.write((byte) x);
 		os.write((byte) (x >> 8));
 	}
 
-	public static void short2beb(final short x, final OutputStream os)
-			throws IOException {
+	public static void short2beb(final short x, final OutputStream os) throws IOException {
 		os.write((byte) (x >> 8));
 		os.write((byte) x);
 	}
@@ -247,8 +225,7 @@ public class ByteUtils {
 		buf[offset + 3] = (byte) x;
 	}
 
-	public static void int2beb(final int x, OutputStream out, final int n)
-			throws IOException {
+	public static void int2beb(final int x, OutputStream out, final int n) throws IOException {
 		switch (n) {
 		case 1:
 			out.write((byte) x);
@@ -273,24 +250,21 @@ public class ByteUtils {
 		}
 	}
 
-	public static void int2leb(final int x, final OutputStream os)
-			throws IOException {
+	public static void int2leb(final int x, final OutputStream os) throws IOException {
 		os.write((byte) x);
 		os.write((byte) (x >> 8));
 		os.write((byte) (x >> 16));
 		os.write((byte) (x >> 24));
 	}
 
-	public static void int2beb(final int x, final OutputStream os)
-			throws IOException {
+	public static void int2beb(final int x, final OutputStream os) throws IOException {
 		os.write((byte) (x >> 24));
 		os.write((byte) (x >> 16));
 		os.write((byte) (x >> 8));
 		os.write((byte) x);
 	}
 
-	public static byte[] int2minLeb(final int x)
-			throws IllegalArgumentException {
+	public static byte[] int2minLeb(final int x) throws IllegalArgumentException {
 		if (x <= 0xFFFF) {
 			if (x <= 0xFF) {
 				if (x < 0)
@@ -301,12 +275,10 @@ public class ByteUtils {
 		}
 		if (x <= 0xFFFFFF)
 			return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16) };
-		return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16),
-				(byte) (x >> 24) };
+		return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24) };
 	}
 
-	public static byte[] long2minLeb(final long x)
-			throws IllegalArgumentException {
+	public static byte[] long2minLeb(final long x) throws IllegalArgumentException {
 		if (x <= 0xFFFFFFFFFFFFFFL) {
 			if (x <= 0xFFFFFFFFFFFFL) {
 				if (x <= 0xFFFFFFFFFFL) {
@@ -320,32 +292,25 @@ public class ByteUtils {
 								}
 								return new byte[] { (byte) x, (byte) (x >> 8) };
 							}
-							return new byte[] { (byte) x, (byte) (x >> 8),
-									(byte) (x >> 16) };
+							return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16) };
 						}
-						return new byte[] { (byte) x, (byte) (x >> 8),
-								(byte) (x >> 16), (byte) (x >> 24) };
+						return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24) };
 					}
-					return new byte[] { (byte) x, (byte) (x >> 8),
-							(byte) (x >> 16), (byte) (x >> 24),
+					return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24),
 							(byte) (x >> 32) };
 				}
-				return new byte[] { (byte) x, (byte) (x >> 8),
-						(byte) (x >> 16), (byte) (x >> 24), (byte) (x >> 32),
+				return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24), (byte) (x >> 32),
 						(byte) (x >> 40) };
 			}
-			return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16),
-					(byte) (x >> 24), (byte) (x >> 32), (byte) (x >> 40),
-					(byte) (x >> 48) };
+			return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24), (byte) (x >> 32),
+					(byte) (x >> 40), (byte) (x >> 48) };
 		}
 
-		return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16),
-				(byte) (x >> 24), (byte) (x >> 32), (byte) (x >> 40),
-				(byte) (x >> 48), (byte) (x >> 56) };
+		return new byte[] { (byte) x, (byte) (x >> 8), (byte) (x >> 16), (byte) (x >> 24), (byte) (x >> 32),
+				(byte) (x >> 40), (byte) (x >> 48), (byte) (x >> 56) };
 	}
 
-	public static byte[] int2minBeb(final int x)
-			throws IllegalArgumentException {
+	public static byte[] int2minBeb(final int x) throws IllegalArgumentException {
 		if (x <= 0xFFFF) {
 			if (x <= 0xFF) {
 				if (x < 0)
@@ -356,8 +321,7 @@ public class ByteUtils {
 		}
 		if (x <= 0xFFFFFF)
 			return new byte[] { (byte) (x >> 16), (byte) (x >> 8), (byte) x };
-		return new byte[] { (byte) (x >> 24), (byte) (x >> 16),
-				(byte) (x >> 8), (byte) x };
+		return new byte[] { (byte) (x >> 24), (byte) (x >> 16), (byte) (x >> 8), (byte) x };
 	}
 
 	public static int ubyte2int(final byte x) {
@@ -387,38 +351,24 @@ public class ByteUtils {
 		case 2:
 			return (x[offset + 1] & 0xFFL) | ((x[offset] & 0xFFL) << 8);
 		case 3:
-			return (x[offset + 2] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8)
-					| ((x[offset] & 0xFFL) << 16);
+			return (x[offset + 2] & 0xFFL) | ((x[offset + 1] & 0xFFL) << 8) | ((x[offset] & 0xFFL) << 16);
 		case 4:
-			return (x[offset + 3] & 0xFFL) | ((x[offset + 2] & 0xFFL) << 8)
-					| ((x[offset + 1] & 0xFFL) << 16)
+			return (x[offset + 3] & 0xFFL) | ((x[offset + 2] & 0xFFL) << 8) | ((x[offset + 1] & 0xFFL) << 16)
 					| ((x[offset] & 0xFFL) << 24);
 		case 5:
-			return (x[offset + 4] & 0xFFL) | ((x[offset + 3] & 0xFFL) << 8)
-					| ((x[offset + 2] & 0xFFL) << 16)
-					| ((x[offset + 1] & 0xFFL) << 24)
-					| ((x[offset] & 0xFFL) << 32);
+			return (x[offset + 4] & 0xFFL) | ((x[offset + 3] & 0xFFL) << 8) | ((x[offset + 2] & 0xFFL) << 16)
+					| ((x[offset + 1] & 0xFFL) << 24) | ((x[offset] & 0xFFL) << 32);
 		case 6:
-			return (x[offset + 5] & 0xFFL) | ((x[offset + 4] & 0xFFL) << 8)
-					| ((x[offset + 3] & 0xFFL) << 16)
-					| ((x[offset + 2] & 0xFFL) << 24)
-					| ((x[offset + 1] & 0xFFL) << 32)
-					| ((x[offset] & 0xFFL) << 40);
+			return (x[offset + 5] & 0xFFL) | ((x[offset + 4] & 0xFFL) << 8) | ((x[offset + 3] & 0xFFL) << 16)
+					| ((x[offset + 2] & 0xFFL) << 24) | ((x[offset + 1] & 0xFFL) << 32) | ((x[offset] & 0xFFL) << 40);
 		case 7:
-			return (x[offset + 6] & 0xFFL) | ((x[offset + 5] & 0xFFL) << 8)
-					| ((x[offset + 4] & 0xFFL) << 16)
-					| ((x[offset + 3] & 0xFFL) << 24)
-					| ((x[offset + 2] & 0xFFL) << 32)
-					| ((x[offset + 1] & 0xFFL) << 40)
-					| ((x[offset] & 0xFFL) << 48);
+			return (x[offset + 6] & 0xFFL) | ((x[offset + 5] & 0xFFL) << 8) | ((x[offset + 4] & 0xFFL) << 16)
+					| ((x[offset + 3] & 0xFFL) << 24) | ((x[offset + 2] & 0xFFL) << 32)
+					| ((x[offset + 1] & 0xFFL) << 40) | ((x[offset] & 0xFFL) << 48);
 		case 8:
-			return (x[offset + 7] & 0xFFL) | ((x[offset + 6] & 0xFFL) << 8)
-					| ((x[offset + 5] & 0xFFL) << 16)
-					| ((x[offset + 4] & 0xFFL) << 24)
-					| ((x[offset + 3] & 0xFFL) << 32)
-					| ((x[offset + 2] & 0xFFL) << 40)
-					| ((x[offset + 1] & 0xFFL) << 48)
-					| ((x[offset] & 0xFFL) << 56);
+			return (x[offset + 7] & 0xFFL) | ((x[offset + 6] & 0xFFL) << 8) | ((x[offset + 5] & 0xFFL) << 16)
+					| ((x[offset + 4] & 0xFFL) << 24) | ((x[offset + 3] & 0xFFL) << 32)
+					| ((x[offset + 2] & 0xFFL) << 40) | ((x[offset + 1] & 0xFFL) << 48) | ((x[offset] & 0xFFL) << 56);
 		default:
 			throw new IllegalArgumentException("No bytes specified");
 		}
@@ -437,8 +387,7 @@ public class ByteUtils {
 			throw new IllegalArgumentException("value is too big");
 		}
 
-		return new byte[] { (byte) ((v >>> 8) & 0xFF),
-				(byte) ((v >>> 0) & 0xFF) };
+		return new byte[] { (byte) ((v >>> 8) & 0xFF), (byte) ((v >>> 0) & 0xFF) };
 	}
 
 	public static int byteArrayToSmallInt(byte[] arr, int offset) {
@@ -452,16 +401,14 @@ public class ByteUtils {
 		if (v > 16777215) {
 			throw new IllegalArgumentException("value is too big");
 		}
-		return new byte[] { (byte) ((v >>> 16) & 0xFF),
-				(byte) ((v >>> 8) & 0xFF), (byte) ((v >>> 0) & 0xFF) };
+		return new byte[] { (byte) ((v >>> 16) & 0xFF), (byte) ((v >>> 8) & 0xFF), (byte) ((v >>> 0) & 0xFF) };
 	}
 
 	public static int tripleByteArrayToSmallInt(byte[] arr, int offset) {
 		if (arr == null || arr.length - offset < 2) {
 			throw new IllegalArgumentException("Invalid arguments");
 		}
-		return ((arr[offset] & 0xFF) << 16) + ((arr[1 + offset] & 0xFF) << 8)
-				+ (arr[2 + offset] & 0xFF);
+		return ((arr[offset] & 0xFF) << 16) + ((arr[1 + offset] & 0xFF) << 8) + (arr[2 + offset] & 0xFF);
 	}
 
 	public static byte[] getByteArrayChecksum(byte[] arr) {
@@ -549,8 +496,7 @@ public class ByteUtils {
 
 	public static byte[] calcPacketLength(byte[] msg) {
 		int msgLen = msg.length;
-		byte[] len = { (byte) ((msgLen >> 24) & 0xFF),
-				(byte) ((msgLen >> 16) & 0xFF), (byte) ((msgLen >> 8) & 0xFF),
+		byte[] len = { (byte) ((msgLen >> 24) & 0xFF), (byte) ((msgLen >> 16) & 0xFF), (byte) ((msgLen >> 8) & 0xFF),
 				(byte) ((msgLen) & 0xFF) };
 		return len;
 	}
@@ -596,8 +542,7 @@ public class ByteUtils {
 		if (arg.toString().trim().matches("-?\\d+(\\.\\d+)?")) {
 			data = new BigInteger(arg.toString().trim()).toByteArray();
 		} else if (arg.toString().trim().matches("0[xX][0-9a-fA-F]+")) {
-			data = new BigInteger(arg.toString().trim().substring(2), 16)
-					.toByteArray();
+			data = new BigInteger(arg.toString().trim().substring(2), 16).toByteArray();
 		} else {
 			data = arg.toString().trim().getBytes();
 		}
@@ -660,8 +605,7 @@ public class ByteUtils {
 		}
 
 		byte[] result = new byte[data.length - firstNonZero];
-		System.arraycopy(data, firstNonZero, result, 0, data.length
-				- firstNonZero);
+		System.arraycopy(data, firstNonZero, result, 0, data.length - firstNonZero);
 
 		return result;
 	}
@@ -719,8 +663,7 @@ public class ByteUtils {
 		}
 		final StringBuilder sb = new StringBuilder(2 + 2 * byteArray.length);
 		for (final byte b : byteArray) {
-			sb.append(hexChars.charAt((b & 0xF0) >> 4)).append(
-					hexChars.charAt((b & 0x0F)));
+			sb.append(hexChars.charAt((b & 0xF0) >> 4)).append(hexChars.charAt((b & 0x0F)));
 		}
 		return sb.toString();
 	}
@@ -762,12 +705,10 @@ public class ByteUtils {
 	}
 
 	public static byte setBitAt(int offset, boolean bitValue, byte aByte) {
-		return (byte) ((bitValue) ? (aByte | (1 << offset))
-				: (aByte & ~(1 << offset)));
+		return (byte) ((bitValue) ? (aByte | (1 << offset)) : (aByte & ~(1 << offset)));
 	}
 
-	public static byte[] readFully(Path filePath) throws FileNotFoundException,
-			IOException {
+	public static byte[] readFully(Path filePath) throws FileNotFoundException, IOException {
 		return readFully(new FileInputStream(filePath.toFile()));
 	}
 
@@ -781,15 +722,12 @@ public class ByteUtils {
 		return output.toByteArray();
 	}
 
-	public static void writeFully(Path filePath, byte[] bytes)
-			throws IOException {
+	public static void writeFully(Path filePath, byte[] bytes) throws IOException {
 		writeFully(new FileOutputStream(filePath.toFile()), bytes);
 	}
 
-	public static void writeFully(OutputStream outputStream, byte[] bytes)
-			throws IOException {
-		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-				outputStream)) {
+	public static void writeFully(OutputStream outputStream, byte[] bytes) throws IOException {
+		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
 			bufferedOutputStream.write(bytes);
 			bufferedOutputStream.flush();
 		}

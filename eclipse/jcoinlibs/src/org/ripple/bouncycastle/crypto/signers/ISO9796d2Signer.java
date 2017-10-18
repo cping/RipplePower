@@ -374,8 +374,6 @@ public class ISO9796d2Signer
             delta -= mR;
             
             System.arraycopy(mBuf, 0, block, delta, mR);
-
-            recoveredMessage = new byte[mR];
         }
         else
         {
@@ -383,8 +381,6 @@ public class ISO9796d2Signer
             delta -= messageLength;
             
             System.arraycopy(mBuf, 0, block, delta, messageLength);
-
-            recoveredMessage = new byte[messageLength];
         }
         
         if ((delta - 1) > 0)
@@ -404,9 +400,6 @@ public class ISO9796d2Signer
         }
 
         byte[]  b = cipher.processBlock(block, 0, block.length);
-
-        fullMessage = (header & 0x20) == 0;
-        System.arraycopy(mBuf, 0, recoveredMessage, 0, recoveredMessage.length);
 
         clearBlock(mBuf);
         clearBlock(block);
@@ -613,8 +606,7 @@ public class ISO9796d2Signer
     }
 
     /**
-     * Return a reference to the recoveredMessage message, either as it was added
-     * to a just generated signature, or extracted from a verified one.
+     * Return a reference to the recoveredMessage message.
      * 
      * @return the full/partial recoveredMessage message.
      * @see org.ripple.bouncycastle.crypto.SignerWithRecovery#getRecoveredMessage()

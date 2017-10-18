@@ -13,13 +13,12 @@ import com.ripple.client.responses.Response;
 
 public class RegularKey {
 
-	public static void set(final String seed, final IssuedCurrency currency,
-			final String fee, final Rollback back) {
+	public static void set(final String seed, final IssuedCurrency currency, final String fee, final Rollback back) {
 		TrustSet.set(new RippleSeedAddress(seed), currency, fee, back);
 	}
 
-	public static void set(final RippleSeedAddress seed,
-			final IssuedCurrency currency, final String fee, final Rollback back) {
+	public static void set(final RippleSeedAddress seed, final IssuedCurrency currency, final String fee,
+			final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -28,13 +27,10 @@ public class RegularKey {
 				try {
 					long sequence = TransactionUtils.getSequence(message);
 					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.REGULAR_KEY_SET.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.REGULAR_KEY_SET.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.LimitAmount, currency);
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					item.putField(BinaryFormatField.Sequence, sequence);
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
@@ -53,13 +49,12 @@ public class RegularKey {
 
 	}
 
-	public static void setTxJson(final String seed, final String message,
-			final String fee, final Rollback back) {
+	public static void setTxJson(final String seed, final String message, final String fee, final Rollback back) {
 		RegularKey.setTxJson(new RippleSeedAddress(seed), message, fee, back);
 	}
 
-	public static void setTxJson(final RippleSeedAddress seed,
-			final String message, final String fee, final Rollback back) {
+	public static void setTxJson(final RippleSeedAddress seed, final String message, final String fee,
+			final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);

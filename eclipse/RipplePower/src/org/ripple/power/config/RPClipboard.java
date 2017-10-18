@@ -11,15 +11,12 @@ public class RPClipboard implements ClipboardOwner {
 
 	public String getClipboardContents() {
 		String result = "";
-		java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit()
-				.getSystemClipboard();
+		java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
-		boolean hasTransferableText = (contents != null)
-				&& contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+		boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
 		if (hasTransferableText) {
 			try {
-				result = (String) contents
-						.getTransferData(DataFlavor.stringFlavor);
+				result = (String) contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
 			}
 		}
@@ -28,8 +25,7 @@ public class RPClipboard implements ClipboardOwner {
 
 	public void setClipboardContents(String content) {
 		StringSelection stringSelection = new StringSelection(content);
-		java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit()
-				.getSystemClipboard();
+		java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, this);
 	}
 

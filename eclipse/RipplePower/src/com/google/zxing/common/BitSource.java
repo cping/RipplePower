@@ -103,8 +103,7 @@ public final class BitSource {
 			if (numBits > 0) {
 				int bitsToNotRead = 8 - numBits;
 				int mask = (0xFF >> bitsToNotRead) << bitsToNotRead;
-				result = (result << numBits)
-						| ((bytes[byteOffset] & mask) >> bitsToNotRead);
+				result = (result << numBits) | ((bytes[byteOffset] & mask) >> bitsToNotRead);
 				bitOffset += numBits;
 			}
 		}

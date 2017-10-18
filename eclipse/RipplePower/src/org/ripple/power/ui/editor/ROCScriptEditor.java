@@ -35,8 +35,7 @@ public class ROCScriptEditor extends JPanel {
 			if (f.isDirectory()) {
 				return true;
 			}
-			return f.getName().endsWith(".txt") || f.getName().endsWith(".roc")
-					|| f.getName().endsWith(".script");
+			return f.getName().endsWith(".txt") || f.getName().endsWith(".roc") || f.getName().endsWith(".script");
 		}
 
 		public String getDescription() {
@@ -87,15 +86,12 @@ public class ROCScriptEditor extends JPanel {
 			_jScrollPanel.getViewport().add(_textEdit);
 			_jScrollPanel.setBackground(new Color(70, 70, 70));
 			_jScrollPanel.setForeground(Color.WHITE);
-			_jScrollPanel.setBorder(BorderFactory
-					.createLineBorder(LColor.black));
+			_jScrollPanel.setBorder(BorderFactory.createLineBorder(LColor.black));
 
 			_textEdit.setDocument(new SourceDocument());
-			_textEdit.getDocument().addDocumentListener(
-					new ROCEditor_Edit_documentAdapter(this));
+			_textEdit.getDocument().addDocumentListener(new ROCEditor_Edit_documentAdapter(this));
 
-			_textEdit.getDocument().addUndoableEditListener(
-					new ROCEditorListener(manager));
+			_textEdit.getDocument().addUndoableEditListener(new ROCEditorListener(manager));
 
 			this.getActionMap().put("ctrl_s", new AbstractAction("ctrl_s") {
 				/**
@@ -113,27 +109,24 @@ public class ROCScriptEditor extends JPanel {
 
 				}
 			});
-			this.getInputMap().put(KeyStroke.getKeyStroke("control S"),
-					"ctrl_s");
-			_textEdit.getActionMap().put("ctrl_s",
-					new AbstractAction("ctrl_s") {
-						/**
-				 * 
-				 */
-						private static final long serialVersionUID = 1L;
+			this.getInputMap().put(KeyStroke.getKeyStroke("control S"), "ctrl_s");
+			_textEdit.getActionMap().put("ctrl_s", new AbstractAction("ctrl_s") {
+				/**
+				* 
+				*/
+				private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent evt) {
-							if (file == null) {
-								saveAs();
-							} else {
-								saveFile();
-							}
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					if (file == null) {
+						saveAs();
+					} else {
+						saveFile();
+					}
 
-						}
-					});
-			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control S"),
-					"ctrl_s");
+				}
+			});
+			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control S"), "ctrl_s");
 
 			this.getActionMap().put("ctrl_o", new AbstractAction("ctrl_o") {
 				/**
@@ -146,76 +139,67 @@ public class ROCScriptEditor extends JPanel {
 					openNew();
 				}
 			});
-			this.getInputMap().put(KeyStroke.getKeyStroke("control O"),
-					"ctrl_o");
-			_textEdit.getActionMap().put("ctrl_o",
-					new AbstractAction("ctrl_o") {
-						/**
-				 * 
-				 */
-						private static final long serialVersionUID = 1L;
+			this.getInputMap().put(KeyStroke.getKeyStroke("control O"), "ctrl_o");
+			_textEdit.getActionMap().put("ctrl_o", new AbstractAction("ctrl_o") {
+				/**
+				* 
+				*/
+				private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent evt) {
-							openNew();
-						}
-					});
-			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control O"),
-					"ctrl_o");
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					openNew();
+				}
+			});
+			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control O"), "ctrl_o");
 
 			_textEdit.setCaretPosition(0);
 
-			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control Z"),
-					"ctrl_z");
-			_textEdit.getActionMap().put("ctrl_z",
-					new AbstractAction("ctrl_z") {
+			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "ctrl_z");
+			_textEdit.getActionMap().put("ctrl_z", new AbstractAction("ctrl_z") {
 
-						/**
-				 * 
-				 */
-						private static final long serialVersionUID = 1L;
+				/**
+				* 
+				*/
+				private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							undo();
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					undo();
 
-						}
+				}
 
-					});
+			});
 
-			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control Y"),
-					"ctrl_y");
-			_textEdit.getActionMap().put("ctrl_y",
-					new AbstractAction("ctrl_y") {
+			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "ctrl_y");
+			_textEdit.getActionMap().put("ctrl_y", new AbstractAction("ctrl_y") {
 
-						/**
-				 * 
-				 */
-						private static final long serialVersionUID = 1L;
+				/**
+				* 
+				*/
+				private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							redo();
-						}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					redo();
+				}
 
-					});
+			});
 
-			_textEdit.getInputMap().put(
-					KeyStroke.getKeyStroke("control shift Z"), "ctrl_shift_z");
-			_textEdit.getActionMap().put("ctrl_shift_z",
-					new AbstractAction("ctrl_shift_z") {
+			_textEdit.getInputMap().put(KeyStroke.getKeyStroke("control shift Z"), "ctrl_shift_z");
+			_textEdit.getActionMap().put("ctrl_shift_z", new AbstractAction("ctrl_shift_z") {
 
-						/**
-				 * 
-				 */
-						private static final long serialVersionUID = 1L;
+				/**
+				* 
+				*/
+				private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							redo();
-						}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					redo();
+				}
 
-					});
+			});
 			_textEdit.setText("#ROC Script\n");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -259,9 +243,8 @@ public class ROCScriptEditor extends JPanel {
 	public boolean close() {
 		boolean savedSuccessfully = true;
 		if (_isEdited) {
-			if (UIRes.showConfirmMessage(this.getParent().getParent(),"Confirm",
-					"Do you want to save changes to the current file?",
-					 "YES","NO") == 0) {
+			if (UIRes.showConfirmMessage(this.getParent().getParent(), "Confirm",
+					"Do you want to save changes to the current file?", "YES", "NO") == 0) {
 				savedSuccessfully = this.saveFile();
 			}
 		}
@@ -312,8 +295,7 @@ public class ROCScriptEditor extends JPanel {
 	public boolean saveFile() {
 		try {
 			if (file != null) {
-				PrintWriter out = new PrintWriter(new BufferedWriter(
-						new FileWriter(file)));
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 				out.print(_textEdit.getText());
 				out.flush();
 				out.close();

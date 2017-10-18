@@ -32,7 +32,6 @@ import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.DERT61String;
 import org.ripple.bouncycastle.asn1.DERUTF8String;
 import org.ripple.bouncycastle.asn1.DERVisibleString;
-import org.ripple.bouncycastle.util.Strings;
 import org.ripple.bouncycastle.util.encoders.Hex;
 
 public class ASN1Dump
@@ -51,7 +50,7 @@ public class ASN1Dump
         ASN1Primitive obj,
         StringBuffer    buf)
     {
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
         if (obj instanceof ASN1Sequence)
         {
             Enumeration     e = ((ASN1Sequence)obj).getObjects();
@@ -354,7 +353,7 @@ public class ASN1Dump
 
     private static String dumpBinaryDataAsString(String indent, byte[] bytes)
     {
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
         StringBuffer buf = new StringBuffer();
 
         indent += TAB;

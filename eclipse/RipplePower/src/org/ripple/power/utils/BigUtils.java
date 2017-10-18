@@ -27,12 +27,10 @@ public final class BigUtils {
 	public static long ITER = 1000;
 	public static MathContext context = new MathContext(100);
 	private static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_EVEN;
-	public static BigDecimal PI_DIV_180 = new BigDecimal(
-			"3.1415926535897932384626433832795").divide(
-			BigDecimal.valueOf(180), 32, BigDecimal.ROUND_HALF_UP);
-	public static BigDecimal PI_DIV_200 = new BigDecimal(
-			"3.1415926535897932384626433832795").divide(
-			BigDecimal.valueOf(200), 32, BigDecimal.ROUND_HALF_UP);
+	public static BigDecimal PI_DIV_180 = new BigDecimal("3.1415926535897932384626433832795")
+			.divide(BigDecimal.valueOf(180), 32, BigDecimal.ROUND_HALF_UP);
+	public static BigDecimal PI_DIV_200 = new BigDecimal("3.1415926535897932384626433832795")
+			.divide(BigDecimal.valueOf(200), 32, BigDecimal.ROUND_HALF_UP);
 	public static BigDecimal EPS = BigDecimal.ONE.scaleByPowerOfTen(-100);
 
 	public static final BigInteger TWO = new BigInteger("2");
@@ -119,12 +117,10 @@ public final class BigUtils {
 			twoCount++;
 			m = m.divide(TWO);
 		}
-		int J2n = n.mod(EIGHT).equals(BigInteger.ONE)
-				|| n.mod(EIGHT).equals(SEVEN) ? 1 : -1;
+		int J2n = n.mod(EIGHT).equals(BigInteger.ONE) || n.mod(EIGHT).equals(SEVEN) ? 1 : -1;
 		int rule8multiplier = (twoCount % 2 == 0) ? 1 : J2n;
 		int tmp = Jacobi(n, m);
-		int rule6multiplier = n.mod(FOUR).equals(BigInteger.ONE)
-				|| m.mod(FOUR).equals(BigInteger.ONE) ? 1 : -1;
+		int rule6multiplier = n.mod(FOUR).equals(BigInteger.ONE) || m.mod(FOUR).equals(BigInteger.ONE) ? 1 : -1;
 		return tmp * rule6multiplier * rule8multiplier;
 	}
 
@@ -209,16 +205,13 @@ public final class BigUtils {
 			BigDecimal xToIm1 = intPower(x, index - 1, sp1);
 
 			// x^index
-			BigDecimal xToI = x.multiply(xToIm1).setScale(sp1,
-					BigDecimal.ROUND_HALF_EVEN);
+			BigDecimal xToI = x.multiply(xToIm1).setScale(sp1, BigDecimal.ROUND_HALF_EVEN);
 
 			// n + (index-1)*(x^index)
-			BigDecimal numerator = n.add(im1.multiply(xToI)).setScale(sp1,
-					BigDecimal.ROUND_HALF_EVEN);
+			BigDecimal numerator = n.add(im1.multiply(xToI)).setScale(sp1, BigDecimal.ROUND_HALF_EVEN);
 
 			// (index*(x^(index-1))
-			BigDecimal denominator = i.multiply(xToIm1).setScale(sp1,
-					BigDecimal.ROUND_HALF_EVEN);
+			BigDecimal denominator = i.multiply(xToIm1).setScale(sp1, BigDecimal.ROUND_HALF_EVEN);
 
 			// x = (n + (index-1)*(x^index)) / (index*(x^(index-1)))
 			xPrev = x;
@@ -256,8 +249,7 @@ public final class BigUtils {
 			BigDecimal lnRoot = lnNewton(root, scale);
 
 			// magnitude*ln(x^(1/magnitude))
-			return BigDecimal.valueOf(magnitude).multiply(lnRoot)
-					.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+			return BigDecimal.valueOf(magnitude).multiply(lnRoot).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 		}
 	}
 
@@ -310,8 +302,7 @@ public final class BigUtils {
 			denominator = denominator.multiply(BigDecimal.valueOf(z - 1));
 			numerator = numerator.multiply(xSquared);
 
-			BigDecimal term = numerator.divide(denominator, SCALE + 5,
-					ROUNDING_MODE);
+			BigDecimal term = numerator.divide(denominator, SCALE + 5, ROUNDING_MODE);
 
 			if (i % 2 == 0) {
 				currentValue = currentValue.subtract(term);
@@ -341,8 +332,7 @@ public final class BigUtils {
 			denominator = denominator.multiply(BigDecimal.valueOf(z - 1));
 			numerator = numerator.multiply(xSquared);
 
-			BigDecimal term = numerator.divide(denominator, SCALE + 5,
-					ROUNDING_MODE);
+			BigDecimal term = numerator.divide(denominator, SCALE + 5, ROUNDING_MODE);
 
 			if (i % 2 == 0) {
 				currentValue = currentValue.subtract(term);
@@ -401,8 +391,7 @@ public final class BigUtils {
 		BigDecimal ans = new BigDecimal(sb.toString());
 
 		// Round the number to the correct number of decimal places.
-		ans = ans.round(new MathContext(ans.precision() - ans.scale() + SCALE,
-				RoundingMode.HALF_EVEN));
+		ans = ans.round(new MathContext(ans.precision() - ans.scale() + SCALE, RoundingMode.HALF_EVEN));
 		return ans;
 	}
 
@@ -417,11 +406,8 @@ public final class BigUtils {
 		// successive iteration's value.
 
 		for (int i = 0; i < ITER; i++) {
-			x = x.subtract(
-					x.pow(3, mc)
-							.subtract(b, mc)
-							.divide(new BigDecimal("3", mc).multiply(
-									x.pow(2, mc), mc), mc), mc);
+			x = x.subtract(x.pow(3, mc).subtract(b, mc).divide(new BigDecimal("3", mc).multiply(x.pow(2, mc), mc), mc),
+					mc);
 		}
 		return x;
 	}
@@ -447,8 +433,7 @@ public final class BigUtils {
 	public static BigDecimal intPower(BigDecimal x, long exponent, int scale) {
 		// If the exponent is negative, compute 1/(x^-exponent).
 		if (exponent < 0) {
-			return BigDecimal.valueOf(1).divide(intPower(x, -exponent, scale),
-					scale, BigDecimal.ROUND_HALF_EVEN);
+			return BigDecimal.valueOf(1).divide(intPower(x, -exponent, scale), scale, BigDecimal.ROUND_HALF_EVEN);
 		}
 
 		BigDecimal power = BigDecimal.valueOf(1);
@@ -458,8 +443,7 @@ public final class BigUtils {
 
 			// Is the rightmost bit a 1?
 			if ((exponent & 1) == 1) {
-				power = power.multiply(x).setScale(scale,
-						BigDecimal.ROUND_HALF_EVEN);
+				power = power.multiply(x).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 			}
 
 			// Square x and shift exponent 1 bit to the right.
@@ -490,8 +474,7 @@ public final class BigUtils {
 
 		// If x is negative, return 1/(e^-x).
 		else if (x.signum() == -1) {
-			return BigDecimal.valueOf(1).divide(exp(x.negate(), scale), scale,
-					BigDecimal.ROUND_HALF_EVEN);
+			return BigDecimal.valueOf(1).divide(exp(x.negate(), scale), scale, BigDecimal.ROUND_HALF_EVEN);
 		}
 
 		// Compute the whole part of x.
@@ -506,8 +489,7 @@ public final class BigUtils {
 		BigDecimal xFraction = x.subtract(xWhole);
 
 		// z = 1 + fraction/whole
-		BigDecimal z = BigDecimal.valueOf(1).add(
-				xFraction.divide(xWhole, scale, BigDecimal.ROUND_HALF_EVEN));
+		BigDecimal z = BigDecimal.valueOf(1).add(xFraction.divide(xWhole, scale, BigDecimal.ROUND_HALF_EVEN));
 
 		// t = e^z
 		BigDecimal t = expTaylor(z, scale);
@@ -519,14 +501,12 @@ public final class BigUtils {
 		// If whole > Long.MAX_VALUE, then first compute products
 		// of e^Long.MAX_VALUE.
 		while (xWhole.compareTo(maxLong) >= 0) {
-			result = result.multiply(intPower(t, Long.MAX_VALUE, scale))
-					.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+			result = result.multiply(intPower(t, Long.MAX_VALUE, scale)).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 			xWhole = xWhole.subtract(maxLong);
 
 			Thread.yield();
 		}
-		return result.multiply(intPower(t, xWhole.longValue(), scale))
-				.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+		return result.multiply(intPower(t, xWhole.longValue(), scale)).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 	}
 
 	/**
@@ -551,15 +531,13 @@ public final class BigUtils {
 		int i = 2;
 		do {
 			// x^i
-			xPower = xPower.multiply(x).setScale(scale,
-					BigDecimal.ROUND_HALF_EVEN);
+			xPower = xPower.multiply(x).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 
 			// i!
 			factorial = factorial.multiply(BigDecimal.valueOf(i));
 
 			// x^i/i!
-			BigDecimal term = xPower.divide(factorial, scale,
-					BigDecimal.ROUND_HALF_EVEN);
+			BigDecimal term = xPower.divide(factorial, scale, BigDecimal.ROUND_HALF_EVEN);
 
 			// sum = sum + x^i/i!
 			sumPrev = sum;

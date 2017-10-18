@@ -8,29 +8,6 @@ import java.util.Vector;
 
 public final class Strings
 {
-    private static String LINE_SEPARATOR;
-
-    static
-    {
-       try
-       {
-           // the easy way
-           LINE_SEPARATOR = System.getProperty("line.separator");
-       }
-       catch (Exception e)
-       {
-           try
-           {
-               // the harder way
-               LINE_SEPARATOR = String.format("%n");
-           }
-           catch (Exception ef)
-           {
-               LINE_SEPARATOR = "\n";   // we're desperate, use this...
-           }
-       }
-    }
-
     public static String fromUTF8ByteArray(byte[] bytes)
     {
         int i = 0;
@@ -70,7 +47,7 @@ public final class Strings
 
             if ((bytes[i] & 0xf0) == 0xf0)
             {
-                int codePoint = ((bytes[i] & 0x03) << 18) | ((bytes[i + 1] & 0x3F) << 12) | ((bytes[i + 2] & 0x3F) << 6) | (bytes[i + 3] & 0x3F);
+                int codePoint = ((bytes[i] & 0x03) << 18) | ((bytes[i+1] & 0x3F) << 12) | ((bytes[i+2] & 0x3F) << 6) | (bytes[i+3] & 0x3F);
                 int U = codePoint - 0x10000;
                 char W1 = (char)(0xD800 | (U >> 10));
                 char W2 = (char)(0xDC00 | (U & 0x3FF));
@@ -81,7 +58,7 @@ public final class Strings
             else if ((bytes[i] & 0xe0) == 0xe0)
             {
                 ch = (char)(((bytes[i] & 0x0f) << 12)
-                    | ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f));
+                        | ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f));
                 i += 3;
             }
             else if ((bytes[i] & 0xd0) == 0xd0)
@@ -105,7 +82,7 @@ public final class Strings
 
         return new String(cs);
     }
-
+    
     public static byte[] toUTF8ByteArray(String string)
     {
         return toUTF8ByteArray(string.toCharArray());
@@ -123,7 +100,7 @@ public final class Strings
         {
             throw new IllegalStateException("cannot encode string to byte array!");
         }
-
+        
         return bOut.toByteArray();
     }
 
@@ -183,7 +160,7 @@ public final class Strings
 
     /**
      * A locale independent version of toUpperCase.
-     *
+     * 
      * @param string input to be converted
      * @return a US Ascii uppercase version
      */
@@ -191,7 +168,7 @@ public final class Strings
     {
         boolean changed = false;
         char[] chars = string.toCharArray();
-
+        
         for (int i = 0; i != chars.length; i++)
         {
             char ch = chars[i];
@@ -201,18 +178,18 @@ public final class Strings
                 chars[i] = (char)(ch - 'a' + 'A');
             }
         }
-
+        
         if (changed)
         {
             return new String(chars);
         }
-
+        
         return string;
     }
-
+    
     /**
      * A locale independent version of toLowerCase.
-     *
+     * 
      * @param string input to be converted
      * @return a US ASCII lowercase version
      */
@@ -220,7 +197,7 @@ public final class Strings
     {
         boolean changed = false;
         char[] chars = string.toCharArray();
-
+        
         for (int i = 0; i != chars.length; i++)
         {
             char ch = chars[i];
@@ -230,12 +207,12 @@ public final class Strings
                 chars[i] = (char)(ch - 'A' + 'a');
             }
         }
-
+        
         if (changed)
         {
             return new String(chars);
         }
-
+        
         return string;
     }
 
@@ -307,7 +284,7 @@ public final class Strings
 
     public static String[] split(String input, char delimiter)
     {
-        Vector v = new Vector();
+        Vector           v = new Vector();
         boolean moreTokens = true;
         String subString;
 
@@ -339,11 +316,6 @@ public final class Strings
     public static StringList newList()
     {
         return new StringListImpl();
-    }
-
-    public static String lineSeparator()
-    {
-        return LINE_SEPARATOR;
     }
 
     private static class StringListImpl

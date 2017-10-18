@@ -6,7 +6,6 @@ import org.ripple.bouncycastle.asn1.ASN1Primitive;
 import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERSequence;
-import org.ripple.bouncycastle.util.Strings;
 
 public class CRLDistPoint
     extends ASN1Object
@@ -85,7 +84,7 @@ public class CRLDistPoint
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        String       sep = Strings.lineSeparator();
+        String       sep = System.getProperty("line.separator");
 
         buf.append("CRLDistPoint:");
         buf.append(sep);

@@ -81,12 +81,10 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 			if ((height & BLOCK_SIZE_MASK) != 0) {
 				subHeight++;
 			}
-			int[][] blackPoints = calculateBlackPoints(luminances, subWidth,
-					subHeight, width, height);
+			int[][] blackPoints = calculateBlackPoints(luminances, subWidth, subHeight, width, height);
 
 			BitMatrix newMatrix = new BitMatrix(width, height);
-			calculateThresholdForBlock(luminances, subWidth, subHeight, width,
-					height, blackPoints, newMatrix);
+			calculateThresholdForBlock(luminances, subWidth, subHeight, width, height, blackPoints, newMatrix);
 			matrix = newMatrix;
 		} else {
 			// If the image is too small, fall back to the global histogram
@@ -107,9 +105,8 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 	 * (fractional blocks are computed based on the last pixels in the
 	 * row/column which are also used in the previous block).
 	 */
-	private static void calculateThresholdForBlock(byte[] luminances,
-			int subWidth, int subHeight, int width, int height,
-			int[][] blackPoints, BitMatrix matrix) {
+	private static void calculateThresholdForBlock(byte[] luminances, int subWidth, int subHeight, int width,
+			int height, int[][] blackPoints, BitMatrix matrix) {
 		for (int y = 0; y < subHeight; y++) {
 			int yoffset = y << BLOCK_SIZE_POWER;
 			int maxYOffset = height - BLOCK_SIZE;
@@ -127,13 +124,11 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 				int sum = 0;
 				for (int z = -2; z <= 2; z++) {
 					int[] blackRow = blackPoints[top + z];
-					sum += blackRow[left - 2] + blackRow[left - 1]
-							+ blackRow[left] + blackRow[left + 1]
+					sum += blackRow[left - 2] + blackRow[left - 1] + blackRow[left] + blackRow[left + 1]
 							+ blackRow[left + 2];
 				}
 				int average = sum / 25;
-				thresholdBlock(luminances, xoffset, yoffset, average, width,
-						matrix);
+				thresholdBlock(luminances, xoffset, yoffset, average, width, matrix);
 			}
 		}
 	}
@@ -145,8 +140,8 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 	/**
 	 * Applies a single threshold to a block of pixels.
 	 */
-	private static void thresholdBlock(byte[] luminances, int xoffset,
-			int yoffset, int threshold, int stride, BitMatrix matrix) {
+	private static void thresholdBlock(byte[] luminances, int xoffset, int yoffset, int threshold, int stride,
+			BitMatrix matrix) {
 		for (int y = 0, offset = yoffset * stride + xoffset; y < BLOCK_SIZE; y++, offset += stride) {
 			for (int x = 0; x < BLOCK_SIZE; x++) {
 				// Comparison needs to be <= so that black == 0 pixels are black
@@ -164,8 +159,7 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 	 * http://
 	 * groups.google.com/group/zxing/browse_thread/thread/d06efa2c35a7ddc0
 	 */
-	private static int[][] calculateBlackPoints(byte[] luminances,
-			int subWidth, int subHeight, int width, int height) {
+	private static int[][] calculateBlackPoints(byte[] luminances, int subWidth, int subHeight, int width, int height) {
 		int[][] blackPoints = new int[subHeight][subWidth];
 		for (int y = 0; y < subHeight; y++) {
 			int yoffset = y << BLOCK_SIZE_POWER;
@@ -235,8 +229,8 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 
 						// The (min < bp) is arbitrary but works better than
 						// other heuristics that were tried.
-						int averageNeighborBlackPoint = (blackPoints[y - 1][x]
-								+ (2 * blackPoints[y][x - 1]) + blackPoints[y - 1][x - 1]) / 4;
+						int averageNeighborBlackPoint = (blackPoints[y - 1][x] + (2 * blackPoints[y][x - 1])
+								+ blackPoints[y - 1][x - 1]) / 4;
 						if (min < averageNeighborBlackPoint) {
 							average = averageNeighborBlackPoint;
 						}

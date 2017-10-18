@@ -216,8 +216,8 @@ public class Command extends Conversion implements Serializable, LRelease {
 		this.elseif_bool = false;
 	}
 
-	private boolean setupIF(String commandString, String nowPosFlagName,
-			HashMap setEnvironmentList, ArrayMap conditionEnvironmentList) {
+	private boolean setupIF(String commandString, String nowPosFlagName, HashMap setEnvironmentList,
+			ArrayMap conditionEnvironmentList) {
 		boolean result = false;
 		conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
 		try {
@@ -229,10 +229,8 @@ public class Command extends Conversion implements Serializable, LRelease {
 			if (size <= 4) {
 				valueA = (String) temps.get(1);
 				valueB = (String) temps.get(3);
-				valueA = setEnvironmentList.get(valueA) == null ? valueA
-						: setEnvironmentList.get(valueA);
-				valueB = setEnvironmentList.get(valueB) == null ? valueB
-						: setEnvironmentList.get(valueB);
+				valueA = setEnvironmentList.get(valueA) == null ? valueA : setEnvironmentList.get(valueA);
+				valueB = setEnvironmentList.get(valueB) == null ? valueB : setEnvironmentList.get(valueB);
 				condition = (String) temps.get(2);
 			} else {
 				int count = 0;
@@ -264,43 +262,38 @@ public class Command extends Conversion implements Serializable, LRelease {
 			}
 			// 无法判定
 			if (valueA == null || valueB == null) {
-				conditionEnvironmentList
-						.put(nowPosFlagName, new Boolean(false));
+				conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
 			}
 
 			// 相等
 			if ("==".equals(condition)) {
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = valueA.toString().equals(valueB.toString())));
+				conditionEnvironmentList.put(nowPosFlagName,
+						new Boolean(result = valueA.toString().equals(valueB.toString())));
 				// 非等
 			} else if ("!=".equals(condition)) {
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = !valueA.toString().equals(valueB.toString())));
+				conditionEnvironmentList.put(nowPosFlagName,
+						new Boolean(result = !valueA.toString().equals(valueB.toString())));
 				// 大于
 			} else if (">".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = numberA > numberB));
+				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA > numberB));
 				// 小于
 			} else if ("<".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = numberA < numberB));
+				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA < numberB));
 
 				// 大于等于
 			} else if (">=".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = numberA >= numberB));
+				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA >= numberB));
 				// 小于等于
 			} else if ("<=".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-						result = numberA <= numberB));
+				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA <= numberB));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -384,11 +377,9 @@ public class Command extends Conversion implements Serializable, LRelease {
 	 * @param endString
 	 * @return
 	 */
-	public static String getNameTag(String messages, String startString,
-			String endString) {
+	public static String getNameTag(String messages, String startString, String endString) {
 		List results = getNameTags(messages, startString, endString);
-		return (results == null || results.size() == 0) ? null
-				: (String) results.get(0);
+		return (results == null || results.size() == 0) ? null : (String) results.get(0);
 	}
 
 	/**
@@ -399,10 +390,8 @@ public class Command extends Conversion implements Serializable, LRelease {
 	 * @param endString
 	 * @return
 	 */
-	public static List getNameTags(String messages, String startString,
-			String endString) {
-		return Command.getNameTags(messages.toCharArray(),
-				startString.toCharArray(), endString.toCharArray());
+	public static List getNameTags(String messages, String startString, String endString) {
+		return Command.getNameTags(messages.toCharArray(), startString.toCharArray(), endString.toCharArray());
 	}
 
 	/**
@@ -413,8 +402,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 	 * @param endString
 	 * @return
 	 */
-	public static List getNameTags(char[] messages, char[] startString,
-			char[] endString) {
+	public static List getNameTags(char[] messages, char[] startString, char[] endString) {
 		int dlength = messages.length;
 		int slength = startString.length;
 		int elength = endString.length;
@@ -525,8 +513,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 	 * @return
 	 */
 	public boolean gotoIndex(final int offset) {
-		boolean result = offset < scriptSize && offset > 0
-				&& offset != offsetPos;
+		boolean result = offset < scriptSize && offset > 0 && offset != offsetPos;
 		if (result) {
 			offsetPos = offset;
 		}
@@ -591,15 +578,12 @@ public class Command extends Conversion implements Serializable, LRelease {
 				for (Iterator it = set.iterator(); it.hasNext();) {
 					Entry entry = (Entry) it.next();
 					if (!(result.startsWith("\"") && result.endsWith("\""))) {
-						result = StringUtils.replaceMatch(result,
-								(String) entry.getKey(), entry.getValue()
-										.toString());
+						result = StringUtils.replaceMatch(result, (String) entry.getKey(), entry.getValue().toString());
 					}
 				}
 				// 当为普通字符串时
 				if (result.startsWith("\"") && result.endsWith("\"")) {
-					setEnvironmentList.put(temps.get(1),
-							result.substring(1, result.length() - 1));
+					setEnvironmentList.put(temps.get(1), result.substring(1, result.length() - 1));
 				} else if (StringUtils.isChinaLanguage(result.toCharArray())
 						|| StringUtils.isEnglishAndNumeric(result)) {
 					setEnvironmentList.put(temps.get(1), result);
@@ -620,33 +604,25 @@ public class Command extends Conversion implements Serializable, LRelease {
 	private void setupRandom(String cmd) {
 		// 随机数判定
 		if (cmd.indexOf(RAND_TAG) != -1) {
-			randTags = Command.getNameTags(cmd, RAND_TAG + BRACKET_LEFT_TAG,
-					BRACKET_RIGHT_TAG);
+			randTags = Command.getNameTags(cmd, RAND_TAG + BRACKET_LEFT_TAG, BRACKET_RIGHT_TAG);
 			if (randTags != null) {
 				for (Iterator it = randTags.iterator(); it.hasNext();) {
 					String key = (String) it.next();
 					Object value = setEnvironmentList.get(key);
 					// 已存在变量
 					if (value != null) {
-						cmd = StringUtils
-								.replaceMatch(cmd, (RAND_TAG + BRACKET_LEFT_TAG
-										+ key + BRACKET_RIGHT_TAG).intern(),
-										value.toString());
+						cmd = StringUtils.replaceMatch(cmd,
+								(RAND_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG).intern(), value.toString());
 						// 设定有随机数生成范围
 					} else if (MathUtils.isNan(key)) {
-						cmd = StringUtils
-								.replaceMatch(
-										cmd,
-										(RAND_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG)
-												.intern(),
-										String.valueOf(GLOBAL_RAND.nextInt(Integer
-												.parseInt((String) key))));
+						cmd = StringUtils.replaceMatch(cmd,
+								(RAND_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG).intern(),
+								String.valueOf(GLOBAL_RAND.nextInt(Integer.parseInt((String) key))));
 						// 无设定
 					} else {
-						cmd = StringUtils
-								.replaceMatch(cmd, (RAND_TAG + BRACKET_LEFT_TAG
-										+ key + BRACKET_RIGHT_TAG).intern(),
-										String.valueOf(GLOBAL_RAND.nextInt()));
+						cmd = StringUtils.replaceMatch(cmd,
+								(RAND_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG).intern(),
+								String.valueOf(GLOBAL_RAND.nextInt()));
 					}
 				}
 			}
@@ -740,19 +716,16 @@ public class Command extends Conversion implements Serializable, LRelease {
 
 			// 注释中
 			if (flaging) {
-				flaging = !(cmd.startsWith(FLAG_LS_E_TAG) || cmd
-						.endsWith(FLAG_LS_E_TAG));
+				flaging = !(cmd.startsWith(FLAG_LS_E_TAG) || cmd.endsWith(FLAG_LS_E_TAG));
 				return executeCommand;
 			}
 
 			if (!flaging) {
 				// 全局注释
-				if (cmd.startsWith(FLAG_LS_B_TAG)
-						&& !cmd.endsWith(FLAG_LS_E_TAG)) {
+				if (cmd.startsWith(FLAG_LS_B_TAG) && !cmd.endsWith(FLAG_LS_E_TAG)) {
 					flaging = true;
 					return executeCommand;
-				} else if (cmd.startsWith(FLAG_LS_B_TAG)
-						&& cmd.endsWith(FLAG_LS_E_TAG)) {
+				} else if (cmd.startsWith(FLAG_LS_B_TAG) && cmd.endsWith(FLAG_LS_E_TAG)) {
 					return executeCommand;
 				}
 			}
@@ -791,15 +764,13 @@ public class Command extends Conversion implements Serializable, LRelease {
 			}
 
 			// 执行代码段调用标记
-			if (((!esleflag && !ifing) || (esleflag && ifing))
-					&& cmd.startsWith(CALL_TAG) && !isCall) {
+			if (((!esleflag && !ifing) || (esleflag && ifing)) && cmd.startsWith(CALL_TAG) && !isCall) {
 				temps = commandSplit(cmd);
 				if (temps.size() == 2) {
 					String functionName = (String) temps.get(1);
 					String[] funs = (String[]) functions.get(functionName);
 					if (funs != null) {
-						innerCommand = new Command(scriptName + FLAG
-								+ functionName, funs);
+						innerCommand = new Command(scriptName + FLAG + functionName, funs);
 						innerCommand.closeCache();
 						innerCommand.setVariables(getVariables());
 						innerCallTrue();
@@ -817,8 +788,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 
 			// 条件判断a
 			if (if_bool) {
-				esleover = esleflag = setupIF(cmd, nowPosFlagName,
-						setEnvironmentList, conditionEnvironmentList);
+				esleover = esleflag = setupIF(cmd, nowPosFlagName, setEnvironmentList, conditionEnvironmentList);
 				addCommand = false;
 				ifing = true;
 				// 条件判断b
@@ -827,16 +797,13 @@ public class Command extends Conversion implements Serializable, LRelease {
 				if (!backIfBool && !esleflag) {
 					// 存在if判断
 					if (value.length > 1 && IF_TAG.equals(value[1])) {
-						esleover = esleflag = setupIF(
-								cmd.replaceAll(ELSE_TAG, "").trim(),
-								nowPosFlagName, setEnvironmentList,
-								conditionEnvironmentList);
+						esleover = esleflag = setupIF(cmd.replaceAll(ELSE_TAG, "").trim(), nowPosFlagName,
+								setEnvironmentList, conditionEnvironmentList);
 						addCommand = false;
 						// 单纯的else
 					} else if (value.length == 1 && ELSE_TAG.equals(value[0])) {
 						if (!esleover) {
-							esleover = esleflag = setupIF("if 1==1",
-									nowPosFlagName, setEnvironmentList,
+							esleover = esleflag = setupIF("if 1==1", nowPosFlagName, setEnvironmentList,
 									conditionEnvironmentList);
 							addCommand = false;
 						}
@@ -844,8 +811,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 				} else {
 					esleflag = false;
 					addCommand = false;
-					conditionEnvironmentList.put(nowPosFlagName, new Boolean(
-							false));
+					conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
 
 				}
 			}
@@ -868,8 +834,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 						return null;
 					}
 				}
-			} else if (cmd.startsWith(INCLUDE_TAG) && !ifing && !backIfBool
-					&& !esleflag) {
+			} else if (cmd.startsWith(INCLUDE_TAG) && !ifing && !backIfBool && !esleflag) {
 				if (includeCommand(cmd)) {
 					return null;
 				}
@@ -905,24 +870,18 @@ public class Command extends Conversion implements Serializable, LRelease {
 
 			// 替换脚本字符串内容
 			if (executeCommand != null) {
-				printTags = Command.getNameTags(executeCommand, PRINT_TAG
-						+ BRACKET_LEFT_TAG, BRACKET_RIGHT_TAG);
+				printTags = Command.getNameTags(executeCommand, PRINT_TAG + BRACKET_LEFT_TAG, BRACKET_RIGHT_TAG);
 				if (printTags != null) {
 					for (Iterator it = printTags.iterator(); it.hasNext();) {
 						String key = (String) it.next();
 						Object value = setEnvironmentList.get(key);
 						if (value != null) {
-							executeCommand = StringUtils
-									.replaceMatch(
-											executeCommand,
-											(PRINT_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG)
-													.intern(), value.toString());
+							executeCommand = StringUtils.replaceMatch(executeCommand,
+									(PRINT_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG).intern(),
+									value.toString());
 						} else {
-							executeCommand = StringUtils
-									.replaceMatch(
-											executeCommand,
-											(PRINT_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG)
-													.intern(), key);
+							executeCommand = StringUtils.replaceMatch(executeCommand,
+									(PRINT_TAG + BRACKET_LEFT_TAG + key + BRACKET_RIGHT_TAG).intern(), key);
 						}
 
 					}
@@ -989,17 +948,14 @@ public class Command extends Conversion implements Serializable, LRelease {
 			int index = 0;
 			try {
 				in = Resources.openResource(fileName);
-				reader = new BufferedReader(new InputStreamReader(in,
-						LSystem.encoding));
+				reader = new BufferedReader(new InputStreamReader(in, LSystem.encoding));
 				String record = null;
 				for (; (record = reader.readLine()) != null;) {
 					record = record.trim();
-					if (record.length() > 0 && !record.startsWith(FLAG_L_TAG)
-							&& !record.startsWith(FLAG_C_TAG)
+					if (record.length() > 0 && !record.startsWith(FLAG_L_TAG) && !record.startsWith(FLAG_C_TAG)
 							&& !record.startsWith(FLAG_I_TAG)) {
 						if (index >= length) {
-							result = (String[]) CollectionUtils.expand(result,
-									capacity);
+							result = (String[]) CollectionUtils.expand(result, capacity);
 							length += capacity;
 						}
 						result[index] = record;
@@ -1054,17 +1010,14 @@ public class Command extends Conversion implements Serializable, LRelease {
 			int length = capacity;
 			int index = 0;
 			try {
-				reader = new BufferedReader(new InputStreamReader(in,
-						LSystem.encoding));
+				reader = new BufferedReader(new InputStreamReader(in, LSystem.encoding));
 				String record = null;
 				for (; (record = reader.readLine()) != null;) {
 					record = record.trim();
-					if (record.length() > 0 && !record.startsWith(FLAG_L_TAG)
-							&& !record.startsWith(FLAG_C_TAG)
+					if (record.length() > 0 && !record.startsWith(FLAG_L_TAG) && !record.startsWith(FLAG_C_TAG)
 							&& !record.startsWith(FLAG_I_TAG)) {
 						if (index >= length) {
-							result = (String[]) CollectionUtils.expand(result,
-									capacity);
+							result = (String[]) CollectionUtils.expand(result, capacity);
 							length += capacity;
 						}
 						result[index] = record;

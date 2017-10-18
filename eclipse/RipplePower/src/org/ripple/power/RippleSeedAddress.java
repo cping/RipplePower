@@ -9,8 +9,7 @@ public class RippleSeedAddress extends RippleIdentifier {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<Integer, RipplePrivateKey> _cache = new HashMap<Integer, RipplePrivateKey>(
-			10);
+	private HashMap<Integer, RipplePrivateKey> _cache = new HashMap<Integer, RipplePrivateKey>(10);
 
 	public RippleSeedAddress(final byte[] payloadBytes) {
 		super(payloadBytes, 33);

@@ -55,8 +55,7 @@ public class Point implements Comparable<Point>, Serializable {
 		Point other = (Point) obj;
 		if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
 			return false;
-		} else if (Double.doubleToLongBits(this.y) != Double
-				.doubleToLongBits(other.y)) {
+		} else if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y)) {
 			return false;
 		}
 		return true;

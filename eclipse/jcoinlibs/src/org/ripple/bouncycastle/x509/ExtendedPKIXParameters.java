@@ -244,7 +244,7 @@ public class ExtendedPKIXParameters
                 {
                     throw new ClassCastException(
                         "All elements of list must be "
-                            + "of type org.bouncycastle.util.Store.");
+                            + "of type org.ripple.bouncycastle.util.Store.");
                 }
             }
             this.stores = new ArrayList(stores);

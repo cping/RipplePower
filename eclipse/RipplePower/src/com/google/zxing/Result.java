@@ -35,13 +35,11 @@ public final class Result {
 	private Map<ResultMetadataType, Object> resultMetadata;
 	private final long timestamp;
 
-	public Result(String text, byte[] rawBytes, ResultPoint[] resultPoints,
-			BarcodeFormat format) {
+	public Result(String text, byte[] rawBytes, ResultPoint[] resultPoints, BarcodeFormat format) {
 		this(text, rawBytes, resultPoints, format, System.currentTimeMillis());
 	}
 
-	public Result(String text, byte[] rawBytes, ResultPoint[] resultPoints,
-			BarcodeFormat format, long timestamp) {
+	public Result(String text, byte[] rawBytes, ResultPoint[] resultPoints, BarcodeFormat format, long timestamp) {
 		this.text = text;
 		this.rawBytes = rawBytes;
 		this.resultPoints = resultPoints;
@@ -114,11 +112,9 @@ public final class Result {
 		if (oldPoints == null) {
 			resultPoints = newPoints;
 		} else if (newPoints != null && newPoints.length > 0) {
-			ResultPoint[] allPoints = new ResultPoint[oldPoints.length
-					+ newPoints.length];
+			ResultPoint[] allPoints = new ResultPoint[oldPoints.length + newPoints.length];
 			System.arraycopy(oldPoints, 0, allPoints, 0, oldPoints.length);
-			System.arraycopy(newPoints, 0, allPoints, oldPoints.length,
-					newPoints.length);
+			System.arraycopy(newPoints, 0, allPoints, oldPoints.length, newPoints.length);
 			resultPoints = allPoints;
 		}
 	}

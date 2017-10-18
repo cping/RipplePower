@@ -179,8 +179,7 @@ public abstract class CanvasScreen extends Screen {
 	public synchronized void repaint() {
 		if (!overFlag) {
 			if (this.setClip) {
-				screenGraphics.clipRect(this.clipX, this.clipY, this.clipWidth,
-						this.clipHeight);
+				screenGraphics.clipRect(this.clipX, this.clipY, this.clipWidth, this.clipHeight);
 				this.setClip = false;
 			}
 			paint(screenGraphics);

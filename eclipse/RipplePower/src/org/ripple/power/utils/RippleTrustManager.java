@@ -55,13 +55,11 @@ public class RippleTrustManager implements X509TrustManager {
 			keyStore.load(null, null);
 
 			for (int i = 0; i < cerList.getCertificateCount(); i++) {
-				Certificate c = getCertificateFromInStream(cerList
-						.getCertificateInputStream(i));
+				Certificate c = getCertificateFromInStream(cerList.getCertificateInputStream(i));
 				keyStore.setCertificateEntry(cerList.getCertificateName(i), c);
 			}
 			String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-			TrustManagerFactory tmf = TrustManagerFactory
-					.getInstance(tmfAlgorithm);
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
 			tmf.init(keyStore);
 			return tmf.getTrustManagers();
 		} catch (Exception e) {
@@ -144,14 +142,12 @@ public class RippleTrustManager implements X509TrustManager {
 
 		public LocalStoreX509TrustManager(KeyStore localTrustStore) {
 			try {
-				TrustManagerFactory tmf = TrustManagerFactory
-						.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+				TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 				tmf.init(localTrustStore);
 
 				trustManager = findX509TrustManager(tmf);
 				if (trustManager == null) {
-					throw new IllegalStateException(
-							"Couldn't find X509TrustManager");
+					throw new IllegalStateException("Couldn't find X509TrustManager");
 				}
 			} catch (GeneralSecurityException e) {
 				throw new RuntimeException(e);
@@ -160,14 +156,12 @@ public class RippleTrustManager implements X509TrustManager {
 		}
 
 		@Override
-		public void checkClientTrusted(X509Certificate[] chain, String authType)
-				throws CertificateException {
+		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 			trustManager.checkClientTrusted(chain, authType);
 		}
 
 		@Override
-		public void checkServerTrusted(X509Certificate[] chain, String authType)
-				throws CertificateException {
+		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 			trustManager.checkServerTrusted(chain, authType);
 		}
 
@@ -195,8 +189,7 @@ public class RippleTrustManager implements X509TrustManager {
 
 	public RippleTrustManager(KeyStore localKeyStore) {
 		try {
-			TrustManagerFactory tmf = TrustManagerFactory
-					.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 			tmf.init((KeyStore) null);
 
 			defaultTrustManager = findX509TrustManager(tmf);
@@ -207,23 +200,20 @@ public class RippleTrustManager implements X509TrustManager {
 			localTrustManager = new LocalStoreX509TrustManager(localKeyStore);
 
 			ArrayList<X509Certificate> allIssuers = new ArrayList<X509Certificate>();
-			for (X509Certificate cert : defaultTrustManager
-					.getAcceptedIssuers()) {
+			for (X509Certificate cert : defaultTrustManager.getAcceptedIssuers()) {
 				allIssuers.add(cert);
 			}
 			for (X509Certificate cert : localTrustManager.getAcceptedIssuers()) {
 				allIssuers.add(cert);
 			}
-			acceptedIssuers = allIssuers.toArray(new X509Certificate[allIssuers
-					.size()]);
+			acceptedIssuers = allIssuers.toArray(new X509Certificate[allIssuers.size()]);
 		} catch (GeneralSecurityException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	public void checkClientTrusted(X509Certificate[] chain, String authType)
-			throws CertificateException {
+	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 		try {
 			defaultTrustManager.checkClientTrusted(chain, authType);
 		} catch (CertificateException ce) {
@@ -231,8 +221,7 @@ public class RippleTrustManager implements X509TrustManager {
 		}
 	}
 
-	public void checkServerTrusted(X509Certificate[] chain, String authType)
-			throws CertificateException {
+	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 		try {
 			defaultTrustManager.checkServerTrusted(chain, authType);
 		} catch (CertificateException ce) {

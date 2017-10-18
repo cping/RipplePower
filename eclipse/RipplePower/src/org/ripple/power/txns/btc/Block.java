@@ -102,8 +102,7 @@ public class Block implements ByteSerializable {
 	 * @throws VerificationException
 	 *             Block verification failed
 	 */
-	public Block(byte[] inBytes, boolean doVerify) throws EOFException,
-			VerificationException {
+	public Block(byte[] inBytes, boolean doVerify) throws EOFException, VerificationException {
 		this(inBytes, 0, inBytes.length, doVerify);
 	}
 
@@ -140,8 +139,7 @@ public class Block implements ByteSerializable {
 	 * @throws VerificationException
 	 *             Block verification failed
 	 */
-	public Block(SerializedBuffer inBuffer, boolean doVerify)
-			throws EOFException, VerificationException {
+	public Block(SerializedBuffer inBuffer, boolean doVerify) throws EOFException, VerificationException {
 		//
 		// We must have at least 80 bytes
 		//
@@ -151,8 +149,8 @@ public class Block implements ByteSerializable {
 		// Compute the block hash from the serialized block header
 		//
 		int startPosition = inBuffer.getPosition();
-		blockHash = new Sha256Hash(Helper.reverseBytes(Helper
-				.doubleDigest(inBuffer.getBytes(BlockHeader.HEADER_SIZE))));
+		blockHash = new Sha256Hash(
+				Helper.reverseBytes(Helper.doubleDigest(inBuffer.getBytes(BlockHeader.HEADER_SIZE))));
 		inBuffer.setPosition(startPosition);
 		//
 		// Read the block header
@@ -426,12 +424,9 @@ public class Block implements ByteSerializable {
 				// an odd number of nodes for the level
 				//
 				int right = Math.min(left + 1, levelSize - 1);
-				byte[] leftBytes = Helper.reverseBytes(tree.get(levelOffset
-						+ left));
-				byte[] rightBytes = Helper.reverseBytes(tree.get(levelOffset
-						+ right));
-				byte[] nodeHash = Helper.doubleDigestTwoBuffers(leftBytes, 0,
-						32, rightBytes, 0, 32);
+				byte[] leftBytes = Helper.reverseBytes(tree.get(levelOffset + left));
+				byte[] rightBytes = Helper.reverseBytes(tree.get(levelOffset + right));
+				byte[] nodeHash = Helper.doubleDigestTwoBuffers(leftBytes, 0, 32, rightBytes, 0, 32);
 				tree.add(Helper.reverseBytes(nodeHash));
 			}
 			//
@@ -452,14 +447,11 @@ public class Block implements ByteSerializable {
 	 * @throws VerificationException
 	 *             Block structure is incorrect
 	 */
-	private void readHeader(SerializedBuffer inBuffer) throws EOFException,
-			VerificationException {
+	private void readHeader(SerializedBuffer inBuffer) throws EOFException, VerificationException {
 		blockVersion = inBuffer.getInt();
 		if (blockVersion < 1 || blockVersion > 3)
-			throw new VerificationException(String.format(
-					"Block version %d is not supported", blockVersion));
-		prevBlockHash = new Sha256Hash(
-				Helper.reverseBytes(inBuffer.getBytes(32)));
+			throw new VerificationException(String.format("Block version %d is not supported", blockVersion));
+		prevBlockHash = new Sha256Hash(Helper.reverseBytes(inBuffer.getBytes(32)));
 		merkleRoot = new Sha256Hash(Helper.reverseBytes(inBuffer.getBytes(32)));
 		timeStamp = inBuffer.getUnsignedInt();
 		targetDifficulty = inBuffer.getUnsignedInt();
@@ -476,12 +468,10 @@ public class Block implements ByteSerializable {
 	 * @throws VerificationException
 	 *             Transaction verification failed
 	 */
-	private void readTransactions(SerializedBuffer inBuffer)
-			throws EOFException, VerificationException {
+	private void readTransactions(SerializedBuffer inBuffer) throws EOFException, VerificationException {
 		int count = inBuffer.getVarInt();
 		if (count < 1 || count > NetParams.MAX_BLOCK_SIZE / 60)
-			throw new VerificationException(String.format(
-					"Transaction count %d is not valid", count));
+			throw new VerificationException(String.format("Transaction count %d is not valid", count));
 		transactions = new ArrayList<>(count);
 		for (int i = 0; i < count; i++)
 			transactions.add(new Transaction(inBuffer));
@@ -521,23 +511,19 @@ public class Block implements ByteSerializable {
 		// hash)
 		//
 		BigInteger target = getTargetDifficultyAsInteger();
-		if (target.signum() <= 0
-				|| target.compareTo(NetParams.PROOF_OF_WORK_LIMIT) > 0)
-			throw new VerificationException("Target difficulty is not valid",
-					RejectMessage.REJECT_INVALID, blockHash);
+		if (target.signum() <= 0 || target.compareTo(NetParams.PROOF_OF_WORK_LIMIT) > 0)
+			throw new VerificationException("Target difficulty is not valid", RejectMessage.REJECT_INVALID, blockHash);
 		BigInteger hash = getHash().toBigInteger();
 		if (hash.compareTo(target) > 0)
-			throw new VerificationException(
-					"Block hash is higher than target difficulty",
-					RejectMessage.REJECT_INVALID, blockHash);
+			throw new VerificationException("Block hash is higher than target difficulty", RejectMessage.REJECT_INVALID,
+					blockHash);
 		//
 		// Verify the block timestamp
 		//
 		long currentTime = System.currentTimeMillis() / 1000;
 		if (timeStamp > currentTime + NetParams.ALLOWED_TIME_DRIFT)
-			throw new VerificationException(
-					"Block timestamp is too far in the future",
-					RejectMessage.REJECT_INVALID, blockHash);
+			throw new VerificationException("Block timestamp is too far in the future", RejectMessage.REJECT_INVALID,
+					blockHash);
 		//
 		// Check that there is just one coinbase transaction and it is the first
 		// transaction in the block
@@ -546,13 +532,11 @@ public class Block implements ByteSerializable {
 		for (Transaction tx : transactions) {
 			if (tx.isCoinBase()) {
 				if (foundCoinBase)
-					throw new VerificationException(
-							"Block contains multiple coinbase transactions",
+					throw new VerificationException("Block contains multiple coinbase transactions",
 							RejectMessage.REJECT_MALFORMED, blockHash);
 				foundCoinBase = true;
 			} else if (!foundCoinBase) {
-				throw new VerificationException(
-						"First transaction in block is not the coinbase transaction",
+				throw new VerificationException("First transaction in block is not the coinbase transaction",
 						RejectMessage.REJECT_MALFORMED, blockHash);
 			}
 		}
@@ -561,8 +545,7 @@ public class Block implements ByteSerializable {
 		//
 		Sha256Hash checkRoot = calculateMerkleRoot();
 		if (!checkRoot.equals(merkleRoot))
-			throw new VerificationException("Merkle root is not correct",
-					RejectMessage.REJECT_INVALID, blockHash);
+			throw new VerificationException("Merkle root is not correct", RejectMessage.REJECT_INVALID, blockHash);
 		//
 		// Verify the transactions in the block
 		//
@@ -585,8 +568,7 @@ public class Block implements ByteSerializable {
 				List<TransactionInput> txInputs = tx.getInputs();
 				for (TransactionInput txInput : txInputs) {
 					if (txInput.getSeqNumber() != -1)
-						throw new VerificationException(
-								"Transaction lock time greater than block time",
+						throw new VerificationException("Transaction lock time greater than block time",
 								RejectMessage.REJECT_INVALID, tx.getHash());
 				}
 			}
@@ -602,8 +584,7 @@ public class Block implements ByteSerializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj != null && (obj instanceof Block) && blockHash
-				.equals(((Block) obj).blockHash));
+		return (obj != null && (obj instanceof Block) && blockHash.equals(((Block) obj).blockHash));
 	}
 
 	/**
@@ -624,9 +605,7 @@ public class Block implements ByteSerializable {
 	 */
 	@Override
 	public String toString() {
-		return String
-				.format("Block hash: %s\n  Previous block hash %s\n  Merkle root: %s\n  Target difficulty %d",
-						getHashAsString(), getPrevBlockHash().toString(),
-						getMerkleRoot().toString(), targetDifficulty);
+		return String.format("Block hash: %s\n  Previous block hash %s\n  Merkle root: %s\n  Target difficulty %d",
+				getHashAsString(), getPrevBlockHash().toString(), getMerkleRoot().toString(), targetDifficulty);
 	}
 }

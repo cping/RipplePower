@@ -7,10 +7,8 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.BadPaddingException;
@@ -48,7 +46,6 @@ import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.IESUtil;
 import org.ripple.bouncycastle.jcajce.util.BCJcaJceHelper;
 import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 import org.ripple.bouncycastle.jce.interfaces.IESKey;
-import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.jce.spec.IESParameterSpec;
 import org.ripple.bouncycastle.util.BigIntegers;
 import org.ripple.bouncycastle.util.Strings;

@@ -35,28 +35,24 @@ public class SHA3 {
 		return sha3String(message, digest, true);
 	}
 
-	protected static String sha3String(String message, Size bitSize,
-			boolean bouncyencoder) {
+	protected static String sha3String(String message, Size bitSize, boolean bouncyencoder) {
 		SHA3Digest digest = new SHA3Digest(bitSize.bits);
 		return sha3String(message, digest, bouncyencoder);
 	}
 
-	protected static String sha3string(byte[] message, Size bitSize,
-			boolean bouncyencoder) {
+	protected static String sha3string(byte[] message, Size bitSize, boolean bouncyencoder) {
 		SHA3Digest digest = new SHA3Digest(bitSize.bits);
 		return sha3String(message, digest, bouncyencoder);
 	}
 
-	private static String sha3String(String message, SHA3Digest digest,
-			boolean bouncyencoder) {
+	private static String sha3String(String message, SHA3Digest digest, boolean bouncyencoder) {
 		if (message != null) {
 			return sha3String(Hex.decode(message), digest, bouncyencoder);
 		}
 		throw new NullPointerException("Can't hash a null");
 	}
 
-	private static String sha3String(byte[] message, SHA3Digest digest,
-			boolean bouncyencoder) {
+	private static String sha3String(byte[] message, SHA3Digest digest, boolean bouncyencoder) {
 		byte[] hash = doSha3(message, digest, bouncyencoder);
 		if (bouncyencoder) {
 			return Hex.toHexString(hash);
@@ -66,13 +62,11 @@ public class SHA3 {
 		}
 	}
 
-	private static byte[] sha3(byte[] message, SHA3Digest digest,
-			boolean bouncyencoder) {
+	private static byte[] sha3(byte[] message, SHA3Digest digest, boolean bouncyencoder) {
 		return doSha3(message, digest, bouncyencoder);
 	}
 
-	private static byte[] doSha3(byte[] message, SHA3Digest digest,
-			boolean bouncyencoder) {
+	private static byte[] doSha3(byte[] message, SHA3Digest digest, boolean bouncyencoder) {
 		byte[] hash = new byte[digest.getDigestSize()];
 
 		if (message.length != 0) {

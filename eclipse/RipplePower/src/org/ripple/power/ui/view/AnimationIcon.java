@@ -21,10 +21,9 @@ public class AnimationIcon implements Icon {
 	private final int width;
 	private final int height;
 
-	private final int[][] rotationOffsets = new int[][] { { 0, 0 }, { 0, 0 },
-			{ 0, 0 }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { -1, 1 },
-			{ -1, 1 }, { -1, 1 }, { -1, 1 }, { -1, 0 }, { -1, 0 }, { -1, 0 },
-			{ -1, 0 }, { 0, 0 }, };
+	private final int[][] rotationOffsets = new int[][] { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
+			{ 0, 1 }, { -1, 1 }, { -1, 1 }, { -1, 1 }, { -1, 1 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 },
+			{ 0, 0 }, };
 
 	private final static int maxStepCount = 16;
 	private double theta = 0;
@@ -32,8 +31,7 @@ public class AnimationIcon implements Icon {
 	private int stepCount = 0;
 	private final Timer timer;
 
-	public AnimationIcon(Icon icon, final JComponent component,
-			final boolean repeat) {
+	public AnimationIcon(Icon icon, final JComponent component, final boolean repeat) {
 
 		delegateIcon = icon;
 
@@ -49,13 +47,12 @@ public class AnimationIcon implements Icon {
 		});
 
 		LSystem.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				component.repaint();
 			}
 		});
-		
 
 		timer.setRepeats(repeat);
 		timer.start();
@@ -71,13 +68,13 @@ public class AnimationIcon implements Icon {
 
 		}
 		LSystem.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				component.repaint();
 			}
 		});
-		
+
 	}
 
 	public void decrementRotation(final JComponent component) {
@@ -89,13 +86,13 @@ public class AnimationIcon implements Icon {
 			stepCount--;
 		}
 		LSystem.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				component.repaint();
 			}
 		});
-		
+
 	}
 
 	public void fixRotation() {
@@ -120,8 +117,7 @@ public class AnimationIcon implements Icon {
 		tx.rotate(theta, centerX, centerY);
 
 		g2d.setTransform(tx);
-		delegateIcon.paintIcon(c, g2d, xRotationOffset + xCenteringOffset + x,
-				yRotationOffset + yCenteringOffset + y);
+		delegateIcon.paintIcon(c, g2d, xRotationOffset + xCenteringOffset + x, yRotationOffset + yCenteringOffset + y);
 		g2d.dispose();
 	}
 

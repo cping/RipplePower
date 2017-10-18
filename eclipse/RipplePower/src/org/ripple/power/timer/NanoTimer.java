@@ -104,8 +104,7 @@ public class NanoTimer extends SystemTimer {
 			} else {
 				timesInARowNewTimerChosen = 0;
 				failResetTime = DEFAULT_FAIL_RESET_TIME;
-				diff = nanoTime - lastTimeStamps[bestTimer]
-						- timeSinceLastUsed[bestTimer];
+				diff = nanoTime - lastTimeStamps[bestTimer] - timeSinceLastUsed[bestTimer];
 
 				if (timeSinceLastUsed[bestTimer] == 0) {
 					lastDiff = diff;

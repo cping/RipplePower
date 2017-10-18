@@ -12,18 +12,18 @@ import org.java_websocket.server.WebSocketServer.WebSocketServerFactory;
 
 public class DefaultWebSocketServerFactory implements WebSocketServerFactory {
 	@Override
-	public WebSocketImpl createWebSocket(WebSocketAdapter a, Draft d, Socket s) {
-		return new WebSocketImpl(a, d);
+	public WebSocketImpl createWebSocket( WebSocketAdapter a, Draft d) {
+		return new WebSocketImpl( a, d );
 	}
-
 	@Override
-	public WebSocketImpl createWebSocket(WebSocketAdapter a, List<Draft> d,
-			Socket s) {
-		return new WebSocketImpl(a, d);
+	public WebSocketImpl createWebSocket( WebSocketAdapter a, List<Draft> d) {
+		return new WebSocketImpl( a, d );
 	}
-
 	@Override
-	public SocketChannel wrapChannel(SocketChannel channel, SelectionKey key) {
-		return (SocketChannel) channel;
+	public SocketChannel wrapChannel( SocketChannel channel, SelectionKey key ) {
+		return channel;
+	}
+	@Override
+	public void close() {
 	}
 }

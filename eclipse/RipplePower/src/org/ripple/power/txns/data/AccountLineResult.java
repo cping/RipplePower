@@ -10,8 +10,7 @@ import org.ripple.power.config.LSystem;
 public class AccountLineResult {
 	public String account;
 	public long ledger_current_index;
-	public List<Line> lines = new ArrayList<Line>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<Line> lines = new ArrayList<Line>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 	public boolean validated;
 
 	public void from(JSONObject obj) {

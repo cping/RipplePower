@@ -223,26 +223,22 @@ public class BTCLoader {
 	 * Map of transactions in the memory pool (txHash, tx) - synchronized on
 	 * txMap
 	 */
-	public static final Map<Sha256Hash, StoredTransaction> txMap = new HashMap<>(
-			250);
+	public static final Map<Sha256Hash, StoredTransaction> txMap = new HashMap<>(250);
 
 	/** Map of recent transactions (txHash, txHash) - synchronized on txMap */
-	public static final Map<Sha256Hash, Sha256Hash> recentTxMap = new HashMap<>(
-			250);
+	public static final Map<Sha256Hash, Sha256Hash> recentTxMap = new HashMap<>(250);
 
 	/**
 	 * Map of orphan transactions (parentTxHash, orphanTxList) - synchronized on
 	 * txMap
 	 */
-	public static final Map<Sha256Hash, List<StoredTransaction>> orphanTxMap = new HashMap<>(
-			250);
+	public static final Map<Sha256Hash, List<StoredTransaction>> orphanTxMap = new HashMap<>(250);
 
 	/**
 	 * Map of recent spent outputs (Outpoint. spendingTxHash) - synchronized on
 	 * txMap
 	 */
-	public static final Map<OutPoint, Sha256Hash> spentOutputsMap = new HashMap<>(
-			250);
+	public static final Map<OutPoint, Sha256Hash> spentOutputsMap = new HashMap<>(250);
 
 	/** List of Bloom filters - synchronized on bloomFilters */
 	public static final List<BloomFilter> bloomFilters = new LinkedList<>();
@@ -251,15 +247,13 @@ public class BTCLoader {
 	public static final LinkedBlockingQueue<Object> databaseQueue = new LinkedBlockingQueue<>();
 
 	/** Message handler message queue */
-	public static final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(
-			250);
+	public static final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(250);
 
 	/** Peer addresses - synchronized on peerAddresses */
 	public static final List<PeerAddress> peerAddresses = new LinkedList<>();
 
 	/** Peer address map - synchronized on peerAddresses */
-	public static final Map<PeerAddress, PeerAddress> peerMap = new HashMap<>(
-			250);
+	public static final Map<PeerAddress, PeerAddress> peerMap = new HashMap<>(250);
 
 	/** Completed messages */
 	public static final ConcurrentLinkedQueue<Message> completedMessages = new ConcurrentLinkedQueue<>();
@@ -267,8 +261,7 @@ public class BTCLoader {
 	/** Alert list */
 	public static final List<Alert> alerts = new ArrayList<Alert>();
 
-	public static final Logger log = LoggerFactory
-			.getLogger("org.ripple.power.btc");
+	public static final Logger log = LoggerFactory.getLogger("org.ripple.power.btc");
 
 	public static void info(String message) {
 		if (testNetwork) {
@@ -335,8 +328,7 @@ public class BTCLoader {
 			if (!dirFile.exists()) {
 				FileUtils.makedirs(dirFile);
 			}
-			File logFile = new File(dataPath + LSystem.FS
-					+ "logging.properties");
+			File logFile = new File(dataPath + LSystem.FS + "logging.properties");
 			if (logFile.exists()) {
 				FileInputStream inStream = new FileInputStream(logFile);
 				LogManager.getLogManager().readConfiguration(inStream);
@@ -344,17 +336,14 @@ public class BTCLoader {
 			BriefLogFormatter.init();
 			processConfig();
 			if (testNetwork && peerAddressesArray == null && maxOutbound != 0) {
-				throw new IllegalArgumentException(
-						"You must specify at least one peer for the test network");
+				throw new IllegalArgumentException("You must specify at least one peer for the test network");
 			}
-			String genesisName = (testNetwork ? "GenesisBlockTest.dat"
-					: "GenesisBlockProd.dat");
+			String genesisName = (testNetwork ? "GenesisBlockTest.dat" : "GenesisBlockProd.dat");
 			try (InputStream classStream = UIRes.getStream(genesisName)) {
 				if (classStream == null) {
 					throw new IOException("Genesis block resource not found");
 				}
-				BTCLoader.GENESIS_BLOCK_BYTES = new byte[classStream
-						.available()];
+				BTCLoader.GENESIS_BLOCK_BYTES = new byte[classStream.available()];
 				classStream.read(BTCLoader.GENESIS_BLOCK_BYTES);
 			}
 			propFile = new File(dataPath + LSystem.FS + "btc.properties");
@@ -371,8 +360,7 @@ public class BTCLoader {
 			//
 			// Initialize the BitcoinCore library
 			//
-			NetParams.configure(testNetwork, BTCLoader.MIN_PROTOCOL_VERSION,
-					NetParams.NODE_NETWORK);
+			NetParams.configure(testNetwork, BTCLoader.MIN_PROTOCOL_VERSION, NetParams.NODE_NETWORK);
 
 			blockStore = new BlockStoreDataBase(dataPath);
 			//
@@ -396,13 +384,10 @@ public class BTCLoader {
 					if (!storedBlock.isOnChain()) {
 						blockChain.updateBlockChain(storedBlock);
 					} else {
-						log.error(String.format(
-								"Block is already on the chain\n  Block %s",
-								retryHash.toString()));
+						log.error(String.format("Block is already on the chain\n  Block %s", retryHash.toString()));
 					}
 				} else {
-					log.error(String.format("Block not found\n  Block %s",
-							retryHash.toString()));
+					log.error(String.format("Block not found\n  Block %s", retryHash.toString()));
 				}
 				shutdown();
 			}
@@ -423,8 +408,7 @@ public class BTCLoader {
 			//
 			// Get the peer addresses
 			//
-			peersFile = new File(String.format("%s%speers.dat", dataPath,
-					LSystem.FS));
+			peersFile = new File(String.format("%s%speers.dat", dataPath, LSystem.FS));
 			if (peersFile.exists() && peersFile.length() > 0) {
 				byte[] fileBuffer = new byte[(int) peersFile.length()];
 				try (FileInputStream inStream = new FileInputStream(peersFile)) {
@@ -477,17 +461,14 @@ public class BTCLoader {
 			threadGroup = new ThreadGroup("Workers");
 
 			databaseHandler = new DatabaseHandler();
-			Thread thread = new Thread(threadGroup, databaseHandler,
-					"Database Handler");
+			Thread thread = new Thread(threadGroup, databaseHandler, "Database Handler");
 			thread.start();
 			threads.add(thread);
 
 			BTCLoader.networkMessageListener = new NetworkMessageListener();
-			BTCLoader.networkHandler = new NetworkHandler(maxConnections,
-					maxOutbound, hostName, listenPort, peerAddressesArray,
-					peerBlacklist);
-			thread = new Thread(threadGroup, BTCLoader.networkHandler,
-					"Network Handler");
+			BTCLoader.networkHandler = new NetworkHandler(maxConnections, maxOutbound, hostName, listenPort,
+					peerAddressesArray, peerBlacklist);
+			thread = new Thread(threadGroup, BTCLoader.networkHandler, "Network Handler");
 			thread.start();
 			threads.add(thread);
 
@@ -500,8 +481,7 @@ public class BTCLoader {
 				//
 				// Start the RPC handler
 				//
-				rpcHandler = new RpcHandler(rpcPort, rpcAllowIp, rpcUser,
-						rpcPassword);
+				rpcHandler = new RpcHandler(rpcPort, rpcAllowIp, rpcUser, rpcPassword);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -540,8 +520,7 @@ public class BTCLoader {
 		}
 		if (!BTCLoader.peerAddresses.isEmpty()) {
 			try {
-				try (FileOutputStream outStream = new FileOutputStream(
-						peersFile)) {
+				try (FileOutputStream outStream = new FileOutputStream(peersFile)) {
 					int peerCount = 0;
 					for (PeerAddress peerAddress : BTCLoader.peerAddresses) {
 						if (!peerAddress.isStatic()) {
@@ -571,75 +550,62 @@ public class BTCLoader {
 				properties.store(out, "RipplePower Properties");
 			}
 		} catch (Exception exc) {
-			ErrorLog.get().logException(
-					"Exception while saving application properties", exc);
+			ErrorLog.get().logException("Exception while saving application properties", exc);
 		}
 	}
 
-	private static void processArguments(String[] args)
-			throws UnknownHostException {
+	private static void processArguments(String[] args) throws UnknownHostException {
 		switch (args[0].toLowerCase()) {
 		case "bootstrap":
 			createBootstrap = true;
 			if (args.length < 2)
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST with the BOOTSTRAP option");
+				throw new IllegalArgumentException("Specify PROD or TEST with the BOOTSTRAP option");
 			if (args[1].equalsIgnoreCase("TEST")) {
 				testNetwork = true;
 			} else if (!args[1].equalsIgnoreCase("PROD")) {
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST after the BOOTSTRAP option");
+				throw new IllegalArgumentException("Specify PROD or TEST after the BOOTSTRAP option");
 			}
 			if (args.length < 3) {
-				throw new IllegalArgumentException(
-						"You must specify the bootstrap directory");
+				throw new IllegalArgumentException("You must specify the bootstrap directory");
 			}
 			blockChainPath = args[2];
 			if (args.length > 3) {
 				startBlock = Integer.parseInt(args[3]);
 				if (startBlock < 0)
-					throw new IllegalArgumentException(
-							"Start height is less than 0");
+					throw new IllegalArgumentException("Start height is less than 0");
 			} else {
 				startBlock = 0;
 			}
 			if (args.length > 4) {
 				stopBlock = Integer.parseInt(args[4]);
 				if (stopBlock < startBlock)
-					throw new IllegalArgumentException(
-							"Stop height is less than start height");
+					throw new IllegalArgumentException("Stop height is less than start height");
 			} else {
 				stopBlock = Integer.MAX_VALUE;
 			}
 			if (args.length > 5)
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			break;
 		case "compact":
 			compactDatabase = true;
 			if (args.length < 2)
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST with the COMPACT option");
+				throw new IllegalArgumentException("Specify PROD or TEST with the COMPACT option");
 			if (args[1].equalsIgnoreCase("TEST")) {
 				testNetwork = true;
 			} else if (!args[1].equalsIgnoreCase("PROD")) {
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST after the COMPACT option");
+				throw new IllegalArgumentException("Specify PROD or TEST after the COMPACT option");
 			}
 			if (args.length > 2)
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			break;
 		case "load":
 			loadBlockChain = true;
 			if (args.length < 2)
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST with the LOAD option");
+				throw new IllegalArgumentException("Specify PROD or TEST with the LOAD option");
 			if (args[1].equalsIgnoreCase("TEST")) {
 				testNetwork = true;
 			} else if (!args[1].equalsIgnoreCase("PROD")) {
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST after the LOAD option");
+				throw new IllegalArgumentException("Specify PROD or TEST after the LOAD option");
 			}
 			if (args.length > 2) {
 				blockChainPath = args[2];
@@ -649,54 +615,45 @@ public class BTCLoader {
 			if (args.length > 3) {
 				startBlock = Integer.parseInt(args[3]);
 				if (startBlock < 0)
-					throw new IllegalArgumentException(
-							"Start block is less than 0");
+					throw new IllegalArgumentException("Start block is less than 0");
 			} else {
 				startBlock = 0;
 			}
 			if (args.length > 4) {
 				stopBlock = Integer.parseInt(args[4]);
 				if (stopBlock < startBlock)
-					throw new IllegalArgumentException(
-							"Stop block is less than start block");
+					throw new IllegalArgumentException("Stop block is less than start block");
 			} else {
 				stopBlock = Integer.MAX_VALUE;
 			}
 			if (args.length > 5)
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			break;
 		case "retry":
 			retryBlock = true;
 			if (args.length < 3)
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST followed by the block hash");
+				throw new IllegalArgumentException("Specify PROD or TEST followed by the block hash");
 			if (args[1].equalsIgnoreCase("TEST")) {
 				testNetwork = true;
 			} else if (!args[1].equalsIgnoreCase("PROD")) {
-				throw new IllegalArgumentException(
-						"Specify PROD or TEST after the RETRY option");
+				throw new IllegalArgumentException("Specify PROD or TEST after the RETRY option");
 			}
 			retryHash = new Sha256Hash(args[2]);
 			if (args.length > 3)
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			break;
 		case "test":
 			testNetwork = true;
 			if (args.length > 1)
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			break;
 		case "prod":
 			if (args.length > 1) {
-				throw new IllegalArgumentException(
-						"Unrecognized command line parameter");
+				throw new IllegalArgumentException("Unrecognized command line parameter");
 			}
 			break;
 		default:
-			throw new IllegalArgumentException(
-					"Unrecognized command line parameter");
+			throw new IllegalArgumentException("Unrecognized command line parameter");
 		}
 	}
 
@@ -710,13 +667,11 @@ public class BTCLoader {
 	 * @throws UnknownHostException
 	 *             Invalid peer address specified
 	 */
-	private static void processConfig() throws IOException,
-			IllegalArgumentException, UnknownHostException {
+	private static void processConfig() throws IOException, IllegalArgumentException, UnknownHostException {
 		//
 		// Use the defaults if there is no configuration file
 		//
-		File configFile = new File(LSystem.getBitcionDirectory() + LSystem.FS
-				+ "rpbitcoin.conf");
+		File configFile = new File(LSystem.getBitcionDirectory() + LSystem.FS + "rpbitcoin.conf");
 		if (!configFile.exists()) {
 			return;
 		}
@@ -732,8 +687,7 @@ public class BTCLoader {
 					continue;
 				int sep = line.indexOf('=');
 				if (sep < 1)
-					throw new IllegalArgumentException(String.format(
-							"Invalid configuration option: %s", line));
+					throw new IllegalArgumentException(String.format("Invalid configuration option: %s", line));
 				String option = line.substring(0, sep).trim().toLowerCase();
 				String value = line.substring(sep + 1).trim();
 				switch (option) {
@@ -745,15 +699,12 @@ public class BTCLoader {
 						blacklistAddr = InetAddress.getByName(value);
 						mask = -1;
 					} else if (sep == 0) {
-						throw new IllegalArgumentException(
-								"Invalid blacklist address: " + value);
+						throw new IllegalArgumentException("Invalid blacklist address: " + value);
 					} else {
-						blacklistAddr = InetAddress.getByName(value.substring(
-								0, sep));
+						blacklistAddr = InetAddress.getByName(value.substring(0, sep));
 						mask = Integer.parseInt(value.substring(sep + 1));
 					}
-					peerBlacklist.add(new NetworkHandler.BlacklistEntry(
-							blacklistAddr, mask));
+					peerBlacklist.add(new NetworkHandler.BlacklistEntry(blacklistAddr, mask));
 					log.info(value + " added to peer blacklist");
 					break;
 				case "connect":
@@ -790,19 +741,16 @@ public class BTCLoader {
 					rpcOpen = true;
 					break;
 				default:
-					throw new IllegalArgumentException(String.format(
-							"Invalid configuration option: %s", line));
+					throw new IllegalArgumentException(String.format("Invalid configuration option: %s", line));
 				}
 			}
 		}
 		if (!addressList.isEmpty()) {
-			peerAddressesArray = addressList
-					.toArray(new PeerAddress[addressList.size()]);
+			peerAddressesArray = addressList.toArray(new PeerAddress[addressList.size()]);
 		}
 	}
 
-	public static BigInteger stringToSatoshi(String value)
-			throws NumberFormatException {
+	public static BigInteger stringToSatoshi(String value) throws NumberFormatException {
 		if (value == null) {
 			throw new IllegalArgumentException("No string value provided");
 		}
@@ -830,8 +778,7 @@ public class BTCLoader {
 				break;
 			}
 		}
-		String text = (negative ? "-" : "")
-				+ formatted.substring(0, formatted.length() - toDelete);
+		String text = (negative ? "-" : "") + formatted.substring(0, formatted.length() - toDelete);
 		return text;
 	}
 

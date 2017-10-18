@@ -460,11 +460,6 @@ public class ISO9796d2PSSSigner
 
         byte[] b = cipher.processBlock(block, 0, block.length);
 
-        recoveredMessage = new byte[messageLength];
-
-        fullMessage = (messageLength <= mBuf.length);
-        System.arraycopy(mBuf, 0, recoveredMessage, 0, recoveredMessage.length);
-
         clearBlock(mBuf);
         clearBlock(block);
         messageLength = 0;
@@ -587,10 +582,8 @@ public class ISO9796d2PSSSigner
         return fullMessage;
     }
 
-
     /**
-     * Return a reference to the recoveredMessage message, either as it was added
-     * to a just generated signature, or extracted from a verified one.
+     * Return a reference to the recoveredMessage message.
      *
      * @return the full/partial recoveredMessage message.
      * @see org.ripple.bouncycastle.crypto.SignerWithRecovery#getRecoveredMessage()

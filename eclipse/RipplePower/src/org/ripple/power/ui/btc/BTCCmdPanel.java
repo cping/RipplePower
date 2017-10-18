@@ -29,18 +29,13 @@ public class BTCCmdPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private ImageIcon blocks = new ImageIcon(new LImage("icons/web.png")
-			.scaledInstance(48, 48).getBufferedImage());
+	private ImageIcon blocks = new ImageIcon(new LImage("icons/web.png").scaledInstance(48, 48).getBufferedImage());
 
-	private ImageIcon wallet = new ImageIcon(new LImage("icons/wallet.png")
-			.scaledInstance(48, 48).getBufferedImage());
-	
-	private ImageIcon brain = new ImageIcon(new LImage("icons/safe.png")
-	.scaledInstance(48, 48).getBufferedImage());
+	private ImageIcon wallet = new ImageIcon(new LImage("icons/wallet.png").scaledInstance(48, 48).getBufferedImage());
 
-	private ImageIcon exchange = new ImageIcon(new LImage("icons/post.png")
-	.scaledInstance(48, 48).getBufferedImage());
+	private ImageIcon brain = new ImageIcon(new LImage("icons/safe.png").scaledInstance(48, 48).getBufferedImage());
 
+	private ImageIcon exchange = new ImageIcon(new LImage("icons/post.png").scaledInstance(48, 48).getBufferedImage());
 
 	private BTCPricePanel price;
 	private LineChartCanvas btcChartCanvas;
@@ -77,8 +72,7 @@ public class BTCCmdPanel extends JPanel {
 
 		RPCButton downloadBlockButton = new RPCButton(blocks);
 		downloadBlockButton.setText("Download Blocks");
-		downloadBlockButton.setFont(GraphicsUtils.getFont(
-				LangConfig.getFontName(), 1, 20));
+		downloadBlockButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1, 20));
 		downloadBlockButton.setBounds(30, price.getHeight() + 50, 320, 100);
 		downloadBlockButton.addActionListener(new ActionListener() {
 
@@ -90,8 +84,7 @@ public class BTCCmdPanel extends JPanel {
 					@Override
 					public void run() {
 
-						DownloadBlocksDialog.showDialog("Download Blocks",
-								LSystem.applicationMain);
+						DownloadBlocksDialog.showDialog("Download Blocks", LSystem.applicationMain);
 					}
 				});
 
@@ -101,13 +94,11 @@ public class BTCCmdPanel extends JPanel {
 
 		RPCButton walletButton = new RPCButton(wallet);
 		walletButton.setText("Bitcoin Wallet");
-		walletButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1,
-				20));
-		walletButton.setBounds(
-				downloadBlockButton.getX() + downloadBlockButton.getWidth()
-						+ 20, price.getHeight() + 50, 320, 100);
+		walletButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1, 20));
+		walletButton.setBounds(downloadBlockButton.getX() + downloadBlockButton.getWidth() + 20, price.getHeight() + 50,
+				320, 100);
 		walletButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -117,40 +108,32 @@ public class BTCCmdPanel extends JPanel {
 					@Override
 					public void run() {
 
-						BitcoinWalletDialog.showDialog("Bitcoin Wallet",
-								LSystem.applicationMain);
+						BitcoinWalletDialog.showDialog("Bitcoin Wallet", LSystem.applicationMain);
 					}
 				});
 
-			
 			}
 		});
 		add(walletButton);
 
-		
-		//Brain wallet hacker
+		// Brain wallet hacker
 		/**
-		 * BTC transactions for monitoring, found the wallet in line dictionaries brain immediately send to your address......
+		 * BTC transactions for monitoring, found the wallet in line
+		 * dictionaries brain immediately send to your address......
 		 */
 		RPCButton brainButton = new RPCButton(brain);
 		brainButton.setText("Brain wallet hacker");
-		brainButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1,
-				20));
-		brainButton.setBounds(
-				walletButton.getX() + walletButton.getWidth()
-						+ 20, price.getHeight() + 50, 320, 100);
+		brainButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1, 20));
+		brainButton.setBounds(walletButton.getX() + walletButton.getWidth() + 20, price.getHeight() + 50, 320, 100);
 		add(brainButton);
-		
-		//Exchange BTC to XRP
+
+		// Exchange BTC to XRP
 		RPCButton toXrpButton = new RPCButton(exchange);
 		toXrpButton.setText("Exchange BTC to XRP");
-		toXrpButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1,
-				20));
-		toXrpButton.setBounds(
-				brainButton.getX() + brainButton.getWidth()
-						+ 20, price.getHeight() + 50, 320, 100);
+		toXrpButton.setFont(GraphicsUtils.getFont(LangConfig.getFontName(), 1, 20));
+		toXrpButton.setBounds(brainButton.getX() + brainButton.getWidth() + 20, price.getHeight() + 50, 320, 100);
 		add(toXrpButton);
-		
+
 		final int width = frameWidth - price.getWidth() - 70;
 
 		if (!isRunning) {
@@ -159,8 +142,7 @@ public class BTCCmdPanel extends JPanel {
 				@Override
 				public void action(Object o) {
 
-					btcChartCanvas = addChart(btcChartCanvas, width, 410,
-							btcChart);
+					btcChartCanvas = addChart(btcChartCanvas, width, 410, btcChart);
 					btcChartCanvas.setLocation(frameWidth - width - 70, 15);
 					add(btcChartCanvas);
 					for (;;) {
@@ -183,8 +165,7 @@ public class BTCCmdPanel extends JPanel {
 
 	}
 
-	private LineChartCanvas addChart(LineChartCanvas canvas, int w, int h,
-			ChartValueSerie my) {
+	private LineChartCanvas addChart(LineChartCanvas canvas, int w, int h, ChartValueSerie my) {
 		if (canvas == null) {
 			canvas = new LineChartCanvas(w, h);
 			canvas.setTextVis(false, false, true, true);
@@ -207,16 +188,14 @@ public class BTCCmdPanel extends JPanel {
 		return canvas;
 	}
 
-	private void addData(ChartValueSerie chart, int day, String cur)
-			throws Exception {
+	private void addData(ChartValueSerie chart, int day, String cur) throws Exception {
 		ArrayMap arrays = OtherData.getCapitalization(day, cur);
 		if (arrays != null && arrays.size() > 0) {
 			chart.clearPointList();
 			for (int i = 0; i < arrays.size(); i++) {
 				if (i < arrays.size()) {
 					String key = (String) arrays.getKey(i);
-					chart.addPoint(new ChartValue(key, Float
-							.parseFloat((String) arrays.getValue(key))));
+					chart.addPoint(new ChartValue(key, Float.parseFloat((String) arrays.getValue(key))));
 				}
 			}
 		}

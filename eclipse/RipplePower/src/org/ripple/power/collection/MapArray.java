@@ -15,8 +15,7 @@ import java.util.Set;
 import org.ripple.power.utils.CollectionUtils;
 
 @SuppressWarnings("rawtypes")
-public class MapArray extends AbstractMap implements Externalizable, Map,
-		Cloneable {
+public class MapArray extends AbstractMap implements Externalizable, Map, Cloneable {
 
 	/**
 	 * 
@@ -136,8 +135,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 
 	public final Entry getEntry(final int index) {
 		if (index >= length) {
-			throw new IndexOutOfBoundsException("Index:" + index + ", Size:"
-					+ length);
+			throw new IndexOutOfBoundsException("Index:" + index + ", Size:" + length);
 		}
 		return listTable[index];
 	}
@@ -404,8 +402,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 
 		transient Entry next;
 
-		public Entry(final int hashCode, final Object key, final Object value,
-				final Entry next) {
+		public Entry(final int hashCode, final Object key, final Object value, final Entry next) {
 
 			this.hashCode = hashCode;
 			this.key = key;
@@ -457,8 +454,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 			s.writeObject(next);
 		}
 
-		public void readExternal(final ObjectInput s) throws IOException,
-				ClassNotFoundException {
+		public void readExternal(final ObjectInput s) throws IOException, ClassNotFoundException {
 			hashCode = s.readInt();
 			key = s.readObject();
 			value = s.readObject();
@@ -475,8 +471,7 @@ public class MapArray extends AbstractMap implements Externalizable, Map,
 		}
 	}
 
-	public final void readExternal(final ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
 		int num = in.readInt();
 		mapTable = new Entry[num];

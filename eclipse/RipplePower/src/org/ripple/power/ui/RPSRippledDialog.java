@@ -98,8 +98,7 @@ public class RPSRippledDialog extends ABaseDialog {
 				try {
 					_nodeList.setItemModel(RPClient.getRLNodes(true).toArray());
 				} catch (Throwable t) {
-					_nodeList
-							.setItemModel(RPClient.getRLNodes(false).toArray());
+					_nodeList.setItemModel(RPClient.getRLNodes(false).toArray());
 				}
 			}
 		});

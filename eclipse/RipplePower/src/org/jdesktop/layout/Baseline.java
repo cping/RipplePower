@@ -129,12 +129,10 @@ public class Baseline {
 	private static boolean usingOcean;
 
 	// Map<Class,Method>
-	private static final Map BASELINE_MAP = Collections
-			.synchronizedMap(new HashMap(1));
+	private static final Map BASELINE_MAP = Collections.synchronizedMap(new HashMap(1));
 
 	// Map<Class,Method> Method is getBaselineResizeBehaviorAsInt
-	private static final Map BRB_I_MAP = Collections
-			.synchronizedMap(new HashMap(1));
+	private static final Map BRB_I_MAP = Collections.synchronizedMap(new HashMap(1));
 
 	private static final Method COMPONENT_BASELINE_METHOD;
 	private static final Method COMPONENT_BRB_METHOD;
@@ -159,12 +157,9 @@ public class Baseline {
 		Object brbConstantDescent = null;
 		Object brbOther = null;
 		try {
-			componentBaselineMethod = Component.class.getMethod("getBaseline",
-					new Class[] { int.class, int.class });
-			componentBRBMethod = Component.class.getMethod(
-					"getBaselineResizeBehavior", new Class[] {});
-			Class brbClass = Class
-					.forName("java.awt.Component$BaselineResizeBehavior");
+			componentBaselineMethod = Component.class.getMethod("getBaseline", new Class[] { int.class, int.class });
+			componentBRBMethod = Component.class.getMethod("getBaselineResizeBehavior", new Class[] {});
+			Class brbClass = Class.forName("java.awt.Component$BaselineResizeBehavior");
 			brbCenterOffset = getFieldValue(brbClass, "CENTER_OFFSET");
 			brbConstantAscent = getFieldValue(brbClass, "CONSTANT_ASCENT");
 			brbConstantDescent = getFieldValue(brbClass, "CONSTANT_DESCENT");
@@ -174,9 +169,8 @@ public class Baseline {
 		} catch (NoSuchFieldException nsfe) {
 		} catch (IllegalAccessException iae) {
 		}
-		if (componentBaselineMethod == null || componentBRBMethod == null
-				|| brbCenterOffset == null || brbConstantDescent == null
-				|| brbConstantAscent == null || brbOther == null) {
+		if (componentBaselineMethod == null || componentBRBMethod == null || brbCenterOffset == null
+				|| brbConstantDescent == null || brbConstantAscent == null || brbOther == null) {
 			componentBaselineMethod = componentBRBMethod = null;
 			brbCenterOffset = brbConstantAscent = brbConstantDescent = brbOther = null;
 		}
@@ -188,8 +182,7 @@ public class Baseline {
 		ENUM_BRB_OTHER = brbOther;
 	}
 
-	private static Object getFieldValue(Class type, String name)
-			throws IllegalAccessException, NoSuchFieldException {
+	private static Object getFieldValue(Class type, String name) throws IllegalAccessException, NoSuchFieldException {
 		return type.getField(name).get(null);
 	}
 
@@ -218,15 +211,13 @@ public class Baseline {
 			return getBaselineResizeBehaviorUsingMustang(c);
 		}
 		String uid = c.getUIClassID();
-		if (uid == "ButtonUI" || uid == "CheckBoxUI" || uid == "RadioButtonUI"
-				|| uid == "ToggleButtonUI") {
+		if (uid == "ButtonUI" || uid == "CheckBoxUI" || uid == "RadioButtonUI" || uid == "ToggleButtonUI") {
 			return getButtonBaselineResizeBehavior((AbstractButton) c);
 		} else if (uid == "ComboBoxUI") {
 			return getComboBoxBaselineResizeBehavior((JComboBox) c);
 		} else if (uid == "TextAreaUI") {
 			return getTextAreaBaselineResizeBehavior((JTextArea) c);
-		} else if (uid == "TextFieldUI" || uid == "FormattedTextFieldUI"
-				|| uid == "PasswordFieldUI") {
+		} else if (uid == "TextFieldUI" || uid == "FormattedTextFieldUI" || uid == "PasswordFieldUI") {
 			return getSingleLineTextBaselineResizeBehavior((JTextField) c);
 		} else if (uid == "LabelUI") {
 			return getLabelBaselineResizeBehavior((JLabel) c);
@@ -344,14 +335,12 @@ public class Baseline {
 		return BRB_OTHER;
 	}
 
-	private static int getScrollPaneBaselineBaselineResizeBehavior(
-			JScrollPane sp) {
+	private static int getScrollPaneBaselineBaselineResizeBehavior(JScrollPane sp) {
 		return BRB_CONSTANT_ASCENT;
 	}
 
 	private static int getProgressBarBaselineResizeBehavior(JProgressBar pb) {
-		if (pb.isStringPainted()
-				&& pb.getOrientation() == JProgressBar.HORIZONTAL) {
+		if (pb.isStringPainted() && pb.getOrientation() == JProgressBar.HORIZONTAL) {
 			return BRB_CENTER_OFFSET;
 		}
 		return BRB_OTHER;
@@ -411,8 +400,7 @@ public class Baseline {
 
 	private static int getComboBoxBaselineResizeBehavior(JComboBox cb) {
 		if (cb.isEditable()) {
-			return getBaselineResizeBehavior(cb.getEditor()
-					.getEditorComponent());
+			return getBaselineResizeBehavior(cb.getEditor().getEditorComponent());
 		}
 		ListCellRenderer renderer = cb.getRenderer();
 		if (renderer == null) {
@@ -432,8 +420,7 @@ public class Baseline {
 			if (brbList == null) {
 				brbList = new JList();
 			}
-			Component component = renderer.getListCellRendererComponent(
-					brbList, value, -1, false, false);
+			Component component = renderer.getListCellRendererComponent(brbList, value, -1, false, false);
 			return getBaselineResizeBehavior(component);
 		}
 		return BRB_OTHER;
@@ -474,8 +461,7 @@ public class Baseline {
 			Method method = methods[i];
 			if ("getBaseline".equals(method.getName())) {
 				Class[] params = method.getParameterTypes();
-				if (params.length == 2 && params[0] == int.class
-						&& params[1] == int.class) {
+				if (params.length == 2 && params[0] == int.class && params[1] == int.class) {
 					BASELINE_MAP.put(klass, method);
 					return method;
 				}
@@ -485,12 +471,11 @@ public class Baseline {
 		return null;
 	}
 
-	private static int invokeBaseline(Method method, JComponent c, int width,
-			int height) {
+	private static int invokeBaseline(Method method, JComponent c, int width, int height) {
 		int baseline = -1;
 		try {
-			baseline = ((Integer) method.invoke(c, new Object[] {
-					new Integer(width), new Integer(height) })).intValue();
+			baseline = ((Integer) method.invoke(c, new Object[] { new Integer(width), new Integer(height) }))
+					.intValue();
 		} catch (IllegalAccessException iae) {
 		} catch (IllegalArgumentException iae2) {
 		} catch (InvocationTargetException ite2) {
@@ -501,8 +486,7 @@ public class Baseline {
 	private static boolean isKnownLookAndFeel() {
 		LookAndFeel laf = UIManager.getLookAndFeel();
 		String lookAndFeelID = laf.getID();
-		return (lookAndFeelID == "GTK" || lookAndFeelID == "Aqua"
-				|| isMetal(laf) || isWindows(laf));
+		return (lookAndFeelID == "GTK" || lookAndFeelID == "Aqua" || isMetal(laf) || isWindows(laf));
 	}
 
 	/**
@@ -525,25 +509,21 @@ public class Baseline {
 		}
 		Object baselineImpl = UIManager.get("Baseline.instance");
 		if (baselineImpl != null && (baselineImpl instanceof Baseline)) {
-			return ((Baseline) baselineImpl).getComponentBaseline(component,
-					width, height);
+			return ((Baseline) baselineImpl).getComponentBaseline(component, width, height);
 		}
 		if (!isKnownLookAndFeel()) {
 			return -1;
 		}
 		String uid = component.getUIClassID();
 		int baseline = -1;
-		if (uid == "ButtonUI" || uid == "CheckBoxUI" || uid == "RadioButtonUI"
-				|| uid == "ToggleButtonUI") {
+		if (uid == "ButtonUI" || uid == "CheckBoxUI" || uid == "RadioButtonUI" || uid == "ToggleButtonUI") {
 			baseline = getButtonBaseline((AbstractButton) component, height);
 		} else if (uid == "ComboBoxUI") {
 			return getComboBoxBaseline((JComboBox) component, height);
 		} else if (uid == "TextAreaUI") {
 			return getTextAreaBaseline((JTextArea) component, height);
-		} else if (uid == "FormattedTextFieldUI" || uid == "PasswordFieldUI"
-				|| uid == "TextFieldUI") {
-			baseline = getSingleLineTextBaseline((JTextComponent) component,
-					height);
+		} else if (uid == "FormattedTextFieldUI" || uid == "PasswordFieldUI" || uid == "TextFieldUI") {
+			baseline = getSingleLineTextBaseline((JTextComponent) component, height);
 		} else if (uid == "LabelUI") {
 			baseline = getLabelBaseline((JLabel) component, height);
 		} else if (uid == "ListUI") {
@@ -571,17 +551,13 @@ public class Baseline {
 	private static Insets rotateInsets(Insets topInsets, int targetPlacement) {
 		switch (targetPlacement) {
 		case JTabbedPane.LEFT:
-			return new Insets(topInsets.left, topInsets.top, topInsets.right,
-					topInsets.bottom);
+			return new Insets(topInsets.left, topInsets.top, topInsets.right, topInsets.bottom);
 		case JTabbedPane.BOTTOM:
-			return new Insets(topInsets.bottom, topInsets.left, topInsets.top,
-					topInsets.right);
+			return new Insets(topInsets.bottom, topInsets.left, topInsets.top, topInsets.right);
 		case JTabbedPane.RIGHT:
-			return new Insets(topInsets.left, topInsets.bottom,
-					topInsets.right, topInsets.top);
+			return new Insets(topInsets.left, topInsets.bottom, topInsets.right, topInsets.top);
 		default:
-			return new Insets(topInsets.top, topInsets.left, topInsets.bottom,
-					topInsets.right);
+			return new Insets(topInsets.top, topInsets.left, topInsets.bottom, topInsets.right);
 		}
 	}
 
@@ -613,20 +589,15 @@ public class Baseline {
 				return getAquaTabbedPaneBaseline(tp, height);
 			}
 			Insets insets = tp.getInsets();
-			Insets contentBorderInsets = UIManager
-					.getInsets("TabbedPane.contentBorderInsets");
-			Insets tabAreaInsets = rotateInsets(
-					UIManager.getInsets("TabbedPane.tabAreaInsets"),
-					tp.getTabPlacement());
+			Insets contentBorderInsets = UIManager.getInsets("TabbedPane.contentBorderInsets");
+			Insets tabAreaInsets = rotateInsets(UIManager.getInsets("TabbedPane.tabAreaInsets"), tp.getTabPlacement());
 			FontMetrics metrics = tp.getFontMetrics(tp.getFont());
 			int maxHeight = getMaxTabHeight(tp);
 			iconRect.setBounds(0, 0, 0, 0);
 			textRect.setBounds(0, 0, 0, 0);
 			viewRect.setBounds(0, 0, Short.MAX_VALUE, maxHeight);
-			SwingUtilities.layoutCompoundLabel(tp, metrics, "A", null,
-					SwingUtilities.CENTER, SwingUtilities.CENTER,
-					SwingUtilities.CENTER, SwingUtilities.TRAILING, viewRect,
-					iconRect, textRect, 0);
+			SwingUtilities.layoutCompoundLabel(tp, metrics, "A", null, SwingUtilities.CENTER, SwingUtilities.CENTER,
+					SwingUtilities.CENTER, SwingUtilities.TRAILING, viewRect, iconRect, textRect, 0);
 			int baseline = textRect.y + metrics.getAscent();
 			switch (tp.getTabPlacement()) {
 			case JTabbedPane.TOP:
@@ -640,8 +611,7 @@ public class Baseline {
 				}
 				return baseline;
 			case JTabbedPane.BOTTOM:
-				baseline = tp.getHeight() - insets.bottom
-						- tabAreaInsets.bottom - maxHeight + baseline;
+				baseline = tp.getHeight() - insets.bottom - tabAreaInsets.bottom - maxHeight + baseline;
 				if (isWindows()) {
 					if (tp.getTabCount() > 1) {
 						baseline += -1;
@@ -687,8 +657,7 @@ public class Baseline {
 			} else {
 				offset = 4;
 			}
-			return height - (20 - ((20 - metrics.getHeight()) / 2 + ascent))
-					- offset;
+			return height - (20 - ((20 - metrics.getHeight()) / 2 + ascent)) - offset;
 		case JTabbedPane.LEFT:
 		case JTabbedPane.RIGHT:
 			// Aqua rotates left/right text, so that there isn't a good
@@ -707,14 +676,11 @@ public class Baseline {
 			Insets focusInsets = (Insets) UIManager.get("Slider.focusInsets");
 			if (slider.getOrientation() == JSlider.HORIZONTAL) {
 				int tickLength = 8;
-				int contentHeight = height - insets.top - insets.bottom
-						- focusInsets.top - focusInsets.bottom;
+				int contentHeight = height - insets.top - insets.bottom - focusInsets.top - focusInsets.bottom;
 				int thumbHeight = 20;
 				if (isMetal()) {
-					tickLength = ((Integer) UIManager
-							.get("Slider.majorTickLength")).intValue() + 5;
-					thumbHeight = UIManager.getIcon(
-							"Slider.horizontalThumbIcon").getIconHeight();
+					tickLength = ((Integer) UIManager.get("Slider.majorTickLength")).intValue() + 5;
+					thumbHeight = UIManager.getIcon("Slider.horizontalThumbIcon").getIconHeight();
 				} else if (isWindows() && isXP()) {
 					// NOTE: this is not correct, this should come from
 					// the skin (in >= 1.5), but short of reflection
@@ -728,12 +694,10 @@ public class Baseline {
 				}
 				// Assume uniform labels.
 				centerSpacing += metrics.getAscent() + metrics.getDescent();
-				int trackY = insets.top + focusInsets.top
-						+ (contentHeight - centerSpacing - 1) / 2;
+				int trackY = insets.top + focusInsets.top + (contentHeight - centerSpacing - 1) / 2;
 				if (isAqua) {
 					if (slider.getPaintTicks()) {
-						int prefHeight = slider.getUI()
-								.getPreferredSize(slider).height;
+						int prefHeight = slider.getUI().getPreferredSize(slider).height;
 						int prefDelta = height - prefHeight;
 						if (prefDelta > 0) {
 							trackY -= Math.min(1, prefDelta);
@@ -753,27 +717,22 @@ public class Baseline {
 				return labelY + metrics.getAscent();
 			} else { // vertical
 				boolean inverted = slider.getInverted();
-				Integer value = inverted ? getMinSliderValue(slider)
-						: getMaxSliderValue(slider);
+				Integer value = inverted ? getMinSliderValue(slider) : getMaxSliderValue(slider);
 				if (value != null) {
 					int thumbHeight = 11;
 					if (isMetal()) {
-						thumbHeight = UIManager.getIcon(
-								"Slider.verticalThumbIcon").getIconHeight();
+						thumbHeight = UIManager.getIcon("Slider.verticalThumbIcon").getIconHeight();
 					}
-					int trackBuffer = Math.max(metrics.getHeight() / 2,
-							thumbHeight / 2);
+					int trackBuffer = Math.max(metrics.getHeight() / 2, thumbHeight / 2);
 					int contentY = focusInsets.top + insets.top;
 					int trackY = contentY + trackBuffer;
-					int trackHeight = height - focusInsets.top
-							- focusInsets.bottom - insets.top - insets.bottom
+					int trackHeight = height - focusInsets.top - focusInsets.bottom - insets.top - insets.bottom
 							- trackBuffer - trackBuffer;
 					int maxValue = getMaxSliderValue(slider).intValue();
 					int min = slider.getMinimum();
 					int max = slider.getMaximum();
 					double valueRange = (double) max - (double) min;
-					double pixelsPerValue = (double) trackHeight
-							/ (double) valueRange;
+					double pixelsPerValue = (double) trackHeight / (double) valueRange;
 					int trackBottom = trackY + (trackHeight - 1);
 					if (isAqua) {
 						trackY -= 3;
@@ -783,11 +742,9 @@ public class Baseline {
 					double offset;
 
 					if (!inverted) {
-						offset = pixelsPerValue
-								* ((double) max - value.intValue());
+						offset = pixelsPerValue * ((double) max - value.intValue());
 					} else {
-						offset = pixelsPerValue
-								* ((double) value.intValue() - min);
+						offset = pixelsPerValue * ((double) value.intValue() - min);
 					}
 					if (isAqua) {
 						yPosition += Math.floor(offset);
@@ -799,8 +756,7 @@ public class Baseline {
 					if (isAqua) {
 						return yPosition + metrics.getAscent();
 					}
-					return yPosition - metrics.getHeight() / 2
-							+ metrics.getAscent();
+					return yPosition - metrics.getHeight() / 2 + metrics.getAscent();
 				}
 			}
 		}
@@ -840,8 +796,7 @@ public class Baseline {
 	}
 
 	private static int getProgressBarBaseline(JProgressBar pb, int height) {
-		if (pb.isStringPainted()
-				&& pb.getOrientation() == JProgressBar.HORIZONTAL) {
+		if (pb.isStringPainted() && pb.getOrientation() == JProgressBar.HORIZONTAL) {
 			FontMetrics metrics = pb.getFontMetrics(pb.getFont());
 			Insets insets = pb.getInsets();
 			int y = insets.top;
@@ -854,8 +809,7 @@ public class Baseline {
 					height -= 3;
 				}
 			} else if (isGTK()) {
-				return (height - metrics.getAscent() - metrics.getDescent())
-						/ 2 + metrics.getAscent();
+				return (height - metrics.getAscent() - metrics.getDescent()) / 2 + metrics.getAscent();
 			} else if (isAqua()) {
 				if (pb.isIndeterminate()) {
 					// Aqua doesn't appear to support text on indeterminate
@@ -867,9 +821,7 @@ public class Baseline {
 			} else {
 				height -= insets.top + insets.bottom;
 			}
-			return y
-					+ (height + metrics.getAscent() - metrics.getLeading() - metrics
-							.getDescent()) / 2;
+			return y + (height + metrics.getAscent() - metrics.getLeading() - metrics.getDescent()) / 2;
 		}
 		return -1;
 	}
@@ -942,8 +894,7 @@ public class Baseline {
 		Border border = panel.getBorder();
 		if (border instanceof TitledBorder) {
 			TitledBorder titledBorder = (TitledBorder) border;
-			if (titledBorder.getTitle() != null
-					&& !"".equals(titledBorder.getTitle())) {
+			if (titledBorder.getTitle() != null && !"".equals(titledBorder.getTitle())) {
 				Font font = titledBorder.getTitleFont();
 				if (font == null) {
 					font = panel.getFont();
@@ -967,25 +918,19 @@ public class Baseline {
 				int diff;
 				switch (((TitledBorder) border).getTitlePosition()) {
 				case TitledBorder.ABOVE_TOP:
-					diff = ascent
-							+ descent
-							+ (Math.max(EDGE_SPACING, TEXT_SPACING * 2) - EDGE_SPACING);
+					diff = ascent + descent + (Math.max(EDGE_SPACING, TEXT_SPACING * 2) - EDGE_SPACING);
 					return y + diff - (descent + TEXT_SPACING);
 				case TitledBorder.TOP:
 				case TitledBorder.DEFAULT_POSITION:
-					diff = Math.max(0, ((ascent / 2) + TEXT_SPACING)
-							- EDGE_SPACING);
-					return (y + diff - descent)
-							+ (borderInsets.top + ascent + descent) / 2;
+					diff = Math.max(0, ((ascent / 2) + TEXT_SPACING) - EDGE_SPACING);
+					return (y + diff - descent) + (borderInsets.top + ascent + descent) / 2;
 				case TitledBorder.BELOW_TOP:
 					return y + borderInsets.top + ascent + TEXT_SPACING;
 				case TitledBorder.ABOVE_BOTTOM:
-					return (y + h)
-							- (borderInsets.bottom + descent + TEXT_SPACING);
+					return (y + h) - (borderInsets.bottom + descent + TEXT_SPACING);
 				case TitledBorder.BOTTOM:
 					h -= fontHeight / 2;
-					return ((y + h) - descent)
-							+ ((ascent + descent) - borderInsets.bottom) / 2;
+					return ((y + h) - descent) + ((ascent + descent) - borderInsets.bottom) / 2;
 				case TitledBorder.BELOW_BOTTOM:
 					h -= fontHeight;
 					return y + h + ascent + TEXT_SPACING;
@@ -1015,17 +960,14 @@ public class Baseline {
 	}
 
 	private static int getLabelBaseline(JLabel label, int height) {
-		Icon icon = (label.isEnabled()) ? label.getIcon() : label
-				.getDisabledIcon();
+		Icon icon = (label.isEnabled()) ? label.getIcon() : label.getDisabledIcon();
 		FontMetrics fm = label.getFontMetrics(label.getFont());
 
 		resetRects(label, height);
 
-		SwingUtilities.layoutCompoundLabel(label, fm, "a", icon,
-				label.getVerticalAlignment(), label.getHorizontalAlignment(),
-				label.getVerticalTextPosition(),
-				label.getHorizontalTextPosition(), viewRect, iconRect,
-				textRect, label.getIconTextGap());
+		SwingUtilities.layoutCompoundLabel(label, fm, "a", icon, label.getVerticalAlignment(),
+				label.getHorizontalAlignment(), label.getVerticalTextPosition(), label.getHorizontalTextPosition(),
+				viewRect, iconRect, textRect, label.getIconTextGap());
 
 		return textRect.y + fm.getAscent();
 	}
@@ -1036,8 +978,7 @@ public class Baseline {
 		height -= (insets.top + insets.bottom);
 		if (combobox.isEditable()) {
 			ComboBoxEditor editor = combobox.getEditor();
-			if (editor != null
-					&& (editor.getEditorComponent() instanceof JTextField)) {
+			if (editor != null && (editor.getEditorComponent() instanceof JTextField)) {
 				JTextField tf = (JTextField) editor.getEditorComponent();
 				return y + getSingleLineTextBaseline(tf, height);
 			}
@@ -1077,8 +1018,7 @@ public class Baseline {
 	 * Returns the baseline for single line text components, like
 	 * <code>JTextField</code>.
 	 */
-	private static int getSingleLineTextBaseline(JTextComponent textComponent,
-			int h) {
+	private static int getSingleLineTextBaseline(JTextComponent textComponent, int h) {
 		View rootView = textComponent.getUI().getRootView(textComponent);
 		if (rootView.getViewCount() > 0) {
 			Insets insets = textComponent.getInsets();
@@ -1090,8 +1030,7 @@ public class Baseline {
 				int slop = height - vspan;
 				y += slop / 2;
 			}
-			FontMetrics fm = textComponent.getFontMetrics(textComponent
-					.getFont());
+			FontMetrics fm = textComponent.getFontMetrics(textComponent.getFont());
 			y += fm.getAscent();
 			return y;
 		}
@@ -1113,11 +1052,9 @@ public class Baseline {
 		// NOTE: that we use "a" here to make sure we get a valid value, if
 		// we were to pass in an empty string or null we would not get
 		// back the right thing.
-		SwingUtilities.layoutCompoundLabel(button, fm, "a", button.getIcon(),
-				button.getVerticalAlignment(), button.getHorizontalAlignment(),
-				button.getVerticalTextPosition(),
-				button.getHorizontalTextPosition(), viewRect, iconRect,
-				textRect, text == null ? 0 : button.getIconTextGap());
+		SwingUtilities.layoutCompoundLabel(button, fm, "a", button.getIcon(), button.getVerticalAlignment(),
+				button.getHorizontalAlignment(), button.getVerticalTextPosition(), button.getHorizontalTextPosition(),
+				viewRect, iconRect, textRect, text == null ? 0 : button.getIconTextGap());
 
 		if (isAqua()) {
 			return textRect.y + fm.getAscent() + 1;
@@ -1138,12 +1075,10 @@ public class Baseline {
 	private static boolean isOceanTheme() {
 		if (!inSandbox) {
 			try {
-				java.lang.reflect.Field field = MetalLookAndFeel.class
-						.getDeclaredField("currentTheme");
+				java.lang.reflect.Field field = MetalLookAndFeel.class.getDeclaredField("currentTheme");
 				field.setAccessible(true);
 				Object theme = field.get(null);
-				return "javax.swing.plaf.metal.OceanTheme".equals(theme
-						.getClass().getName());
+				return "javax.swing.plaf.metal.OceanTheme".equals(theme.getClass().getName());
 			} catch (Exception ex) {
 				// We're in a sandbox and can't access the field
 				inSandbox = true;
@@ -1175,8 +1110,7 @@ public class Baseline {
 		}
 		try {
 			int majorVersion = Integer.parseInt(majorString);
-			int minorVersion = (minorString != null) ? Integer
-					.parseInt(minorString) : 0;
+			int minorVersion = (minorString != null) ? Integer.parseInt(minorString) : 0;
 			usingOcean = (majorVersion > 1 || minorVersion > 4);
 		} catch (NumberFormatException nfe) {
 		}
@@ -1192,8 +1126,7 @@ public class Baseline {
 		}
 		if (!checkedForWindows) {
 			try {
-				WINDOWS_CLASS = Class
-						.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+				WINDOWS_CLASS = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			} catch (ClassNotFoundException e) {
 			}
 			checkedForWindows = true;
@@ -1220,19 +1153,16 @@ public class Baseline {
 	private static boolean isXP() {
 		if (!checkedForClassic) {
 			try {
-				CLASSIC_WINDOWS = Class
-						.forName("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+				CLASSIC_WINDOWS = Class.forName("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 			} catch (ClassNotFoundException e) {
 			}
 			checkedForClassic = true;
 		}
-		if (CLASSIC_WINDOWS != null
-				&& CLASSIC_WINDOWS.isInstance(UIManager.getLookAndFeel())) {
+		if (CLASSIC_WINDOWS != null && CLASSIC_WINDOWS.isInstance(UIManager.getLookAndFeel())) {
 			return false;
 		}
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Boolean themeActive = (Boolean) toolkit
-				.getDesktopProperty("win.xpstyle.themeActive");
+		Boolean themeActive = (Boolean) toolkit.getDesktopProperty("win.xpstyle.themeActive");
 		if (themeActive == null) {
 			themeActive = Boolean.FALSE;
 		}

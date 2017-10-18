@@ -144,8 +144,7 @@ public class ChartPointSerie {
 			calcRanges();
 	}
 
-	public void setAutoMinmax(boolean bAutoX, boolean bAutoY, float fXmin,
-			float fXmax, float fYmin, float fYmax) {
+	public void setAutoMinmax(boolean bAutoX, boolean bAutoY, float fXmin, float fXmax, float fYmin, float fYmax) {
 		this.mAutoXminmax = bAutoX;
 		this.mAutoYminmax = bAutoY;
 		if (!bAutoX) {

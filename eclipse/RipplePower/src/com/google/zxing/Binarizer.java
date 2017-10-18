@@ -59,8 +59,7 @@ public abstract class Binarizer {
 	 * @throws NotFoundException
 	 *             if row can't be binarized
 	 */
-	public abstract BitArray getBlackRow(int y, BitArray row)
-			throws NotFoundException;
+	public abstract BitArray getBlackRow(int y, BitArray row) throws NotFoundException;
 
 	/**
 	 * Converts a 2D array of luminance data to 1 bit data. As above, assume

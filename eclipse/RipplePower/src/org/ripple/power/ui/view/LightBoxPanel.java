@@ -26,10 +26,8 @@ public class LightBoxPanel extends JPanel {
 	public LightBoxPanel(JPanel screenPanel, Integer layer) {
 
 		Preconditions.checkNotNull(screenPanel, "'panel' must be present");
-		Preconditions.checkState(screenPanel.getWidth() > 0,
-				"'width' must be greater than zero");
-		Preconditions.checkState(screenPanel.getHeight() > 0,
-				"'height' must be greater than zero");
+		Preconditions.checkState(screenPanel.getWidth() > 0, "'width' must be greater than zero");
+		Preconditions.checkState(screenPanel.getHeight() > 0, "'height' must be greater than zero");
 
 		this.screenPanel = screenPanel;
 
@@ -40,11 +38,9 @@ public class LightBoxPanel extends JPanel {
 		addMouseListener(new ModalMouseListener());
 
 		if (JLayeredPane.MODAL_LAYER.equals(layer)) {
-			Panels.getApplication().getLayeredPane()
-					.add(this, JLayeredPane.PALETTE_LAYER);
+			Panels.getApplication().getLayeredPane().add(this, JLayeredPane.PALETTE_LAYER);
 		} else {
-			Panels.getApplication().getLayeredPane()
-					.add(this, JLayeredPane.POPUP_LAYER);
+			Panels.getApplication().getLayeredPane().add(this, JLayeredPane.POPUP_LAYER);
 		}
 
 		calculatePosition();
@@ -71,8 +67,7 @@ public class LightBoxPanel extends JPanel {
 
 	public void close() {
 
-		Preconditions.checkState(SwingUtilities.isEventDispatchThread(),
-				"Must be on the EDT");
+		Preconditions.checkState(SwingUtilities.isEventDispatchThread(), "Must be on the EDT");
 		JLayeredPane layeredPane = Panels.getApplication().getLayeredPane();
 
 		Component[] components = layeredPane.getComponents();
@@ -102,8 +97,7 @@ public class LightBoxPanel extends JPanel {
 
 			GraphicsUtils.setAlpha(g, 0.5f);
 
-			g.fillRect(0, 0, Panels.getApplication().getWidth(), Panels
-					.getApplication().getHeight());
+			g.fillRect(0, 0, Panels.getApplication().getWidth(), Panels.getApplication().getHeight());
 		}
 	}
 

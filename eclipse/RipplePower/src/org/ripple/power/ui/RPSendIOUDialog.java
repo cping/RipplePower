@@ -39,7 +39,7 @@ import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPSendIOUDialog extends JPanel implements WindowListener{
+public class RPSendIOUDialog extends JPanel implements WindowListener {
 
 	/**
 	 * 
@@ -50,6 +50,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 	private final JTextField _addressText;
 	private final JTextField _amountText;
 	private final JTextField _feeText;
+	private final JTextField _destinationTag;
 	private final JLabel _submitLabel;
 
 	private static RPSendIOUDialog lock = null;
@@ -57,19 +58,16 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 
 	private RPDialogTool tool;
 
-	public static RPSendIOUDialog showDialog(String text, Window parent,
-			WalletItem item, String address, String amount, String fee,
-			boolean show) {
+	public static RPSendIOUDialog showDialog(String text, Window parent, WalletItem item, String address, String amount,
+			String fee, boolean show) {
 		if (show) {
 			synchronized (RPSendIOUDialog.class) {
 				if (lock == null) {
-					return (lock = new RPSendIOUDialog(text, parent, item,
-							address, amount, fee));
+					return (lock = new RPSendIOUDialog(text, parent, item, address, amount, fee));
 				} else {
 					if (lock != null) {
 						lock.closeDialog();
-						lock = new RPSendIOUDialog(text, parent, item, address,
-								amount, fee);
+						lock = new RPSendIOUDialog(text, parent, item, address, amount, fee);
 					}
 					return lock;
 				}
@@ -78,15 +76,13 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 		return null;
 	}
 
-	public static RPSendIOUDialog showDialog(String text, Window parent,
-			WalletItem item, String address, String amount, String fee) {
+	public static RPSendIOUDialog showDialog(String text, Window parent, WalletItem item, String address, String amount,
+			String fee) {
 		return showDialog(text, parent, item, address, amount, fee, true);
 	}
 
-	public static RPSendIOUDialog showDialog(String name, JFrame parent,
-			WalletItem item) {
-		return new RPSendIOUDialog(name, parent, item, "",
-				LSystem.getMinSend(), LSystem.getFee());
+	public static RPSendIOUDialog showDialog(String name, JFrame parent, WalletItem item) {
+		return new RPSendIOUDialog(name, parent, item, "", LSystem.getMinSend(), LSystem.getFee());
 	}
 
 	public RPDialogTool get() {
@@ -100,10 +96,10 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 		}
 	}
 
-	public RPSendIOUDialog(String text, Window parent, final WalletItem item,
-			String address, String amount, String fee) {
+	public RPSendIOUDialog(String text, Window parent, final WalletItem item, String address, String amount,
+			String fee) {
 
-		Dimension dim = new Dimension(500, 260);
+		Dimension dim = new Dimension(500, 290);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -125,8 +121,8 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 
 		_curList = new JComboBox<Object>();
 		_curList.setBackground(LColor.white);
-		_curList.setModel(new javax.swing.DefaultComboBoxModel<Object>(
-				new Object[] { "Empty" }));
+		_curList.setEditable(true);
+		_curList.setModel(new javax.swing.DefaultComboBoxModel<Object>(new Object[] { "Empty" }));
 		UIRes.addStyle(_curList, "Currency from: ");
 
 		_addressText = new JTextField(34);
@@ -139,6 +135,10 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 
 		_feeText = new JTextField(5);
 		UIRes.addStyle(_feeText, "Fee: ");
+
+		_destinationTag = new JTextField(34);
+		_destinationTag.setText(address);
+		UIRes.addStyle(_destinationTag, "Destination Tag: ", false);
 
 		setBackground(LColor.white);
 		setLayout(null);
@@ -155,11 +155,15 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 		_feeText.setBounds(330, 130, 90, 45);
 		add(_feeText);
 
+		_destinationTag.setText("");
+		_destinationTag.setBounds(70, 180, 350, 45);
+		add(_destinationTag);
+
 		JLabel exitLabel = new JLabel(UIRes.exitIcon);
 		exitLabel.setToolTipText("Cancel");
 		exitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		exitLabel.setBounds(260, 195, 45, 45);
+		exitLabel.setBounds(260, 235, 45, 45);
 		add(exitLabel);
 		exitLabel.setVisible(true);
 		exitLabel.addMouseListener(new MouseAdapter() {
@@ -173,7 +177,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 		_submitLabel.setToolTipText("Submit transaction");
 		_submitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		_submitLabel.setBounds(200, 195, 45, 45);
+		_submitLabel.setBounds(200, 235, 45, 45);
 		add(_submitLabel);
 		_submitLabel.setVisible(true);
 
@@ -184,9 +188,9 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 				String amount = _amountText.getText().trim();
 				String fee = _feeText.getText().trim();
 				Object o = _curList.getSelectedItem();
+				String destinationTag = _destinationTag.getText().trim();
 				if (!MathUtils.isNan(amount)) {
-					UIMessage.alertMessage(get().getDialog(),
-							UIMessage.errMoney);
+					UIMessage.alertMessage(get().getDialog(), UIMessage.errMoney);
 					return;
 				}
 				if (!MathUtils.isNan(fee)) {
@@ -200,47 +204,42 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 					cur = (IssuedCurrency) o;
 				} else if (o instanceof AccountLine) {
 					AccountLine line = (AccountLine) o;
-					cur = new IssuedCurrency(amount, line.getIssuer(), line
-							.getCurrency());
+					cur = new IssuedCurrency(amount, line.getIssuer(), line.getCurrency());
 					Double a = Double.parseDouble(amount);
 					Double b = Double.parseDouble(line.getBalance());
 					if (a > b) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errNotMoney);
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errNotMoney);
 						return;
 					}
 				} else {
-					UIMessage.alertMessage(get().getDialog(),
-							UIMessage.errNotAddress);
+					UIMessage.alertMessage(get().getDialog(), UIMessage.errNotAddress);
 					return;
 				}
 				if (!AccountFind.isRippleAddress(address)) {
 					try {
 						address = NameFind.getAddress(address);
 					} catch (Exception ex) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errNotAddress);
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errNotAddress);
 						return;
 					}
-					if (StringUtils.isEmpty(address)
-							|| !AccountFind.isRippleAddress(address)) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errNotAddress);
+					if (StringUtils.isEmpty(address) || !AccountFind.isRippleAddress(address)) {
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errNotAddress);
 						return;
 					}
 				}
-				final WaitDialog dialog = WaitDialog.showDialog(get()
-						.getDialog());
+				final WaitDialog dialog = WaitDialog.showDialog(get().getDialog());
 				_waitDialogs.add(dialog);
-				Payment.send(item.getSeed(), address, cur, fee, new Rollback() {
+
+				long tagNumber = StringUtils.isEmpty(destinationTag) ? MathUtils.randomLong(1, 999999999)
+						: Integer.parseInt(destinationTag);
+				Payment.send(item.getSeed(), address, cur, fee, tagNumber, new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {
 						dialog.closeDialog();
 						RPJSonLog.get().println(res, false);
 						WalletCache.get().reset();
-						UIMessage.infoMessage(get().getDialog(),
-								UIMessage.completed);
+						UIMessage.infoMessage(get().getDialog(), UIMessage.completed);
 					}
 
 					@Override
@@ -255,8 +254,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 		_feeText.setText(fee);
 		_amountText.setText(amount);
 		calldisable();
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 		if (item != null) {
 			loadIOUs(item.getPublicKey());
 		}
@@ -281,16 +279,14 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 
 			@Override
 			public void action(Object o) {
-				final WaitDialog dialog = WaitDialog.showDialog(get()
-						.getDialog());
+				final WaitDialog dialog = WaitDialog.showDialog(get().getDialog());
 				_waitDialogs.add(dialog);
 				final AccountInfo info = new AccountInfo();
 				Updateable accountline = new Updateable() {
 					@Override
 					public void action(Object res) {
 						if (info.lines.size() > 0) {
-							_curList.setModel(new javax.swing.DefaultComboBoxModel<Object>(
-									info.lines.toArray()));
+							_curList.setModel(new javax.swing.DefaultComboBoxModel<Object>(info.lines.toArray()));
 							callactivity();
 						} else {
 							calldisable();
@@ -308,13 +304,13 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -331,25 +327,25 @@ public class RPSendIOUDialog extends JPanel implements WindowListener{
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

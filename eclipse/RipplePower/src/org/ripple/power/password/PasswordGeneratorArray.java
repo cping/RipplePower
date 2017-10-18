@@ -21,13 +21,11 @@ public class PasswordGeneratorArray {
 	private char flag = (char) -1;
 	private boolean not_repeat;
 
-	public PasswordGeneratorArray(int startLength, int maxWordLength,
-			ArrayList<String> alphabet) {
+	public PasswordGeneratorArray(int startLength, int maxWordLength, ArrayList<String> alphabet) {
 		this.wordLenght = startLength;
 		this.maxWordLength = maxWordLength;
 		this.alphabet = new ArrayList<String>(alphabet);
 		this.RADIX = alphabet.size();
-		System.out.println(RADIX);
 		this.MAX_WORDS = (long) Math.pow(RADIX, wordLenght);
 	}
 
@@ -39,12 +37,10 @@ public class PasswordGeneratorArray {
 		this.skip = skip;
 	}
 
-	public PasswordGeneratorArray(int startLength, int maxWordLength,
-			String filename) throws IOException {
+	public PasswordGeneratorArray(int startLength, int maxWordLength, String filename) throws IOException {
 		alphabet = new ArrayList<String>(10000);
 		HashSet<String> caches = new HashSet<String>(10000);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(filename), "utf-8"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "utf-8"));
 		String text = null;
 		for (; (text = reader.readLine()) != null;) {
 			String tmp = text.trim();
@@ -66,8 +62,7 @@ public class PasswordGeneratorArray {
 		for (int k = 0; k < wordLenght; k++) {
 			String result = alphabet.get(indices[k]);
 			if (isUpper) {
-				result = result.substring(0, 1).toUpperCase()
-						+ result.substring(1, result.length());
+				result = result.substring(0, 1).toUpperCase() + result.substring(1, result.length());
 			}
 			if (not_repeat) {
 				if (temp.indexOf(result) == -1) {

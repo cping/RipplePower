@@ -179,5 +179,6 @@
   {"value": "LTC", "name": "LTC - Litecoin", "display": true, "standard_precision": 4, "order": 1},
   {"value": "BTS", "name": "BTS - Bitshares", "display": true, "standard_precision": 4, "order": 1},
   {"value": "DOG", "name": "DOG - Dogecoin", "display": true, "standard_precision": 4, "order": 1},
-  {"value": "STR", "name": "STR - Ripple Derivative Products", "display": true, "standard_precision": 4, "order": 0}
+  {"value": "STR", "name": "STR - Ripple Derivative Products", "display": true, "standard_precision": 4, "order": 0},
+  {"value": "XLM", "name": "XLM - Ripple Derivative Products", "display": true, "standard_precision": 4, "order": 0}
 ]

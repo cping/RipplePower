@@ -200,7 +200,7 @@ public final class DESede
     {
         public PBEWithSHAAndDES3Key()
         {
-            super(new CBCBlockCipher(new DESedeEngine()), PKCS12, SHA1, 192, 8);
+            super(new CBCBlockCipher(new DESedeEngine()));
         }
     }
 
@@ -212,7 +212,7 @@ public final class DESede
     {
         public PBEWithSHAAndDES2Key()
         {
-            super(new CBCBlockCipher(new DESedeEngine()), PKCS12, SHA1, 128, 8);
+            super(new CBCBlockCipher(new DESedeEngine()));
         }
     }
 
@@ -351,7 +351,7 @@ public final class DESede
         extends AlgorithmProvider
     {
         private static final String PREFIX = DESede.class.getName();
-        private static final String PACKAGE = "org.bouncycastle.jcajce.provider.symmetric"; // JDK 1.2
+        private static final String PACKAGE = "org.ripple.bouncycastle.jcajce.provider.symmetric"; // JDK 1.2
                 
         public Mappings()
         {

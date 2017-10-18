@@ -50,28 +50,23 @@ final class DecodedBitStreamParser {
 	 * See ISO 16022:2006, Annex C Table C.1 The C40 Basic Character Set (*'s
 	 * used for placeholders for the shift values)
 	 */
-	private static final char[] C40_BASIC_SET_CHARS = { '*', '*', '*', ' ',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-			'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	private static final char[] C40_BASIC_SET_CHARS = { '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
+			'9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+			'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-	private static final char[] C40_SHIFT2_SET_CHARS = { '!', '"', '#', '$',
-			'%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';',
-			'<', '=', '>', '?', '@', '[', '\\', ']', '^', '_' };
+	private static final char[] C40_SHIFT2_SET_CHARS = { '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
+			'-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_' };
 
 	/**
 	 * See ISO 16022:2006, Annex C Table C.2 The Text Basic Character Set (*'s
 	 * used for placeholders for the shift values)
 	 */
-	private static final char[] TEXT_BASIC_SET_CHARS = { '*', '*', '*', ' ',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
-			'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-			'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	private static final char[] TEXT_BASIC_SET_CHARS = { '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7',
+			'8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+			't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
-	private static final char[] TEXT_SHIFT3_SET_CHARS = { '`', 'A', 'B', 'C',
-			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-			'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}',
-			'~', (char) 127 };
+	private static final char[] TEXT_SHIFT3_SET_CHARS = { '`', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+			'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (char) 127 };
 
 	private DecodedBitStreamParser() {
 	}
@@ -111,15 +106,13 @@ final class DecodedBitStreamParser {
 		if (resultTrailer.length() > 0) {
 			result.append(resultTrailer);
 		}
-		return new DecoderResult(bytes, result.toString(),
-				byteSegments.isEmpty() ? null : byteSegments, null);
+		return new DecoderResult(bytes, result.toString(), byteSegments.isEmpty() ? null : byteSegments, null);
 	}
 
 	/**
 	 * See ISO 16022:2006, 5.2.3 and Annex C, Table C.2
 	 */
-	private static Mode decodeAsciiSegment(BitSource bits,
-			StringBuilder result, StringBuilder resultTrailer)
+	private static Mode decodeAsciiSegment(BitSource bits, StringBuilder result, StringBuilder resultTrailer)
 			throws FormatException {
 		boolean upperShift = false;
 		do {
@@ -186,8 +179,7 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 16022:2006, 5.2.5 and Annex C, Table C.1
 	 */
-	private static void decodeC40Segment(BitSource bits, StringBuilder result)
-			throws FormatException {
+	private static void decodeC40Segment(BitSource bits, StringBuilder result) throws FormatException {
 		// Three C40 values are encoded in a 16-bit value as
 		// (1600 * C1) + (40 * C2) + C3 + 1
 		// TODO(bbrown): The Upper Shift with C40 doesn't work in the 4 value
@@ -273,8 +265,7 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 16022:2006, 5.2.6 and Annex C, Table C.2
 	 */
-	private static void decodeTextSegment(BitSource bits, StringBuilder result)
-			throws FormatException {
+	private static void decodeTextSegment(BitSource bits, StringBuilder result) throws FormatException {
 		// Three Text values are encoded in a 16-bit value as
 		// (1600 * C1) + (40 * C2) + C3 + 1
 		// TODO(bbrown): The Upper Shift with Text doesn't work in the 4 value
@@ -365,8 +356,7 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 16022:2006, 5.2.7
 	 */
-	private static void decodeAnsiX12Segment(BitSource bits,
-			StringBuilder result) throws FormatException {
+	private static void decodeAnsiX12Segment(BitSource bits, StringBuilder result) throws FormatException {
 		// Three ANSI X12 values are encoded in a 16-bit value as
 		// (1600 * C1) + (40 * C2) + C3 + 1
 
@@ -404,8 +394,7 @@ final class DecodedBitStreamParser {
 		} while (bits.available() > 0);
 	}
 
-	private static void parseTwoBytes(int firstByte, int secondByte,
-			int[] result) {
+	private static void parseTwoBytes(int firstByte, int secondByte, int[] result) {
 		int fullBitValue = (firstByte << 8) + secondByte - 1;
 		int temp = fullBitValue / 1600;
 		result[0] = temp;
@@ -418,8 +407,7 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 16022:2006, 5.2.8 and Annex C Table C.3
 	 */
-	private static void decodeEdifactSegment(BitSource bits,
-			StringBuilder result) {
+	private static void decodeEdifactSegment(BitSource bits, StringBuilder result) {
 		do {
 			// If there is only two or less bytes left then it will be encoded
 			// as ASCII
@@ -453,8 +441,7 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 16022:2006, 5.2.9 and Annex B, B.2
 	 */
-	private static void decodeBase256Segment(BitSource bits,
-			StringBuilder result, Collection<byte[]> byteSegments)
+	private static void decodeBase256Segment(BitSource bits, StringBuilder result, Collection<byte[]> byteSegments)
 			throws FormatException {
 		// Figure out how long the Base 256 Segment is.
 		int codewordPosition = 1 + bits.getByteOffset(); // position is
@@ -466,8 +453,7 @@ final class DecodedBitStreamParser {
 		} else if (d1 < 250) {
 			count = d1;
 		} else {
-			count = 250 * (d1 - 249)
-					+ unrandomize255State(bits.readBits(8), codewordPosition++);
+			count = 250 * (d1 - 249) + unrandomize255State(bits.readBits(8), codewordPosition++);
 		}
 
 		// We're seeing NegativeArraySizeException errors from users.
@@ -482,23 +468,20 @@ final class DecodedBitStreamParser {
 			if (bits.available() < 8) {
 				throw FormatException.getFormatInstance();
 			}
-			bytes[i] = (byte) unrandomize255State(bits.readBits(8),
-					codewordPosition++);
+			bytes[i] = (byte) unrandomize255State(bits.readBits(8), codewordPosition++);
 		}
 		byteSegments.add(bytes);
 		try {
 			result.append(new String(bytes, "ISO8859_1"));
 		} catch (UnsupportedEncodingException uee) {
-			throw new IllegalStateException(
-					"Platform does not support required encoding: " + uee);
+			throw new IllegalStateException("Platform does not support required encoding: " + uee);
 		}
 	}
 
 	/**
 	 * See ISO 16022:2006, Annex B, B.2
 	 */
-	private static int unrandomize255State(int randomizedBase256Codeword,
-			int base256CodewordPosition) {
+	private static int unrandomize255State(int randomizedBase256Codeword, int base256CodewordPosition) {
 		int pseudoRandomNumber = ((149 * base256CodewordPosition) % 255) + 1;
 		int tempVariable = randomizedBase256Codeword - pseudoRandomNumber;
 		return tempVariable >= 0 ? tempVariable : tempVariable + 256;

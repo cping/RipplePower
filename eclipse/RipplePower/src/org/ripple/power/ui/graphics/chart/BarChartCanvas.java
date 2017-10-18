@@ -113,8 +113,7 @@ public class BarChartCanvas extends ChartBaseCanvas {
 
 	}
 
-	public void setLineStyle(int index, int color, int fillcolor, float size,
-			boolean usedip) {
+	public void setLineStyle(int index, int color, int fillcolor, float size, boolean usedip) {
 		mSeries.get(index).setStyle(color, fillcolor, size, usedip);
 		bRedraw = true;
 
@@ -180,16 +179,12 @@ public class BarChartCanvas extends ChartBaseCanvas {
 						zY = sY;
 					}
 					if (!Float.isNaN(pY)) {
-						RectF rect = new RectF(
-								(sX + gX / 2 + jj * gX + ii * aX + 1), zY, (sX
-										+ gX / 2 + jj * gX + ii * aX + gX),
-								(eY - (pY - bY) * aY));
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPntFill);
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPnt);
+						RectF rect = new RectF((sX + gX / 2 + jj * gX + ii * aX + 1), zY,
+								(sX + gX / 2 + jj * gX + ii * aX + gX), (eY - (pY - bY) * aY));
+						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY, rect.right + offsetX,
+								rect.bottom + offsetY, mPntFill);
+						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY, rect.right + offsetX,
+								rect.bottom + offsetY, mPnt);
 					}
 				}
 			}
@@ -216,8 +211,7 @@ public class BarChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, eY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size
-							+ 2, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size + 2, mPntText);
 			}
 		} else {
 			for (int ii = 0; ii < mLabel.getSize(); ii++) {
@@ -225,13 +219,11 @@ public class BarChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, sY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size
-							+ 3, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size + 3, mPntText);
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);
-		if (_display != null && _display.message != null
-				&& _display.message.length() > 0) {
+		if (_display != null && _display.message != null && _display.message.length() > 0) {
 			LColor old = mCnv._graphics.getLColor();
 			mCnv._graphics.setColor(_display.color);
 			LFont font = mCnv._graphics.getLFont();

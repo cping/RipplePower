@@ -144,31 +144,14 @@ public abstract class Nat192
         z[5] = x[5];
     }
 
-    public static void copy64(long[] x, long[] z)
-    {
-        z[0] = x[0];
-        z[1] = x[1];
-        z[2] = x[2];
-    }
-
     public static int[] create()
     {
         return new int[6];
     }
 
-    public static long[] create64()
-    {
-        return new long[3];
-    }
-
     public static int[] createExt()
     {
         return new int[12];
-    }
-
-    public static long[] createExt64()
-    {
-        return new long[6];
     }
 
     public static boolean diff(int[] x, int xOff, int[] y, int yOff, int[] z, int zOff)
@@ -197,18 +180,6 @@ public abstract class Nat192
         return true;
     }
 
-    public static boolean eq64(long[] x, long[] y)
-    {
-        for (int i = 2; i >= 0; --i)
-        {
-            if (x[i] != y[i])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static int[] fromBigInteger(BigInteger x)
     {
         if (x.signum() < 0 || x.bitLength() > 192)
@@ -222,23 +193,6 @@ public abstract class Nat192
         {
             z[i++] = x.intValue();
             x = x.shiftRight(32);
-        }
-        return z;
-    }
-
-    public static long[] fromBigInteger64(BigInteger x)
-    {
-        if (x.signum() < 0 || x.bitLength() > 192)
-        {
-            throw new IllegalArgumentException();
-        }
-
-        long[] z = create64();
-        int i = 0;
-        while (x.signum() != 0)
-        {
-            z[i++] = x.longValue();
-            x = x.shiftRight(64);
         }
         return z;
     }
@@ -302,39 +256,11 @@ public abstract class Nat192
         return true;
     }
 
-    public static boolean isOne64(long[] x)
-    {
-        if (x[0] != 1L)
-        {
-            return false;
-        }
-        for (int i = 1; i < 3; ++i)
-        {
-            if (x[i] != 0L)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean isZero(int[] x)
     {
         for (int i = 0; i < 6; ++i)
         {
             if (x[i] != 0)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isZero64(long[] x)
-    {
-        for (int i = 0; i < 3; ++i)
-        {
-            if (x[i] != 0L)
             {
                 return false;
             }
@@ -1025,20 +951,6 @@ public abstract class Nat192
             if (x_i != 0)
             {
                 Pack.intToBigEndian(x_i, bs, (5 - i) << 2);
-            }
-        }
-        return new BigInteger(1, bs);
-    }
-
-    public static BigInteger toBigInteger64(long[] x)
-    {
-        byte[] bs = new byte[24];
-        for (int i = 0; i < 3; ++i)
-        {
-            long x_i = x[i];
-            if (x_i != 0L)
-            {
-                Pack.longToBigEndian(x_i, bs, (2 - i) << 3);
             }
         }
         return new BigInteger(1, bs);

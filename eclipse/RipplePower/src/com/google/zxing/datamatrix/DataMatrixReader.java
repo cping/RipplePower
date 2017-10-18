@@ -58,8 +58,7 @@ public final class DataMatrixReader implements Reader {
 	 *             if error correction fails
 	 */
 	@Override
-	public Result decode(BinaryBitmap image) throws NotFoundException,
-			ChecksumException, FormatException {
+	public Result decode(BinaryBitmap image) throws NotFoundException, ChecksumException, FormatException {
 		return decode(image, null);
 	}
 
@@ -73,21 +72,19 @@ public final class DataMatrixReader implements Reader {
 			decoderResult = decoder.decode(bits);
 			points = NO_POINTS;
 		} else {
-			DetectorResult detectorResult = new Detector(image.getBlackMatrix())
-					.detect();
+			DetectorResult detectorResult = new Detector(image.getBlackMatrix()).detect();
 			decoderResult = decoder.decode(detectorResult.getBits());
 			points = detectorResult.getPoints();
 		}
-		Result result = new Result(decoderResult.getText(),
-				decoderResult.getRawBytes(), points, BarcodeFormat.DATA_MATRIX);
+		Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points,
+				BarcodeFormat.DATA_MATRIX);
 		List<byte[]> byteSegments = decoderResult.getByteSegments();
 		if (byteSegments != null) {
 			result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
 		}
 		String ecLevel = decoderResult.getECLevel();
 		if (ecLevel != null) {
-			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL,
-					ecLevel);
+			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
 		}
 		return result;
 	}
@@ -105,8 +102,7 @@ public final class DataMatrixReader implements Reader {
 	 * 
 	 * @see com.google.zxing.qrcode.QRCodeReader#extractPureBits(BitMatrix)
 	 */
-	private static BitMatrix extractPureBits(BitMatrix image)
-			throws NotFoundException {
+	private static BitMatrix extractPureBits(BitMatrix image) throws NotFoundException {
 
 		int[] leftTopBlack = image.getTopLeftOnBit();
 		int[] rightBottomBlack = image.getBottomRightOnBit();
@@ -147,8 +143,7 @@ public final class DataMatrixReader implements Reader {
 		return bits;
 	}
 
-	private static int moduleSize(int[] leftTopBlack, BitMatrix image)
-			throws NotFoundException {
+	private static int moduleSize(int[] leftTopBlack, BitMatrix image) throws NotFoundException {
 		int width = image.getWidth();
 		int x = leftTopBlack[0];
 		int y = leftTopBlack[1];

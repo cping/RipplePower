@@ -57,8 +57,7 @@ public class JSEscape {
 	}
 
 	private static boolean isLetterOrDigit(char ch) {
-		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
-				|| (ch >= '0' && ch <= '9');
+		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
 	}
 
 	private static boolean isEscapeExempt(char c) {

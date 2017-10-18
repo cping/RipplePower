@@ -1,7 +1,6 @@
 package org.ripple.bouncycastle.asn1.x509;
 
 import java.util.Enumeration;
-import java.util.NoSuchElementException;
 
 import org.ripple.bouncycastle.asn1.ASN1EncodableVector;
 import org.ripple.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -133,7 +132,7 @@ public class TBSCertList
 
         public Object nextElement()
         {
-            throw new NoSuchElementException("Empty Enumeration");
+            return null;   // TODO: check exception handling
         }
     }
 

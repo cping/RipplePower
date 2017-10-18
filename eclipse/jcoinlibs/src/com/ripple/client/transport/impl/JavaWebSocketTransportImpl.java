@@ -2,13 +2,12 @@ package com.ripple.client.transport.impl;
 
 import com.ripple.client.transport.TransportEventHandler;
 import com.ripple.client.transport.WebSocketTransport;
-import java.lang.ref.WeakReference;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.net.Proxy;
 import java.net.URI;
 
@@ -17,11 +16,7 @@ class WS extends WebSocketClient {
 	WeakReference<TransportEventHandler> h;
 
 	public WS(URI serverURI) {
-		super(serverURI, new Draft_17(), null, 10000);
-	}
-
-	public void setProxy(Proxy proxy) {
-		super.setProxy(proxy);
+		super(serverURI, new Draft_17());
 	}
 
 	public void muteEventHandler() {
@@ -42,13 +37,9 @@ class WS extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		try {
-			TransportEventHandler handler = h.get();
-			if (handler != null) {
-				handler.onMessage(new JSONObject(message));
-			}
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
+		TransportEventHandler handler = h.get();
+		if (handler != null) {
+			handler.onMessage(new JSONObject(message));
 		}
 	}
 
@@ -74,12 +65,6 @@ public class JavaWebSocketTransportImpl implements WebSocketTransport {
 	WeakReference<TransportEventHandler> handler;
 	WS client = null;
 
-	public void setProxy(Proxy proxy) {
-		if (client != null) {
-			client.setProxy(proxy);
-		}
-	}
-
 	@Override
 	public void setHandler(TransportEventHandler events) {
 		handler = new WeakReference<TransportEventHandler>(events);
@@ -97,22 +82,40 @@ public class JavaWebSocketTransportImpl implements WebSocketTransport {
 	public void connect(URI uri) {
 		TransportEventHandler curHandler = handler.get();
 		if (curHandler == null) {
-			throw new RuntimeException(
-					"must call setEventHandler() before connect(...)");
+			throw new RuntimeException("must call setEventHandler() before connect(...)");
 		}
 		disconnect();
 		client = new WS(uri);
-
+		if (_proxy != null) {
+			client.setProxy(_proxy);
+		}
 		client.setEventHandler(curHandler);
 		curHandler.onConnecting(1);
 		client.connect();
+
 	}
 
 	@Override
 	public void disconnect() {
 		if (client != null) {
+			TransportEventHandler handler = this.handler.get();
+			// Before we mute the handler, call disconnect
+			if (handler != null) {
+				handler.onDisconnected(false);
+			}
 			client.muteEventHandler();
 			client = null;
 		}
 	}
+
+	private Proxy _proxy;
+
+	@Override
+	public void setProxy(Proxy proxy) {
+		_proxy = proxy;
+		if (client != null) {
+			client.setProxy(proxy);
+		}
+	}
+
 }

@@ -28,7 +28,7 @@ import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
 import org.ripple.power.utils.SwingUtils;
 
-public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListener{
+public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListener {
 	/**
 	 * 
 	 */
@@ -51,7 +51,7 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 		addWindowListener(HelperWindow.get());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setIconImage(UIRes.getIcon());
-		Dimension dim = new Dimension(380, 200);
+		Dimension dim = new Dimension(380, 220);
 		setResizable(false);
 		setPreferredSize(dim);
 		setSize(dim);
@@ -59,8 +59,7 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 	}
 
 	public static RPExchangeMinInputDialog showDialog(Window parent, String name) {
-		final RPExchangeMinInputDialog dialog = new RPExchangeMinInputDialog(parent,
-				name);
+		final RPExchangeMinInputDialog dialog = new RPExchangeMinInputDialog(parent, name);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.setVisible(true);
@@ -91,8 +90,7 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 			if (!"0".equals(price) && !"0".equals(count)) {
 				BigDecimal a = new BigDecimal(price);
 				BigDecimal b = new BigDecimal(count);
-				if (a.compareTo(BigDecimal.ZERO) == 1
-						&& b.compareTo(BigDecimal.ZERO) == 1) {
+				if (a.compareTo(BigDecimal.ZERO) == 1 && b.compareTo(BigDecimal.ZERO) == 1) {
 					String cprice = LSystem.getNumber(a.multiply(b));
 					_countPriceText.setText(cprice + "/" + _dstCurrency);
 				} else {
@@ -186,106 +184,48 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 		_okButton.setText(UIMessage.ok);
 		_okButton.setFont(UIRes.getFont());
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		_oneLabel,
-																		javax.swing.GroupLayout.PREFERRED_SIZE,
-																		88,
-																		javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(
-																		_curPriceText))
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		_twoLabel,
-																		javax.swing.GroupLayout.PREFERRED_SIZE,
-																		88,
-																		javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(
-																		_countText,
-																		javax.swing.GroupLayout.DEFAULT_SIZE,
-																		261,
-																		Short.MAX_VALUE))
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		_threeLabel,
-																		javax.swing.GroupLayout.PREFERRED_SIZE,
-																		88,
-																		javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(
-																		_countPriceText,
-																		javax.swing.GroupLayout.DEFAULT_SIZE,
-																		261,
-																		Short.MAX_VALUE))
-												.addGroup(
-														javax.swing.GroupLayout.Alignment.TRAILING,
-														layout.createSequentialGroup()
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE)
-																.addComponent(
-																		_okButton,
-																		javax.swing.GroupLayout.PREFERRED_SIZE,
-																		108,
-																		javax.swing.GroupLayout.PREFERRED_SIZE)))
-								.addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(_oneLabel)
-												.addComponent(
-														_curPriceText,
-														javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addGap(18, 18, 18)
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(_twoLabel)
-												.addComponent(
-														_countText,
-														javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addGap(18, 18, 18)
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(_threeLabel)
-												.addComponent(
-														_countPriceText,
-														javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addGap(18, 18, 18)
-								.addComponent(_okButton,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										41, Short.MAX_VALUE).addContainerGap()));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addContainerGap()
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(_oneLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 88,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(_curPriceText))
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(_twoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 88,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(_countText, javax.swing.GroupLayout.DEFAULT_SIZE, 261,
+												Short.MAX_VALUE))
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(_threeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 88,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(_countPriceText, javax.swing.GroupLayout.DEFAULT_SIZE, 261,
+												Short.MAX_VALUE))
+								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+										layout.createSequentialGroup().addGap(0, 0, Short.MAX_VALUE).addComponent(
+												_okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108,
+												javax.swing.GroupLayout.PREFERRED_SIZE)))
+						.addContainerGap()));
+		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+				.createSequentialGroup().addContainerGap()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(_oneLabel)
+						.addComponent(_curPriceText, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGap(18, 18, 18)
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(_twoLabel)
+						.addComponent(_countText, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGap(18, 18, 18)
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(_threeLabel).addComponent(_countPriceText, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGap(18, 18, 18).addComponent(_okButton, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+				.addContainerGap()));
 		getContentPane().setBackground(UIConfig.dialogbackground);
 
 		pack();
@@ -295,8 +235,7 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 		return _textAContext;
 	}
 
-	public void setTextContext(RPTextBox a, RPTextBox b, final String curName,
-			final String dstCurName) {
+	public void setTextContext(RPTextBox a, RPTextBox b, final String curName, final String dstCurName) {
 		if (a != null && b != null) {
 			this._dstCurrency = dstCurName;
 			this._textAContext = a;
@@ -306,36 +245,19 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 			this._countText.setText("0");
 			this._curName = curName;
 			this.setTitle(curName + "/" + dstCurName + "(Average Price)");
-			if (!dstCurName.equals(curName)) {
-				final WaitDialog waitDialog = WaitDialog.showDialog(this);
-				_waitDialogs.add(waitDialog);
-				Updateable update = new Updateable() {
-
-					@Override
-					public void action(Object o) {
-						String value = OfferPrice.getMoneyConvert("1",
-								_curName, dstCurName.toLowerCase());
-						if (!"unkown".equals(value)) {
-							_curPriceText.setText(value);
-						}
-						waitDialog.closeDialog();
-					}
-				};
-				LSystem.postThread(update);
-			}
 		}
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -352,24 +274,24 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

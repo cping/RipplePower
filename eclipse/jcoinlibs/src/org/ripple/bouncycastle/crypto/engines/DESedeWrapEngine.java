@@ -15,11 +15,12 @@ import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * Wrap keys according to
- * <A HREF="https://www.ietf.org/rfc/rfc3217.txt">
- * RFC 3217</A>.
+ * <A HREF="http://www.ietf.org/internet-drafts/draft-ietf-smime-key-wrap-01.txt">
+ * draft-ietf-smime-key-wrap-01.txt</A>.
  * <p>
  * Note: 
  * <ul>
+ * <li>this is based on a draft, and as such is subject to change - don't use this class for anything requiring long term storage.
  * <li>if you are using this to wrap triple-des keys you need to set the
  * parity bits on the key and, if it's a two-key triple-des key, pad it
  * yourself.

@@ -138,8 +138,7 @@ public class RectBox {
 		int i_r = Math.min(a_r, b_r);
 		int i_y = Math.max(a_y, b_y);
 		int i_t = Math.min(a_t, b_t);
-		return i_x < i_r && i_y < i_t ? new RectBox(i_x, i_y, i_r - i_x, i_t
-				- i_y) : null;
+		return i_x < i_r && i_y < i_t ? new RectBox(i_x, i_y, i_r - i_x, i_t - i_y) : null;
 	}
 
 	public Rectangle2D getRectangle2D() {
@@ -204,8 +203,8 @@ public class RectBox {
 	 * @return
 	 */
 	public boolean contains(int x, int y, int width, int height) {
-		return (x >= this.x && y >= this.y
-				&& ((x + width) <= (this.x + this.width)) && ((y + height) <= (this.y + this.height)));
+		return (x >= this.x && y >= this.y && ((x + width) <= (this.x + this.width))
+				&& ((y + height) <= (this.y + this.height)));
 	}
 
 	/**
@@ -244,8 +243,7 @@ public class RectBox {
 	 * @return
 	 */
 	public boolean intersects(int x, int y, int width, int height) {
-		return x + width > this.x && x < this.x + this.width
-				&& y + height > this.y && y < this.y + this.height;
+		return x + width > this.x && x < this.x + this.width && y + height > this.y && y < this.y + this.height;
 	}
 
 	/**
@@ -282,8 +280,7 @@ public class RectBox {
 	 * @param y2
 	 * @return
 	 */
-	public final boolean intersectsLine(final int x1, final int y1,
-			final int x2, final int y2) {
+	public final boolean intersectsLine(final int x1, final int y1, final int x2, final int y2) {
 		return contains(x1, y1) || contains(x2, y2);
 	}
 
@@ -295,8 +292,7 @@ public class RectBox {
 	 * @return
 	 */
 	public boolean inside(int x, int y) {
-		return (x >= this.x) && ((x - this.x) < this.width) && (y >= this.y)
-				&& ((y - this.y) < this.height);
+		return (x >= this.x) && ((x - this.x) < this.width) && (y >= this.y) && ((y - this.y) < this.height);
 	}
 
 	/**

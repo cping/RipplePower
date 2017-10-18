@@ -13,8 +13,7 @@ public class SpeedOMeterInpotStream extends InputStream {
 	private SpeedListener mNetworkSpeedListener;
 	private int mStreamIndex;
 
-	public SpeedOMeterInpotStream(InputStream is, int size, int streamIndex,
-			SpeedListener networkSpeedListener) {
+	public SpeedOMeterInpotStream(InputStream is, int size, int streamIndex, SpeedListener networkSpeedListener) {
 		mIs = is;
 		mSize = size;
 		mStreamIndex = streamIndex;

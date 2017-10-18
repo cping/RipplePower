@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 
 import org.ripple.power.blockchain.list.RP;
-import org.ripple.power.collection.ByteArrayWrapper;
 import org.ripple.power.collection.LRUMap;
 import org.ripple.power.utils.ByteUtils;
 import org.ripple.bouncycastle.crypto.Digest;
@@ -46,12 +45,6 @@ public class Helper {
 	private static final Map<Class<?>, Collection<Field>> _reflectedFields = new ConcurrentHashMap<Class<?>, Collection<Field>>();
 
 	private static final int MAX_ENTRIES = 100;
-	private static LRUMap<ByteArrayWrapper, byte[]> sha3Cache = new LRUMap<>(0,
-			MAX_ENTRIES);
-	public static final byte[] EMPTY_DATA_HASH = sha3(ByteUtils.EMPTY_BYTE_ARRAY);
-	public static final byte[] EMPTY_LIST_HASH = sha3(RP.encodeList());
-	public static final byte[] EMPTY_TRIE_HASH = sha3(RP
-			.encodeElement(ByteUtils.EMPTY_BYTE_ARRAY));
 
 	private static final MessageDigest sha256digest;
 
@@ -72,327 +65,319 @@ public class Helper {
 	private static final String UTF8 = "UTF-8";
 	private static final String STATIC_SALT = "{'[R^*&843HGihp3p5l3e%g!o@t@o!mono$ ^f442Axs092aBGJZawW ]\"}";
 
-    /** Constant -1 */
-    public static final BigInteger NEGATIVE_ONE = BigInteger.valueOf(-1);
+	/** Constant -1 */
+	public static final BigInteger NEGATIVE_ONE = BigInteger.valueOf(-1);
 
-    /** Constant 1,000 */
-    private static final BigInteger DISPLAY_1K = new BigInteger("1000");
+	/** Constant 1,000 */
+	private static final BigInteger DISPLAY_1K = new BigInteger("1000");
 
-    /** Constant 1,000,000 */
-    private static final BigInteger DISPLAY_1M = new BigInteger("1000000");
+	/** Constant 1,000,000 */
+	private static final BigInteger DISPLAY_1M = new BigInteger("1000000");
 
-    /** Constant 1,000,000,000 */
-    private static final BigInteger DISPLAY_1G = new BigInteger("1000000000");
+	/** Constant 1,000,000,000 */
+	private static final BigInteger DISPLAY_1G = new BigInteger("1000000000");
 
-    /** Constant 1,000,000,000,000 */
-    private static final BigInteger DISPLAY_1T = new BigInteger("1000000000000");
+	/** Constant 1,000,000,000,000 */
+	private static final BigInteger DISPLAY_1T = new BigInteger("1000000000000");
 
-    /** Constant 1,000,000,000,000,000 */
-    private static final BigInteger DISPLAY_1P = new BigInteger("1000000000000000");
+	/** Constant 1,000,000,000,000,000 */
+	private static final BigInteger DISPLAY_1P = new BigInteger("1000000000000000");
 
-    /** Bit masks (Low-order bit is bit 0 and high-order bit is bit 7) */
-    private static final int bitMask[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+	/** Bit masks (Low-order bit is bit 0 and high-order bit is bit 7) */
+	private static final int bitMask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
-    /** Instance of a SHA-256 digest which we will use as needed */
-    private static final MessageDigest digest;
-    
-    static {
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);  // Can't happen.
-        }
-    }
+	/** Instance of a SHA-256 digest which we will use as needed */
+	private static final MessageDigest digest;
 
-    public static final BigInteger COIN = new BigInteger("100000000", 10);
+	static {
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e); // Can't happen.
+		}
+	}
 
-    public static final BigInteger CENT = new BigInteger("1000000", 10);
+	public static final BigInteger COIN = new BigInteger("100000000", 10);
 
-    public static byte[] singleDigest(byte[] input) {
-        return singleDigest(input, 0, input.length);
-    }
+	public static final BigInteger CENT = new BigInteger("1000000", 10);
 
-    public static byte[] singleDigest(byte[] input, int offset, int length) {
-        byte[] bytes;
-        synchronized (digest) {
-            digest.reset();
-            digest.update(input, offset, length);
-            bytes = digest.digest();
-        }
-        return bytes;
-    }
+	public static byte[] singleDigest(byte[] input) {
+		return singleDigest(input, 0, input.length);
+	}
 
-    public static byte[] singleDigest(List<byte[]> inputList) {
-        byte[] bytes;
-        synchronized(digest) {
-            digest.reset();
-            for(byte[] input:inputList){
-                digest.update(input, 0, input.length);
-            }
-            bytes = digest.digest();
-        }
-        return bytes;
-    }
+	public static byte[] singleDigest(byte[] input, int offset, int length) {
+		byte[] bytes;
+		synchronized (digest) {
+			digest.reset();
+			digest.update(input, offset, length);
+			bytes = digest.digest();
+		}
+		return bytes;
+	}
 
-  
-    public static byte[] doubleDigest(List<byte[]> inputList) {
-        byte[] bytes;
-        synchronized(digest) {
-            digest.reset();
-            for(byte[] input:inputList){
-                digest.update(input, 0, input.length);
-            }
-            byte[] first = digest.digest();
-            bytes = digest.digest(first);
-        }
-        return bytes;
-    }
+	public static byte[] singleDigest(List<byte[]> inputList) {
+		byte[] bytes;
+		synchronized (digest) {
+			digest.reset();
+			for (byte[] input : inputList) {
+				digest.update(input, 0, input.length);
+			}
+			bytes = digest.digest();
+		}
+		return bytes;
+	}
 
+	public static byte[] doubleDigest(List<byte[]> inputList) {
+		byte[] bytes;
+		synchronized (digest) {
+			digest.reset();
+			for (byte[] input : inputList) {
+				digest.update(input, 0, input.length);
+			}
+			byte[] first = digest.digest();
+			bytes = digest.digest(first);
+		}
+		return bytes;
+	}
 
-    public static byte[] doubleDigestTwoBuffers(byte[]input1, int offset1, int length1,
-                                                byte[]input2, int offset2, int length2) {
-        byte[] bytes;
-        synchronized (digest) {
-            digest.reset();
-            digest.update(input1, offset1, length1);
-            digest.update(input2, offset2, length2);
-            byte[]first = digest.digest();
-            bytes = digest.digest(first);
-        }
-        return bytes;
-    }
+	public static byte[] doubleDigestTwoBuffers(byte[] input1, int offset1, int length1, byte[] input2, int offset2,
+			int length2) {
+		byte[] bytes;
+		synchronized (digest) {
+			digest.reset();
+			digest.update(input1, offset1, length1);
+			digest.update(input2, offset2, length2);
+			byte[] first = digest.digest();
+			bytes = digest.digest(first);
+		}
+		return bytes;
+	}
 
-    public static byte[] sha1Hash(byte[] input) {
-        byte[] out;
-        try {
-            MessageDigest sDigest = MessageDigest.getInstance("SHA-1");
-            out = sDigest.digest(input);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);    
-        }
-        return out;
-    }
+	public static byte[] sha1Hash(byte[] input) {
+		byte[] out;
+		try {
+			MessageDigest sDigest = MessageDigest.getInstance("SHA-1");
+			out = sDigest.digest(input);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		return out;
+	}
 
-    public static byte[] hash160(byte[] input) {
-        byte[] out = new byte[20];
-        RIPEMD160Digest rDigest = new RIPEMD160Digest();
-        rDigest.update(input, 0, input.length);
-        rDigest.doFinal(out, 0);
-        return out;
-    }
+	public static byte[] hash160(byte[] input) {
+		byte[] out = new byte[20];
+		RIPEMD160Digest rDigest = new RIPEMD160Digest();
+		rDigest.update(input, 0, input.length);
+		rDigest.doFinal(out, 0);
+		return out;
+	}
 
-    public static byte[] sha256Hash160(byte[] input) {
-        byte[] out = new byte[20];
-        synchronized(digest) {
-            digest.reset();
-            byte[] sha256 = digest.digest(input);
-            RIPEMD160Digest rDigest = new RIPEMD160Digest();
-            rDigest.update(sha256, 0, sha256.length);
-            rDigest.doFinal(out, 0);
-        }
-        return out;
-    }
+	public static byte[] sha256Hash160(byte[] input) {
+		byte[] out = new byte[20];
+		synchronized (digest) {
+			digest.reset();
+			byte[] sha256 = digest.digest(input);
+			RIPEMD160Digest rDigest = new RIPEMD160Digest();
+			rDigest.update(sha256, 0, sha256.length);
+			rDigest.doFinal(out, 0);
+		}
+		return out;
+	}
 
-    public static String bytesToHexString(byte[] bytes) {
-        StringBuilder buf = new StringBuilder(bytes.length*2);
-        for (byte b : bytes) {
-            String s = Integer.toString(0xFF&b, 16);
-            if (s.length() < 2)
-                buf.append('0');
-            buf.append(s);
-        }
-        return buf.toString();
-    }
+	public static String bytesToHexString(byte[] bytes) {
+		StringBuilder buf = new StringBuilder(bytes.length * 2);
+		for (byte b : bytes) {
+			String s = Integer.toString(0xFF & b, 16);
+			if (s.length() < 2)
+				buf.append('0');
+			buf.append(s);
+		}
+		return buf.toString();
+	}
 
-    public static byte[] bigIntegerToBytes(BigInteger bigInteger, int numBytes) {
-        if (bigInteger == null)
-            return null;
-        byte[] bigBytes = bigInteger.toByteArray();
-        byte[] bytes = new byte[numBytes];
-        int start = (bigBytes.length==numBytes+1) ? 1 : 0;
-        int length = Math.min(bigBytes.length, numBytes);
-        System.arraycopy(bigBytes, start, bytes, numBytes-length, length);
-        return bytes;
-    }
+	public static byte[] bigIntegerToBytes(BigInteger bigInteger, int numBytes) {
+		if (bigInteger == null)
+			return null;
+		byte[] bigBytes = bigInteger.toByteArray();
+		byte[] bytes = new byte[numBytes];
+		int start = (bigBytes.length == numBytes + 1) ? 1 : 0;
+		int length = Math.min(bigBytes.length, numBytes);
+		System.arraycopy(bigBytes, start, bytes, numBytes - length, length);
+		return bytes;
+	}
 
-    public static String numberToShortString(BigInteger number) {
-        int scale;
-        String suffix;
-        BigDecimal work;
-        if (number.compareTo(DISPLAY_1P) >= 0) {
-            scale = 15;
-            suffix = "P";
-        } else if (number.compareTo(DISPLAY_1T) >= 0) {
-            scale = 12;
-            suffix = "T";
-        } else if (number.compareTo(DISPLAY_1G) >= 0) {
-            scale = 9;
-            suffix = "G";
-        } else if (number.compareTo(DISPLAY_1M) >= 0) {
-            scale = 6;
-            suffix = "M";
-        } else if (number.compareTo(DISPLAY_1K) >= 0) {
-            scale = 3;
-            suffix = "K";
-        } else {
-            scale = 0;
-            suffix = "";
-        }
-        if (scale != 0)
-            work = new BigDecimal(number, scale);
-        else
-            work = new BigDecimal(number);
+	public static String numberToShortString(BigInteger number) {
+		int scale;
+		String suffix;
+		BigDecimal work;
+		if (number.compareTo(DISPLAY_1P) >= 0) {
+			scale = 15;
+			suffix = "P";
+		} else if (number.compareTo(DISPLAY_1T) >= 0) {
+			scale = 12;
+			suffix = "T";
+		} else if (number.compareTo(DISPLAY_1G) >= 0) {
+			scale = 9;
+			suffix = "G";
+		} else if (number.compareTo(DISPLAY_1M) >= 0) {
+			scale = 6;
+			suffix = "M";
+		} else if (number.compareTo(DISPLAY_1K) >= 0) {
+			scale = 3;
+			suffix = "K";
+		} else {
+			scale = 0;
+			suffix = "";
+		}
+		if (scale != 0)
+			work = new BigDecimal(number, scale);
+		else
+			work = new BigDecimal(number);
 
-        return String.format("%3.3f%s", work.floatValue(), suffix);
-    }
+		return String.format("%3.3f%s", work.floatValue(), suffix);
+	}
 
-    public static boolean checkBitLE(byte[] data, int index) {
-        return (data[index>>>3] & bitMask[7&index]) != 0;
-    }
+	public static boolean checkBitLE(byte[] data, int index) {
+		return (data[index >>> 3] & bitMask[7 & index]) != 0;
+	}
 
-    public static void setBitLE(byte[] data, int index) {
-        data[index>>>3] |= bitMask[7&index];
-    }
+	public static void setBitLE(byte[] data, int index) {
+		data[index >>> 3] |= bitMask[7 & index];
+	}
 
-    public static BigInteger decodeCompactBits(long compact) {
-        int size = ((int)(compact>>24)) & 0xFF;
-        byte[] bytes = new byte[4 + size];
-        bytes[3] = (byte)size;
-        if (size>=1) bytes[4] = (byte)((compact>>16) & 0xFF);
-        if (size>=2) bytes[5] = (byte)((compact>>8) & 0xFF);
-        if (size>=3) bytes[6] = (byte)(compact & 0xFF);
-        return decodeMPI(bytes, true);
-    }
+	public static BigInteger decodeCompactBits(long compact) {
+		int size = ((int) (compact >> 24)) & 0xFF;
+		byte[] bytes = new byte[4 + size];
+		bytes[3] = (byte) size;
+		if (size >= 1)
+			bytes[4] = (byte) ((compact >> 16) & 0xFF);
+		if (size >= 2)
+			bytes[5] = (byte) ((compact >> 8) & 0xFF);
+		if (size >= 3)
+			bytes[6] = (byte) (compact & 0xFF);
+		return decodeMPI(bytes, true);
+	}
 
-    public static BigInteger decodeMPI(byte[] mpi, boolean hasLength) {
-        byte[] buf;
-        if (hasLength) {
-            int length = (int)readUint32BE(mpi, 0);
-            buf = new byte[length];
-            System.arraycopy(mpi, 4, buf, 0, length);
-        } else {
-            buf = mpi;
-        }
-        if (buf.length == 0)
-            return BigInteger.ZERO;
-        boolean isNegative = (buf[0] & 0x80) == 0x80;
-        if (isNegative)
-            buf[0] &= 0x7f;
-        BigInteger result = new BigInteger(buf);
-        return isNegative ? result.negate() : result;
-    }
+	public static BigInteger decodeMPI(byte[] mpi, boolean hasLength) {
+		byte[] buf;
+		if (hasLength) {
+			int length = (int) readUint32BE(mpi, 0);
+			buf = new byte[length];
+			System.arraycopy(mpi, 4, buf, 0, length);
+		} else {
+			buf = mpi;
+		}
+		if (buf.length == 0)
+			return BigInteger.ZERO;
+		boolean isNegative = (buf[0] & 0x80) == 0x80;
+		if (isNegative)
+			buf[0] &= 0x7f;
+		BigInteger result = new BigInteger(buf);
+		return isNegative ? result.negate() : result;
+	}
 
-    public static byte[] encodeMPI(BigInteger value, boolean includeLength) {
-        byte[] bytes;
-        if (value.equals(BigInteger.ZERO)) {
-            if (!includeLength)
-                bytes = new byte[] {};
-            else
-                bytes = new byte[] {0x00, 0x00, 0x00, 0x00};
-        } else {
-            boolean isNegative = value.signum()<0;
-            if (isNegative)
-                value = value.negate();
-            byte[] array = value.toByteArray();
-            int length = array.length;
-            if ((array[0]&0x80) == 0x80)
-                length++;
-            if (includeLength) {
-                bytes = new byte[length+4];
-                System.arraycopy(array, 0, bytes, length-array.length+3, array.length);
-                uint32ToByteArrayBE(length, bytes, 0);
-                if (isNegative)
-                    bytes[4] |= 0x80;
-            } else {
-                if (length != array.length) {
-                    bytes = new byte[length];
-                    System.arraycopy(array, 0, bytes, 1, array.length);
-                } else {
-                    bytes = array;
-                }
-                if (isNegative)
-                    bytes[0] |= 0x80;
-            }
-        }
-        return bytes;
-    }
+	public static byte[] encodeMPI(BigInteger value, boolean includeLength) {
+		byte[] bytes;
+		if (value.equals(BigInteger.ZERO)) {
+			if (!includeLength)
+				bytes = new byte[] {};
+			else
+				bytes = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+		} else {
+			boolean isNegative = value.signum() < 0;
+			if (isNegative)
+				value = value.negate();
+			byte[] array = value.toByteArray();
+			int length = array.length;
+			if ((array[0] & 0x80) == 0x80)
+				length++;
+			if (includeLength) {
+				bytes = new byte[length + 4];
+				System.arraycopy(array, 0, bytes, length - array.length + 3, array.length);
+				uint32ToByteArrayBE(length, bytes, 0);
+				if (isNegative)
+					bytes[4] |= 0x80;
+			} else {
+				if (length != array.length) {
+					bytes = new byte[length];
+					System.arraycopy(array, 0, bytes, 1, array.length);
+				} else {
+					bytes = array;
+				}
+				if (isNegative)
+					bytes[0] |= 0x80;
+			}
+		}
+		return bytes;
+	}
 
-    public static byte[] reverseBytes(byte[] bytes) {
-        byte[] buf = new byte[bytes.length];
-        for (int i=0; i<bytes.length; i++)
-            buf[i] = bytes[bytes.length-1-i];
-        return buf;
-    }
+	public static byte[] reverseBytes(byte[] bytes) {
+		byte[] buf = new byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++)
+			buf[i] = bytes[bytes.length - 1 - i];
+		return buf;
+	}
 
-    public static byte[] reverseBytes(byte[] bytes, int offset, int length) {
-        byte[] buf = new byte[length];
-        for (int i=0; i<length; i++)
-            buf[i] = bytes[offset+length-1-i];
-        return buf;
-    }
+	public static byte[] reverseBytes(byte[] bytes, int offset, int length) {
+		byte[] buf = new byte[length];
+		for (int i = 0; i < length; i++)
+			buf[i] = bytes[offset + length - 1 - i];
+		return buf;
+	}
 
-    public static byte[] reverseDwordBytes(byte[] bytes, int trimLength) {
-        byte[] rev = new byte[trimLength >= 0 && bytes.length > trimLength ? trimLength : bytes.length];
-        for (int i = 0; i < rev.length; i += 4) {
-            System.arraycopy(bytes, i, rev, i , 4);
-            for (int j = 0; j < 4; j++) {
-                rev[i + j] = bytes[i + 3 - j];
-            }
-        }
-        return rev;
-    }
+	public static byte[] reverseDwordBytes(byte[] bytes, int trimLength) {
+		byte[] rev = new byte[trimLength >= 0 && bytes.length > trimLength ? trimLength : bytes.length];
+		for (int i = 0; i < rev.length; i += 4) {
+			System.arraycopy(bytes, i, rev, i, 4);
+			for (int j = 0; j < 4; j++) {
+				rev[i + j] = bytes[i + 3 - j];
+			}
+		}
+		return rev;
+	}
 
-    public static long readUint32LE(byte[] bytes, int offset) {
-        return ((long)bytes[offset++]&0x00FFL) |
-               (((long)bytes[offset++]&0x00FFL) << 8) |
-               (((long)bytes[offset++]&0x00FFL) << 16) |
-               (((long)bytes[offset]&0x00FFL) << 24);
-    }
+	public static long readUint32LE(byte[] bytes, int offset) {
+		return ((long) bytes[offset++] & 0x00FFL) | (((long) bytes[offset++] & 0x00FFL) << 8)
+				| (((long) bytes[offset++] & 0x00FFL) << 16) | (((long) bytes[offset] & 0x00FFL) << 24);
+	}
 
-    public static long readUint32BE(byte[] bytes, int offset) {
-        return (((long)bytes[offset++]&0x00FFL) << 24) |
-                (((long)bytes[offset++]&0x00FFL) << 16) |
-                (((long)bytes[offset++]&0x00FFL) << 8) |
-                ((long)bytes[offset]&0x00FFL);
-    }
+	public static long readUint32BE(byte[] bytes, int offset) {
+		return (((long) bytes[offset++] & 0x00FFL) << 24) | (((long) bytes[offset++] & 0x00FFL) << 16)
+				| (((long) bytes[offset++] & 0x00FFL) << 8) | ((long) bytes[offset] & 0x00FFL);
+	}
 
-    public static void uint32ToByteArrayLE(long val, byte[] out, int offset) {
-        out[offset++] = (byte)val;
-        out[offset++] = (byte)(val >> 8);
-        out[offset++] = (byte)(val >> 16);
-        out[offset] = (byte)(val >> 24);
-    }
+	public static void uint32ToByteArrayLE(long val, byte[] out, int offset) {
+		out[offset++] = (byte) val;
+		out[offset++] = (byte) (val >> 8);
+		out[offset++] = (byte) (val >> 16);
+		out[offset] = (byte) (val >> 24);
+	}
 
-    public static void uint32ToByteArrayBE(long val, byte[] out, int offset) {
-        out[offset++] = (byte)(val>>24);
-        out[offset++] = (byte)(val>>16);
-        out[offset++] = (byte)(val>>8);
-        out[offset] = (byte)val;
-    }
+	public static void uint32ToByteArrayBE(long val, byte[] out, int offset) {
+		out[offset++] = (byte) (val >> 24);
+		out[offset++] = (byte) (val >> 16);
+		out[offset++] = (byte) (val >> 8);
+		out[offset] = (byte) val;
+	}
 
-    public static long readUint64LE(byte[] bytes, int offset) {
-        return ((long)bytes[offset++]&0x00FFL) |
-               (((long)bytes[offset++]&0x00FFL) << 8) |
-               (((long)bytes[offset++]&0x00FFL) << 16) |
-               (((long)bytes[offset++]&0x00FFL) << 24) |
-               (((long)bytes[offset++]&0x00FFL) << 32) |
-               (((long)bytes[offset++]&0x00FFL) << 40) |
-               (((long)bytes[offset++]&0x00FFL) << 48) |
-               (((long)bytes[offset]&0x00FFL) << 56);
-    }
+	public static long readUint64LE(byte[] bytes, int offset) {
+		return ((long) bytes[offset++] & 0x00FFL) | (((long) bytes[offset++] & 0x00FFL) << 8)
+				| (((long) bytes[offset++] & 0x00FFL) << 16) | (((long) bytes[offset++] & 0x00FFL) << 24)
+				| (((long) bytes[offset++] & 0x00FFL) << 32) | (((long) bytes[offset++] & 0x00FFL) << 40)
+				| (((long) bytes[offset++] & 0x00FFL) << 48) | (((long) bytes[offset] & 0x00FFL) << 56);
+	}
 
+	public static void uint64ToByteArrayLE(long val, byte[] out, int offset) {
+		out[offset++] = (byte) val;
+		out[offset++] = (byte) (val >> 8);
+		out[offset++] = (byte) (val >> 16);
+		out[offset++] = (byte) (val >> 24);
+		out[offset++] = (byte) (val >> 32);
+		out[offset++] = (byte) (val >> 40);
+		out[offset++] = (byte) (val >> 48);
+		out[offset] = (byte) (val >> 56);
+	}
 
-    public static void uint64ToByteArrayLE(long val, byte[] out, int offset) {
-        out[offset++] = (byte)val;
-        out[offset++] = (byte)(val >> 8);
-        out[offset++] = (byte)(val >> 16);
-        out[offset++] = (byte)(val >> 24);
-        out[offset++] = (byte)(val >> 32);
-        out[offset++] = (byte)(val >> 40);
-        out[offset++] = (byte)(val >> 48);
-        out[offset] = (byte)(val >> 56);
-    }
-    
 	private static String mix(String str) {
 		String result = str;
 		String holder;
@@ -420,24 +405,17 @@ public class Helper {
 		String char2 = String.valueOf(str.charAt(1));
 		String char3 = String.valueOf(str.charAt(2));
 		if ((char1.compareTo(char2) > 0) && (char1.compareTo(char3) < 0)) {
-			return sb.append(mixStep(str.substring(2))).append(str.charAt(1))
-					.append(str.charAt(0)).toString();
+			return sb.append(mixStep(str.substring(2))).append(str.charAt(1)).append(str.charAt(0)).toString();
 		} else if ((char1.compareTo(char2) > 0) && (char1.compareTo(char3) > 0)) {
-			String mixReverse = (new StringBuilder(mixStep(str.substring(2))))
-					.reverse().toString();
-			return sb.append(str.charAt(1)).append(mixReverse)
-					.append(str.charAt(0)).toString();
+			String mixReverse = (new StringBuilder(mixStep(str.substring(2)))).reverse().toString();
+			return sb.append(str.charAt(1)).append(mixReverse).append(str.charAt(0)).toString();
 		} else if ((char1.compareTo(char2) < 0) && (char1.compareTo(char3) > 0)) {
-			return sb.append(str.charAt(0)).append(mixStep(str.substring(2)))
-					.append(str.charAt(1)).toString();
+			return sb.append(str.charAt(0)).append(mixStep(str.substring(2))).append(str.charAt(1)).toString();
 		} else if ((char1.compareTo(char2) < 0) && (char1.compareTo(char3) < 0)) {
-			String mixReverse = (new StringBuilder(mixStep(str.substring(2))))
-					.reverse().toString();
-			return sb.append(str.charAt(0)).append(mixReverse)
-					.append(str.charAt(1)).toString();
+			String mixReverse = (new StringBuilder(mixStep(str.substring(2)))).reverse().toString();
+			return sb.append(str.charAt(0)).append(mixReverse).append(str.charAt(1)).toString();
 		}
-		return sb.append(str.charAt(1)).append(str.charAt(0))
-				.append(mixStep(str.substring(2))).toString();
+		return sb.append(str.charAt(1)).append(str.charAt(0)).append(mixStep(str.substring(2))).toString();
 	}
 
 	private static String deriveLongerString(String str) {
@@ -452,8 +430,7 @@ public class Helper {
 		return result.toString();
 	}
 
-	public static byte[] generateRandom256() throws NoSuchAlgorithmException,
-			InterruptedException {
+	public static byte[] generateRandom256() throws NoSuchAlgorithmException, InterruptedException {
 		byte[] randomSeed1 = ByteUtils.longToBytes(System.nanoTime());
 		byte[] randomSeed2 = (new SecureRandom()).generateSeed(KEY_SIZE_BYTES);
 		byte[] bh1 = ByteUtils.concatenate(randomSeed1, randomSeed2);
@@ -464,8 +441,7 @@ public class Helper {
 		return simpleHash256(ByteUtils.concatenate(bh1, bh2));
 	}
 
-	public static byte[] simpleHash256(byte[] msg)
-			throws NoSuchAlgorithmException {
+	public static byte[] simpleHash256(byte[] msg) throws NoSuchAlgorithmException {
 		MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
 		byte[] byteHolder1, byteHolder2;
 		byteHolder1 = sha256.digest(msg);
@@ -476,9 +452,8 @@ public class Helper {
 		return byteHolder1;
 	}
 
-	public static byte[] hash256(String stringToMangle, String salt,
-			int iterations) throws NoSuchAlgorithmException,
-			UnsupportedEncodingException {
+	public static byte[] hash256(String stringToMangle, String salt, int iterations)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
 		StringBuilder sb = new StringBuilder();
 		sb.append(deriveLongerString(stringToMangle));
@@ -496,14 +471,11 @@ public class Helper {
 			byteHolder2 = sha256.digest(byteHolder1);
 			if ((i % wallInterval) < wallThickness) {
 				if ((i % 2) == 0) {
-					byteHolder3 = sha256.digest(ByteUtils.concatenate(
-							byteHolder2, rawInput));
+					byteHolder3 = sha256.digest(ByteUtils.concatenate(byteHolder2, rawInput));
 				} else {
-					byteHolder3 = sha256.digest(ByteUtils.concatenate(rawInput,
-							byteHolder2));
+					byteHolder3 = sha256.digest(ByteUtils.concatenate(rawInput, byteHolder2));
 				}
-				byteHolder1 = sha256.digest(ByteUtils.concatenate(byteHolder2,
-						byteHolder3));
+				byteHolder1 = sha256.digest(ByteUtils.concatenate(byteHolder2, byteHolder3));
 			} else {
 				byteHolder1 = sha256.digest(byteHolder2);
 			}
@@ -511,28 +483,15 @@ public class Helper {
 		return byteHolder1;
 	}
 
-	public static byte[] hash512(String stringToMangle, String salt,
-			int iterations) throws NoSuchAlgorithmException,
-			UnsupportedEncodingException {
+	public static byte[] hash512(String stringToMangle, String salt, int iterations)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		byte[] hash256a = hash256(stringToMangle, salt, (iterations + 3) / 2);
-		byte[] hash256b = hash256(ByteUtils.toHexString(hash256a),
-				stringToMangle, (iterations + 1) / 2);
+		byte[] hash256b = hash256(ByteUtils.toHexString(hash256a), stringToMangle, (iterations + 1) / 2);
 		return ByteUtils.concatenate(hash256a, hash256b);
 	}
 
 	public static byte[] sha256(byte[] input) {
 		return sha256digest.digest(input);
-	}
-
-	public static byte[] sha3(byte[] input) {
-		ByteArrayWrapper inputByteArray = new ByteArrayWrapper(input);
-		byte[] result = sha3Cache.get(inputByteArray);
-		if (result != null) {
-			return result;
-		}
-		result = SHA3.sha3(input);
-		sha3Cache.put(inputByteArray, result);
-		return result;
 	}
 
 	public static byte[] ripemd160(byte[] message) {
@@ -544,20 +503,6 @@ public class Helper {
 			return resBuf;
 		}
 		throw new NullPointerException("Can't hash a null");
-	}
-
-	public static byte[] sha3omit12(byte[] input) {
-		byte[] hash = sha3(input);
-		return copyOfRange(hash, 12, hash.length);
-	}
-
-	public static byte[] calcNewAddr(byte[] addr, byte[] nonce) {
-
-		byte[] encSender = RP.encodeElement(addr);
-		byte[] encNonce = RP.encodeBigInteger(new BigInteger(1, nonce));
-		byte[] newAddress = sha3omit12(RP.encodeList(encSender, encNonce));
-
-		return newAddress;
 	}
 
 	public static byte[] doubleDigest(byte[] input) {
@@ -595,10 +540,11 @@ public class Helper {
 		System.arraycopy(sha512(bytes), 0, hash, 0, 16);
 		return hash;
 	}
+	public static String MODE = "SHA-512";
 
 	public static byte[] halfSHA512(byte[] bytesToHash) {
 		try {
-			MessageDigest sha512Digest = MessageDigest.getInstance("SHA-512");
+			MessageDigest sha512Digest = MessageDigest.getInstance(MODE);
 			byte[] bytesHash = sha512Digest.digest(bytesToHash);
 			byte[] first256BitsOfHash = copyOf(bytesHash, 32);
 			return first256BitsOfHash;
@@ -606,11 +552,12 @@ public class Helper {
 			throw new RuntimeException(e);
 		}
 	}
+	
 
 	public static byte[] sha512(byte[] byteArrays) {
 		MessageDigest messageDigest;
 		try {
-			messageDigest = MessageDigest.getInstance("SHA-512");
+			messageDigest = MessageDigest.getInstance(MODE);
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		} catch (Exception e) {
@@ -1167,40 +1114,36 @@ public class Helper {
 			}
 
 			if (dualKey._key1 instanceof SortedSet) {
-				if (!compareOrderedCollection((Collection) dualKey._key1,
-						(Collection) dualKey._key2, stack, visited)) {
+				if (!compareOrderedCollection((Collection) dualKey._key1, (Collection) dualKey._key2, stack, visited)) {
 					return false;
 				}
 				continue;
 			}
 
 			if (dualKey._key1 instanceof Set) {
-				if (!compareUnorderedCollection((Collection) dualKey._key1,
-						(Collection) dualKey._key2, stack, visited)) {
+				if (!compareUnorderedCollection((Collection) dualKey._key1, (Collection) dualKey._key2, stack,
+						visited)) {
 					return false;
 				}
 				continue;
 			}
 
 			if (dualKey._key1 instanceof Collection) {
-				if (!compareOrderedCollection((Collection) dualKey._key1,
-						(Collection) dualKey._key2, stack, visited)) {
+				if (!compareOrderedCollection((Collection) dualKey._key1, (Collection) dualKey._key2, stack, visited)) {
 					return false;
 				}
 				continue;
 			}
 
 			if (dualKey._key1 instanceof SortedMap) {
-				if (!compareSortedMap((SortedMap) dualKey._key1,
-						(SortedMap) dualKey._key2, stack, visited)) {
+				if (!compareSortedMap((SortedMap) dualKey._key1, (SortedMap) dualKey._key2, stack, visited)) {
 					return false;
 				}
 				continue;
 			}
 
 			if (dualKey._key1 instanceof Map) {
-				if (!compareUnorderedMap((Map) dualKey._key1,
-						(Map) dualKey._key2, stack, visited)) {
+				if (!compareUnorderedMap((Map) dualKey._key1, (Map) dualKey._key2, stack, visited)) {
 					return false;
 				}
 				continue;
@@ -1213,13 +1156,11 @@ public class Helper {
 				continue;
 			}
 
-			Collection<Field> fields = getDeepDeclaredFields(dualKey._key1
-					.getClass());
+			Collection<Field> fields = getDeepDeclaredFields(dualKey._key1.getClass());
 
 			for (Field field : fields) {
 				try {
-					DualKey dk = new DualKey(field.get(dualKey._key1),
-							field.get(dualKey._key2));
+					DualKey dk = new DualKey(field.get(dualKey._key1), field.get(dualKey._key2));
 					if (!visited.contains(dk)) {
 						stack.addFirst(dk);
 					}
@@ -1231,8 +1172,8 @@ public class Helper {
 		return true;
 	}
 
-	private static boolean compareArrays(Object array1, Object array2,
-			LinkedList<DualKey> stack, Set<DualKey> visited) {
+	private static boolean compareArrays(Object array1, Object array2, LinkedList<DualKey> stack,
+			Set<DualKey> visited) {
 		int len = Array.getLength(array1);
 		if (len != Array.getLength(array2)) {
 			return false;
@@ -1246,8 +1187,7 @@ public class Helper {
 		return true;
 	}
 
-	private static boolean compareOrderedCollection(Collection col1,
-			Collection col2, LinkedList stack, Set visited) {
+	private static boolean compareOrderedCollection(Collection col1, Collection col2, LinkedList stack, Set visited) {
 
 		if (col1.size() != col2.size()) {
 			return false;
@@ -1265,8 +1205,7 @@ public class Helper {
 		return true;
 	}
 
-	private static boolean compareUnorderedCollection(Collection col1,
-			Collection col2, LinkedList stack, Set visited) {
+	private static boolean compareUnorderedCollection(Collection col1, Collection col2, LinkedList stack, Set visited) {
 		if (col1.size() != col2.size()) {
 			return false;
 		}
@@ -1290,8 +1229,7 @@ public class Helper {
 		return true;
 	}
 
-	private static boolean compareSortedMap(SortedMap map1, SortedMap map2,
-			LinkedList stack, Set visited) {
+	private static boolean compareSortedMap(SortedMap map1, SortedMap map2, LinkedList stack, Set visited) {
 		if (map1.size() != map2.size()) {
 			return false;
 		}
@@ -1316,8 +1254,7 @@ public class Helper {
 		return true;
 	}
 
-	private static boolean compareUnorderedMap(Map map1, Map map2,
-			LinkedList stack, Set visited) {
+	private static boolean compareUnorderedMap(Map map1, Map map2, LinkedList stack, Set visited) {
 		if (map1.size() != map2.size()) {
 			return false;
 		}
@@ -1329,8 +1266,7 @@ public class Helper {
 		}
 
 		for (Map.Entry entry : (Set<Map.Entry>) map1.entrySet()) {
-			Map.Entry other = (Map.Entry) fastLookup.get(deepHashCode(entry
-					.getKey()));
+			Map.Entry other = (Map.Entry) fastLookup.get(deepHashCode(entry.getKey()));
 			if (other == null) {
 				return false;
 			}
@@ -1455,8 +1391,7 @@ public class Helper {
 					}
 
 					int modifiers = field.getModifiers();
-					if (!Modifier.isStatic(modifiers)
-							&& !field.getName().startsWith("this$")
+					if (!Modifier.isStatic(modifiers) && !field.getName().startsWith("this$")
 							&& !Modifier.isTransient(modifiers)) {
 						fields.add(field);
 					}
@@ -1537,9 +1472,7 @@ public class Helper {
 	public static String hexStringToDecimalString(String hexNum) {
 		boolean match = Pattern.matches("0[xX][0-9a-fA-F]+", hexNum);
 		if (!match) {
-			throw new Error(
-					"The string doesn't conains hex num in form 0x.. : ["
-							+ hexNum + "]");
+			throw new Error("The string doesn't conains hex num in form 0x.. : [" + hexNum + "]");
 		}
 		byte[] numberBytes = Hex.decode(hexNum.substring(2));
 		return (new BigInteger(1, numberBytes)).toString();
@@ -1577,8 +1510,7 @@ public class Helper {
 			return sb.append("[]");
 		}
 		String firstHash = Hex.toHexString(blockHashes.get(0));
-		String lastHash = Hex
-				.toHexString(blockHashes.get(blockHashes.size() - 1));
+		String lastHash = Hex.toHexString(blockHashes.get(blockHashes.size() - 1));
 		return sb.append(" ").append(firstHash).append("...").append(lastHash);
 	}
 }

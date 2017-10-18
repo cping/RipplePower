@@ -59,8 +59,7 @@ public final class WhiteRectangleDetector {
 	 * @throws NotFoundException
 	 *             if image is too small to accommodate {@code initSize}
 	 */
-	public WhiteRectangleDetector(BitMatrix image, int initSize, int x, int y)
-			throws NotFoundException {
+	public WhiteRectangleDetector(BitMatrix image, int initSize, int x, int y) throws NotFoundException {
 		this.image = image;
 		height = image.getHeight();
 		width = image.getWidth();
@@ -69,8 +68,7 @@ public final class WhiteRectangleDetector {
 		rightInit = x + halfsize;
 		upInit = y - halfsize;
 		downInit = y + halfsize;
-		if (upInit < 0 || leftInit < 0 || downInit >= height
-				|| rightInit >= width) {
+		if (upInit < 0 || leftInit < 0 || downInit >= height || rightInit >= width) {
 			throw NotFoundException.getNotFoundInstance();
 		}
 	}
@@ -113,8 +111,7 @@ public final class WhiteRectangleDetector {
 			// . |
 			// .....
 			boolean rightBorderNotWhite = true;
-			while ((rightBorderNotWhite || !atLeastOneBlackPointFoundOnRight)
-					&& right < width) {
+			while ((rightBorderNotWhite || !atLeastOneBlackPointFoundOnRight) && right < width) {
 				rightBorderNotWhite = containsBlackPoint(up, down, right, false);
 				if (rightBorderNotWhite) {
 					right++;
@@ -134,10 +131,8 @@ public final class WhiteRectangleDetector {
 			// . .
 			// .___.
 			boolean bottomBorderNotWhite = true;
-			while ((bottomBorderNotWhite || !atLeastOneBlackPointFoundOnBottom)
-					&& down < height) {
-				bottomBorderNotWhite = containsBlackPoint(left, right, down,
-						true);
+			while ((bottomBorderNotWhite || !atLeastOneBlackPointFoundOnBottom) && down < height) {
+				bottomBorderNotWhite = containsBlackPoint(left, right, down, true);
 				if (bottomBorderNotWhite) {
 					down++;
 					aBlackPointFoundOnBorder = true;
@@ -156,8 +151,7 @@ public final class WhiteRectangleDetector {
 			// | .
 			// .....
 			boolean leftBorderNotWhite = true;
-			while ((leftBorderNotWhite || !atLeastOneBlackPointFoundOnLeft)
-					&& left >= 0) {
+			while ((leftBorderNotWhite || !atLeastOneBlackPointFoundOnLeft) && left >= 0) {
 				leftBorderNotWhite = containsBlackPoint(up, down, left, false);
 				if (leftBorderNotWhite) {
 					left--;
@@ -177,8 +171,7 @@ public final class WhiteRectangleDetector {
 			// . .
 			// .....
 			boolean topBorderNotWhite = true;
-			while ((topBorderNotWhite || !atLeastOneBlackPointFoundOnTop)
-					&& up >= 0) {
+			while ((topBorderNotWhite || !atLeastOneBlackPointFoundOnTop) && up >= 0) {
 				topBorderNotWhite = containsBlackPoint(left, right, up, true);
 				if (topBorderNotWhite) {
 					up--;
@@ -262,8 +255,7 @@ public final class WhiteRectangleDetector {
 		}
 	}
 
-	private ResultPoint getBlackPointOnSegment(float aX, float aY, float bX,
-			float bY) {
+	private ResultPoint getBlackPointOnSegment(float aX, float aY, float bX, float bY) {
 		int dist = MathUtils.round(MathUtils.distance(aX, aY, bX, bY));
 		float xStep = (bX - aX) / dist;
 		float yStep = (bY - aY) / dist;
@@ -295,8 +287,7 @@ public final class WhiteRectangleDetector {
 	 *         point and the last, the bottommost. The second point will be
 	 *         leftmost and the third, the rightmost
 	 */
-	private ResultPoint[] centerEdges(ResultPoint y, ResultPoint z,
-			ResultPoint x, ResultPoint t) {
+	private ResultPoint[] centerEdges(ResultPoint y, ResultPoint z, ResultPoint x, ResultPoint t) {
 
 		//
 		// t t
@@ -315,15 +306,11 @@ public final class WhiteRectangleDetector {
 		float tj = t.getY();
 
 		if (yi < width / 2.0f) {
-			return new ResultPoint[] { new ResultPoint(ti - CORR, tj + CORR),
-					new ResultPoint(zi + CORR, zj + CORR),
-					new ResultPoint(xi - CORR, xj - CORR),
-					new ResultPoint(yi + CORR, yj - CORR) };
+			return new ResultPoint[] { new ResultPoint(ti - CORR, tj + CORR), new ResultPoint(zi + CORR, zj + CORR),
+					new ResultPoint(xi - CORR, xj - CORR), new ResultPoint(yi + CORR, yj - CORR) };
 		} else {
-			return new ResultPoint[] { new ResultPoint(ti + CORR, tj + CORR),
-					new ResultPoint(zi + CORR, zj - CORR),
-					new ResultPoint(xi - CORR, xj + CORR),
-					new ResultPoint(yi - CORR, yj - CORR) };
+			return new ResultPoint[] { new ResultPoint(ti + CORR, tj + CORR), new ResultPoint(zi + CORR, zj - CORR),
+					new ResultPoint(xi - CORR, xj + CORR), new ResultPoint(yi - CORR, yj - CORR) };
 		}
 	}
 
@@ -340,8 +327,7 @@ public final class WhiteRectangleDetector {
 	 *            set to true if scan must be horizontal, false if vertical
 	 * @return true if a black point has been found, else false.
 	 */
-	private boolean containsBlackPoint(int a, int b, int fixed,
-			boolean horizontal) {
+	private boolean containsBlackPoint(int a, int b, int fixed, boolean horizontal) {
 
 		if (horizontal) {
 			for (int x = a; x <= b; x++) {

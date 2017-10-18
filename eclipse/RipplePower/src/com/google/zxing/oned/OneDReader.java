@@ -42,35 +42,29 @@ import java.util.Map;
 public abstract class OneDReader implements Reader {
 
 	@Override
-	public Result decode(BinaryBitmap image) throws NotFoundException,
-			FormatException {
+	public Result decode(BinaryBitmap image) throws NotFoundException, FormatException {
 		return decode(image, null);
 	}
 
 	// Note that we don't try rotation without the try harder flag, even if
 	// rotation was supported.
 	@Override
-	public Result decode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
-			throws NotFoundException, FormatException {
+	public Result decode(BinaryBitmap image, Map<DecodeHintType, ?> hints) throws NotFoundException, FormatException {
 		try {
 			return doDecode(image, hints);
 		} catch (NotFoundException nfe) {
-			boolean tryHarder = hints != null
-					&& hints.containsKey(DecodeHintType.TRY_HARDER);
+			boolean tryHarder = hints != null && hints.containsKey(DecodeHintType.TRY_HARDER);
 			if (tryHarder && image.isRotateSupported()) {
 				BinaryBitmap rotatedImage = image.rotateCounterClockwise();
 				Result result = doDecode(rotatedImage, hints);
 				// Record that we found it rotated 90 degrees CCW / 270 degrees
 				// CW
-				Map<ResultMetadataType, ?> metadata = result
-						.getResultMetadata();
+				Map<ResultMetadataType, ?> metadata = result.getResultMetadata();
 				int orientation = 270;
-				if (metadata != null
-						&& metadata.containsKey(ResultMetadataType.ORIENTATION)) {
+				if (metadata != null && metadata.containsKey(ResultMetadataType.ORIENTATION)) {
 					// But if we found it reversed in doDecode(), add in that
 					// result here:
-					orientation = (orientation + (Integer) metadata
-							.get(ResultMetadataType.ORIENTATION)) % 360;
+					orientation = (orientation + (Integer) metadata.get(ResultMetadataType.ORIENTATION)) % 360;
 				}
 				result.putMetadata(ResultMetadataType.ORIENTATION, orientation);
 				// Update result points
@@ -78,8 +72,7 @@ public abstract class OneDReader implements Reader {
 				if (points != null) {
 					int height = rotatedImage.getHeight();
 					for (int i = 0; i < points.length; i++) {
-						points[i] = new ResultPoint(height - points[i].getY()
-								- 1, points[i].getX());
+						points[i] = new ResultPoint(height - points[i].getY() - 1, points[i].getX());
 					}
 				}
 				return result;
@@ -112,15 +105,13 @@ public abstract class OneDReader implements Reader {
 	 * @throws NotFoundException
 	 *             Any spontaneous errors which occur
 	 */
-	private Result doDecode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
-			throws NotFoundException {
+	private Result doDecode(BinaryBitmap image, Map<DecodeHintType, ?> hints) throws NotFoundException {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		BitArray row = new BitArray(width);
 
 		int middle = height >> 1;
-		boolean tryHarder = hints != null
-				&& hints.containsKey(DecodeHintType.TRY_HARDER);
+		boolean tryHarder = hints != null && hints.containsKey(DecodeHintType.TRY_HARDER);
 		int rowStep = Math.max(1, height >> (tryHarder ? 8 : 5));
 		int maxLines;
 		if (tryHarder) {
@@ -136,8 +127,7 @@ public abstract class OneDReader implements Reader {
 			// at next:
 			int rowStepsAboveOrBelow = (x + 1) / 2;
 			boolean isAbove = (x & 0x01) == 0; // i.e. is x even?
-			int rowNumber = middle + rowStep
-					* (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
+			int rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
 			if (rowNumber < 0 || rowNumber >= height) {
 				// Oops, if we run off the top or bottom, stop
 				break;
@@ -163,10 +153,8 @@ public abstract class OneDReader implements Reader {
 					// don't want to clutter with noise from every single row
 					// scan -- just the scans
 					// that start on the center line.
-					if (hints != null
-							&& hints.containsKey(DecodeHintType.NEED_RESULT_POINT_CALLBACK)) {
-						Map<DecodeHintType, Object> newHints = new EnumMap<>(
-								DecodeHintType.class);
+					if (hints != null && hints.containsKey(DecodeHintType.NEED_RESULT_POINT_CALLBACK)) {
+						Map<DecodeHintType, Object> newHints = new EnumMap<>(DecodeHintType.class);
 						newHints.putAll(hints);
 						newHints.remove(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
 						hints = newHints;
@@ -182,10 +170,8 @@ public abstract class OneDReader implements Reader {
 						// And remember to flip the result points horizontally.
 						ResultPoint[] points = result.getResultPoints();
 						if (points != null) {
-							points[0] = new ResultPoint(width
-									- points[0].getX() - 1, points[0].getY());
-							points[1] = new ResultPoint(width
-									- points[1].getX() - 1, points[1].getY());
+							points[0] = new ResultPoint(width - points[0].getX() - 1, points[0].getY());
+							points[1] = new ResultPoint(width - points[1].getX() - 1, points[1].getY());
 						}
 					}
 					return result;
@@ -217,8 +203,7 @@ public abstract class OneDReader implements Reader {
 	 *             if counters cannot be filled entirely from row before running
 	 *             out of pixels
 	 */
-	protected static void recordPattern(BitArray row, int start, int[] counters)
-			throws NotFoundException {
+	protected static void recordPattern(BitArray row, int start, int[] counters) throws NotFoundException {
 		int numCounters = counters.length;
 		Arrays.fill(counters, 0, numCounters, 0);
 		int end = row.getSize();
@@ -251,8 +236,7 @@ public abstract class OneDReader implements Reader {
 		}
 	}
 
-	protected static void recordPatternInReverse(BitArray row, int start,
-			int[] counters) throws NotFoundException {
+	protected static void recordPatternInReverse(BitArray row, int start, int[] counters) throws NotFoundException {
 		// This could be more efficient I guess
 		int numTransitionsLeft = counters.length;
 		boolean last = row.get(start);
@@ -283,8 +267,7 @@ public abstract class OneDReader implements Reader {
 	 * @return ratio of total variance between counters and pattern compared to
 	 *         total pattern size
 	 */
-	protected static float patternMatchVariance(int[] counters, int[] pattern,
-			float maxIndividualVariance) {
+	protected static float patternMatchVariance(int[] counters, int[] pattern, float maxIndividualVariance) {
 		int numCounters = counters.length;
 		int total = 0;
 		int patternLength = 0;
@@ -306,8 +289,7 @@ public abstract class OneDReader implements Reader {
 		for (int x = 0; x < numCounters; x++) {
 			int counter = counters[x];
 			float scaledPattern = pattern[x] * unitBarWidth;
-			float variance = counter > scaledPattern ? counter - scaledPattern
-					: scaledPattern - counter;
+			float variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
 			if (variance > maxIndividualVariance) {
 				return Float.POSITIVE_INFINITY;
 			}
@@ -337,8 +319,7 @@ public abstract class OneDReader implements Reader {
 	 * @throws FormatException
 	 *             if a potential barcode is found but format is invalid
 	 */
-	public abstract Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException,
-			ChecksumException, FormatException;
+	public abstract Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints)
+			throws NotFoundException, ChecksumException, FormatException;
 
 }

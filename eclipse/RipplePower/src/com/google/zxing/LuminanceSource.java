@@ -101,8 +101,7 @@ public abstract class LuminanceSource {
 	 * @return A cropped version of this object.
 	 */
 	public LuminanceSource crop(int left, int top, int width, int height) {
-		throw new UnsupportedOperationException(
-				"This luminance source does not support cropping.");
+		throw new UnsupportedOperationException("This luminance source does not support cropping.");
 	}
 
 	/**
@@ -128,8 +127,7 @@ public abstract class LuminanceSource {
 	 * @return A rotated version of this object.
 	 */
 	public LuminanceSource rotateCounterClockwise() {
-		throw new UnsupportedOperationException(
-				"This luminance source does not support rotation by 90 degrees.");
+		throw new UnsupportedOperationException("This luminance source does not support rotation by 90 degrees.");
 	}
 
 	/**
@@ -139,8 +137,7 @@ public abstract class LuminanceSource {
 	 * @return A rotated version of this object.
 	 */
 	public LuminanceSource rotateCounterClockwise45() {
-		throw new UnsupportedOperationException(
-				"This luminance source does not support rotation by 45 degrees.");
+		throw new UnsupportedOperationException("This luminance source does not support rotation by 45 degrees.");
 	}
 
 	@Override

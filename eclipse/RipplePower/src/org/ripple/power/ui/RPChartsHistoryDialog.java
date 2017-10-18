@@ -62,8 +62,7 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
-	private LineChartCanvas addChart(LineChartCanvas canvas, int w, int h,
-			ChartValueSerie my, ChartValueSerie btc) {
+	private LineChartCanvas addChart(LineChartCanvas canvas, int w, int h, ChartValueSerie my, ChartValueSerie btc) {
 		if (canvas == null) {
 			canvas = new LineChartCanvas(w, h);
 			canvas.setTextVis(false, false, false, false);
@@ -85,52 +84,40 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 	}
 
 	private void initChart() {
-		chartOneCanvas = addChart(chartOneCanvas, 730, 130, chartsOne,
-				chartsOnebtc);
-		chartTwoCanvas = addChart(chartTwoCanvas, 730, 130, chartsTwo,
-				chartsTwobtc);
-		chartThreeCanvas = addChart(chartThreeCanvas, 730, 130, chartsThree,
-				chartsThreebtc);
+		chartOneCanvas = addChart(chartOneCanvas, 730, 130, chartsOne, chartsOnebtc);
+		chartTwoCanvas = addChart(chartTwoCanvas, 730, 130, chartsTwo, chartsTwobtc);
+		chartThreeCanvas = addChart(chartThreeCanvas, 730, 130, chartsThree, chartsThreebtc);
 
-		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(
-				chartThreeCanvas);
+		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(chartThreeCanvas);
 		chartThreeCanvas.setLayout(jPanel2Layout);
-		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 730,
-				Short.MAX_VALUE));
-		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 130,
-				Short.MAX_VALUE));
+		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 730, Short.MAX_VALUE));
+		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 130, Short.MAX_VALUE));
 
 		getContentPane().add(chartThreeCanvas);
 		chartThreeCanvas.setBounds(10, 340, 730, 130);
 
 		chartOneCanvas.setBackground(new java.awt.Color(51, 51, 51));
 
-		javax.swing.GroupLayout _chartOnePanelLayout = new javax.swing.GroupLayout(
-				chartOneCanvas);
+		javax.swing.GroupLayout _chartOnePanelLayout = new javax.swing.GroupLayout(chartOneCanvas);
 		chartOneCanvas.setLayout(_chartOnePanelLayout);
 		_chartOnePanelLayout.setHorizontalGroup(_chartOnePanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 730, Short.MAX_VALUE));
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 730, Short.MAX_VALUE));
 		_chartOnePanelLayout.setVerticalGroup(_chartOnePanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 130, Short.MAX_VALUE));
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 130, Short.MAX_VALUE));
 
 		getContentPane().add(chartOneCanvas);
 		chartOneCanvas.setBounds(10, 20, 730, 130);
 
 		chartTwoCanvas.setBackground(new java.awt.Color(51, 51, 51));
 
-		javax.swing.GroupLayout _chartTwoPanelLayout = new javax.swing.GroupLayout(
-				chartTwoCanvas);
+		javax.swing.GroupLayout _chartTwoPanelLayout = new javax.swing.GroupLayout(chartTwoCanvas);
 		chartTwoCanvas.setLayout(_chartTwoPanelLayout);
 		_chartTwoPanelLayout.setHorizontalGroup(_chartTwoPanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 730, Short.MAX_VALUE));
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 730, Short.MAX_VALUE));
 		_chartTwoPanelLayout.setVerticalGroup(_chartTwoPanelLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGap(0, 130, Short.MAX_VALUE));
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 130, Short.MAX_VALUE));
 
 		getContentPane().add(chartTwoCanvas);
 		chartTwoCanvas.setBounds(10, 180, 730, 130);
@@ -138,8 +125,8 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 	}
 
 	public RPChartsHistoryDialog(Window parent) {
-		super(parent, LangConfig.get(RPChartsHistoryDialog.class, "hp",
-				"Historical Prices Charts"), Dialog.ModalityType.MODELESS);
+		super(parent, LangConfig.get(RPChartsHistoryDialog.class, "hp", "Historical Prices Charts"),
+				Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
@@ -185,11 +172,9 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final String cur = (String) _cComboBox.getSelectedItem();
-				final boolean match = _matchBTCCheckBox.isSelected()
-						&& !"bitcoin".equalsIgnoreCase(cur);
+				final boolean match = _matchBTCCheckBox.isSelected() && !"bitcoin".equalsIgnoreCase(cur);
 
-				final WaitDialog dialog = WaitDialog
-						.showDialog(RPChartsHistoryDialog.this);
+				final WaitDialog dialog = WaitDialog.showDialog(RPChartsHistoryDialog.this);
 				_waitDialogs.add(dialog);
 				dialog.get().setFadeClose(false);
 				Updateable update = new Updateable() {
@@ -198,47 +183,37 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 					public void action(Object o) {
 						try {
 							addData(chartsOne, 1, cur, match, chartsOnebtc);
-							chartOneCanvas = addChart(chartOneCanvas, 730, 130,
-									chartsOne, chartsOnebtc);
+							chartOneCanvas = addChart(chartOneCanvas, 730, 130, chartsOne, chartsOnebtc);
 						} catch (Exception e) {
 							try {
 								addData(chartsOne, 1, cur, match, chartsOnebtc);
-								chartOneCanvas = addChart(chartOneCanvas, 730,
-										130, chartsOne, chartsOnebtc);
+								chartOneCanvas = addChart(chartOneCanvas, 730, 130, chartsOne, chartsOnebtc);
 							} catch (Exception ex) {
-								RPToast.makeText(RPChartsHistoryDialog.this,
-										e.getMessage(), RPToast.Style.ERROR)
+								RPToast.makeText(RPChartsHistoryDialog.this, e.getMessage(), RPToast.Style.ERROR)
 										.display();
 							}
 						}
 						try {
 							addData(chartsTwo, 7, cur, match, chartsTwobtc);
-							chartTwoCanvas = addChart(chartTwoCanvas, 730, 130,
-									chartsTwo, chartsTwobtc);
+							chartTwoCanvas = addChart(chartTwoCanvas, 730, 130, chartsTwo, chartsTwobtc);
 						} catch (Exception e) {
 							try {
 								addData(chartsTwo, 7, cur, match, chartsTwobtc);
-								chartTwoCanvas = addChart(chartTwoCanvas, 730,
-										130, chartsTwo, chartsTwobtc);
+								chartTwoCanvas = addChart(chartTwoCanvas, 730, 130, chartsTwo, chartsTwobtc);
 							} catch (Exception ex) {
-								RPToast.makeText(RPChartsHistoryDialog.this,
-										e.getMessage(), RPToast.Style.ERROR)
+								RPToast.makeText(RPChartsHistoryDialog.this, e.getMessage(), RPToast.Style.ERROR)
 										.display();
 							}
 						}
 						try {
 							addData(chartsThree, 30, cur, match, chartsThreebtc);
-							chartThreeCanvas = addChart(chartThreeCanvas, 730,
-									130, chartsThree, chartsThreebtc);
+							chartThreeCanvas = addChart(chartThreeCanvas, 730, 130, chartsThree, chartsThreebtc);
 						} catch (Exception e) {
 							try {
-								addData(chartsThree, 30, cur, match,
-										chartsThreebtc);
-								chartThreeCanvas = addChart(chartThreeCanvas,
-										730, 130, chartsThree, chartsThreebtc);
+								addData(chartsThree, 30, cur, match, chartsThreebtc);
+								chartThreeCanvas = addChart(chartThreeCanvas, 730, 130, chartsThree, chartsThreebtc);
 							} catch (Exception ex) {
-								RPToast.makeText(RPChartsHistoryDialog.this,
-										e.getMessage(), RPToast.Style.ERROR)
+								RPToast.makeText(RPChartsHistoryDialog.this, e.getMessage(), RPToast.Style.ERROR)
 										.display();
 							}
 						}
@@ -270,13 +245,11 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 		_currencyLabel.setBounds(10, 490, 120, 20);
 
 		_cComboBox.setFont(font); // NOI18N
-		_cComboBox.setItemModel(new String[] { "Bitcoin", "Ripple", "Litecoin",
-				"Bitshares-x", "Dogecoin" });
+		_cComboBox.setItemModel(new String[] { "Bitcoin", "Ripple", "Litecoin", "Bitshares-x", "Dogecoin" });
 		getContentPane().add(_cComboBox);
 		_cComboBox.setBounds(90, 490, 180, 22);
 
-		_autoRefreshCheckBox.setText(LangConfig.get(this, "autor",
-				"Auto Refresh"));
+		_autoRefreshCheckBox.setText(LangConfig.get(this, "autor", "Auto Refresh"));
 		getContentPane().add(_autoRefreshCheckBox);
 		_autoRefreshCheckBox.setBackground(UIConfig.dialogbackground);
 		_autoRefreshCheckBox.setBounds(640, 490, 100, 23);
@@ -349,8 +322,7 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 			@Override
 			public void action(Object o) {
 				try {
-					ArrayList<CoinmarketcapData> datas = OtherData
-							.getCoinmarketcapAllTo(30);
+					ArrayList<CoinmarketcapData> datas = OtherData.getCoinmarketcapAllTo(30);
 					if (datas.size() > 0) {
 						final ArrayList<String> list = new ArrayList<String>(30);
 						for (CoinmarketcapData data : datas) {
@@ -368,28 +340,21 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 						@Override
 						public void run() {
 							if (_autoRefreshCheckBox.isSelected()) {
-								final String cur = (String) _cComboBox
-										.getSelectedItem();
-								final boolean match = _matchBTCCheckBox
-										.isSelected()
+								final String cur = (String) _cComboBox.getSelectedItem();
+								final boolean match = _matchBTCCheckBox.isSelected()
 										&& !"bitcoin".equalsIgnoreCase(cur);
 								try {
-									addData(chartsOne, 1, cur, match,
-											chartsOnebtc);
-									addData(chartsTwo, 7, cur, match,
-											chartsTwobtc);
-									addData(chartsThree, 30, cur, match,
-											chartsThreebtc);
+									addData(chartsOne, 1, cur, match, chartsOnebtc);
+									addData(chartsTwo, 7, cur, match, chartsTwobtc);
+									addData(chartsThree, 30, cur, match, chartsThreebtc);
 								} catch (Exception ex) {
-									RPToast.makeText(
-											RPChartsHistoryDialog.this,
-											ex.getMessage(),
-											RPToast.Style.ERROR).display();
+									RPToast.makeText(RPChartsHistoryDialog.this, ex.getMessage(), RPToast.Style.ERROR)
+											.display();
 								}
 							}
-							
+
 							RPChartsHistoryDialog.this.repaint();
-			
+
 							if (chartOneCanvas != null) {
 								chartOneCanvas.repaint();
 							}
@@ -412,16 +377,15 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 		LSystem.postThread(update);
 	}
 
-	private void addData(ChartValueSerie chart, int day, String cur,
-			boolean match, ChartValueSerie btcchart) throws Exception {
+	private void addData(ChartValueSerie chart, int day, String cur, boolean match, ChartValueSerie btcchart)
+			throws Exception {
 		ArrayMap arrays = OtherData.getCapitalization(day, cur);
 		if (arrays != null && arrays.size() > 0) {
 			chart.clearPointList();
 			for (int i = 0; i < arrays.size(); i++) {
 				if (i < arrays.size()) {
 					String key = (String) arrays.getKey(i);
-					chart.addPoint(new ChartValue(key, Float
-							.parseFloat((String) arrays.getValue(key)) / 1000f));
+					chart.addPoint(new ChartValue(key, Float.parseFloat((String) arrays.getValue(key)) / 1000f));
 				}
 			}
 		}
@@ -432,9 +396,7 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 				for (int i = 0; i < arrays.size(); i++) {
 					if (i < arrays.size()) {
 						String key = (String) arrays.getKey(i);
-						btcchart.addPoint(new ChartValue(
-								key,
-								Float.parseFloat((String) arrays.getValue(key)) / 1000f));
+						btcchart.addPoint(new ChartValue(key, Float.parseFloat((String) arrays.getValue(key)) / 1000f));
 					}
 				}
 			}

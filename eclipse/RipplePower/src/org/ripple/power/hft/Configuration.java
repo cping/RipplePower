@@ -7,8 +7,7 @@ import org.ripple.power.config.RPConfig;
 
 public class Configuration extends BOT_SET {
 
-	private static HashMap<String, Configuration> _instance = new HashMap<String, Configuration>(
-			10);
+	private static HashMap<String, Configuration> _instance = new HashMap<String, Configuration>(10);
 
 	public static Configuration get(String res) {
 		String key = res.trim().toLowerCase();
@@ -25,8 +24,7 @@ public class Configuration extends BOT_SET {
 		try {
 			_config = new RPConfig(res);
 			if (_config != null) {
-				this.operative_amount = _config
-						.getFloatValue("operative_amount");
+				this.operative_amount = _config.getFloatValue("operative_amount");
 				this.min_volume = _config.getFloatValue("min_volume");
 				this.max_volume = _config.getFloatValue("max_volume");
 				this.gateway_address = _config.getValue("gateway_address");

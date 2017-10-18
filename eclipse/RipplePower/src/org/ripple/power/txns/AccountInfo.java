@@ -30,15 +30,13 @@ public class AccountInfo {
 	public ArrayList<AccountLine> lines = new ArrayList<AccountLine>(10);
 
 	public ArrayList<AccountLine> zero_lines = new ArrayList<AccountLine>(10);
-	public ArrayList<TransactionTx> transactions = new ArrayList<TransactionTx>(
-			100);
+	public ArrayList<TransactionTx> transactions = new ArrayList<TransactionTx>(100);
 	public ArrayList<BookOffer> bookOffers = new ArrayList<BookOffer>(100);
 	public int cntTrust = 0;
 
 	public HashMap<String, Double> debt = new HashMap<String, Double>(10);
 	public HashMap<String, Long> debtCount = new HashMap<String, Long>(10);
-	public HashMap<String, Integer> trustCount = new HashMap<String, Integer>(
-			10);
+	public HashMap<String, Integer> trustCount = new HashMap<String, Integer>(10);
 
 	public AccountInfo copy(AccountInfo info) {
 
@@ -86,7 +84,8 @@ public class AccountInfo {
 	public ArrayList<TransactionTx> getTxs(String flag) {
 		ArrayList<TransactionTx> list = new ArrayList<TransactionTx>();
 		if (transactions != null) {
-			for (TransactionTx tx : transactions) {
+			for (int i = transactions.size() - 1; i > -1; i--) {
+				TransactionTx tx = transactions.get(i);
 				if (tx.clazz.equalsIgnoreCase(flag)) {
 					list.add(tx);
 				}

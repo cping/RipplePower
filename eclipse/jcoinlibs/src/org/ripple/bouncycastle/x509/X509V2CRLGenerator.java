@@ -41,7 +41,7 @@ import org.ripple.bouncycastle.jce.provider.X509CRLObject;
 
 /**
  * class to produce an X.509 Version 2 CRL.
- *  @deprecated use org.bouncycastle.cert.X509v2CRLBuilder.
+ *  @deprecated use org.ripple.bouncycastle.cert.X509v2CRLBuilder.
  */
 public class X509V2CRLGenerator
 {

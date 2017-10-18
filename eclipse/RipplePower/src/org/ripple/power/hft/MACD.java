@@ -13,8 +13,7 @@ public class MACD {
 			this.period = period;
 		}
 
-		public static Period newInstance(int fastPeriod, int slowPeriod,
-				int period) {
+		public static Period newInstance(int fastPeriod, int slowPeriod, int period) {
 			return new Period(fastPeriod, slowPeriod, period);
 		}
 
@@ -38,8 +37,7 @@ public class MACD {
 			}
 
 			Period _period = (Period) o;
-			return this.fastPeriod == _period.fastPeriod
-					&& this.slowPeriod == _period.slowPeriod
+			return this.fastPeriod == _period.fastPeriod && this.slowPeriod == _period.slowPeriod
 					&& this.period == _period.period;
 		}
 	}
@@ -55,8 +53,7 @@ public class MACD {
 			this.outMACDHist = outMACDHist;
 		}
 
-		public static Result newInstance(double outMACD, double outMACDSignal,
-				double outMACDHist) {
+		public static Result newInstance(double outMACD, double outMACDSignal, double outMACDHist) {
 			return new Result(outMACD, outMACDSignal, outMACDHist);
 		}
 
@@ -67,8 +64,7 @@ public class MACD {
 			long _outMACDSignal = Double.doubleToLongBits(outMACDSignal);
 			long _outMACDHist = Double.doubleToLongBits(outMACDHist);
 			result = 31 * result + (int) (_outMACD ^ (_outMACD >>> 32));
-			result = 31 * result
-					+ (int) (_outMACDSignal ^ (_outMACDSignal >>> 32));
+			result = 31 * result + (int) (_outMACDSignal ^ (_outMACDSignal >>> 32));
 			result = 31 * result + (int) (_outMACDHist ^ (_outMACDHist >>> 32));
 			return result;
 		}
@@ -84,8 +80,7 @@ public class MACD {
 			}
 
 			Result macdResult = (Result) o;
-			return this.outMACD == macdResult.outMACD
-					&& this.outMACDSignal == macdResult.outMACDSignal
+			return this.outMACD == macdResult.outMACD && this.outMACDSignal == macdResult.outMACDSignal
 					&& this.outMACDHist == macdResult.outMACDHist;
 		}
 	}

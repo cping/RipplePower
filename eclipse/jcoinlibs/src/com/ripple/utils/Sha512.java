@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-public class Sha512 {
+public class Sha512 implements Sha{
     MessageDigest messageDigest;
 
     public Sha512() {
@@ -27,7 +27,7 @@ public class Sha512 {
         return this;
     }
 
-    public Sha512 add32(int i) {
+    public Sha512 addU32(int i) {
         messageDigest.update((byte) ((i >>> 24) & 0xFF));
         messageDigest.update((byte) ((i >>> 16) & 0xFF));
         messageDigest.update((byte) ((i >>> 8)  & 0xFF));

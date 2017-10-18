@@ -21,8 +21,7 @@ import com.google.zxing.Result;
 /**
  * @author Sean Owen
  */
-public final class BookmarkDoCoMoResultParser extends
-		AbstractDoCoMoResultParser {
+public final class BookmarkDoCoMoResultParser extends AbstractDoCoMoResultParser {
 
 	@Override
 	public URIParsedResult parse(Result result) {
@@ -36,8 +35,7 @@ public final class BookmarkDoCoMoResultParser extends
 			return null;
 		}
 		String uri = rawUri[0];
-		return URIResultParser.isBasicallyValidURI(uri) ? new URIParsedResult(
-				uri, title) : null;
+		return URIResultParser.isBasicallyValidURI(uri) ? new URIParsedResult(uri, title) : null;
 	}
 
 }

@@ -14,19 +14,16 @@ public class PointTextContainer {
 	public double x;
 	public double y;
 
-	public PointTextContainer(String text, double x, double y,
-			Paint paintFront, Position position) {
+	public PointTextContainer(String text, double x, double y, Paint paintFront, Position position) {
 		this(text, x, y, paintFront, null, null, position);
 	}
 
-	public PointTextContainer(String text, double x, double y,
-			Paint paintFront, Paint paintBack, Position position) {
+	public PointTextContainer(String text, double x, double y, Paint paintFront, Paint paintBack, Position position) {
 		this(text, x, y, paintFront, paintBack, null, position);
 	}
 
-	public PointTextContainer(String text, double x, double y,
-			Paint paintFront, Paint paintBack, SymbolContainer symbol,
-			Position position) {
+	public PointTextContainer(String text, double x, double y, Paint paintFront, Paint paintBack,
+			SymbolContainer symbol, Position position) {
 		this.text = text;
 		this.symbol = symbol;
 		this.x = x;

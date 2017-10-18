@@ -46,8 +46,7 @@ public class EmptyBarBorder extends ToolBarBorder {
 
 	}
 
-	protected void drawXPBorder(Component c, Graphics g, int x, int y, int w,
-			int h) {
+	protected void drawXPBorder(Component c, Graphics g, int x, int y, int w, int h) {
 
 	}
 }

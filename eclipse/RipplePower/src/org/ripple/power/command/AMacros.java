@@ -69,13 +69,11 @@ public abstract class AMacros implements IMacros {
 		macros.setVariable(clazz + getCommandName(type) + ".syncing", syncing);
 	}
 
-	protected void setJsonArrayVar(int type, JSONObject obj, String name,
-			int idx, String key) {
+	protected void setJsonArrayVar(int type, JSONObject obj, String name, int idx, String key) {
 		setJsonArrayVar(type, obj, name, idx, key, false);
 	}
 
-	protected void setJsonArrayVar(int type, JSONObject obj, String name,
-			int idx, String key, boolean useCur) {
+	protected void setJsonArrayVar(int type, JSONObject obj, String name, int idx, String key, boolean useCur) {
 		String result = name + "[" + idx + "]" + "." + key;
 		if (obj.has(key)) {
 			if (useCur) {
@@ -109,8 +107,7 @@ public abstract class AMacros implements IMacros {
 			if (useThis) {
 				macros.setVariable(clazz + getCommandName(type), value);
 			} else {
-				macros.setVariable(clazz + getCommandName(type) + "." + key,
-						value);
+				macros.setVariable(clazz + getCommandName(type) + "." + key, value);
 			}
 		}
 	}

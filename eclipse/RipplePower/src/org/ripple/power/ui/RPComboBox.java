@@ -19,4 +19,5 @@ public class RPComboBox extends JComboBox<Object> {
 	public void setItemModel(Object[] args) {
 		setModel(new javax.swing.DefaultComboBoxModel<Object>(args));
 	}
+
 }

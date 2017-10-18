@@ -49,8 +49,7 @@ public class RPBubbleDialog {
 			this.width = width;
 			this.height = height;
 			dim = Toolkit.getDefaultToolkit().getScreenSize();
-			screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-					this.getGraphicsConfiguration());
+			screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
 			x = (int) (dim.getWidth() - width - 3);
 			y = (int) (dim.getHeight() - screenInsets.bottom - 3);
 			initComponents();
@@ -77,8 +76,8 @@ public class RPBubbleDialog {
 				y = this.getY();
 				int ybottom = (int) dim.getHeight() - screenInsets.bottom;
 				for (int i = 0; i <= ybottom - y; i += 10) {
-						setLocation(x, y + i);
-						LSystem.sleep(5);
+					setLocation(x, y + i);
+					LSystem.sleep(5);
 				}
 				dispose();
 			}
@@ -143,8 +142,7 @@ public class RPBubbleDialog {
 		this(mes, 300, 120, autoClose);
 	}
 
-	public RPBubbleDialog(final String mes, final int w, final int h,
-			final boolean autoClose) {
+	public RPBubbleDialog(final String mes, final int w, final int h, final boolean autoClose) {
 		_message = mes;
 		_width = w;
 		_height = h;
@@ -161,16 +159,14 @@ public class RPBubbleDialog {
 		_backagePane = new JScrollPane(_contentText);
 		_updateLabel = new RPLabel();
 
-		((JPanel) _tpDialog.getContentPane())
-				.setBackground(UIConfig.dialogbackground);
+		((JPanel) _tpDialog.getContentPane()).setBackground(UIConfig.dialogbackground);
 		_headPane.setBackground(UIConfig.dialogbackground);
 		_backPane.setBackground(UIConfig.dialogbackground);
 		_btnPane.setBackground(UIConfig.dialogbackground);
 
 		_headPane.setPreferredSize(new Dimension(300, 30));
 
-		_tpDialog.getRootPane().setBorder(
-				BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+		_tpDialog.getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
 		_titleLabel.setFont(UIRes.getFont());
 		_titleLabel.setPreferredSize(new Dimension(260, 26));
 		_titleLabel.setVerticalTextPosition(RPLabel.CENTER);
@@ -184,8 +180,7 @@ public class RPBubbleDialog {
 		_closeLabel.setToolTipText(LangConfig.get(this, "close", "Close"));
 
 		_contentText.setEditable(false);
-		_contentText
-				.setFont(new Font(LangConfig.getFontName(), Font.PLAIN, 13));
+		_contentText.setFont(new Font(LangConfig.getFontName(), Font.PLAIN, 13));
 		_contentText.setForeground(LColor.white);
 		_contentText.setLineWrap(true);
 		_contentText.setText(_message);
@@ -212,8 +207,7 @@ public class RPBubbleDialog {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
-				_updateLabel.setBorder(BorderFactory
-						.createLineBorder(Color.gray));
+				_updateLabel.setBorder(BorderFactory.createLineBorder(Color.gray));
 			}
 
 			@Override
@@ -246,8 +240,7 @@ public class RPBubbleDialog {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
-				_closeLabel.setBorder(BorderFactory
-						.createLineBorder(Color.gray));
+				_closeLabel.setBorder(BorderFactory.createLineBorder(Color.gray));
 			}
 
 			@Override

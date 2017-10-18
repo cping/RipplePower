@@ -19,8 +19,7 @@ public class AsyncInputStream extends InputStream implements Runnable {
 	final Lock lock = new ReentrantLock();
 	final Condition notEmpty = lock.newCondition();
 
-	public AsyncInputStream(InputStream inputStream, int size, int streamIndex,
-			SpeedListener networkSpeedListener) {
+	public AsyncInputStream(InputStream inputStream, int size, int streamIndex, SpeedListener networkSpeedListener) {
 		is = new BufferedInputStream(inputStream);
 		data = new byte[size + 1];
 		mStreamIndex = streamIndex;

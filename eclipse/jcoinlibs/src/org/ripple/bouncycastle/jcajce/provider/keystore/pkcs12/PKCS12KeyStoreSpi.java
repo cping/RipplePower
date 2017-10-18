@@ -87,8 +87,8 @@ import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.digests.SHA1Digest;
-import org.ripple.bouncycastle.jcajce.PKCS12Key;
 import org.ripple.bouncycastle.jcajce.PKCS12StoreParameter;
+import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey;
 import org.ripple.bouncycastle.jcajce.spec.GOST28147ParameterSpec;
 import org.ripple.bouncycastle.jcajce.spec.PBKDF2KeySpec;
 import org.ripple.bouncycastle.jcajce.util.BCJcaJceHelper;
@@ -446,21 +446,14 @@ public class PKCS12KeyStoreSpi
                     }
                 }
 
-                if (cs.contains(c))
+                cs.addElement(c);
+                if (nextC != c)     // self signed - end of the chain
                 {
-                    c = null;          // we've got a certificate chain loop time to stop
+                    c = nextC;
                 }
                 else
                 {
-                    cs.addElement(c);
-                    if (nextC != c)     // self signed - end of the chain
-                    {
-                        c = nextC;
-                    }
-                    else
-                    {
-                        c = null;
-                    }
+                    c = null;
                 }
             }
 
@@ -608,15 +601,23 @@ public class PKCS12KeyStoreSpi
             if (algorithm.on(PKCSObjectIdentifiers.pkcs_12PbeIds))
             {
                 PKCS12PBEParams pbeParams = PKCS12PBEParams.getInstance(algId.getParameters());
+
+                PBEKeySpec pbeSpec = new PBEKeySpec(password);
+                PrivateKey out;
+
+                SecretKeyFactory keyFact = helper.createSecretKeyFactory(
+                    algorithm.getId());
                 PBEParameterSpec defParams = new PBEParameterSpec(
                     pbeParams.getIV(),
                     pbeParams.getIterations().intValue());
 
+                SecretKey k = keyFact.generateSecret(pbeSpec);
+
+                ((BCPBEKey)k).setTryWrongPKCS12Zero(wrongPKCS12Zero);
+
                 Cipher cipher = helper.createCipher(algorithm.getId());
 
-                PKCS12Key key = new PKCS12Key(password, wrongPKCS12Zero);
-
-                cipher.init(Cipher.UNWRAP_MODE, key, defParams);
+                cipher.init(Cipher.UNWRAP_MODE, k, defParams);
 
                 // we pass "" as the key algorithm type as it is unknown at this point
                 return (PrivateKey)cipher.unwrap(data, "", Cipher.PRIVATE_KEY);
@@ -687,10 +688,13 @@ public class PKCS12KeyStoreSpi
 
             try
             {
+                SecretKeyFactory keyFact = helper.createSecretKeyFactory(algorithm.getId());
                 PBEParameterSpec defParams = new PBEParameterSpec(
                     pbeParams.getIV(),
                     pbeParams.getIterations().intValue());
-                PKCS12Key key = new PKCS12Key(password, wrongPKCS12Zero);
+                BCPBEKey key = (BCPBEKey)keyFact.generateSecret(pbeSpec);
+
+                key.setTryWrongPKCS12Zero(wrongPKCS12Zero);
 
                 Cipher cipher = helper.createCipher(algorithm.getId());
 
@@ -1656,12 +1660,15 @@ public class PKCS12KeyStoreSpi
         byte[] data)
         throws Exception
     {
+        SecretKeyFactory keyFact = helper.createSecretKeyFactory(oid.getId());
         PBEParameterSpec defParams = new PBEParameterSpec(salt, itCount);
+        PBEKeySpec pbeSpec = new PBEKeySpec(password);
+        BCPBEKey key = (BCPBEKey)keyFact.generateSecret(pbeSpec);
+        key.setTryWrongPKCS12Zero(wrongPkcs12Zero);
 
         Mac mac = helper.createMac(oid.getId());
-        mac.init(new PKCS12Key(password, wrongPkcs12Zero), defParams);
+        mac.init(key, defParams);
         mac.update(data);
-
         return mac.doFinal();
     }
 

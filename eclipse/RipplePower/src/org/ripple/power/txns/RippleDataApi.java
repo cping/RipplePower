@@ -18,10 +18,10 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class RippleDataApi {
 
-	// PS:Java环境下SSL支持有限，不能使用https读取此站，否则解码协议时会崩……dotNet下无事……我给oracle提交bug没人理我……
-	private static String DATA_URL = "http://data.ripple.com";
+	private static String DATA_URL = "https://data.ripple.com";
 
 	public static void setDataAPI_URL(String url) {
+
 		DATA_URL = url;
 	}
 
@@ -63,8 +63,7 @@ public class RippleDataApi {
 		if (!AccountFind.isRippleAddress(address)) {
 			return null;
 		}
-		String link = DATA_URL
-				+ String.format("/v2/accounts/%s/transactions", address);
+		String link = DATA_URL + String.format("/v2/accounts/%s/transactions", address);
 		String result = open(link);
 		if (result != null) {
 			TransactionsResponse response = new TransactionsResponse();
@@ -74,16 +73,13 @@ public class RippleDataApi {
 		return null;
 	}
 
-	public static ExchangesResponse exchanges(IssuedCurrency base,
-			IssuedCurrency counter) {
+	public static ExchangesResponse exchanges(IssuedCurrency base, IssuedCurrency counter) {
 		return exchanges(base.getTake(), counter.getTake());
 	}
 
 	public static ExchangesResponse exchanges(Take base, Take counter) {
-		String link = DATA_URL
-				+ String.format("/v2/exchanges/%s/%s", base, counter);
+		String link = DATA_URL + String.format("/v2/exchanges/%s/%s", base, counter);
 		String result = open(link);
-		System.out.println(result);
 		if (result != null) {
 			ExchangesResponse response = new ExchangesResponse();
 			response.from(new JSONObject(result));
@@ -93,11 +89,10 @@ public class RippleDataApi {
 	}
 
 	public static double exchange_rates(Take base, Take counter) {
-		String link = DATA_URL
-				+ String.format("/v2/exchange_rates/%s/%s", base, counter);
+		String link = DATA_URL + String.format("/v2/exchange_rates/%s/%s", base, counter);
 		String result = open(link);
 		if (result != null) {
-			System.out.println(result);
+			return Double.parseDouble(result);
 		}
 		return -1;
 	}
@@ -106,8 +101,7 @@ public class RippleDataApi {
 		if (!AccountFind.isRippleAddress(address)) {
 			return null;
 		}
-		String link = DATA_URL
-				+ String.format("/v2/accounts/%s/exchanges", address);
+		String link = DATA_URL + String.format("/v2/accounts/%s/exchanges", address);
 		String result = open(link);
 		if (result != null) {
 			ExchangesResponse response = new ExchangesResponse();
@@ -117,14 +111,13 @@ public class RippleDataApi {
 		return null;
 	}
 
-	public static JSONObject transactionsFind(final AccountInfo accountinfo,
-			final ArrayList<IssuedCurrency> issues, String address) {
+	public static JSONObject transactionsFind(final AccountInfo accountinfo, final ArrayList<IssuedCurrency> issues,
+			String address) {
 		JSONObject json = null;
 		if (!AccountFind.isRippleAddress(address)) {
 			return json;
 		}
-		String link = DATA_URL
-				+ String.format("/v2/accounts/%s/transactions", address);
+		String link = DATA_URL + String.format("/v2/accounts/%s/transactions", address);
 		String result = open(link);
 		if (result != null) {
 
@@ -147,8 +140,7 @@ public class RippleDataApi {
 				// transactionTx.date_number = date;
 				transactionTx.date = transaction.optString("date");
 
-				String fee = CurrencyUtils.getRippleToValue(String.valueOf(tx
-						.optLong("Fee")));
+				String fee = CurrencyUtils.getRippleToValue(String.valueOf(tx.optLong("Fee")));
 
 				transactionTx.fee = fee;
 				transactionTx.hash = tx.optString("hash");
@@ -160,14 +152,12 @@ public class RippleDataApi {
 				transactionTx.clazz = type;
 				if (transactionTx.flags != 0) {
 					transactionTx.isPartialPayment = (TransactionFlag.PartialPayment == transactionTx.flags);
-					transactionTx.flagsName = TransactionFlagMap
-							.getString(transactionTx.flags);
+					transactionTx.flagsName = TransactionFlagMap.getString(transactionTx.flags);
 				} else {
 					transactionTx.flagsName = "Empty";
 				}
 				if (tx.has("SendMax")) {
-					transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(tx
-							.get("SendMax"));
+					transactionTx.sendMax = CurrencyUtils.getIssuedCurrency(tx.get("SendMax"));
 				}
 				transactionTx.signingPubKey = tx.optString("SigningPubKey");
 				transactionTx.txnSignature = tx.optString("TxnSignature");
@@ -178,13 +168,11 @@ public class RippleDataApi {
 					transactionTx.meta.from(meta);
 
 					if (meta.has("AffectedNodes")) {
-						JSONArray affectedNodes = meta
-								.getJSONArray("AffectedNodes");
+						JSONArray affectedNodes = meta.getJSONArray("AffectedNodes");
 						int size = affectedNodes.length();
 
 						for (int j = 0; j < size; j++) {
-							JSONObject affectedNode = affectedNodes
-									.getJSONObject(j);
+							JSONObject affectedNode = affectedNodes.getJSONObject(j);
 							JSONArray names = affectedNode.names();
 							for (int n = 0; n < names.length(); n++) {
 								String key = names.getString(n);
@@ -193,89 +181,56 @@ public class RippleDataApi {
 								transactionTx.affectedNodeList.add(node);
 
 								node.name = key;
-								JSONObject ledger_node = affectedNode
-										.getJSONObject(key);
-								node.ledgerEntryType = ledger_node
-										.optString("LedgerEntryType");
+								JSONObject ledger_node = affectedNode.getJSONObject(key);
+								node.ledgerEntryType = ledger_node.optString("LedgerEntryType");
 								if (node.ledgerEntryType != null) {
 
 									node.previousTxnID = ledger_node.optString(
 
-									"PreviousTxnID");
-									node.txid = node.previousTxnID != null ? node.previousTxnID
-											: transactionTx.hash;
-									node.ledgerIndex = ledger_node
-											.optString("LedgerIndex");
-									node.previousTxnLgrSeq = ledger_node
-											.optLong("PreviousTxnLgrSeq");
+											"PreviousTxnID");
+									node.txid = node.previousTxnID != null ? node.previousTxnID : transactionTx.hash;
+									node.ledgerIndex = ledger_node.optString("LedgerIndex");
+									node.previousTxnLgrSeq = ledger_node.optLong("PreviousTxnLgrSeq");
 
 									JSONObject fields = null;
 									if (ledger_node.has("FinalFields")) {
-										fields = ledger_node
-												.optJSONObject("FinalFields");
+										fields = ledger_node.optJSONObject("FinalFields");
 									} else if (ledger_node.has("NewFields")) {
-										fields = ledger_node
-												.optJSONObject("NewFields");
+										fields = ledger_node.optJSONObject("NewFields");
 									}
 									if (fields != null) {
 
-										node.account = fields
-												.optString("Account");
-										node.regularKey = fields
-												.optString("RegularKey");
+										node.account = fields.optString("Account");
+										node.regularKey = fields.optString("RegularKey");
 
-										node.takerGetsIssuer = fields
-												.optString("TakerGetsIssuer");
-										node.takerPaysIssuer = fields
-												.optString("TakerPaysIssuer");
-										node.exchangeRate = fields
-												.optString("ExchangeRate");
-										node.takerPaysCurrency = fields
-												.optString("TakerPaysCurrency");
-										node.takerGetsCurrency = fields
-												.optString("TakerGetsCurrency");
+										node.takerGetsIssuer = fields.optString("TakerGetsIssuer");
+										node.takerPaysIssuer = fields.optString("TakerPaysIssuer");
+										node.exchangeRate = fields.optString("ExchangeRate");
+										node.takerPaysCurrency = fields.optString("TakerPaysCurrency");
+										node.takerGetsCurrency = fields.optString("TakerGetsCurrency");
 
-										node.balance = CurrencyUtils
-												.getIssuedCurrency(fields
-														.opt("Balance"));
+										node.balance = CurrencyUtils.getIssuedCurrency(fields.opt("Balance"));
 
-										node.highLimit = CurrencyUtils
-												.getIssuedCurrency(fields
-														.opt("HighLimit"));
-										node.lowLimit = CurrencyUtils
-												.getIssuedCurrency(fields
-														.opt("LowLimit"));
+										node.highLimit = CurrencyUtils.getIssuedCurrency(fields.opt("HighLimit"));
+										node.lowLimit = CurrencyUtils.getIssuedCurrency(fields.opt("LowLimit"));
 
 										node.owner = fields.optString("Owner");
-										node.rootIndex = fields
-												.optString("RootIndex");
-										node.indexPrevious = fields
-												.optString("IndexPrevious");
-										node.indexNext = fields
-												.optString("IndexNext");
-										node.sequence = fields
-												.optLong("Sequence");
-										node.ownerCount = fields
-												.optLong("OwnerCount");
-										node.transferRate = fields
-												.optLong("TransferRate");
+										node.rootIndex = fields.optString("RootIndex");
+										node.indexPrevious = fields.optString("IndexPrevious");
+										node.indexNext = fields.optString("IndexNext");
+										node.sequence = fields.optLong("Sequence");
+										node.ownerCount = fields.optLong("OwnerCount");
+										node.transferRate = fields.optLong("TransferRate");
 
-										node.takerGets = CurrencyUtils
-												.getIssuedCurrency(fields
-														.opt("TakerGets"));
-										node.takerPays = CurrencyUtils
-												.getIssuedCurrency(fields
-														.opt("TakerPays"));
+										node.takerGets = CurrencyUtils.getIssuedCurrency(fields.opt("TakerGets"));
+										node.takerPays = CurrencyUtils.getIssuedCurrency(fields.opt("TakerPays"));
 										if (fields.has("Flags")) {
-											node.flags = fields
-													.optLong("Flags");
+											node.flags = fields.optLong("Flags");
 										} else {
 											node.flags = transactionTx.flags;
 										}
-										node.sell = OfferPrice
-												.isSellOrder(node.flags);
-										node.sellOrBuy = node.sell ? "sell"
-												: "buy";
+										node.sell = OfferPrice.isSellOrder(node.flags);
+										node.sellOrBuy = node.sell ? "sell" : "buy";
 									}
 
 								}
@@ -295,11 +250,9 @@ public class RippleDataApi {
 					IssuedCurrency currency = null;
 					String counterparty = null;
 					if (meta != null && meta.has("DeliveredAmount")) {
-						currency = CurrencyUtils.getIssuedCurrency(meta
-								.opt("DeliveredAmount"));
+						currency = CurrencyUtils.getIssuedCurrency(meta.opt("DeliveredAmount"));
 					} else {
-						currency = CurrencyUtils.getIssuedCurrency(tx
-								.opt("Amount"));
+						currency = CurrencyUtils.getIssuedCurrency(tx.opt("Amount"));
 					}
 					transactionTx.currency = currency;
 					String flagType;
@@ -328,39 +281,27 @@ public class RippleDataApi {
 				case "TrustSet":
 					Object limitAmount = tx.opt("LimitAmount");
 					if (limitAmount != null) {
-						transactionTx.currency = CurrencyUtils
-								.getIssuedCurrency(limitAmount);
-						transactionTx.trusted = transactionTx.currency.issuer
-								.toString();
+						transactionTx.currency = CurrencyUtils.getIssuedCurrency(limitAmount);
+						transactionTx.trusted = transactionTx.currency.issuer.toString();
 					}
 					break;
 				case "OfferCreate":
-					transactionTx.get = CurrencyUtils.getIssuedCurrency(tx
-							.opt("TakerGets"));
-					transactionTx.pay = CurrencyUtils.getIssuedCurrency(tx
-							.opt("TakerPays"));
+					transactionTx.get = CurrencyUtils.getIssuedCurrency(tx.opt("TakerGets"));
+					transactionTx.pay = CurrencyUtils.getIssuedCurrency(tx.opt("TakerPays"));
 					break;
 				case "OfferCancel":
-					JSONArray affectedNodes = meta
-							.optJSONArray("AffectedNodes");
+					JSONArray affectedNodes = meta.optJSONArray("AffectedNodes");
 					for (int n = 0; n < affectedNodes.length(); n++) {
 						JSONObject obj = affectedNodes.getJSONObject(n);
 						if (obj.has("DeletedNode")) {
-							JSONObject deleted = obj
-									.getJSONObject("DeletedNode");
-							String ledgerEntryType = deleted
-									.optString("LedgerEntryType");
+							JSONObject deleted = obj.getJSONObject("DeletedNode");
+							String ledgerEntryType = deleted.optString("LedgerEntryType");
 							if ("Offer".equals(ledgerEntryType)) {
-								JSONObject ff = deleted
-										.optJSONObject("FinalFields");
+								JSONObject ff = deleted.optJSONObject("FinalFields");
 								String ffactount = ff.optString("Account");
 								if (ffactount.equals(transactionTx.account)) {
-									transactionTx.get = CurrencyUtils
-											.getIssuedCurrency(ff
-													.opt("TakerGets"));
-									transactionTx.pay = CurrencyUtils
-											.getIssuedCurrency(ff
-													.opt("TakerPays"));
+									transactionTx.get = CurrencyUtils.getIssuedCurrency(ff.opt("TakerGets"));
+									transactionTx.pay = CurrencyUtils.getIssuedCurrency(ff.opt("TakerPays"));
 								}
 							}
 						}
@@ -409,6 +350,25 @@ public class RippleDataApi {
 		return gateways().find(curName);
 	}
 
+	public static ArrayList<String> reportsPaysAccounts(String date, int limit) {
+		ArrayList<String> list = new ArrayList<String>(limit);
+		String link = DATA_URL + "/v2/reports/" + date + "?accounts=true&payments=true&limit=" + limit;
+		String result = open(link);
+		if (result != null) {
+			JSONObject obj = new JSONObject(result);
+			JSONArray arrays = obj.optJSONArray("reports");
+			int size = arrays.length();
+			if (arrays != null && size > 0) {
+				for (int i = 0; i < size; i++) {
+					JSONObject report = arrays.optJSONObject(i);
+					String account = report.optString("account");
+					list.add(account);
+				}
+			}
+		}
+		return list;
+	}
+
 	/**
 	 * 以指定网关数据为标准，转换一种货币价格为另外一种的
 	 * 
@@ -419,8 +379,8 @@ public class RippleDataApi {
 	 * @param exIssuer
 	 * @return
 	 */
-	public static Normalize normalize(double amount, String baseCurrency,
-			String baseIssuer, String exCurrency, String exIssuer) {
+	public static Normalize normalize(double amount, String baseCurrency, String baseIssuer, String exCurrency,
+			String exIssuer) {
 		String link = DATA_URL + "/v2/normalize";
 		Map<Object, Object> maps = new HashMap<Object, Object>();
 		maps.put("amount", amount);
@@ -449,16 +409,8 @@ public class RippleDataApi {
 	 * @param exIssuer
 	 * @return
 	 */
-	public static Normalize normalizeNative(double amount, String exCurrency,
-			String exIssuer) {
-		return normalize(amount, LSystem.nativeCurrency, null, exCurrency,
-				exIssuer);
+	public static Normalize normalizeNative(double amount, String exCurrency, String exIssuer) {
+		return normalize(amount, LSystem.nativeCurrency, null, exCurrency, exIssuer);
 	}
 
-	// rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B
-	public static void main(String[] args) {
-		System.out.println(RippleDataApi.normalize(100, "BTC",
-				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B", "USD",
-				"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
-	}
 }

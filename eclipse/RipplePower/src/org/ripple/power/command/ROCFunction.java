@@ -47,8 +47,7 @@ public class ROCFunction {
 			if (value.indexOf(",") != -1) {
 				String[] split = StringUtils.split(value, ",");
 				if (split.length == 3) {
-					return OfferPrice.getMoneyConvert(split[0], split[1],
-							split[2]);
+					return OfferPrice.getMoneyConvert(split[0], split[1], split[2]);
 				}
 			}
 		} else if ("roc.trim".equalsIgnoreCase(name)) {

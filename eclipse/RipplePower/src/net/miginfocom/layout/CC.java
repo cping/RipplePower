@@ -110,8 +110,7 @@ public final class CC implements Externalizable {
 					addLinkTargetIDs(targets, pos[i]);
 			}
 
-			linkTargets = targets.size() == 0 ? EMPTY_ARR : targets
-					.toArray(new String[targets.size()]);
+			linkTargets = targets.size() == 0 ? EMPTY_ARR : targets.toArray(new String[targets.size()]);
 		}
 		return linkTargets;
 	}
@@ -187,8 +186,7 @@ public final class CC implements Externalizable {
 	 *         <code>new ComponentConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final CC minWidth(String size) {
-		hor.setSize(LayoutUtil.derive(hor.getSize(),
-				ConstraintParser.parseUnitValue(size, true), null, null));
+		hor.setSize(LayoutUtil.derive(hor.getSize(), ConstraintParser.parseUnitValue(size, true), null, null));
 		return this;
 	}
 
@@ -224,8 +222,7 @@ public final class CC implements Externalizable {
 	 *         <code>new ComponentConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final CC maxWidth(String size) {
-		hor.setSize(LayoutUtil.derive(hor.getSize(), null, null,
-				ConstraintParser.parseUnitValue(size, true)));
+		hor.setSize(LayoutUtil.derive(hor.getSize(), null, null, ConstraintParser.parseUnitValue(size, true)));
 		return this;
 	}
 
@@ -247,8 +244,7 @@ public final class CC implements Externalizable {
 	 */
 	public final CC gapX(String before, String after) {
 		if (before != null)
-			hor.setGapBefore(ConstraintParser
-					.parseBoundSize(before, true, true));
+			hor.setGapBefore(ConstraintParser.parseBoundSize(before, true, true));
 
 		if (after != null)
 			hor.setGapAfter(ConstraintParser.parseBoundSize(after, true, true));
@@ -306,8 +302,7 @@ public final class CC implements Externalizable {
 	public final CC growPrio(int... widthHeight) {
 		switch (widthHeight.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ widthHeight.length);
+			throw new IllegalArgumentException("Illegal argument count: " + widthHeight.length);
 		case 2:
 			growPrioY(widthHeight[1]);
 		case 1:
@@ -363,8 +358,7 @@ public final class CC implements Externalizable {
 	public final CC grow(float... widthHeight) {
 		switch (widthHeight.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ widthHeight.length);
+			throw new IllegalArgumentException("Illegal argument count: " + widthHeight.length);
 		case 2:
 			growY(widthHeight[1]);
 		case 1:
@@ -404,8 +398,7 @@ public final class CC implements Externalizable {
 	public final CC shrinkPrio(int... widthHeight) {
 		switch (widthHeight.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ widthHeight.length);
+			throw new IllegalArgumentException("Illegal argument count: " + widthHeight.length);
 		case 2:
 			shrinkPrioY(widthHeight[1]);
 		case 1:
@@ -445,8 +438,7 @@ public final class CC implements Externalizable {
 	public final CC shrink(float... widthHeight) {
 		switch (widthHeight.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ widthHeight.length);
+			throw new IllegalArgumentException("Illegal argument count: " + widthHeight.length);
 		case 2:
 			shrinkY(widthHeight[1]);
 		case 1:
@@ -488,8 +480,7 @@ public final class CC implements Externalizable {
 	public final CC endGroup(String... xy) {
 		switch (xy.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ xy.length);
+			throw new IllegalArgumentException("Illegal argument count: " + xy.length);
 		case 2:
 			endGroupY(xy[1]);
 		case 1:
@@ -531,8 +522,7 @@ public final class CC implements Externalizable {
 	public final CC sizeGroup(String... xy) {
 		switch (xy.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ xy.length);
+			throw new IllegalArgumentException("Illegal argument count: " + xy.length);
 		case 2:
 			sizeGroupY(xy[1]);
 		case 1:
@@ -555,8 +545,7 @@ public final class CC implements Externalizable {
 	 *         <code>new ComponentConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final CC minHeight(String size) {
-		ver.setSize(LayoutUtil.derive(ver.getSize(),
-				ConstraintParser.parseUnitValue(size, false), null, null));
+		ver.setSize(LayoutUtil.derive(ver.getSize(), ConstraintParser.parseUnitValue(size, false), null, null));
 		return this;
 	}
 
@@ -592,8 +581,7 @@ public final class CC implements Externalizable {
 	 *         <code>new ComponentConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final CC maxHeight(String size) {
-		ver.setSize(LayoutUtil.derive(ver.getSize(), null, null,
-				ConstraintParser.parseUnitValue(size, false)));
+		ver.setSize(LayoutUtil.derive(ver.getSize(), null, null, ConstraintParser.parseUnitValue(size, false)));
 		return this;
 	}
 
@@ -616,8 +604,7 @@ public final class CC implements Externalizable {
 	 */
 	public final CC gapY(String before, String after) {
 		if (before != null)
-			ver.setGapBefore(ConstraintParser.parseBoundSize(before, true,
-					false));
+			ver.setGapBefore(ConstraintParser.parseBoundSize(before, true, false));
 
 		if (after != null)
 			ver.setGapAfter(ConstraintParser.parseBoundSize(after, true, false));
@@ -783,8 +770,8 @@ public final class CC implements Externalizable {
 
 	/**
 	 * Set the cell(s) that the component should occupy in the grid. Same
-	 * functionality as {@link #setCellX(int col)} and {@link #setCellY(int row)}
-	 * together with {@link #setSpanX(int width)} and
+	 * functionality as {@link #setCellX(int col)} and
+	 * {@link #setCellY(int row)} together with {@link #setSpanX(int width)} and
 	 * {@link #setSpanY(int height)}. This method returns <code>this</code> for
 	 * chaining multiple calls.
 	 * <p>
@@ -805,8 +792,7 @@ public final class CC implements Externalizable {
 	public final CC cell(int... colRowWidthHeight) {
 		switch (colRowWidthHeight.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ colRowWidthHeight.length);
+			throw new IllegalArgumentException("Illegal argument count: " + colRowWidthHeight.length);
 		case 4:
 			setSpanY(colRowWidthHeight[3]);
 		case 3:
@@ -866,8 +852,7 @@ public final class CC implements Externalizable {
 	public final CC gap(String... args) {
 		switch (args.length) {
 		default:
-			throw new IllegalArgumentException("Illegal argument count: "
-					+ args.length);
+			throw new IllegalArgumentException("Illegal argument count: " + args.length);
 		case 4:
 			gapBottom(args[3]);
 		case 3:
@@ -893,8 +878,7 @@ public final class CC implements Externalizable {
 	 * @since 3.7.2
 	 */
 	public final CC gapBefore(String boundsSize) {
-		hor.setGapBefore(ConstraintParser
-				.parseBoundSize(boundsSize, true, true));
+		hor.setGapBefore(ConstraintParser.parseBoundSize(boundsSize, true, true));
 		return this;
 	}
 
@@ -926,8 +910,7 @@ public final class CC implements Externalizable {
 	 * @since 3.7.2
 	 */
 	public final CC gapTop(String boundsSize) {
-		ver.setGapBefore(ConstraintParser.parseBoundSize(boundsSize, true,
-				false));
+		ver.setGapBefore(ConstraintParser.parseBoundSize(boundsSize, true, false));
 		return this;
 	}
 
@@ -942,8 +925,7 @@ public final class CC implements Externalizable {
 	 * @since 3.7.2
 	 */
 	public final CC gapLeft(String boundsSize) {
-		hor.setGapBefore(ConstraintParser
-				.parseBoundSize(boundsSize, true, true));
+		hor.setGapBefore(ConstraintParser.parseBoundSize(boundsSize, true, true));
 		return this;
 	}
 
@@ -958,8 +940,7 @@ public final class CC implements Externalizable {
 	 * @since 3.7.2
 	 */
 	public final CC gapBottom(String boundsSize) {
-		ver.setGapAfter(ConstraintParser
-				.parseBoundSize(boundsSize, true, false));
+		ver.setGapAfter(ConstraintParser.parseBoundSize(boundsSize, true, false));
 		return this;
 	}
 
@@ -1329,8 +1310,7 @@ public final class CC implements Externalizable {
 	 * @see #setNewlineGapSize(BoundSize)
 	 */
 	public final CC newline(String gapSize) {
-		BoundSize bs = ConstraintParser.parseBoundSize(gapSize, true,
-				(flowX != null && flowX == false));
+		BoundSize bs = ConstraintParser.parseBoundSize(gapSize, true, (flowX != null && flowX == false));
 		if (bs != null) {
 			setNewlineGapSize(bs);
 		} else {
@@ -1373,8 +1353,7 @@ public final class CC implements Externalizable {
 	 * @see #setWrapGapSize(BoundSize)
 	 */
 	public final CC wrap(String gapSize) {
-		BoundSize bs = ConstraintParser.parseBoundSize(gapSize, true,
-				(flowX != null && flowX == false));
+		BoundSize bs = ConstraintParser.parseBoundSize(gapSize, true, (flowX != null && flowX == false));
 		if (bs != null) {
 			setWrapGapSize(bs);
 		} else {
@@ -1597,10 +1576,8 @@ public final class CC implements Externalizable {
 	 * @see #setPos(UnitValue[])
 	 */
 	public final CC pos(String x, String y, String x2, String y2) {
-		setPos(new UnitValue[] { ConstraintParser.parseUnitValue(x, true),
-				ConstraintParser.parseUnitValue(y, false),
-				ConstraintParser.parseUnitValue(x2, true),
-				ConstraintParser.parseUnitValue(y2, false), });
+		setPos(new UnitValue[] { ConstraintParser.parseUnitValue(x, true), ConstraintParser.parseUnitValue(y, false),
+				ConstraintParser.parseUnitValue(x2, true), ConstraintParser.parseUnitValue(y2, false), });
 		setBoundsInGrid(false);
 		return this;
 	}
@@ -1630,8 +1607,8 @@ public final class CC implements Externalizable {
 	 * @see #setTag(String)
 	 */
 	public final CC pad(int top, int left, int bottom, int right) {
-		setPadding(new UnitValue[] { new UnitValue(top), new UnitValue(left),
-				new UnitValue(bottom), new UnitValue(right) });
+		setPadding(new UnitValue[] { new UnitValue(top), new UnitValue(left), new UnitValue(bottom),
+				new UnitValue(right) });
 		return this;
 	}
 
@@ -1651,8 +1628,7 @@ public final class CC implements Externalizable {
 	 * @see #setTag(String)
 	 */
 	public final CC pad(String pad) {
-		setPadding(pad != null ? ConstraintParser.parseInsets(pad, false)
-				: null);
+		setPadding(pad != null ? ConstraintParser.parseInsets(pad, false) : null);
 		return this;
 	}
 
@@ -1747,8 +1723,7 @@ public final class CC implements Externalizable {
 	 * @return The current value as a new array, free to modify.
 	 */
 	public UnitValue[] getPos() {
-		return pos != null ? new UnitValue[] { pos[0], pos[1], pos[2], pos[3] }
-				: null;
+		return pos != null ? new UnitValue[] { pos[0], pos[1], pos[2], pos[3] } : null;
 	}
 
 	/**
@@ -1773,8 +1748,7 @@ public final class CC implements Externalizable {
 	 *            <code>null</code>.
 	 */
 	public void setPos(UnitValue[] pos) {
-		this.pos = pos != null ? new UnitValue[] { pos[0], pos[1], pos[2],
-				pos[3] } : null;
+		this.pos = pos != null ? new UnitValue[] { pos[0], pos[1], pos[2], pos[3] } : null;
 		linkTargets = null;
 	}
 
@@ -2045,8 +2019,7 @@ public final class CC implements Externalizable {
 	 * @return The current value. <code>null</code> or of length 4.
 	 */
 	public UnitValue[] getPadding() {
-		return padding != null ? new UnitValue[] { padding[0], padding[1],
-				padding[2], padding[3] } : null;
+		return padding != null ? new UnitValue[] { padding[0], padding[1], padding[2], padding[3] } : null;
 	}
 
 	/**
@@ -2063,8 +2036,7 @@ public final class CC implements Externalizable {
 	 *            length 4.
 	 */
 	public void setPadding(UnitValue[] sides) {
-		this.padding = sides != null ? new UnitValue[] { sides[0], sides[1],
-				sides[2], sides[3] } : null;
+		this.padding = sides != null ? new UnitValue[] { sides[0], sides[1], sides[2], sides[3] } : null;
 	}
 
 	/**
@@ -2431,8 +2403,7 @@ public final class CC implements Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

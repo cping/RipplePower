@@ -18,14 +18,12 @@ import javax.swing.SwingConstants;
  * @version $Revision: 1.7 $
  */
 class GnomeLayoutStyle extends LayoutStyle {
-	public int getPreferredGap(JComponent source, JComponent target, int type,
-			int position, Container parent) {
+	public int getPreferredGap(JComponent source, JComponent target, int type, int position, Container parent) {
 		// Invoke super to check arguments.
 		super.getPreferredGap(source, target, type, position, parent);
 
 		if (type == INDENT) {
-			if (position == SwingConstants.EAST
-					|| position == SwingConstants.WEST) {
+			if (position == SwingConstants.EAST || position == SwingConstants.WEST) {
 				int gap = getButtonChildIndent(source, position);
 				if (gap != 0) {
 					return gap;
@@ -63,8 +61,7 @@ class GnomeLayoutStyle extends LayoutStyle {
 		return 12;
 	}
 
-	public int getContainerGap(JComponent component, int position,
-			Container parent) {
+	public int getContainerGap(JComponent component, int position, Container parent) {
 		super.getContainerGap(component, position, parent);
 		// A general padding of 12 pixels is
 		// recommended between the contents of a dialog window and the

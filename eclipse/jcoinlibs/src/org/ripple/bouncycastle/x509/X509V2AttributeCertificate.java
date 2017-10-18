@@ -34,7 +34,7 @@ import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * An implementation of a version 2 X.509 Attribute Certificate.
- * @deprecated use org.bouncycastle.cert.X509AttributeCertificateHolder
+ * @deprecated use org.ripple.bouncycastle.cert.X509AttributeCertificateHolder
  */
 public class X509V2AttributeCertificate
     implements X509AttributeCertificate
@@ -180,7 +180,7 @@ public class X509V2AttributeCertificate
             throw new CertificateException("Signature algorithm in certificate info not same as outer certificate");
         }
 
-        signature = Signature.getInstance(cert.getSignatureAlgorithm().getAlgorithm().getId(), provider);
+        signature = Signature.getInstance(cert.getSignatureAlgorithm().getObjectId().getId(), provider);
 
         signature.initVerify(key);
 

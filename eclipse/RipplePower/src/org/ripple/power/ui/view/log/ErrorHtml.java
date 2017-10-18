@@ -21,15 +21,13 @@ public abstract class ErrorHtml {
 
 	protected ErrorHtml(String reportName) {
 		try {
-			String fullFileName = LSystem.getCurrentDirectory() + reportName
-					+ ".html";
+			String fullFileName = LSystem.getCurrentDirectory() + reportName + ".html";
 			File reportFile = new File(fullFileName);
 			boolean reportExisted = reportFile.exists();
 			if (!reportExisted) {
 				FileUtils.makedirs(reportFile);
 			}
-			writer = new PrintWriter(new BufferedWriter(new FileWriter(
-					fullFileName, true)));
+			writer = new PrintWriter(new BufferedWriter(new FileWriter(fullFileName, true)));
 			StringBuilder sb = new StringBuilder();
 			if (reportExisted) {
 				sb.append("</table><br>");

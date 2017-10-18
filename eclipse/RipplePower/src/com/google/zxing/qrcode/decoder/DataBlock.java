@@ -52,8 +52,7 @@ final class DataBlock {
 	 * @return DataBlocks containing original bytes, "de-interleaved" from
 	 *         representation in the QR Code
 	 */
-	static DataBlock[] getDataBlocks(byte[] rawCodewords, Version version,
-			ErrorCorrectionLevel ecLevel) {
+	static DataBlock[] getDataBlocks(byte[] rawCodewords, Version version, ErrorCorrectionLevel ecLevel) {
 
 		if (rawCodewords.length != version.getTotalCodewords()) {
 			throw new IllegalArgumentException();
@@ -78,10 +77,8 @@ final class DataBlock {
 		for (Version.ECB ecBlock : ecBlockArray) {
 			for (int i = 0; i < ecBlock.getCount(); i++) {
 				int numDataCodewords = ecBlock.getDataCodewords();
-				int numBlockCodewords = ecBlocks.getECCodewordsPerBlock()
-						+ numDataCodewords;
-				result[numResultBlocks++] = new DataBlock(numDataCodewords,
-						new byte[numBlockCodewords]);
+				int numBlockCodewords = ecBlocks.getECCodewordsPerBlock() + numDataCodewords;
+				result[numResultBlocks++] = new DataBlock(numDataCodewords, new byte[numBlockCodewords]);
 			}
 		}
 
@@ -98,8 +95,7 @@ final class DataBlock {
 		}
 		longerBlocksStartAt++;
 
-		int shorterBlocksNumDataCodewords = shorterBlocksTotalCodewords
-				- ecBlocks.getECCodewordsPerBlock();
+		int shorterBlocksNumDataCodewords = shorterBlocksTotalCodewords - ecBlocks.getECCodewordsPerBlock();
 		// The last elements of result may be 1 element longer;
 		// first fill out as many elements as all of them have
 		int rawCodewordsOffset = 0;

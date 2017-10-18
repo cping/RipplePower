@@ -42,8 +42,7 @@ public interface Writer {
 	 * @throws WriterException
 	 *             if contents cannot be encoded legally in a format
 	 */
-	BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height) throws WriterException;
+	BitMatrix encode(String contents, BarcodeFormat format, int width, int height) throws WriterException;
 
 	/**
 	 * @param contents
@@ -60,7 +59,7 @@ public interface Writer {
 	 * @throws WriterException
 	 *             if contents cannot be encoded legally in a format
 	 */
-	BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) throws WriterException;
+	BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType, ?> hints)
+			throws WriterException;
 
 }

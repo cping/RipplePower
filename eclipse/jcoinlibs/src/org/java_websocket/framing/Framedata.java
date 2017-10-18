@@ -5,21 +5,43 @@ import java.nio.ByteBuffer;
 import org.java_websocket.exceptions.InvalidFrameException;
 
 public interface Framedata {
-	public enum Opcode {
+	/**
+	 * Enum which contains the different valid opcodes
+	 */
+	enum Opcode {
 		CONTINUOUS, TEXT, BINARY, PING, PONG, CLOSING
 		// more to come
 	}
 
-	public boolean isFin();
+	/**
+	 * Indicates that this is the final fragment in a message.  The first fragment MAY also be the final fragment.
+	 * @return true, if this frame is the final fragment
+	 */
+	boolean isFin();
 
-	public boolean getTransfereMasked();
+	/**
+	 * Defines whether the "Payload data" is masked.
+	 * @return true, "Payload data" is masked
+	 */
+	boolean getTransfereMasked();
 
-	public Opcode getOpcode();
+	/**
+	 * Defines the interpretation of the "Payload data".
+	 * @return the interpretation as a Opcode
+	 */
+	Opcode getOpcode();
 
-	public ByteBuffer getPayloadData();// TODO the separation of the application
-										// data and the extension data is yet to
-										// be done
+	/**
+	 * The "Payload data" which was sent in this frame
+	 * @return the "Payload data" as ByteBuffer
+	 */
+	ByteBuffer getPayloadData();// TODO the separation of the application data and the extension data is yet to be done
 
-	public abstract void append(Framedata nextframe)
-			throws InvalidFrameException;
+	/**
+	 * Appends an additional frame to the current frame
+	 *
+	 * This methods does not override the opcode, but does override the fin
+	 * @param nextframe the additional frame
+	 */
+	void append( Framedata nextframe );
 }

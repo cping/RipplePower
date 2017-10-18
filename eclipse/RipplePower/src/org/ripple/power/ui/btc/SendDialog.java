@@ -84,8 +84,7 @@ public class SendDialog extends JDialog implements ActionListener {
 		feePane.add(new JLabel("Fee  ", JLabel.RIGHT));
 		feePane.add(feeField);
 
-		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "Send",
-				"send" }, new String[] { "Done", "done" });
+		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "Send", "send" }, new String[] { "Done", "done" });
 
 		JPanel contentPane = new JPanel();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -119,11 +118,9 @@ public class SendDialog extends JDialog implements ActionListener {
 			switch (action) {
 			case "send":
 				if (checkFields()) {
-					String confirmText = String.format(
-							"Do you want to send %s BTC?",
+					String confirmText = String.format("Do you want to send %s BTC?",
 							BTCLoader.satoshiToString(sendAmount));
-					if (UIRes.showConfirmMessage(this, "Send Coins",
-							confirmText, "YES", "NO") == 0) {
+					if (UIRes.showConfirmMessage(this, "Send Coins", confirmText, "YES", "NO") == 0) {
 						sendCoins();
 					}
 				}
@@ -134,25 +131,21 @@ public class SendDialog extends JDialog implements ActionListener {
 				break;
 			}
 		} catch (NumberFormatException exc) {
-			UIRes.showErrorMessage(this, "Error",
-					"Invalid numeric value entered");
+			UIRes.showErrorMessage(this, "Error", "Invalid numeric value entered");
 		} catch (AddressFormatException exc) {
 			UIRes.showErrorMessage(this, "Error", "Send address is not valid");
 		} catch (BlockStoreException exc) {
 			ErrorLog.get().logException("Unable to process send request", exc);
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 
-	private boolean checkFields() throws AddressFormatException,
-			NumberFormatException {
+	private boolean checkFields() throws AddressFormatException, NumberFormatException {
 
 		String sendString = (String) addressField.getSelectedItem();
 		if (sendString == null) {
-			UIRes.showErrorMessage(this, "Error",
-					"You must enter a send address");
+			UIRes.showErrorMessage(this, "Error", "You must enter a send address");
 			return false;
 		}
 		int index = addressField.getSelectedIndex();
@@ -164,28 +157,24 @@ public class SendDialog extends JDialog implements ActionListener {
 
 		String amountString = amountField.getText();
 		if (amountString.isEmpty()) {
-			UIRes.showErrorMessage(this, "Error",
-					"You must enter the amount to send");
+			UIRes.showErrorMessage(this, "Error", "You must enter the amount to send");
 			return false;
 		}
 		sendAmount = BTCLoader.stringToSatoshi(amountString);
 		if (sendAmount.compareTo(BTCLoader.DUST_TRANSACTION) < 0) {
-			UIRes.showErrorMessage(this, "ERROR", String.format(
-					"The minimum amount you can send is %s BTC",
+			UIRes.showErrorMessage(this, "ERROR", String.format("The minimum amount you can send is %s BTC",
 					BTCLoader.satoshiToString(BTCLoader.DUST_TRANSACTION)));
 			return false;
 		}
 
 		String feeString = feeField.getText();
 		if (feeString.isEmpty()) {
-			UIRes.showErrorMessage(this, "Enter",
-					"You must enter a transaction fee");
+			UIRes.showErrorMessage(this, "Enter", "You must enter a transaction fee");
 			return false;
 		}
 		sendFee = BTCLoader.stringToSatoshi(feeString);
 		if (sendFee.compareTo(BTCLoader.MIN_TX_FEE) < 0) {
-			UIRes.showErrorMessage(this, "Error", String.format(
-					"The minimun transaction fee is %s BTC",
+			UIRes.showErrorMessage(this, "Error", String.format("The minimun transaction fee is %s BTC",
 					BTCLoader.satoshiToString(BTCLoader.MIN_TX_FEE)));
 			return false;
 		}
@@ -197,8 +186,7 @@ public class SendDialog extends JDialog implements ActionListener {
 		Transaction tx = null;
 		for (;;) {
 			BigInteger totalAmount = sendAmount.add(sendFee);
-			List<SignedInput> inputs = new ArrayList<SignedInput>(
-					inputList.size());
+			List<SignedInput> inputs = new ArrayList<SignedInput>(inputList.size());
 			for (SignedInput input : inputList) {
 				inputs.add(input);
 				totalAmount = totalAmount.subtract(input.getValue());
@@ -207,28 +195,24 @@ public class SendDialog extends JDialog implements ActionListener {
 				}
 			}
 			if (totalAmount.signum() > 0) {
-				UIRes.showErrorMessage(this, "Error",
-						"There are not enough confirmed coins available");
+				UIRes.showErrorMessage(this, "Error", "There are not enough confirmed coins available");
 				break;
 			}
 			List<TransactionOutput> outputs = new ArrayList<>(2);
 			outputs.add(new TransactionOutput(0, sendAmount, sendAddress));
 			BigInteger change = totalAmount.negate();
 			if (change.compareTo(BTCLoader.DUST_TRANSACTION) > 0) {
-				outputs.add(new TransactionOutput(1, change,
-						BTCLoader.changeKey.toAddress()));
+				outputs.add(new TransactionOutput(1, change, BTCLoader.changeKey.toAddress()));
 			}
 
 			try {
 				tx = new Transaction(inputs, outputs);
 			} catch (ECException | ScriptException | VerificationException exc) {
-				throw new BlockStoreException("Unable to create transaction",
-						exc);
+				throw new BlockStoreException("Unable to create transaction", exc);
 			}
 
 			int length = tx.getBytes().length;
-			BigInteger minFee = BigInteger.valueOf(length / 1000 + 1).multiply(
-					BTCLoader.MIN_TX_FEE);
+			BigInteger minFee = BigInteger.valueOf(length / 1000 + 1).multiply(BTCLoader.MIN_TX_FEE);
 			if (minFee.compareTo(sendFee) <= 0) {
 				break;
 			}
@@ -240,14 +224,10 @@ public class SendDialog extends JDialog implements ActionListener {
 			BTCLoader.databaseHandler.processTransaction(tx);
 			List<InventoryItem> invList = new ArrayList<InventoryItem>(1);
 			invList.add(new InventoryItem(InventoryItem.INV_TX, tx.getHash()));
-			Message invMsg = InventoryMessage.buildInventoryMessage(null,
-					invList);
+			Message invMsg = InventoryMessage.buildInventoryMessage(null, invList);
 			BTCLoader.networkHandler.broadcastMessage(invMsg);
-			UIRes.showInfoMessage(
-					this,
-					"Transaction Broadcast",
-					String.format("Transaction broadcast to peer nodes\n%s",
-							tx.getHash()));
+			UIRes.showInfoMessage(this, "Transaction Broadcast",
+					String.format("Transaction broadcast to peer nodes\n%s", tx.getHash()));
 		}
 	}
 }

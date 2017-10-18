@@ -43,8 +43,7 @@ public final class Decoder {
 		rsDecoder = new ReedSolomonDecoder(GenericGF.QR_CODE_FIELD_256);
 	}
 
-	public DecoderResult decode(boolean[][] image) throws ChecksumException,
-			FormatException {
+	public DecoderResult decode(boolean[][] image) throws ChecksumException, FormatException {
 		return decode(image, null);
 	}
 
@@ -78,8 +77,7 @@ public final class Decoder {
 		return decode(bits, hints);
 	}
 
-	public DecoderResult decode(BitMatrix bits) throws ChecksumException,
-			FormatException {
+	public DecoderResult decode(BitMatrix bits) throws ChecksumException, FormatException {
 		return decode(bits, null);
 	}
 
@@ -158,18 +156,15 @@ public final class Decoder {
 		}
 	}
 
-	private DecoderResult decode(BitMatrixParser parser,
-			Map<DecodeHintType, ?> hints) throws FormatException,
-			ChecksumException {
+	private DecoderResult decode(BitMatrixParser parser, Map<DecodeHintType, ?> hints)
+			throws FormatException, ChecksumException {
 		Version version = parser.readVersion();
-		ErrorCorrectionLevel ecLevel = parser.readFormatInformation()
-				.getErrorCorrectionLevel();
+		ErrorCorrectionLevel ecLevel = parser.readFormatInformation().getErrorCorrectionLevel();
 
 		// Read codewords
 		byte[] codewords = parser.readCodewords();
 		// Separate into data blocks
-		DataBlock[] dataBlocks = DataBlock.getDataBlocks(codewords, version,
-				ecLevel);
+		DataBlock[] dataBlocks = DataBlock.getDataBlocks(codewords, version, ecLevel);
 
 		// Count total number of data bytes
 		int totalBytes = 0;
@@ -190,8 +185,7 @@ public final class Decoder {
 		}
 
 		// Decode the contents of that stream of bytes
-		return DecodedBitStreamParser.decode(resultBytes, version, ecLevel,
-				hints);
+		return DecodedBitStreamParser.decode(resultBytes, version, ecLevel, hints);
 	}
 
 	/**
@@ -208,8 +202,7 @@ public final class Decoder {
 	 * @throws ChecksumException
 	 *             if error correction fails
 	 */
-	private void correctErrors(byte[] codewordBytes, int numDataCodewords)
-			throws ChecksumException {
+	private void correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
 		int numCodewords = codewordBytes.length;
 		// First read into an array of ints
 		int[] codewordsInts = new int[numCodewords];

@@ -312,8 +312,7 @@ public class SearchDialog extends ABaseDialog {
 				viewPane.add(label_8, gbc_label_8);
 
 				RPLabel relationshipLabel = new RPLabel();
-				relationshipLabel.setText(((FamilyContact) person)
-						.getRelationship());
+				relationshipLabel.setText(((FamilyContact) person).getRelationship());
 				GridBagConstraints gbc_relationshipLabel = new GridBagConstraints();
 				gbc_relationshipLabel.insets = new Insets(0, 0, 0, 15);
 				gbc_relationshipLabel.anchor = GridBagConstraints.WEST;

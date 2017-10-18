@@ -38,8 +38,7 @@ final class MaskUtil {
 	 * with the same color and give penalty to them. Example: 00000 or 11111.
 	 */
 	static int applyMaskPenaltyRule1(ByteMatrix matrix) {
-		return applyMaskPenaltyRule1Internal(matrix, true)
-				+ applyMaskPenaltyRule1Internal(matrix, false);
+		return applyMaskPenaltyRule1Internal(matrix, true) + applyMaskPenaltyRule1Internal(matrix, false);
 	}
 
 	/**
@@ -57,8 +56,7 @@ final class MaskUtil {
 		for (int y = 0; y < height - 1; y++) {
 			for (int x = 0; x < width - 1; x++) {
 				int value = array[y][x];
-				if (value == array[y][x + 1] && value == array[y + 1][x]
-						&& value == array[y + 1][x + 1]) {
+				if (value == array[y][x + 1] && value == array[y + 1][x] && value == array[y + 1][x + 1]) {
 					penalty++;
 				}
 			}
@@ -81,28 +79,14 @@ final class MaskUtil {
 			for (int x = 0; x < width; x++) {
 				byte[] arrayY = array[y]; // We can at least optimize this
 											// access
-				if (x + 6 < width
-						&& arrayY[x] == 1
-						&& arrayY[x + 1] == 0
-						&& arrayY[x + 2] == 1
-						&& arrayY[x + 3] == 1
-						&& arrayY[x + 4] == 1
-						&& arrayY[x + 5] == 0
-						&& arrayY[x + 6] == 1
-						&& (isWhiteHorizontal(arrayY, x - 4, x) || isWhiteHorizontal(
-								arrayY, x + 7, x + 11))) {
+				if (x + 6 < width && arrayY[x] == 1 && arrayY[x + 1] == 0 && arrayY[x + 2] == 1 && arrayY[x + 3] == 1
+						&& arrayY[x + 4] == 1 && arrayY[x + 5] == 0 && arrayY[x + 6] == 1
+						&& (isWhiteHorizontal(arrayY, x - 4, x) || isWhiteHorizontal(arrayY, x + 7, x + 11))) {
 					numPenalties++;
 				}
-				if (y + 6 < height
-						&& array[y][x] == 1
-						&& array[y + 1][x] == 0
-						&& array[y + 2][x] == 1
-						&& array[y + 3][x] == 1
-						&& array[y + 4][x] == 1
-						&& array[y + 5][x] == 0
-						&& array[y + 6][x] == 1
-						&& (isWhiteVertical(array, x, y - 4, y) || isWhiteVertical(
-								array, x, y + 7, y + 11))) {
+				if (y + 6 < height && array[y][x] == 1 && array[y + 1][x] == 0 && array[y + 2][x] == 1
+						&& array[y + 3][x] == 1 && array[y + 4][x] == 1 && array[y + 5][x] == 0 && array[y + 6][x] == 1
+						&& (isWhiteVertical(array, x, y - 4, y) || isWhiteVertical(array, x, y + 7, y + 11))) {
 					numPenalties++;
 				}
 			}
@@ -119,8 +103,7 @@ final class MaskUtil {
 		return true;
 	}
 
-	private static boolean isWhiteVertical(byte[][] array, int col, int from,
-			int to) {
+	private static boolean isWhiteVertical(byte[][] array, int col, int from, int to) {
 		for (int i = from; i < to; i++) {
 			if (i >= 0 && i < array.length && array[i][col] == 1) {
 				return false;
@@ -148,8 +131,7 @@ final class MaskUtil {
 			}
 		}
 		int numTotalCells = matrix.getHeight() * matrix.getWidth();
-		int fivePercentVariances = Math.abs(numDarkCells * 2 - numTotalCells)
-				* 10 / numTotalCells;
+		int fivePercentVariances = Math.abs(numDarkCells * 2 - numTotalCells) * 10 / numTotalCells;
 		return fivePercentVariances * N4;
 	}
 
@@ -189,8 +171,7 @@ final class MaskUtil {
 			intermediate = ((temp % 3) + ((y + x) & 0x1)) & 0x1;
 			break;
 		default:
-			throw new IllegalArgumentException("Invalid mask pattern: "
-					+ maskPattern);
+			throw new IllegalArgumentException("Invalid mask pattern: " + maskPattern);
 		}
 		return intermediate == 0;
 	}
@@ -199,8 +180,7 @@ final class MaskUtil {
 	 * Helper function for applyMaskPenaltyRule1. We need this for doing this
 	 * calculation in both vertical and horizontal orders respectively.
 	 */
-	private static int applyMaskPenaltyRule1Internal(ByteMatrix matrix,
-			boolean isHorizontal) {
+	private static int applyMaskPenaltyRule1Internal(ByteMatrix matrix, boolean isHorizontal) {
 		int penalty = 0;
 		int iLimit = isHorizontal ? matrix.getHeight() : matrix.getWidth();
 		int jLimit = isHorizontal ? matrix.getWidth() : matrix.getHeight();

@@ -55,8 +55,7 @@ public class SHA256 {
 		}
 		LongArray b = this._buffer = BitArray.concat(this._buffer, data);
 
-		int ol = this._length, nl = this._length = ol
-				+ (int) BitArray.bitLength(data);
+		int ol = this._length, nl = this._length = ol + (int) BitArray.bitLength(data);
 
 		for (i = 512 + ol & -512; i <= nl; i += 512) {
 			this._block(b.splice(0, 16));
@@ -122,7 +121,8 @@ public class SHA256 {
 		LongArray h = this._h;
 		LongArray k = this._key;
 
-		long h0 = h.items[0], h1 = h.items[1], h2 = h.items[2], h3 = h.items[3], h4 = h.items[4], h5 = h.items[5], h6 = h.items[6], h7 = h.items[7];
+		long h0 = h.items[0], h1 = h.items[1], h2 = h.items[2], h3 = h.items[3], h4 = h.items[4], h5 = h.items[5],
+				h6 = h.items[6], h7 = h.items[7];
 
 		for (i = 0; i < 64; i++) {
 			if (i < 16) {
@@ -130,21 +130,15 @@ public class SHA256 {
 			} else {
 				a = w.items[(i + 1) & 15];
 				b = w.items[(i + 14) & 15];
-				tmp = w.items[i & 15] = JS
-						.get(((JS.MOVE_RightUShift(a, 7)
-								^ JS.MOVE_RightUShift(a, 18)
-								^ JS.MOVE_RightUShift(a, 3) ^ a << 25 ^ a << 14)
-								+ (JS.MOVE_RightUShift(b, 17)
-										^ JS.MOVE_RightUShift(b, 19)
-										^ JS.MOVE_RightUShift(b, 10) ^ b << 15 ^ b << 13)
-								+ w.items[i & 15] + w.items[(i + 9) & 15]) | 0);
+				tmp = w.items[i & 15] = JS.get(((JS.MOVE_RightUShift(a, 7) ^ JS.MOVE_RightUShift(a, 18)
+						^ JS.MOVE_RightUShift(a, 3) ^ a << 25 ^ a << 14)
+						+ (JS.MOVE_RightUShift(b, 17) ^ JS.MOVE_RightUShift(b, 19) ^ JS.MOVE_RightUShift(b, 10)
+								^ b << 15 ^ b << 13)
+						+ w.items[i & 15] + w.items[(i + 9) & 15]) | 0);
 			}
 
-			tmp = (tmp
-					+ h7
-					+ (JS.MOVE_RightUShift(h4, 6) ^ JS.MOVE_RightUShift(h4, 11)
-							^ JS.MOVE_RightUShift(h4, 25) ^ h4 << 26 ^ h4 << 21 ^ h4 << 7)
-					+ (h6 ^ h4 & (h5 ^ h6)) + k.items[i]);
+			tmp = (tmp + h7 + (JS.MOVE_RightUShift(h4, 6) ^ JS.MOVE_RightUShift(h4, 11) ^ JS.MOVE_RightUShift(h4, 25)
+					^ h4 << 26 ^ h4 << 21 ^ h4 << 7) + (h6 ^ h4 & (h5 ^ h6)) + k.items[i]);
 			h7 = h6;
 			h6 = h5;
 			h5 = h4;
@@ -153,10 +147,8 @@ public class SHA256 {
 			h2 = h1;
 			h1 = h0;
 
-			h0 = JS.get((tmp + ((h1 & h2) ^ (h3 & (h1 ^ h2))) + (JS
-					.MOVE_RightUShift(h1, 2)
-					^ JS.MOVE_RightUShift(h1, 13)
-					^ JS.MOVE_RightUShift(h1, 22) ^ h1 << 30 ^ h1 << 19 ^ h1 << 10)) | 0);
+			h0 = JS.get((tmp + ((h1 & h2) ^ (h3 & (h1 ^ h2))) + (JS.MOVE_RightUShift(h1, 2)
+					^ JS.MOVE_RightUShift(h1, 13) ^ JS.MOVE_RightUShift(h1, 22) ^ h1 << 30 ^ h1 << 19 ^ h1 << 10)) | 0);
 		}
 		h.items[0] = h.items[0] + (int) (h0 | 0);
 		h.items[1] = h.items[1] + (int) (h1 | 0);

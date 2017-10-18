@@ -38,7 +38,7 @@ import org.ripple.bouncycastle.jce.provider.X509CertificateObject;
 
 /**
  * class to produce an X.509 Version 1 certificate.
- * @deprecated use org.bouncycastle.cert.X509v1CertificateBuilder.
+ * @deprecated use org.ripple.bouncycastle.cert.X509v1CertificateBuilder.
  */
 public class X509V1CertificateGenerator
 {

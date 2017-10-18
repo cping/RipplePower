@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.ripple.power.utils.Base64Coder;
 import org.ripple.power.utils.StringUtils;
 
 public class Session {
@@ -25,10 +26,32 @@ public class Session {
 	private boolean isPersisted = false;
 
 	private String loadData() {
-		return _properties.getProperty(name);
+		String result = _properties.getProperty(name);
+		if (StringUtils.isEmpty(result)) {
+			return null;
+		}
+		if (Base64Coder.isBase64(result)) {
+			try {
+				result = new String(Base64Coder.decode(result), LSystem.encoding);
+			} catch (Exception e) {
+				result = new String(Base64Coder.decode(result));
+			}
+		}
+		return result;
+
 	}
 
 	private void svaeData(String result) {
+		if (StringUtils.isEmpty(result)) {
+			return;
+		}
+		if (!Base64Coder.isBase64(result)) {
+			try {
+				result = new String(Base64Coder.encode(result.getBytes()), LSystem.encoding);
+			} catch (Exception e) {
+				result = new String(Base64Coder.encode(result.getBytes()));
+			}
+		}
 		_properties.setProperty(name, result);
 		makeProperties(_properties);
 	}
@@ -68,11 +91,15 @@ public class Session {
 			if (n >= parts.length) {
 				return n;
 			}
-			active = "1".equals(parts[n++]);
+			String result = parts[n++];
+
+			active = "1".equals(result);
 			if (n >= parts.length) {
 				return n;
 			}
-			int count = Integer.parseInt(parts[n++]);
+			result = parts[n++];
+
+			int count = Integer.parseInt(result);
 			values = new String[count];
 			for (int i = 0; i < count; i++) {
 				if (n >= parts.length) {
@@ -92,6 +119,9 @@ public class Session {
 		}
 
 		public void set(int index, final String v) {
+			if (StringUtils.isEmpty(v)) {
+				return;
+			}
 			final String value = StringUtils.replace(v, flag, "+");
 			if (index >= values.length) {
 				int size = index + 1;
@@ -157,8 +187,8 @@ public class Session {
 		if (name == null) {
 			throw new RuntimeException("session name can not exist !");
 		}
-		this._tempFile = new File(LSystem.getRippleDirectory(), STORE_FILENAME_PREFIX
-				+ name + STORE_FILENAME_SUFFIX);
+		this._tempFile = new File(LSystem.getRippleDirectory(), STORE_FILENAME_PREFIX + name + STORE_FILENAME_SUFFIX);
+
 		this._properties = makeProperties();
 		this.name = name;
 		this.records = new HashMap<String, Record>(10);
@@ -215,6 +245,9 @@ public class Session {
 	}
 
 	public void set(String name, int index, String value) {
+		if (StringUtils.isEmpty(value)) {
+			return;
+		}
 		synchronized (recordsList) {
 			Record record = records.get(name);
 			if (record == null) {
@@ -259,6 +292,9 @@ public class Session {
 	}
 
 	public void add(String name, String value) {
+		if (StringUtils.isEmpty(value)) {
+			return;
+		}
 		synchronized (recordsList) {
 			Record record = records.get(name);
 			if (record == null) {
@@ -384,18 +420,24 @@ public class Session {
 			if (n >= parts.length) {
 				return n;
 			}
-
-			int count = Integer.parseInt(parts[n++]);
-			for (int i = 0; i < count; i++) {
-				if (n >= parts.length) {
-					return n;
+			try {
+				String result = parts[n++];
+				int count = Integer.parseInt(result);
+				for (int i = 0; i < count; i++) {
+					if (n >= parts.length) {
+						return n;
+					}
+					result = parts[n++];
+					Record record = new Record(result);
+					n = record.decode(parts, n);
+					records.put(record.name, record);
+					recordsList.add(record);
 				}
-				Record record = new Record(parts[n++]);
-				n = record.decode(parts, n);
-				records.put(record.name, record);
-				recordsList.add(record);
+				return n;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			return n;
+			return -1;
 		}
 	}
 
@@ -468,8 +510,7 @@ public class Session {
 	}
 
 	public HashMap<String, String> getRecords(int index) {
-		HashMap<String, String> result = new HashMap<String, String>(
-				records.size());
+		HashMap<String, String> result = new HashMap<String, String>(records.size());
 		Set<Entry<String, Record>> set = records.entrySet();
 		for (Iterator<Entry<String, Record>> it = set.iterator(); it.hasNext();) {
 			Entry<String, Record> entry = it.next();

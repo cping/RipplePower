@@ -16,8 +16,7 @@ public class RippleBlobObj {
 	public final static int UNLOCK = 1;
 
 	public static String keyHash(LongArray key, String token) throws Exception {
-		return BigNumber.hex_fromBits(BitArray.bitSlice(
-				new HMAC(key).encrypt(token), 0, 256));
+		return BigNumber.hex_fromBits(BitArray.bitSlice(new HMAC(key).encrypt(token), 0, 256));
 	}
 
 	public static class Missing {
@@ -119,13 +118,12 @@ public class RippleBlobObj {
 		this(def_authinfo_url);
 	}
 
-	public BlobInfoRes load(final String username, final String secret)
-			throws Exception {
+	public BlobInfoRes load(final String username, final String secret) throws Exception {
 		return load(username, secret, def_domain, def_pakdf_name);
 	}
 
-	public BlobInfoRes load(final String username, final String secret,
-			final String domain, final String pakdfName) throws Exception {
+	public BlobInfoRes load(final String username, final String secret, final String domain, final String pakdfName)
+			throws Exception {
 		AuthInfoRes info = derive(username, secret, domain, pakdfName, LOGIN);
 		if (info != null && info.success) {
 			String[] result = info.result;
@@ -139,28 +137,23 @@ public class RippleBlobObj {
 				HttpRequest request = HttpRequest.get(url);
 				if (request.ok()) {
 					JSONObject json = new JSONObject(request.body());
-					res.success = "success".equalsIgnoreCase(json
-							.getString("result"));
+					res.success = "success".equalsIgnoreCase(json.getString("result"));
 					if (res.success) {
 						res.blob = json.getString("blob");
 						res.revision = json.getInt("revision");
 						res.quota = json.getInt("quota");
 						res.email = json.getString("email");
 						res.identity_id = json.getString("identity_id");
-						res.encrypted_secret = json
-								.getString("encrypted_secret");
+						res.encrypted_secret = json.getString("encrypted_secret");
 						if (json.has("missing_fields")) {
-							JSONObject miss = json
-									.getJSONObject("missing_fields");
+							JSONObject miss = json.getJSONObject("missing_fields");
 							Missing missing = new Missing();
 							missing.phone_2fa = miss.getString("2fa_phone");
 							missing.region = miss.getString("region");
-							missing.phone_verified = miss
-									.getString("phone_verified");
+							missing.phone_verified = miss.getString("phone_verified");
 							missing.phone = miss.getString("phone");
 							missing.auth_id_2fa = miss.getString("2fa_auth_id");
-							missing.country_code_2fa = miss
-									.getString("2fa_country_code");
+							missing.country_code_2fa = miss.getString("2fa_country_code");
 							missing.enabled_2fa = miss.getString("2fa_enabled");
 							missing.city = miss.getString("city");
 							missing.country = miss.getString("country");
@@ -173,22 +166,19 @@ public class RippleBlobObj {
 		return null;
 	}
 
-	public AuthInfoRes derive(final String username, final String secret,
-			final int mode) throws Exception {
+	public AuthInfoRes derive(final String username, final String secret, final int mode) throws Exception {
 		return derive(username, secret, def_domain, def_pakdf_name, mode);
 	}
 
-	public AuthInfoRes derive(final String username, final String secret,
-			final String domain, final String pakdfName, final int mode)
-			throws Exception {
+	public AuthInfoRes derive(final String username, final String secret, final String domain, final String pakdfName,
+			final int mode) throws Exception {
 		String purpose = null;
 		if (mode == 0) {
 			purpose = "login";
 		} else {
 			purpose = "unlock";
 		}
-		String page = baseUrl + authinfo + "?domain=" + domain + "&username="
-				+ username;
+		String page = baseUrl + authinfo + "?domain=" + domain + "&username=" + username;
 		HttpRequest request = HttpRequest.get(page);
 		if (request.ok()) {
 			AuthInfoRes res = new AuthInfoRes();
@@ -228,18 +218,15 @@ public class RippleBlobObj {
 				String alpha = pakdf.getString("alpha");
 				String url = pakdf.getString("url");
 				String modulus = pakdf.getString("modulus");
-				BigNumber iExponent = BigNumber.bn(exponent), iModulus = BigNumber
-						.bn(modulus), iAlpha = BigNumber.bn(alpha);
-				String publicInfo = StringUtils.join(":", pakdfName,
-						host.length(), host, username.length(), username,
+				BigNumber iExponent = BigNumber.bn(exponent), iModulus = BigNumber.bn(modulus),
+						iAlpha = BigNumber.bn(alpha);
+				String publicInfo = StringUtils.join(":", pakdfName, host.length(), host, username.length(), username,
 						purpose.length(), purpose);
-				long publicSize = (long) Math.ceil(Math.min(
-						(7 + iModulus.bitLength()) >>> 3, 256) / 8);
+				long publicSize = (long) Math.ceil(Math.min((7 + iModulus.bitLength()) >>> 3, 256) / 8);
 				LongArray publicHash = BigNumber.fdh(publicInfo, publicSize);
 				String publicHex = BigNumber.hex_fromBits(publicHash);
 				BigNumber iPublic = BigNumber.bn(publicHex).setBitM(0);
-				String secretInfo = StringUtils.join(":", publicInfo,
-						secret.length(), secret);
+				String secretInfo = StringUtils.join(":", publicInfo, secret.length(), secret);
 				long secretSize = (7 + iModulus.bitLength()) >>> 3;
 				LongArray secretHash = BigNumber.fdh(secretInfo, secretSize);
 				String secretHex = BigNumber.hex_fromBits(secretHash);
@@ -254,17 +241,15 @@ public class RippleBlobObj {
 						break;
 					}
 				}
-				BigNumber iBlind = iRandom.powermodMontgomery(
-						iPublic.mul(iExponent), iModulus), iSignreq = iSecret
-						.mulmod(iBlind, iModulus);
+				BigNumber iBlind = iRandom.powermodMontgomery(iPublic.mul(iExponent), iModulus),
+						iSignreq = iSecret.mulmod(iBlind, iModulus);
 				String signreq = BigNumber.hex_fromBits(iSignreq.toBits());
 
 				HttpRequest post = HttpRequest.post(url);
 				post.send("info=" + publicInfo + "&signreq=" + signreq);
 				if (post.ok()) {
 					JSONObject jsonObject = new JSONObject(post.body());
-					res.success = "success".equalsIgnoreCase(jsonObject
-							.getString("result"));
+					res.success = "success".equalsIgnoreCase(jsonObject.getString("result"));
 					if (!res.success) {
 						return res;
 					}
@@ -275,8 +260,7 @@ public class RippleBlobObj {
 					LongArray key = iSigned.toBits();
 					String[] result = null;
 					if (mode == 0) {
-						result = new String[] { keyHash(key, "id"),
-								keyHash(key, "crypt") };
+						result = new String[] { keyHash(key, "id"), keyHash(key, "crypt") };
 					} else {
 						result = new String[] { keyHash(key, "unlock") };
 					}

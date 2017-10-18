@@ -124,8 +124,7 @@ public class MinuteThirty extends RegularTimer implements Serializable {
 					&& this.getLastMillisecond() == m30.getLastMillisecond()) {
 				result = 0;
 			} else {
-				result = (int) (this.getLastMillisecond() - m30
-						.getLastMillisecond());
+				result = (int) (this.getLastMillisecond() - m30.getLastMillisecond());
 			}
 		} else if (obj instanceof RegularTimer) {
 			result = 0;

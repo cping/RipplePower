@@ -143,8 +143,7 @@ public class GlobalHistogramBinarizer extends Binarizer {
 		}
 	}
 
-	private static int estimateBlackPoint(int[] buckets)
-			throws NotFoundException {
+	private static int estimateBlackPoint(int[] buckets) throws NotFoundException {
 		// Find the tallest peak in the histogram.
 		int numBuckets = buckets.length;
 		int maxBucketCount = 0;
@@ -194,8 +193,7 @@ public class GlobalHistogramBinarizer extends Binarizer {
 		int bestValleyScore = -1;
 		for (int x = secondPeak - 1; x > firstPeak; x--) {
 			int fromFirst = x - firstPeak;
-			int score = fromFirst * fromFirst * (secondPeak - x)
-					* (maxBucketCount - buckets[x]);
+			int score = fromFirst * fromFirst * (secondPeak - x) * (maxBucketCount - buckets[x]);
 			if (score > bestValleyScore) {
 				bestValley = x;
 				bestValleyScore = score;

@@ -68,8 +68,7 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 		}
 	}
 
-	public RPPaperDialog(Window win, int flag, String address)
-			throws IOException {
+	public RPPaperDialog(Window win, int flag, String address) throws IOException {
 		super(win);
 		if (address != null && !address.startsWith("s")) {
 			throw new IOException("Bad address name !");
@@ -83,13 +82,11 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 		switch (modelFlag) {
 		case 0:
 			addWindowListener(HelperWindow.get());
-			this.setTitle(LangConfig.get(this, "title1",
-					"Export Ripple Paper Wallet"));
+			this.setTitle(LangConfig.get(this, "title1", "Export Ripple Paper Wallet"));
 			title = LangConfig.get(this, "export", "Export");
 			try {
 				EncoderDecoder encode = new EncoderDecoder(320, 320);
-				byte[] buffer = WalletCryptos.encrypt(LSystem.getAppPassword(),
-						address.getBytes(LSystem.encoding));
+				byte[] buffer = WalletCryptos.encrypt(LSystem.getAppPassword(), address.getBytes(LSystem.encoding));
 				String hex = CoinUtils.toHex(buffer);
 				this.pImage = encode.encode(hex);
 			} catch (Exception ex) {
@@ -97,8 +94,7 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 			}
 			break;
 		case 1:
-			this.setTitle(LangConfig.get(this, "title2",
-					"Import Ripple Paper Wallet"));
+			this.setTitle(LangConfig.get(this, "title2", "Import Ripple Paper Wallet"));
 			title = LangConfig.get(this, "import", "Import");
 			break;
 		default:
@@ -123,33 +119,19 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 			}
 		});
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup().addGap(152, 152, 152)
-								.addComponent(_button)
-								.addContainerGap(155, Short.MAX_VALUE))
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(_panel,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE).addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(_button)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(_panel,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										251, Short.MAX_VALUE).addContainerGap()));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addGap(152, 152, 152).addComponent(_button)
+						.addContainerGap(155, Short.MAX_VALUE))
+				.addGroup(layout.createSequentialGroup().addContainerGap().addComponent(_panel,
+						javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addContainerGap()));
+		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addContainerGap().addComponent(_button)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+						.addContainerGap()));
 
 		pack();
 	}
@@ -159,8 +141,7 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 			if (f.isDirectory()) {
 				return true;
 			}
-			return f.getName().endsWith(".png") || f.getName().endsWith(".jpg")
-					|| f.getName().endsWith(".gif");
+			return f.getName().endsWith(".png") || f.getName().endsWith(".jpg") || f.getName().endsWith(".gif");
 		}
 
 		public String getDescription() {
@@ -170,8 +151,7 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 		if (modelFlag == 0) {
-			int select = UIRes.showConfirmMessage(this, "Export paper wallet",
-					"Please choose your way to export",
+			int select = UIRes.showConfirmMessage(this, "Export paper wallet", "Please choose your way to export",
 					"Exporting an image file", "Export to printer");
 			if (select == -1) {
 				return;
@@ -193,43 +173,34 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 			} else {
 				File file = jFileChooser.getSelectedFile();
 				if (file.exists()) {
-					int result = UIRes
-							.showConfirmMessage(
-									this,
-									"Find the same file",
-									"Specify the file already exists, whether or not to continue?",
-									UIMessage.ok, UIMessage.cancel);
+					int result = UIRes.showConfirmMessage(this, "Find the same file",
+							"Specify the file already exists, whether or not to continue?", UIMessage.ok,
+							UIMessage.cancel);
 					if (result == 0) {
 						String ext = FileUtils.getExtension(file.getName());
-						if ("png".equals(ext) || "jpg".equals(ext)
-								|| "gif".equals(ext)) {
+						if ("png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext)) {
 							if (pImage != null) {
 								GraphicsUtils.saveImage(pImage, file, ext);
 							}
 						} else {
 							if (pImage != null) {
-								GraphicsUtils.saveImage(pImage,
-										file.getAbsolutePath() + ".png", "png");
+								GraphicsUtils.saveImage(pImage, file.getAbsolutePath() + ".png", "png");
 							}
 						}
-						UIRes.showInfoMessage(this, "Export",
-								"Successfully exported file.");
+						UIRes.showInfoMessage(this, "Export", "Successfully exported file.");
 					}
 				} else {
 					String ext = FileUtils.getExtension(file.getName());
-					if ("png".equals(ext) || "jpg".equals(ext)
-							|| "gif".equals(ext)) {
+					if ("png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext)) {
 						if (pImage != null) {
 							GraphicsUtils.saveImage(pImage, file, ext);
 						}
 					} else {
 						if (pImage != null) {
-							GraphicsUtils.saveImage(pImage,
-									file.getAbsolutePath() + ".png", "png");
+							GraphicsUtils.saveImage(pImage, file.getAbsolutePath() + ".png", "png");
 						}
 					}
-					UIRes.showInfoMessage(this, "Export",
-							"Successfully exported file.");
+					UIRes.showInfoMessage(this, "Export", "Successfully exported file.");
 				}
 
 			}
@@ -247,19 +218,15 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 						this.pImage = image;
 						String result = decoder.decode(image);
 						byte[] buffer = CoinUtils.fromHex(result);
-						buffer = WalletCryptos.decrypt(
-								LSystem.getAppPassword(), buffer);
+						buffer = WalletCryptos.decrypt(LSystem.getAppPassword(), buffer);
 						this.pAddress = new String(buffer, LSystem.encoding);
 					} catch (Exception ex) {
 						this.pAddress = null;
-						UIRes.showErrorMessage(
-								this,
-								"Import",
+						UIRes.showErrorMessage(this, "Import",
 								"File import fails, the default password does not match the image or paper wallet error !");
 					}
 				} else {
-					UIRes.showErrorMessage(this, "Import",
-							"File import fails, the specified file does not exist !");
+					UIRes.showErrorMessage(this, "Import", "File import fails, the specified file does not exist !");
 				}
 
 			}

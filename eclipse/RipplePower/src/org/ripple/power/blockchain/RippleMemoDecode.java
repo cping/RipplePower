@@ -12,6 +12,8 @@ import com.ripple.core.coretypes.RippleDate;
 
 public class RippleMemoDecode {
 
+	private JSONObject json;
+
 	private String dataHash;
 
 	private String typeHash;
@@ -26,8 +28,8 @@ public class RippleMemoDecode {
 
 	public long date = -1;
 
-	public RippleMemoDecode(String account, JSONObject obj, long date,
-			String password) {
+	public RippleMemoDecode(String account, JSONObject obj, long date, String password) {
+		this.json = obj;
 		this.date = date;
 		this.account = account;
 		TransactionTx.Memo tx_memo = new TransactionTx.Memo(obj, date);
@@ -36,8 +38,7 @@ public class RippleMemoDecode {
 		}
 		this.typeHash = tx_memo.memo_type;
 		this.dataHash = tx_memo.memo_data;
-		if (tx_memo.memo_format == null || tx_memo.memo_data == null
-				|| tx_memo.memo_type == null) {
+		if (tx_memo.memo_format == null || tx_memo.memo_data == null || tx_memo.memo_type == null) {
 			modeName = "UNKOWN";
 			if (tx_memo.memo_data == null) {
 				data = "UNKOWN";
@@ -52,6 +53,8 @@ public class RippleMemoDecode {
 		} else {
 			switch (modeName) {
 			case "UNKOWN":
+				data = convertHash(tx_memo.memo_data);
+				type = convertHash(tx_memo.memo_type);
 			case "NONE":
 				data = convertHash(tx_memo.memo_data);
 				type = convertHash(tx_memo.memo_type);
@@ -71,6 +74,16 @@ public class RippleMemoDecode {
 				break;
 			}
 		}
+		if (tx_memo.memo_type != null && type == null) {
+			data = convertBase64(tx_memo.memo_type);
+		}
+		if (tx_memo.memo_data != null && data == null) {
+			data = convertBase64(tx_memo.memo_data);
+		}
+	}
+
+	public JSONObject getJson() {
+		return json;
 	}
 
 	private static String convertEncode(String res, String password) {
@@ -171,20 +184,26 @@ public class RippleMemoDecode {
 		sbr.append("<font size=3 color=red>Date </font>");
 		sbr.append(RippleDate.fromSecondsSinceRippleEpoch(date).getTimeString());
 		sbr.append("<br>");
-		sbr.append("<font size=3 color=red>Type </font>");
-		sbr.append(type.toUpperCase());
-		sbr.append(" ");
+		if (type != null) {
+			sbr.append("<font size=3 color=red>Type </font>");
+			sbr.append(type.toUpperCase());
+			sbr.append(" ");
+		}
 		sbr.append("<font size=3 color=red>Mode </font>");
 		sbr.append(modeName.toUpperCase());
 		sbr.append("<br>");
 		sbr.append("<font size=3 color=red>Type Hash </font>");
 		sbr.append("<br>");
-		sbr.append(wrap(typeHash, 60));
-		sbr.append("<br>");
+		if (typeHash != null) {
+			sbr.append(wrap(typeHash, 60));
+			sbr.append("<br>");
+		}
 		sbr.append("<font size=3 color=red>Data Hash </font>");
 		sbr.append("<br>");
-		sbr.append(wrap(dataHash, 60));
-		sbr.append("<br>");
+		if (dataHash != null) {
+			sbr.append(wrap(dataHash, 60));
+			sbr.append("<br>");
+		}
 		sbr.append("<font size=4 color=orange>");
 		String html = data;
 		html = StringUtils.replaceIgnoreCase(html, "\n", "<br>");

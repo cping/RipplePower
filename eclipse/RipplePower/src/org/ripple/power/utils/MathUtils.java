@@ -26,9 +26,19 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.ui.graphics.geom.RectBox;
 
 public class MathUtils {
+	static public int nextPowerOfTwo(int value) {
+		if (value == 0)
+			return 1;
+		value--;
+		value |= value >> 1;
+		value |= value >> 2;
+		value |= value >> 4;
+		value |= value >> 8;
+		value |= value >> 16;
+		return value + 1;
+	}
 
-	public static RectBox getBounds(float x, float y, float width,
-			float height, float rotate, RectBox result) {
+	public static RectBox getBounds(float x, float y, float width, float height, float rotate, RectBox result) {
 		int[] rect = getLimit(x, y, width, height, rotate);
 		if (result == null) {
 			result = new RectBox(rect[0], rect[1], rect[2], rect[3]);
@@ -38,20 +48,16 @@ public class MathUtils {
 		return result;
 	}
 
-	public static RectBox getBounds(float x, float y, float width,
-			float height, float rotate) {
+	public static RectBox getBounds(float x, float y, float width, float height, float rotate) {
 		return getBounds(x, y, width, height, rotate, null);
 	}
 
-	public static int[] getLimit(float x, float y, float width, float height,
-			float rotate) {
+	public static int[] getLimit(float x, float y, float width, float height, float rotate) {
 		float rotation = MathUtils.toRadians(rotate);
 		float angSin = MathUtils.sin(rotation);
 		float angCos = MathUtils.cos(rotation);
-		int newW = MathUtils.floor((width * MathUtils.abs(angCos))
-				+ (height * MathUtils.abs(angSin)));
-		int newH = MathUtils.floor((height * MathUtils.abs(angCos))
-				+ (width * MathUtils.abs(angSin)));
+		int newW = MathUtils.floor((width * MathUtils.abs(angCos)) + (height * MathUtils.abs(angSin)));
+		int newH = MathUtils.floor((height * MathUtils.abs(angCos)) + (width * MathUtils.abs(angSin)));
 		int centerX = (int) (x + (width / 2));
 		int centerY = (int) (y + (height / 2));
 		int newX = (centerX - (newW / 2));
@@ -59,8 +65,8 @@ public class MathUtils {
 		return new int[] { newX, newY, newW, newH };
 	}
 
-	final static private String[] zeros = { "", "0", "00", "000", "0000",
-			"00000", "000000", "0000000", "00000000", "000000000", "0000000000" };
+	final static private String[] zeros = { "", "0", "00", "000", "0000", "00000", "000000", "0000000", "00000000",
+			"000000000", "0000000000" };
 
 	/**
 	 * 为指定数值补足位数
@@ -98,77 +104,12 @@ public class MathUtils {
 		if (StringUtils.isEmpty(str)) {
 			return false;
 		}
-		char[] chars = str.toCharArray();
-		int sz = chars.length;
-		boolean hasExp = false;
-		boolean hasDecPoint = false;
-		boolean allowSigns = false;
-		boolean foundDigit = false;
-		int start = (chars[0] == '-') ? 1 : 0;
-		if (sz > start + 1) {
-			if (chars[start] == '0' && chars[start + 1] == 'x') {
-				int i = start + 2;
-				if (i == sz) {
-					return false;
-				}
-				for (; i < chars.length; i++) {
-					if ((chars[i] < '0' || chars[i] > '9')
-							&& (chars[i] < 'a' || chars[i] > 'f')
-							&& (chars[i] < 'A' || chars[i] > 'F')) {
-						return false;
-					}
-				}
-				return true;
-			}
-		}
-		sz--;
-		int i = start;
-		while (i < sz || (i < sz + 1 && allowSigns && !foundDigit)) {
-			if (chars[i] >= '0' && chars[i] <= '9') {
-				foundDigit = true;
-				allowSigns = false;
-			} else if (chars[i] == '.') {
-				if (hasDecPoint || hasExp) {
-					return false;
-				}
-				hasDecPoint = true;
-			} else if (chars[i] == 'e' || chars[i] == 'E') {
-				if (hasExp) {
-					return false;
-				}
-				if (!foundDigit) {
-					return false;
-				}
-				hasExp = true;
-				allowSigns = true;
-			} else if (chars[i] == '+' || chars[i] == '-') {
-				if (!allowSigns) {
-					return false;
-				}
-				allowSigns = false;
-				foundDigit = false;
-			} else {
-				return false;
-			}
-			i++;
-		}
-		if (i < chars.length) {
-			if (chars[i] >= '0' && chars[i] <= '9') {
-				return true;
-			}
-			if (chars[i] == 'e' || chars[i] == 'E') {
-				return false;
-			}
-			if (!allowSigns
-					&& (chars[i] == 'd' || chars[i] == 'D' || chars[i] == 'f' || chars[i] == 'F')) {
-				return foundDigit;
-			}
-			if (chars[i] == 'l' || chars[i] == 'L') {
-				return foundDigit && !hasExp;
-			}
+		try {
+			Double.parseDouble(str);
+		} catch (Exception e) {
 			return false;
 		}
-		return !allowSigns && foundDigit;
+		return true;
 	}
 
 	public static final float PI_OVER2 = 1.5708f;
@@ -233,10 +174,8 @@ public class MathUtils {
 			cos[i] = (float) Math.cos(a);
 		}
 		for (int i = 0; i < 360; i += 90) {
-			sin[(int) (i * degToIndex) & SIN_MASK] = (float) Math.sin(i
-					* DEG_TO_RAD);
-			cos[(int) (i * degToIndex) & SIN_MASK] = (float) Math.cos(i
-					* DEG_TO_RAD);
+			sin[(int) (i * degToIndex) & SIN_MASK] = (float) Math.sin(i * DEG_TO_RAD);
+			cos[(int) (i * degToIndex) & SIN_MASK] = (float) Math.cos(i * DEG_TO_RAD);
 		}
 	}
 
@@ -485,12 +424,10 @@ public class MathUtils {
 		return result;
 	}
 
-	static int log2arr[] = { 26573, 14624, 7719, 3973, 2017, 1016, 510, 256,
-			128, 64, 32, 16, 8, 4, 2, 1, 0, 0, 0 };
+	static int log2arr[] = { 26573, 14624, 7719, 3973, 2017, 1016, 510, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0, 0, 0 };
 
-	static int lnscale[] = { 0, 45426, 90852, 136278, 181704, 227130, 272557,
-			317983, 363409, 408835, 454261, 499687, 545113, 590539, 635965,
-			681391, 726817 };
+	static int lnscale[] = { 0, 45426, 90852, 136278, 181704, 227130, 272557, 317983, 363409, 408835, 454261, 499687,
+			545113, 590539, 635965, 681391, 726817 };
 
 	public static int ln(int x) {
 		int shift = 0;
@@ -538,8 +475,7 @@ public class MathUtils {
 		return sqrt(sq(x2 - x1) + sq(y2 - y1));
 	}
 
-	static public final float dist(float x1, float y1, float z1, float x2,
-			float y2, float z2) {
+	static public final float dist(float x1, float y1, float z1, float x2, float y2, float z2) {
 		return sqrt(sq(x2 - x1) + sq(y2 - y1) + sq(z2 - z1));
 	}
 
@@ -615,10 +551,8 @@ public class MathUtils {
 		return (value - start) / (stop - start);
 	}
 
-	static public final float map(float value, float istart, float istop,
-			float ostart, float ostop) {
-		return ostart + (ostop - ostart)
-				* ((value - istart) / (istop - istart));
+	static public final float map(float value, float istart, float istop, float ostart, float ostop) {
+		return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 	}
 
 	static public final float degrees(float radians) {
@@ -691,13 +625,11 @@ public class MathUtils {
 		return RAD_TO_DEG * rad;
 	}
 
-	public static final int bringToBounds(final int minValue,
-			final int maxValue, final int v) {
+	public static final int bringToBounds(final int minValue, final int maxValue, final int v) {
 		return Math.max(minValue, Math.min(maxValue, v));
 	}
 
-	public static final float bringToBounds(final float minValue,
-			final float maxValue, final float v) {
+	public static final float bringToBounds(final float minValue, final float maxValue, final float v) {
 		return Math.max(minValue, Math.min(maxValue, v));
 	}
 
@@ -761,20 +693,16 @@ public class MathUtils {
 		return (int) (x + 0.5f);
 	}
 
-	public static float barycentric(float value1, float value2, float value3,
-			float amount1, float amount2) {
-		return value1 + (value2 - value1) * amount1 + (value3 - value1)
-				* amount2;
+	public static float barycentric(float value1, float value2, float value3, float amount1, float amount2) {
+		return value1 + (value2 - value1) * amount1 + (value3 - value1) * amount2;
 	}
 
-	public static float catmullRom(float value1, float value2, float value3,
-			float value4, float amount) {
+	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
 		double amountSquared = amount * amount;
 		double amountCubed = amountSquared * amount;
 		return (float) (0.5 * (2.0 * value2 + (value3 - value1) * amount
-				+ (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4)
-				* amountSquared + (3.0 * value2 - value1 - 3.0 * value3 + value4)
-				* amountCubed));
+				+ (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * amountSquared
+				+ (3.0 * value2 - value1 - 3.0 * value3 + value4) * amountCubed));
 	}
 
 	public static float clamp(float value, float min, float max) {
@@ -787,8 +715,7 @@ public class MathUtils {
 		return Math.abs(value1 - value2);
 	}
 
-	public static float hermite(float value1, float tangent1, float value2,
-			float tangent2, float amount) {
+	public static float hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
 		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount, result;
 		double sCubed = s * s * s;
 		double sSquared = s * s;
@@ -798,8 +725,7 @@ public class MathUtils {
 		} else if (amount == 1f) {
 			result = value2;
 		} else {
-			result = (2 * v1 - 2 * v2 + t2 + t1) * sCubed
-					+ (3 * v2 - 3 * v1 - 2 * t1 - t2) * sSquared + t1 * s + v1;
+			result = (2 * v1 - 2 * v2 + t2 + t1) * sCubed + (3 * v2 - 3 * v1 - 2 * t1 - t2) * sSquared + t1 * s + v1;
 		}
 		return (float) result;
 	}

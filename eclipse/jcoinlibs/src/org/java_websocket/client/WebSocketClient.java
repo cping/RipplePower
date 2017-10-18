@@ -5,25 +5,33 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.NotYetConnectedException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import org.java_websocket.AbstractWebSocket;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketAdapter;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.exceptions.InvalidHandshakeException;
 import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.framing.Framedata.Opcode;
+import org.java_websocket.framing.FramedataImpl1;
 import org.java_websocket.handshake.HandshakeImpl1Client;
 import org.java_websocket.handshake.Handshakedata;
 import org.java_websocket.handshake.ServerHandshake;
+import org.java_websocket.util.Charsetfunctions;
 
 /**
  * A subclass must implement at least <var>onOpen</var>, <var>onClose</var>, and
@@ -32,8 +40,7 @@ import org.java_websocket.handshake.ServerHandshake;
  * {@link #onMessage(String)} via the overloaded methods and to
  * {@link #send(String)} data to the server.
  */
-public abstract class WebSocketClient extends WebSocketAdapter implements
-		Runnable, WebSocket {
+public abstract class WebSocketClient extends AbstractWebSocket implements Runnable, WebSocket {
 
 	/**
 	 * The URI this channel is supposed to connect to.
@@ -62,38 +69,64 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 
 	private int connectTimeout = 0;
 
-	/** This open a websocket connection as specified by rfc6455 */
-	public WebSocketClient(URI serverURI) {
-		this(serverURI, new Draft_17());
+	/**
+	 * Constructs a WebSocketClient instance and sets it to the connect to the
+	 * specified URI. The channel does not attampt to connect automatically. The
+	 * connection will be established once you call <var>connect</var>.
+	 *
+	 * @param serverUri
+	 *            the server URI to connect to
+	 */
+	public WebSocketClient(URI serverUri) {
+		this(serverUri, new Draft_17());
 	}
 
 	/**
 	 * Constructs a WebSocketClient instance and sets it to the connect to the
 	 * specified URI. The channel does not attampt to connect automatically. The
 	 * connection will be established once you call <var>connect</var>.
+	 * 
+	 * @param serverUri
+	 *            the server URI to connect to
+	 * @param protocolDraft
+	 *            The draft which should be used for this connection
 	 */
-	public WebSocketClient(URI serverUri, Draft draft) {
-		this(serverUri, draft, null, 0);
+	public WebSocketClient(URI serverUri, Draft protocolDraft) {
+		this(serverUri, protocolDraft, null, 0);
 	}
 
-	public WebSocketClient(URI serverUri, Draft protocolDraft,
-			Map<String, String> httpHeaders, int connectTimeout) {
+	/**
+	 * Constructs a WebSocketClient instance and sets it to the connect to the
+	 * specified URI. The channel does not attampt to connect automatically. The
+	 * connection will be established once you call <var>connect</var>.
+	 * 
+	 * @param serverUri
+	 *            the server URI to connect to
+	 * @param protocolDraft
+	 *            The draft which should be used for this connection
+	 * @param httpHeaders
+	 *            Additional HTTP-Headers
+	 * @param connectTimeout
+	 *            The Timeout for the connection
+	 */
+	public WebSocketClient(URI serverUri, Draft protocolDraft, Map<String, String> httpHeaders, int connectTimeout) {
 		if (serverUri == null) {
 			throw new IllegalArgumentException();
 		} else if (protocolDraft == null) {
-			throw new IllegalArgumentException(
-					"null as draft is permitted for `WebSocketServer` only!");
+			throw new IllegalArgumentException("null as draft is permitted for `WebSocketServer` only!");
 		}
 		this.uri = serverUri;
 		this.draft = protocolDraft;
 		this.headers = httpHeaders;
 		this.connectTimeout = connectTimeout;
+		setTcpNoDelay(false);
 		this.engine = new WebSocketImpl(this, protocolDraft);
-		
 	}
 
 	/**
 	 * Returns the URI that this WebSocketClient is connected to.
+	 * 
+	 * @return the URI connected to
 	 */
 	public URI getURI() {
 		return uri;
@@ -103,9 +136,20 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	 * Returns the protocol version this channel uses.<br>
 	 * For more infos see
 	 * https://github.com/TooTallNate/Java-WebSocket/wiki/Drafts
+	 * 
+	 * @return The draft used for this client
 	 */
 	public Draft getDraft() {
 		return draft;
+	}
+
+	/**
+	 * Returns the socket to allow Hostname Verification
+	 * 
+	 * @return the socket used for this connection
+	 */
+	public Socket getSocket() {
+		return socket;
 	}
 
 	/**
@@ -113,8 +157,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	 */
 	public void connect() {
 		if (writeThread != null)
-			throw new IllegalStateException(
-					"WebSocketClient objects are not reuseable");
+			throw new IllegalStateException("WebSocketClient objects are not reuseable");
 		writeThread = new Thread(this);
 		writeThread.start();
 	}
@@ -122,8 +165,11 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	/**
 	 * Same as <code>connect</code> but blocks until the websocket connected or
 	 * failed to do so.<br>
-	 * Returns whether it succeeded or not.
-	 **/
+	 * 
+	 * @return Returns whether it succeeded or not.
+	 * @throws InterruptedException
+	 *             Thrown when the threads get interrupted
+	 */
 	public boolean connectBlocking() throws InterruptedException {
 		connect();
 		connectLatch.await();
@@ -141,6 +187,13 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		}
 	}
 
+	/**
+	 * Same as <code>close</code> but blocks until the websocket closed or
+	 * failed to do so.<br>
+	 * 
+	 * @throws InterruptedException
+	 *             Thrown when the threads get interrupted
+	 */
 	public void closeBlocking() throws InterruptedException {
 		close();
 		closeLatch.await();
@@ -166,25 +219,41 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		engine.send(data);
 	}
 
+	protected Collection<WebSocket> connections() {
+		return Collections.singletonList((WebSocket) engine);
+	}
+
+	public void sendPing() throws NotYetConnectedException {
+		engine.sendPing();
+	}
+
+	public void setSocket(String host, int port) {
+		SocketAddress addr = new InetSocketAddress(host, port);
+		setProxy(new Proxy(Proxy.Type.SOCKS, addr));
+	}
+	
 	public void run() {
 		try {
+			setProxy(proxy);
 			if (socket == null) {
 				socket = new Socket(proxy);
 			} else if (socket.isClosed()) {
 				throw new IOException();
 			}
-			if (!socket.isBound())
-				socket.connect(new InetSocketAddress(uri.getHost(), getPort()),
-						connectTimeout);
+			socket.setTcpNoDelay(isTcpNoDelay());
+			if (!socket.isBound()){
+				socket.connect(new InetSocketAddress(uri.getHost(), getPort()), 66000);
+			}
+		
 			istream = socket.getInputStream();
 			ostream = socket.getOutputStream();
 
 			sendHandshake();
 		} catch ( /*
-				 * IOException | SecurityException | UnresolvedAddressException
-				 * | InvalidHandshakeException | ClosedByInterruptException |
-				 * SocketTimeoutException
-				 */Exception e) {
+					 * IOException | SecurityException |
+					 * UnresolvedAddressException | InvalidHandshakeException |
+					 * ClosedByInterruptException | SocketTimeoutException
+					 */Exception e) {
 			onWebsocketError(engine, e);
 			engine.closeConnection(CloseFrame.NEVER_CONNECTED, e.getMessage());
 			return;
@@ -197,7 +266,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		int readBytes;
 
 		try {
-			while (!isClosed() && (readBytes = istream.read(rawbuffer)) != -1) {
+			while (!isClosing() && !isClosed() && (readBytes = istream.read(rawbuffer)) != -1) {
 				engine.decode(ByteBuffer.wrap(rawbuffer, 0, readBytes));
 			}
 			engine.eot();
@@ -221,7 +290,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 			} else if (scheme.equals("ws")) {
 				return WebSocket.DEFAULT_PORT;
 			} else {
-				throw new RuntimeException("unkonow scheme" + scheme);
+				throw new RuntimeException("unknown scheme: " + scheme);
 			}
 		}
 		return port;
@@ -229,8 +298,8 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 
 	private void sendHandshake() throws InvalidHandshakeException {
 		String path;
-		String part1 = uri.getPath();
-		String part2 = uri.getQuery();
+		String part1 = uri.getRawPath();
+		String part2 = uri.getRawQuery();
 		if (part1 == null || part1.length() == 0)
 			path = "/";
 		else
@@ -238,8 +307,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		if (part2 != null)
 			path += "?" + part2;
 		int port = getPort();
-		String host = uri.getHost()
-				+ (port != WebSocket.DEFAULT_PORT ? ":" + port : "");
+		String host = uri.getHost() + (port != WebSocket.DEFAULT_PORT ? ":" + port : "");
 
 		HandshakeImpl1Client handshake = new HandshakeImpl1Client();
 		handshake.setResourceDescriptor(path);
@@ -272,9 +340,29 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 		onMessage(blob);
 	}
 
+	private boolean isText = false, isContinuous = false;
+
+	private StringBuffer _buffer = new StringBuffer();
+	
 	@Override
 	public void onWebsocketMessageFragment(WebSocket conn, Framedata frame) {
 		onFragment(frame);
+		// 这部分不仅仅会传递字符类型，不过基于ripple访问要求，接收字符串就够了
+		Framedata.Opcode curop = frame.getOpcode();
+		if (!isText) {
+			isText = (curop == Framedata.Opcode.TEXT);
+		}
+		isContinuous = (curop == Framedata.Opcode.CONTINUOUS);
+		if (isText || isContinuous) {
+			try {
+				_buffer.append(Charsetfunctions.stringUtf8(frame.getPayloadData()));
+			} catch (InvalidDataException e) {
+			}
+		}
+		if (frame.isFin() && isContinuous) {
+			onMessage(_buffer.toString());
+		}
+
 	}
 
 	/**
@@ -282,18 +370,17 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	 */
 	@Override
 	public final void onWebsocketOpen(WebSocket conn, Handshakedata handshake) {
-		connectLatch.countDown();
+		startConnectionLostTimer();
 		onOpen((ServerHandshake) handshake);
+		connectLatch.countDown();
 	}
 
 	/**
 	 * Calls subclass' implementation of <var>onClose</var>.
 	 */
 	@Override
-	public final void onWebsocketClose(WebSocket conn, int code, String reason,
-			boolean remote) {
-		connectLatch.countDown();
-		closeLatch.countDown();
+	public final void onWebsocketClose(WebSocket conn, int code, String reason, boolean remote) {
+		stopConnectionLostTimer();
 		if (writeThread != null)
 			writeThread.interrupt();
 		try {
@@ -303,6 +390,8 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 			onWebsocketError(this, e);
 		}
 		onClose(code, reason, remote);
+		connectLatch.countDown();
+		closeLatch.countDown();
 	}
 
 	/**
@@ -319,23 +408,45 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	}
 
 	@Override
-	public void onWebsocketCloseInitiated(WebSocket conn, int code,
-			String reason) {
+	public void onWebsocketCloseInitiated(WebSocket conn, int code, String reason) {
 		onCloseInitiated(code, reason);
 	}
 
 	@Override
-	public void onWebsocketClosing(WebSocket conn, int code, String reason,
-			boolean remote) {
+	public void onWebsocketClosing(WebSocket conn, int code, String reason, boolean remote) {
 		onClosing(code, reason, remote);
 	}
 
+	/**
+	 * Send when this peer sends a close handshake
+	 *
+	 * @param code
+	 *            The codes can be looked up here: {@link CloseFrame}
+	 * @param reason
+	 *            Additional information string
+	 */
 	public void onCloseInitiated(int code, String reason) {
 	}
 
+	/**
+	 * Called as soon as no further frames are accepted
+	 *
+	 * @param code
+	 *            The codes can be looked up here: {@link CloseFrame}
+	 * @param reason
+	 *            Additional information string
+	 * @param remote
+	 *            Returns whether or not the closing of the connection was
+	 *            initiated by the remote host.
+	 */
 	public void onClosing(int code, String reason, boolean remote) {
 	}
 
+	/**
+	 * Getter for the engine
+	 * 
+	 * @return the engine
+	 */
 	public WebSocket getConnection() {
 		return engine;
 	}
@@ -388,9 +499,8 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	}
 
 	public void setProxy(Proxy proxy) {
-		if (proxy == null) {
+		if (proxy == null)
 			throw new IllegalArgumentException();
-		}
 		this.proxy = proxy;
 	}
 
@@ -399,7 +509,10 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	 * This method must be called before <code>connect</code>. If the given
 	 * socket is not yet bound it will be bound to the uri specified in the
 	 * constructor.
-	 **/
+	 * 
+	 * @param socket
+	 *            The socket which should be used for the connection
+	 */
 	public void setSocket(Socket socket) {
 		if (this.socket != null) {
 			throw new IllegalStateException("socket has already been set");
@@ -458,8 +571,7 @@ public abstract class WebSocketClient extends WebSocketAdapter implements
 	}
 
 	@Override
-	public void send(ByteBuffer bytes) throws IllegalArgumentException,
-			NotYetConnectedException {
+	public void send(ByteBuffer bytes) throws IllegalArgumentException, NotYetConnectedException {
 		engine.send(bytes);
 	}
 

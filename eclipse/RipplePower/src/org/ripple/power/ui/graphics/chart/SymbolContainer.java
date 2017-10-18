@@ -12,8 +12,7 @@ public class SymbolContainer {
 		this(symbol, point, false, 0);
 	}
 
-	public SymbolContainer(Bitmap symbol, Point point, boolean alignCenter,
-			float theta) {
+	public SymbolContainer(Bitmap symbol, Point point, boolean alignCenter, float theta) {
 		this.symbol = symbol;
 		this.point = point;
 		this.alignCenter = alignCenter;

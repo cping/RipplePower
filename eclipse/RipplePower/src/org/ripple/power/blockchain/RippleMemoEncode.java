@@ -21,8 +21,7 @@ public class RippleMemoEncode {
 
 	private String modeName = "UNKOWN";
 
-	public RippleMemoEncode(int modeIdx, String mtype, String mdata,
-			String password) {
+	public RippleMemoEncode(int modeIdx, String mtype, String mdata, String password) {
 		try {
 			type = mtype.getBytes(LSystem.encoding);
 			data = mdata.getBytes(LSystem.encoding);

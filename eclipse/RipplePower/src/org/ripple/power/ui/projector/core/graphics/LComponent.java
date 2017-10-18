@@ -186,8 +186,7 @@ public abstract class LComponent extends LObject implements LRelease {
 		}
 	}
 
-	public abstract void createUI(LGraphics g, int x, int y,
-			LComponent component, LImage[] buttonImage);
+	public abstract void createUI(LGraphics g, int x, int y, LComponent component, LImage[] buttonImage);
 
 	/**
 	 * 渲染当前组件画面于指定绘图器之上
@@ -201,37 +200,30 @@ public abstract class LComponent extends LObject implements LRelease {
 		try {
 			if (this.elastic) {
 				this.oldClip = g.getClip();
-				g.clipRect(this.getScreenX(), this.getScreenY(),
-						this.getWidth(), this.getHeight());
+				g.clipRect(this.getScreenX(), this.getScreenY(), this.getWidth(), this.getHeight());
 			}
 			// 变更透明度
 			if (alpha > 0.1 && alpha < 1.0) {
 				g.setAlpha(alpha);
 				if (background != null) {
-					g.drawImage(background, this.screenX, this.screenY,
-							this.width, this.height);
+					g.drawImage(background, this.screenX, this.screenY, this.width, this.height);
 				}
 				if (this.customRendering) {
-					this.createCustomUI(g, this.screenX, this.screenY,
-							this.width, this.height);
+					this.createCustomUI(g, this.screenX, this.screenY, this.width, this.height);
 				} else {
-					this.createUI(g, this.screenX, this.screenY, this,
-							this.imageUI);
+					this.createUI(g, this.screenX, this.screenY, this, this.imageUI);
 
 				}
 				g.setAlpha(1.0F);
 				// 不变更
 			} else {
 				if (background != null) {
-					g.drawImage(background, this.screenX, this.screenY,
-							this.width, this.height);
+					g.drawImage(background, this.screenX, this.screenY, this.width, this.height);
 				}
 				if (this.customRendering) {
-					this.createCustomUI(g, this.screenX, this.screenY,
-							this.width, this.height);
+					this.createCustomUI(g, this.screenX, this.screenY, this.width, this.height);
 				} else {
-					this.createUI(g, this.screenX, this.screenY, this,
-							this.imageUI);
+					this.createUI(g, this.screenX, this.screenY, this, this.imageUI);
 
 				}
 			}
@@ -260,25 +252,19 @@ public abstract class LComponent extends LObject implements LRelease {
 	}
 
 	public boolean contains(int x, int y, int width, int height) {
-		return (this.visible)
-				&& (x >= this.screenX && y >= this.screenY
-						&& ((x + width) <= (this.screenX + this.width)) && ((y + height) <= (this.screenY + this.height)));
+		return (this.visible) && (x >= this.screenX && y >= this.screenY && ((x + width) <= (this.screenX + this.width))
+				&& ((y + height) <= (this.screenY + this.height)));
 	}
 
 	public boolean intersects(int x1, int y1) {
-		return (this.visible)
-				&& (x1 >= this.screenX && x1 <= this.screenX + this.width
-						&& y1 >= this.screenY && y1 <= this.screenY
-						+ this.height);
+		return (this.visible) && (x1 >= this.screenX && x1 <= this.screenX + this.width && y1 >= this.screenY
+				&& y1 <= this.screenY + this.height);
 	}
 
 	public boolean intersects(LComponent comp) {
-		return (this.visible)
-				&& (comp.isVisible())
-				&& (this.screenX + this.width >= comp.screenX
-						&& this.screenX <= comp.screenX + comp.width
-						&& this.screenY + this.height >= comp.screenY && this.screenY <= comp.screenY
-						+ comp.height);
+		return (this.visible) && (comp.isVisible())
+				&& (this.screenX + this.width >= comp.screenX && this.screenX <= comp.screenX + comp.width
+						&& this.screenY + this.height >= comp.screenY && this.screenY <= comp.screenY + comp.height);
 	}
 
 	public void dispose() {
@@ -316,8 +302,7 @@ public abstract class LComponent extends LObject implements LRelease {
 	}
 
 	public boolean isEnabled() {
-		return (this.parent == null) ? this.enabled
-				: (this.enabled && this.parent.isEnabled());
+		return (this.parent == null) ? this.enabled : (this.enabled && this.parent.isEnabled());
 	}
 
 	public void setEnabled(boolean b) {

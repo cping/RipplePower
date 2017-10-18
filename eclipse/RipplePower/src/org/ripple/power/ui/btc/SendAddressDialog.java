@@ -34,13 +34,11 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Class<?>[] columnClasses = { String.class,
-			String.class };
+	private static final Class<?>[] columnClasses = { String.class, String.class };
 
 	private static final String[] columnNames = { "Name", "Address" };
 
-	private static final int[] columnTypes = { AddressTable.NAME,
-			AddressTable.ADDRESS };
+	private static final int[] columnTypes = { AddressTable.NAME, AddressTable.ADDRESS };
 
 	private final AddressTableModel tableModel;
 
@@ -65,10 +63,8 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 		tablePane.add(scrollPane);
 		tablePane.add(Box.createGlue());
 
-		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "New",
-				"new" }, new String[] { "Copy", "copy" }, new String[] {
-				"Edit", "edit" }, new String[] { "Delete", "delete" },
-				new String[] { "Done", "done" });
+		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "New", "new" }, new String[] { "Copy", "copy" },
+				new String[] { "Edit", "edit" }, new String[] { "Delete", "delete" }, new String[] { "Done", "done" });
 		buttonPane.setBackground(Color.white);
 
 		JPanel contentPane = new JPanel();
@@ -104,16 +100,14 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 			} else {
 				int row = table.getSelectedRow();
 				if (row < 0) {
-					UIRes.showErrorMessage(this,"Error",  "No entry selected");
+					UIRes.showErrorMessage(this, "Error", "No entry selected");
 				} else {
 					row = table.convertRowIndexToModel(row);
 					Address addr = BTCLoader.addresses.get(row);
 					switch (action) {
 					case "copy":
-						StringSelection sel = new StringSelection(
-								addr.toString());
-						Clipboard cb = Toolkit.getDefaultToolkit()
-								.getSystemClipboard();
+						StringSelection sel = new StringSelection(addr.toString());
+						Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
 						cb.setContents(sel, null);
 						break;
 					case "edit":
@@ -130,13 +124,11 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 		} catch (BlockStoreException exc) {
 			ErrorLog.get().logException("Unable to update blockStore database", exc);
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 
-	private void editAddress(Address address, int row)
-			throws BlockStoreException {
+	private void editAddress(Address address, int row) throws BlockStoreException {
 		Address addr = address;
 		while (true) {
 			addr = AddressEditDialog.showDialog(this, addr, true);
@@ -149,8 +141,7 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 					if (chkAddr.equals(address))
 						continue;
 					if (chkAddr.getLabel().compareToIgnoreCase(label) == 0) {
-						UIRes.showErrorMessage(this,"Error",
-								"Duplicate name specified");
+						UIRes.showErrorMessage(this, "Error", "Duplicate name specified");
 						valid = false;
 						break;
 					}
@@ -198,8 +189,7 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 		public AddressTableModel(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length) {
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			}
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
@@ -227,9 +217,8 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 
 		@Override
 		public Object getValueAt(int row, int column) {
-			if (row >= BTCLoader.addresses.size()){
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+			if (row >= BTCLoader.addresses.size()) {
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			Object value;
 			Address addr = BTCLoader.addresses.get(row);
@@ -241,8 +230,7 @@ public class SendAddressDialog extends JDialog implements ActionListener {
 				value = addr.toString();
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}

@@ -19,5 +19,5 @@ public interface Config {
 	public static final int TUP = 6;
 
 	public static final int TDOWN = 7;
-	
+
 }

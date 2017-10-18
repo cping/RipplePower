@@ -53,8 +53,7 @@ import java.util.ArrayList;
  * <code>new AxisConstraint().size("100").gap("3").size("200").fill()</code>.
  */
 public final class AC implements Externalizable {
-	private final ArrayList<DimConstraint> cList = new ArrayList<DimConstraint>(
-			8);
+	private final ArrayList<DimConstraint> cList = new ArrayList<DimConstraint>(8);
 
 	private transient int curIx = 0;
 
@@ -429,8 +428,7 @@ public final class AC implements Externalizable {
 	 *         <code>new AxisConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final AC gap(String size, int... indexes) {
-		BoundSize bsa = size != null ? ConstraintParser.parseBoundSize(size,
-				true, true) : null;
+		BoundSize bsa = size != null ? ConstraintParser.parseBoundSize(size, true, true) : null;
 
 		for (int i = indexes.length - 1; i >= 0; i--) {
 			int ix = indexes[i];
@@ -738,8 +736,7 @@ public final class AC implements Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

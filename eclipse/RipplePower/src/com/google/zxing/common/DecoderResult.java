@@ -39,13 +39,11 @@ public final class DecoderResult {
 	private final int structuredAppendParity;
 	private final int structuredAppendSequenceNumber;
 
-	public DecoderResult(byte[] rawBytes, String text,
-			List<byte[]> byteSegments, String ecLevel) {
+	public DecoderResult(byte[] rawBytes, String text, List<byte[]> byteSegments, String ecLevel) {
 		this(rawBytes, text, byteSegments, ecLevel, -1, -1);
 	}
 
-	public DecoderResult(byte[] rawBytes, String text,
-			List<byte[]> byteSegments, String ecLevel, int saSequence,
+	public DecoderResult(byte[] rawBytes, String text, List<byte[]> byteSegments, String ecLevel, int saSequence,
 			int saParity) {
 		this.rawBytes = rawBytes;
 		this.text = text;
@@ -96,8 +94,7 @@ public final class DecoderResult {
 	}
 
 	public boolean hasStructuredAppend() {
-		return structuredAppendParity >= 0
-				&& structuredAppendSequenceNumber >= 0;
+		return structuredAppendParity >= 0 && structuredAppendSequenceNumber >= 0;
 	}
 
 	public int getStructuredAppendParity() {

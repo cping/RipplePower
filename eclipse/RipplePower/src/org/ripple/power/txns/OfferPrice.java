@@ -1,8 +1,6 @@
 package org.ripple.power.txns;
 
-import com.ripple.client.Client;
-import com.ripple.client.requests.Request;
-import com.ripple.client.responses.Response;
+import com.ripple.client.enums.Command;
 import com.ripple.core.coretypes.AccountID;
 import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.Issue;
@@ -12,7 +10,7 @@ import com.ripple.core.types.known.sle.entries.Offer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.ui.RPClient;
+import org.ripple.power.utils.TemporaryWebSocket;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -57,8 +55,7 @@ public abstract class OfferPrice {
 
 	private static String reset(String name) {
 		for (Store s : _storage) {
-			if (s.name.equals(name)
-					&& (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
+			if (s.name.equals(name) && (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
 				return s.price;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);
@@ -75,8 +72,7 @@ public abstract class OfferPrice {
 		}
 	}
 
-	public synchronized static String getMoneyConvert(String srcValue,
-			String src, String dst) {
+	public synchronized static String getMoneyConvert(String srcValue, String src, String dst) {
 		if (srcValue == null || src == null | dst == null) {
 			return "unkown";
 		}
@@ -95,18 +91,22 @@ public abstract class OfferPrice {
 		if (ret != null) {
 			return ret;
 		}
-
 		String oneValue = null;
 		String twoValue = null;
 		try {
 			oneValue = OtherData.getCoinmarketcapCoinToUSD(src);
+			if ("usd".equals(dst)) {
+				BigDecimal a1 = new BigDecimal(oneValue);
+				String result = LSystem.getNumber(a1.multiply(new BigDecimal(srcValue)));
+				addStorage(new Store(result, name));
+				return result;
+			}
 			twoValue = OtherData.getCoinmarketcapCoinToUSD(dst);
 			if (oneValue != null && twoValue != null) {
 				BigDecimal a1 = new BigDecimal(oneValue);
 				BigDecimal b1 = new BigDecimal(twoValue);
-				String result = LSystem.getNumber(a1.divide(b1,
-						MathContext.DECIMAL128).multiply(
-						new BigDecimal(srcValue)));
+				String result = LSystem
+						.getNumber(a1.divide(b1, MathContext.DECIMAL128).multiply(new BigDecimal(srcValue)));
 				addStorage(new Store(result, name));
 				return result;
 			}
@@ -138,24 +138,20 @@ public abstract class OfferPrice {
 					if (twoValue != null) {
 						BigDecimal srcValueb = new BigDecimal(oneValue);
 						BigDecimal valueb = new BigDecimal(twoValue);
-						String result = LSystem.getNumber(srcValueb.divide(
-								valueb, MathContext.DECIMAL128).multiply(
-								new BigDecimal(srcValue)));
+						String result = LSystem.getNumber(
+								srcValueb.divide(valueb, MathContext.DECIMAL128).multiply(new BigDecimal(srcValue)));
 						addStorage(new Store(result, name));
 						return result;
 					} else {
-						double yahooValue = OtherData
-								.getLegaltenderCurrencyToUSD(src);
+						double yahooValue = OtherData.getLegaltenderCurrencyToUSD(src);
 						if (yahooValue != -1) {
 							if (twoValue == null) {
 								twoValue = OtherData.converterMoney(dst, "usd");
 							}
 							if (twoValue != null) {
-								BigDecimal srcValueb = new BigDecimal(
-										yahooValue);
+								BigDecimal srcValueb = new BigDecimal(yahooValue);
 								BigDecimal valueb = new BigDecimal(twoValue);
-								String result = LSystem.getNumber(srcValueb
-										.divide(valueb, MathContext.DECIMAL128)
+								String result = LSystem.getNumber(srcValueb.divide(valueb, MathContext.DECIMAL128)
 										.multiply(new BigDecimal(srcValue)));
 								addStorage(new Store(result, name));
 								return result;
@@ -200,49 +196,29 @@ public abstract class OfferPrice {
 
 	public abstract void error(JSONObject obj);
 
-	public abstract void complete(ArrayList<OfferFruit> buys,
-			ArrayList<OfferFruit> sells, OfferPrice price);
+	public abstract void complete(ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells, OfferPrice price);
 
-	public static void load(String address, String buyCurName,
-			String sellCurName, OfferPrice price) {
+	public static void load(String address, String buyCurName, String sellCurName, OfferPrice price) {
 		load(address, buyCurName, sellCurName, price, true);
 	}
 
-	public static void load(String address, String buyCurName,
-			String sellCurName, OfferPrice price, boolean html) {
+	public static void load(String address, String buyCurName, String sellCurName, OfferPrice price, boolean html) {
 		AccountID account = AccountID.fromAddress(address);
-		RPClient ripple = RPClient.ripple();
-		if (ripple != null) {
-			Issue buy = account.issue(buyCurName);
-			Issue sell = account.issue(sellCurName);
-			load(ripple.getClinet(), buy, sell, price, html);
-		}
+		Issue buy = account.issue(buyCurName);
+		Issue sell = account.issue(sellCurName);
+		load(buy, sell, price, html);
 	}
 
-	public static void load(IssuedCurrency buy, IssuedCurrency sell,
-			OfferPrice price) {
+	public static void load(IssuedCurrency buy, IssuedCurrency sell, OfferPrice price) {
 		load(buy, sell, price, true);
 	}
 
-	public static void load(IssuedCurrency buy, IssuedCurrency sell,
-			OfferPrice price, boolean html) {
-		RPClient ripple = RPClient.ripple();
-		if (ripple != null) {
-			load(ripple.getClinet(), buy.getIssue(), sell.getIssue(), price,
-					html);
-		}
+	public static void load(IssuedCurrency buy, IssuedCurrency sell, OfferPrice price, boolean html) {
+		load(buy.getIssue(), sell.getIssue(), price, html);
 	}
 
 	public static void load(Issue buy, Issue sell, OfferPrice price) {
 		load(buy, sell, price, true);
-	}
-
-	public static void load(Issue buy, Issue sell, OfferPrice price,
-			boolean html) {
-		RPClient ripple = RPClient.ripple();
-		if (ripple != null) {
-			load(ripple.getClinet(), buy, sell, price, html);
-		}
 	}
 
 	public static class OrderBooks {
@@ -250,22 +226,19 @@ public abstract class OfferPrice {
 			public void onUpdate(OrderBooks book);
 		}
 
-		private Client client;
-		private int limit = 30;
+		private final static int DEF_LIMIT = 100;
 		private final BookEvents callback;
+		private int limit = DEF_LIMIT;
 		public Issue first, second;
 		public STArray asks, bids;
 		public Amount ask, bid, spread;
 
-		public OrderBooks(Client client, Issue first, Issue second,
-				BookEvents callback) {
-			this(client, first, second, 30, callback);
+		public OrderBooks(Issue first, Issue second, BookEvents callback) {
+			this(first, second, DEF_LIMIT, callback);
 		}
 
-		public OrderBooks(Client client, Issue first, Issue second, int limit,
-				BookEvents callback) {
+		public OrderBooks(Issue first, Issue second, int limit, BookEvents callback) {
 			this.limit = limit;
-			this.client = client;
 			this.first = first;
 			this.second = second;
 			this.callback = callback;
@@ -284,52 +257,50 @@ public abstract class OfferPrice {
 
 		private void requestUpdate(final OfferPrice price) {
 			for (int i = 0; i < 2; i++) {
-				final boolean getAsks = i == 0, getBids = !getAsks;
-				Issue getIssue = getAsks ? first : second, payIssue = getAsks ? second
-						: first;
-				Request request = null;
-				if (price.subscribe) {
-					request = client.subscribeBookOffers(getIssue, payIssue);
-				} else {
-					request = client.requestBookOffers(getIssue, payIssue);
-				}
-				request.json("limit", limit);
-				request.once(Request.OnResponse.class,
-						new Request.OnResponse() {
-							@Override
-							public void called(Response response) {
-								if (response.succeeded) {
 
-									JSONArray offersJSON = response.result
-											.optJSONArray("offers");
-									STArray offers = STArray.translate
-											.fromJSONArray(offersJSON);
+				final boolean getAsks = (i == 0), getBids = !getAsks;
+				Issue getIssue = getAsks ? first : second, payIssue = getAsks ? second : first;
 
-									if (getBids) {
-										bids = offers;
-									} else {
-										asks = offers;
-									}
-									if (retrievedBothBooks()) {
-										if (!isEmpty()) {
-											calculateStats();
-										}
-										callback.onUpdate(OrderBooks.this);
-									}
-								} else {
-									price.error(response.message);
-								}
-							}
-						});
-				request.once(Request.OnError.class, new Request.OnError() {
+				final JSONObject req = new JSONObject();
+
+				req.put("ledger_index", "validated");
+				req.put("taker_gets", getIssue.toJSON());
+				req.put("taker_pays", payIssue.toJSON());
+				req.put("limit", limit);
+
+				TemporaryWebSocket.post(Command.book_offers, req, new Rollback() {
 
 					@Override
-					public void called(Response response) {
-						price.error(response.message);
+					public void success(JSONObject res) {
+
+						JSONArray offersJSON = res.optJSONObject("result").optJSONArray("offers");
+						STArray offers = STArray.translate.fromJSONArray(offersJSON);
+
+						if (getBids) {
+
+							bids = offers;
+						} else {
+
+							asks = offers;
+						}
+						if (retrievedBothBooks()) {
+
+							if (!isEmpty()) {
+								calculateStats();
+							}
+							callback.onUpdate(OrderBooks.this);
+						}
+
+					}
+
+					@Override
+					public void error(JSONObject res) {
+
+						price.error(res);
 
 					}
 				});
-				request.request();
+
 			}
 		}
 
@@ -342,14 +313,14 @@ public abstract class OfferPrice {
 		}
 	}
 
-	private static void load(Client client, final Issue first,
-			final Issue second, final OfferPrice price, final boolean html) {
+	private static void load(final Issue first, final Issue second, final OfferPrice price, final boolean html) {
 		if (price == null) {
 			return;
 		}
-		new OrderBooks(client, first, second, new OrderBooks.BookEvents() {
+		new OrderBooks(first, second, new OrderBooks.BookEvents() {
 			@Override
 			public void onUpdate(OrderBooks book) {
+
 				ArrayList<OfferFruit> buys = new ArrayList<OfferFruit>(100);
 				ArrayList<OfferFruit> sells = new ArrayList<OfferFruit>(100);
 				if (!book.isEmpty()) {
@@ -366,15 +337,10 @@ public abstract class OfferPrice {
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
 						if (html) {
-							fruit.message = o.takerGets().toText()
-									+ "<br><font size=5 color=red>Sell</font><br>"
-									+ (o.takerPays().toText())
-									+ "<br><font size=5 color=green>Exchange rate</font><br>"
-									+ getsOne.toText() + "=="
-									+ paysOne.multiply(payForOne).toText()
-									+ "<br>"
-									+ getsOne.divide(payForOne).toText() + "=="
-									+ paysOne.toText();
+							fruit.message = o.takerGets().toText() + "<br><font size=5 color=red>Sell</font><br>"
+									+ (o.takerPays().toText()) + "<br><font size=5 color=green>Exchange rate</font><br>"
+									+ getsOne.toText() + "==" + paysOne.multiply(payForOne).toText() + "<br>"
+									+ getsOne.divide(payForOne).toText() + "==" + paysOne.toText();
 						}
 						sells.add(fruit);
 					}
@@ -388,14 +354,10 @@ public abstract class OfferPrice {
 						OfferFruit fruit = new OfferFruit();
 						fruit.offer = o;
 						if (html) {
-							fruit.message = o.takerGets().toText()
-									+ "<br><font size=5 color=green>Buy</font><br>"
-									+ (o.takerPays().toText())
-									+ "<br><font size=5 color=red>Exchange rate</font><br>"
-									+ paysOne.multiply(payForOne).toText()
-									+ "==" + getsOne.toText() + "<br>"
-									+ paysOne.toText() + "=="
-									+ getsOne.divide(payForOne).toText();
+							fruit.message = o.takerGets().toText() + "<br><font size=5 color=green>Buy</font><br>"
+									+ (o.takerPays().toText()) + "<br><font size=5 color=red>Exchange rate</font><br>"
+									+ paysOne.multiply(payForOne).toText() + "==" + getsOne.toText() + "<br>"
+									+ paysOne.toText() + "==" + getsOne.divide(payForOne).toText();
 						}
 						buys.add(fruit);
 					}

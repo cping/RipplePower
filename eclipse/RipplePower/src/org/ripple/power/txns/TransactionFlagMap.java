@@ -11,8 +11,7 @@ import com.ripple.core.enums.TransactionFlag;
 
 public class TransactionFlagMap {
 
-	private final static HashMap<Long, String> _flags = new HashMap<Long, String>(
-			30);
+	private final static HashMap<Long, String> _flags = new HashMap<Long, String>(30);
 	static {
 		// Constraints flags:
 		_flags.put(TransactionFlag.FullyCanonicalSig, "FullyCanonicalSig");
@@ -62,8 +61,7 @@ public class TransactionFlagMap {
 
 	public final static long getFlag(String name) {
 		Set<Map.Entry<Long, String>> set = _flags.entrySet();
-		for (Iterator<Map.Entry<Long, String>> it = set.iterator(); it
-				.hasNext();) {
+		for (Iterator<Map.Entry<Long, String>> it = set.iterator(); it.hasNext();) {
 			Entry<Long, String> result = it.next();
 			if (result.getValue().equalsIgnoreCase(name)) {
 				return result.getKey();

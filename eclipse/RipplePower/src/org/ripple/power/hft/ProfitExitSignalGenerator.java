@@ -17,8 +17,7 @@ public class ProfitExitSignalGenerator implements ExitSignalGenerator {
 
 	@Override
 	public double generateSignal(IHStatistics stat, IHPortfolio portfolio) {
-		if (portfolio.getProfitAndLoss() <= profitTarget
-				&& portfolio.getProfitAndLoss() >= lossTrigger) {
+		if (portfolio.getProfitAndLoss() <= profitTarget && portfolio.getProfitAndLoss() >= lossTrigger) {
 			return 0;
 		} else {
 			// 达到盈利点, 发止盈信号

@@ -50,11 +50,10 @@ public final class Code128Writer extends OneDimensionalCodeWriter {
 	private static final int CODE_FNC_4_B = 100; // Code B
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) throws WriterException {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType, ?> hints)
+			throws WriterException {
 		if (format != BarcodeFormat.CODE_128) {
-			throw new IllegalArgumentException(
-					"Can only encode CODE_128, but got " + format);
+			throw new IllegalArgumentException("Can only encode CODE_128, but got " + format);
 		}
 		return super.encode(contents, format, width, height, hints);
 	}
@@ -65,8 +64,7 @@ public final class Code128Writer extends OneDimensionalCodeWriter {
 		// Check length
 		if (length < 1 || length > 80) {
 			throw new IllegalArgumentException(
-					"Contents length should be between 1 and 80 characters, but got "
-							+ length);
+					"Contents length should be between 1 and 80 characters, but got " + length);
 		}
 		// Check content
 		for (int i = 0; i < length; i++) {
@@ -79,8 +77,7 @@ public final class Code128Writer extends OneDimensionalCodeWriter {
 				case ESCAPE_FNC_4:
 					break;
 				default:
-					throw new IllegalArgumentException(
-							"Bad character in input: " + c);
+					throw new IllegalArgumentException("Bad character in input: " + c);
 				}
 			}
 		}
@@ -126,8 +123,7 @@ public final class Code128Writer extends OneDimensionalCodeWriter {
 					if (codeSet == CODE_CODE_B) {
 						patternIndex = contents.charAt(position) - ' ';
 					} else { // CODE_CODE_C
-						patternIndex = Integer.parseInt(contents.substring(
-								position, position + 2));
+						patternIndex = Integer.parseInt(contents.substring(position, position + 2));
 						position++; // Also incremented below
 					}
 				}

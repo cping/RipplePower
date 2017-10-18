@@ -72,11 +72,9 @@ public class RippleRestAPI {
 		}
 	}
 
-	public static JSONObject findPaths(String address, String destination,
-			String limit) {
+	public static JSONObject findPaths(String address, String destination, String limit) {
 		try {
-			String url = page + "accounts/" + address + "/payments/paths/"
-					+ destination + "/" + limit;
+			String url = page + "accounts/" + address + "/payments/paths/" + destination + "/" + limit;
 			return open_rest(url);
 		} catch (Exception e) {
 			return null;

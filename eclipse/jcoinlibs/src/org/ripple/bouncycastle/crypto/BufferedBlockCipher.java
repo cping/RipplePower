@@ -115,14 +115,7 @@ public class BufferedBlockCipher
 
         if (pgpCFB)
         {
-            if (forEncryption)
-            {
-                leftOver = total % buf.length - (cipher.getBlockSize() + 2);
-            }
-            else
-            {
-                leftOver = total % buf.length;
-            }
+            leftOver    = total % buf.length - (cipher.getBlockSize() + 2);
         }
         else
         {

@@ -47,20 +47,10 @@ public final class Code39Reader extends OneDReader {
 	 * pattern of wide and narrow, with 1s representing "wide" and 0s
 	 * representing narrow.
 	 */
-	static final int[] CHARACTER_ENCODINGS = { 0x034, 0x121, 0x061, 0x160,
-			0x031, 0x130, 0x070,
-			0x025,
-			0x124,
-			0x064, // 0-9
-			0x109, 0x049, 0x148, 0x019, 0x118, 0x058, 0x00D,
-			0x10C,
-			0x04C,
-			0x01C, // A-J
-			0x103, 0x043, 0x142, 0x013, 0x112, 0x052, 0x007, 0x106,
-			0x046,
-			0x016, // K-T
-			0x181, 0x0C1, 0x1C0, 0x091, 0x190, 0x0D0, 0x085, 0x184, 0x0C4,
-			0x094, // U-*
+	static final int[] CHARACTER_ENCODINGS = { 0x034, 0x121, 0x061, 0x160, 0x031, 0x130, 0x070, 0x025, 0x124, 0x064, // 0-9
+			0x109, 0x049, 0x148, 0x019, 0x118, 0x058, 0x00D, 0x10C, 0x04C, 0x01C, // A-J
+			0x103, 0x043, 0x142, 0x013, 0x112, 0x052, 0x007, 0x106, 0x046, 0x016, // K-T
+			0x181, 0x0C1, 0x1C0, 0x091, 0x190, 0x0D0, 0x085, 0x184, 0x0C4, 0x094, // U-*
 			0x0A8, 0x0A2, 0x08A, 0x02A // $-%
 	};
 
@@ -73,8 +63,8 @@ public final class Code39Reader extends OneDReader {
 
 	/**
 	 * Creates a reader that assumes all encoded data is data, and does not
-	 * treat the final character as a check digit. It will not decoded
-	 * "extended Code 39" sequences.
+	 * treat the final character as a check digit. It will not decoded "extended
+	 * Code 39" sequences.
 	 */
 	public Code39Reader() {
 		this(false);
@@ -112,9 +102,8 @@ public final class Code39Reader extends OneDReader {
 	}
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException,
-			ChecksumException, FormatException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints)
+			throws NotFoundException, ChecksumException, FormatException {
 
 		int[] theCounters = counters;
 		Arrays.fill(theCounters, 0);
@@ -184,15 +173,12 @@ public final class Code39Reader extends OneDReader {
 
 		float left = (float) (start[1] + start[0]) / 2.0f;
 		float right = lastStart + lastPatternSize / 2.0f;
-		return new Result(resultString, null, new ResultPoint[] {
-				new ResultPoint(left, (float) rowNumber),
-				new ResultPoint(right, (float) rowNumber) },
-				BarcodeFormat.CODE_39);
+		return new Result(resultString, null, new ResultPoint[] { new ResultPoint(left, (float) rowNumber),
+				new ResultPoint(right, (float) rowNumber) }, BarcodeFormat.CODE_39);
 
 	}
 
-	private static int[] findAsteriskPattern(BitArray row, int[] counters)
-			throws NotFoundException {
+	private static int[] findAsteriskPattern(BitArray row, int[] counters) throws NotFoundException {
 		int width = row.getSize();
 		int rowOffset = row.getNextSet(0);
 
@@ -209,15 +195,11 @@ public final class Code39Reader extends OneDReader {
 					// Look for whitespace before start pattern, >= 50% of width
 					// of start pattern
 					if (toNarrowWidePattern(counters) == ASTERISK_ENCODING
-							&& row.isRange(
-									Math.max(0, patternStart
-											- ((i - patternStart) / 2)),
-									patternStart, false)) {
+							&& row.isRange(Math.max(0, patternStart - ((i - patternStart) / 2)), patternStart, false)) {
 						return new int[] { patternStart, i };
 					}
 					patternStart += counters[0] + counters[1];
-					System.arraycopy(counters, 2, counters, 0,
-							patternLength - 2);
+					System.arraycopy(counters, 2, counters, 0, patternLength - 2);
 					counters[patternLength - 2] = 0;
 					counters[patternLength - 1] = 0;
 					counterPosition--;
@@ -288,8 +270,7 @@ public final class Code39Reader extends OneDReader {
 		throw NotFoundException.getNotFoundInstance();
 	}
 
-	private static String decodeExtended(CharSequence encoded)
-			throws FormatException {
+	private static String decodeExtended(CharSequence encoded) throws FormatException {
 		int length = encoded.length();
 		StringBuilder decoded = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {

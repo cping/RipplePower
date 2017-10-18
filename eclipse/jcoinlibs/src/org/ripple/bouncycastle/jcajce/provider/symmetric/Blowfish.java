@@ -1,6 +1,5 @@
 package org.ripple.bouncycastle.jcajce.provider.symmetric;
 
-import org.ripple.bouncycastle.asn1.misc.MiscObjectIdentifiers;
 import org.ripple.bouncycastle.crypto.CipherKeyGenerator;
 import org.ripple.bouncycastle.crypto.engines.BlowfishEngine;
 import org.ripple.bouncycastle.crypto.modes.CBCBlockCipher;
@@ -65,11 +64,11 @@ public final class Blowfish
         {
 
             provider.addAlgorithm("Cipher.BLOWFISH", PREFIX + "$ECB");
-            provider.addAlgorithm("Cipher." + MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CBC, PREFIX + "$CBC");
+            provider.addAlgorithm("Cipher.1.3.6.1.4.1.3029.1.2", PREFIX + "$CBC");
             provider.addAlgorithm("KeyGenerator.BLOWFISH", PREFIX + "$KeyGen");
-            provider.addAlgorithm("Alg.Alias.KeyGenerator." + MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CBC, "BLOWFISH");
+            provider.addAlgorithm("Alg.Alias.KeyGenerator.1.3.6.1.4.1.3029.1.2", "BLOWFISH");
             provider.addAlgorithm("AlgorithmParameters.BLOWFISH", PREFIX + "$AlgParams");
-            provider.addAlgorithm("Alg.Alias.AlgorithmParameters." + MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CBC, "BLOWFISH");
+            provider.addAlgorithm("Alg.Alias.AlgorithmParameters.1.3.6.1.4.1.3029.1.2", "BLOWFISH");
 
         }
     }

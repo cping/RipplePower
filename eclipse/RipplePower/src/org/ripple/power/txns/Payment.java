@@ -31,17 +31,15 @@ import com.ripple.core.types.known.tx.Transaction;
 
 public class Payment {
 
-	public static void send(final RippleSeedAddress seed, final String amount,
-			final String dstAddress, final RippleMemoEncode memo,
-			final String fee, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String amount, final String dstAddress,
+			final RippleMemoEncode memo, final String fee, final Rollback back) {
 		RippleMemoEncodes memos = new RippleMemoEncodes();
 		memos.add(memo);
 		send(seed, amount, dstAddress, memos, fee, back);
 	}
 
-	public static void send(final RippleSeedAddress seed, final String amount,
-			final String dstAddress, final RippleMemoEncodes list,
-			final String fee, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String amount, final String dstAddress,
+			final RippleMemoEncodes list, final String fee, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -52,8 +50,7 @@ public class Payment {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				txn.putTranslated(Field.Destination, dstAddress);
 				txn.putTranslated(Field.Amount, amount);
-				txn.putTranslated(Field.DestinationTag,
-						MathUtils.randomLong(1, 999999999));
+				txn.putTranslated(Field.DestinationTag, MathUtils.randomLong(1, 999999999));
 				STArray arrays = new STArray();
 				for (int i = 0; i < list.size(); i++) {
 					RippleMemoEncode rpmemo = list.get(i);
@@ -86,25 +83,20 @@ public class Payment {
 
 	}
 
-	public static void send(final RippleSeedAddress seed, final Amount amount,
-			final Amount sendMax, final Amount deliveredAmount,
-			final String dstAddress, final long flags, final long dt,
-			final String invoiceID, final RippleMemoEncode memo,
-			final String fee, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final Amount amount, final Amount sendMax,
+			final Amount deliveredAmount, final String dstAddress, final long flags, final long dt,
+			final String invoiceID, final RippleMemoEncode memo, final String fee, final Rollback back) {
 		RippleMemoEncodes memos = null;
 		if (memo != null) {
 			memos = new RippleMemoEncodes();
 			memos.add(memo);
 		}
-		send(seed, amount, sendMax, deliveredAmount, dstAddress, flags, dt,
-				invoiceID, memos, fee, back);
+		send(seed, amount, sendMax, deliveredAmount, dstAddress, flags, dt, invoiceID, memos, fee, back);
 	}
 
-	public static void send(final RippleSeedAddress seed, final Amount amount,
-			final Amount sendMax, final Amount deliveredAmount,
-			final String dstAddress, final long flags, final long dt,
-			final String invoiceID, final RippleMemoEncodes list,
-			final String fee, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final Amount amount, final Amount sendMax,
+			final Amount deliveredAmount, final String dstAddress, final long flags, final long dt,
+			final String invoiceID, final RippleMemoEncodes list, final String fee, final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 
@@ -125,12 +117,9 @@ public class Payment {
 					byte[] id = null;
 					if (!AccountFind.is256hash(invoiceID)) {
 						try {
-							id = CoinUtils.toHex(
-									invoiceID.getBytes(LSystem.encoding))
-									.getBytes(LSystem.encoding);
+							id = CoinUtils.toHex(invoiceID.getBytes(LSystem.encoding)).getBytes(LSystem.encoding);
 						} catch (UnsupportedEncodingException e) {
-							id = CoinUtils.toHex(invoiceID.getBytes())
-									.getBytes();
+							id = CoinUtils.toHex(invoiceID.getBytes()).getBytes();
 						}
 					} else {
 						id = CoinUtils.fromHex(invoiceID);
@@ -145,8 +134,7 @@ public class Payment {
 						obj.putTranslated(Field.MemoType, rpmemo.getType());
 						obj.putTranslated(Field.MemoData, rpmemo.getData());
 						if (rpmemo.getFormat() != null) {
-							obj.putTranslated(Field.MemoFormat,
-									rpmemo.getFormat());
+							obj.putTranslated(Field.MemoFormat, rpmemo.getFormat());
 						}
 						STObject memo = new STObject();
 						memo.put(Field.Memo, obj);
@@ -156,8 +144,7 @@ public class Payment {
 				}
 				if (deliveredAmount != null) {
 					STObject delivered = new STObject();
-					delivered.putTranslated(Field.DeliveredAmount,
-							deliveredAmount);
+					delivered.putTranslated(Field.DeliveredAmount, deliveredAmount);
 					delivered.putTranslated(Field.TransactionIndex, 0);
 					txn.put(Field.TransactionMetaData, delivered);
 				}
@@ -179,35 +166,30 @@ public class Payment {
 
 	}
 
-	public static void sendMessage(final RippleSeedAddress seed,
-			final String dstAddress, final String memotype,
-			final String memodata, final String memoformat, final String fee,
-			final Rollback back) {
+	public static void sendMessage(final RippleSeedAddress seed, final String dstAddress, final String memotype,
+			final String memodata, final String memoformat, final String fee, final Rollback back) {
 		try {
 			byte[] typeByte = memotype.getBytes(LSystem.encoding);
 			byte[] dataByte = memodata.getBytes(LSystem.encoding);
 			byte[] formatByte = memoformat.getBytes(LSystem.encoding);
-			send(seed, dstAddress, LSystem.getMinSend(), fee, typeByte,
-					dataByte, formatByte, back);
+			send(seed, dstAddress, LSystem.getMinSend(), fee, typeByte, dataByte, formatByte, back);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final String amount, final String fee,
-			final byte[] memotype, final byte[] memodata,
-			final byte[] memoformat, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String dstAddress, final String amount,
+			final String fee, final byte[] memotype, final byte[] memodata, final byte[] memoformat,
+			final Rollback back) {
 		String typeStr = CoinUtils.toHex(Base64Coder.encode(memotype));
 		String typeData = CoinUtils.toHex(Base64Coder.encode(memodata));
 		String typeFormat = CoinUtils.toHex(Base64Coder.encode(memoformat));
 		send(seed, dstAddress, amount, fee, typeStr, typeData, typeFormat, back);
 	}
 
-	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final String amount, final String fee,
-			final String memotype, final String memodata,
-			final String memoformat, final Rollback back) {
+	public static void send(final RippleSeedAddress seed, final String dstAddress, final String amount,
+			final String fee, final String memotype, final String memodata, final String memoformat,
+			final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -218,8 +200,7 @@ public class Payment {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				txn.putTranslated(Field.Destination, dstAddress);
 				txn.putTranslated(Field.Amount, amount);
-				txn.putTranslated(Field.DestinationTag,
-						MathUtils.randomLong(1, 999999999));
+				txn.putTranslated(Field.DestinationTag, MathUtils.randomLong(1, 999999999));
 				STObject obj = new STObject();
 				obj.putTranslated(Field.MemoType, memotype);
 				obj.putTranslated(Field.MemoData, memodata);
@@ -249,15 +230,18 @@ public class Payment {
 
 	}
 
-	public static void sendXRP(final String seed, final String dstAddress,
-			final String amount, final String fee, final Rollback back) {
-		Payment.sendXRP(new RippleSeedAddress(seed), dstAddress, amount, fee,
-				back);
+	public static void sendXRP(final String seed, final String dstAddress, final String amount, final String fee,
+			final Rollback back) {
+		Payment.sendXRP(new RippleSeedAddress(seed), dstAddress, amount, fee, back);
 	}
 
-	public static void sendXRP(final RippleSeedAddress seed,
-			final String dstAddress, final String amount, final String fee,
-			final Rollback back) {
+	public static void sendXRP(final RippleSeedAddress seed, final String dstAddress, final String amount,
+			final String fee, final Rollback back) {
+		sendXRP(seed, dstAddress, MathUtils.randomLong(1, 999999999), amount, fee, back);
+	}
+
+	public static void sendXRP(final RippleSeedAddress seed, final String dstAddress, final long destinationTag,
+			final String amount, final String fee, final Rollback back) {
 		final String address = seed.getPublicKey();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -265,19 +249,15 @@ public class Payment {
 			public void success(JSONObject message) {
 				try {
 					long sequence = TransactionUtils.getSequence(message);
+
 					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.PAYMENT.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
-					item.putField(BinaryFormatField.Amount,
-							CurrencyUtils.getValueToRipple(amount));
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.Amount, CurrencyUtils.getValueToRipple(amount));
 					item.putField(BinaryFormatField.Sequence, sequence);
 					item.putField(BinaryFormatField.Destination, dstAddress);
-					item.putField(BinaryFormatField.DestinationTag,
-							MathUtils.randomLong(1, 999999999));
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
+					item.putField(BinaryFormatField.DestinationTag, destinationTag);
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -295,16 +275,13 @@ public class Payment {
 
 	}
 
-	public static void sendXRPAndInvoiceIDAndTag(final String seed,
-			final String dstAddress, final String amount, final byte[] hash,
-			final long tag, final String fee, final Rollback back) {
-		Payment.sendXRPAndInvoiceIDAndTag(new RippleSeedAddress(seed),
-				dstAddress, amount, hash, tag, fee, back);
+	public static void sendXRPAndInvoiceIDAndTag(final String seed, final String dstAddress, final String amount,
+			final byte[] hash, final long tag, final String fee, final Rollback back) {
+		Payment.sendXRPAndInvoiceIDAndTag(new RippleSeedAddress(seed), dstAddress, amount, hash, tag, fee, back);
 	}
 
-	public static void sendXRPAndInvoiceIDAndTag(final RippleSeedAddress seed,
-			final String dstAddress, final String amount, final byte[] hash,
-			final long tag, final String fee, final Rollback back) {
+	public static void sendXRPAndInvoiceIDAndTag(final RippleSeedAddress seed, final String dstAddress,
+			final String amount, final byte[] hash, final long tag, final String fee, final Rollback back) {
 		final String address = seed.getPublicKey();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -313,18 +290,14 @@ public class Payment {
 				try {
 					long sequence = TransactionUtils.getSequence(message);
 					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.PAYMENT.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
-					item.putField(BinaryFormatField.Amount,
-							CurrencyUtils.getValueToRipple(amount));
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.Amount, CurrencyUtils.getValueToRipple(amount));
 					item.putField(BinaryFormatField.InvoiceID, hash);
 					item.putField(BinaryFormatField.Sequence, sequence);
 					item.putField(BinaryFormatField.Destination, dstAddress);
 					item.putField(BinaryFormatField.DestinationTag, tag);
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -342,14 +315,18 @@ public class Payment {
 
 	}
 
-	public static void send(final String seed, final String dstAddress,
-			final IssuedCurrency amount, final String fee, final Rollback back) {
+	public static void send(final String seed, final String dstAddress, final IssuedCurrency amount, final String fee,
+			final Rollback back) {
 		Payment.send(new RippleSeedAddress(seed), dstAddress, amount, fee, back);
 	}
 
-	public static void send(final RippleSeedAddress seed,
-			final String dstAddress, final IssuedCurrency amount,
+	public static void send(final RippleSeedAddress seed, final String dstAddress, final IssuedCurrency amount,
 			final String fee, final Rollback back) {
+		send(seed, dstAddress, amount, fee, MathUtils.randomLong(1, 999999999), back);
+	}
+
+	public static void send(final RippleSeedAddress seed, final String dstAddress, final IssuedCurrency amount,
+			final String fee, final long tagNumber, final Rollback back) {
 
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
@@ -359,17 +336,13 @@ public class Payment {
 				try {
 					long sequence = TransactionUtils.getSequence(message);
 					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.PAYMENT.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.Destination, dstAddress);
 					item.putField(BinaryFormatField.Amount, amount);
 					item.putField(BinaryFormatField.Sequence, sequence);
-					item.putField(BinaryFormatField.DestinationTag,
-							MathUtils.randomLong(1, 999999999));
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
+					item.putField(BinaryFormatField.DestinationTag, tagNumber);
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -406,8 +379,8 @@ public class Payment {
 		}
 	}
 
-	public static void sendTxJson(String srcAddress, String seed,
-			String dstAddress, String amount, String fee, final Rollback back) {
+	public static void sendTxJson(String srcAddress, String seed, String dstAddress, String amount, String fee,
+			final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);
@@ -441,9 +414,8 @@ public class Payment {
 		}
 	}
 
-	public static void sendTxMemosJson(String srcAddress, String seed,
-			String dstAddress, String amount, String fee, String memotype,
-			String memodata, final Rollback back) {
+	public static void sendTxMemosJson(String srcAddress, String seed, String dstAddress, String amount, String fee,
+			String memotype, String memodata, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);

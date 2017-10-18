@@ -8,7 +8,6 @@ import org.ripple.bouncycastle.crypto.digests.SHA1Digest;
 import org.ripple.bouncycastle.crypto.macs.HMac;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
-import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * Generator for PBE derived keys and ivs as defined by PKCS 5 V2.0 Scheme 2.
@@ -113,7 +112,7 @@ public class PKCS5S2ParametersGenerator
     {
         keySize = keySize / 8;
 
-        byte[]  dKey = Arrays.copyOfRange(generateDerivedKey(keySize), 0, keySize);
+        byte[]  dKey = generateDerivedKey(keySize);
 
         return new KeyParameter(dKey, 0, keySize);
     }

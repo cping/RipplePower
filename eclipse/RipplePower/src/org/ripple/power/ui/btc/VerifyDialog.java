@@ -55,8 +55,8 @@ public class VerifyDialog extends JDialog implements ActionListener {
 		JPanel signaturePane = new JPanel();
 		signaturePane.add(new JLabel("Signature  ", JLabel.RIGHT));
 		signaturePane.add(signatureField);
-		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "Verify",
-				"verify" }, new String[] { "Done", "done" });
+		JPanel buttonPane = new ButtonPane(this, 10, new String[] { "Verify", "verify" },
+				new String[] { "Done", "done" });
 		JPanel contentPane = new JPanel();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		contentPane.setOpaque(true);
@@ -92,21 +92,16 @@ public class VerifyDialog extends JDialog implements ActionListener {
 				String address = addressField.getText();
 				String signature = signatureField.getText();
 				if (address.length() == 0) {
-					UIRes.showErrorMessage(this, "Error",
-							"You must enter the signing address");
+					UIRes.showErrorMessage(this, "Error", "You must enter the signing address");
 				} else if (message.length() == 0) {
-					UIRes.showErrorMessage(this, "Error",
-							"You must enter the message text to verify");
+					UIRes.showErrorMessage(this, "Error", "You must enter the message text to verify");
 				} else if (signature.length() == 0) {
-					UIRes.showErrorMessage(this, "Error",
-							"You must enter the message signature");
+					UIRes.showErrorMessage(this, "Error", "You must enter the message signature");
 				} else {
 					if (ECKey.verifyMessage(address, message, signature)) {
-						UIRes.showErrorMessage(this, "Valid Signature",
-								"The signature is valid");
+						UIRes.showErrorMessage(this, "Valid Signature", "The signature is valid");
 					} else {
-						UIRes.showErrorMessage(this, "Invalid Signature",
-								"The signature is not valid");
+						UIRes.showErrorMessage(this, "Invalid Signature", "The signature is not valid");
 					}
 				}
 				break;
@@ -116,11 +111,9 @@ public class VerifyDialog extends JDialog implements ActionListener {
 				break;
 			}
 		} catch (SignatureException exc) {
-			UIRes.showErrorMessage(this, "Invalid Signature",
-					"The signature is not valid");
+			UIRes.showErrorMessage(this, "Invalid Signature", "The signature is not valid");
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 }

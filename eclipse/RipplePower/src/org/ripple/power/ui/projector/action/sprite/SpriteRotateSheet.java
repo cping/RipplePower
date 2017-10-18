@@ -30,8 +30,7 @@ public class SpriteRotateSheet {
 		this.width = img.getWidth(null);
 		this.height = img.getHeight(null);
 		if (!suited(width, height)) {
-			throw new RuntimeException("size not allowed :" + width + ","
-					+ height);
+			throw new RuntimeException("size not allowed :" + width + "," + height);
 		}
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;
@@ -39,15 +38,13 @@ public class SpriteRotateSheet {
 		this.bitmapHeight = height;
 		Graphics2D g = null;
 		if (c) {
-			this.sheetRotationImages = GraphicsUtils.createImage(width * number
-					+ width, height, true);
+			this.sheetRotationImages = GraphicsUtils.createImage(width * number + width, height, true);
 			g = sheetRotationImages.createGraphics();
 			int x;
 			for (int i = 0; i < number; i++) {
 				x = i * width;
 				double degrees = Math.toRadians(i * 360 / number);
-				g.setTransform(AffineTransform.getRotateInstance(degrees, x
-						+ halfWidth, halfHeight));
+				g.setTransform(AffineTransform.getRotateInstance(degrees, x + halfWidth, halfHeight));
 				g.drawImage(img, x, 0, null);
 			}
 		} else {
@@ -59,18 +56,16 @@ public class SpriteRotateSheet {
 				bitmapWidth = Math.max(bitmapWidth, rect.width);
 				bitmapHeight = Math.max(bitmapHeight, rect.height);
 			}
-			this.sheetRotationImages = GraphicsUtils.createImage(bitmapWidth
-					* number + bitmapWidth, bitmapHeight, true);
+			this.sheetRotationImages = GraphicsUtils.createImage(bitmapWidth * number + bitmapWidth, bitmapHeight,
+					true);
 			g = sheetRotationImages.createGraphics();
 			int x = 0;
 			for (int i = 0; i < number; i++) {
 				double degrees = Math.toRadians(i * 360 / number);
 				RectBox rect = lazyRotates[i];
 				x = (i * (bitmapWidth));
-				g.setTransform(AffineTransform.getRotateInstance(degrees, x
-						+ rect.width / 2, rect.height / 2));
-				g.drawImage(img, x + (rect.width - width) / 2,
-						(rect.height - height) / 2, null);
+				g.setTransform(AffineTransform.getRotateInstance(degrees, x + rect.width / 2, rect.height / 2));
+				g.drawImage(img, x + (rect.width - width) / 2, (rect.height - height) / 2, null);
 			}
 			lazyRotates = null;
 		}
@@ -81,8 +76,7 @@ public class SpriteRotateSheet {
 	}
 
 	public static boolean suited(int w, int h) {
-		return (w == h || (w > 16 && w < 64 && h > 16 && h < 64))
-				&& (w <= 256 && h <= 256);
+		return (w == h || (w > 16 && w < 64 && h > 16 && h < 64)) && (w <= 256 && h <= 256);
 	}
 
 	public void draw(LGraphics g, int x, int y, double rotation) {
@@ -102,13 +96,10 @@ public class SpriteRotateSheet {
 					double rotate = Math.toRadians(rotation);
 					double sinA = Math.sin(rotate);
 					double cosA = Math.cos(rotate);
-					x = (int) (x - (halfWidth - (halfWidth * cosA - halfHeight
-							* sinA)));
-					y = (int) (y - (halfHeight - (halfHeight * cosA + halfWidth
-							* sinA)));
+					x = (int) (x - (halfWidth - (halfWidth * cosA - halfHeight * sinA)));
+					y = (int) (y - (halfHeight - (halfHeight * cosA + halfWidth * sinA)));
 				}
-				g.drawImage(sheetRotationImages, x, y, x + bitmapWidth, y
-						+ bitmapHeight, spriteIndex * bitmapWidth, 0,
+				g.drawImage(sheetRotationImages, x, y, x + bitmapWidth, y + bitmapHeight, spriteIndex * bitmapWidth, 0,
 						(spriteIndex * bitmapWidth + bitmapWidth), bitmapHeight);
 			}
 		}

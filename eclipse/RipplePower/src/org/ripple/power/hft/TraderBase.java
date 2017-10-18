@@ -40,8 +40,7 @@ public abstract class TraderBase implements ITrader {
 
 	protected int query_limit = 15;
 
-	public TraderBase(RippleBackendsAPI api, RippleSeedAddress seed,
-			BOT_SET set, BotLog log) {
+	public TraderBase(RippleBackendsAPI api, RippleSeedAddress seed, BOT_SET set, BotLog log) {
 		this._rippleApi = api;
 		this._seed = seed;
 		this._set = set;
@@ -72,8 +71,8 @@ public abstract class TraderBase implements ITrader {
 		}
 	}
 
-	public void cleanupZombies(final String address, final long buyOrderId,
-			final long sellOrderId, final Updateable update) {
+	public void cleanupZombies(final String address, final long buyOrderId, final long sellOrderId,
+			final Updateable update) {
 		_rippleApi.getActiveOrders(address, new Updateable() {
 
 			@Override
@@ -86,18 +85,14 @@ public abstract class TraderBase implements ITrader {
 					}
 					for (Offer offer : offers.result.offers) {
 						if (String.valueOf(offer.getPrice()).contains("12345"))
-							log("Cleanup: Order ID=" + offer.seq
-									+ " not a zombie, possibly manual");
+							log("Cleanup: Order ID=" + offer.seq + " not a zombie, possibly manual");
 						else if (-1 != buyOrderId && buyOrderId == offer.seq)
-							log("Cleanup: Order ID=" + offer.seq
-									+ " not a zombie, our BUY order");
+							log("Cleanup: Order ID=" + offer.seq + " not a zombie, our BUY order");
 						else if (-1 != sellOrderId && sellOrderId == offer.seq)
-							log("Cleanup: Order ID=" + offer.seq
-									+ " not a zombie, our SELL order");
+							log("Cleanup: Order ID=" + offer.seq + " not a zombie, our SELL order");
 						else {
 							log("Identified %s zombie order with ID=%s (%s XRP for %s %s). Trying to cancel...",
-									offer.getType(), offer.seq,
-									offer.getAmountXrp(), offer.getPrice(),
+									offer.getType(), offer.seq, offer.getAmountXrp(), offer.getPrice(),
 									offer.getCurrency());
 							if (_rippleApi.cancelSynOrder(_seed, offer.seq)) {
 								log("... success");
@@ -136,8 +131,7 @@ public abstract class TraderBase implements ITrader {
 
 				last5mCandle.startTime = beforeLast.startTime;
 				last5mCandle.count = beforeLast.count + last5mCandle.count;
-				last5mCandle.baseVolume = beforeLast.baseVolume
-						+ last5mCandle.count;
+				last5mCandle.baseVolume = beforeLast.baseVolume + last5mCandle.count;
 
 			}
 		}
@@ -147,8 +141,7 @@ public abstract class TraderBase implements ITrader {
 		} else if (last5mCandle.count >= MAX_TRADES) {
 			intenseCoef = 1.0f;
 		} else {
-			intenseCoef = (float) (last5mCandle.count - MIN_TRADES)
-					/ (MAX_TRADES - MIN_TRADES);
+			intenseCoef = (float) (last5mCandle.count - MIN_TRADES) / (MAX_TRADES - MIN_TRADES);
 		}
 		float volumeCoef;
 		double avgVolume = last5mCandle.baseVolume / last5mCandle.count;
@@ -172,8 +165,7 @@ public abstract class TraderBase implements ITrader {
 				count++;
 			}
 		}
-		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
-				/ count)));
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume / count)));
 	}
 
 	protected float getSumAVGSellPrice(List<Ask> asks) {
@@ -186,8 +178,7 @@ public abstract class TraderBase implements ITrader {
 				count++;
 			}
 		}
-		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
-				/ count)));
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume / count)));
 	}
 
 	protected float getSumAVGBuyAmount(List<Bid> bids) {
@@ -200,8 +191,7 @@ public abstract class TraderBase implements ITrader {
 				count++;
 			}
 		}
-		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
-				/ count)));
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume / count)));
 	}
 
 	protected float getSumAVGSellAmount(List<Ask> asks) {
@@ -214,8 +204,7 @@ public abstract class TraderBase implements ITrader {
 				count++;
 			}
 		}
-		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume
-				/ count)));
+		return Float.valueOf(LSystem.getNumberShort(String.valueOf(sumVolume / count)));
 	}
 
 }

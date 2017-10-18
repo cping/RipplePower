@@ -257,7 +257,7 @@ public class DERBitString
         }
         catch (IOException e)
         {
-            throw new ASN1ParsingException("Internal error encoding BitString: " + e.getMessage(), e);
+           throw new RuntimeException("internal error encoding BitString");
         }
         
         byte[]    string = bOut.toByteArray();

@@ -59,8 +59,7 @@ public final class MaxiCodeReader implements Reader {
 	 *             if error correction fails
 	 */
 	@Override
-	public Result decode(BinaryBitmap image) throws NotFoundException,
-			ChecksumException, FormatException {
+	public Result decode(BinaryBitmap image) throws NotFoundException, ChecksumException, FormatException {
 		return decode(image, null);
 	}
 
@@ -76,13 +75,12 @@ public final class MaxiCodeReader implements Reader {
 		}
 
 		ResultPoint[] points = NO_POINTS;
-		Result result = new Result(decoderResult.getText(),
-				decoderResult.getRawBytes(), points, BarcodeFormat.MAXICODE);
+		Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points,
+				BarcodeFormat.MAXICODE);
 
 		String ecLevel = decoderResult.getECLevel();
 		if (ecLevel != null) {
-			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL,
-					ecLevel);
+			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
 		}
 		return result;
 	}
@@ -101,8 +99,7 @@ public final class MaxiCodeReader implements Reader {
 	 * @see com.google.zxing.datamatrix.DataMatrixReader#extractPureBits(BitMatrix)
 	 * @see com.google.zxing.qrcode.QRCodeReader#extractPureBits(BitMatrix)
 	 */
-	private static BitMatrix extractPureBits(BitMatrix image)
-			throws NotFoundException {
+	private static BitMatrix extractPureBits(BitMatrix image) throws NotFoundException {
 
 		int[] enclosingRectangle = image.getEnclosingRectangle();
 		if (enclosingRectangle == null) {
@@ -119,9 +116,7 @@ public final class MaxiCodeReader implements Reader {
 		for (int y = 0; y < MATRIX_HEIGHT; y++) {
 			int iy = top + (y * height + height / 2) / MATRIX_HEIGHT;
 			for (int x = 0; x < MATRIX_WIDTH; x++) {
-				int ix = left
-						+ (x * width + width / 2 + (y & 0x01) * width / 2)
-						/ MATRIX_WIDTH;
+				int ix = left + (x * width + width / 2 + (y & 0x01) * width / 2) / MATRIX_WIDTH;
 				if (image.get(ix, iy)) {
 					bits.set(x, y);
 				}

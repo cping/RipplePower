@@ -38,8 +38,7 @@ public class RippleBOTLoader extends Loop {
 
 	private static Trend reset(String name) {
 		for (Store s : _storage) {
-			if (s.name.equals(name)
-					&& (System.currentTimeMillis() - s.date) <= LSystem.MINUTE * 10) {
+			if (s.name.equals(name) && (System.currentTimeMillis() - s.date) <= LSystem.MINUTE * 10) {
 				return s.trend;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);
@@ -72,8 +71,7 @@ public class RippleBOTLoader extends Loop {
 				if (trend_limit <= 1) {
 					trend_limit = 2;
 				}
-				ArrayMap arrays = OtherData.getCapitalization(1, curName,
-						trend_limit);
+				ArrayMap arrays = OtherData.getCapitalization(1, curName, trend_limit);
 				if (arrays.size() == 0) {
 					result = Trend.UNKOWN;
 				} else {
@@ -119,10 +117,8 @@ public class RippleBOTLoader extends Loop {
 				}
 			} catch (Exception e) {
 				try {
-					CoinmarketcapData data = OtherData.getCoinmarketcapTo(
-							"usd", curName);
-					if (data.change7h.indexOf("-") == -1
-							&& data.change1h.indexOf("-") == -1) {
+					CoinmarketcapData data = OtherData.getCoinmarketcapTo("usd", curName);
+					if (data.percent_change_24h.indexOf("-") == -1 && data.percent_change_1h.indexOf("-") == -1) {
 						result = Trend.UP;
 					} else {
 						result = Trend.DOWN;
@@ -134,7 +130,7 @@ public class RippleBOTLoader extends Loop {
 		}
 		return result == null ? Trend.UNKOWN : result;
 	}
-	
+
 	private TraderBase _base;
 
 	public RippleBOTLoader(TraderBase base) {

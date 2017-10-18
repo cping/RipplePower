@@ -11,20 +11,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ripple.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.ripple.bouncycastle.asn1.x9.ECNamedCurveTable;
-import org.ripple.bouncycastle.asn1.x9.X962Parameters;
 import org.ripple.bouncycastle.asn1.x9.X9ECParameters;
 import org.ripple.bouncycastle.crypto.ec.CustomNamedCurves;
-import org.ripple.bouncycastle.jcajce.provider.config.ProviderConfiguration;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.ripple.bouncycastle.math.ec.ECAlgorithms;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.math.field.FiniteField;
-import org.ripple.bouncycastle.math.field.Polynomial;
-import org.ripple.bouncycastle.math.field.PolynomialExtensionField;
-import org.ripple.bouncycastle.util.Arrays;
 
 public class EC5Util
 {
@@ -45,111 +38,34 @@ public class EC5Util
         }
     }
 
-    public static ECCurve getCurve(
-        ProviderConfiguration configuration,
-        X962Parameters params)
-    {
-        ECCurve curve;
-
-        if (params.isNamedCurve())
-        {
-            ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)params.getParameters();
-            X9ECParameters ecP = ECUtil.getNamedCurveByOid(oid);
-
-            curve = ecP.getCurve();
-        }
-        else if (params.isImplicitlyCA())
-        {
-            curve = configuration.getEcImplicitlyCa().getCurve();
-        }
-        else
-        {
-            X9ECParameters ecP = X9ECParameters.getInstance(params.getParameters());
-
-            curve = ecP.getCurve();
-        }
-
-        return curve;
-    }
-
-    public static ECParameterSpec convertToSpec(
-        X962Parameters params, ECCurve curve)
-    {
-        ECParameterSpec ecSpec;
-        EllipticCurve ellipticCurve;
-
-        if (params.isNamedCurve())
-        {
-            ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)params.getParameters();
-            X9ECParameters ecP = ECUtil.getNamedCurveByOid(oid);
-
-            ellipticCurve = EC5Util.convertCurve(curve, ecP.getSeed());
-
-            ecSpec = new ECNamedCurveSpec(
-                ECUtil.getCurveName(oid),
-                ellipticCurve,
-                new ECPoint(
-                    ecP.getG().getAffineXCoord().toBigInteger(),
-                    ecP.getG().getAffineYCoord().toBigInteger()),
-                ecP.getN(),
-                ecP.getH());
-        }
-        else if (params.isImplicitlyCA())
-        {
-            ecSpec = null;
-        }
-        else
-        {
-            X9ECParameters ecP = X9ECParameters.getInstance(params.getParameters());
-
-            ellipticCurve = EC5Util.convertCurve(curve, ecP.getSeed());
-
-            if (ecP.getH() != null)
-            {
-                ecSpec = new ECParameterSpec(
-                    ellipticCurve,
-                    new ECPoint(
-                        ecP.getG().getAffineXCoord().toBigInteger(),
-                        ecP.getG().getAffineYCoord().toBigInteger()),
-                    ecP.getN(),
-                    ecP.getH().intValue());
-            }
-            else
-            {
-                ecSpec = new ECParameterSpec(
-                    ellipticCurve,
-                    new ECPoint(
-                        ecP.getG().getAffineXCoord().toBigInteger(),
-                        ecP.getG().getAffineYCoord().toBigInteger()),
-                    ecP.getN(), 1);      // TODO: not strictly correct... need to fix the test data...
-            }
-        }
-
-        return ecSpec;
-    }
-
-    public static ECParameterSpec convertToSpec(
-        X9ECParameters domainParameters)
-    {
-        return new ECParameterSpec(
-            convertCurve(domainParameters.getCurve(), null),  // JDK 1.5 has trouble with this if it's not null...
-            new ECPoint(
-                domainParameters.getG().getAffineXCoord().toBigInteger(),
-                domainParameters.getG().getAffineYCoord().toBigInteger()),
-            domainParameters.getN(),
-            domainParameters.getH().intValue());
-    }
-
     public static EllipticCurve convertCurve(
         ECCurve curve, 
         byte[]  seed)
     {
-        ECField field = convertField(curve.getField());
-        BigInteger a = curve.getA().toBigInteger(), b = curve.getB().toBigInteger();
-
         // TODO: the Sun EC implementation doesn't currently handle the seed properly
         // so at the moment it's set to null. Should probably look at making this configurable
-        return new EllipticCurve(field, a, b, null);
+        if (ECAlgorithms.isFpCurve(curve))
+        {
+            return new EllipticCurve(new ECFieldFp(curve.getField().getCharacteristic()), curve.getA().toBigInteger(), curve.getB().toBigInteger(), null);
+        }
+        else
+        {
+            ECCurve.F2m curveF2m = (ECCurve.F2m)curve;
+            int ks[];
+            
+            if (curveF2m.isTrinomial())
+            {
+                ks = new int[] { curveF2m.getK1() };
+                
+                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), null);
+            }
+            else
+            {
+                ks = new int[] { curveF2m.getK3(), curveF2m.getK2(), curveF2m.getK1() };
+                
+                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), null);
+            } 
+        }
     }
 
     public static ECCurve convertCurve(
@@ -176,21 +92,6 @@ public class EC5Util
             int m = fieldF2m.getM();
             int ks[] = ECUtil.convertMidTerms(fieldF2m.getMidTermsOfReductionPolynomial());
             return new ECCurve.F2m(m, ks[0], ks[1], ks[2], a, b); 
-        }
-    }
-
-    public static ECField convertField(FiniteField field)
-    {
-        if (ECAlgorithms.isFpField(field))
-        {
-            return new ECFieldFp(field.getCharacteristic());
-        }
-        else //if (ECAlgorithms.isF2mField(curveField))
-        {
-            Polynomial poly = ((PolynomialExtensionField)field).getMinimalPolynomial();
-            int[] exponents = poly.getExponentsPresent();
-            int[] ks = Arrays.reverse(Arrays.copyOfRange(exponents, 1, exponents.length - 1));
-            return new ECFieldF2m(poly.getDegree(), ks);
         }
     }
 
@@ -248,6 +149,6 @@ public class EC5Util
         ECPoint point,
         boolean withCompression)
     {
-        return curve.createPoint(point.getAffineX(), point.getAffineY());
+        return curve.createPoint(point.getAffineX(), point.getAffineY(), withCompression);
     }
 }

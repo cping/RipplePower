@@ -30,8 +30,7 @@ import com.ripple.client.responses.Response;
 //select rippled api or ripple rest api
 public class RippleBackendsAPI {
 
-	private final static DecimalFormat xrp_num_format = new DecimalFormat(
-			"0.00000");
+	private final static DecimalFormat xrp_num_format = new DecimalFormat("0.00000");
 
 	public static enum Model {
 		RippleRestAPI, Rippled
@@ -55,8 +54,7 @@ public class RippleBackendsAPI {
 	public RippleBackendsAPI() {
 	}
 
-	public AccountInfoResponse getAccountInfo(final String address,
-			final Updateable update) {
+	public AccountInfoResponse getAccountInfo(final String address, final Updateable update) {
 		if (!AccountFind.isRippleAddress(address)) {
 			throw new RuntimeException("not ripple address !");
 		}
@@ -101,8 +99,7 @@ public class RippleBackendsAPI {
 		return accountInfo;
 	}
 
-	public AccountLinesResponse getAccountLines(final String address,
-			final Updateable update) {
+	public AccountLinesResponse getAccountLines(final String address, final Updateable update) {
 		if (!AccountFind.isRippleAddress(address)) {
 			throw new RuntimeException("not ripple address !");
 		}
@@ -145,8 +142,7 @@ public class RippleBackendsAPI {
 		return null;
 	}
 
-	public OffersResponse getActiveOrders(final String address,
-			final Updateable update) {
+	public OffersResponse getActiveOrders(final String address, final Updateable update) {
 		if (!AccountFind.isRippleAddress(address)) {
 			throw new RuntimeException("not ripple address !");
 		}
@@ -209,8 +205,7 @@ public class RippleBackendsAPI {
 		return -1;
 	}
 
-	public RippleResult getXrpBalance(final String address,
-			final RippleResultListener listener) {
+	public RippleResult getXrpBalance(final String address, final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		getAccountInfo(address, new Updateable() {
 
@@ -218,13 +213,11 @@ public class RippleBackendsAPI {
 			public void action(Object o) {
 				if (o instanceof AccountInfoResponse) {
 					AccountInfoResponse account = (AccountInfoResponse) o;
-					if (account.result == null
-							|| account.result.account_data == null) {
+					if (account.result == null || account.result.account_data == null) {
 						result.data = -1.0;
 						result.success = false;
 					} else {
-						result.data = account.result.account_data
-								.getBalanceXrp();
+						result.data = account.result.account_data.getBalanceXrp();
 						result.success = true;
 					}
 				} else {
@@ -243,16 +236,14 @@ public class RippleBackendsAPI {
 		return getSynBalance(dst.issuer, dst.currency);
 	}
 
-	public double getSynBalance(final String issuerAddress,
-			final String currency) {
+	public double getSynBalance(final String issuerAddress, final String currency) {
 		if (_seed != null) {
 			return getSynBalance(_seed.getPublicKey(), issuerAddress, currency);
 		}
 		return -1;
 	}
 
-	public double getSynBalance(final String address,
-			final String issuerAddress, final String currency) {
+	public double getSynBalance(final String address, final String issuerAddress, final String currency) {
 		RippleResult result = getBalance(address, issuerAddress, currency, null);
 		for (; result.data == null;) {
 		}
@@ -264,13 +255,11 @@ public class RippleBackendsAPI {
 		return -1;
 	}
 
-	public RippleResult getBalance(final String address,
-			final RippleResultListener listener) {
+	public RippleResult getBalance(final String address, final RippleResultListener listener) {
 		return getBalance(address, null, null, listener);
 	}
 
-	public RippleResult getBalance(final String address,
-			final String issuerAddress, final String currency,
+	public RippleResult getBalance(final String address, final String issuerAddress, final String currency,
 			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		getAccountLines(address, new Updateable() {
@@ -287,17 +276,14 @@ public class RippleBackendsAPI {
 						if (theLines.size() > 0) {
 							for (Line line : theLines) {
 								if (issuerAddress != null && currency != null) {
-									if (line.account
-											.equalsIgnoreCase(issuerAddress)
-											&& line.currency
-													.equalsIgnoreCase(currency)) {
+									if (line.account.equalsIgnoreCase(issuerAddress)
+											&& line.currency.equalsIgnoreCase(currency)) {
 										result.data = line.getBalance();
 										result.success = true;
 										break;
 									}
 								} else if (currency != null) {
-									if (line.currency
-											.equalsIgnoreCase(currency)) {
+									if (line.currency.equalsIgnoreCase(currency)) {
 										result.data = line.getBalance();
 										result.success = true;
 										break;
@@ -345,8 +331,7 @@ public class RippleBackendsAPI {
 		return new Offer(true);
 	}
 
-	public RippleResult getOrderInfo(final String address, final long orderId,
-			final RippleResultListener listener) {
+	public RippleResult getOrderInfo(final String address, final long orderId, final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		getActiveOrders(address, new Updateable() {
 
@@ -393,8 +378,7 @@ public class RippleBackendsAPI {
 		return result;
 	}
 
-	public MarketDepthBidsResponse getBids(String takerAddress,
-			final Take pays, final Take gets, final int limit,
+	public MarketDepthBidsResponse getBids(String takerAddress, final Take pays, final Take gets, final int limit,
 			final Updateable update) {
 		final MarketDepthBidsResponse bids = new MarketDepthBidsResponse();
 		RPClient client = RPClient.ripple();
@@ -435,8 +419,7 @@ public class RippleBackendsAPI {
 		return bids;
 	}
 
-	public MarketDepthAsksResponse getAsks(String takerAddress,
-			final Take pays, final Take gets, final int limit,
+	public MarketDepthAsksResponse getAsks(String takerAddress, final Take pays, final Take gets, final int limit,
 			final Updateable update) {
 		final MarketDepthAsksResponse asks = new MarketDepthAsksResponse();
 		RPClient client = RPClient.ripple();
@@ -477,27 +460,23 @@ public class RippleBackendsAPI {
 		return asks;
 	}
 
-	public Market getSynXRPMarketDepth(String takerAddress, final Take gets,
-			final int limit) {
-		return getSynMarketDepth(takerAddress, RippleDefault.BASE,
-				gets, limit);
+	public Market getSynXRPMarketDepth(String takerAddress, final Take gets, final int limit) {
+		return getSynMarketDepth(takerAddress, RippleDefault.BASE, gets, limit);
 	}
 
-	public Market getSynMarketDepth(String takerAddress, final Take pays,
-			final Take gets, final int limit) {
+	public Market getSynMarketDepth(String takerAddress, final Take pays, final Take gets, final int limit) {
 		Market market = getMarketDepth(takerAddress, pays, gets, limit, null);
 		for (; market.count < 2;) {
 		}
 		return market;
 	}
 
-	public Market getMarketDepth(String takerAddress, final Take pays,
-			final Take gets, final int limit) {
+	public Market getMarketDepth(String takerAddress, final Take pays, final Take gets, final int limit) {
 		return getMarketDepth(takerAddress, pays, gets, limit, null);
 	}
 
-	public Market getMarketDepth(String takerAddress, final Take pays,
-			final Take gets, final int limit, final OfferListener listener) {
+	public Market getMarketDepth(String takerAddress, final Take pays, final Take gets, final int limit,
+			final OfferListener listener) {
 		final Market market = new Market();
 		// rippled
 		switch (model) {
@@ -534,8 +513,7 @@ public class RippleBackendsAPI {
 		return market;
 	}
 
-	public RippleResult placeOrder(final RippleSeedAddress seed,
-			IssuedCurrency pays, IssuedCurrency gets, long flags,
+	public RippleResult placeOrder(final RippleSeedAddress seed, IssuedCurrency pays, IssuedCurrency gets, long flags,
 			final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		if (_testing) {
@@ -544,50 +522,45 @@ public class RippleBackendsAPI {
 			result.success = true;
 			return result;
 		}
-		OfferCreate.set(seed, pays, gets, LSystem.getFee(), -1, 1.0001f, flags,
-				new Rollback() {
+		OfferCreate.set(seed, pays, gets, LSystem.getFee(), -1, 1.0001f, flags, new Rollback() {
 
-					@Override
-					public void success(JSONObject res) {
-						NewOrderResponse newOrder = new NewOrderResponse();
-						newOrder.from(res);
-						result.data = newOrder;
-						result.success = true;
-						if (listener != null) {
-							listener.update(result);
-						}
-					}
+			@Override
+			public void success(JSONObject res) {
+				NewOrderResponse newOrder = new NewOrderResponse();
+				newOrder.from(res);
+				result.data = newOrder;
+				result.success = true;
+				if (listener != null) {
+					listener.update(result);
+				}
+			}
 
-					@Override
-					public void error(JSONObject res) {
-						result.data = -1;
-						result.success = false;
-						if (listener != null) {
-							listener.update(result);
-						}
-					}
-				});
+			@Override
+			public void error(JSONObject res) {
+				result.data = -1;
+				result.success = false;
+				if (listener != null) {
+					listener.update(result);
+				}
+			}
+		});
 		return result;
 	}
 
-	public long placeSynXRPBuyOrder(double price, double amount,
-			Take dst) {
-		return placeSynXRPBuyOrder(price, amount, dst.currency,
-				dst.issuer);
+	public long placeSynXRPBuyOrder(double price, double amount, Take dst) {
+		return placeSynXRPBuyOrder(price, amount, dst.currency, dst.issuer);
 	}
 
-	public long placeSynXRPBuyOrder(double price, double amount,
-			String curreny, String issuer) {
+	public long placeSynXRPBuyOrder(double price, double amount, String curreny, String issuer) {
 		if (_seed != null) {
 			return placeSynXRPBuyOrder(_seed, price, amount, curreny, issuer);
 		}
 		return -1;
 	}
 
-	public long placeSynXRPBuyOrder(final RippleSeedAddress seed, double price,
-			double amount, String curreny, String issuer) {
-		RippleResult result = placeXRPBuyOrder(seed, price, amount, curreny,
-				issuer, null);
+	public long placeSynXRPBuyOrder(final RippleSeedAddress seed, double price, double amount, String curreny,
+			String issuer) {
+		RippleResult result = placeXRPBuyOrder(seed, price, amount, curreny, issuer, null);
 		for (; result.data == null;) {
 		}
 		if (result.success) {
@@ -598,24 +571,20 @@ public class RippleBackendsAPI {
 		return -1;
 	}
 
-	public long placeSynXRPSellOrder(double price, double amount,
-			Take dst) {
-		return placeSynXRPSellOrder(price, amount, dst.currency,
-				dst.issuer);
+	public long placeSynXRPSellOrder(double price, double amount, Take dst) {
+		return placeSynXRPSellOrder(price, amount, dst.currency, dst.issuer);
 	}
 
-	public long placeSynXRPSellOrder(double price, double amount,
-			String curreny, String issuer) {
+	public long placeSynXRPSellOrder(double price, double amount, String curreny, String issuer) {
 		if (_seed != null) {
 			return placeSynXRPSellOrder(_seed, price, amount, curreny, issuer);
 		}
 		return -1;
 	}
 
-	public long placeSynXRPSellOrder(final RippleSeedAddress seed,
-			double price, double amountXrp, String curreny, String issuer) {
-		RippleResult result = placeXRPSellOrder(seed, price, amountXrp,
-				curreny, issuer, null);
+	public long placeSynXRPSellOrder(final RippleSeedAddress seed, double price, double amountXrp, String curreny,
+			String issuer) {
+		RippleResult result = placeXRPSellOrder(seed, price, amountXrp, curreny, issuer, null);
 		for (; result.data == null;) {
 		}
 		if (result.success) {
@@ -626,55 +595,46 @@ public class RippleBackendsAPI {
 		return -1;
 	}
 
-	public RippleResult placeXRPBuyOrder(final RippleSeedAddress seed,
-			double price, double amount, String curreny, String issuer,
-			RippleResultListener listener) {
+	public RippleResult placeXRPBuyOrder(final RippleSeedAddress seed, double price, double amount, String curreny,
+			String issuer, RippleResultListener listener) {
 		long amountXrpDrops = (long) Math.round(amount * Const.DROPS_IN_XRP);
 		double amountFiat = price * amount;
 		IssuedCurrency pays = new IssuedCurrency(String.valueOf(amountXrpDrops));
-		IssuedCurrency gets = new IssuedCurrency(String.valueOf(xrp_num_format
-				.format(amountFiat)), issuer, curreny);
+		IssuedCurrency gets = new IssuedCurrency(String.valueOf(xrp_num_format.format(amountFiat)), issuer, curreny);
 		return placeOrder(seed, pays, gets, 0, listener);
 	}
 
-	public RippleResult placeXRPSellOrder(final RippleSeedAddress seed,
-			double price, double amountXrp, String curreny, String issuer,
-			RippleResultListener listener) {
+	public RippleResult placeXRPSellOrder(final RippleSeedAddress seed, double price, double amountXrp, String curreny,
+			String issuer, RippleResultListener listener) {
 		double amountFiat = price * amountXrp;
 		long amountXrpDrops = (long) Math.round(amountXrp * Const.DROPS_IN_XRP);
-		IssuedCurrency pays = new IssuedCurrency(String.valueOf(xrp_num_format
-				.format(amountFiat)), issuer, curreny);
+		IssuedCurrency pays = new IssuedCurrency(String.valueOf(xrp_num_format.format(amountFiat)), issuer, curreny);
 		IssuedCurrency gets = new IssuedCurrency(String.valueOf(amountXrpDrops));
 		// flags == 2147483648(sell)
 		return placeOrder(seed, pays, gets, 2147483648l, listener);
 	}
 
-	public long updateSynXRPSellOrder(long orderId, double price,
-			double amount, Take dst) {
+	public long updateSynXRPSellOrder(long orderId, double price, double amount, Take dst) {
 		if (_seed != null) {
 			return updateSynXRPSellOrder(_seed, orderId, price, amount, dst);
 		}
 		return -1;
 	}
 
-	public long updateSynXRPSellOrder(final RippleSeedAddress seed,
-			long orderId, double price, double amount, Take dst) {
-		return updateSynXRPSellOrder(orderId, price, amount, dst.currency,
-				dst.issuer);
+	public long updateSynXRPSellOrder(final RippleSeedAddress seed, long orderId, double price, double amount,
+			Take dst) {
+		return updateSynXRPSellOrder(orderId, price, amount, dst.currency, dst.issuer);
 	}
 
-	public long updateSynXRPSellOrder(long orderId, double price,
-			double amount, String curreny, String issuer) {
+	public long updateSynXRPSellOrder(long orderId, double price, double amount, String curreny, String issuer) {
 		if (_seed != null) {
-			return updateSynXRPSellOrder(_seed, orderId, price, amount,
-					curreny, issuer);
+			return updateSynXRPSellOrder(_seed, orderId, price, amount, curreny, issuer);
 		}
 		return -1;
 	}
 
-	public long updateSynXRPSellOrder(final RippleSeedAddress seed,
-			long orderId, double price, double amount, String curreny,
-			String issuer) {
+	public long updateSynXRPSellOrder(final RippleSeedAddress seed, long orderId, double price, double amount,
+			String curreny, String issuer) {
 		if (cancelSynOrder(seed, orderId)) {
 			long id = placeSynXRPSellOrder(seed, price, amount, curreny, issuer);
 			if (id == -1) {
@@ -685,32 +645,27 @@ public class RippleBackendsAPI {
 		return orderId;
 	}
 
-	public long updateSynXRPBuyOrder(long orderId, double price, double amount,
-			Take dst) {
+	public long updateSynXRPBuyOrder(long orderId, double price, double amount, Take dst) {
 		if (_seed != null) {
 			return updateSynXRPBuyOrder(_seed, orderId, price, amount, dst);
 		}
 		return -1;
 	}
 
-	public long updateSynXRPBuyOrder(final RippleSeedAddress seed,
-			long orderId, double price, double amount, Take dst) {
-		return updateSynXRPBuyOrder(orderId, price, amount, dst.currency,
-				dst.issuer.toString());
+	public long updateSynXRPBuyOrder(final RippleSeedAddress seed, long orderId, double price, double amount,
+			Take dst) {
+		return updateSynXRPBuyOrder(orderId, price, amount, dst.currency, dst.issuer.toString());
 	}
 
-	public long updateSynXRPBuyOrder(long orderId, double price, double amount,
-			String curreny, String issuer) {
+	public long updateSynXRPBuyOrder(long orderId, double price, double amount, String curreny, String issuer) {
 		if (_seed != null) {
-			return updateSynXRPSellOrder(_seed, orderId, price, amount,
-					curreny, issuer);
+			return updateSynXRPSellOrder(_seed, orderId, price, amount, curreny, issuer);
 		}
 		return -1;
 	}
 
-	public long updateSynXRPBuyOrder(final RippleSeedAddress seed,
-			long orderId, double price, double amount, String curreny,
-			String issuer) {
+	public long updateSynXRPBuyOrder(final RippleSeedAddress seed, long orderId, double price, double amount,
+			String curreny, String issuer) {
 		if (cancelSynOrder(orderId)) {
 			long id = placeSynXRPBuyOrder(seed, price, amount, curreny, issuer);
 			if (-1 == id) {
@@ -741,8 +696,7 @@ public class RippleBackendsAPI {
 		return false;
 	}
 
-	public RippleResult cancelOrder(final RippleSeedAddress seed, long orderId,
-			final RippleResultListener listener) {
+	public RippleResult cancelOrder(final RippleSeedAddress seed, long orderId, final RippleResultListener listener) {
 		final RippleResult result = new RippleResult();
 		if (_testing) {
 			CancelOrderResponse cancelOrder = new CancelOrderResponse();
@@ -775,19 +729,16 @@ public class RippleBackendsAPI {
 		return result;
 	}
 
-	public CandlesResponse getTradeStatistics(long time, String curreny,
-			String issuer) {
+	public CandlesResponse getTradeStatistics(long time, String curreny, String issuer) {
 		return RippleChartsAPI.getTradeStatistics(curreny, issuer, time);
 	}
 
-	public CandlesResponse getTradeStatistics(long time,
-			Take basecur, Take counter) {
+	public CandlesResponse getTradeStatistics(long time, Take basecur, Take counter) {
 		return RippleChartsAPI.getTradeStatistics(basecur, counter, time);
 	}
 
 	public CandlesResponse getTradeStatistics(long time, Take counter) {
-		return RippleChartsAPI.getTradeStatistics(RippleDefault.BASE, counter,
-				time);
+		return RippleChartsAPI.getTradeStatistics(RippleDefault.BASE, counter, time);
 	}
 
 	public boolean isTesting() {

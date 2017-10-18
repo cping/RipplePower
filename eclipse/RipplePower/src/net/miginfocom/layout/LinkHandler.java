@@ -48,18 +48,14 @@ public final class LinkHandler {
 	public static final int X2 = 4;
 	public static final int Y2 = 5;
 
-	private static final ArrayList<WeakReference<Object>> LAYOUTS = new ArrayList<WeakReference<Object>>(
-			4);
-	private static final ArrayList<HashMap<String, int[]>> VALUES = new ArrayList<HashMap<String, int[]>>(
-			4);
-	private static final ArrayList<HashMap<String, int[]>> VALUES_TEMP = new ArrayList<HashMap<String, int[]>>(
-			4);
+	private static final ArrayList<WeakReference<Object>> LAYOUTS = new ArrayList<WeakReference<Object>>(4);
+	private static final ArrayList<HashMap<String, int[]>> VALUES = new ArrayList<HashMap<String, int[]>>(4);
+	private static final ArrayList<HashMap<String, int[]>> VALUES_TEMP = new ArrayList<HashMap<String, int[]>>(4);
 
 	private LinkHandler() {
 	}
 
-	public synchronized static Integer getValue(Object layout, String key,
-			int type) {
+	public synchronized static Integer getValue(Object layout, String key, int type) {
 		Integer ret = null;
 		boolean cont = true;
 
@@ -71,8 +67,7 @@ public final class LinkHandler {
 					ret = rect[type];
 				} else {
 					rect = VALUES.get(i).get(key);
-					ret = (rect != null && rect[type] != LayoutUtil.NOT_SET) ? rect[type]
-							: null;
+					ret = (rect != null && rect[type] != LayoutUtil.NOT_SET) ? rect[type] : null;
 				}
 				cont = false;
 			}
@@ -104,25 +99,21 @@ public final class LinkHandler {
 	 *            Height
 	 * @return If the value was changed
 	 */
-	public synchronized static boolean setBounds(Object layout, String key,
-			int x, int y, int width, int height) {
+	public synchronized static boolean setBounds(Object layout, String key, int x, int y, int width, int height) {
 		return setBounds(layout, key, x, y, width, height, false, false);
 	}
 
-	synchronized static boolean setBounds(Object layout, String key, int x,
-			int y, int width, int height, boolean temporary, boolean incCur) {
+	synchronized static boolean setBounds(Object layout, String key, int x, int y, int width, int height,
+			boolean temporary, boolean incCur) {
 		for (int i = LAYOUTS.size() - 1; i >= 0; i--) {
 			Object l = LAYOUTS.get(i).get();
 			if (l == layout) {
-				HashMap<String, int[]> map = (temporary ? VALUES_TEMP : VALUES)
-						.get(i);
+				HashMap<String, int[]> map = (temporary ? VALUES_TEMP : VALUES).get(i);
 				int[] old = map.get(key);
 
-				if (old == null || old[X] != x || old[Y] != y
-						|| old[WIDTH] != width || old[HEIGHT] != height) {
+				if (old == null || old[X] != x || old[Y] != y || old[WIDTH] != width || old[HEIGHT] != height) {
 					if (old == null || incCur == false) {
-						map.put(key, new int[] { x, y, width, height,
-								x + width, y + height });
+						map.put(key, new int[] { x, y, width, height, x + width, y + height });
 						return true;
 					} else {
 						boolean changed = false;
@@ -136,8 +127,7 @@ public final class LinkHandler {
 
 							if (width != LayoutUtil.NOT_SET) {
 								int x2 = x + width;
-								if (old[X2] == LayoutUtil.NOT_SET
-										|| x2 > old[X2]) {
+								if (old[X2] == LayoutUtil.NOT_SET || x2 > old[X2]) {
 									old[X2] = x2;
 									old[WIDTH] = x2 - old[X];
 									changed = true;
@@ -154,8 +144,7 @@ public final class LinkHandler {
 
 							if (height != LayoutUtil.NOT_SET) {
 								int y2 = y + height;
-								if (old[Y2] == LayoutUtil.NOT_SET
-										|| y2 > old[Y2]) {
+								if (old[Y2] == LayoutUtil.NOT_SET || y2 > old[Y2]) {
 									old[Y2] = y2;
 									old[HEIGHT] = y2 - old[Y];
 									changed = true;

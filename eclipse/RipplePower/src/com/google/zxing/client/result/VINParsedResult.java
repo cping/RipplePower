@@ -28,9 +28,8 @@ public final class VINParsedResult extends ParsedResult {
 	private final char plantCode;
 	private final String sequentialNumber;
 
-	public VINParsedResult(String vin, String worldManufacturerID,
-			String vehicleDescriptorSection, String vehicleIdentifierSection,
-			String countryCode, String vehicleAttributes, int modelYear,
+	public VINParsedResult(String vin, String worldManufacturerID, String vehicleDescriptorSection,
+			String vehicleIdentifierSection, String countryCode, String vehicleAttributes, int modelYear,
 			char plantCode, String sequentialNumber) {
 		super(ParsedResultType.VIN);
 		this.vin = vin;

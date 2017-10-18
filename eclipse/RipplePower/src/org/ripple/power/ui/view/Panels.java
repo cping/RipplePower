@@ -32,15 +32,13 @@ public class Panels {
 
 	private static Optional<LightBoxPanel> lightBoxPanel = Optional.absent();
 
-	private static Optional<LightBoxPanel> lightBoxPopoverPanel = Optional
-			.absent();
+	private static Optional<LightBoxPanel> lightBoxPopoverPanel = Optional.absent();
 
 	private static JDialog applicationWindow;
 
 	private static boolean deferredHideEventInProgress = false;
 
-	private static HashMap<String, ImageIcon> _speed_images = new HashMap<String, ImageIcon>(
-			10);
+	private static HashMap<String, ImageIcon> _speed_images = new HashMap<String, ImageIcon>(10);
 	private static LImage _speed_image;
 
 	public synchronized static ImageIcon getSpeedImage(String name) {
@@ -51,32 +49,23 @@ public class Panels {
 				_speed_image = LImage.createImage("icons/speed.png");
 			}
 			if ("empty".equals(name)) {
-				image = new ImageIcon(_speed_image
-						.getSubImageSize(0, 0, 34, 20).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(0, 0, 34, 20).getBufferedImage());
 			} else if ("lv1".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(34, 0, 68,
-						20).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(34, 0, 68, 20).getBufferedImage());
 			} else if ("lv2".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(68, 0, 102,
-						20).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(68, 0, 102, 20).getBufferedImage());
 			} else if ("lv3".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(0, 20, 34,
-						40).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(0, 20, 34, 40).getBufferedImage());
 			} else if ("lv4".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(34, 20, 68,
-						40).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(34, 20, 68, 40).getBufferedImage());
 			} else if ("lv5".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(68, 20, 102,
-						40).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(68, 20, 102, 40).getBufferedImage());
 			} else if ("black".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(0, 40, 34,
-						60).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(0, 40, 34, 60).getBufferedImage());
 			} else if ("lv0".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(34, 40, 68,
-						60).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(34, 40, 68, 60).getBufferedImage());
 			} else if ("all".equals(name)) {
-				image = new ImageIcon(_speed_image.getSubImageSize(68, 40, 102,
-						60).getBufferedImage());
+				image = new ImageIcon(_speed_image.getSubImageSize(68, 40, 102, 60).getBufferedImage());
 			}
 			_speed_images.put(name, image);
 		}
@@ -130,8 +119,7 @@ public class Panels {
 		JPanel panel = new JPanel(layout);
 		panel.setBackground(UIConfig.dialogbackground);
 		panel.setOpaque(false);
-		panel.applyComponentOrientation(LangConfig
-				.currentComponentOrientation());
+		panel.applyComponentOrientation(LangConfig.currentComponentOrientation());
 		return panel;
 	}
 
@@ -157,8 +145,7 @@ public class Panels {
 
 	public synchronized static void showLightBox(final JPanel panel) {
 
-		Preconditions.checkState(SwingUtilities.isEventDispatchThread(),
-				"LightBox requires the EDT");
+		Preconditions.checkState(SwingUtilities.isEventDispatchThread(), "LightBox requires the EDT");
 
 		if (isDeferredHideEventInProgress()) {
 
@@ -166,19 +153,16 @@ public class Panels {
 				@Override
 				public void run() {
 
-					Uninterruptibles.sleepUninterruptibly(100,
-							TimeUnit.MILLISECONDS);
+					Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
 
 					Preconditions.checkState(!isDeferredHideEventInProgress(),
 							"Deferred hide has taken too long to complete");
 
-					Preconditions.checkState(!lightBoxPanel.isPresent(),
-							"Light box should never be called twice ");
+					Preconditions.checkState(!lightBoxPanel.isPresent(), "Light box should never be called twice ");
 
 					allowFocus(Panels.getApplication(), false);
 
-					lightBoxPanel = Optional.of(new LightBoxPanel(panel,
-							JLayeredPane.MODAL_LAYER));
+					lightBoxPanel = Optional.of(new LightBoxPanel(panel, JLayeredPane.MODAL_LAYER));
 
 				}
 			});
@@ -186,20 +170,17 @@ public class Panels {
 			return;
 		}
 
-		Preconditions.checkState(!lightBoxPanel.isPresent(),
-				"Light box should never be called twice ");
+		Preconditions.checkState(!lightBoxPanel.isPresent(), "Light box should never be called twice ");
 
 		allowFocus(Panels.getApplication(), false);
 
-		lightBoxPanel = Optional.of(new LightBoxPanel(panel,
-				JLayeredPane.MODAL_LAYER));
+		lightBoxPanel = Optional.of(new LightBoxPanel(panel, JLayeredPane.MODAL_LAYER));
 
 	}
 
 	public synchronized static void hideLightBoxIfPresent() {
 
-		Preconditions.checkState(SwingUtilities.isEventDispatchThread(),
-				"LightBoxPopover requires the EDT");
+		Preconditions.checkState(SwingUtilities.isEventDispatchThread(), "LightBoxPopover requires the EDT");
 
 		hideLightBoxPopoverIfPresent();
 
@@ -213,8 +194,7 @@ public class Panels {
 
 	}
 
-	private static void allowFocus(final Component component,
-			final boolean allowFocus) {
+	private static void allowFocus(final Component component, final boolean allowFocus) {
 		if (component instanceof AbstractButton) {
 			component.setFocusable(allowFocus);
 		}
@@ -244,23 +224,18 @@ public class Panels {
 
 	public synchronized static void showLightBoxPopover(JPanel panel) {
 
-		Preconditions.checkState(SwingUtilities.isEventDispatchThread(),
-				"LightBoxPopover requires the EDT");
-		Preconditions
-				.checkState(lightBoxPanel.isPresent(),
-						"LightBoxPopover should not be called unless a light box is showing");
-		Preconditions.checkState(!lightBoxPopoverPanel.isPresent(),
-				"LightBoxPopover should never be called twice");
+		Preconditions.checkState(SwingUtilities.isEventDispatchThread(), "LightBoxPopover requires the EDT");
+		Preconditions.checkState(lightBoxPanel.isPresent(),
+				"LightBoxPopover should not be called unless a light box is showing");
+		Preconditions.checkState(!lightBoxPopoverPanel.isPresent(), "LightBoxPopover should never be called twice");
 
-		lightBoxPopoverPanel = Optional.of(new LightBoxPanel(panel,
-				JLayeredPane.DRAG_LAYER));
+		lightBoxPopoverPanel = Optional.of(new LightBoxPanel(panel, JLayeredPane.DRAG_LAYER));
 
 	}
 
 	public synchronized static void hideLightBoxPopoverIfPresent() {
 
-		Preconditions.checkState(SwingUtilities.isEventDispatchThread(),
-				"LightBoxPopover requires the EDT");
+		Preconditions.checkState(SwingUtilities.isEventDispatchThread(), "LightBoxPopover requires the EDT");
 
 		if (lightBoxPopoverPanel.isPresent()) {
 			lightBoxPopoverPanel.get().close();

@@ -41,19 +41,18 @@ package net.miginfocom.layout;
  * E.g.:
  * 
  * <pre>
- * if (adjacentComp == null || adjacentSide == SwingConstants.LEFT
- * 		|| adjacentSide == SwingConstants.TOP)
- * 	return null;
+ * if (adjacentComp == null || adjacentSide == SwingConstants.LEFT ||
+ * adjacentSide == SwingConstants.TOP) return null;
  * 
- * boolean isHor = (adjacentSide == SwingConstants.LEFT || adjacentSide == SwingConstants.RIGHT);
+ * boolean isHor = (adjacentSide == SwingConstants.LEFT || adjacentSide ==
+ * SwingConstants.RIGHT);
  * 
  * if (adjacentComp.getComponentType(false) == ComponentWrapper.TYPE_LABEL
- * 		&amp;&amp; comp.getComponentType(false) == ComponentWrapper.TYPE_TEXT_FIELD)
- * 	return isHor ? UNRELATED_Y : UNRELATED_Y;
+ * &amp;&amp; comp.getComponentType(false) == ComponentWrapper.TYPE_TEXT_FIELD)
+ * return isHor ? UNRELATED_Y : UNRELATED_Y;
  * 
- * return (adjacentSide == SwingConstants.LEFT || adjacentSide == SwingConstants.RIGHT) ? RELATED_X
- * 		: RELATED_Y;
- * </pre
+ * return (adjacentSide == SwingConstants.LEFT || adjacentSide ==
+ * SwingConstants.RIGHT) ? RELATED_X : RELATED_Y; </pre
  */
 public interface InCellGapProvider {
 	/**
@@ -78,7 +77,6 @@ public interface InCellGapProvider {
 	 * @return The default gap between two components or <code>null</code> if
 	 *         there should be no gap.
 	 */
-	public abstract BoundSize getDefaultGap(ComponentWrapper comp,
-			ComponentWrapper adjacentComp, int adjacentSide, String tag,
-			boolean isLTR);
+	public abstract BoundSize getDefaultGap(ComponentWrapper comp, ComponentWrapper adjacentComp, int adjacentSide,
+			String tag, boolean isLTR);
 }

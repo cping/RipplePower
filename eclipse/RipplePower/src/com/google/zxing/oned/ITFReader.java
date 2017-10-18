@@ -44,8 +44,8 @@ import java.util.Map;
  * </p>
  * 
  * <p>
- * <a
- * href="http://en.wikipedia.org/wiki/Interleaved_2_of_5">http://en.wikipedia.
+ * <a href=
+ * "http://en.wikipedia.org/wiki/Interleaved_2_of_5">http://en.wikipedia.
  * org/wiki/Interleaved_2_of_5</a> is a great reference for Interleaved 2 of 5
  * information.
  * </p>
@@ -94,9 +94,8 @@ public final class ITFReader extends OneDReader {
 	};
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws FormatException,
-			NotFoundException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints)
+			throws FormatException, NotFoundException {
 
 		// Find out where the Middle section (payload) starts & ends
 		int[] startRange = decodeStart(row);
@@ -137,10 +136,9 @@ public final class ITFReader extends OneDReader {
 			throw FormatException.getFormatInstance();
 		}
 
-		return new Result(resultString,
-				null, // no natural byte representation for these barcodes
-				new ResultPoint[] {
-						new ResultPoint(startRange[1], (float) rowNumber),
+		return new Result(resultString, null, // no natural byte representation
+												// for these barcodes
+				new ResultPoint[] { new ResultPoint(startRange[1], (float) rowNumber),
 						new ResultPoint(endRange[0], (float) rowNumber) },
 				BarcodeFormat.ITF);
 	}
@@ -155,8 +153,7 @@ public final class ITFReader extends OneDReader {
 	 * @throws NotFoundException
 	 *             if decoding could not complete successfully
 	 */
-	private static void decodeMiddle(BitArray row, int payloadStart,
-			int payloadEnd, StringBuilder resultString)
+	private static void decodeMiddle(BitArray row, int payloadStart, int payloadEnd, StringBuilder resultString)
 			throws NotFoundException {
 
 		// Digits are interleaved in pairs - 5 black lines for one digit, and
@@ -233,8 +230,7 @@ public final class ITFReader extends OneDReader {
 	 *             if the quiet zone cannot be found, a ReaderException is
 	 *             thrown.
 	 */
-	private void validateQuietZone(BitArray row, int startPattern)
-			throws NotFoundException {
+	private void validateQuietZone(BitArray row, int startPattern) throws NotFoundException {
 
 		int quietCount = this.narrowLineWidth * 10; // expect to find this many
 													// pixels of quiet zone
@@ -289,8 +285,7 @@ public final class ITFReader extends OneDReader {
 		row.reverse();
 		try {
 			int endStart = skipWhiteSpace(row);
-			int[] endPattern = findGuardPattern(row, endStart,
-					END_PATTERN_REVERSED);
+			int[] endPattern = findGuardPattern(row, endStart, END_PATTERN_REVERSED);
 
 			// The start & end patterns must be pre/post fixed by a quiet zone.
 			// This
@@ -326,8 +321,7 @@ public final class ITFReader extends OneDReader {
 	 * @throws NotFoundException
 	 *             if pattern is not found
 	 */
-	private static int[] findGuardPattern(BitArray row, int rowOffset,
-			int[] pattern) throws NotFoundException {
+	private static int[] findGuardPattern(BitArray row, int rowOffset, int[] pattern) throws NotFoundException {
 
 		// TODO: This is very similar to implementation in UPCEANReader.
 		// Consider if they can be
@@ -344,13 +338,11 @@ public final class ITFReader extends OneDReader {
 				counters[counterPosition]++;
 			} else {
 				if (counterPosition == patternLength - 1) {
-					if (patternMatchVariance(counters, pattern,
-							MAX_INDIVIDUAL_VARIANCE) < MAX_AVG_VARIANCE) {
+					if (patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE) < MAX_AVG_VARIANCE) {
 						return new int[] { patternStart, x };
 					}
 					patternStart += counters[0] + counters[1];
-					System.arraycopy(counters, 2, counters, 0,
-							patternLength - 2);
+					System.arraycopy(counters, 2, counters, 0, patternLength - 2);
 					counters[patternLength - 2] = 0;
 					counters[patternLength - 1] = 0;
 					counterPosition--;
@@ -379,8 +371,7 @@ public final class ITFReader extends OneDReader {
 		int max = PATTERNS.length;
 		for (int i = 0; i < max; i++) {
 			int[] pattern = PATTERNS[i];
-			float variance = patternMatchVariance(counters, pattern,
-					MAX_INDIVIDUAL_VARIANCE);
+			float variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
 			if (variance < bestVariance) {
 				bestVariance = variance;
 				bestMatch = i;

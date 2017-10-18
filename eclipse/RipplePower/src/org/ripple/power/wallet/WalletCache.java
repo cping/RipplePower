@@ -4,7 +4,14 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.ripple.power.collection.ArrayMap;
@@ -16,8 +23,7 @@ import org.ripple.power.utils.MathUtils;
 public class WalletCache {
 
 	public static void loadDefWallet() throws Exception {
-		String fileName = LSystem.getRippleDirectory() + LSystem.FS
-				+ LSystem.walletName;
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS + LSystem.walletName;
 		File file = new File(fileName);
 		if (file.exists() && file.length() > 0) {
 			get().load(file);
@@ -25,9 +31,13 @@ public class WalletCache {
 	}
 
 	public static void saveDefWallet() throws Exception {
-		String fileName = LSystem.getRippleDirectory() + LSystem.FS
-				+ LSystem.walletName;
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS + LSystem.walletName;
 		File file = new File(fileName);
+		if (file.exists()) {
+			File rename = new File(fileName);
+			// 每次保存前，备份加密的上一次私钥信息，以防意外丢失
+			rename.renameTo(new File(fileName + "." + System.currentTimeMillis() + ".bak"));
+		}
 		get().save(file);
 	}
 
@@ -53,13 +63,12 @@ public class WalletCache {
 		if (!pCaches.containsKey(key)) {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(Calendar.getInstance().getTime());
-			String date = String.format("%04d-%02d-%02d",
-					cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+			String date = String.format("%04d-%02d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
 					cal.get(Calendar.DAY_OF_MONTH));
-			WalletItem walletItem = new WalletItem(date, priKey, "0.000000",
-					"none");
+			WalletItem walletItem = new WalletItem(date, priKey, "0.000000", "none");
 			walletItem.setOnline(online);
 			pCaches.put(key, walletItem);
+			isSort = true;
 		}
 	}
 
@@ -80,6 +89,7 @@ public class WalletCache {
 			if (res > 0) {
 				amounts = String.valueOf(res);
 			}
+			isSort = true;
 		}
 	}
 
@@ -90,13 +100,13 @@ public class WalletCache {
 				pCaches.remove(idx);
 			}
 			if (pCaches.size() == 0) {
-				String fileName = LSystem.getRippleDirectory() + LSystem.FS
-						+ LSystem.walletName;
+				String fileName = LSystem.getRippleDirectory() + LSystem.FS + LSystem.walletName;
 				File file = new File(fileName);
 				if (file.exists()) {
 					file.deleteOnExit();
 				}
 			}
+			isSort = true;
 		}
 	}
 
@@ -146,8 +156,7 @@ public class WalletCache {
 			for (int i = 0; i < size; i++) {
 				WalletItem item = (WalletItem) pCaches.getEntry(i).getValue();
 				if (!item.isOnline()) {
-					RPAddress address = new RPAddress(item.getPublicKey(),
-							item.getPrivateKey());
+					RPAddress address = new RPAddress(item.getPublicKey(), item.getPrivateKey());
 					sbr.append(item.getDate());
 					sbr.append(',');
 					sbr.append(address.getPublic());
@@ -163,7 +172,10 @@ public class WalletCache {
 					}
 				}
 			}
-			seed.save(file, sbr.toString());
+			String context = sbr.toString();
+			if (context.length() > 0 && context.indexOf(',') != -1) {
+				seed.save(file, context);
+			}
 		}
 	}
 
@@ -187,10 +199,10 @@ public class WalletCache {
 						RPAddress address = new RPAddress(pubKey, priKey);
 						pubKey = new String(address.getPublic());
 						priKey = new String(address.getPrivate());
+
 						String key = pubKey.concat(priKey);
 						if (!pCaches.containsKey(key)) {
-							WalletItem walletItem = new WalletItem(date,
-									priKey, amount, status);
+							WalletItem walletItem = new WalletItem(date, priKey, amount, status);
 							if (MathUtils.isNan(amount)) {
 								count = count.add(new BigDecimal(amount));
 							}
@@ -202,6 +214,7 @@ public class WalletCache {
 				if (res > 0) {
 					amounts = String.valueOf(res);
 				}
+				isSort = true;
 			}
 			return text;
 		}
@@ -211,7 +224,46 @@ public class WalletCache {
 		return pCaches.size();
 	}
 
+	private boolean isSort = true;
+
+	private static ArrayMap sortMapByValues(Map<String, WalletItem> aMap) {
+
+		Set<Map.Entry<String, WalletItem>> mapEntries = aMap.entrySet();
+
+		List<Map.Entry<String, WalletItem>> aList = new LinkedList<Map.Entry<String, WalletItem>>(mapEntries);
+
+		Collections.sort(aList, new Comparator<Map.Entry<String, WalletItem>>() {
+
+			@Override
+			public int compare(Map.Entry<String, WalletItem> ele1, Map.Entry<String, WalletItem> ele2) {
+				Double a1 = Double.parseDouble(ele1.getValue().getAmount());
+				Double a2 = Double.parseDouble(ele2.getValue().getAmount());
+				return a2.compareTo(a1);
+			}
+		});
+		ArrayMap map = new ArrayMap(aList.size());
+		for (Map.Entry<String, WalletItem> entry : aList) {
+			map.put(entry.getKey(), entry.getValue());
+		}
+		return map;
+	}
+
+	private void sort() {
+		if (isSort) {
+			Map<String, WalletItem> temp = new HashMap<String, WalletItem>(pCaches.size());
+			for (int i = 0; i < pCaches.size(); i++) {
+				ArrayMap.Entry entry = pCaches.getEntry(i);
+				temp.put((String) entry.getKey(), (WalletItem) entry.getValue());
+			}
+			ArrayMap map = sortMapByValues(temp);
+			pCaches.clear();
+			pCaches.putAll(map);
+			isSort = false;
+		}
+	}
+
 	public WalletItem readRow(int index) {
+		sort();
 		return (WalletItem) pCaches.get(index);
 	}
 

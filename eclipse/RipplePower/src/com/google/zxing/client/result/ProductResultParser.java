@@ -32,8 +32,8 @@ public final class ProductResultParser extends ResultParser {
 	@Override
 	public ProductParsedResult parse(Result result) {
 		BarcodeFormat format = result.getBarcodeFormat();
-		if (!(format == BarcodeFormat.UPC_A || format == BarcodeFormat.UPC_E
-				|| format == BarcodeFormat.EAN_8 || format == BarcodeFormat.EAN_13)) {
+		if (!(format == BarcodeFormat.UPC_A || format == BarcodeFormat.UPC_E || format == BarcodeFormat.EAN_8
+				|| format == BarcodeFormat.EAN_13)) {
 			return null;
 		}
 		String rawText = getMassagedText(result);

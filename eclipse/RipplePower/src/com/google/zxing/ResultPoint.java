@@ -90,13 +90,11 @@ public class ResultPoint {
 		ResultPoint pointC;
 		// Assume one closest to other two is B; A and C will just be guesses at
 		// first
-		if (oneTwoDistance >= zeroOneDistance
-				&& oneTwoDistance >= zeroTwoDistance) {
+		if (oneTwoDistance >= zeroOneDistance && oneTwoDistance >= zeroTwoDistance) {
 			pointB = patterns[0];
 			pointA = patterns[1];
 			pointC = patterns[2];
-		} else if (zeroTwoDistance >= oneTwoDistance
-				&& zeroTwoDistance >= zeroOneDistance) {
+		} else if (zeroTwoDistance >= oneTwoDistance && zeroTwoDistance >= zeroOneDistance) {
 			pointB = patterns[1];
 			pointA = patterns[0];
 			pointC = patterns[2];
@@ -132,19 +130,16 @@ public class ResultPoint {
 	 * @return distance between two points
 	 */
 	public static float distance(ResultPoint pattern1, ResultPoint pattern2) {
-		return MathUtils.distance(pattern1.x, pattern1.y, pattern2.x,
-				pattern2.y);
+		return MathUtils.distance(pattern1.x, pattern1.y, pattern2.x, pattern2.y);
 	}
 
 	/**
 	 * Returns the z component of the cross product between vectors BC and BA.
 	 */
-	private static float crossProductZ(ResultPoint pointA, ResultPoint pointB,
-			ResultPoint pointC) {
+	private static float crossProductZ(ResultPoint pointA, ResultPoint pointB, ResultPoint pointC) {
 		float bX = pointB.x;
 		float bY = pointB.y;
-		return ((pointC.x - bX) * (pointA.y - bY))
-				- ((pointC.y - bY) * (pointA.x - bX));
+		return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
 	}
 
 }

@@ -23,8 +23,7 @@ public class SecureData implements IndexedTableEntry {
 	public SecureData(String title, String message) {
 		this.title = title;
 		try {
-			this.message = Passphrase.encodeToHex(message,
-					LSystem.getAppPassword());
+			this.message = Passphrase.encodeToHex(message, LSystem.getAppPassword());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,8 +61,7 @@ public class SecureData implements IndexedTableEntry {
 	public void setMessage(String message) {
 		updateTime();
 		try {
-			this.message = Passphrase.encodeToHex(message,
-					LSystem.getAppPassword());
+			this.message = Passphrase.encodeToHex(message, LSystem.getAppPassword());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -138,8 +136,7 @@ public class SecureData implements IndexedTableEntry {
 			return false;
 		}
 		SecureData other = ((SecureData) obj);
-		return ((this.id == other.id) && (this.getClass().equals(other
-				.getClass())));
+		return ((this.id == other.id) && (this.getClass().equals(other.getClass())));
 	}
 
 	@Override
@@ -165,10 +162,8 @@ public class SecureData implements IndexedTableEntry {
 		StringBuilder xmlSnip = new StringBuilder();
 		xmlSnip.append("\t<Data>\n");
 		xmlSnip.append("\t\t<Title>").append(this.title).append("</Title>\n");
-		xmlSnip.append("\t\t<Message>").append(this.message)
-				.append("</Message>\n");
-		xmlSnip.append("\t\t<Tags>").append(this.getTagString())
-				.append("</Tags>\n");
+		xmlSnip.append("\t\t<Message>").append(this.message).append("</Message>\n");
+		xmlSnip.append("\t\t<Tags>").append(this.getTagString()).append("</Tags>\n");
 		xmlSnip.append("\t</Data>\n");
 		return xmlSnip.toString();
 	}

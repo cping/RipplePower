@@ -51,8 +51,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 
 	private RPGatewayDialog _superDialog;
 
-	public static RPAddGatewayDialog showDialog(String text,
-			RPGatewayDialog parent) {
+	public static RPAddGatewayDialog showDialog(String text, RPGatewayDialog parent) {
 		RPAddGatewayDialog dialog = new RPAddGatewayDialog(text, parent);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
@@ -79,36 +78,30 @@ public class RPAddGatewayDialog extends ABaseDialog {
 		String name = _addressNameText.getText().trim();
 		String address = _gatewayAddressText.getText().trim();
 		if (name == null || name.length() == 0) {
-			UIRes.showWarningMessage(this, UIMessage.warning,
-					UIMessage.data_error);
+			UIRes.showWarningMessage(this, UIMessage.warning, UIMessage.data_error);
 			return;
 		}
 		for (Gateway gateway : _gateways) {
 			if (gateway.name.toLowerCase().equals(name.toLowerCase())) {
-				UIRes.showWarningMessage(this, UIMessage.warning,
-						UIMessage.data_error);
+				UIRes.showWarningMessage(this, UIMessage.warning, UIMessage.data_error);
 				return;
 			}
 		}
 		if (Gateway.getAddress(name) != null) {
-			UIRes.showWarningMessage(this, UIMessage.warning,
-					UIMessage.data_error);
+			UIRes.showWarningMessage(this, UIMessage.warning, UIMessage.data_error);
 			return;
 		}
 		if (_ious.size() == 0) {
-			UIRes.showWarningMessage(this, UIMessage.warning,
-					UIMessage.data_error);
+			UIRes.showWarningMessage(this, UIMessage.warning, UIMessage.data_error);
 			return;
 		}
 		if (address.length() == 0) {
-			UIRes.showWarningMessage(this, UIMessage.warning,
-					UIMessage.errAddress);
+			UIRes.showWarningMessage(this, UIMessage.warning, UIMessage.errAddress);
 			return;
 		}
 		if (!address.startsWith("~")) {
 			if (!AccountFind.isRippleAddress(address)) {
-				UIRes.showErrorMessage(LSystem.applicationMain,
-						UIMessage.error, UIMessage.errAddress);
+				UIRes.showErrorMessage(LSystem.applicationMain, UIMessage.error, UIMessage.errAddress);
 				return;
 			}
 		}
@@ -116,13 +109,11 @@ public class RPAddGatewayDialog extends ABaseDialog {
 			try {
 				address = NameFind.getAddress(address);
 			} catch (Exception ex) {
-				UIRes.showWarningMessage(LSystem.applicationMain,
-						UIMessage.warning, UIMessage.errNotAddress);
+				UIRes.showWarningMessage(LSystem.applicationMain, UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
 			if (address == null) {
-				UIRes.showWarningMessage(LSystem.applicationMain,
-						UIMessage.warning, UIMessage.errNotAddress);
+				UIRes.showWarningMessage(LSystem.applicationMain, UIMessage.warning, UIMessage.errNotAddress);
 				return;
 			}
 		}
@@ -208,8 +199,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 		_gatewayNameText.setBounds(20, 10, 100, 27);
 
 		_gatewayAddressLabel.setFont(font); // NOI18N
-		_gatewayAddressLabel.setText(LangConfig.get(this, "gateway_address",
-				"Address"));
+		_gatewayAddressLabel.setText(LangConfig.get(this, "gateway_address", "Address"));
 		getContentPane().add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(20, 60, 100, 27);
 
@@ -232,8 +222,8 @@ public class RPAddGatewayDialog extends ABaseDialog {
 					_iouList.setModel(new javax.swing.AbstractListModel<Object>() {
 
 						/**
-					 * 
-					 */
+						* 
+						*/
 						private static final long serialVersionUID = 1L;
 
 						@Override
@@ -261,8 +251,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 			public void actionPerformed(ActionEvent e) {
 				String iouName = _iouNameText.getText().trim().toUpperCase();
 				if (iouName.length() != 3) {
-					UIRes.showWarningMessage(RPAddGatewayDialog.this,
-							UIMessage.warning, "char != 3 not allow !");
+					UIRes.showWarningMessage(RPAddGatewayDialog.this, UIMessage.warning, "char != 3 not allow !");
 					return;
 				}
 				if (!_ious.contains(iouName)) {
@@ -293,8 +282,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 		getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(0, 320, 480, 10);
 
-		_delGatewayButton.setText(LangConfig.get(this, "delgateway",
-				"Delete The Gateway"));
+		_delGatewayButton.setText(LangConfig.get(this, "delgateway", "Delete The Gateway"));
 		_delGatewayButton.setFont(btnfont);
 		getContentPane().add(_delGatewayButton);
 		_delGatewayButton.setBounds(10, 330, 180, 40);
@@ -305,8 +293,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 				String name = _addressNameText.getText().trim();
 				if (name.length() > 0) {
 					if (delGateway(name) != -1) {
-						UIRes.showInfoMessage(RPAddGatewayDialog.this,
-								UIMessage.info, "Deleted successfully");
+						UIRes.showInfoMessage(RPAddGatewayDialog.this, UIMessage.info, "Deleted successfully");
 					}
 				}
 			}

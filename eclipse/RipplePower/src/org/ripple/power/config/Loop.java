@@ -7,8 +7,7 @@ import org.ripple.power.utils.MathUtils;
 
 public abstract class Loop {
 
-	private long _lastTimeMicros, _currTimeMicros, _goalTimeMicros,
-			_elapsedTimeMicros, _remainderMicros, _elapsedTime;
+	private long _lastTimeMicros, _currTimeMicros, _goalTimeMicros, _elapsedTimeMicros, _remainderMicros, _elapsedTime;
 
 	private long _maxFrames = 30;
 
@@ -55,8 +54,7 @@ public abstract class Loop {
 		for (; _isRunning;) {
 			_goalTimeMicros = _lastTimeMicros + 1000000L / _maxFrames;
 			_currTimeMicros = _timer.sleepTimeMicros(_goalTimeMicros);
-			_elapsedTimeMicros = _currTimeMicros - _lastTimeMicros
-					+ _remainderMicros;
+			_elapsedTimeMicros = _currTimeMicros - _lastTimeMicros + _remainderMicros;
 			_elapsedTime = MathUtils.max(0, (_elapsedTimeMicros / 1000));
 			_remainderMicros = _elapsedTimeMicros - _elapsedTime * 1000;
 			_lastTimeMicros = _currTimeMicros;

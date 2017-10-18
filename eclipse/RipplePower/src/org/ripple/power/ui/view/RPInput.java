@@ -27,12 +27,10 @@ public class RPInput {
 		public void canceled();
 	}
 
-	public void getTextInput(final TextInputListener listener,
-			final String title, final String text) {
+	public void getTextInput(final TextInputListener listener, final String title, final String text) {
 		LSystem.invokeLater(new Runnable() {
 			public void run() {
-				final String output = JOptionPane.showInputDialog(null, title,
-						text);
+				final String output = JOptionPane.showInputDialog(null, title, text);
 				if (output != null) {
 					listener.input(output);
 				} else {
@@ -42,8 +40,8 @@ public class RPInput {
 		});
 	}
 
-	public void getBigTextInput(final TextInputListener listener,
-			final String title, final String placeholder, final Object[] objs) {
+	public void getBigTextInput(final TextInputListener listener, final String title, final String placeholder,
+			final Object[] objs) {
 		LSystem.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -71,44 +69,40 @@ public class RPInput {
 				placeholderLabel.setAlignmentX(0.0f);
 				textPanel.add(placeholderLabel, 0);
 
-				textField.getDocument().addDocumentListener(
-						new DocumentListener() {
+				textField.getDocument().addDocumentListener(new DocumentListener() {
 
-							@Override
-							public void removeUpdate(DocumentEvent arg0) {
-								this.updated();
-							}
+					@Override
+					public void removeUpdate(DocumentEvent arg0) {
+						this.updated();
+					}
 
-							@Override
-							public void insertUpdate(DocumentEvent arg0) {
-								this.updated();
-							}
+					@Override
+					public void insertUpdate(DocumentEvent arg0) {
+						this.updated();
+					}
 
-							@Override
-							public void changedUpdate(DocumentEvent arg0) {
-								this.updated();
-							}
+					@Override
+					public void changedUpdate(DocumentEvent arg0) {
+						this.updated();
+					}
 
-							private void updated() {
-								if (textField.getText().length() == 0) {
-									placeholderLabel.setVisible(true);
-								} else {
-									placeholderLabel.setVisible(false);
-								}
-							}
-						});
+					private void updated() {
+						if (textField.getText().length() == 0) {
+							placeholderLabel.setVisible(true);
+						} else {
+							placeholderLabel.setVisible(false);
+						}
+					}
+				});
 
-				JOptionPane pane = new JOptionPane(panel,
-						JOptionPane.INFORMATION_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION, null, objs, null);
+				JOptionPane pane = new JOptionPane(panel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION,
+						null, objs, null);
 
 				pane.setInitialValue(null);
-				pane.setComponentOrientation(JOptionPane.getRootFrame()
-						.getComponentOrientation());
+				pane.setComponentOrientation(JOptionPane.getRootFrame().getComponentOrientation());
 
 				Border border = textField.getBorder();
-				placeholderLabel.setBorder(new EmptyBorder(border
-						.getBorderInsets(textField)));
+				placeholderLabel.setBorder(new EmptyBorder(border.getBorderInsets(textField)));
 
 				JDialog dialog = pane.createDialog(null, title);
 				pane.selectInitialValue();
@@ -130,8 +124,7 @@ public class RPInput {
 
 				Object selectedValue = pane.getValue();
 
-				if (selectedValue != null
-						&& (selectedValue instanceof Integer)
+				if (selectedValue != null && (selectedValue instanceof Integer)
 						&& ((Integer) selectedValue).intValue() == JOptionPane.OK_OPTION) {
 					listener.input(textField.getText());
 				} else {

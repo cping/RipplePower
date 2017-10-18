@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import org.ripple.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.Signer;
 import org.ripple.bouncycastle.crypto.params.ECDomainParameters;
-import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
-import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.ripple.bouncycastle.util.Arrays;
 import org.ripple.bouncycastle.util.io.TeeInputStream;
 
 /**

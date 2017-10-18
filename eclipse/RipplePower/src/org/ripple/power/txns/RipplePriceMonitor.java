@@ -66,10 +66,8 @@ public class RipplePriceMonitor extends Loop {
 
 						if (Gateway.getAddress(gateway).accounts.size() > 0) {
 
-							String address = (Gateway.getAddress(gateway).accounts
-									.get(0).address);
-							if (Gateway.getAddress(gateway).accounts.get(0).currencies
-									.contains(cur)) {
+							String address = (Gateway.getAddress(gateway).accounts.get(0).address);
+							if (Gateway.getAddress(gateway).accounts.get(0).currencies.contains(cur)) {
 								idx = -1;
 								for (String q : querys) {
 									idx = res.indexOf(q);
@@ -83,15 +81,11 @@ public class RipplePriceMonitor extends Loop {
 									String query = res.substring(0, empty);
 									idx = res.indexOf(",");
 									if (idx != -1) {
-										String value = res.substring(empty + 1,
-												idx);
-										String delay = res.substring(idx + 1,
-												res.length());
+										String value = res.substring(empty + 1, idx);
+										String delay = res.substring(idx + 1, res.length());
 										PriceMonitorItem item = new PriceMonitorItem();
-										item.currency = new Take(
-												 cur,address);
-										item.delay = new LTimer(
-												Long.parseLong(delay));
+										item.currency = new Take(cur, address);
+										item.delay = new LTimer(Long.parseLong(delay));
 										item.query = query;
 										item.value = Double.valueOf(value);
 										loops.add(item);
@@ -118,8 +112,7 @@ public class RipplePriceMonitor extends Loop {
 				Object result = RippleChartsAPI.getExchangeRates(item.currency);
 				if (result != null) {
 					if (result instanceof JSONArray) {
-						value = ((JSONArray) result).getJSONObject(0)
-								.getDouble("rate");
+						value = ((JSONArray) result).getJSONObject(0).getDouble("rate");
 					} else if (result instanceof JSONObject) {
 						value = ((JSONObject) result).getDouble("rate");
 					}
@@ -165,8 +158,7 @@ public class RipplePriceMonitor extends Loop {
 			Object result = RippleChartsAPI.getExchangeRates(item.currency);
 			if (result != null) {
 				if (result instanceof JSONArray) {
-					value = ((JSONArray) result).getJSONObject(0).getDouble(
-							"rate");
+					value = ((JSONArray) result).getJSONObject(0).getDouble("rate");
 				} else if (result instanceof JSONObject) {
 					value = ((JSONObject) result).getDouble("rate");
 				}
@@ -218,12 +210,8 @@ public class RipplePriceMonitor extends Loop {
 
 	private void showPrice(PriceMonitorItem item, double value) {
 		RPBubbleDialog.pop("Price Monitor : " + DateUtils.toDate() + ", now "
-				+ Gateway.getGateway(item.currency.issuer.toString()).name
-				+ "/" + item.currency.currency + " convert 1/XRP == " + value);
-	}
-
-	public static void main(String[] args) {
-		RipplePriceMonitor.get();
+				+ Gateway.getGateway(item.currency.issuer.toString()).name + "/" + item.currency.currency
+				+ " convert 1/XRP == " + value);
 	}
 
 }

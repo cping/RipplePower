@@ -48,10 +48,8 @@ public class AVGChara implements LRelease {
 	 * @param width
 	 * @param height
 	 */
-	public AVGChara(LImage image, final int x, final int y, int width,
-			int height) {
-		this.load(image, x, y, width, height, LSystem.screenRect.width,
-				LSystem.screenRect.height);
+	public AVGChara(LImage image, final int x, final int y, int width, int height) {
+		this.load(image, x, y, width, height, LSystem.screenRect.width, LSystem.screenRect.height);
 	}
 
 	public AVGChara(LImage image, final int x, final int y) {
@@ -62,8 +60,7 @@ public class AVGChara implements LRelease {
 		this(resName, x, y, LSystem.screenRect.width, LSystem.screenRect.height);
 	}
 
-	public AVGChara(final String resName, final int x, final int y,
-			final int w, final int h) {
+	public AVGChara(final String resName, final int x, final int y, final int w, final int h) {
 		String path = resName;
 		if (StringUtils.startsWith(path, '"')) {
 			path = resName.replaceAll("\"", "");
@@ -78,12 +75,11 @@ public class AVGChara implements LRelease {
 	}
 
 	private void load(LImage image, final int x, final int y) {
-		this.load(image, x, y, image.getWidth(), image.getHeight(),
-				LSystem.screenRect.width, LSystem.screenRect.height);
+		this.load(image, x, y, image.getWidth(), image.getHeight(), LSystem.screenRect.width,
+				LSystem.screenRect.height);
 	}
 
-	private void load(LImage image, final int x, final int y, int width,
-			int height, final int w, final int h) {
+	private void load(LImage image, final int x, final int y, int width, int height, final int w, final int h) {
 		this.maxWidth = w;
 		this.maxHeight = h;
 		this.characterCG = image;

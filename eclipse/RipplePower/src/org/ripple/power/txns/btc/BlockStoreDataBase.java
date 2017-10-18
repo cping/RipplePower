@@ -35,8 +35,8 @@ public class BlockStoreDataBase extends BlockStore {
 																// version
 
 	/** Blocks table definition */
-	public static final String Blocks_Table = "CREATE TABLE IF NOT EXISTS Blocks ("
-			+ "db_id              IDENTITY," + // Database identity
+	public static final String Blocks_Table = "CREATE TABLE IF NOT EXISTS Blocks (" + "db_id              IDENTITY," + // Database
+																														// identity
 			"block_hash_index   BIGINT          NOT NULL," + // Block hash index
 			"block_hash         BINARY          NOT NULL," + // Block hash
 			"prev_hash_index    BIGINT          NOT NULL," + // Previous hash
@@ -102,8 +102,8 @@ public class BlockStoreDataBase extends BlockStore {
 			+ "label                    VARCHAR)"; // Associated label or null
 
 	/** Keys table definitions */
-	private static final String Keys_Table = "CREATE TABLE IF NOT EXISTS Keys ("
-			+ "db_id                    IDENTITY," // Row identity
+	private static final String Keys_Table = "CREATE TABLE IF NOT EXISTS Keys (" + "db_id                    IDENTITY," // Row
+																														// identity
 			+ "public_key               BINARY NOT NULL," // Public key
 			+ "private_key              BINARY NOT NULL," // Encrypted private
 															// key
@@ -143,8 +143,8 @@ public class BlockStoreDataBase extends BlockStore {
 	private static final String Received_IX1 = "CREATE INDEX IF NOT EXISTS Received_IX1 ON Received(tx_hash_index)";
 
 	/** Sent table definitions */
-	private static final String Sent_Table = "CREATE TABLE IF NOT EXISTS Sent ("
-			+ "db_id                    IDENTITY," // Row identity
+	private static final String Sent_Table = "CREATE TABLE IF NOT EXISTS Sent (" + "db_id                    IDENTITY," // Row
+																														// identity
 			+ "tx_hash_index            BIGINT NOT NULL," // Transaction hash
 															// index
 			+ "tx_hash                  BINARY NOT NULL," // Transaction hash
@@ -162,8 +162,7 @@ public class BlockStoreDataBase extends BlockStore {
 			+ "tx_data                  BINARY NOT NULL)"; // Transaction data
 	private static final String Sent_IX1 = "CREATE UNIQUE INDEX IF NOT EXISTS Sent_IX1 ON Sent(tx_hash_index)";
 	/** Database schema name */
-	public static final String schemaName = LSystem.applicationName
-			+ " Block Store";
+	public static final String schemaName = LSystem.applicationName + " Block Store";
 
 	/** Database schema version */
 	public static final int schemaVersion = 102;
@@ -172,8 +171,7 @@ public class BlockStoreDataBase extends BlockStore {
 	private final ThreadLocal<Connection> threadConnection = new ThreadLocal<>();
 
 	/** List of all database connections */
-	private final List<Connection> allConnections = Collections
-			.synchronizedList(new ArrayList<Connection>());
+	private final List<Connection> allConnections = Collections.synchronizedList(new ArrayList<Connection>());
 
 	/** Database connection URL */
 	private final String connectionURL;
@@ -197,8 +195,7 @@ public class BlockStoreDataBase extends BlockStore {
 		else
 			dbCacheSize = 256;
 		String databasePath = dataPath.replace('\\', '/');
-		connectionURL = String.format("jdbc:h2:%s/Database/bitcoin;"
-				+ "DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;CACHE_SIZE=%d",
+		connectionURL = String.format("jdbc:h2:%s/Database/bitcoin;" + "DB_CLOSE_ON_EXIT=FALSE;MVCC=TRUE;CACHE_SIZE=%d",
 				databasePath, dbCacheSize * 1024);
 		BTCLoader.info("Database connection URL: " + connectionURL);
 		//
@@ -231,11 +228,9 @@ public class BlockStoreDataBase extends BlockStore {
 			index++;
 			try {
 				conn.close();
-				BTCLoader.info(String.format("Database connection %d closed",
-						index));
+				BTCLoader.info(String.format("Database connection %d closed", index));
 			} catch (SQLException exc) {
-				BTCLoader.error(String.format(
-						"SQL error while closing connection %d", index), exc);
+				BTCLoader.error(String.format("SQL error while closing connection %d", index), exc);
 			}
 		}
 		allConnections.clear();
@@ -254,20 +249,14 @@ public class BlockStoreDataBase extends BlockStore {
 			try {
 				conn = threadConnection.get();
 				if (conn == null || conn.isClosed()) {
-					threadConnection.set(DriverManager.getConnection(
-							connectionURL, "SCRIPTERRON", "Bitcoin"));
+					threadConnection.set(DriverManager.getConnection(connectionURL, "SCRIPTERRON", "Bitcoin"));
 					conn = threadConnection.get();
 					allConnections.add(conn);
-					BTCLoader.info(String.format(
-							"Database connection %d created",
-							allConnections.size()));
+					BTCLoader.info(String.format("Database connection %d created", allConnections.size()));
 				}
 			} catch (SQLException exc) {
-				BTCLoader.error(String.format(
-						"Unable to connect to SQL database %s", connectionURL),
-						exc);
-				throw new BlockStoreException(
-						"Unable to connect to SQL database");
+				BTCLoader.error(String.format("Unable to connect to SQL database %s", connectionURL), exc);
+				throw new BlockStoreException("Unable to connect to SQL database");
 			}
 		}
 		return conn;
@@ -301,14 +290,10 @@ public class BlockStoreDataBase extends BlockStore {
 	 */
 	private long getHashIndex(Sha256Hash hash) {
 		byte[] bytes = hash.getBytes();
-		return (((long) bytes[24] & 0xffL) << 56)
-				| (((long) bytes[25] & 0xffL) << 48)
-				| (((long) bytes[26] & 0xffL) << 40)
-				| (((long) bytes[27] & 0xffl) << 32)
-				| (((long) bytes[28] & 0xffL) << 24)
-				| (((long) bytes[29] & 0xffL) << 16)
-				| (((long) bytes[30] & 0xffL) << 8)
-				| ((long) bytes[31] & 0xffL);
+		return (((long) bytes[24] & 0xffL) << 56) | (((long) bytes[25] & 0xffL) << 48)
+				| (((long) bytes[26] & 0xffL) << 40) | (((long) bytes[27] & 0xffl) << 32)
+				| (((long) bytes[28] & 0xffL) << 24) | (((long) bytes[29] & 0xffL) << 16)
+				| (((long) bytes[30] & 0xffL) << 8) | ((long) bytes[31] & 0xffL);
 	}
 
 	/**
@@ -323,13 +308,9 @@ public class BlockStoreDataBase extends BlockStore {
 	 */
 	@Override
 	public void compactDatabase() throws BlockStoreException {
-		File backupFile = new File(String.format("%s%sDatabase%sbackup.sql.gz",
-				dataPath, LSystem.FS, LSystem.FS));
-		File databaseFile = new File(
-				String.format("%s%sDatabase%sbitcoin.mv.db", dataPath,
-						LSystem.FS, LSystem.FS));
-		File lockFile = new File(String.format("%s%sDatabase%sbitcoin.lock.db",
-				dataPath, LSystem.FS, LSystem.FS));
+		File backupFile = new File(String.format("%s%sDatabase%sbackup.sql.gz", dataPath, LSystem.FS, LSystem.FS));
+		File databaseFile = new File(String.format("%s%sDatabase%sbitcoin.mv.db", dataPath, LSystem.FS, LSystem.FS));
+		File lockFile = new File(String.format("%s%sDatabase%sbitcoin.lock.db", dataPath, LSystem.FS, LSystem.FS));
 		Connection conn = getConnection();
 		ResultSet r;
 		//
@@ -338,26 +319,21 @@ public class BlockStoreDataBase extends BlockStore {
 		long ageLimit = Math.max(chainTime - MAX_TX_AGE, 0);
 		int deletedCount = 0;
 		BTCLoader.info("Deleting spent transaction outputs");
-		try (PreparedStatement s = conn
-				.prepareStatement("DELETE FROM TxOutputs WHERE db_id IN "
-						+ "(SELECT db_id FROM TxSpentOutputs WHERE time_spent<? LIMIT 2000)")) {
+		try (PreparedStatement s = conn.prepareStatement("DELETE FROM TxOutputs WHERE db_id IN "
+				+ "(SELECT db_id FROM TxSpentOutputs WHERE time_spent<? LIMIT 2000)")) {
 			int count;
 			do {
 				s.setLong(1, ageLimit);
 				count = s.executeUpdate();
 				deletedCount += count;
 				if (deletedCount % 100000 == 0)
-					BTCLoader.info(String.format(
-							"Deleted %,d spent transaction outputs",
-							deletedCount));
+					BTCLoader.info(String.format("Deleted %,d spent transaction outputs", deletedCount));
 			} while (count > 0);
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to delete spent transaction outputs", exc);
-			throw new BlockStoreException(
-					"Unable to delete spent transaction outputs");
+			throw new BlockStoreException("Unable to delete spent transaction outputs");
 		}
-		BTCLoader.info(String.format("%,d spent transaction outputs deleted",
-				deletedCount));
+		BTCLoader.info(String.format("%,d spent transaction outputs deleted", deletedCount));
 		//
 		// Create the SQL backup script
 		//
@@ -366,9 +342,8 @@ public class BlockStoreDataBase extends BlockStore {
 			if (backupFile.exists())
 				backupFile.delete();
 			try (Statement s = conn.createStatement()) {
-				r = s.executeQuery(String.format(
-						"SCRIPT TO '%s' COMPRESSION GZIP CHARSET 'UTF-8'",
-						backupFile.getPath()));
+				r = s.executeQuery(
+						String.format("SCRIPT TO '%s' COMPRESSION GZIP CHARSET 'UTF-8'", backupFile.getPath()));
 				while (r.next())
 					BTCLoader.debug(r.getString(1));
 				r.close();
@@ -376,8 +351,7 @@ public class BlockStoreDataBase extends BlockStore {
 			BTCLoader.info("SQL backup script created");
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to create the SQL backup script", exc);
-			throw new BlockStoreException(
-					"Unable to create the SQL backup script");
+			throw new BlockStoreException("Unable to create the SQL backup script");
 		}
 		//
 		// Close and delete the database
@@ -392,8 +366,7 @@ public class BlockStoreDataBase extends BlockStore {
 					Thread.sleep(1000);
 			} catch (InterruptedException exc) {
 				BTCLoader.error("Interrupted while waiting on database lock");
-				throw new BlockStoreException(
-						"Interrupted while waiting on database lock");
+				throw new BlockStoreException("Interrupted while waiting on database lock");
 			}
 			BTCLoader.info("Database lock released");
 		}
@@ -405,16 +378,12 @@ public class BlockStoreDataBase extends BlockStore {
 		BTCLoader.info("Creating database from SQL backup script");
 		conn = getConnection();
 		try (Statement s = conn.createStatement()) {
-			int count = s.executeUpdate(String.format(
-					"RUNSCRIPT FROM '%s' COMPRESSION GZIP CHARSET 'UTF-8'",
-					backupFile.getPath()));
-			BTCLoader.debug(String.format("%d database updates completed",
-					count));
+			int count = s.executeUpdate(
+					String.format("RUNSCRIPT FROM '%s' COMPRESSION GZIP CHARSET 'UTF-8'", backupFile.getPath()));
+			BTCLoader.debug(String.format("%d database updates completed", count));
 		} catch (SQLException exc) {
-			BTCLoader.error("Unable to create database from SQL backup script",
-					exc);
-			throw new BlockStoreException(
-					"Unable to create database from SQL backup script");
+			BTCLoader.error("Unable to create database from SQL backup script", exc);
+			throw new BlockStoreException("Unable to create database from SQL backup script");
 		}
 		BTCLoader.info("Database created");
 	}
@@ -433,19 +402,14 @@ public class BlockStoreDataBase extends BlockStore {
 		boolean isNewBlock;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("SELECT 1 FROM Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+				.prepareStatement("SELECT 1 FROM Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			ResultSet r = s.executeQuery();
 			isNewBlock = !r.next();
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String.format(
-							"Unable to check block status\n  Block %s",
-							blockHash), exc);
-			throw new BlockStoreException("Unable to check block status",
-					blockHash);
+			BTCLoader.error(String.format("Unable to check block status\n  Block %s", blockHash), exc);
+			throw new BlockStoreException("Unable to check block status", blockHash);
 		}
 		return isNewBlock;
 	}
@@ -463,14 +427,12 @@ public class BlockStoreDataBase extends BlockStore {
 	public boolean isNewAlert(int alertID) throws BlockStoreException {
 		boolean isNewAlert;
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT 1 FROM Alerts WHERE alert_id=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT 1 FROM Alerts WHERE alert_id=?")) {
 			s.setInt(1, alertID);
 			ResultSet r = s.executeQuery();
 			isNewAlert = !r.next();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to check alert status for %d", alertID), exc);
+			BTCLoader.error(String.format("Unable to check alert status for %d", alertID), exc);
 			throw new BlockStoreException("Unable to check alert status");
 		}
 		return isNewAlert;
@@ -488,8 +450,7 @@ public class BlockStoreDataBase extends BlockStore {
 		List<Alert> alertList = new LinkedList<>();
 		Connection conn = getConnection();
 		try (Statement s = conn.createStatement()) {
-			ResultSet r = s
-					.executeQuery("SELECT is_cancelled,payload,signature FROM Alerts ORDER BY alert_id ASC");
+			ResultSet r = s.executeQuery("SELECT is_cancelled,payload,signature FROM Alerts ORDER BY alert_id ASC");
 			while (r.next()) {
 				boolean isCancelled = r.getBoolean(1);
 				byte[] payload = r.getBytes(2);
@@ -516,17 +477,14 @@ public class BlockStoreDataBase extends BlockStore {
 	@Override
 	public void storeAlert(Alert alert) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Alerts "
-						+ "(alert_id,is_cancelled,payload,signature) VALUES(?,false,?,?)")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"INSERT INTO Alerts " + "(alert_id,is_cancelled,payload,signature) VALUES(?,false,?,?)")) {
 			s.setInt(1, alert.getID());
 			s.setBytes(2, alert.getPayload());
 			s.setBytes(3, alert.getSignature());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(
-					String.format("Unable to store alert %d", alert.getID()),
-					exc);
+			BTCLoader.error(String.format("Unable to store alert %d", alert.getID()), exc);
 			throw new BlockStoreException("Unable to store alert");
 		}
 	}
@@ -542,13 +500,11 @@ public class BlockStoreDataBase extends BlockStore {
 	@Override
 	public void cancelAlert(int alertID) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Alerts SET is_cancelled=true WHERE alert_id=?")) {
+		try (PreparedStatement s = conn.prepareStatement("UPDATE Alerts SET is_cancelled=true WHERE alert_id=?")) {
 			s.setInt(1, alertID);
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(
-					String.format("Unable to cancel alert %d", alertID), exc);
+			BTCLoader.error(String.format("Unable to cancel alert %d", alertID), exc);
 			throw new BlockStoreException("Unable to cancel alert");
 		}
 	}
@@ -567,19 +523,14 @@ public class BlockStoreDataBase extends BlockStore {
 		boolean onChain;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_height from Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+				.prepareStatement("SELECT block_height from Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			ResultSet r = s.executeQuery();
 			onChain = (r.next() && r.getInt(1) >= 0);
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String.format(
-							"Unable to check block status\n  Block %s",
-							blockHash), exc);
-			throw new BlockStoreException("Unable to check block status",
-					blockHash);
+			BTCLoader.error(String.format("Unable to check block status\n  Block %s", blockHash), exc);
+			throw new BlockStoreException("Unable to check block status", blockHash);
 		}
 		return onChain;
 	}
@@ -599,9 +550,8 @@ public class BlockStoreDataBase extends BlockStore {
 	public Block getBlock(Sha256Hash blockHash) throws BlockStoreException {
 		Block block = null;
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT file_number,file_offset FROM Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"SELECT file_number,file_offset FROM Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			ResultSet r = s.executeQuery();
@@ -611,9 +561,7 @@ public class BlockStoreDataBase extends BlockStore {
 				block = getBlock(fileNumber, fileOffset);
 			}
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String.format("Unable to get block\n  Block %s",
-							blockHash), exc);
+			BTCLoader.error(String.format("Unable to get block\n  Block %s", blockHash), exc);
 			throw new BlockStoreException("Unable to get block", blockHash);
 		}
 		return block;
@@ -632,19 +580,14 @@ public class BlockStoreDataBase extends BlockStore {
 	public Sha256Hash getBlockId(int height) throws BlockStoreException {
 		Sha256Hash blockHash = null;
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_hash FROM Blocks WHERE block_height=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT block_hash FROM Blocks WHERE block_height=?")) {
 			s.setInt(1, height);
 			ResultSet r = s.executeQuery();
 			if (r.next())
 				blockHash = new Sha256Hash(r.getBytes(1));
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String
-							.format("Unable to get block hash from database: Height %d",
-									height), exc);
-			throw new BlockStoreException(
-					"Unable to get block hash from database");
+			BTCLoader.error(String.format("Unable to get block hash from database: Height %d", height), exc);
+			throw new BlockStoreException("Unable to get block hash from database");
 		}
 		return blockHash;
 	}
@@ -661,14 +604,11 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get block from database
 	 */
 	@Override
-	public StoredBlock getStoredBlock(Sha256Hash blockHash)
-			throws BlockStoreException {
+	public StoredBlock getStoredBlock(Sha256Hash blockHash) throws BlockStoreException {
 		StoredBlock storedBlock = null;
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_height,chain_work,on_hold,"
-						+ "file_number,file_offset FROM Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT block_height,chain_work,on_hold,"
+				+ "file_number,file_offset FROM Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			ResultSet r = s.executeQuery();
@@ -680,13 +620,10 @@ public class BlockStoreDataBase extends BlockStore {
 				int fileOffset = r.getInt(5);
 				Block block = getBlock(fileNumber, fileOffset);
 				if (block != null)
-					storedBlock = new StoredBlock(block, blockWork,
-							blockHeight, (blockHeight >= 0), onHold);
+					storedBlock = new StoredBlock(block, blockWork, blockHeight, (blockHeight >= 0), onHold);
 			}
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String.format("Unable to get block\n  Block %s",
-							blockHash), exc);
+			BTCLoader.error(String.format("Unable to get block\n  Block %s", blockHash), exc);
 			throw new BlockStoreException("Unable to get block", blockHash);
 		}
 		return storedBlock;
@@ -703,8 +640,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get block
 	 */
 	@Override
-	public StoredBlock getChildStoredBlock(Sha256Hash blockHash)
-			throws BlockStoreException {
+	public StoredBlock getChildStoredBlock(Sha256Hash blockHash) throws BlockStoreException {
 		StoredBlock childStoredBlock = null;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
@@ -723,16 +659,13 @@ public class BlockStoreDataBase extends BlockStore {
 				int fileOffset = r.getInt(5);
 				Block block = getBlock(fileNumber, fileOffset);
 				if (block != null)
-					childStoredBlock = new StoredBlock(block, blockWork,
-							blockHeight, (blockHeight >= 0), onHold);
+					childStoredBlock = new StoredBlock(block, blockWork, blockHeight, (blockHeight >= 0), onHold);
 				if (blockHeight >= 0)
 					break;
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get child block\n  Block %s", blockHash), exc);
-			throw new BlockStoreException("Unable to get child block",
-					blockHash);
+			BTCLoader.error(String.format("Unable to get child block\n  Block %s", blockHash), exc);
+			throw new BlockStoreException("Unable to get child block", blockHash);
 		}
 		return childStoredBlock;
 	}
@@ -747,8 +680,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get block status
 	 */
 	@Override
-	public List<BlockStatus> getBlockStatus(int maxCount)
-			throws BlockStoreException {
+	public List<BlockStatus> getBlockStatus(int maxCount) throws BlockStoreException {
 		List<BlockStatus> blockList = new LinkedList<>();
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
@@ -762,12 +694,10 @@ public class BlockStoreDataBase extends BlockStore {
 				int blockHeight = r.getInt(3);
 				boolean onHold = r.getBoolean(4);
 				byte[] header = r.getBytes(5);
-				int version = ((int) header[0] & 255)
-						| (((int) header[1] & 255) << 8)
-						| (((int) header[2] & 255) << 16)
+				int version = ((int) header[0] & 255) | (((int) header[1] & 255) << 8) | (((int) header[2] & 255) << 16)
 						| (((int) header[3] & 255) << 24);
-				BlockStatus status = new BlockStatus(blockHash, timeStamp,
-						blockHeight, version, (blockHeight >= 0), onHold);
+				BlockStatus status = new BlockStatus(blockHash, timeStamp, blockHeight, version, (blockHeight >= 0),
+						onHold);
 				blockList.add(status);
 			}
 		} catch (SQLException exc) {
@@ -787,21 +717,17 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to check transaction status
 	 */
 	@Override
-	public boolean isNewTransaction(Sha256Hash txHash)
-			throws BlockStoreException {
+	public boolean isNewTransaction(Sha256Hash txHash) throws BlockStoreException {
 		boolean isNew;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("SELECT 1 FROM TxOutputs "
-						+ "WHERE tx_hash_index=? AND tx_hash=? LIMIT 1")) {
+				.prepareStatement("SELECT 1 FROM TxOutputs " + "WHERE tx_hash_index=? AND tx_hash=? LIMIT 1")) {
 			s.setLong(1, getHashIndex(txHash));
 			s.setBytes(2, txHash.getBytes());
 			ResultSet r = s.executeQuery();
 			isNew = !r.next();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get transaction status\n  Tx %s",
-					txHash.toString()), exc);
+			BTCLoader.error(String.format("Unable to get transaction status\n  Tx %s", txHash.toString()), exc);
 			throw new BlockStoreException("Unable to get transaction status");
 		}
 		return isNew;
@@ -822,11 +748,9 @@ public class BlockStoreDataBase extends BlockStore {
 		int txDepth = 0;
 		Connection conn = getConnection();
 		try (PreparedStatement s1 = conn
-				.prepareStatement("SELECT block_height from Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?");
-				PreparedStatement s2 = conn
-						.prepareStatement("SELECT block_hash FROM TxOutputs "
-								+ "WHERE tx_hash_index=? AND tx_hash=?")) {
+				.prepareStatement("SELECT block_height from Blocks " + "WHERE block_hash_index=? AND block_hash=?");
+				PreparedStatement s2 = conn.prepareStatement(
+						"SELECT block_hash FROM TxOutputs " + "WHERE tx_hash_index=? AND tx_hash=?")) {
 			s2.setLong(1, getHashIndex(txHash));
 			s2.setBytes(2, txHash.getBytes());
 			ResultSet r = s2.executeQuery();
@@ -843,8 +767,7 @@ public class BlockStoreDataBase extends BlockStore {
 				}
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get transaction depth\n  Tx %s", txHash), exc);
+			BTCLoader.error(String.format("Unable to get transaction depth\n  Tx %s", txHash), exc);
 			throw new BlockStoreException("Unable to get transaction depth");
 		}
 		return txDepth;
@@ -860,8 +783,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get transaction output status
 	 */
 	@Override
-	public StoredOutput getTxOutput(OutPoint outPoint)
-			throws BlockStoreException {
+	public StoredOutput getTxOutput(OutPoint outPoint) throws BlockStoreException {
 		StoredOutput output = null;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
@@ -877,13 +799,12 @@ public class BlockStoreDataBase extends BlockStore {
 				byte[] scriptBytes = r.getBytes(3);
 				int blockHeight = r.getInt(4);
 				boolean isCoinbase = r.getBoolean(5);
-				output = new StoredOutput(outPoint.getIndex(), value,
-						scriptBytes, isCoinbase, (timeSpent != 0), blockHeight);
+				output = new StoredOutput(outPoint.getIndex(), value, scriptBytes, isCoinbase, (timeSpent != 0),
+						blockHeight);
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get transaction output\n  Tx %s : Index %d",
-					outPoint.getHash(), outPoint.getIndex()), exc);
+			BTCLoader.error(String.format("Unable to get transaction output\n  Tx %s : Index %d", outPoint.getHash(),
+					outPoint.getIndex()), exc);
 			throw new BlockStoreException("Unable to get transaction output");
 		}
 		return output;
@@ -899,8 +820,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get transaction outputs
 	 */
 	@Override
-	public List<StoredOutput> getTxOutputs(Sha256Hash txHash)
-			throws BlockStoreException {
+	public List<StoredOutput> getTxOutputs(Sha256Hash txHash) throws BlockStoreException {
 		List<StoredOutput> outputList = new LinkedList<>();
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
@@ -916,15 +836,13 @@ public class BlockStoreDataBase extends BlockStore {
 				byte[] scriptBytes = r.getBytes(4);
 				int blockHeight = r.getInt(5);
 				boolean isCoinbase = r.getBoolean(6);
-				StoredOutput output = new StoredOutput(txIndex, value,
-						scriptBytes, isCoinbase, (timeSpent != 0), blockHeight);
+				StoredOutput output = new StoredOutput(txIndex, value, scriptBytes, isCoinbase, (timeSpent != 0),
+						blockHeight);
 				outputList.add(output);
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get transaction outputs\n  Tx %s", txHash), exc);
-			throw new BlockStoreException("Unable to get transaction outputs",
-					txHash);
+			BTCLoader.error(String.format("Unable to get transaction outputs\n  Tx %s", txHash), exc);
+			throw new BlockStoreException("Unable to get transaction outputs", txHash);
 		}
 		return outputList;
 	}
@@ -949,19 +867,15 @@ public class BlockStoreDataBase extends BlockStore {
 		//
 		synchronized (lock) {
 			BTCLoader.info("Deleting spent transaction outputs");
-			try (PreparedStatement s = conn
-					.prepareStatement("DELETE FROM TxOutputs WHERE db_id IN "
-							+ "(SELECT db_id FROM TxSpentOutputs WHERE time_spent<? LIMIT 1000)")) {
+			try (PreparedStatement s = conn.prepareStatement("DELETE FROM TxOutputs WHERE db_id IN "
+					+ "(SELECT db_id FROM TxSpentOutputs WHERE time_spent<? LIMIT 1000)")) {
 				s.setLong(1, ageLimit);
 				deletedCount = s.executeUpdate();
 			} catch (SQLException exc) {
-				BTCLoader.error(String.format(
-						"Unable to delete spent transaction outputs", exc));
-				throw new BlockStoreException(
-						"Unable to delete spent transaction outputs");
+				BTCLoader.error(String.format("Unable to delete spent transaction outputs", exc));
+				throw new BlockStoreException("Unable to delete spent transaction outputs");
 			}
-			BTCLoader.info(String.format(
-					"Deleted %d spent transaction outputs", deletedCount));
+			BTCLoader.info(String.format("Deleted %d spent transaction outputs", deletedCount));
 		}
 		return deletedCount;
 	}
@@ -980,26 +894,22 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get blocks from database
 	 */
 	@Override
-	public List<InventoryItem> getChainList(Sha256Hash startBlock,
-			Sha256Hash stopBlock) throws BlockStoreException {
+	public List<InventoryItem> getChainList(Sha256Hash startBlock, Sha256Hash stopBlock) throws BlockStoreException {
 		//
 		// Get the block height for the start block
 		//
 		int blockHeight = 0;
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_height FROM Blocks "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+				.prepareStatement("SELECT block_height FROM Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(startBlock));
 			s.setBytes(2, startBlock.getBytes());
 			ResultSet r = s.executeQuery();
 			if (r.next())
 				blockHeight = Math.max(r.getInt(1), 0);
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get start block\n  Block %s", startBlock), exc);
-			throw new BlockStoreException("Unable to get start block",
-					startBlock);
+			BTCLoader.error(String.format("Unable to get start block\n  Block %s", startBlock), exc);
+			throw new BlockStoreException("Unable to get start block", startBlock);
 		}
 		//
 		// If we found the start block, we will start at the block following it.
@@ -1022,8 +932,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get blocks from database
 	 */
 	@Override
-	public List<InventoryItem> getChainList(int startHeight,
-			Sha256Hash stopBlock) throws BlockStoreException {
+	public List<InventoryItem> getChainList(int startHeight, Sha256Hash stopBlock) throws BlockStoreException {
 		List<InventoryItem> chainList = new LinkedList<>();
 		//
 		// Get the chain list starting at the block following the start block
@@ -1031,16 +940,14 @@ public class BlockStoreDataBase extends BlockStore {
 		// for a maximum of 500 blocks.
 		//
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_hash FROM Blocks "
-						+ "WHERE block_height>? AND block_height<=? ORDER BY block_height ASC")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT block_hash FROM Blocks "
+				+ "WHERE block_height>? AND block_height<=? ORDER BY block_height ASC")) {
 			s.setInt(1, startHeight);
 			s.setInt(2, startHeight + 500);
 			ResultSet r = s.executeQuery();
 			while (r.next()) {
 				Sha256Hash blockHash = new Sha256Hash(r.getBytes(1));
-				chainList.add(new InventoryItem(InventoryItem.INV_BLOCK,
-						blockHash));
+				chainList.add(new InventoryItem(InventoryItem.INV_BLOCK, blockHash));
 				if (blockHash.equals(stopBlock))
 					break;
 			}
@@ -1065,8 +972,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Unable to get data from the database
 	 */
 	@Override
-	public List<BlockHeader> getHeaderList(Sha256Hash startBlock,
-			Sha256Hash stopBlock) throws BlockStoreException {
+	public List<BlockHeader> getHeaderList(Sha256Hash startBlock, Sha256Hash stopBlock) throws BlockStoreException {
 		List<BlockHeader> headerList = new LinkedList<>();
 		//
 		// Get the start block
@@ -1075,9 +981,8 @@ public class BlockStoreDataBase extends BlockStore {
 		try {
 			Connection conn = getConnection();
 			ResultSet r;
-			try (PreparedStatement s = conn
-					.prepareStatement("SELECT block_height FROM Blocks "
-							+ "WHERE block_hash_index=? AND block_hash=?")) {
+			try (PreparedStatement s = conn.prepareStatement(
+					"SELECT block_height FROM Blocks " + "WHERE block_hash_index=? AND block_hash=?")) {
 				s.setLong(1, getHashIndex(startBlock));
 				s.setBytes(2, startBlock.getBytes());
 				r = s.executeQuery();
@@ -1089,9 +994,8 @@ public class BlockStoreDataBase extends BlockStore {
 			// it. Otherwise,
 			// we will start at the block following the genesis block.
 			//
-			try (PreparedStatement s = conn
-					.prepareStatement("SELECT header,block_height FROM Blocks "
-							+ "WHERE block_height>? AND block_height<=? ORDER BY block_height ASC")) {
+			try (PreparedStatement s = conn.prepareStatement("SELECT header,block_height FROM Blocks "
+					+ "WHERE block_height>? AND block_height<=? ORDER BY block_height ASC")) {
 				s.setInt(1, blockHeight);
 				s.setInt(2, blockHeight + 2000);
 				r = s.executeQuery();
@@ -1117,16 +1021,12 @@ public class BlockStoreDataBase extends BlockStore {
 	public void releaseBlock(Sha256Hash blockHash) throws BlockStoreException {
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Blocks SET on_hold=false "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+				.prepareStatement("UPDATE Blocks SET on_hold=false " + "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader
-					.error(String.format(
-							"Unable to release held block\n  Block %s",
-							blockHash), exc);
+			BTCLoader.error(String.format("Unable to release held block\n  Block %s", blockHash), exc);
 			throw new BlockStoreException("Unable to release held block");
 		}
 	}
@@ -1149,8 +1049,7 @@ public class BlockStoreDataBase extends BlockStore {
 			int[] fileLocation = storeBlock(block);
 			Connection conn = getConnection();
 			try (PreparedStatement s1 = conn
-					.prepareStatement("INSERT INTO Blocks "
-							+ "(block_hash_index,block_hash,prev_hash_index,prev_hash,"
+					.prepareStatement("INSERT INTO Blocks " + "(block_hash_index,block_hash,prev_hash_index,prev_hash,"
 							+ "block_height,timestamp,chain_work,on_hold,file_number,file_offset,header) "
 							+ "VALUES(?,?,?,?,?,?,?,?,?,?,?)")) {
 				//
@@ -1160,8 +1059,7 @@ public class BlockStoreDataBase extends BlockStore {
 				s1.setBytes(2, block.getHash().getBytes());
 				s1.setLong(3, getHashIndex(block.getPrevBlockHash()));
 				s1.setBytes(4, block.getPrevBlockHash().getBytes());
-				s1.setInt(5, storedBlock.isOnChain() ? storedBlock.getHeight()
-						: -1);
+				s1.setInt(5, storedBlock.isOnChain() ? storedBlock.getHeight() : -1);
 				s1.setLong(6, block.getTimeStamp());
 				s1.setBytes(7, storedBlock.getChainWork().toByteArray());
 				s1.setBoolean(8, storedBlock.isOnHold());
@@ -1170,13 +1068,11 @@ public class BlockStoreDataBase extends BlockStore {
 				s1.setBytes(11, block.getHeaderBytes());
 				s1.executeUpdate();
 			} catch (SQLException exc) {
-				BTCLoader.error(String.format(
-						"Unable to store block in database\n  Block %s",
-						storedBlock.getHash()), exc);
+				BTCLoader.error(String.format("Unable to store block in database\n  Block %s", storedBlock.getHash()),
+						exc);
 				rollback();
 				truncateBlockFile(fileLocation);
-				throw new BlockStoreException(
-						"Unable to store block in database");
+				throw new BlockStoreException("Unable to store block in database");
 			}
 		}
 	}
@@ -1209,8 +1105,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 */
 	@Override
 	public List<StoredBlock> getJunction(Sha256Hash chainHash)
-			throws BlockNotFoundException, BlockStoreException,
-			ChainTooLongException {
+			throws BlockNotFoundException, BlockStoreException, ChainTooLongException {
 		List<StoredBlock> chainList = new LinkedList<>();
 		boolean onChain = false;
 		Sha256Hash blockHash = chainHash;
@@ -1225,8 +1120,7 @@ public class BlockStoreDataBase extends BlockStore {
 			// of the chain list.
 			//
 			if (chainHead.equals(blockHash)) {
-				chainStoredBlock = new StoredBlock(chainHead, prevChainHead,
-						chainWork, chainHeight);
+				chainStoredBlock = new StoredBlock(chainHead, prevChainHead, chainWork, chainHeight);
 				chainList.add(0, chainStoredBlock);
 			} else {
 				//
@@ -1250,8 +1144,8 @@ public class BlockStoreDataBase extends BlockStore {
 					BigInteger blockWork;
 					Connection conn = getConnection();
 					ResultSet r;
-					s1 = conn
-							.prepareStatement("SELECT prev_hash,on_hold,chain_work,block_height,file_number,file_offset "
+					s1 = conn.prepareStatement(
+							"SELECT prev_hash,on_hold,chain_work,block_height,file_number,file_offset "
 									+ "FROM Blocks WHERE block_hash_index=? AND block_hash=?");
 					while (!onChain) {
 						s1.setLong(1, getHashIndex(blockHash));
@@ -1268,39 +1162,27 @@ public class BlockStoreDataBase extends BlockStore {
 							r.close();
 							if (!onChain) {
 								if (chainList.size() >= 144)
-									throw new ChainTooLongException(
-											"Chain length too long", blockHash);
+									throw new ChainTooLongException("Chain length too long", blockHash);
 								block = getBlock(fileNumber, fileOffset);
 								if (block == null) {
-									BTCLoader
-											.error(String
-													.format("Chain block file %d is not available\n  Block %s",
-															fileNumber,
-															blockHash));
-									throw new BlockNotFoundException(
-											"Unable to resolve block chain",
-											blockHash);
+									BTCLoader.error(String.format("Chain block file %d is not available\n  Block %s",
+											fileNumber, blockHash));
+									throw new BlockNotFoundException("Unable to resolve block chain", blockHash);
 								}
-								chainStoredBlock = new StoredBlock(block,
-										BigInteger.ZERO, -1, false, onHold);
+								chainStoredBlock = new StoredBlock(block, BigInteger.ZERO, -1, false, onHold);
 								blockHash = block.getPrevBlockHash();
 							} else {
-								chainStoredBlock = new StoredBlock(blockHash,
-										prevHash, blockWork, blockHeight);
+								chainStoredBlock = new StoredBlock(blockHash, prevHash, blockWork, blockHeight);
 							}
 							chainList.add(0, chainStoredBlock);
 						} else {
-							BTCLoader.debug(String.format(
-									"Chain block is not available\n  Block %s",
-									blockHash));
-							throw new BlockNotFoundException(
-									"Unable to resolve block chain", blockHash);
+							BTCLoader.debug(String.format("Chain block is not available\n  Block %s", blockHash));
+							throw new BlockNotFoundException("Unable to resolve block chain", blockHash);
 						}
 					}
 				} catch (SQLException exc) {
 					BTCLoader.error("Unable to locate junction block", exc);
-					throw new BlockStoreException(
-							"Unable to locate junction block", blockHash);
+					throw new BlockStoreException("Unable to locate junction block", blockHash);
 				}
 			}
 		}
@@ -1323,8 +1205,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 *             Chain verification failed
 	 */
 	@Override
-	public void setChainHead(List<StoredBlock> chainList)
-			throws BlockStoreException, VerificationException {
+	public void setChainHead(List<StoredBlock> chainList) throws BlockStoreException, VerificationException {
 		//
 		// See if we have reached a checkpoint. If we have, the new block at
 		// that height
@@ -1333,21 +1214,15 @@ public class BlockStoreDataBase extends BlockStore {
 		for (StoredBlock storedBlock : chainList) {
 			if (storedBlock.getBlock() == null)
 				continue;
-			Sha256Hash checkHash = checkpoints.get(Integer.valueOf(storedBlock
-					.getHeight()));
+			Sha256Hash checkHash = checkpoints.get(Integer.valueOf(storedBlock.getHeight()));
 			if (checkHash != null) {
 				if (checkHash.equals(storedBlock.getHash())) {
-					BTCLoader.info(String.format(
-							"New chain head at height %d matches checkpoint",
-							storedBlock.getHeight()));
+					BTCLoader.info(
+							String.format("New chain head at height %d matches checkpoint", storedBlock.getHeight()));
 				} else {
-					BTCLoader
-							.error(String
-									.format("New chain head at height %d does not match checkpoint",
-											storedBlock.getHeight()));
-					throw new VerificationException(
-							"Checkpoint verification failed",
-							RejectMessage.REJECT_CHECKPOINT,
+					BTCLoader.error(String.format("New chain head at height %d does not match checkpoint",
+							storedBlock.getHeight()));
+					throw new VerificationException("Checkpoint verification failed", RejectMessage.REJECT_CHECKPOINT,
 							storedBlock.getHash());
 				}
 			}
@@ -1378,17 +1253,13 @@ public class BlockStoreDataBase extends BlockStore {
 				// chain following the junction block.
 				//
 				if (!chainHead.equals(storedBlock.getPrevBlockHash())) {
-					s1 = conn
-							.prepareStatement("SELECT file_number,file_offset FROM Blocks "
-									+ "WHERE block_hash_index=? AND block_hash=?");
-					s2 = conn
-							.prepareStatement("DELETE FROM TxOutputs WHERE tx_hash_index=? AND tx_hash=?");
-					s3 = conn
-							.prepareStatement("UPDATE TxOutputs SET time_spent=0 "
-									+ "WHERE tx_hash_index=? AND tx_hash=? AND tx_index=?");
-					s4 = conn
-							.prepareStatement("UPDATE Blocks SET block_height=-1 "
-									+ "WHERE block_hash_index=? AND block_hash=?");
+					s1 = conn.prepareStatement("SELECT file_number,file_offset FROM Blocks "
+							+ "WHERE block_hash_index=? AND block_hash=?");
+					s2 = conn.prepareStatement("DELETE FROM TxOutputs WHERE tx_hash_index=? AND tx_hash=?");
+					s3 = conn.prepareStatement("UPDATE TxOutputs SET time_spent=0 "
+							+ "WHERE tx_hash_index=? AND tx_hash=? AND tx_index=?");
+					s4 = conn.prepareStatement(
+							"UPDATE Blocks SET block_height=-1 " + "WHERE block_hash_index=? AND block_hash=?");
 					Sha256Hash junctionHash = chainList.get(0).getHash();
 					blockHash = chainHead;
 					//
@@ -1404,23 +1275,17 @@ public class BlockStoreDataBase extends BlockStore {
 						s1.setBytes(2, blockHash.getBytes());
 						r = s1.executeQuery();
 						if (!r.next()) {
-							BTCLoader
-									.error(String
-											.format("Chain block not found in Blocks database\n  Block %s",
-													blockHash));
-							throw new BlockStoreException(
-									"Chain block not found in Blocks database");
+							BTCLoader.error(
+									String.format("Chain block not found in Blocks database\n  Block %s", blockHash));
+							throw new BlockStoreException("Chain block not found in Blocks database");
 						}
 						int fileNumber = r.getInt(1);
 						int fileOffset = r.getInt(2);
 						block = getBlock(fileNumber, fileOffset);
 						if (block == null) {
-							BTCLoader
-									.error(String
-											.format("Chain block file %d is not available\n  Block %s",
-													fileNumber, blockHash));
-							throw new BlockStoreException(
-									"Chain block is not available");
+							BTCLoader.error(String.format("Chain block file %d is not available\n  Block %s",
+									fileNumber, blockHash));
+							throw new BlockStoreException("Chain block is not available");
 						}
 						//
 						// Process each transaction in the block
@@ -1468,9 +1333,7 @@ public class BlockStoreDataBase extends BlockStore {
 						s4.setBytes(2, blockHash.getBytes());
 						s4.executeUpdate();
 						BTCLoader.networkChainHeight--;
-						BTCLoader.info(String.format(
-								"Block removed from block chain\n  Block %s",
-								blockHash));
+						BTCLoader.info(String.format("Block removed from block chain\n  Block %s", blockHash));
 						//
 						// Advance to the block before this block
 						//
@@ -1481,20 +1344,16 @@ public class BlockStoreDataBase extends BlockStore {
 				// Now add the new blocks to the block chain starting with the
 				// block following the junction block
 				//
-				s1 = conn.prepareStatement("SELECT tx_index FROM TxOutputs "
-						+ "WHERE tx_hash_index=? AND tx_hash=? LIMIT 1");
-				s2 = conn
-						.prepareStatement("INSERT INTO TxOutputs (tx_hash_index,tx_hash,tx_index,block_hash,"
-								+ "block_height,time_spent,value,script_bytes,is_coinbase) VALUES(?,?,?,?,0,0,?,?,?)");
-				s3 = conn
-						.prepareStatement("UPDATE TxOutputs SET time_spent=?,block_height=? WHERE db_id=?");
-				s4 = conn
-						.prepareStatement("UPDATE Blocks SET block_height=?,chain_work=? "
-								+ "WHERE block_hash_index=? AND block_hash=?");
-				s5 = conn
-						.prepareStatement("INSERT INTO TxSpentOutputs (time_spent,db_id) VALUES(?,?)");
-				s6 = conn.prepareStatement("SELECT db_id FROM TxOutputs "
-						+ "WHERE tx_hash_index=? AND tx_hash=? AND tx_index=?");
+				s1 = conn.prepareStatement(
+						"SELECT tx_index FROM TxOutputs " + "WHERE tx_hash_index=? AND tx_hash=? LIMIT 1");
+				s2 = conn.prepareStatement("INSERT INTO TxOutputs (tx_hash_index,tx_hash,tx_index,block_hash,"
+						+ "block_height,time_spent,value,script_bytes,is_coinbase) VALUES(?,?,?,?,0,0,?,?,?)");
+				s3 = conn.prepareStatement("UPDATE TxOutputs SET time_spent=?,block_height=? WHERE db_id=?");
+				s4 = conn.prepareStatement(
+						"UPDATE Blocks SET block_height=?,chain_work=? " + "WHERE block_hash_index=? AND block_hash=?");
+				s5 = conn.prepareStatement("INSERT INTO TxSpentOutputs (time_spent,db_id) VALUES(?,?)");
+				s6 = conn.prepareStatement(
+						"SELECT db_id FROM TxOutputs " + "WHERE tx_hash_index=? AND tx_hash=? AND tx_index=?");
 				for (int i = 1; i < chainList.size(); i++) {
 					storedBlock = chainList.get(i);
 					block = storedBlock.getBlock();
@@ -1535,15 +1394,11 @@ public class BlockStoreDataBase extends BlockStore {
 						r = s1.executeQuery();
 						if (r.next()) {
 							r.close();
-							if (!tx.isCoinBase()
-									|| storedBlock.getHeight() >= 250000) {
+							if (!tx.isCoinBase() || storedBlock.getHeight() >= 250000) {
 								BTCLoader.error(String.format(
-										"Height %d: Transaction outputs already in TxOutputs\n"
-												+ "  Block %s\n  Tx %s",
-										storedBlock.getHeight(),
-										block.getHashAsString(), txHash));
-								throw new VerificationException(
-										"Transaction outputs already in TxOutputs",
+										"Height %d: Transaction outputs already in TxOutputs\n" + "  Block %s\n  Tx %s",
+										storedBlock.getHeight(), block.getHashAsString(), txHash));
+								throw new VerificationException("Transaction outputs already in TxOutputs",
 										RejectMessage.REJECT_DUPLICATE, txHash);
 							}
 							processOutputs = false;
@@ -1558,8 +1413,7 @@ public class BlockStoreDataBase extends BlockStore {
 									s2.setBytes(2, txHash.getBytes());
 									s2.setShort(3, (short) txOutput.getIndex());
 									s2.setBytes(4, blockHash.getBytes());
-									s2.setLong(5, txOutput.getValue()
-											.longValue());
+									s2.setLong(5, txOutput.getValue().longValue());
 									s2.setBytes(6, txOutput.getScriptBytes());
 									s2.setBoolean(7, tx.isCoinBase());
 									s2.executeUpdate();
@@ -1586,12 +1440,9 @@ public class BlockStoreDataBase extends BlockStore {
 							s6.setShort(3, (short) outIndex);
 							r = s6.executeQuery();
 							if (!r.next()) {
-								BTCLoader
-										.error(String
-												.format("Transaction output not found\n  Tx %s",
-														tx.getHashAsString()));
-								throw new BlockStoreException(
-										"Transaction output not found");
+								BTCLoader.error(
+										String.format("Transaction output not found\n  Tx %s", tx.getHashAsString()));
+								throw new BlockStoreException("Transaction output not found");
 							}
 							long dbId = r.getLong(1);
 							s3.setLong(1, block.getTimeStamp());
@@ -1611,11 +1462,8 @@ public class BlockStoreDataBase extends BlockStore {
 					s4.setLong(3, getHashIndex(blockHash));
 					s4.setBytes(4, blockHash.getBytes());
 					s4.executeUpdate();
-					BTCLoader
-							.info(String
-									.format("Block added to block chain at height %d\n  Block %s",
-											blockHeight,
-											block.getHashAsString()));
+					BTCLoader.info(String.format("Block added to block chain at height %d\n  Block %s", blockHeight,
+							block.getHashAsString()));
 				}
 				//
 				// Commit the changes
@@ -1635,8 +1483,7 @@ public class BlockStoreDataBase extends BlockStore {
 			} catch (SQLException exc) {
 				BTCLoader.error("Unable to update block chain", exc);
 				rollback(s1, s2, s3, s4);
-				throw new BlockStoreException("Unable to update block chain",
-						blockHash);
+				throw new BlockStoreException("Unable to update block chain", blockHash);
 			}
 		}
 	}
@@ -1695,18 +1542,16 @@ public class BlockStoreDataBase extends BlockStore {
 			// We are creating a new database, so delete any existing block
 			// files
 			//
-			File dirFile = new File(String.format("%s%sBlocks", dataPath,
-					LSystem.FS));
+			File dirFile = new File(String.format("%s%sBlocks", dataPath, LSystem.FS));
 			if (dirFile.exists()) {
 				File[] fileList = dirFile.listFiles();
-				for (File file : fileList){
+				for (File file : fileList) {
 					file.delete();
 				}
 			}
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to create SQL database tables", exc);
-			throw new BlockStoreException(
-					"Unable to create SQL database tables");
+			throw new BlockStoreException("Unable to create SQL database tables");
 		}
 	}
 
@@ -1725,8 +1570,8 @@ public class BlockStoreDataBase extends BlockStore {
 			//
 			// Initialize the block chain with the genesis block
 			//
-			Block genesisBlock = new Block(BTCLoader.GENESIS_BLOCK_BYTES, 0,
-					BTCLoader.GENESIS_BLOCK_BYTES.length, false);
+			Block genesisBlock = new Block(BTCLoader.GENESIS_BLOCK_BYTES, 0, BTCLoader.GENESIS_BLOCK_BYTES.length,
+					false);
 			chainHead = genesisBlock.getHash();
 			prevChainHead = Sha256Hash.ZERO_HASH;
 			chainHeight = 0;
@@ -1762,8 +1607,7 @@ public class BlockStoreDataBase extends BlockStore {
 			//
 			// Copy the genesis block as the initial block file
 			//
-			File blockFile = new File(String.format("%s%sBlocks%sblk00000.dat",
-					dataPath, LSystem.FS, LSystem.FS));
+			File blockFile = new File(String.format("%s%sBlocks%sblk00000.dat", dataPath, LSystem.FS, LSystem.FS));
 			if (!existsBlock) {
 				existsBlock = blockFile.exists();
 				if (!existsBlock) {
@@ -1772,10 +1616,8 @@ public class BlockStoreDataBase extends BlockStore {
 			}
 			try (FileOutputStream outFile = new FileOutputStream(blockFile)) {
 				byte[] prefixBytes = new byte[8];
-				Helper.uint32ToByteArrayLE(NetParams.MAGIC_NUMBER, prefixBytes,
-						0);
-				Helper.uint32ToByteArrayLE(
-						BTCLoader.GENESIS_BLOCK_BYTES.length, prefixBytes, 4);
+				Helper.uint32ToByteArrayLE(NetParams.MAGIC_NUMBER, prefixBytes, 0);
+				Helper.uint32ToByteArrayLE(BTCLoader.GENESIS_BLOCK_BYTES.length, prefixBytes, 4);
 				outFile.write(prefixBytes);
 				outFile.write(BTCLoader.GENESIS_BLOCK_BYTES);
 			}
@@ -1784,14 +1626,12 @@ public class BlockStoreDataBase extends BlockStore {
 			//
 			conn.commit();
 			conn.setAutoCommit(true);
-			BTCLoader.info(String.format(
-					"Database initialized with schema version %d.%d",
-					schemaVersion / 100, schemaVersion % 100));
+			BTCLoader.info(String.format("Database initialized with schema version %d.%d", schemaVersion / 100,
+					schemaVersion % 100));
 		} catch (IOException | SQLException | VerificationException exc) {
 			BTCLoader.error("Unable to initialize the database tables", exc);
 			rollback();
-			throw new BlockStoreException(
-					"Unable to initialize the database tables");
+			throw new BlockStoreException("Unable to initialize the database tables");
 		}
 	}
 
@@ -1810,17 +1650,15 @@ public class BlockStoreDataBase extends BlockStore {
 			// Get the initial values from the Settings table
 			//
 			try (PreparedStatement s = conn
-					.prepareStatement("SELECT schema_version FROM Settings "
-							+ "WHERE schema_name=?")) {
+					.prepareStatement("SELECT schema_version FROM Settings " + "WHERE schema_name=?")) {
 				s.setString(1, schemaName);
 				r = s.executeQuery();
 				if (!r.next())
 					throw new BlockStoreException("Incorrect database schema");
 				version = r.getInt(1);
 				if (version > schemaVersion)
-					throw new BlockStoreException(String.format(
-							"Schema version %d.%d is not supported",
-							version / 100, version % 100));
+					throw new BlockStoreException(
+							String.format("Schema version %d.%d is not supported", version / 100, version % 100));
 				switch (version) {
 				case 100:
 					dbUpgrade100(conn); // Upgrade from Version 1.00 to 1.01
@@ -1834,12 +1672,11 @@ public class BlockStoreDataBase extends BlockStore {
 			// Get the current chain values from the chain head block
 			//
 			try (Statement s = conn.createStatement()) {
-				r = s.executeQuery("SELECT block_hash,prev_hash,block_height,chain_work,timestamp,"
-						+ "file_number,file_offset "
-						+ "FROM Blocks WHERE block_height=(SELECT MAX(block_height) FROM Blocks)");
+				r = s.executeQuery(
+						"SELECT block_hash,prev_hash,block_height,chain_work,timestamp," + "file_number,file_offset "
+								+ "FROM Blocks WHERE block_height=(SELECT MAX(block_height) FROM Blocks)");
 				if (!r.next())
-					throw new BlockStoreException(
-							"Unable to get chain head block");
+					throw new BlockStoreException("Unable to get chain head block");
 				chainHead = new Sha256Hash(r.getBytes(1));
 				prevChainHead = new Sha256Hash(r.getBytes(2));
 				chainHeight = r.getInt(3);
@@ -1849,44 +1686,32 @@ public class BlockStoreDataBase extends BlockStore {
 				int fileOffset = r.getInt(7);
 				Block block = getBlock(fileNumber, fileOffset);
 				if (block == null) {
-					BTCLoader
-							.error(String
-									.format("Unable to get block from block file %d, offset %d\n  %s",
-											fileNumber, fileOffset, chainHead));
-					throw new BlockStoreException(
-							"Unable to get block from block file", chainHead);
+					BTCLoader.error(String.format("Unable to get block from block file %d, offset %d\n  %s", fileNumber,
+							fileOffset, chainHead));
+					throw new BlockStoreException("Unable to get block from block file", chainHead);
 				}
 				targetDifficulty = block.getTargetDifficulty();
 			}
 			//
 			// Get the cuurrent block file number
 			//
-			File blockDir = new File(String.format("%s%sBlocks", dataPath,
-					LSystem.FS));
+			File blockDir = new File(String.format("%s%sBlocks", dataPath, LSystem.FS));
 			String[] fileList = blockDir.list();
 			for (String fileName : fileList) {
 				int sep = fileName.lastIndexOf('.');
-				if (sep >= 0 && fileName.substring(0, 3).equals("blk")
-						&& fileName.substring(sep).equals(".dat"))
-					blockFileNumber = Math.max(blockFileNumber,
-							Integer.parseInt(fileName.substring(3, sep)));
+				if (sep >= 0 && fileName.substring(0, 3).equals("blk") && fileName.substring(sep).equals(".dat"))
+					blockFileNumber = Math.max(blockFileNumber, Integer.parseInt(fileName.substring(3, sep)));
 			}
 			BigInteger networkDifficulty = NetParams.PROOF_OF_WORK_LIMIT
 					.divide(Helper.decodeCompactBits(targetDifficulty));
-			BTCLoader
-					.info(String
-							.format("Database opened with schema version %d.%d\n"
-									+ "  Chain height %,d, Target difficulty %s, Block File number %d\n"
-									+ "  Chain head %s",
-									version / 100,
-									version % 100,
-									chainHeight,
-									Helper.numberToShortString(networkDifficulty),
-									blockFileNumber, chainHead));
+			BTCLoader.info(String.format(
+					"Database opened with schema version %d.%d\n"
+							+ "  Chain height %,d, Target difficulty %s, Block File number %d\n" + "  Chain head %s",
+					version / 100, version % 100, chainHeight, Helper.numberToShortString(networkDifficulty),
+					blockFileNumber, chainHead));
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to get initial table settings", exc);
-			throw new BlockStoreException(
-					"Unable to get initial table settings");
+			throw new BlockStoreException("Unable to get initial table settings");
 		}
 	}
 
@@ -1904,8 +1729,7 @@ public class BlockStoreDataBase extends BlockStore {
 	 */
 	private void dbUpgrade100(Connection conn) throws BlockStoreException {
 		try {
-			BTCLoader
-					.info("Upgrading the SQL database from Version 1.00 to Version 1.01");
+			BTCLoader.info("Upgrading the SQL database from Version 1.00 to Version 1.01");
 			ResultSet r;
 			//
 			// Add the 'header' column to the Blocks table
@@ -1925,29 +1749,22 @@ public class BlockStoreDataBase extends BlockStore {
 			//
 			PreparedStatement s2 = conn
 					.prepareStatement("SELECT file_number,file_offset FROM Blocks WHERE block_hash=?");
-			PreparedStatement s3 = conn
-					.prepareStatement("UPDATE Blocks SET header=? WHERE block_hash=?");
+			PreparedStatement s3 = conn.prepareStatement("UPDATE Blocks SET header=? WHERE block_hash=?");
 			for (Sha256Hash blockHash : blockList) {
 				s2.setBytes(1, blockHash.getBytes());
 				r = s2.executeQuery();
 				if (!r.next()) {
-					BTCLoader
-							.warn(String
-									.format("Block file pointer not found in database\n  Block %s",
-											blockHash));
-					throw new BlockStoreException(
-							"Block file pointer not found in database");
+					BTCLoader.warn(String.format("Block file pointer not found in database\n  Block %s", blockHash));
+					throw new BlockStoreException("Block file pointer not found in database");
 				}
 				int fileNumber = r.getInt(1);
 				int fileOffset = r.getInt(2);
 				r.close();
 				Block block = getBlock(fileNumber, fileOffset);
 				if (block == null) {
-					BTCLoader.error(String.format(
-							"Block in file %d at position %d is unavailable",
-							fileNumber, fileOffset));
-					throw new BlockStoreException(
-							"Unable to upgrade database due to unavailable block");
+					BTCLoader.error(
+							String.format("Block in file %d at position %d is unavailable", fileNumber, fileOffset));
+					throw new BlockStoreException("Unable to upgrade database due to unavailable block");
 				}
 				s3.setBytes(1, block.getHeaderBytes());
 				s3.setBytes(2, blockHash.getBytes());
@@ -1983,8 +1800,7 @@ public class BlockStoreDataBase extends BlockStore {
 	private void dbUpgrade101(Connection conn) throws BlockStoreException {
 		ResultSet r;
 		try {
-			BTCLoader
-					.info("Upgrading the SQL database from Version 1.01 to Version 1.02");
+			BTCLoader.info("Upgrading the SQL database from Version 1.01 to Version 1.02");
 			Statement s1 = conn.createStatement();
 			PreparedStatement s2;
 			PreparedStatement s3;
@@ -2007,10 +1823,8 @@ public class BlockStoreDataBase extends BlockStore {
 			//
 			BTCLoader.info("Upgrading Blocks table");
 			List<Long> idList = new LinkedList<>();
-			s2 = conn
-					.prepareStatement("SELECT block_hash,prev_hash FROM Blocks WHERE db_id=?");
-			s3 = conn
-					.prepareStatement("UPDATE Blocks SET block_hash_index=?,prev_hash_index=? WHERE db_id=?");
+			s2 = conn.prepareStatement("SELECT block_hash,prev_hash FROM Blocks WHERE db_id=?");
+			s3 = conn.prepareStatement("UPDATE Blocks SET block_hash_index=?,prev_hash_index=? WHERE db_id=?");
 			r = s1.executeQuery("SELECT db_id FROM Blocks WHERE block_hash_index IS NULL");
 			while (r.next())
 				idList.add(r.getLong(1));
@@ -2038,10 +1852,8 @@ public class BlockStoreDataBase extends BlockStore {
 			// Fill in the index column for the TxOutputs table
 			//
 			BTCLoader.info("Upgrading TxOutputs table");
-			s2 = conn
-					.prepareStatement("SELECT tx_hash FROM TxOutputs WHERE db_id=?");
-			s3 = conn
-					.prepareStatement("UPDATE TxOutputs SET tx_hash_index=? WHERE db_id=?");
+			s2 = conn.prepareStatement("SELECT tx_hash FROM TxOutputs WHERE db_id=?");
+			s3 = conn.prepareStatement("UPDATE TxOutputs SET tx_hash_index=? WHERE db_id=?");
 			r = s1.executeQuery("SELECT db_id FROM TxOutputs WHERE tx_hash_index IS NULL");
 			while (r.next())
 				idList.add(r.getLong(1));
@@ -2090,8 +1902,7 @@ public class BlockStoreDataBase extends BlockStore {
 
 	public void setAddressLabel(Address address) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Addresses SET label=? WHERE address=?")) {
+		try (PreparedStatement s = conn.prepareStatement("UPDATE Addresses SET label=? WHERE address=?")) {
 			if (address.getLabel().isEmpty()) {
 				s.setNull(1, Types.VARCHAR);
 			} else {
@@ -2107,8 +1918,7 @@ public class BlockStoreDataBase extends BlockStore {
 
 	public void storeAddress(Address address) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Addresses (address,label) VALUES(?,?)")) {
+		try (PreparedStatement s = conn.prepareStatement("INSERT INTO Addresses (address,label) VALUES(?,?)")) {
 			s.setBytes(1, address.getHash());
 			if (address.getLabel().isEmpty())
 				s.setNull(2, Types.VARCHAR);
@@ -2123,8 +1933,7 @@ public class BlockStoreDataBase extends BlockStore {
 
 	public void deleteAddress(Address address) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("DELETE FROM Addresses WHERE address=?")) {
+		try (PreparedStatement s = conn.prepareStatement("DELETE FROM Addresses WHERE address=?")) {
 			s.setBytes(1, address.getHash());
 			s.executeUpdate();
 		} catch (SQLException exc) {
@@ -2141,8 +1950,7 @@ public class BlockStoreDataBase extends BlockStore {
 			r = s.executeQuery("SELECT address,label FROM Addresses ORDER BY label ASC NULLS FIRST");
 			while (r.next()) {
 				String label = r.getString(2);
-				addressList.add(new Address(r.getBytes(1),
-						label != null ? label : ""));
+				addressList.add(new Address(r.getBytes(1), label != null ? label : ""));
 			}
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to get address list", exc);
@@ -2153,11 +1961,9 @@ public class BlockStoreDataBase extends BlockStore {
 
 	public void storeKey(ECKey key) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Keys "
-						+ "(public_key,private_key,timestamp,is_change,label) VALUES(?,?,?,?,?)")) {
-			EncryptedPrivateKey encPrivKey = new EncryptedPrivateKey(
-					key.getPrivKey(), LSystem.getAppPassword());
+		try (PreparedStatement s = conn.prepareStatement(
+				"INSERT INTO Keys " + "(public_key,private_key,timestamp,is_change,label) VALUES(?,?,?,?,?)")) {
+			EncryptedPrivateKey encPrivKey = new EncryptedPrivateKey(key.getPrivKey(), LSystem.getAppPassword());
 			s.setBytes(1, key.getPubKey());
 			s.setBytes(2, encPrivKey.getBytes());
 			s.setLong(3, key.getCreationTime());
@@ -2176,8 +1982,7 @@ public class BlockStoreDataBase extends BlockStore {
 
 	public void setKeyLabel(ECKey key) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Keys SET label=? WHERE public_key=?")) {
+		try (PreparedStatement s = conn.prepareStatement("UPDATE Keys SET label=? WHERE public_key=?")) {
 			if (key.getLabel().isEmpty()) {
 				s.setNull(1, Types.VARCHAR);
 			} else {
@@ -2200,13 +2005,10 @@ public class BlockStoreDataBase extends BlockStore {
 					+ "ORDER BY label ASC NULLS FIRST");
 			while (r.next()) {
 				byte[] pubKey = r.getBytes(1);
-				EncryptedPrivateKey encPrivKey = new EncryptedPrivateKey(
-						r.getBytes(2));
-				ECKey key = new ECKey(encPrivKey.getPrivKey(LSystem
-						.getAppPassword()), (pubKey.length == 33));
+				EncryptedPrivateKey encPrivKey = new EncryptedPrivateKey(r.getBytes(2));
+				ECKey key = new ECKey(encPrivKey.getPrivKey(LSystem.getAppPassword()), (pubKey.length == 33));
 				if (!Arrays.equals(key.getPubKey(), pubKey)) {
-					throw new KeyException(
-							"Private key does not match public key");
+					throw new KeyException("Private key does not match public key");
 				}
 				key.setCreationTime(r.getLong(3));
 				key.setChange(r.getBoolean(4));
@@ -2221,12 +2023,10 @@ public class BlockStoreDataBase extends BlockStore {
 		return keyList;
 	}
 
-	public void storeReceiveTx(ReceiveTransaction receiveTx)
-			throws BlockStoreException {
+	public void storeReceiveTx(ReceiveTransaction receiveTx) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Received "
-						+ "(tx_hash_index,tx_hash,tx_index,norm_hash,timestamp,block_hash,address,"
+		try (PreparedStatement s = conn.prepareStatement(
+				"INSERT INTO Received " + "(tx_hash_index,tx_hash,tx_index,norm_hash,timestamp,block_hash,address,"
 						+ "value,script_bytes,is_spent,is_change,in_safe,is_coinbase,is_deleted) "
 						+ "VALUES(?,?,?,?,?,?,?,?,?,false,?,false,?,false)")) {
 			s.setLong(1, getHashIndex(receiveTx.getTxHash()));
@@ -2245,84 +2045,68 @@ public class BlockStoreDataBase extends BlockStore {
 			s.setBoolean(11, receiveTx.isCoinBase());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to store receive transaction output\n  Tx %s[%d]",
+			BTCLoader.error(String.format("Unable to store receive transaction output\n  Tx %s[%d]",
 					receiveTx.getTxHash(), receiveTx.getTxIndex()), exc);
-			throw new BlockStoreException(
-					"Unable to store receive transaction output");
+			throw new BlockStoreException("Unable to store receive transaction output");
 		}
 	}
 
-	public void setTxSpent(Sha256Hash txHash, int txIndex, boolean isSpent)
-			throws BlockStoreException {
+	public void setTxSpent(Sha256Hash txHash, int txIndex, boolean isSpent) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Received SET is_spent=? "
-						+ "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"UPDATE Received SET is_spent=? " + "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
 			s.setBoolean(1, isSpent);
 			s.setLong(2, getHashIndex(txHash));
 			s.setBytes(3, txHash.getBytes());
 			s.setShort(4, (short) txIndex);
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to update receive transaction output\n  Tx %s[%d]",
-					txHash, txIndex), exc);
-			throw new BlockStoreException(
-					"Unable to update receive transaction outputs");
+			BTCLoader.error(String.format("Unable to update receive transaction output\n  Tx %s[%d]", txHash, txIndex),
+					exc);
+			throw new BlockStoreException("Unable to update receive transaction outputs");
 		}
 	}
 
-	public void setTxSafe(Sha256Hash txHash, int txIndex, boolean inSafe)
-			throws BlockStoreException {
+	public void setTxSafe(Sha256Hash txHash, int txIndex, boolean inSafe) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Received SET in_safe=? "
-						+ "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"UPDATE Received SET in_safe=? " + "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
 			s.setBoolean(1, inSafe);
 			s.setLong(2, getHashIndex(txHash));
 			s.setBytes(3, txHash.getBytes());
 			s.setShort(4, (short) txIndex);
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to update receive transaction output\n  Tx %s[%d]",
-					txHash, txIndex), exc);
-			throw new BlockStoreException(
-					"Unable to update receive transaction outputs");
+			BTCLoader.error(String.format("Unable to update receive transaction output\n  Tx %s[%d]", txHash, txIndex),
+					exc);
+			throw new BlockStoreException("Unable to update receive transaction outputs");
 		}
 	}
 
-	public void setReceiveTxDelete(Sha256Hash txHash, int txIndex,
-			boolean isDeleted) throws BlockStoreException {
+	public void setReceiveTxDelete(Sha256Hash txHash, int txIndex, boolean isDeleted) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Received SET is_deleted=? "
-						+ "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"UPDATE Received SET is_deleted=? " + "WHERE tx_hash_index=? AND tx_hash=? and tx_index=?")) {
 			s.setBoolean(1, isDeleted);
 			s.setLong(2, getHashIndex(txHash));
 			s.setBytes(3, txHash.getBytes());
 			s.setShort(4, (short) txIndex);
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to update receive transaction output\n  Tx %s[%d]",
-					txHash, txIndex), exc);
-			throw new BlockStoreException(
-					"Unable to update receive transaction outputs");
+			BTCLoader.error(String.format("Unable to update receive transaction output\n  Tx %s[%d]", txHash, txIndex),
+					exc);
+			throw new BlockStoreException("Unable to update receive transaction outputs");
 		}
 	}
 
-	public List<ReceiveTransaction> getReceiveTxList()
-			throws BlockStoreException {
+	public List<ReceiveTransaction> getReceiveTxList() throws BlockStoreException {
 		List<ReceiveTransaction> txList = new LinkedList<>();
 		Map<TransactionID, ReceiveTransaction> txMap = new HashMap<TransactionID, ReceiveTransaction>();
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT tx_hash,tx_index,norm_hash,timestamp,"
-						+ "block_hash,address,value,script_bytes,is_spent,is_change,in_safe,is_coinbase "
-						+ "FROM Received WHERE is_deleted=false")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT tx_hash,tx_index,norm_hash,timestamp,"
+				+ "block_hash,address,value,script_bytes,is_spent,is_change,in_safe,is_coinbase "
+				+ "FROM Received WHERE is_deleted=false")) {
 			r = s.executeQuery();
 			while (r.next()) {
 				Sha256Hash txHash = new Sha256Hash(r.getBytes(1));
@@ -2330,8 +2114,7 @@ public class BlockStoreDataBase extends BlockStore {
 				Sha256Hash normID = new Sha256Hash(r.getBytes(3));
 				long txTime = r.getLong(4);
 				byte[] bytes = r.getBytes(5);
-				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes)
-						: null);
+				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes) : null);
 				Address address = new Address(r.getBytes(6));
 				BigInteger value = BigInteger.valueOf(r.getLong(7));
 				byte[] scriptBytes = r.getBytes(8);
@@ -2340,9 +2123,8 @@ public class BlockStoreDataBase extends BlockStore {
 				boolean inSafe = r.getBoolean(11);
 				boolean isCoinbase = r.getBoolean(12);
 				TransactionID txID = new TransactionID(txHash, txIndex);
-				ReceiveTransaction tx = new ReceiveTransaction(normID, txHash,
-						txIndex, txTime, blockHash, address, value,
-						scriptBytes, isSpent, isChange, isCoinbase, inSafe);
+				ReceiveTransaction tx = new ReceiveTransaction(normID, txHash, txIndex, txTime, blockHash, address,
+						value, scriptBytes, isSpent, isChange, isCoinbase, inSafe);
 				ReceiveTransaction prevTx = txMap.get(txID);
 				if (blockHash != null) {
 					if (prevTx != null) {
@@ -2357,17 +2139,15 @@ public class BlockStoreDataBase extends BlockStore {
 			}
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to get receive transaction list", exc);
-			throw new BlockStoreException(
-					"Unable to get receive transaction list");
+			throw new BlockStoreException("Unable to get receive transaction list");
 		}
 		return txList;
 	}
 
 	public void storeSendTx(SendTransaction sendTx) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Sent "
-						+ "(tx_hash_index,tx_hash,norm_hash,timestamp,block_hash,address,value,fee,"
+		try (PreparedStatement s = conn.prepareStatement(
+				"INSERT INTO Sent " + "(tx_hash_index,tx_hash,norm_hash,timestamp,block_hash,address,value,fee,"
 						+ "is_deleted,tx_data) VALUES(?,?,?,?,?,?,?,?,false,?)")) {
 			s.setLong(1, getHashIndex(sendTx.getTxHash()));
 			s.setBytes(2, sendTx.getTxHash().getBytes());
@@ -2383,38 +2163,31 @@ public class BlockStoreDataBase extends BlockStore {
 			s.setBytes(9, sendTx.getTxData());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to store send transaction\n  Tx %s",
-					sendTx.getTxHash()), exc);
+			BTCLoader.error(String.format("Unable to store send transaction\n  Tx %s", sendTx.getTxHash()), exc);
 			throw new BlockStoreException("Unable to store send transaction");
 		}
 	}
 
-	public void setSendTxDelete(Sha256Hash txHash, boolean isDeleted)
-			throws BlockStoreException {
+	public void setSendTxDelete(Sha256Hash txHash, boolean isDeleted) throws BlockStoreException {
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Sent SET is_deleted=? "
-						+ "WHERE tx_hash_index=? AND tx_hash=?")) {
+				.prepareStatement("UPDATE Sent SET is_deleted=? " + "WHERE tx_hash_index=? AND tx_hash=?")) {
 			s.setBoolean(1, isDeleted);
 			s.setLong(2, getHashIndex(txHash));
 			s.setBytes(3, txHash.getBytes());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to update send transaction\n  Tx %s", txHash), exc);
+			BTCLoader.error(String.format("Unable to update send transaction\n  Tx %s", txHash), exc);
 			throw new BlockStoreException("Unable to update send transaction");
 		}
 	}
 
-	public SendTransaction getSendTx(Sha256Hash txHash)
-			throws BlockStoreException {
+	public SendTransaction getSendTx(Sha256Hash txHash) throws BlockStoreException {
 		SendTransaction tx = null;
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT norm_hash,timestamp,block_hash,address,value,fee,"
-						+ "tx_data FROM Sent WHERE tx_hash_index=? AND tx_hash=? AND is_deleted=false")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT norm_hash,timestamp,block_hash,address,value,fee,"
+				+ "tx_data FROM Sent WHERE tx_hash_index=? AND tx_hash=? AND is_deleted=false")) {
 			s.setLong(1, getHashIndex(txHash));
 			s.setBytes(2, txHash.getBytes());
 			r = s.executeQuery();
@@ -2422,18 +2195,15 @@ public class BlockStoreDataBase extends BlockStore {
 				Sha256Hash normID = new Sha256Hash(r.getBytes(1));
 				long txTime = r.getLong(2);
 				byte[] bytes = r.getBytes(3);
-				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes)
-						: null);
+				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes) : null);
 				Address address = new Address(r.getBytes(4));
 				BigInteger value = BigInteger.valueOf(r.getLong(5));
 				BigInteger fee = BigInteger.valueOf(r.getLong(6));
 				byte[] txData = r.getBytes(7);
-				tx = new SendTransaction(normID, txHash, txTime, blockHash,
-						address, value, fee, txData);
+				tx = new SendTransaction(normID, txHash, txTime, blockHash, address, value, fee, txData);
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get send transaction\n  Tx %s", txHash), exc);
+			BTCLoader.error(String.format("Unable to get send transaction\n  Tx %s", txHash), exc);
 			throw new BlockStoreException("Unable to get send transaction");
 		}
 		return tx;
@@ -2444,23 +2214,21 @@ public class BlockStoreDataBase extends BlockStore {
 		Map<Sha256Hash, SendTransaction> txMap = new HashMap<Sha256Hash, SendTransaction>();
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT tx_hash,norm_hash,timestamp,"
-						+ "block_hash,address,value,fee,tx_data FROM Sent WHERE is_deleted=false")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT tx_hash,norm_hash,timestamp,"
+				+ "block_hash,address,value,fee,tx_data FROM Sent WHERE is_deleted=false")) {
 			r = s.executeQuery();
 			while (r.next()) {
 				Sha256Hash txHash = new Sha256Hash(r.getBytes(1));
 				Sha256Hash normID = new Sha256Hash(r.getBytes(2));
 				long txTime = r.getLong(3);
 				byte[] bytes = r.getBytes(4);
-				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes)
-						: null);
+				Sha256Hash blockHash = (bytes != null ? new Sha256Hash(bytes) : null);
 				Address address = new Address(r.getBytes(5));
 				BigInteger value = BigInteger.valueOf(r.getLong(6));
 				BigInteger fee = BigInteger.valueOf(r.getLong(7));
 				byte[] txData = r.getBytes(8);
-				SendTransaction tx = new SendTransaction(normID, txHash,
-						txTime, blockHash, address, value, fee, txData);
+				SendTransaction tx = new SendTransaction(normID, txHash, txTime, blockHash, address, value, fee,
+						txData);
 				SendTransaction prevTx = txMap.get(normID);
 				if (blockHash != null) {
 					if (prevTx != null) {
@@ -2483,31 +2251,26 @@ public class BlockStoreDataBase extends BlockStore {
 	public void deleteTransactions(long rescanTime) throws BlockStoreException {
 		Connection conn = getConnection();
 		try (PreparedStatement s1 = conn
-				.prepareStatement("DELETE FROM Received "
-						+ "WHERE timestamp>=? AND block_hash IS NOT NULL");
+				.prepareStatement("DELETE FROM Received " + "WHERE timestamp>=? AND block_hash IS NOT NULL");
 				PreparedStatement s2 = conn
-						.prepareStatement("DELETE FROM Sent "
-								+ "WHERE timestamp>=? AND block_hash IS NOT NULL")) {
+						.prepareStatement("DELETE FROM Sent " + "WHERE timestamp>=? AND block_hash IS NOT NULL")) {
 			s1.setLong(1, rescanTime);
 			s1.executeUpdate();
 			s2.setLong(1, rescanTime);
 			s2.executeUpdate();
 		} catch (SQLException exc) {
 			BTCLoader.error("Unable to delete rescan transactions", exc);
-			throw new BlockStoreException(
-					"Unable to delete rescan transactions");
+			throw new BlockStoreException("Unable to delete rescan transactions");
 		}
 	}
 
-	public StoredHeader getHeader(Sha256Hash blockHash)
-			throws BlockStoreException {
+	public StoredHeader getHeader(Sha256Hash blockHash) throws BlockStoreException {
 		StoredHeader header = null;
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT prev_hash,version,timestamp,target_difficulty,"
-						+ "merkle_root,block_height,chain_work,matches FROM Headers "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT prev_hash,version,timestamp,target_difficulty,"
+				+ "merkle_root,block_height,chain_work,matches FROM Headers "
+				+ "WHERE block_hash_index=? AND block_hash=?")) {
 			s.setLong(1, getHashIndex(blockHash));
 			s.setBytes(2, blockHash.getBytes());
 			r = s.executeQuery();
@@ -2520,27 +2283,23 @@ public class BlockStoreDataBase extends BlockStore {
 				int blockHeight = r.getInt(6);
 				BigInteger blockWork = new BigInteger(r.getBytes(7));
 				List<Sha256Hash> matches = getMatches(r.getBytes(8));
-				header = new StoredHeader(version, blockHash, prevHash,
-						timestamp, targetDifficulty, merkleRoot,
+				header = new StoredHeader(version, blockHash, prevHash, timestamp, targetDifficulty, merkleRoot,
 						blockHeight >= 0, blockHeight, blockWork, matches);
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get block header\n  Block %s", blockHash), exc);
+			BTCLoader.error(String.format("Unable to get block header\n  Block %s", blockHash), exc);
 			throw new BlockStoreException("Unable to get block header");
 		}
 		return header;
 	}
 
-	public StoredHeader getChildHeader(Sha256Hash parentHash)
-			throws BlockStoreException {
+	public StoredHeader getChildHeader(Sha256Hash parentHash) throws BlockStoreException {
 		StoredHeader header = null;
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_hash,version,timestamp,target_difficulty,"
-						+ "merkle_root,block_height,chain_work,matches FROM Headers "
-						+ "WHERE prev_hash_index=? AND prev_hash=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT block_hash,version,timestamp,target_difficulty,"
+				+ "merkle_root,block_height,chain_work,matches FROM Headers "
+				+ "WHERE prev_hash_index=? AND prev_hash=?")) {
 			s.setLong(1, getHashIndex(parentHash));
 			s.setBytes(2, parentHash.getBytes());
 			r = s.executeQuery();
@@ -2553,13 +2312,11 @@ public class BlockStoreDataBase extends BlockStore {
 				int blockHeight = r.getInt(6);
 				BigInteger blockWork = new BigInteger(r.getBytes(7));
 				List<Sha256Hash> matches = getMatches(r.getBytes(8));
-				header = new StoredHeader(version, blockHash, parentHash,
-						timestamp, targetDifficulty, merkleRoot,
+				header = new StoredHeader(version, blockHash, parentHash, timestamp, targetDifficulty, merkleRoot,
 						blockHeight >= 0, blockHeight, blockWork, matches);
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to get child header\n  Block %s", parentHash), exc);
+			BTCLoader.error(String.format("Unable to get child header\n  Block %s", parentHash), exc);
 			throw new BlockStoreException("Unable to get child header");
 		}
 		return header;
@@ -2568,8 +2325,7 @@ public class BlockStoreDataBase extends BlockStore {
 	public void updateMatches(BlockHeader header) throws BlockStoreException {
 		Connection conn = getConnection();
 		try (PreparedStatement s = conn
-				.prepareStatement("UPDATE Headers SET matches=? "
-						+ "WHERE block_hash_index=? AND block_hash=?")) {
+				.prepareStatement("UPDATE Headers SET matches=? " + "WHERE block_hash_index=? AND block_hash=?")) {
 			if (header.getMatches() == null || header.getMatches().isEmpty()) {
 				s.setNull(1, Types.BINARY);
 			} else {
@@ -2579,11 +2335,8 @@ public class BlockStoreDataBase extends BlockStore {
 			s.setBytes(3, header.getHash().getBytes());
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to update matched transactions\n  Block %s",
-					header.getHash()), exc);
-			throw new BlockStoreException(
-					"Unable to update matched transactions");
+			BTCLoader.error(String.format("Unable to update matched transactions\n  Block %s", header.getHash()), exc);
+			throw new BlockStoreException("Unable to update matched transactions");
 		}
 	}
 
@@ -2591,9 +2344,8 @@ public class BlockStoreDataBase extends BlockStore {
 		int height = 0;
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_height,timestamp FROM Headers "
-						+ "WHERE timestamp<? ORDER BY timestamp DESC LIMIT 1")) {
+		try (PreparedStatement s = conn.prepareStatement(
+				"SELECT block_height,timestamp FROM Headers " + "WHERE timestamp<? ORDER BY timestamp DESC LIMIT 1")) {
 			s.setLong(1, rescanTime);
 			r = s.executeQuery();
 			if (r.next())
@@ -2609,16 +2361,14 @@ public class BlockStoreDataBase extends BlockStore {
 		Sha256Hash blockHash = null;
 		Connection conn = getConnection();
 		ResultSet r;
-		try (PreparedStatement s = conn
-				.prepareStatement("SELECT block_hash FROM Headers WHERE block_height=?")) {
+		try (PreparedStatement s = conn.prepareStatement("SELECT block_hash FROM Headers WHERE block_height=?")) {
 			s.setInt(1, blockHeight);
 			r = s.executeQuery();
 			if (r.next()) {
 				blockHash = new Sha256Hash(r.getBytes(1));
 			}
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format("Unable to get block at height %d",
-					exc));
+			BTCLoader.error(String.format("Unable to get block at height %d", exc));
 			throw new BlockStoreException("Unable to get block");
 		}
 		return blockHash;
@@ -2633,11 +2383,8 @@ public class BlockStoreDataBase extends BlockStore {
 			while (!onChain) {
 				StoredHeader header = getHeader(blockHash);
 				if (header == null) {
-					BTCLoader.debug(String.format(
-							"Chain block is not available\n  Block %s",
-							blockHash));
-					throw new BlockNotFoundException(
-							"Unable to resolve block chain", blockHash);
+					BTCLoader.debug(String.format("Chain block is not available\n  Block %s", blockHash));
+					throw new BlockNotFoundException("Unable to resolve block chain", blockHash);
 				}
 				chainList.add(0, header);
 				blockHash = header.getPrevHash();
@@ -2646,28 +2393,20 @@ public class BlockStoreDataBase extends BlockStore {
 		}
 		return chainList;
 	}
-	
-	public void setChainStoredHead(List<StoredHeader> chainList)
-			throws BlockStoreException, VerificationException {
+
+	public void setChainStoredHead(List<StoredHeader> chainList) throws BlockStoreException, VerificationException {
 		if (!BTCLoader.testNetwork) {
 			for (StoredHeader header : chainList) {
-				Sha256Hash checkHash = checkpoints.get(Integer.valueOf(header
-						.getBlockHeight()));
+				Sha256Hash checkHash = checkpoints.get(Integer.valueOf(header.getBlockHeight()));
 				if (checkHash != null) {
 					if (checkHash.equals(header.getHash())) {
-						BTCLoader
-								.info(String
-										.format("New chain head at height %d matches checkpoint",
-												header.getBlockHeight()));
+						BTCLoader.info(String.format("New chain head at height %d matches checkpoint",
+								header.getBlockHeight()));
 					} else {
-						BTCLoader
-								.error(String
-										.format("New chain head at height %d does not match checkpoint",
-												header.getBlockHeight()));
-						throw new VerificationException(
-								"Checkpoint verification failed",
-								RejectMessage.REJECT_CHECKPOINT,
-								header.getHash());
+						BTCLoader.error(String.format("New chain head at height %d does not match checkpoint",
+								header.getBlockHeight()));
+						throw new VerificationException("Checkpoint verification failed",
+								RejectMessage.REJECT_CHECKPOINT, header.getHash());
 					}
 				}
 			}
@@ -2680,21 +2419,16 @@ public class BlockStoreDataBase extends BlockStore {
 			Sha256Hash blockHash;
 			Sha256Hash prevHash;
 			List<Sha256Hash> txList;
-			try (PreparedStatement s1 = conn
-					.prepareStatement("SELECT prev_hash,matches FROM Headers "
-							+ "WHERE block_hash_index=? AND block_hash=? FOR UPDATE");
-					PreparedStatement s2 = conn
-							.prepareStatement("UPDATE Received SET block_hash=? "
-									+ "WHERE tx_hash_index=? AND tx_hash=?");
+			try (PreparedStatement s1 = conn.prepareStatement(
+					"SELECT prev_hash,matches FROM Headers " + "WHERE block_hash_index=? AND block_hash=? FOR UPDATE");
+					PreparedStatement s2 = conn.prepareStatement(
+							"UPDATE Received SET block_hash=? " + "WHERE tx_hash_index=? AND tx_hash=?");
 					PreparedStatement s3 = conn
-							.prepareStatement("UPDATE Sent SET block_hash=? "
-									+ "WHERE tx_hash_index=? AND tx_hash=?");
-					PreparedStatement s4 = conn
-							.prepareStatement("UPDATE Headers SET block_height=-1 "
-									+ "WHERE block_hash_index=? AND block_hash=?");
-					PreparedStatement s5 = conn
-							.prepareStatement("UPDATE Headers SET block_height=?,chain_work=? "
-									+ "WHERE block_hash_index=? AND block_hash=?")) {
+							.prepareStatement("UPDATE Sent SET block_hash=? " + "WHERE tx_hash_index=? AND tx_hash=?");
+					PreparedStatement s4 = conn.prepareStatement(
+							"UPDATE Headers SET block_height=-1 " + "WHERE block_hash_index=? AND block_hash=?");
+					PreparedStatement s5 = conn.prepareStatement("UPDATE Headers SET block_height=?,chain_work=? "
+							+ "WHERE block_hash_index=? AND block_hash=?")) {
 				conn.setAutoCommit(false);
 				if (!chainHead.equals(chainHeader.getPrevHash())) {
 					Sha256Hash junctionHash = chainList.get(0).getHash();
@@ -2704,11 +2438,8 @@ public class BlockStoreDataBase extends BlockStore {
 						s1.setBytes(2, blockHash.getBytes());
 						r = s1.executeQuery();
 						if (!r.next()) {
-							BTCLoader.error(String.format(
-									"Chain block not found\n  Block %s",
-									blockHash));
-							throw new BlockStoreException("Chain block not found",
-									blockHash);
+							BTCLoader.error(String.format("Chain block not found\n  Block %s", blockHash));
+							throw new BlockStoreException("Chain block not found", blockHash);
 						}
 						prevHash = new Sha256Hash(r.getBytes(1));
 						byte[] bytes = r.getBytes(2);
@@ -2729,9 +2460,7 @@ public class BlockStoreDataBase extends BlockStore {
 						s4.setLong(1, getHashIndex(blockHash));
 						s4.setBytes(2, blockHash.getBytes());
 						s4.executeUpdate();
-						BTCLoader.info(String.format(
-								"Block removed from block chain\n  Block %s",
-								blockHash));
+						BTCLoader.info(String.format("Block removed from block chain\n  Block %s", blockHash));
 						blockHash = prevHash;
 					}
 				}
@@ -2757,11 +2486,8 @@ public class BlockStoreDataBase extends BlockStore {
 					s5.setLong(3, getHashIndex(blockHash));
 					s5.setBytes(4, blockHash.getBytes());
 					s5.executeUpdate();
-					BTCLoader
-							.info(String
-									.format("Block added to block chain at height %d, Difficulty %d\n  Block %s",
-											blockHeight, header.getChainWork(),
-											blockHash));
+					BTCLoader.info(String.format("Block added to block chain at height %d, Difficulty %d\n  Block %s",
+							blockHeight, header.getChainWork(), blockHash));
 				}
 				conn.commit();
 				conn.setAutoCommit(true);
@@ -2775,12 +2501,11 @@ public class BlockStoreDataBase extends BlockStore {
 			}
 		}
 	}
-	
+
 	public void storeHeader(StoredHeader storedHeader) throws BlockStoreException {
 		Connection conn = getConnection();
-		try (PreparedStatement s = conn
-				.prepareStatement("INSERT INTO Headers "
-						+ "(block_hash_index,block_hash,prev_hash_index,prev_hash,version,timestamp,"
+		try (PreparedStatement s = conn.prepareStatement(
+				"INSERT INTO Headers " + "(block_hash_index,block_hash,prev_hash_index,prev_hash,version,timestamp,"
 						+ "target_difficulty,merkle_root,block_height,chain_work,matches) "
 						+ "VALUES(?,?,?,?,?,?,?,?,?,?,?)")) {
 			s.setLong(1, getHashIndex(storedHeader.getHash()));
@@ -2791,22 +2516,16 @@ public class BlockStoreDataBase extends BlockStore {
 			s.setLong(6, storedHeader.getBlockTime());
 			s.setLong(7, storedHeader.getTargetDifficulty());
 			s.setBytes(8, storedHeader.getMerkleRoot().getBytes());
-			s.setInt(9,
-					storedHeader.isOnChain() ? storedHeader.getBlockHeight()
-							: -1);
+			s.setInt(9, storedHeader.isOnChain() ? storedHeader.getBlockHeight() : -1);
 			s.setBytes(10, storedHeader.getChainWork().toByteArray());
-			if (storedHeader.getMatches() == null
-					|| storedHeader.getMatches().isEmpty()){
+			if (storedHeader.getMatches() == null || storedHeader.getMatches().isEmpty()) {
 				s.setNull(11, Types.BINARY);
-			}
-			else{
+			} else {
 				s.setBytes(11, getMatches(storedHeader.getMatches()));
 			}
 			s.executeUpdate();
 		} catch (SQLException exc) {
-			BTCLoader.error(String.format(
-					"Unable to store block header\n  Block %s",
-					storedHeader.getHash()), exc);
+			BTCLoader.error(String.format("Unable to store block header\n  Block %s", storedHeader.getHash()), exc);
 			throw new BlockStoreException("Unable to store block header");
 		}
 	}

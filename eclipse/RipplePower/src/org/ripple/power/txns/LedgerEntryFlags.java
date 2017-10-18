@@ -25,10 +25,7 @@ public class LedgerEntryFlags {
 	public static class State {
 		public static long LowReserve = 0x00010000, // True, if entry counts
 													// toward reserve.
-				HighReserve = 0x00020000,
-				LowAuth = 0x00040000,
-				HighAuth = 0x00080000,
-				LowNoRipple = 0x00100000,
+				HighReserve = 0x00020000, LowAuth = 0x00040000, HighAuth = 0x00080000, LowNoRipple = 0x00100000,
 				HighNoRipple = 0x00200000;
 	}
 

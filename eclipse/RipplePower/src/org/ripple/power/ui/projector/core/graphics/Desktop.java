@@ -86,8 +86,7 @@ public class Desktop implements LRelease {
 		int i = 0;
 		while (removed == -1 && i < components.length - 1) {
 			if (components[i].isContainer()) {
-				removed = this
-						.removeComponent((LContainer) components[i], comp);
+				removed = this.removeComponent((LContainer) components[i], comp);
 			}
 			i++;
 		}
@@ -95,15 +94,13 @@ public class Desktop implements LRelease {
 		return removed;
 	}
 
-	private int removeComponent(LContainer container,
-			Class<? extends LComponent> clazz) {
+	private int removeComponent(LContainer container, Class<? extends LComponent> clazz) {
 		int removed = container.remove(clazz);
 		LComponent[] components = container.getComponents();
 		int i = 0;
 		while (removed == -1 && i < components.length - 1) {
 			if (components[i].isContainer()) {
-				removed = this.removeComponent((LContainer) components[i],
-						clazz);
+				removed = this.removeComponent((LContainer) components[i], clazz);
 			}
 			i++;
 		}
@@ -172,8 +169,7 @@ public class Desktop implements LRelease {
 			this.processTouchEvent();
 		}
 		// 键盘事件
-		if (this.selectedComponent != null
-				&& this.selectedComponent.isEnabled()) {
+		if (this.selectedComponent != null && this.selectedComponent.isEnabled()) {
 			this.processKeyEvent();
 		}
 	}
@@ -183,18 +179,15 @@ public class Desktop implements LRelease {
 	 * 
 	 */
 	private void processTouchMotionEvent() {
-		if ((this.hoverComponent != null && this.hoverComponent.isEnabled())
-				&& this.input.isMoving()) {
+		if ((this.hoverComponent != null && this.hoverComponent.isEnabled()) && this.input.isMoving()) {
 			if (this.input.getTouchDX() != 0 || this.input.getTouchDY() != 0) {
 				this.hoverComponent.processTouchDragged();
 			}
 		} else {
 			// 获得当前窗体下鼠标坐标
-			LComponent comp = this.findComponent(this.input.getTouchX(),
-					this.input.getTouchY());
+			LComponent comp = this.findComponent(this.input.getTouchX(), this.input.getTouchY());
 			if (comp != null) {
-				if (this.input.getTouchDX() != 0
-						|| this.input.getTouchDY() != 0) {
+				if (this.input.getTouchDX() != 0 || this.input.getTouchDY() != 0) {
 					comp.processTouchMoved();
 				}
 
@@ -221,16 +214,14 @@ public class Desktop implements LRelease {
 	 * 
 	 */
 	private void processTouchEvent() {
-		int pressed = this.input.getTouchPressed(), released = this.input
-				.getTouchReleased();
+		int pressed = this.input.getTouchPressed(), released = this.input.getTouchReleased();
 		if (pressed > LInput.NO_BUTTON) {
 			if (!isClicked) {
 				this.hoverComponent.processTouchPressed();
 			}
 			this.clickComponent[0] = this.hoverComponent;
 			if (this.hoverComponent.isFocusable()) {
-				if (pressed == MouseEvent.BUTTON1
-						&& this.hoverComponent != this.selectedComponent) {
+				if (pressed == MouseEvent.BUTTON1 && this.hoverComponent != this.selectedComponent) {
 					this.selectComponent(this.hoverComponent);
 				}
 			}
@@ -255,8 +246,7 @@ public class Desktop implements LRelease {
 		if (this.input.getKeyPressed() != LInput.NO_KEY) {
 			this.selectedComponent.keyPressed();
 		}
-		if (this.input.getKeyReleased() != LInput.NO_KEY
-				&& this.selectedComponent != null) {
+		if (this.input.getKeyReleased() != LInput.NO_KEY && this.selectedComponent != null) {
 			this.selectedComponent.processKeyReleased();
 		}
 	}
@@ -273,8 +263,7 @@ public class Desktop implements LRelease {
 			return null;
 		}
 		// 返回子容器
-		LContainer panel = (this.modal == null) ? this.contentPane
-				: ((LContainer) this.modal);
+		LContainer panel = (this.modal == null) ? this.contentPane : ((LContainer) this.modal);
 		LComponent comp = panel.findComponent(x, y);
 		return comp;
 	}
@@ -406,8 +395,7 @@ public class Desktop implements LRelease {
 		for (int i = size; i > 0; i--) {
 			LComponent comp = (LComponent) components[i - 1];
 			Class<? extends LComponent> cls = comp.getClass();
-			if (clazz == null || clazz == cls || clazz.isInstance(comp)
-					|| clazz.equals(cls)) {
+			if (clazz == null || clazz == cls || clazz.isInstance(comp) || clazz.equals(cls)) {
 				l.add(comp);
 			}
 		}
@@ -468,8 +456,7 @@ public class Desktop implements LRelease {
 
 	public void setModal(LComponent comp) {
 		if (comp != null && !comp.isVisible()) {
-			throw new RuntimeException(
-					"Can't set invisible component as modal component!");
+			throw new RuntimeException("Can't set invisible component as modal component!");
 		}
 		this.modal = comp;
 	}

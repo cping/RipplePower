@@ -73,16 +73,14 @@ public class ContactDialog extends ABaseDialog {
 
 	private JPanel labelPanel, viewEditPanel;
 
-	private RPLabel firstNameLabel, lastNameLabel, rippleAddressLabel,
-			relationshipLabel, addressLabel, cityLabel, stateLabel, zipLabel,
-			phoneLabel, emailLabel, birthdayLabel, companyLabel;
+	private RPLabel firstNameLabel, lastNameLabel, rippleAddressLabel, relationshipLabel, addressLabel, cityLabel,
+			stateLabel, zipLabel, phoneLabel, emailLabel, birthdayLabel, companyLabel;
 
 	private RPComboBox comboBox;
 
-	private RPTextBox stateTextField, cityTextField, rippleTextField,
-			emailTextField, lastNameTextField, firstNameTextField,
-			phoneTextField, relationshipTextField, birthdayTextField,
-			companyTextField, zipTextField;
+	private RPTextBox stateTextField, cityTextField, rippleTextField, emailTextField, lastNameTextField,
+			firstNameTextField, phoneTextField, relationshipTextField, birthdayTextField, companyTextField,
+			zipTextField;
 
 	private JTextPane addressTextPane;
 
@@ -98,8 +96,7 @@ public class ContactDialog extends ABaseDialog {
 
 	private RPCButton editButton;
 
-	private String first, last, rippleAddress, address, city, state, zip,
-			phone, email, relationship, birthday, company;
+	private String first, last, rippleAddress, address, city, state, zip, phone, email, relationship, birthday, company;
 
 	private int contactIndex;
 	private boolean edit = false;
@@ -136,8 +133,7 @@ public class ContactDialog extends ABaseDialog {
 
 		viewEditPanel = new JPanel();
 		viewEditPanel.setBounds(10, 6, 226, 54);
-		viewEditPanel.setBorder(new TitledBorder(UIManager
-				.getBorder("TitledBorder.border"), "View/Edit Contact",
+		viewEditPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "View/Edit Contact",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.white));
 		viewEditPanel.setLayout(null);
 
@@ -258,8 +254,7 @@ public class ContactDialog extends ABaseDialog {
 
 		// mode 0
 		relationshipTextField = new RPTextBox();
-		relationshipTextField.setBounds(offsetX - 2, (offsetY += 25) - 4, 230,
-				20);
+		relationshipTextField.setBounds(offsetX - 2, (offsetY += 25) - 4, 230, 20);
 		relationshipTextField.setText("");
 		relationshipTextField.setColumns(10);
 
@@ -322,8 +317,7 @@ public class ContactDialog extends ABaseDialog {
 
 						if (tab == Tab.FAMILY) {
 							if (contacts.get(i) instanceof FamilyContact) {
-								FamilyContact contact = (FamilyContact) contacts
-										.get(i);
+								FamilyContact contact = (FamilyContact) contacts.get(i);
 								relationship = contact.getRelationship();
 								rippleAddress = contact.getRippleAddress();
 								first = contact.getFirstName();
@@ -339,8 +333,7 @@ public class ContactDialog extends ABaseDialog {
 						}
 						if (tab == Tab.FRIEND) {
 							if (contacts.get(i) instanceof FriendContact) {
-								FriendContact contact = (FriendContact) contacts
-										.get(i);
+								FriendContact contact = (FriendContact) contacts.get(i);
 								birthday = contact.getBirthday();
 								rippleAddress = contact.getRippleAddress();
 								first = contact.getFirstName();
@@ -357,8 +350,7 @@ public class ContactDialog extends ABaseDialog {
 
 						if (tab == Tab.BUSINESS) {
 							if (contacts.get(i) instanceof BusinessContact) {
-								BusinessContact contact = (BusinessContact) contacts
-										.get(i);
+								BusinessContact contact = (BusinessContact) contacts.get(i);
 								rippleAddress = contact.getRippleAddress();
 								company = contact.getCompany();
 								first = contact.getFirstName();
@@ -374,7 +366,7 @@ public class ContactDialog extends ABaseDialog {
 						}
 						firstNameTextField.setVisible(true);
 						repaint();
-						//printAll(getGraphics());
+						// printAll(getGraphics());
 					}
 				}
 			}
@@ -463,8 +455,7 @@ public class ContactDialog extends ABaseDialog {
 				rippleTextField.setEditable(true);
 				phoneTextField.setEditable(true);
 				addressTextPane.setEditable(true);
-				addressTextPane.setBackground(firstNameTextField
-						.getBackground());
+				addressTextPane.setBackground(firstNameTextField.getBackground());
 
 				if (tab == Tab.FAMILY) {
 					relationshipTextField.setEditable(true);
@@ -510,17 +501,17 @@ public class ContactDialog extends ABaseDialog {
 					relationship = relationshipTextField.getText();
 					birthday = birthdayTextField.getText();
 					company = companyTextField.getText();
-					
+
 					if (first == null || first.length() == 0) {
 						firstNameTextField.setText("Error!");
 						repaint();
-						//printAll(getGraphics());
+						// printAll(getGraphics());
 						throw new Exception("First Name exception !");
 					}
 					if (last == null || last.length() == 0) {
 						lastNameTextField.setText("Error!");
 						repaint();
-						//printAll(getGraphics());
+						// printAll(getGraphics());
 						throw new Exception("Last Name exception !");
 					}
 					if (!AccountFind.isRippleAddress(rippleAddress)) {
@@ -529,33 +520,30 @@ public class ContactDialog extends ABaseDialog {
 						} catch (Exception ex) {
 							rippleTextField.setText("Error!");
 							repaint();
-							//printAll(getGraphics());
+							// printAll(getGraphics());
 							throw new Exception("Ripple Address exception !");
 						}
 					}
 					if (!StringUtils.isEmail(email)) {
 						emailTextField.setText("Error!");
 						repaint();
-						//printAll(getGraphics());
+						// printAll(getGraphics());
 						throw new Exception("Email exception !");
 					}
-		
 
 					if (edit == true) {
 						contacts.remove(contactIndex);
 					}
 
 					if (tab == Tab.FAMILY) {
-						FamilyContact contact = new FamilyContact(first, last,
-								rippleAddress, address, city, state, zip,
+						FamilyContact contact = new FamilyContact(first, last, rippleAddress, address, city, state, zip,
 								phone, email, relationship);
 						contacts.add(contact);
 					}
 					if (tab == Tab.FRIEND) {
 						birthday = birthdayTextField.getText();
 
-						FriendContact contact = new FriendContact(first, last,
-								rippleAddress, address, city, state, zip,
+						FriendContact contact = new FriendContact(first, last, rippleAddress, address, city, state, zip,
 								phone, email, birthday);
 						contacts.add(contact);
 					}
@@ -563,9 +551,8 @@ public class ContactDialog extends ABaseDialog {
 					if (tab == Tab.BUSINESS) {
 						company = companyTextField.getText();
 
-						BusinessContact contact = new BusinessContact(first,
-								last, rippleAddress, address, city, state, zip,
-								phone, email, company);
+						BusinessContact contact = new BusinessContact(first, last, rippleAddress, address, city, state,
+								zip, phone, email, company);
 						contacts.add(contact);
 					}
 
@@ -573,8 +560,7 @@ public class ContactDialog extends ABaseDialog {
 					firstState();
 					event.getActionCommand();
 				} catch (Exception runtimeException) {
-					UIRes.showWarningMessage(ContactDialog.this,
-							"Invalid Input", "Invalid Input");
+					UIRes.showWarningMessage(ContactDialog.this, "Invalid Input", "Invalid Input");
 				}
 
 			}
@@ -590,8 +576,7 @@ public class ContactDialog extends ABaseDialog {
 					ContactShowDialog.init();
 					ContactShowDialog.displayContacts(contacts);
 				} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-					UIRes.showWarningMessage(ContactDialog.this,
-							"Please add a contact first",
+					UIRes.showWarningMessage(ContactDialog.this, "Please add a contact first",
 							"Please add a contact first");
 				}
 			}
@@ -600,8 +585,7 @@ public class ContactDialog extends ABaseDialog {
 				try {
 					SearchDialog.showDialog("Serach", ContactDialog.this);
 				} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-					UIRes.showWarningMessage(ContactDialog.this,
-							"Please add a contact first",
+					UIRes.showWarningMessage(ContactDialog.this, "Please add a contact first",
 							"Please add a contact first");
 				}
 			}
@@ -621,8 +605,7 @@ public class ContactDialog extends ABaseDialog {
 				firstNameTextField.setEditable(true);
 				phoneTextField.setEditable(true);
 				addressTextPane.setEditable(true);
-				addressTextPane.setBackground(firstNameTextField
-						.getBackground());
+				addressTextPane.setBackground(firstNameTextField.getBackground());
 
 				saveButton.setEnabled(true);
 				backButton.setEnabled(true);
@@ -711,22 +694,19 @@ public class ContactDialog extends ABaseDialog {
 		for (int i = 0; i < contacts.size(); i++) {
 			if (contacts.get(i) instanceof FamilyContact) {
 				FamilyContact person = (FamilyContact) contacts.get(i);
-				if (person.getFirstName().equals(fName)
-						&& person.getLastName().equals(lName)) {
+				if (person.getFirstName().equals(fName) && person.getLastName().equals(lName)) {
 					index = i;
 				}
 			}
 			if (contacts.get(i) instanceof FriendContact) {
 				FriendContact person = (FriendContact) contacts.get(i);
-				if (person.getFirstName().equals(fName)
-						&& person.getLastName().equals(lName)) {
+				if (person.getFirstName().equals(fName) && person.getLastName().equals(lName)) {
 					index = i;
 				}
 			}
 			if (contacts.get(i) instanceof BusinessContact) {
 				BusinessContact person = (BusinessContact) contacts.get(i);
-				if (person.getFirstName().equals(fName)
-						&& person.getLastName().equals(lName)) {
+				if (person.getFirstName().equals(fName) && person.getLastName().equals(lName)) {
 					index = i;
 				}
 			}
@@ -794,7 +774,7 @@ public class ContactDialog extends ABaseDialog {
 		comboBox.setVisible(true);
 
 		repaint();
-	//	printAll(getGraphics());
+		// printAll(getGraphics());
 	}
 
 	@SuppressWarnings("unchecked")

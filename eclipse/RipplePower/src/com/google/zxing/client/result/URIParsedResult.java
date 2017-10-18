@@ -23,8 +23,7 @@ import java.util.regex.Pattern;
  */
 public final class URIParsedResult extends ParsedResult {
 
-	private static final Pattern USER_IN_HOST = Pattern
-			.compile(":/*([^/@]+)@[^/]+");
+	private static final Pattern USER_IN_HOST = Pattern.compile(":/*([^/@]+)@[^/]+");
 
 	private final String uri;
 	private final String title;
@@ -82,8 +81,7 @@ public final class URIParsedResult extends ParsedResult {
 		return uri;
 	}
 
-	private static boolean isColonFollowedByPortNumber(String uri,
-			int protocolEnd) {
+	private static boolean isColonFollowedByPortNumber(String uri, int protocolEnd) {
 		int start = protocolEnd + 1;
 		int nextSlash = uri.indexOf('/', start);
 		if (nextSlash < 0) {

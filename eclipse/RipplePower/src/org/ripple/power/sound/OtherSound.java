@@ -52,11 +52,8 @@ public class OtherSound implements Sound {
 			}
 			AudioFormat baseFormat = in.getFormat();
 
-			AudioFormat decodedFormat = new AudioFormat(
-					AudioFormat.Encoding.PCM_SIGNED,
-					baseFormat.getSampleRate(), 16, baseFormat.getChannels(),
-					baseFormat.getChannels() * 2, baseFormat.getSampleRate(),
-					false);
+			AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
+					baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
 
 			din = AudioSystem.getAudioInputStream(decodedFormat, in);
 
@@ -77,8 +74,8 @@ public class OtherSound implements Sound {
 		this.volume = volume / 100F;
 	}
 
-	private void rawplay(AudioFormat trgFormat, AudioInputStream din,
-			float volume) throws IOException, LineUnavailableException {
+	private void rawplay(AudioFormat trgFormat, AudioInputStream din, float volume)
+			throws IOException, LineUnavailableException {
 		if (volume <= 0f) {
 			return;
 		}
@@ -110,12 +107,10 @@ public class OtherSound implements Sound {
 		}
 	}
 
-	private SourceDataLine getLine(AudioFormat audioFormat)
-			throws LineUnavailableException {
+	private SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
 		SourceDataLine res = null;
 
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-				audioFormat);
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 
 		res = (SourceDataLine) AudioSystem.getLine(info);
 		res.open(audioFormat);

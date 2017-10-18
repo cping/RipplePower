@@ -9,6 +9,6 @@ public interface IHInfoPacks {
 	IHPosition position(IHInstrument instrument);
 
 	IHPosition position(String idOrSymbol);
-	
+
 	IHRuntime runtime();
 }

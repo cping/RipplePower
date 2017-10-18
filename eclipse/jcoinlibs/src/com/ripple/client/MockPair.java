@@ -3,7 +3,6 @@ package com.ripple.client;
 import com.ripple.client.requests.Request;
 import com.ripple.client.transport.TransportEventHandler;
 import com.ripple.client.transport.WebSocketTransport;
-
 import org.json.JSONObject;
 
 import java.net.Proxy;
@@ -173,11 +172,12 @@ public class MockPair {
             public void onConnected() {
                 handler.onConnected();
             }
-       
+
 			@Override
 			public void setProxy(Proxy proxy) {
 				handler.setProxy(proxy);
 			}
+
         }
 
         MockSocket ws;

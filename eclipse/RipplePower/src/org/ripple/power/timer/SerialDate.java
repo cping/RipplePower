@@ -13,8 +13,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final DateFormatSymbols DATE_FORMAT_SYMBOLS = new SimpleDateFormat()
-			.getDateFormatSymbols();
+	public static final DateFormatSymbols DATE_FORMAT_SYMBOLS = new SimpleDateFormat().getDateFormatSymbols();
 
 	public static final int SERIAL_LOWER_BOUND = 2;
 
@@ -38,20 +37,18 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 	public static final int SUNDAY = Calendar.SUNDAY;
 
-	static final int[] LAST_DAY_OF_MONTH = { 0, 31, 28, 31, 30, 31, 30, 31, 31,
-			30, 31, 30, 31 };
+	static final int[] LAST_DAY_OF_MONTH = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-	static final int[] AGGREGATE_DAYS_TO_END_OF_MONTH = { 0, 31, 59, 90, 120,
-			151, 181, 212, 243, 273, 304, 334, 365 };
+	static final int[] AGGREGATE_DAYS_TO_END_OF_MONTH = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
 
-	static final int[] AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH = { 0, 0, 31,
-			59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
+	static final int[] AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH = { 0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304,
+			334, 365 };
 
-	static final int[] LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_MONTH = { 0, 31, 60,
-			91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
+	static final int[] LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_MONTH = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305,
+			335, 366 };
 
-	static final int[] LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH = {
-			0, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
+	static final int[] LEAP_YEAR_AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH = { 0, 0, 31, 60, 91, 121, 152, 182, 213, 244,
+			274, 305, 335, 366 };
 
 	public static final int FIRST_WEEK_IN_MONTH = 1;
 
@@ -101,8 +98,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 	public static int stringToWeekdayCode(String s) {
 
-		final String[] shortWeekdayNames = DATE_FORMAT_SYMBOLS
-				.getShortWeekdays();
+		final String[] shortWeekdayNames = DATE_FORMAT_SYMBOLS.getShortWeekdays();
 		final String[] weekDayNames = DATE_FORMAT_SYMBOLS.getWeekdays();
 
 		int result = -1;
@@ -186,8 +182,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 		case DECEMBER:
 			return 4;
 		default:
-			throw new IllegalArgumentException(
-					"SerialDate.monthCodeToQuarter: invalid month code.");
+			throw new IllegalArgumentException("SerialDate.monthCodeToQuarter: invalid month code.");
 		}
 
 	}
@@ -198,12 +193,10 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 	}
 
-	public static String monthCodeToString(final int month,
-			final boolean shortened) {
+	public static String monthCodeToString(final int month, final boolean shortened) {
 
 		if (!isValidMonthCode(month)) {
-			throw new IllegalArgumentException(
-					"SerialDate.monthCodeToString: month outside valid range.");
+			throw new IllegalArgumentException("SerialDate.monthCodeToString: month outside valid range.");
 		}
 
 		final String[] months;
@@ -311,8 +304,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 		final int yy = (12 * base.getYYYY() + base.getMonth() + months - 1) / 12;
 		final int mm = (12 * base.getYYYY() + base.getMonth() + months - 1) % 12 + 1;
-		final int dd = Math.min(base.getDayOfMonth(),
-				SerialDate.lastDayOfMonth(mm, yy));
+		final int dd = Math.min(base.getDayOfMonth(), SerialDate.lastDayOfMonth(mm, yy));
 		return SerialDate.createInstance(dd, mm, yy);
 
 	}
@@ -324,15 +316,13 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 		final int baseD = base.getDayOfMonth();
 
 		final int targetY = baseY + years;
-		final int targetD = Math.min(baseD,
-				SerialDate.lastDayOfMonth(baseM, targetY));
+		final int targetD = Math.min(baseD, SerialDate.lastDayOfMonth(baseM, targetY));
 
 		return SerialDate.createInstance(targetD, baseM, targetY);
 
 	}
 
-	public static SerialDate getPreviousDayOfWeek(final int targetWeekday,
-			final SerialDate base) {
+	public static SerialDate getPreviousDayOfWeek(final int targetWeekday, final SerialDate base) {
 
 		if (!SerialDate.isValidWeekdayCode(targetWeekday)) {
 			throw new IllegalArgumentException("Invalid day-of-the-week code.");
@@ -350,8 +340,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 	}
 
-	public static SerialDate getFollowingDayOfWeek(final int targetWeekday,
-			final SerialDate base) {
+	public static SerialDate getFollowingDayOfWeek(final int targetWeekday, final SerialDate base) {
 
 		if (!SerialDate.isValidWeekdayCode(targetWeekday)) {
 			throw new IllegalArgumentException("Invalid day-of-the-week code.");
@@ -368,8 +357,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 		return SerialDate.addDays(adjust, base);
 	}
 
-	public static SerialDate getNearestDayOfWeek(final int targetDOW,
-			final SerialDate base) {
+	public static SerialDate getNearestDayOfWeek(final int targetDOW, final SerialDate base) {
 
 		if (!SerialDate.isValidWeekdayCode(targetDOW)) {
 			throw new IllegalArgumentException("Invalid day-of-the-week code.");
@@ -388,8 +376,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 	}
 
 	public SerialDate getEndOfCurrentMonth(final SerialDate base) {
-		final int last = SerialDate.lastDayOfMonth(base.getMonth(),
-				base.getYYYY());
+		final int last = SerialDate.lastDayOfMonth(base.getMonth(), base.getYYYY());
 		return SerialDate.createInstance(last, base.getMonth(), base.getYYYY());
 	}
 
@@ -427,8 +414,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 	}
 
-	public static SerialDate createInstance(final int day, final int month,
-			final int yyyy) {
+	public static SerialDate createInstance(final int day, final int month, final int yyyy) {
 		return new SpreadsheetDate(day, month, yyyy);
 	}
 
@@ -440,8 +426,8 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 
 		final GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		return new SpreadsheetDate(calendar.get(Calendar.DATE),
-				calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+		return new SpreadsheetDate(calendar.get(Calendar.DATE), calendar.get(Calendar.MONTH) + 1,
+				calendar.get(Calendar.YEAR));
 
 	}
 
@@ -458,8 +444,7 @@ public abstract class SerialDate implements Serializable, MonthConstants {
 	}
 
 	public String toString() {
-		return getDayOfMonth() + "-" + SerialDate.monthCodeToString(getMonth())
-				+ "-" + getYYYY();
+		return getDayOfMonth() + "-" + SerialDate.monthCodeToString(getMonth()) + "-" + getYYYY();
 	}
 
 	public abstract int getYYYY();

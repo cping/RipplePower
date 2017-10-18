@@ -9,13 +9,13 @@ import com.ripple.core.types.known.sle.LedgerEntry;
 
 // TODO: fix up this nonsense
 public class AffectedNode extends STObject {
-    Field field;
-    STObject nested;
+    public final Field field;
+    public final STObject nested;
 
     public AffectedNode(STObject source) {
         fields = source.getFields();
         field = getField();
-        nested = getNested();
+        nested = nestedObject();
     }
 
     public boolean isOffer() {
@@ -66,7 +66,7 @@ public class AffectedNode extends STObject {
         return ledgerEntryType(nested);
     }
 
-    private STObject getNested() {
+    private STObject nestedObject() {
         return (STObject) get(getField());
     }
 
@@ -78,7 +78,7 @@ public class AffectedNode extends STObject {
         return (LedgerEntry) rebuildFromMeta(false);
     }
 
-    public STObject rebuildFromMeta(boolean layerPrevious) {
+    private STObject rebuildFromMeta(boolean layerPrevious) {
         STObject mixed = new STObject();
         boolean created = isCreatedNode();
 

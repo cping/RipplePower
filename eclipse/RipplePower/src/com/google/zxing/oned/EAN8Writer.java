@@ -37,11 +37,10 @@ public final class EAN8Writer extends UPCEANWriter {
 			3; // end guard
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) throws WriterException {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType, ?> hints)
+			throws WriterException {
 		if (format != BarcodeFormat.EAN_8) {
-			throw new IllegalArgumentException(
-					"Can only encode EAN_8, but got " + format);
+			throw new IllegalArgumentException("Can only encode EAN_8, but got " + format);
 		}
 
 		return super.encode(contents, format, width, height, hints);
@@ -54,8 +53,7 @@ public final class EAN8Writer extends UPCEANWriter {
 	public boolean[] encode(String contents) {
 		if (contents.length() != 8) {
 			throw new IllegalArgumentException(
-					"Requested contents should be 8 digits long, but got "
-							+ contents.length());
+					"Requested contents should be 8 digits long, but got " + contents.length());
 		}
 
 		boolean[] result = new boolean[CODE_WIDTH];
@@ -65,16 +63,14 @@ public final class EAN8Writer extends UPCEANWriter {
 
 		for (int i = 0; i <= 3; i++) {
 			int digit = Integer.parseInt(contents.substring(i, i + 1));
-			pos += appendPattern(result, pos, UPCEANReader.L_PATTERNS[digit],
-					false);
+			pos += appendPattern(result, pos, UPCEANReader.L_PATTERNS[digit], false);
 		}
 
 		pos += appendPattern(result, pos, UPCEANReader.MIDDLE_PATTERN, false);
 
 		for (int i = 4; i <= 7; i++) {
 			int digit = Integer.parseInt(contents.substring(i, i + 1));
-			pos += appendPattern(result, pos, UPCEANReader.L_PATTERNS[digit],
-					true);
+			pos += appendPattern(result, pos, UPCEANReader.L_PATTERNS[digit], true);
 		}
 		appendPattern(result, pos, UPCEANReader.START_END_PATTERN, true);
 

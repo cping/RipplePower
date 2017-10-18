@@ -36,8 +36,7 @@ public final class FinderPattern extends ResultPoint {
 		this(posX, posY, estimatedModuleSize, 1);
 	}
 
-	private FinderPattern(float posX, float posY, float estimatedModuleSize,
-			int count) {
+	private FinderPattern(float posX, float posY, float estimatedModuleSize, int count) {
 		super(posX, posY);
 		this.estimatedModuleSize = estimatedModuleSize;
 		this.count = count;
@@ -63,11 +62,9 @@ public final class FinderPattern extends ResultPoint {
 	 * </p>
 	 */
 	boolean aboutEquals(float moduleSize, float i, float j) {
-		if (Math.abs(i - getY()) <= moduleSize
-				&& Math.abs(j - getX()) <= moduleSize) {
+		if (Math.abs(i - getY()) <= moduleSize && Math.abs(j - getX()) <= moduleSize) {
 			float moduleSizeDiff = Math.abs(moduleSize - estimatedModuleSize);
-			return moduleSizeDiff <= 1.0f
-					|| moduleSizeDiff <= estimatedModuleSize;
+			return moduleSizeDiff <= 1.0f || moduleSizeDiff <= estimatedModuleSize;
 		}
 		return false;
 	}
@@ -81,10 +78,8 @@ public final class FinderPattern extends ResultPoint {
 		int combinedCount = count + 1;
 		float combinedX = (count * getX() + j) / combinedCount;
 		float combinedY = (count * getY() + i) / combinedCount;
-		float combinedModuleSize = (count * estimatedModuleSize + newModuleSize)
-				/ combinedCount;
-		return new FinderPattern(combinedX, combinedY, combinedModuleSize,
-				combinedCount);
+		float combinedModuleSize = (count * estimatedModuleSize + newModuleSize) / combinedCount;
+		return new FinderPattern(combinedX, combinedY, combinedModuleSize, combinedCount);
 	}
 
 }

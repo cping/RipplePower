@@ -11,16 +11,11 @@ import org.ripple.power.utils.HttpRequest;
 //not included in China can not be linked site
 public class BTCStoreQuery {
 
-	private final static ArrayList<BTCPrice> _usdList = new ArrayList<BTCPrice>(
-			40);
-	private final static ArrayList<BTCPrice> _cnyList = new ArrayList<BTCPrice>(
-			40);
-	private final static ArrayList<BTCPrice> _jpyList = new ArrayList<BTCPrice>(
-			40);
-	private final static ArrayList<BTCPrice> _eurList = new ArrayList<BTCPrice>(
-			40);
-	private final static ArrayList<BTCPrice> _cadList = new ArrayList<BTCPrice>(
-			40);
+	private final static ArrayList<BTCPrice> _usdList = new ArrayList<BTCPrice>(40);
+	private final static ArrayList<BTCPrice> _cnyList = new ArrayList<BTCPrice>(40);
+	private final static ArrayList<BTCPrice> _jpyList = new ArrayList<BTCPrice>(40);
+	private final static ArrayList<BTCPrice> _eurList = new ArrayList<BTCPrice>(40);
+	private final static ArrayList<BTCPrice> _cadList = new ArrayList<BTCPrice>(40);
 
 	static {
 		_cnyList.add(new BTCPrice(BTCStore.LAKEBTC));
@@ -152,16 +147,14 @@ public class BTCStoreQuery {
 				}
 				break;
 			case COINBASE:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.COINBASE, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.COINBASE, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("amount");
 				}
 				break;
 			case BITCOIN_AVERAGE:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.BITCOIN_AVERAGE, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.BITCOIN_AVERAGE, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("last");
@@ -177,8 +170,7 @@ public class BTCStoreQuery {
 				}
 				break;
 			case BITCUREX:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.BITCUREX, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.BITCUREX, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					return obj.optString("last_tx_price_h");
@@ -192,8 +184,7 @@ public class BTCStoreQuery {
 				}
 				break;
 			case BITCOIN_AVERAGE_GLOBAL:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.BITCOIN_AVERAGE_GLOBAL, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.BITCOIN_AVERAGE_GLOBAL, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					return obj.optString("last");
@@ -219,12 +210,10 @@ public class BTCStoreQuery {
 				}
 				break;
 			case KRAKEN:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.KRAKEN, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.KRAKEN, _cur));
 				if (result != null && result.indexOf("\"c\":") != -1) {
 					JSONObject obj = new JSONObject(result);
-					JSONObject obj2 = obj.optJSONObject("result")
-							.optJSONObject("XXBTZ" + _cur);
+					JSONObject obj2 = obj.optJSONObject("result").optJSONObject("XXBTZ" + _cur);
 					result = (String) obj2.optJSONArray("c").get(0);
 				}
 				break;
@@ -239,26 +228,21 @@ public class BTCStoreQuery {
 				result = HttpRequest.getHttps(BTCStoreQuery.VIRTEX);
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
-					result = obj.optJSONObject("ticker")
-							.optJSONObject("BTCCAD").optString("last");
+					result = obj.optJSONObject("ticker").optJSONObject("BTCCAD").optString("last");
 				}
 				break;
 			case JUSTCOIN:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.JUSTCOIN, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.JUSTCOIN, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
-					result = obj.optJSONObject("data").optJSONObject("last")
-							.optString("value");
+					result = obj.optJSONObject("data").optJSONObject("last").optString("value");
 				}
 				break;
 			case LAKEBTC:
 				result = HttpRequest.getHttps(BTCStoreQuery.LAKEBTC);
-				if (result != null && result.indexOf("error") == -1
-						&& result.indexOf(_cur) != -1) {
+				if (result != null && result.indexOf("error") == -1 && result.indexOf(_cur) != -1) {
 					JSONObject obj = new JSONObject(result);
-					result = String.valueOf(obj.optJSONObject(_cur).optDouble(
-							"last"));
+					result = String.valueOf(obj.optJSONObject(_cur).optDouble("last"));
 				}
 				break;
 			case CRYPTONIT:
@@ -325,16 +309,14 @@ public class BTCStoreQuery {
 				}
 				break;
 			case BITBAY:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.BITBAY, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.BITBAY, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("last");
 				}
 				break;
 			case CEXIO:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.CEXIO, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.CEXIO, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("lprice");
@@ -353,8 +335,7 @@ public class BTCStoreQuery {
 				break;
 			case HITBTC:
 				try {
-					result = HttpRequest.fix_ssl_open(String.format(
-							BTCStoreQuery.HITBTC, _cur));
+					result = HttpRequest.fix_ssl_open(String.format(BTCStoreQuery.HITBTC, _cur));
 				} catch (Exception e) {
 					result = null;
 				}
@@ -364,8 +345,7 @@ public class BTCStoreQuery {
 				}
 				break;
 			case ITBIT:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.ITBIT, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.ITBIT, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("lastPrice");
@@ -386,8 +366,7 @@ public class BTCStoreQuery {
 				}
 				break;
 			case INDEPENDENT_RESERVER:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.INDEPENDENT_RESERVER, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.INDEPENDENT_RESERVER, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("LastPrice");
@@ -401,24 +380,21 @@ public class BTCStoreQuery {
 				}
 				break;
 			case QUADRIGA:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.QUADRIGA, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.QUADRIGA, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("last");
 				}
 				break;
 			case GATECOIN:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.GATECOIN, _cur));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.GATECOIN, _cur));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optJSONObject("ticker").optString("last");
 				}
 				break;
 			case MEXBT:
-				result = HttpRequest.getHttps(String.format(
-						BTCStoreQuery.MEXBT, _cur.toLowerCase(Locale.US)));
+				result = HttpRequest.getHttps(String.format(BTCStoreQuery.MEXBT, _cur.toLowerCase(Locale.US)));
 				if (result != null && result.indexOf("error") == -1) {
 					JSONObject obj = new JSONObject(result);
 					result = obj.optString("last");
@@ -444,8 +420,8 @@ public class BTCStoreQuery {
 		return getCurrency("USD", store);
 	}
 
-	public static ArrayList<BTCPrice> getPrices(String cur,
-			ArrayList<BTCPrice> prices, BTCMonitor monitor, boolean sort) {
+	public static ArrayList<BTCPrice> getPrices(String cur, ArrayList<BTCPrice> prices, BTCMonitor monitor,
+			boolean sort) {
 		ArrayList<BTCPrice> result = new ArrayList<BTCPrice>(prices.size());
 		for (BTCPrice p : prices) {
 			BTCPrice price = new BTCPrice(p.store, getCurrency(cur, p.store));
@@ -463,28 +439,23 @@ public class BTCStoreQuery {
 		return result;
 	}
 
-	public static ArrayList<BTCPrice> getUSDPrices(BTCMonitor monitor,
-			boolean sort) {
+	public static ArrayList<BTCPrice> getUSDPrices(BTCMonitor monitor, boolean sort) {
 		return getPrices("USD", _usdList, monitor, sort);
 	}
 
-	public static ArrayList<BTCPrice> getCNYPrices(BTCMonitor monitor,
-			boolean sort) {
+	public static ArrayList<BTCPrice> getCNYPrices(BTCMonitor monitor, boolean sort) {
 		return getPrices("CNY", _cnyList, monitor, sort);
 	}
 
-	public static ArrayList<BTCPrice> getJPYPrices(BTCMonitor monitor,
-			boolean sort) {
+	public static ArrayList<BTCPrice> getJPYPrices(BTCMonitor monitor, boolean sort) {
 		return getPrices("JPY", _jpyList, monitor, sort);
 	}
 
-	public static ArrayList<BTCPrice> getEURPrices(BTCMonitor monitor,
-			boolean sort) {
+	public static ArrayList<BTCPrice> getEURPrices(BTCMonitor monitor, boolean sort) {
 		return getPrices("EUR", _eurList, monitor, sort);
 	}
 
-	public static ArrayList<BTCPrice> getCADPrices(BTCMonitor monitor,
-			boolean sort) {
+	public static ArrayList<BTCPrice> getCADPrices(BTCMonitor monitor, boolean sort) {
 		return getPrices("CAD", _cadList, monitor, sort);
 	}
 

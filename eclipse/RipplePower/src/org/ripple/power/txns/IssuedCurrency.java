@@ -18,8 +18,8 @@ import com.ripple.core.coretypes.Issue;
 
 public class IssuedCurrency extends RippleDefault {
 
-	boolean isHighNodeIssuer(BigNumber finalBalance, BigNumber previousBalance,
-			BigNumber highLimit, BigNumber lowLimit) {
+	boolean isHighNodeIssuer(BigNumber finalBalance, BigNumber previousBalance, BigNumber highLimit,
+			BigNumber lowLimit) {
 		if (finalBalance.isPositive()) {
 			return true;
 		} else if (finalBalance.isNegative()) {
@@ -57,8 +57,7 @@ public class IssuedCurrency extends RippleDefault {
 
 	public IssuedCurrency(String amountStr, boolean update) {
 		if (amountStr.toLowerCase().indexOf(LSystem.nativeCurrency) != -1) {
-			amountStr = StringUtils.replaceIgnoreCase(amountStr,
-					LSystem.nativeCurrency, "").trim();
+			amountStr = StringUtils.replaceIgnoreCase(amountStr, LSystem.nativeCurrency, "").trim();
 			int idx = amountStr.indexOf('/');
 			if (idx != -1) {
 				amountStr = amountStr.substring(0, idx);
@@ -70,12 +69,10 @@ public class IssuedCurrency extends RippleDefault {
 		if (amountStr.indexOf('/') == -1) {
 			amount = new BigDecimal(amountStr).stripTrailingZeros();
 		} else {
-			String[] split = org.ripple.power.utils.StringUtils.split(
-					amountStr, "/");
+			String[] split = org.ripple.power.utils.StringUtils.split(amountStr, "/");
 			amount = new BigDecimal(split[0]).stripTrailingZeros();
 			currency = split[1];
-			if ("XAU (-0.5%pa)".equals(currency)
-					|| "XAU(-0.5%pa)".equals(currency)) {
+			if ("XAU (-0.5%pa)".equals(currency) || "XAU(-0.5%pa)".equals(currency)) {
 				this.currency = XAU_05PA;
 			} else if (currency.length() > 3 && AccountFind.is256hash(currency)) {
 				byte[] buffer = CoinUtils.fromHex(currency);
@@ -84,11 +81,9 @@ public class IssuedCurrency extends RippleDefault {
 			issuer = new RippleAddress(split[2]);
 			int oldScale = amount.scale();
 			if (oldScale < MIN_SCALE || oldScale > MAX_SCALE) {
-				int newScale = MAX_SCALE
-						- (amount.precision() - amount.scale());
+				int newScale = MAX_SCALE - (amount.precision() - amount.scale());
 				if (newScale < MIN_SCALE || newScale > MAX_SCALE) {
-					throw new RuntimeException("newScale " + newScale
-							+ " is out of range");
+					throw new RuntimeException("newScale " + newScale + " is out of range");
 				}
 				amount = amount.setScale(newScale);
 			}
@@ -103,34 +98,28 @@ public class IssuedCurrency extends RippleDefault {
 		this(amountStr, new RippleAddress(issuerStr), currencyStr);
 	}
 
-	public IssuedCurrency(String amountStr, RippleAddress issuer,
-			String currencyStr) {
-		this(new BigDecimal(amountStr).stripTrailingZeros(), issuer,
-				currencyStr);
+	public IssuedCurrency(String amountStr, RippleAddress issuer, String currencyStr) {
+		this(new BigDecimal(amountStr).stripTrailingZeros(), issuer, currencyStr);
 	}
 
 	public IssuedCurrency(IssuedCurrency cur) {
 		this(cur.toString());
 	}
 
-	public IssuedCurrency(BigDecimal amount, RippleAddress issuer,
-			String currencyStr) {
+	public IssuedCurrency(BigDecimal amount, RippleAddress issuer, String currencyStr) {
 		int oldScale = amount.scale();
 		if (oldScale < MIN_SCALE || oldScale > MAX_SCALE) {
 			int newScale = MAX_SCALE - (amount.precision() - amount.scale());
 			if (newScale < MIN_SCALE || newScale > MAX_SCALE) {
-				throw new RuntimeException("newScale " + newScale
-						+ " is out of range");
+				throw new RuntimeException("newScale " + newScale + " is out of range");
 			}
 			amount = amount.setScale(newScale);
 		}
 		this.amount = amount;
 		this.issuer = issuer;
-		if ("XAU (-0.5%pa)".equals(currencyStr)
-				|| "XAU(-0.5%pa)".equals(currencyStr)) {
+		if ("XAU (-0.5%pa)".equals(currencyStr) || "XAU(-0.5%pa)".equals(currencyStr)) {
 			this.currency = XAU_05PA;
-		} else if (currencyStr.length() > 3
-				&& AccountFind.is256hash(currencyStr)) {
+		} else if (currencyStr.length() > 3 && AccountFind.is256hash(currencyStr)) {
 			byte[] buffer = CoinUtils.fromHex(currencyStr);
 			this.currency = CoinUtils.toHex(buffer);
 		} else {
@@ -147,8 +136,7 @@ public class IssuedCurrency extends RippleDefault {
 	}
 
 	public boolean isNative() {
-		return issuer == null
-				|| LSystem.nativeCurrency.equalsIgnoreCase(currency);
+		return issuer == null || LSystem.nativeCurrency.equalsIgnoreCase(currency);
 	}
 
 	public boolean isNegative() {
@@ -157,35 +145,29 @@ public class IssuedCurrency extends RippleDefault {
 
 	public String toGatewayString() {
 		if (issuer == null || currency == null) {
-			return amount.movePointLeft(6).stripTrailingZeros().toPlainString()
-					+ " XRP";
+			return amount.movePointLeft(6).stripTrailingZeros().toPlainString() + " XRP";
 		}
 		Gateway gateway = Gateway.getGateway(issuer.toString());
 		if (gateway == null) {
-			return amount.stripTrailingZeros().toPlainString() + "/" + currency
-					+ "/" + issuer.toString();
+			return amount.stripTrailingZeros().toPlainString() + "/" + currency + "/" + issuer.toString();
 		} else {
-			return amount.stripTrailingZeros().toPlainString() + "/" + currency
-					+ "/" + gateway.name;
+			return amount.stripTrailingZeros().toPlainString() + "/" + currency + "/" + gateway.name;
 		}
 	}
 
 	@Override
 	public String toString() {
 		if (issuer == null || currency == null) {
-			return amount.movePointLeft(6).stripTrailingZeros().toPlainString()
-					+ " XRP";
+			return amount.movePointLeft(6).stripTrailingZeros().toPlainString() + " XRP";
 		}
-		return amount.stripTrailingZeros().toPlainString() + "/" + currency
-				+ "/" + issuer;
+		return amount.stripTrailingZeros().toPlainString() + "/" + currency + "/" + issuer;
 	}
 
 	public BigDecimal scale(float s) {
 		if (amount == null) {
 			return null;
 		}
-		return amount = new BigDecimal(LSystem.getNumber(
-				amount.multiply(BigDecimal.valueOf(s)), false));
+		return amount = new BigDecimal(LSystem.getNumber(amount.multiply(BigDecimal.valueOf(s)), false));
 	}
 
 	public void copyFrom(JSONObject jsonDenomination) {
@@ -199,8 +181,7 @@ public class IssuedCurrency extends RippleDefault {
 		String currencyStr = jsonDenomination.optString("currency");
 		if (XAU_05PA.equals(currencyStr)) {
 			currency = "XAU (-0.5%pa)";
-		} else if (currencyStr.length() > 3
-				&& AccountFind.is256hash(currencyStr)) {
+		} else if (currencyStr.length() > 3 && AccountFind.is256hash(currencyStr)) {
 			byte[] buffer = CoinUtils.fromHex(currencyStr);
 			try {
 				currency = new String(buffer, LSystem.encoding);
@@ -210,8 +191,7 @@ public class IssuedCurrency extends RippleDefault {
 		} else {
 			currency = currencyStr;
 		}
-		String amountStr = LSystem.getNumberShort(jsonDenomination.optString(
-				"value", "0"));
+		String amountStr = LSystem.getNumberShort(jsonDenomination.optString("value", "0"));
 		amount = new BigDecimal(amountStr);
 	}
 
@@ -240,8 +220,7 @@ public class IssuedCurrency extends RippleDefault {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-		result = prime * result
-				+ ((currency == null) ? 0 : currency.hashCode());
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		result = prime * result + ((issuer == null) ? 0 : issuer.hashCode());
 		return result;
 	}
@@ -275,16 +254,14 @@ public class IssuedCurrency extends RippleDefault {
 
 	public Amount getAmount() {
 		if (issuer != null && currency != null) {
-			return new Amount(amount, Currency.fromString(currency),
-					AccountID.fromAddress(issuer.toString()));
+			return new Amount(amount, Currency.fromString(currency), AccountID.fromAddress(issuer.toString()));
 		}
 		return new Amount(amount);
 	}
 
 	public Issue getIssue() {
 		if (issuer != null && currency != null) {
-			return new Issue(Currency.fromString(currency),
-					AccountID.fromAddress(issuer.toString()));
+			return new Issue(Currency.fromString(currency), AccountID.fromAddress(issuer.toString()));
 		}
 		return null;
 	}

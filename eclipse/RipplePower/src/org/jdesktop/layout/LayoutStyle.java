@@ -76,8 +76,7 @@ public class LayoutStyle {
 	 *            should be used
 	 */
 	public static void setSharedInstance(LayoutStyle layoutStyle) {
-		UIManager.getLookAndFeelDefaults().put("LayoutStyle.instance",
-				layoutStyle);
+		UIManager.getLookAndFeelDefaults().put("LayoutStyle.instance", layoutStyle);
 	}
 
 	/**
@@ -98,8 +97,7 @@ public class LayoutStyle {
 			if (USE_CORE_LAYOUT_STYLE) {
 				if ("Aqua" == lafID) {
 					try {
-						currentLAF.getClass().getDeclaredMethod(
-								"getLayoutStyle", new Class[0]);
+						currentLAF.getClass().getDeclaredMethod("getLayoutStyle", new Class[0]);
 						layoutStyle = new SwingLayoutStyle();
 					} catch (NoSuchMethodException nsfex) {
 						// getLayoutStyle() not overriden => use our own (issue
@@ -133,8 +131,7 @@ public class LayoutStyle {
 	 * above <code>component1</code>:
 	 * 
 	 * <pre>
-	 * int gap = getPreferredGap(component1, component2, LayoutStyle.RELATED,
-	 * 		SwingConstants.NORTH, parent);
+	 * int gap = getPreferredGap(component1, component2, LayoutStyle.RELATED, SwingConstants.NORTH, parent);
 	 * </pre>
 	 * 
 	 * The <code>type</code> parameter indicates the type of gap being
@@ -193,11 +190,8 @@ public class LayoutStyle {
 	 *             <code>UNRELATED</code>; or <code>component1</code> or
 	 *             <code>component2</code> is null
 	 */
-	public int getPreferredGap(JComponent component1, JComponent component2,
-			int type, int position, Container parent) {
-		if (position != SwingConstants.NORTH
-				&& position != SwingConstants.SOUTH
-				&& position != SwingConstants.WEST
+	public int getPreferredGap(JComponent component1, JComponent component2, int type, int position, Container parent) {
+		if (position != SwingConstants.NORTH && position != SwingConstants.SOUTH && position != SwingConstants.WEST
 				&& position != SwingConstants.EAST) {
 			throw new IllegalArgumentException("Invalid position");
 		}
@@ -209,8 +203,7 @@ public class LayoutStyle {
 		} else if (type == UNRELATED) {
 			return 12;
 		} else if (type == INDENT) {
-			if (position == SwingConstants.EAST
-					|| position == SwingConstants.WEST) {
+			if (position == SwingConstants.EAST || position == SwingConstants.WEST) {
 				int gap = getButtonChildIndent(component1, position);
 				if (gap != 0) {
 					return gap;
@@ -246,11 +239,8 @@ public class LayoutStyle {
 	 *             <code>SwingConstants.WEST</code>; or <code>component</code>
 	 *             is null
 	 */
-	public int getContainerGap(JComponent component, int position,
-			Container parent) {
-		if (position != SwingConstants.NORTH
-				&& position != SwingConstants.SOUTH
-				&& position != SwingConstants.WEST
+	public int getContainerGap(JComponent component, int position, Container parent) {
+		if (position != SwingConstants.NORTH && position != SwingConstants.SOUTH && position != SwingConstants.WEST
 				&& position != SwingConstants.EAST) {
 			throw new IllegalArgumentException("Invalid position");
 		}
@@ -284,8 +274,7 @@ public class LayoutStyle {
 	 *            Ideal offset, not including border/margin
 	 * @return offset - border/margin around the component.
 	 */
-	int getCBRBPadding(JComponent source, JComponent target, int position,
-			int offset) {
+	int getCBRBPadding(JComponent source, JComponent target, int position, int offset) {
 		offset -= getCBRBPadding(source, position);
 		if (offset > 0) {
 			offset -= getCBRBPadding(target, flipDirection(position));
@@ -330,8 +319,7 @@ public class LayoutStyle {
 	}
 
 	private int getCBRBPadding(JComponent c, int position) {
-		if (c.getUIClassID() == "CheckBoxUI"
-				|| c.getUIClassID() == "RadioButtonUI") {
+		if (c.getUIClassID() == "CheckBoxUI" || c.getUIClassID() == "RadioButtonUI") {
 			Border border = c.getBorder();
 			if (border instanceof UIResource) {
 				return getInset(c, position);
@@ -360,7 +348,8 @@ public class LayoutStyle {
 		if (position == SwingConstants.WEST) {
 			boolean ltr = button.getComponentOrientation().isLeftToRight();
 			int hAlign = button.getHorizontalAlignment();
-			return ((ltr && (hAlign == SwingConstants.LEFT || hAlign == SwingConstants.LEADING)) || (!ltr && (hAlign == SwingConstants.TRAILING)));
+			return ((ltr && (hAlign == SwingConstants.LEFT || hAlign == SwingConstants.LEADING))
+					|| (!ltr && (hAlign == SwingConstants.TRAILING)));
 		}
 		return false;
 	}
@@ -369,7 +358,8 @@ public class LayoutStyle {
 		if (position == SwingConstants.EAST) {
 			boolean ltr = button.getComponentOrientation().isLeftToRight();
 			int hAlign = button.getHorizontalAlignment();
-			return ((ltr && (hAlign == SwingConstants.RIGHT || hAlign == SwingConstants.TRAILING)) || (!ltr && (hAlign == SwingConstants.LEADING)));
+			return ((ltr && (hAlign == SwingConstants.RIGHT || hAlign == SwingConstants.TRAILING))
+					|| (!ltr && (hAlign == SwingConstants.LEADING)));
 		}
 		return false;
 	}

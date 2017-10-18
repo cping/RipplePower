@@ -12,16 +12,14 @@ public class KeyPair {
 			publicKey = null;
 			address = null;
 		} else {
-			publicKey = CoinUtils.generatePublicKey(
-					privateKeyInfo.privateKeyDecoded,
+			publicKey = CoinUtils.generatePublicKey(privateKeyInfo.privateKeyDecoded,
 					privateKeyInfo.isPublicKeyCompressed);
 			address = CoinUtils.publicKeyToAddress(publicKey);
 		}
 		privateKey = privateKeyInfo;
 	}
 
-	public KeyPair(String address, byte[] publicKey,
-			CoinUtils.PrivateKeyInfo privateKey) {
+	public KeyPair(String address, byte[] publicKey, CoinUtils.PrivateKeyInfo privateKey) {
 		this.publicKey = publicKey;
 		this.address = address;
 		this.privateKey = privateKey;

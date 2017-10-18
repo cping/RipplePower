@@ -29,8 +29,7 @@ public class RPSelectAddressDialog extends JPanel {
 
 	private RPDialogTool tool;
 
-	public static RPSelectAddressDialog showDialog(String text, Window parent,
-			boolean show) {
+	public static RPSelectAddressDialog showDialog(String text, Window parent, boolean show) {
 		if (show) {
 			synchronized (RPSelectAddressDialog.class) {
 				if (lock == null) {
@@ -62,11 +61,11 @@ public class RPSelectAddressDialog extends JPanel {
 		}
 	}
 
-	private final static ImageIcon iconLocal = new ImageIcon(new LImage(
-			"icons/home.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconLocal = new ImageIcon(
+			new LImage("icons/home.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconWeb = new ImageIcon(new LImage(
-			"icons/web.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconWeb = new ImageIcon(
+			new LImage("icons/web.png").scaledInstance(48, 48).getBufferedImage());
 
 	public RPSelectAddressDialog(String text, Window parent) {
 		Dimension dim = new Dimension(375, 190);
@@ -83,9 +82,8 @@ public class RPSelectAddressDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();
-				RPToast.makeText(LSystem.applicationMain,
-						"Here import or create your Ripple address.",
-						Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain, "Here import or create your Ripple address.", Style.SUCCESS)
+						.display();
 				RPAddressDialog.showDialog(LSystem.applicationMain);
 			}
 		});
@@ -101,13 +99,13 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 			}
 		});
 		this.setBackground(UIConfig.dialogbackground);
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
-	
-		HelperDialog.setSystemHelperMessage("Ripple secret create or import , The Ripple secret is stored Your Computer . Your are the sole owner , will not be uploaded to the Ripple network .");
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
+
+		HelperDialog.setSystemHelperMessage(
+				"Ripple secret create or import , The Ripple secret is stored Your Computer . Your are the sole owner , will not be uploaded to the Ripple network .");
 	}
 }

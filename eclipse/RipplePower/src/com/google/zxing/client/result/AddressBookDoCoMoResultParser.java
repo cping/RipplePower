@@ -34,8 +34,7 @@ import com.google.zxing.Result;
  * 
  * @author Sean Owen
  */
-public final class AddressBookDoCoMoResultParser extends
-		AbstractDoCoMoResultParser {
+public final class AddressBookDoCoMoResultParser extends AbstractDoCoMoResultParser {
 
 	@Override
 	public AddressBookParsedResult parse(Result result) {
@@ -48,8 +47,7 @@ public final class AddressBookDoCoMoResultParser extends
 			return null;
 		}
 		String name = parseName(rawName[0]);
-		String pronunciation = matchSingleDoCoMoPrefixedField("SOUND:",
-				rawText, true);
+		String pronunciation = matchSingleDoCoMoPrefixedField("SOUND:", rawText, true);
 		String[] phoneNumbers = matchDoCoMoPrefixedField("TEL:", rawText, true);
 		String[] emails = matchDoCoMoPrefixedField("EMAIL:", rawText, true);
 		String note = matchSingleDoCoMoPrefixedField("NOTE:", rawText, false);
@@ -67,9 +65,8 @@ public final class AddressBookDoCoMoResultParser extends
 		// honor it when found in the wild.
 		String org = matchSingleDoCoMoPrefixedField("ORG:", rawText, true);
 
-		return new AddressBookParsedResult(maybeWrap(name), null,
-				pronunciation, phoneNumbers, null, emails, null, null, note,
-				addresses, null, org, birthday, null, urls, null);
+		return new AddressBookParsedResult(maybeWrap(name), null, pronunciation, phoneNumbers, null, emails, null, null,
+				note, addresses, null, org, birthday, null, urls, null);
 	}
 
 	private static String parseName(String name) {

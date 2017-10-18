@@ -2,9 +2,8 @@ package org.ripple.power.txns.data;
 
 import org.json.JSONObject;
 
-
 public class Exchange {
-	
+
 	public double base_amount;
 	public double counter_amount;
 	public int rate;
@@ -18,7 +17,7 @@ public class Exchange {
 	public String taker;
 	public String tx_hash;
 	public String tx_type;
-	
+
 	public void from(Object obj) {
 		if (obj != null && obj instanceof JSONObject) {
 			JSONObject result = (JSONObject) obj;

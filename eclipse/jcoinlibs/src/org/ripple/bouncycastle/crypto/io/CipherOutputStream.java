@@ -245,10 +245,6 @@ public class CipherOutputStream
                     out.write(buf, 0, outLen);
                 }
             }
-            else if (streamCipher != null)
-            {
-                streamCipher.reset();
-            }
         }
         catch (final InvalidCipherTextException e)
         {

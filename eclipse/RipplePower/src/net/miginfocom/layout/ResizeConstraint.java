@@ -67,8 +67,7 @@ final class ResizeConstraint implements Externalizable {
 	{
 	}
 
-	ResizeConstraint(int shrinkPrio, Float shrinkWeight, int growPrio,
-			Float growWeight) {
+	ResizeConstraint(int shrinkPrio, Float shrinkWeight, int growPrio, Float growWeight) {
 		this.shrinkPrio = shrinkPrio;
 		this.shrink = shrinkWeight;
 		this.growPrio = growPrio;
@@ -83,8 +82,7 @@ final class ResizeConstraint implements Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

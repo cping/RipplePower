@@ -2,10 +2,12 @@ package org.ripple.power.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.ProxySettings;
 import org.ripple.power.config.Session;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.WebRippled;
@@ -38,15 +40,11 @@ public class RPClient {
 
 	private final ArrayList<Updateable> _loads = new ArrayList<Updateable>(10);
 
-	private final ArrayList<Updateable> _longloads = new ArrayList<Updateable>(
-			10);
+	private final ArrayList<Updateable> _longloads = new ArrayList<Updateable>(10);
 
-	private final static String[] applicationPublicNodes = new String[] {
-			"wss://s1.ripple.com:51233", "wss://s2.ripple.com:51233",
-			"wss://s-west.ripple.com:51233", "wss://s-east.ripple.com:51233",
-			"wss://s1.ripple.com:443", "wss://s2.ripple.com:443",
-			"wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443",
-			"wss://r.ripple.com:443", "wss://ripplenode.io:5006" };
+	private final static String[] applicationPublicNodes = new String[] { "wss://s1.ripple.com:443",
+			"wss://s2.ripple.com:443", "wss://s-west.ripple.com:443", "wss://s-east.ripple.com:443",
+			"wss://r.ripple.com:443", "wss://s.altnet.rippletest.net:51233" };
 
 	public static ArrayList<String> getRLNodes(boolean flag) {
 		ArrayList<String> tmp = new ArrayList<String>(40);
@@ -78,17 +76,14 @@ public class RPClient {
 	public static String getRippledNode() {
 		Session session = LSystem.session("ripple_node");
 		String result = session.get("data");
-		if (result != null && result.startsWith("wss://")
-				&& result.length() > 6) {
+		if (result != null && result.startsWith("wss://") && result.length() > 6) {
 			return result;
 		} else {
-			return applicationPublicNodes[MathUtils.random(0,
-					applicationPublicNodes.length - 1)];
+			return applicationPublicNodes[MathUtils.random(0, 3)];
 		}
 	}
 
-	public static ArrayList<String> loadRLNodes() throws HttpRequestException,
-			IOException {
+	public static ArrayList<String> loadRLNodes() throws HttpRequestException, IOException {
 		ArrayList<String> list = new ArrayList<String>(30);
 		WebRippled rippled = loadWebRippledConfig("https://ripple.com/ripple.txt");
 		for (String ips : rippled.ips) {
@@ -98,8 +93,7 @@ public class RPClient {
 		return list;
 	}
 
-	public static WebRippled loadWebRippledConfig(String url)
-			throws HttpRequestException, IOException {
+	public static WebRippled loadWebRippledConfig(String url) throws HttpRequestException, IOException {
 		WebRippled rippled = new WebRippled();
 		// 突然发现报错Could not generate DH
 		// keypair（最早是没有的，不知道rl又换了什么……），似乎遇到java的bug了，目前验证ripple.com站的ssl证书会溢出，然后报错的是sun.security.ssl.SSLSocketImpl部分，私有代码想修改都不行，只能过几天换成openssl直接读吧……
@@ -208,8 +202,7 @@ public class RPClient {
 		}
 	}
 
-	private final static void callLongUpdateable(
-			final ArrayList<Updateable> list) {
+	private final static void callLongUpdateable(final ArrayList<Updateable> list) {
 		synchronized (list) {
 			for (int i = 0; i < list.size(); i++) {
 				Updateable running = list.get(i);
@@ -262,6 +255,7 @@ public class RPClient {
 	}
 
 	public static RPClient ripple() {
+
 		if (_rippleClient == null) {
 			synchronized (RPClient.class) {
 				_rippleClient = new RPClient();
@@ -308,14 +302,11 @@ public class RPClient {
 	public String getBaseFee() {
 		Client client = getClinet();
 		if (client != null) {
-			if (client.serverInfo.fee_ref == 0
-					|| client.serverInfo.load_base == 0) {
+			if (client.serverInfo.fee_ref == 0 || client.serverInfo.load_base == 0) {
 				return "0.01";
 			}
-			float fee_unit = client.serverInfo.fee_base
-					/ client.serverInfo.fee_ref;
-			fee_unit *= client.serverInfo.load_factor
-					/ client.serverInfo.load_base;
+			float fee_unit = client.serverInfo.fee_base / client.serverInfo.fee_ref;
+			fee_unit *= client.serverInfo.load_factor / client.serverInfo.load_base;
 			fee_unit *= 10f;
 			return CurrencyUtils.getRippleToValue(String.valueOf(fee_unit));
 		}
@@ -382,6 +373,9 @@ public class RPClient {
 							Thread.yield();
 						}
 					}
+					if (LSystem.applicationMain != null) {
+						LSystem.applicationMain.close();
+					}
 				}
 			};
 			pThread = new Thread(runnable);
@@ -390,6 +384,11 @@ public class RPClient {
 	}
 
 	public RPClient() {
+		/*
+		 * LSystem.applicationProxy = new ProxySettings("127.0.0.1", 1080);
+		 * LSystem.applicationProxy.setSocket(true);
+		 * LSystem.applicationProxy.setEnabled(true);
+		 */
 		// ClientLogger.quiet = true;
 		pClinet = new Client(new JavaWebSocketTransportImpl());
 		if (LSystem.applicationProxy != null) {
@@ -423,18 +422,15 @@ public class RPClient {
 				public void called(Response response) {
 					JSONObject arrays = response.result;
 					JSONObject result = arrays.getJSONObject("account_data");
-					String number = CurrencyUtils.getRippleToValue(result
-							.getString("Balance"));
+					String number = CurrencyUtils.getRippleToValue(result.getString("Balance"));
 					if (item.isTip()) {
 						double new_amount = Double.parseDouble(number);
 						double old_amount = Double.parseDouble(item.getAmount());
 						if (old_amount > new_amount) {
-							popXRP(item.getPublicKey(), LangConfig.get(
-									RPClient.class, "lower", "Lower"),
+							popXRP(item.getPublicKey(), LangConfig.get(RPClient.class, "lower", "Lower"),
 									old_amount - new_amount);
 						} else if (new_amount > old_amount) {
-							popXRP(item.getPublicKey(), LangConfig.get(
-									RPClient.class, "heighten", "Heighten"),
+							popXRP(item.getPublicKey(), LangConfig.get(RPClient.class, "heighten", "Heighten"),
 									new_amount - old_amount);
 						}
 					}
@@ -458,14 +454,12 @@ public class RPClient {
 	}
 
 	private final static String time() {
-		return LangConfig.get(RPClient.class, "in", "In")
-				+ RippleDate.now().getTimeString() + ", "
+		return LangConfig.get(RPClient.class, "in", "In") + RippleDate.now().getTimeString() + ", "
 				+ LangConfig.get(RPClient.class, "ya", "Your address") + ": ";
 	}
 
 	private static void popXRP(String address, String flag, double amount) {
-		RPBubbleDialog.pop(time() + address + flag + " "
-				+ LSystem.getNumberShort(amount) + LSystem.nativeCurrency);
+		RPBubbleDialog.pop(time() + address + flag + " " + LSystem.getNumberShort(amount) + LSystem.nativeCurrency);
 	}
 
 	public Client getClinet() {

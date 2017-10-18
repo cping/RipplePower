@@ -56,20 +56,13 @@ public final class PlatformDefaults {
 	// private static final UnitValue LPX8 = new UnitValue(8, UnitValue.LPX,
 	// null);
 	private static final UnitValue LPX9 = new UnitValue(9, UnitValue.LPX, null);
-	private static final UnitValue LPX10 = new UnitValue(10, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX11 = new UnitValue(11, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX12 = new UnitValue(12, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX14 = new UnitValue(14, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX16 = new UnitValue(16, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX18 = new UnitValue(18, UnitValue.LPX,
-			null);
-	private static final UnitValue LPX20 = new UnitValue(20, UnitValue.LPX,
-			null);
+	private static final UnitValue LPX10 = new UnitValue(10, UnitValue.LPX, null);
+	private static final UnitValue LPX11 = new UnitValue(11, UnitValue.LPX, null);
+	private static final UnitValue LPX12 = new UnitValue(12, UnitValue.LPX, null);
+	private static final UnitValue LPX14 = new UnitValue(14, UnitValue.LPX, null);
+	private static final UnitValue LPX16 = new UnitValue(16, UnitValue.LPX, null);
+	private static final UnitValue LPX18 = new UnitValue(18, UnitValue.LPX, null);
+	private static final UnitValue LPX20 = new UnitValue(20, UnitValue.LPX, null);
 
 	private static final UnitValue LPY4 = new UnitValue(4, UnitValue.LPY, null);
 	private static final UnitValue LPY6 = new UnitValue(6, UnitValue.LPY, null);
@@ -77,20 +70,13 @@ public final class PlatformDefaults {
 	// private static final UnitValue LPY8 = new UnitValue(8, UnitValue.LPY,
 	// null);
 	private static final UnitValue LPY9 = new UnitValue(9, UnitValue.LPY, null);
-	private static final UnitValue LPY10 = new UnitValue(10, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY11 = new UnitValue(11, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY12 = new UnitValue(12, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY14 = new UnitValue(14, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY16 = new UnitValue(16, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY18 = new UnitValue(18, UnitValue.LPY,
-			null);
-	private static final UnitValue LPY20 = new UnitValue(20, UnitValue.LPY,
-			null);
+	private static final UnitValue LPY10 = new UnitValue(10, UnitValue.LPY, null);
+	private static final UnitValue LPY11 = new UnitValue(11, UnitValue.LPY, null);
+	private static final UnitValue LPY12 = new UnitValue(12, UnitValue.LPY, null);
+	private static final UnitValue LPY14 = new UnitValue(14, UnitValue.LPY, null);
+	private static final UnitValue LPY16 = new UnitValue(16, UnitValue.LPY, null);
+	private static final UnitValue LPY18 = new UnitValue(18, UnitValue.LPY, null);
+	private static final UnitValue LPY20 = new UnitValue(20, UnitValue.LPY, null);
 
 	public static final int WINDOWS_XP = 0;
 	public static final int MAC_OSX = 1;
@@ -105,13 +91,10 @@ public final class PlatformDefaults {
 
 	private static String BUTTON_FORMAT = null;
 
-	private static final HashMap<String, UnitValue> HOR_DEFS = new HashMap<String, UnitValue>(
-			32);
-	private static final HashMap<String, UnitValue> VER_DEFS = new HashMap<String, UnitValue>(
-			32);
+	private static final HashMap<String, UnitValue> HOR_DEFS = new HashMap<String, UnitValue>(32);
+	private static final HashMap<String, UnitValue> VER_DEFS = new HashMap<String, UnitValue>(32);
 	private static BoundSize DEF_VGAP = null, DEF_HGAP = null;
-	static BoundSize RELATED_X = null, RELATED_Y = null, UNRELATED_X = null,
-			UNRELATED_Y = null;
+	static BoundSize RELATED_X = null, RELATED_Y = null, UNRELATED_X = null, UNRELATED_Y = null;
 	private static UnitValue BUTT_WIDTH = null;
 
 	private static Float horScale = null, verScale = null;
@@ -245,8 +228,7 @@ public final class PlatformDefaults {
 			throw new IllegalArgumentException("Unknown platform: " + plaf);
 		}
 		CUR_PLAF = plaf;
-		BASE_DPI = BASE_DPI_FORCED != null ? BASE_DPI_FORCED
-				: getPlatformDPI(plaf);
+		BASE_DPI = BASE_DPI_FORCED != null ? BASE_DPI_FORCED : getPlatformDPI(plaf);
 	}
 
 	private static int getPlatformDPI(int plaf) {
@@ -256,8 +238,14 @@ public final class PlatformDefaults {
 			return 96;
 		case MAC_OSX:
 			try {
-				return System.getProperty("java.version").compareTo("1.6") < 0 ? 72
-						: 96; // Default DPI was 72 prior to JSE 1.6
+				return System.getProperty("java.version").compareTo("1.6") < 0 ? 72 : 96; // Default
+																							// DPI
+																							// was
+																							// 72
+																							// prior
+																							// to
+																							// JSE
+																							// 1.6
 			} catch (Throwable t) {
 				return 72;
 			}
@@ -542,8 +530,7 @@ public final class PlatformDefaults {
 	 *            for <code>x</code>. If <code>null</code> the value is not
 	 *            changed.
 	 */
-	public static final void setUnitValue(String[] unitStrings, UnitValue x,
-			UnitValue y) {
+	public static final void setUnitValue(String[] unitStrings, UnitValue x, UnitValue y) {
 		for (String unitString : unitStrings) {
 			String s = unitString.toLowerCase().trim();
 			if (x != null)
@@ -558,11 +545,10 @@ public final class PlatformDefaults {
 	 * Understands ("r", "rel", "related") OR ("u", "unrel", "unrelated") OR
 	 * ("i", "ind", "indent") OR ("p", "para", "paragraph").
 	 */
-	static int convertToPixels(float value, String unit, boolean isHor,
-			float ref, ContainerWrapper parent, ComponentWrapper comp) {
+	static int convertToPixels(float value, String unit, boolean isHor, float ref, ContainerWrapper parent,
+			ComponentWrapper comp) {
 		UnitValue uv = (isHor ? HOR_DEFS : VER_DEFS).get(unit);
-		return uv != null ? Math.round(value * uv.getPixels(ref, parent, comp))
-				: UnitConverter.UNABLE;
+		return uv != null ? Math.round(value * uv.getPixels(ref, parent, comp)) : UnitConverter.UNABLE;
 	}
 
 	/**
@@ -721,8 +707,7 @@ public final class PlatformDefaults {
 	 * @param right
 	 *            The right inset. May be <code>null</code>.
 	 */
-	public static void setDialogInsets(UnitValue top, UnitValue left,
-			UnitValue bottom, UnitValue right) {
+	public static void setDialogInsets(UnitValue top, UnitValue left, UnitValue bottom, UnitValue right) {
 		if (top != null)
 			DIALOG_INS[0] = top;
 
@@ -762,8 +747,7 @@ public final class PlatformDefaults {
 	 * @param right
 	 *            The right inset. May be <code>null</code>.
 	 */
-	public static void setPanelInsets(UnitValue top, UnitValue left,
-			UnitValue bottom, UnitValue right) {
+	public static void setPanelInsets(UnitValue top, UnitValue left, UnitValue bottom, UnitValue right) {
 		if (top != null)
 			PANEL_INS[0] = top;
 
@@ -811,12 +795,10 @@ public final class PlatformDefaults {
 	 * @return The default gap between two components or <code>null</code> if
 	 *         there should be no gap.
 	 */
-	static BoundSize getDefaultComponentGap(ComponentWrapper comp,
-			ComponentWrapper adjacentComp, int adjacentSide, String tag,
-			boolean isLTR) {
+	static BoundSize getDefaultComponentGap(ComponentWrapper comp, ComponentWrapper adjacentComp, int adjacentSide,
+			String tag, boolean isLTR) {
 		if (GAP_PROVIDER != null)
-			return GAP_PROVIDER.getDefaultGap(comp, adjacentComp, adjacentSide,
-					tag, isLTR);
+			return GAP_PROVIDER.getDefaultGap(comp, adjacentComp, adjacentSide, tag, isLTR);
 
 		if (adjacentComp == null)
 			return null;
@@ -825,8 +807,7 @@ public final class PlatformDefaults {
 		// adjacentSide == SwingConstants.TOP)
 		// return null;
 
-		return (adjacentSide == SwingConstants.LEFT || adjacentSide == SwingConstants.RIGHT) ? RELATED_X
-				: RELATED_Y;
+		return (adjacentSide == SwingConstants.LEFT || adjacentSide == SwingConstants.RIGHT) ? RELATED_X : RELATED_Y;
 	}
 
 	/**

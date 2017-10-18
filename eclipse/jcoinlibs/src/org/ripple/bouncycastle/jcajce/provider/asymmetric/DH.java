@@ -8,7 +8,7 @@ import org.ripple.bouncycastle.jcajce.provider.util.AsymmetricAlgorithmProvider;
 
 public class DH
 {
-    private static final String PREFIX = "org.bouncycastle.jcajce.provider.asymmetric" + ".dh.";
+    private static final String PREFIX = "org.ripple.bouncycastle.jcajce.provider.asymmetric" + ".dh.";
 
     public static class Mappings
         extends AsymmetricAlgorithmProvider

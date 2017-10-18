@@ -76,20 +76,17 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 			try {
 				url = new URL(urlString);
 				if (LSystem.applicationProxy != null) {
-					connection = (HttpURLConnection) url
-							.openConnection(LSystem.applicationProxy.getProxy());
+					connection = (HttpURLConnection) url.openConnection(LSystem.applicationProxy.getProxy());
 				} else {
 					connection = (HttpURLConnection) url.openConnection();
 				}
-				connection.setRequestProperty("Range", "bytes=" + downloaded
-						+ "-");
+				connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
 
 				connection.connect();
 
 				if (connection.getResponseCode() / 100 != 2) {
 					state = ERROR;
-					errorMessage = "Bad response code: "
-							+ connection.getResponseCode() + ", "
+					errorMessage = "Bad response code: " + connection.getResponseCode() + ", "
 							+ connection.getResponseMessage();
 					stateChanged();
 				}
@@ -104,8 +101,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 					size = contentLength;
 				}
 
-				file = new RandomAccessFile(LSystem.getCurrentDirectory()
-						+ getFileName(), "rw");
+				file = new RandomAccessFile(LSystem.getCurrentDirectory() + getFileName(), "rw");
 
 				file.seek(downloaded);
 
@@ -236,12 +232,11 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 		}
 	}
 
-	public class DownloadPrgBar extends JProgressBar implements
-			TableCellRenderer {
+	public class DownloadPrgBar extends JProgressBar implements TableCellRenderer {
 
 		/**
-	 * 
-	 */
+		* 
+		*/
 		private static final long serialVersionUID = 1L;
 
 		public DownloadPrgBar(int min, int max) {
@@ -249,9 +244,8 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 		}
 
 		@Override
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
 			if (value instanceof Integer) {
 				setValue((int) value);
 			} else {
@@ -262,17 +256,14 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 
 	}
 
-	public static class DownloadTable extends AbstractTableModel implements
-			Observer {
+	public static class DownloadTable extends AbstractTableModel implements Observer {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static final String[] columns = { "Name", "Size", "State",
-				"Progress" };
-		private static final Class<?>[] colClasses = { String.class,
-				String.class, String.class, JProgressBar.class };
+		private static final String[] columns = { "Name", "Size", "State", "Progress" };
+		private static final Class<?>[] colClasses = { String.class, String.class, String.class, JProgressBar.class };
 
 		private static ArrayList<Download> downloads = new ArrayList<Download>();
 
@@ -388,12 +379,11 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 
 		downloadTable = new DownloadTable();
 		table = new JTable(downloadTable);
-		table.getSelectionModel().addListSelectionListener(
-				new ListSelectionListener() {
-					public void valueChanged(ListSelectionEvent e) {
-						tableSelectionChanged();
-					}
-				});
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				tableSelectionChanged();
+			}
+		});
 		UIRes.addStyle(table);
 
 		table.getTableHeader().setBackground(UIConfig.dialogbackground);
@@ -518,8 +508,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 			selectedDownload.deleteObserver(this);
 		}
 		if (!isRemoving && table.getSelectedRow() != -1) {
-			selectedDownload = downloadTable
-					.getDownload(table.getSelectedRow());
+			selectedDownload = downloadTable.getDownload(table.getSelectedRow());
 			selectedDownload.addObserver(this);
 			updateButtons();
 		}

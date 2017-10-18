@@ -31,9 +31,7 @@ public class UIConfig {
 	private static Image defaultAppIcon = null;
 
 	private static Cursor transparentCursor = Toolkit.getDefaultToolkit()
-			.createCustomCursor(
-					Toolkit.getDefaultToolkit().createImage(new byte[0]),
-					new Point(0, 0), "blank cursor");
+			.createCustomCursor(Toolkit.getDefaultToolkit().createImage(new byte[0]), new Point(0, 0), "blank cursor");
 
 	public static boolean getCursorOff() {
 		return UIConfig.cursorOff;
@@ -116,15 +114,11 @@ public class UIConfig {
 
 	private static Image buildAppIconImage() {
 		String icon = "R";
-		BufferedImage image = new BufferedImage(40, 40,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = (Graphics2D) image.getGraphics();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-				RenderingHints.VALUE_STROKE_PURE);
-		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 		g2.setColor(brandColor);
 		g2.fillRoundRect(0, 0, 40, 40, 10, 10);
 		g2.setColor(Color.WHITE);
@@ -133,10 +127,8 @@ public class UIConfig {
 		LineMetrics lm = font.getLineMetrics(icon, g2.getFontRenderContext());
 		int iconWidth = g2.getFontMetrics().stringWidth(icon);
 		int iconHeight = (int) lm.getHeight();
-		int iconBaseline = (int) (lm.getHeight() - lm.getLeading() - lm
-				.getDescent());
-		g2.drawString(icon, (40 - iconWidth) / 2, (40 - iconHeight) / 2
-				+ iconBaseline);
+		int iconBaseline = (int) (lm.getHeight() - lm.getLeading() - lm.getDescent());
+		g2.drawString(icon, (40 - iconWidth) / 2, (40 - iconHeight) / 2 + iconBaseline);
 		g2.dispose();
 		return GraphicsUtils.getResize(image, 32, 32);
 	}

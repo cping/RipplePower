@@ -19,9 +19,8 @@ public abstract class Contact implements Serializable {
 	private String phoneNumber;
 	private String emailAddress;
 
-	public Contact(String firstName, String lastName, String rippleAddress,
-			String address, String city, String state, String zipCode,
-			String phoneNumber, String emailAddress) {
+	public Contact(String firstName, String lastName, String rippleAddress, String address, String city, String state,
+			String zipCode, String phoneNumber, String emailAddress) {
 		setRippleAddress(rippleAddress);
 		setFirstName(firstName);
 		setLastName(lastName);
@@ -107,9 +106,8 @@ public abstract class Contact implements Serializable {
 
 	@Override
 	public String toString() {
-		return StringUtils.join(" ", getFirstName(), getLastName(),
-				getRippleAddress(), getAddress(), getCity(), getState(),
-				getZipCode(), getPhoneNumber(), getEmailAddress());
+		return StringUtils.join(" ", getFirstName(), getLastName(), getRippleAddress(), getAddress(), getCity(),
+				getState(), getZipCode(), getPhoneNumber(), getEmailAddress());
 	}
 
 }

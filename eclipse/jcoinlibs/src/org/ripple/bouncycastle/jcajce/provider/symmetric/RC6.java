@@ -24,7 +24,6 @@ import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseKeyGenerator;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BaseMac;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvider;
 import org.ripple.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters;
-import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public final class RC6
 {

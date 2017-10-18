@@ -56,8 +56,7 @@ public final class UPCEReader extends UPCEANReader {
 	}
 
 	@Override
-	protected int decodeMiddle(BitArray row, int[] startRange,
-			StringBuilder result) throws NotFoundException {
+	protected int decodeMiddle(BitArray row, int[] startRange, StringBuilder result) throws NotFoundException {
 		int[] counters = decodeMiddleCounters;
 		counters[0] = 0;
 		counters[1] = 0;
@@ -69,8 +68,7 @@ public final class UPCEReader extends UPCEANReader {
 		int lgPatternFound = 0;
 
 		for (int x = 0; x < 6 && rowOffset < end; x++) {
-			int bestMatch = decodeDigit(row, counters, rowOffset,
-					L_AND_G_PATTERNS);
+			int bestMatch = decodeDigit(row, counters, rowOffset, L_AND_G_PATTERNS);
 			result.append((char) ('0' + bestMatch % 10));
 			for (int counter : counters) {
 				rowOffset += counter;
@@ -86,8 +84,7 @@ public final class UPCEReader extends UPCEANReader {
 	}
 
 	@Override
-	protected int[] decodeEnd(BitArray row, int endStart)
-			throws NotFoundException {
+	protected int[] decodeEnd(BitArray row, int endStart) throws NotFoundException {
 		return findGuardPattern(row, endStart, true, MIDDLE_END_PATTERN);
 	}
 
@@ -96,8 +93,7 @@ public final class UPCEReader extends UPCEANReader {
 		return super.checkChecksum(convertUPCEtoUPCA(s));
 	}
 
-	private static void determineNumSysAndCheckDigit(
-			StringBuilder resultString, int lgPatternFound)
+	private static void determineNumSysAndCheckDigit(StringBuilder resultString, int lgPatternFound)
 			throws NotFoundException {
 
 		for (int numSys = 0; numSys <= 1; numSys++) {

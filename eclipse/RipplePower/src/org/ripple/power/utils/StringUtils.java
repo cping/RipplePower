@@ -34,17 +34,13 @@ import com.google.common.base.Strings;
 
 final public class StringUtils {
 
-	public final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile(
-			"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+	public final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
-	public final static Pattern VALID_PHONE_REGEX = Pattern
-			.compile("^\\(\\d{3}\\)\\d{3}\\-\\d{4}$");
+	public final static Pattern VALID_PHONE_REGEX = Pattern.compile("^\\(\\d{3}\\)\\d{3}\\-\\d{4}$");
 
 	private static final String whiteRange = "\\p{javaWhitespace}\\p{Zs}";
-	private static final Pattern whiteStart = Pattern.compile("^[" + whiteRange
-			+ "]+");
-	private static final Pattern whiteEnd = Pattern.compile("[" + whiteRange
-			+ "]+$");
+	private static final Pattern whiteStart = Pattern.compile("^[" + whiteRange + "]+");
+	private static final Pattern whiteEnd = Pattern.compile("[" + whiteRange + "]+$");
 
 	public static final String ASCII_CHARSET = "US-ASCII";
 
@@ -62,14 +58,29 @@ final public class StringUtils {
 		return sbr.toString();
 	}
 
+	public static boolean isBoolean(String o) {
+		String str = o.trim().toLowerCase();
+		return str.equals("true") || str.equals("false") || str.equals("yes") || str.equals("no") || str.equals("ok");
+	}
+
+	public static boolean toBoolean(String o) {
+		String str = o.trim().toLowerCase();
+		if (str.equals("true") || str.equals("yes") || str.equals("ok")) {
+			return true;
+		} else if (str.equals("no") || str.equals("false")) {
+			return false;
+		} else if (MathUtils.isNan(str)) {
+			return Double.parseDouble(str) > 0;
+		}
+		return false;
+	}
+
 	public static String toLineBreaks(String[] lines) {
 		final StringBuilder sbr;
 		if (LangConfig.isLeftToRight()) {
-			sbr = new StringBuilder(
-					"<html><body style='width: 100%'><div align=left>");
+			sbr = new StringBuilder("<html><body style='width: 100%'><div align=left>");
 		} else {
-			sbr = new StringBuilder(
-					"<html><body style='width: 100%'><div align=right>");
+			sbr = new StringBuilder("<html><body style='width: 100%'><div align=right>");
 		}
 		boolean first = true;
 		for (String line : lines) {
@@ -84,8 +95,7 @@ final public class StringUtils {
 	}
 
 	public static String toWithCenteredLinedBreaks(String[] lines) {
-		final StringBuilder sbr = new StringBuilder(
-				"<html><body style='width: 100%'><div align=center>");
+		final StringBuilder sbr = new StringBuilder("<html><body style='width: 100%'><div align=center>");
 		boolean first = true;
 		for (String line : lines) {
 			if (!first) {
@@ -99,8 +109,7 @@ final public class StringUtils {
 	}
 
 	public static String toBoldFragments(String fragment, String sourceText) {
-		if (Strings.isNullOrEmpty(fragment)
-				|| Strings.isNullOrEmpty(sourceText)) {
+		if (Strings.isNullOrEmpty(fragment) || Strings.isNullOrEmpty(sourceText)) {
 			return "<html>" + sourceText + "</html>";
 		}
 		String lowerFragment = fragment.toLowerCase();
@@ -111,10 +120,8 @@ final public class StringUtils {
 		do {
 			matchIndex = lowerSource.indexOf(lowerFragment, sourceIndex);
 			if (matchIndex > -1) {
-				sbr.append(sourceText.substring(sourceIndex, matchIndex))
-						.append("<b>")
-						.append(sourceText.substring(matchIndex, matchIndex
-								+ fragment.length())).append("</b>");
+				sbr.append(sourceText.substring(sourceIndex, matchIndex)).append("<b>")
+						.append(sourceText.substring(matchIndex, matchIndex + fragment.length())).append("</b>");
 				sourceIndex = matchIndex + fragment.length();
 			}
 
@@ -175,8 +182,7 @@ final public class StringUtils {
 					return false;
 				}
 				for (; i < chars.length; i++) {
-					if ((chars[i] < '0' || chars[i] > '9')
-							&& (chars[i] < 'a' || chars[i] > 'f')
+					if ((chars[i] < '0' || chars[i] > '9') && (chars[i] < 'a' || chars[i] > 'f')
 							&& (chars[i] < 'A' || chars[i] > 'F')) {
 						return false;
 					}
@@ -222,8 +228,7 @@ final public class StringUtils {
 			if (chars[i] == 'e' || chars[i] == 'E') {
 				return false;
 			}
-			if (!allowSigns
-					&& (chars[i] == 'd' || chars[i] == 'D' || chars[i] == 'f' || chars[i] == 'F')) {
+			if (!allowSigns && (chars[i] == 'd' || chars[i] == 'D' || chars[i] == 'f' || chars[i] == 'F')) {
 				return foundDigit;
 			}
 			if (chars[i] == 'l' || chars[i] == 'L') {
@@ -266,8 +271,7 @@ final public class StringUtils {
 		int size = chars.length;
 		for (int j = 0; j < size; j++) {
 			char letter = chars[j];
-			if ((97 > letter || letter > 122) && (65 > letter || letter > 90)
-					&& (48 > letter || letter > 57)) {
+			if ((97 > letter || letter > 122) && (65 > letter || letter > 90) && (48 > letter || letter > 57)) {
 				return false;
 			}
 		}
@@ -281,12 +285,8 @@ final public class StringUtils {
 	 * @return
 	 */
 	public static boolean isSingle(final char c) {
-		return (':' == c || '：' == c)
-				|| (',' == c || '，' == c)
-				|| ('"' == c || '“' == c)
-				|| ((0x0020 <= c)
-						&& (c <= 0x007E)
-						&& !((('a' <= c) && (c <= 'z')) || (('A' <= c) && (c <= 'Z')))
+		return (':' == c || '：' == c) || (',' == c || '，' == c) || ('"' == c || '“' == c)
+				|| ((0x0020 <= c) && (c <= 0x007E) && !((('a' <= c) && (c <= 'z')) || (('A' <= c) && (c <= 'Z')))
 						&& !('0' <= c) && (c <= '9'));
 
 	}
@@ -316,8 +316,7 @@ final public class StringUtils {
 	 * @param newString
 	 * @return
 	 */
-	public static final String replace(String string, String oldString,
-			String newString) {
+	public static final String replace(String string, String oldString, String newString) {
 		if (string == null)
 			return null;
 		if (newString == null)
@@ -351,8 +350,7 @@ final public class StringUtils {
 	 * @param newString
 	 * @return
 	 */
-	public static final String replaceIgnoreCase(String line, String oldString,
-			String newString) {
+	public static final String replaceIgnoreCase(String line, String oldString, String newString) {
 		if (line == null)
 			return null;
 		String lcLine = line.toLowerCase();
@@ -387,8 +385,7 @@ final public class StringUtils {
 	 * @param count
 	 * @return
 	 */
-	public static final String replaceIgnoreCase(String line, String oldString,
-			String newString, int count[]) {
+	public static final String replaceIgnoreCase(String line, String oldString, String newString, int count[]) {
 		if (line == null)
 			return null;
 		String lcLine = line.toLowerCase();
@@ -426,8 +423,7 @@ final public class StringUtils {
 	 * @param count
 	 * @return
 	 */
-	public static final String replace(String line, String oldString,
-			String newString, int count[]) {
+	public static final String replace(String line, String oldString, String newString, int count[]) {
 		if (line == null)
 			return null;
 		int i = 0;
@@ -461,24 +457,40 @@ final public class StringUtils {
 	 * @return
 	 */
 	public static boolean isChinaLanguage(char[] chars) {
-		int[] ints = new int[2];
-		boolean isChinese = false;
-		int length = chars.length;
-		byte[] bytes = null;
-		for (int i = 0; i < length; i++) {
-			bytes = ("" + chars[i]).getBytes();
-			if (bytes.length == 2) {
-				ints[0] = bytes[0] & 0xff;
-				ints[1] = bytes[1] & 0xff;
-				if (ints[0] >= 0x81 && ints[0] <= 0xFE && ints[1] >= 0x40
-						&& ints[1] <= 0xFE) {
-					isChinese = true;
-				}
-			} else {
-				return false;
+		int size = chars.length;
+		for (int i = 0; i < size; i++) {
+			if (isChinese(chars[i])) {
+				return true;
 			}
 		}
-		return isChinese;
+		return false;
+	}
+
+	/**
+	 * 检查一组字符串是否完全由中文组成
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static boolean isChinaLanguage(String mes) {
+		int size = mes.length();
+		int count = 0;
+		for (int i = 0; i < size; i++) {
+			if (isChinese(mes.charAt(i))) {
+				count++;
+			}
+		}
+		return count >= size;
+	}
+
+	public static boolean containChinaLanguage(String mes) {
+		int size = mes.length();
+		for (int i = 0; i < size; i++) {
+			if (isChinese(mes.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isChinese(char c) {
@@ -511,8 +523,7 @@ final public class StringUtils {
 			char ch = checkStr.charAt(i);
 			if (ch < '\176') {
 				ch = Character.toUpperCase(ch);
-				if (((ch < 'A') || (ch > 'Z')) && ((ch < '0') || (ch > '9'))
-						&& (spStr.indexOf(ch) < 0)) {
+				if (((ch < 'A') || (ch > 'Z')) && ((ch < '0') || (ch > '9')) && (spStr.indexOf(ch) < 0)) {
 					isError = true;
 				}
 			}
@@ -528,17 +539,14 @@ final public class StringUtils {
 	 * @return
 	 */
 	public final static boolean isAlphabet(String value) {
-		if (value == null || value.length() == 0) {
+		if (value == null || value.length() == 0)
 			return false;
-		}
-		int count = 0;
 		for (int i = 0; i < value.length(); i++) {
-			char c = Character.toUpperCase(value.charAt(i));
-			if ('A' <= c && c <= 'Z') {
-				count++;
-			}
+			char letter = Character.toUpperCase(value.charAt(i));
+			if (('a' <= letter && letter <= 'z') || ('A' <= letter && letter <= 'Z'))
+				return true;
 		}
-		return count == value.length();
+		return false;
 	}
 
 	/**
@@ -552,9 +560,7 @@ final public class StringUtils {
 			return true;
 		for (int i = 0; i < value.length(); i++) {
 			char letter = value.charAt(i);
-			if (('a' > letter || letter > 'z')
-					&& ('A' > letter || letter > 'Z')
-					&& ('0' > letter || letter > '9'))
+			if (('a' > letter || letter > 'z') && ('A' > letter || letter > 'Z') && ('0' > letter || letter > '9'))
 				return false;
 		}
 		return true;
@@ -568,8 +574,7 @@ final public class StringUtils {
 	 * @param newString
 	 * @return
 	 */
-	public static String replaceMatch(String line, String oldString,
-			String newString) {
+	public static String replaceMatch(String line, String oldString, String newString) {
 		int i = 0;
 		int j = 0;
 		if ((i = line.indexOf(oldString, i)) >= 0) {
@@ -617,8 +622,7 @@ final public class StringUtils {
 	 * @param s
 	 * @return
 	 */
-	public static String[] getString(String[] strs, String sourceEncoding,
-			String objectEncoding) {
+	public static String[] getString(String[] strs, String sourceEncoding, String objectEncoding) {
 		String[] ss = new String[strs.length];
 		try {
 			for (int i = 0; i < strs.length; i++) {
@@ -661,8 +665,7 @@ final public class StringUtils {
 		return contains(input, pattern, false);
 	}
 
-	public static final boolean contains(String input, String pattern,
-			boolean ignoreCase) {
+	public static final boolean contains(String input, String pattern, boolean ignoreCase) {
 		final int n = pattern.length();
 		int last = 0;
 		for (int i = 0; i < n;) {
@@ -700,8 +703,8 @@ final public class StringUtils {
 		return false;
 	}
 
-	private static final int subset(String little, int littleStart,
-			int littleStop, String big, int bigStart, boolean ignoreCase) {
+	private static final int subset(String little, int littleStart, int littleStop, String big, int bigStart,
+			boolean ignoreCase) {
 		if (ignoreCase) {
 			final int n = big.length() - (littleStop - littleStart) + 1;
 			outerLoop: for (int i = bigStart; i < n; i++) {

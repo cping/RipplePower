@@ -17,19 +17,18 @@ public class ErrorLog extends ErrorHtml {
 
 	private boolean isEnabled;
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-	private final SimpleDateFormat timeFormat = new SimpleDateFormat(
-			"HH:mm:ss.SSS");
-	
+	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+
 	private static ErrorLog instance = null;
-	
-	public static ErrorLog get(){
-		if(instance==null){
+
+	public static ErrorLog get() {
+		if (instance == null) {
 			instance = new ErrorLog();
 		}
 		return instance;
 	}
 
-	public ErrorLog()  {
+	public ErrorLog() {
 		super("ErrorLog");
 
 		isEnabled = true;
@@ -44,14 +43,12 @@ public class ErrorLog extends ErrorHtml {
 		write(sb);
 
 		StringBuilder startupMessage = new StringBuilder();
-		startupMessage.append("New Report Started. ")
-				.append(LSystem.applicationName).append(" version ")
+		startupMessage.append("New Report Started. ").append(LSystem.applicationName).append(" version ")
 				.append(LSystem.applicationVersion);
 		report(LSystem.applicationName, startupMessage);
 		TimeZone tz = TimeZone.getDefault();
 		report(LSystem.applicationName,
-				"All times will be reported in the local time zone: "
-						+ tz.getID() + ", " + tz.getDisplayName());
+				"All times will be reported in the local time zone: " + tz.getID() + ", " + tz.getDisplayName());
 	}
 
 	public void disable() {
@@ -113,8 +110,7 @@ public class ErrorLog extends ErrorHtml {
 					break;
 			}
 			strings.append("</html>");
-			UIRes.showErrorMessage(LSystem.applicationMain, UIMessage.error,
-					strings.toString());
+			UIRes.showErrorMessage(LSystem.applicationMain, UIMessage.error, strings.toString());
 		} else if (deferredException == null) {
 			deferredText = text;
 			deferredException = exc;

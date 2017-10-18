@@ -18,7 +18,6 @@ import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.ripple.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
-import org.ripple.bouncycastle.util.Strings;
 
 public class BCDSAPublicKey
     implements DSAPublicKey
@@ -120,7 +119,7 @@ public class BCDSAPublicKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("DSA Public Key").append(nl);
         buf.append("            y: ").append(this.getY().toString(16)).append(nl);

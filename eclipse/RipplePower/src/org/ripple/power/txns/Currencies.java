@@ -78,8 +78,7 @@ public class Currencies {
 		if (_items.size() == 0) {
 			JSONTokener tokener = null;
 			try {
-				tokener = new JSONTokener(
-						UIRes.getStream("config/currencies.json"));
+				tokener = new JSONTokener(UIRes.getStream("config/currencies.json"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

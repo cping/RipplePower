@@ -70,8 +70,7 @@ public class SwingComponentWrapper implements ComponentWrapper {
 			return -1;
 
 		try {
-			Object[] args = new Object[] { width < 0 ? c.getWidth() : width,
-					height < 0 ? c.getHeight() : height };
+			Object[] args = new Object[] { width < 0 ? c.getWidth() : width, height < 0 ? c.getHeight() : height };
 
 			return (Integer) BL_METHOD.invoke(c, args);
 		} catch (Exception e) {
@@ -98,16 +97,14 @@ public class SwingComponentWrapper implements ComponentWrapper {
 			Point.Float p = FM_MAP.get(fm);
 			if (p == null) {
 				Rectangle2D r = fm.getStringBounds("X", c.getGraphics());
-				p = new Point.Float(((float) r.getWidth()) / 6f,
-						((float) r.getHeight()) / 13.27734375f);
+				p = new Point.Float(((float) r.getWidth()) / 6f, ((float) r.getHeight()) / 13.27734375f);
 				FM_MAP.put(fm, p);
 			}
 			return isHor ? p.x : p.y;
 
 		case PlatformDefaults.BASE_SCALE_FACTOR:
 
-			Float s = isHor ? PlatformDefaults.getHorizontalScaleFactor()
-					: PlatformDefaults.getVerticalScaleFactor();
+			Float s = isHor ? PlatformDefaults.getHorizontalScaleFactor() : PlatformDefaults.getVerticalScaleFactor();
 			if (s != null)
 				return s;
 			return (isHor ? getHorizontalScreenDPI() : getVerticalScreenDPI())
@@ -264,8 +261,7 @@ public class SwingComponentWrapper implements ComponentWrapper {
 	public final boolean hasBaseline() {
 		if (bl == null) {
 			try {
-				if (BL_RES_METHOD == null
-						|| BL_RES_METHOD.invoke(c).toString().equals("OTHER")) {
+				if (BL_RES_METHOD == null || BL_RES_METHOD.invoke(c).toString().equals("OTHER")) {
 					bl = Boolean.FALSE;
 				} else {
 					Dimension d = c.getMinimumSize();
@@ -292,8 +288,7 @@ public class SwingComponentWrapper implements ComponentWrapper {
 
 	public final int[] getVisualPadding() {
 		if (vp && c instanceof JTabbedPane) {
-			if (UIManager.getLookAndFeel().getClass().getName()
-					.endsWith("WindowsLookAndFeel"))
+			if (UIManager.getLookAndFeel().getClass().getName().endsWith("WindowsLookAndFeel"))
 				return new int[] { -1, 0, 2, 2 };
 		}
 
@@ -325,8 +320,8 @@ public class SwingComponentWrapper implements ComponentWrapper {
 			return;
 
 		g.setPaint(DB_COMP_OUTLINE);
-		g.setStroke(new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-				BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 4f }, 0));
+		g.setStroke(
+				new BasicStroke(1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 4f }, 0));
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 	}
 
@@ -423,19 +418,17 @@ public class SwingComponentWrapper implements ComponentWrapper {
 	private static Method BL_RES_METHOD = null;
 	static {
 		try {
-			BL_METHOD = Component.class.getDeclaredMethod("getBaseline",
-					new Class[] { int.class, int.class });
-			BL_RES_METHOD = Component.class
-					.getDeclaredMethod("getBaselineResizeBehavior"); // 3.7.2:
-																		// Removed
-																		// Class<?>
-																		// null
-																		// since
-																		// that
-																		// made
-																		// the
-																		// method
-																		// inaccessible.
+			BL_METHOD = Component.class.getDeclaredMethod("getBaseline", new Class[] { int.class, int.class });
+			BL_RES_METHOD = Component.class.getDeclaredMethod("getBaselineResizeBehavior"); // 3.7.2:
+																							// Removed
+																							// Class<?>
+																							// null
+																							// since
+																							// that
+																							// made
+																							// the
+																							// method
+																							// inaccessible.
 		} catch (Throwable e) { // No such method or security exception
 		}
 	}
@@ -443,8 +436,7 @@ public class SwingComponentWrapper implements ComponentWrapper {
 	private static Method IMS_METHOD = null;
 	static {
 		try {
-			IMS_METHOD = Component.class.getDeclaredMethod("isMaximumSizeSet",
-					(Class[]) null);
+			IMS_METHOD = Component.class.getDeclaredMethod("isMaximumSizeSet", (Class[]) null);
 		} catch (Throwable e) { // No such method or security exception
 		}
 	}

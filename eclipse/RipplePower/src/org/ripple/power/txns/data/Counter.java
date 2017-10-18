@@ -2,7 +2,7 @@ package org.ripple.power.txns.data;
 
 public class Counter {
 
-     String currency;
+	String currency;
 
-     String issuer ;
+	String issuer;
 }

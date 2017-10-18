@@ -14,10 +14,9 @@ import com.ripple.core.types.known.tx.Transaction;
 
 public class AccountSet {
 
-	public static void set(final RippleSeedAddress seed,
-			final String messageKey, final String domain,
-			final String emailHash, final long clearFlag, final long setFlag,
-			final long transferRate, final String fee, final Rollback back) {
+	public static void set(final RippleSeedAddress seed, final String messageKey, final String domain,
+			final String emailHash, final long clearFlag, final long setFlag, final long transferRate, final String fee,
+			final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -28,30 +27,23 @@ public class AccountSet {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				if (messageKey != null) {
 					try {
-						txn.put(Field.MessageKey, Blob
-								.fromBytes(domain.getBytes(LSystem.encoding)));
+						txn.put(Field.MessageKey, Blob.fromBytes(domain.getBytes(LSystem.encoding)));
 					} catch (UnsupportedEncodingException e) {
-						txn.put(Field.MessageKey,
-								Blob.fromBytes(domain.getBytes()));
+						txn.put(Field.MessageKey, Blob.fromBytes(domain.getBytes()));
 					}
 				}
 				if (domain != null) {
 					try {
-						txn.put(Field.Domain, Blob.fromBytes(domain
-								.getBytes(LSystem.encoding)));
+						txn.put(Field.Domain, Blob.fromBytes(domain.getBytes(LSystem.encoding)));
 					} catch (UnsupportedEncodingException e) {
-						txn.put(Field.Domain,
-								Blob.fromBytes(domain.getBytes()));
+						txn.put(Field.Domain, Blob.fromBytes(domain.getBytes()));
 					}
 				}
 				if (emailHash != null) {
 					try {
-						txn.put(Field.EmailHash,
-								new Hash128(emailHash
-										.getBytes(LSystem.encoding)));
+						txn.put(Field.EmailHash, new Hash128(emailHash.getBytes(LSystem.encoding)));
 					} catch (UnsupportedEncodingException e) {
-						txn.put(Field.EmailHash,
-								new Hash128(emailHash.getBytes()));
+						txn.put(Field.EmailHash, new Hash128(emailHash.getBytes()));
 					}
 				}
 				if (transferRate > -1) {

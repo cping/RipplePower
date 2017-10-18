@@ -40,12 +40,10 @@ public final class ReedSolomonEncoder {
 
 	private GenericGFPoly buildGenerator(int degree) {
 		if (degree >= cachedGenerators.size()) {
-			GenericGFPoly lastGenerator = cachedGenerators.get(cachedGenerators
-					.size() - 1);
+			GenericGFPoly lastGenerator = cachedGenerators.get(cachedGenerators.size() - 1);
 			for (int d = cachedGenerators.size(); d <= degree; d++) {
-				GenericGFPoly nextGenerator = lastGenerator
-						.multiply(new GenericGFPoly(field, new int[] { 1,
-								field.exp(d - 1 + field.getGeneratorBase()) }));
+				GenericGFPoly nextGenerator = lastGenerator.multiply(
+						new GenericGFPoly(field, new int[] { 1, field.exp(d - 1 + field.getGeneratorBase()) }));
 				cachedGenerators.add(nextGenerator);
 				lastGenerator = nextGenerator;
 			}
@@ -72,8 +70,7 @@ public final class ReedSolomonEncoder {
 		for (int i = 0; i < numZeroCoefficients; i++) {
 			toEncode[dataBytes + i] = 0;
 		}
-		System.arraycopy(coefficients, 0, toEncode, dataBytes
-				+ numZeroCoefficients, coefficients.length);
+		System.arraycopy(coefficients, 0, toEncode, dataBytes + numZeroCoefficients, coefficients.length);
 	}
 
 }

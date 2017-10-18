@@ -37,8 +37,7 @@ public class Array<T> implements Closed {
 		insertBetween(previous._items, next._items, newNode._items);
 	}
 
-	public void insertBetween(ArrayNode<T> previous, ArrayNode<T> next,
-			ArrayNode<T> newNode) {
+	public void insertBetween(ArrayNode<T> previous, ArrayNode<T> next, ArrayNode<T> newNode) {
 		if (_close) {
 			return;
 		}
@@ -375,8 +374,7 @@ public class Array<T> implements Closed {
 			return "[]";
 		}
 		ArrayNode<T> o = this._items.next;
-		StringBuilder buffer = new StringBuilder(
-				CollectionUtils.INITIAL_CAPACITY);
+		StringBuilder buffer = new StringBuilder(CollectionUtils.INITIAL_CAPACITY);
 		buffer.append('[');
 		int count = 0;
 		for (; o != this._items;) {

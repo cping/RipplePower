@@ -23,8 +23,7 @@ public class ApplicationInfo {
 		this.applicationName = applicationName;
 		userDir = new File(LSystem.getUserName());
 		if (LSystem.isMacOSX()) {
-			applicationDataDir = new File(userDir, "/Library/"
-					+ applicationName);
+			applicationDataDir = new File(userDir, "/Library/" + applicationName);
 		} else {
 			applicationDataDir = new File(userDir, "/" + applicationName);
 		}
@@ -39,8 +38,7 @@ public class ApplicationInfo {
 	public static boolean lock() {
 		try {
 			ApplicationInfo info = new ApplicationInfo("power");
-			lockfile = new File(info.applicationDataDir.getAbsolutePath()
-					+ ".lock");
+			lockfile = new File(info.applicationDataDir.getAbsolutePath() + ".lock");
 			channel = new RandomAccessFile(lockfile, "rw").getChannel();
 			lock = channel.tryLock();
 			if (lock == null) {

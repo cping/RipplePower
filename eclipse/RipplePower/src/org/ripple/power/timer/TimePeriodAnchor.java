@@ -10,14 +10,11 @@ public class TimePeriodAnchor implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final TimePeriodAnchor START = new TimePeriodAnchor(
-			"TimePeriodAnchor.START");
+	public static final TimePeriodAnchor START = new TimePeriodAnchor("TimePeriodAnchor.START");
 
-	public static final TimePeriodAnchor MIDDLE = new TimePeriodAnchor(
-			"TimePeriodAnchor.MIDDLE");
+	public static final TimePeriodAnchor MIDDLE = new TimePeriodAnchor("TimePeriodAnchor.MIDDLE");
 
-	public static final TimePeriodAnchor END = new TimePeriodAnchor(
-			"TimePeriodAnchor.END");
+	public static final TimePeriodAnchor END = new TimePeriodAnchor("TimePeriodAnchor.END");
 
 	private String name;
 

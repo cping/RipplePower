@@ -5,11 +5,8 @@ import java.util.function.Consumer;
 
 public interface IHOrderBuilderBase {
 
-
 	IHOrder commit();
-	
 
-	IHOrder commit(Consumer<IHOrder> onSuccess,
-	               BiConsumer<HOrderRejectReasonEnum, IHOrder> onRejected);
-	               
+	IHOrder commit(Consumer<IHOrder> onSuccess, BiConsumer<HOrderRejectReasonEnum, IHOrder> onRejected);
+
 }

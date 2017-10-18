@@ -99,6 +99,12 @@ public class HMacDSAKCalculator
         hMac.doFinal(V, 0);
     }
 
+    // Testability hack
+    // Added by ND
+    public boolean isValid(BigInteger k) {
+        return true;
+    }
+
     public BigInteger nextK()
     {
         byte[] t = new byte[((n.bitLength() + 7) / 8)];
@@ -120,8 +126,7 @@ public class HMacDSAKCalculator
 
             BigInteger k = bitsToInt(t);
 
-            if (k.compareTo(ZERO) > 0 && k.compareTo(n) < 0)
-            {
+            if (k.compareTo(ZERO) > 0 && k.compareTo(n) < 0 && isValid(k)) {
                 return k;
             }
 

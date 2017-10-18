@@ -38,107 +38,49 @@ import java.util.Map;
  */
 public final class Code128Reader extends OneDReader {
 
-	static final int[][] CODE_PATTERNS = {
-			{ 2, 1, 2, 2, 2, 2 }, // 0
-			{ 2, 2, 2, 1, 2, 2 },
-			{ 2, 2, 2, 2, 2, 1 },
-			{ 1, 2, 1, 2, 2, 3 },
-			{ 1, 2, 1, 3, 2, 2 },
+	static final int[][] CODE_PATTERNS = { { 2, 1, 2, 2, 2, 2 }, // 0
+			{ 2, 2, 2, 1, 2, 2 }, { 2, 2, 2, 2, 2, 1 }, { 1, 2, 1, 2, 2, 3 }, { 1, 2, 1, 3, 2, 2 },
 			{ 1, 3, 1, 2, 2, 2 }, // 5
-			{ 1, 2, 2, 2, 1, 3 },
-			{ 1, 2, 2, 3, 1, 2 },
-			{ 1, 3, 2, 2, 1, 2 },
-			{ 2, 2, 1, 2, 1, 3 },
+			{ 1, 2, 2, 2, 1, 3 }, { 1, 2, 2, 3, 1, 2 }, { 1, 3, 2, 2, 1, 2 }, { 2, 2, 1, 2, 1, 3 },
 			{ 2, 2, 1, 3, 1, 2 }, // 10
-			{ 2, 3, 1, 2, 1, 2 },
-			{ 1, 1, 2, 2, 3, 2 },
-			{ 1, 2, 2, 1, 3, 2 },
-			{ 1, 2, 2, 2, 3, 1 },
+			{ 2, 3, 1, 2, 1, 2 }, { 1, 1, 2, 2, 3, 2 }, { 1, 2, 2, 1, 3, 2 }, { 1, 2, 2, 2, 3, 1 },
 			{ 1, 1, 3, 2, 2, 2 }, // 15
-			{ 1, 2, 3, 1, 2, 2 },
-			{ 1, 2, 3, 2, 2, 1 },
-			{ 2, 2, 3, 2, 1, 1 },
-			{ 2, 2, 1, 1, 3, 2 },
+			{ 1, 2, 3, 1, 2, 2 }, { 1, 2, 3, 2, 2, 1 }, { 2, 2, 3, 2, 1, 1 }, { 2, 2, 1, 1, 3, 2 },
 			{ 2, 2, 1, 2, 3, 1 }, // 20
-			{ 2, 1, 3, 2, 1, 2 },
-			{ 2, 2, 3, 1, 1, 2 },
-			{ 3, 1, 2, 1, 3, 1 },
-			{ 3, 1, 1, 2, 2, 2 },
+			{ 2, 1, 3, 2, 1, 2 }, { 2, 2, 3, 1, 1, 2 }, { 3, 1, 2, 1, 3, 1 }, { 3, 1, 1, 2, 2, 2 },
 			{ 3, 2, 1, 1, 2, 2 }, // 25
-			{ 3, 2, 1, 2, 2, 1 },
-			{ 3, 1, 2, 2, 1, 2 },
-			{ 3, 2, 2, 1, 1, 2 },
-			{ 3, 2, 2, 2, 1, 1 },
+			{ 3, 2, 1, 2, 2, 1 }, { 3, 1, 2, 2, 1, 2 }, { 3, 2, 2, 1, 1, 2 }, { 3, 2, 2, 2, 1, 1 },
 			{ 2, 1, 2, 1, 2, 3 }, // 30
-			{ 2, 1, 2, 3, 2, 1 },
-			{ 2, 3, 2, 1, 2, 1 },
-			{ 1, 1, 1, 3, 2, 3 },
-			{ 1, 3, 1, 1, 2, 3 },
+			{ 2, 1, 2, 3, 2, 1 }, { 2, 3, 2, 1, 2, 1 }, { 1, 1, 1, 3, 2, 3 }, { 1, 3, 1, 1, 2, 3 },
 			{ 1, 3, 1, 3, 2, 1 }, // 35
-			{ 1, 1, 2, 3, 1, 3 },
-			{ 1, 3, 2, 1, 1, 3 },
-			{ 1, 3, 2, 3, 1, 1 },
-			{ 2, 1, 1, 3, 1, 3 },
+			{ 1, 1, 2, 3, 1, 3 }, { 1, 3, 2, 1, 1, 3 }, { 1, 3, 2, 3, 1, 1 }, { 2, 1, 1, 3, 1, 3 },
 			{ 2, 3, 1, 1, 1, 3 }, // 40
-			{ 2, 3, 1, 3, 1, 1 },
-			{ 1, 1, 2, 1, 3, 3 },
-			{ 1, 1, 2, 3, 3, 1 },
-			{ 1, 3, 2, 1, 3, 1 },
+			{ 2, 3, 1, 3, 1, 1 }, { 1, 1, 2, 1, 3, 3 }, { 1, 1, 2, 3, 3, 1 }, { 1, 3, 2, 1, 3, 1 },
 			{ 1, 1, 3, 1, 2, 3 }, // 45
-			{ 1, 1, 3, 3, 2, 1 },
-			{ 1, 3, 3, 1, 2, 1 },
-			{ 3, 1, 3, 1, 2, 1 },
-			{ 2, 1, 1, 3, 3, 1 },
+			{ 1, 1, 3, 3, 2, 1 }, { 1, 3, 3, 1, 2, 1 }, { 3, 1, 3, 1, 2, 1 }, { 2, 1, 1, 3, 3, 1 },
 			{ 2, 3, 1, 1, 3, 1 }, // 50
-			{ 2, 1, 3, 1, 1, 3 },
-			{ 2, 1, 3, 3, 1, 1 },
-			{ 2, 1, 3, 1, 3, 1 },
-			{ 3, 1, 1, 1, 2, 3 },
+			{ 2, 1, 3, 1, 1, 3 }, { 2, 1, 3, 3, 1, 1 }, { 2, 1, 3, 1, 3, 1 }, { 3, 1, 1, 1, 2, 3 },
 			{ 3, 1, 1, 3, 2, 1 }, // 55
-			{ 3, 3, 1, 1, 2, 1 },
-			{ 3, 1, 2, 1, 1, 3 },
-			{ 3, 1, 2, 3, 1, 1 },
-			{ 3, 3, 2, 1, 1, 1 },
+			{ 3, 3, 1, 1, 2, 1 }, { 3, 1, 2, 1, 1, 3 }, { 3, 1, 2, 3, 1, 1 }, { 3, 3, 2, 1, 1, 1 },
 			{ 3, 1, 4, 1, 1, 1 }, // 60
-			{ 2, 2, 1, 4, 1, 1 },
-			{ 4, 3, 1, 1, 1, 1 },
-			{ 1, 1, 1, 2, 2, 4 },
-			{ 1, 1, 1, 4, 2, 2 },
+			{ 2, 2, 1, 4, 1, 1 }, { 4, 3, 1, 1, 1, 1 }, { 1, 1, 1, 2, 2, 4 }, { 1, 1, 1, 4, 2, 2 },
 			{ 1, 2, 1, 1, 2, 4 }, // 65
-			{ 1, 2, 1, 4, 2, 1 },
-			{ 1, 4, 1, 1, 2, 2 },
-			{ 1, 4, 1, 2, 2, 1 },
-			{ 1, 1, 2, 2, 1, 4 },
+			{ 1, 2, 1, 4, 2, 1 }, { 1, 4, 1, 1, 2, 2 }, { 1, 4, 1, 2, 2, 1 }, { 1, 1, 2, 2, 1, 4 },
 			{ 1, 1, 2, 4, 1, 2 }, // 70
-			{ 1, 2, 2, 1, 1, 4 },
-			{ 1, 2, 2, 4, 1, 1 },
-			{ 1, 4, 2, 1, 1, 2 },
-			{ 1, 4, 2, 2, 1, 1 },
+			{ 1, 2, 2, 1, 1, 4 }, { 1, 2, 2, 4, 1, 1 }, { 1, 4, 2, 1, 1, 2 }, { 1, 4, 2, 2, 1, 1 },
 			{ 2, 4, 1, 2, 1, 1 }, // 75
-			{ 2, 2, 1, 1, 1, 4 },
-			{ 4, 1, 3, 1, 1, 1 },
-			{ 2, 4, 1, 1, 1, 2 },
-			{ 1, 3, 4, 1, 1, 1 },
+			{ 2, 2, 1, 1, 1, 4 }, { 4, 1, 3, 1, 1, 1 }, { 2, 4, 1, 1, 1, 2 }, { 1, 3, 4, 1, 1, 1 },
 			{ 1, 1, 1, 2, 4, 2 }, // 80
-			{ 1, 2, 1, 1, 4, 2 },
-			{ 1, 2, 1, 2, 4, 1 },
-			{ 1, 1, 4, 2, 1, 2 },
-			{ 1, 2, 4, 1, 1, 2 },
+			{ 1, 2, 1, 1, 4, 2 }, { 1, 2, 1, 2, 4, 1 }, { 1, 1, 4, 2, 1, 2 }, { 1, 2, 4, 1, 1, 2 },
 			{ 1, 2, 4, 2, 1, 1 }, // 85
-			{ 4, 1, 1, 2, 1, 2 },
-			{ 4, 2, 1, 1, 1, 2 },
-			{ 4, 2, 1, 2, 1, 1 },
-			{ 2, 1, 2, 1, 4, 1 },
+			{ 4, 1, 1, 2, 1, 2 }, { 4, 2, 1, 1, 1, 2 }, { 4, 2, 1, 2, 1, 1 }, { 2, 1, 2, 1, 4, 1 },
 			{ 2, 1, 4, 1, 2, 1 }, // 90
-			{ 4, 1, 2, 1, 2, 1 }, { 1, 1, 1, 1, 4, 3 },
-			{ 1, 1, 1, 3, 4, 1 },
-			{ 1, 3, 1, 1, 4, 1 },
+			{ 4, 1, 2, 1, 2, 1 }, { 1, 1, 1, 1, 4, 3 }, { 1, 1, 1, 3, 4, 1 }, { 1, 3, 1, 1, 4, 1 },
 			{ 1, 1, 4, 1, 1, 3 }, // 95
-			{ 1, 1, 4, 3, 1, 1 }, { 4, 1, 1, 1, 1, 3 }, { 4, 1, 1, 3, 1, 1 },
-			{ 1, 1, 3, 1, 4, 1 },
+			{ 1, 1, 4, 3, 1, 1 }, { 4, 1, 1, 1, 1, 3 }, { 4, 1, 1, 3, 1, 1 }, { 1, 1, 3, 1, 4, 1 },
 			{ 1, 1, 4, 1, 3, 1 }, // 100
-			{ 3, 1, 1, 1, 4, 1 }, { 4, 1, 1, 1, 3, 1 }, { 2, 1, 1, 4, 1, 2 },
-			{ 2, 1, 1, 2, 1, 4 }, { 2, 1, 1, 2, 3, 2 }, // 105
+			{ 3, 1, 1, 1, 4, 1 }, { 4, 1, 1, 1, 3, 1 }, { 2, 1, 1, 4, 1, 2 }, { 2, 1, 1, 2, 1, 4 },
+			{ 2, 1, 1, 2, 3, 2 }, // 105
 			{ 2, 3, 3, 1, 1, 1, 2 } };
 
 	private static final float MAX_AVG_VARIANCE = 0.25f;
@@ -161,8 +103,7 @@ public final class Code128Reader extends OneDReader {
 	private static final int CODE_START_C = 105;
 	private static final int CODE_STOP = 106;
 
-	private static int[] findStartPattern(BitArray row)
-			throws NotFoundException {
+	private static int[] findStartPattern(BitArray row) throws NotFoundException {
 		int width = row.getSize();
 		int rowOffset = row.getNextSet(0);
 
@@ -180,8 +121,7 @@ public final class Code128Reader extends OneDReader {
 					float bestVariance = MAX_AVG_VARIANCE;
 					int bestMatch = -1;
 					for (int startCode = CODE_START_A; startCode <= CODE_START_C; startCode++) {
-						float variance = patternMatchVariance(counters,
-								CODE_PATTERNS[startCode],
+						float variance = patternMatchVariance(counters, CODE_PATTERNS[startCode],
 								MAX_INDIVIDUAL_VARIANCE);
 						if (variance < bestVariance) {
 							bestVariance = variance;
@@ -191,15 +131,11 @@ public final class Code128Reader extends OneDReader {
 					// Look for whitespace before start pattern, >= 50% of width
 					// of start pattern
 					if (bestMatch >= 0
-							&& row.isRange(
-									Math.max(0, patternStart
-											- (i - patternStart) / 2),
-									patternStart, false)) {
+							&& row.isRange(Math.max(0, patternStart - (i - patternStart) / 2), patternStart, false)) {
 						return new int[] { patternStart, i, bestMatch };
 					}
 					patternStart += counters[0] + counters[1];
-					System.arraycopy(counters, 2, counters, 0,
-							patternLength - 2);
+					System.arraycopy(counters, 2, counters, 0, patternLength - 2);
 					counters[patternLength - 2] = 0;
 					counters[patternLength - 1] = 0;
 					counterPosition--;
@@ -213,15 +149,13 @@ public final class Code128Reader extends OneDReader {
 		throw NotFoundException.getNotFoundInstance();
 	}
 
-	private static int decodeCode(BitArray row, int[] counters, int rowOffset)
-			throws NotFoundException {
+	private static int decodeCode(BitArray row, int[] counters, int rowOffset) throws NotFoundException {
 		recordPattern(row, rowOffset, counters);
 		float bestVariance = MAX_AVG_VARIANCE; // worst variance we'll accept
 		int bestMatch = -1;
 		for (int d = 0; d < CODE_PATTERNS.length; d++) {
 			int[] pattern = CODE_PATTERNS[d];
-			float variance = patternMatchVariance(counters, pattern,
-					MAX_INDIVIDUAL_VARIANCE);
+			float variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
 			if (variance < bestVariance) {
 				bestVariance = variance;
 				bestMatch = d;
@@ -237,12 +171,10 @@ public final class Code128Reader extends OneDReader {
 	}
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException,
-			FormatException, ChecksumException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints)
+			throws NotFoundException, FormatException, ChecksumException {
 
-		boolean convertFNC1 = hints != null
-				&& hints.containsKey(DecodeHintType.ASSUME_GS1);
+		boolean convertFNC1 = hints != null && hints.containsKey(DecodeHintType.ASSUME_GS1);
 
 		int[] startPatternInfo = findStartPattern(row);
 		int startCode = startPatternInfo[2];
@@ -507,8 +439,7 @@ public final class Code128Reader extends OneDReader {
 		// to read off. Would be slightly better to properly read. Here we just
 		// skip it:
 		nextStart = row.getNextUnset(nextStart);
-		if (!row.isRange(nextStart, Math.min(row.getSize(), nextStart
-				+ (nextStart - lastStart) / 2), false)) {
+		if (!row.isRange(nextStart, Math.min(row.getSize(), nextStart + (nextStart - lastStart) / 2), false)) {
 			throw NotFoundException.getNotFoundInstance();
 		}
 
@@ -547,10 +478,8 @@ public final class Code128Reader extends OneDReader {
 			rawBytes[i] = rawCodes.get(i);
 		}
 
-		return new Result(result.toString(), rawBytes, new ResultPoint[] {
-				new ResultPoint(left, (float) rowNumber),
-				new ResultPoint(right, (float) rowNumber) },
-				BarcodeFormat.CODE_128);
+		return new Result(result.toString(), rawBytes, new ResultPoint[] { new ResultPoint(left, (float) rowNumber),
+				new ResultPoint(right, (float) rowNumber) }, BarcodeFormat.CODE_128);
 
 	}
 

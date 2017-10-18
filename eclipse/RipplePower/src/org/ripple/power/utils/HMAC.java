@@ -36,8 +36,7 @@ public class HMAC {
 			this.update(data);
 			return this.digest();
 		} else {
-			throw new RuntimeException(
-					"encrypt on already updated hmac called!");
+			throw new RuntimeException("encrypt on already updated hmac called!");
 		}
 	}
 

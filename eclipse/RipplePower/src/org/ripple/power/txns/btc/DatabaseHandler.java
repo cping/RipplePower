@@ -61,12 +61,9 @@ public class DatabaseHandler implements Runnable {
 		rescanHeight = BTCLoader.blockStore.getRescanHeight(rescanTime);
 
 		if (rescanHeight > 0) {
-			BTCLoader.info(String.format(
-					"Block chain rescan started at height %d", rescanHeight));
-			Sha256Hash blockHash = BTCLoader.blockStore
-					.getBlockHash(rescanHeight);
-			PeerRequest request = new PeerRequest(blockHash,
-					InventoryItem.INV_FILTERED_BLOCK);
+			BTCLoader.info(String.format("Block chain rescan started at height %d", rescanHeight));
+			Sha256Hash blockHash = BTCLoader.blockStore.getBlockHash(rescanHeight);
+			PeerRequest request = new PeerRequest(blockHash, InventoryItem.INV_FILTERED_BLOCK);
 			synchronized (BTCLoader.lock) {
 				BTCLoader.pendingRequests.add(request);
 			}
@@ -114,8 +111,8 @@ public class DatabaseHandler implements Runnable {
 					//
 					int chainHeight = BTCLoader.blockStore.getChainHeight();
 					if (chainHeight < BTCLoader.networkChainHeight - 100
-							&& (getblocksHeight < chainHeight - 300 || getblocksTime < System
-									.currentTimeMillis() - 60000)
+							&& (getblocksHeight < chainHeight - 300
+									|| getblocksTime < System.currentTimeMillis() - 60000)
 							&& BTCLoader.networkHandler != null) {
 						getblocksHeight = chainHeight;
 						getblocksTime = System.currentTimeMillis();
@@ -185,12 +182,9 @@ public class DatabaseHandler implements Runnable {
 						}
 					} else {
 						if (rescanHeight % 1000 == 0)
-							BTCLoader.debug(String.format(
-									"Block rescan at block %d", rescanHeight));
-						Sha256Hash nextHash = BTCLoader.blockStore
-								.getBlockHash(rescanHeight);
-						PeerRequest request = new PeerRequest(nextHash,
-								InventoryItem.INV_FILTERED_BLOCK);
+							BTCLoader.debug(String.format("Block rescan at block %d", rescanHeight));
+						Sha256Hash nextHash = BTCLoader.blockStore.getBlockHash(rescanHeight);
+						PeerRequest request = new PeerRequest(nextHash, InventoryItem.INV_FILTERED_BLOCK);
 						synchronized (BTCLoader.lock) {
 							BTCLoader.pendingRequests.add(request);
 						}
@@ -198,8 +192,7 @@ public class DatabaseHandler implements Runnable {
 					}
 				} else {
 
-					StoredHeader chkHeader = BTCLoader.blockStore
-							.getHeader(blockHash);
+					StoredHeader chkHeader = BTCLoader.blockStore.getHeader(blockHash);
 					if (!chkHeader.isOnChain()) {
 						updateChain(blockHeader);
 						if (blockHeader.isOnChain()) {
@@ -211,12 +204,10 @@ public class DatabaseHandler implements Runnable {
 				}
 			}
 		} catch (BlockNotFoundException exc) {
-			PeerRequest request = new PeerRequest(exc.getHash(),
-					InventoryItem.INV_FILTERED_BLOCK);
+			PeerRequest request = new PeerRequest(exc.getHash(), InventoryItem.INV_FILTERED_BLOCK);
 			boolean wakeup = false;
 			synchronized (BTCLoader.lock) {
-				if (!BTCLoader.pendingRequests.contains(request)
-						&& !BTCLoader.processedRequests.contains(request)) {
+				if (!BTCLoader.pendingRequests.contains(request) && !BTCLoader.processedRequests.contains(request)) {
 					BTCLoader.pendingRequests.add(request);
 					wakeup = true;
 				}
@@ -224,22 +215,15 @@ public class DatabaseHandler implements Runnable {
 			if (wakeup)
 				BTCLoader.networkHandler.wakeup();
 		} catch (VerificationException exc) {
-			BTCLoader.error(
-					String.format("Checkpoint verification failed\n  %s",
-							exc.getHash()), exc);
+			BTCLoader.error(String.format("Checkpoint verification failed\n  %s", exc.getHash()), exc);
 		} catch (BlockStoreException exc) {
-			BTCLoader.error(
-					String.format("Unable to process block\n  %s",
-							blockHash.toString()), exc);
+			BTCLoader.error(String.format("Unable to process block\n  %s", blockHash.toString()), exc);
 		}
 	}
 
+	private void updateChain(StoredHeader blockHeader) throws VerificationException, BlockStoreException {
 
-	private void updateChain(StoredHeader blockHeader)
-			throws VerificationException, BlockStoreException {
-
-		List<StoredHeader> chainList = BTCLoader.blockStore.getJunctionHeader(blockHeader
-				.getPrevHash());
+		List<StoredHeader> chainList = BTCLoader.blockStore.getJunctionHeader(blockHeader.getPrevHash());
 		chainList.add(blockHeader);
 
 		StoredHeader chainHeader = chainList.get(0);
@@ -252,35 +236,29 @@ public class DatabaseHandler implements Runnable {
 			chainHeader.setBlockHeight(++blockHeight);
 		}
 
-		if (blockHeader.getChainWork().compareTo(
-				BTCLoader.blockStore.getChainWork()) > 0) {
+		if (blockHeader.getChainWork().compareTo(BTCLoader.blockStore.getChainWork()) > 0) {
 			BTCLoader.blockStore.setChainStoredHead(chainList);
 			for (int i = 1; i < chainList.size(); i++) {
 				chainHeader = chainList.get(i);
 				chainHeader.setChain(true);
-				for (BlockStoreListener listener : listeners){
+				for (BlockStoreListener listener : listeners) {
 					listener.addChainBlock(chainHeader);
 				}
 			}
-			BTCLoader.networkChainHeight = Math.max(
-					BTCLoader.networkChainHeight, blockHeader.getBlockHeight());
+			BTCLoader.networkChainHeight = Math.max(BTCLoader.networkChainHeight, blockHeader.getBlockHeight());
 		} else {
-			BTCLoader
-					.debug(String
-							.format("Block not added to chain: New chain work %d, Current chain work %d\n  Block %s",
-									blockHeader.getChainWork(),
-									BTCLoader.blockStore.getChainWork(),
-									blockHeader.getHash()));
+			BTCLoader.debug(
+					String.format("Block not added to chain: New chain work %d, Current chain work %d\n  Block %s",
+							blockHeader.getChainWork(), BTCLoader.blockStore.getChainWork(), blockHeader.getHash()));
 		}
 	}
 
-	private Sha256Hash processChildBlock(Sha256Hash parentHash)
-			throws VerificationException, BlockStoreException {
+	private Sha256Hash processChildBlock(Sha256Hash parentHash) throws VerificationException, BlockStoreException {
 		Sha256Hash nextParent = null;
 		StoredHeader childHeader = BTCLoader.blockStore.getChildHeader(parentHash);
 		if (childHeader != null && !childHeader.isOnChain()) {
 			updateChain(childHeader);
-			if (childHeader.isOnChain()){
+			if (childHeader.isOnChain()) {
 				nextParent = childHeader.getHash();
 			}
 		}
@@ -299,8 +277,7 @@ public class DatabaseHandler implements Runnable {
 			// Process the new block
 			//
 			List<StoredBlock> chainList = null;
-			StoredBlock storedBlock = BTCLoader.blockStore.getStoredBlock(block
-					.getHash());
+			StoredBlock storedBlock = BTCLoader.blockStore.getStoredBlock(block.getHash());
 			if (storedBlock == null) {
 				//
 				// Add a new block to our database
@@ -328,8 +305,7 @@ public class DatabaseHandler implements Runnable {
 					if (chainBlock != null) {
 						updateTxPool(chainBlock);
 						int chainHeight = chainStoredBlock.getHeight();
-						BTCLoader.networkChainHeight = Math.max(chainHeight,
-								BTCLoader.networkChainHeight);
+						BTCLoader.networkChainHeight = Math.max(chainHeight, BTCLoader.networkChainHeight);
 						if (chainHeight >= BTCLoader.networkChainHeight - 3)
 							notifyPeers(chainStoredBlock);
 					}
@@ -342,21 +318,18 @@ public class DatabaseHandler implements Runnable {
 			// Remove the request from the processedRequests list
 			//
 			synchronized (BTCLoader.pendingRequests) {
-				Iterator<PeerRequest> it = BTCLoader.processedRequests
-						.iterator();
+				Iterator<PeerRequest> it = BTCLoader.processedRequests.iterator();
 				while (it.hasNext()) {
 					PeerRequest request = it.next();
-					if (request.getType() == InventoryItem.INV_BLOCK
-							&& request.getHash().equals(block.getHash())) {
+					if (request.getType() == InventoryItem.INV_BLOCK && request.getHash().equals(block.getHash())) {
 						it.remove();
 						break;
 					}
 				}
 			}
 		} catch (BlockStoreException exc) {
-			BTCLoader.error(String.format(
-					"Unable to store block in database\n  Block %s",
-					block.getHashAsString()), exc);
+			BTCLoader.error(String.format("Unable to store block in database\n  Block %s", block.getHashAsString()),
+					exc);
 		}
 	}
 
@@ -367,8 +340,7 @@ public class DatabaseHandler implements Runnable {
 	 *             Database error occurred
 	 */
 	private void processPendingBlocks() throws BlockStoreException {
-		StoredBlock parentBlock = BTCLoader.blockStore
-				.getStoredBlock(BTCLoader.blockStore.getChainHead());
+		StoredBlock parentBlock = BTCLoader.blockStore.getStoredBlock(BTCLoader.blockStore.getChainHead());
 		while (parentBlock != null && !databaseShutdown)
 			parentBlock = processChildBlock(parentBlock);
 	}
@@ -382,11 +354,9 @@ public class DatabaseHandler implements Runnable {
 	 * @throws BlockStoreException
 	 *             Database error occurred
 	 */
-	private StoredBlock processChildBlock(StoredBlock storedBlock)
-			throws BlockStoreException {
+	private StoredBlock processChildBlock(StoredBlock storedBlock) throws BlockStoreException {
 		StoredBlock parentBlock = null;
-		StoredBlock childStoredBlock = BTCLoader.blockStore
-				.getChildStoredBlock(storedBlock.getHash());
+		StoredBlock childStoredBlock = BTCLoader.blockStore.getChildStoredBlock(storedBlock.getHash());
 		if (childStoredBlock != null && !childStoredBlock.isOnChain()) {
 			//
 			// Update the chain with the child block
@@ -402,8 +372,7 @@ public class DatabaseHandler implements Runnable {
 				// network chain.
 				//
 				int chainHeight = childStoredBlock.getHeight();
-				BTCLoader.networkChainHeight = Math.max(chainHeight,
-						BTCLoader.networkChainHeight);
+				BTCLoader.networkChainHeight = Math.max(chainHeight, BTCLoader.networkChainHeight);
 				if (chainHeight >= BTCLoader.networkChainHeight - 3)
 					notifyPeers(childStoredBlock);
 				//
@@ -428,41 +397,38 @@ public class DatabaseHandler implements Runnable {
 		List<Transaction> txList = block.getTransactions();
 		List<StoredTransaction> retryList = new ArrayList<>();
 		synchronized (BTCLoader.txMap) {
-			for(Transaction tx:txList){
+			for (Transaction tx : txList) {
 
 				Sha256Hash txHash = tx.getHash();
 				//
 				// Remove the transaction from the transaction maps
 				//
-					BTCLoader.txMap.remove(txHash);
-					BTCLoader.recentTxMap.remove(txHash);
-					//
-					// Remove spent outputs from the map since they are now
-					// updated in the database
-					//
-					List<TransactionInput> txInputs = tx.getInputs();
-					for(TransactionInput txInput:txInputs){
-						BTCLoader.spentOutputsMap
-						.remove(txInput.getOutPoint());
-					}
-					//
-					// Get orphan transactions dependent on this transaction
-					//
-					List<StoredTransaction> orphanList = BTCLoader.orphanTxMap
-							.remove(txHash);
-					if (orphanList != null)
-						retryList.addAll(orphanList);
-				
+				BTCLoader.txMap.remove(txHash);
+				BTCLoader.recentTxMap.remove(txHash);
+				//
+				// Remove spent outputs from the map since they are now
+				// updated in the database
+				//
+				List<TransactionInput> txInputs = tx.getInputs();
+				for (TransactionInput txInput : txInputs) {
+					BTCLoader.spentOutputsMap.remove(txInput.getOutPoint());
+				}
+				//
+				// Get orphan transactions dependent on this transaction
+				//
+				List<StoredTransaction> orphanList = BTCLoader.orphanTxMap.remove(txHash);
+				if (orphanList != null)
+					retryList.addAll(orphanList);
+
 			}
-	
+
 		}
 		//
 		// Retry orphan transactions that are not in the database
 		//
 		for (StoredTransaction orphan : retryList) {
 			if (BTCLoader.blockStore.isNewTransaction(orphan.getHash()))
-				BTCLoader.networkMessageListener.retryOrphanTransaction(orphan
-						.getTransaction());
+				BTCLoader.networkMessageListener.retryOrphanTransaction(orphan.getTransaction());
 		}
 	}
 
@@ -474,8 +440,7 @@ public class DatabaseHandler implements Runnable {
 	 */
 	private void notifyPeers(StoredBlock storedBlock) {
 		List<InventoryItem> invList = new ArrayList<>(1);
-		invList.add(new InventoryItem(InventoryItem.INV_BLOCK, storedBlock
-				.getHash()));
+		invList.add(new InventoryItem(InventoryItem.INV_BLOCK, storedBlock.getHash()));
 		Message invMsg = InventoryMessage.buildInventoryMessage(null, invList);
 		invMsg.setInventoryType(InventoryItem.INV_BLOCK);
 		BTCLoader.networkHandler.broadcastMessage(invMsg);
@@ -494,8 +459,7 @@ public class DatabaseHandler implements Runnable {
 					txMap.remove(txHash);
 			}
 			if (blockHash != null) {
-				StoredHeader blockHeader = BTCLoader.blockStore
-						.getHeader(blockHash);
+				StoredHeader blockHeader = BTCLoader.blockStore.getHeader(blockHash);
 				txTime = blockHeader.getBlockTime();
 				if (!blockHeader.isOnChain())
 					blockHash = null;
@@ -515,10 +479,8 @@ public class DatabaseHandler implements Runnable {
 					if (key != null) {
 						if (key.isChange())
 							totalChange = totalChange.add(txOutput.getValue());
-						ReceiveTransaction rcvTx = new ReceiveTransaction(
-								tx.getNormalizedID(), txHash, txIndex, txTime,
-								blockHash, key.toAddress(),
-								txOutput.getValue(), txOutput.getScriptBytes(),
+						ReceiveTransaction rcvTx = new ReceiveTransaction(tx.getNormalizedID(), txHash, txIndex, txTime,
+								blockHash, key.toAddress(), txOutput.getValue(), txOutput.getScriptBytes(),
 								key.isChange(), tx.isCoinBase());
 						BTCLoader.blockStore.storeReceiveTx(rcvTx);
 						txUpdated = true;
@@ -526,18 +488,15 @@ public class DatabaseHandler implements Runnable {
 				}
 
 				boolean isRelevant = false;
-				List<ReceiveTransaction> rcvList = BTCLoader.blockStore
-						.getReceiveTxList();
+				List<ReceiveTransaction> rcvList = BTCLoader.blockStore.getReceiveTxList();
 				List<TransactionInput> txInputs = tx.getInputs();
 				BigInteger totalInput = BigInteger.ZERO;
 				for (TransactionInput txInput : txInputs) {
 					OutPoint txOutPoint = txInput.getOutPoint();
 					for (ReceiveTransaction rcv : rcvList) {
-						if (rcv.getTxHash().equals(txOutPoint.getHash())
-								&& rcv.getTxIndex() == txOutPoint.getIndex()) {
+						if (rcv.getTxHash().equals(txOutPoint.getHash()) && rcv.getTxIndex() == txOutPoint.getIndex()) {
 							totalInput = totalInput.add(rcv.getValue());
-							BTCLoader.blockStore.setTxSpent(rcv.getTxHash(),
-									rcv.getTxIndex(), true);
+							BTCLoader.blockStore.setTxSpent(rcv.getTxHash(), rcv.getTxIndex(), true);
 							isRelevant = true;
 							txUpdated = true;
 							break;
@@ -556,10 +515,8 @@ public class DatabaseHandler implements Runnable {
 					if (address != null) {
 						BigInteger fee = totalInput.subtract(totalValue);
 						BigInteger sentValue = totalValue.subtract(totalChange);
-						SendTransaction sendTx = new SendTransaction(
-								tx.getNormalizedID(), txHash, txTime - 15,
-								blockHash, address, sentValue, fee,
-								tx.getBytes());
+						SendTransaction sendTx = new SendTransaction(tx.getNormalizedID(), txHash, txTime - 15,
+								blockHash, address, sentValue, fee, tx.getBytes());
 						BTCLoader.blockStore.storeSendTx(sendTx);
 					}
 				}
@@ -571,8 +528,7 @@ public class DatabaseHandler implements Runnable {
 				}
 			}
 		} catch (BlockStoreException exc) {
-			BTCLoader.error(String.format(
-					"Unable to process transaction\n  %s", txHash), exc);
+			BTCLoader.error(String.format("Unable to process transaction\n  %s", txHash), exc);
 		}
 	}
 
@@ -626,14 +582,11 @@ public class DatabaseHandler implements Runnable {
 				timerTask = new DeleteOutputsTask();
 				timer.schedule(timerTask, 60 * 60 * 1000);
 			} catch (BlockStoreException exc) {
-				BTCLoader.error("Unable to delete spent transaction outputs",
-						exc);
+				BTCLoader.error("Unable to delete spent transaction outputs", exc);
 			} catch (InterruptedException exc) {
 				BTCLoader.info("Database prune task terminated");
 			} catch (Throwable exc) {
-				BTCLoader
-						.error("Unexpected exception while deleting spent transaction outputs",
-								exc);
+				BTCLoader.error("Unexpected exception while deleting spent transaction outputs", exc);
 			}
 			//
 			// Indicate task is no longer active
@@ -659,8 +612,7 @@ public class DatabaseHandler implements Runnable {
 					Thread.sleep(1000);
 				}
 			} catch (InterruptedException exc) {
-				BTCLoader
-						.error("Unable to wait for database prune task to complete");
+				BTCLoader.error("Unable to wait for database prune task to complete");
 			}
 			//
 			// Cancel future execution
@@ -673,10 +625,8 @@ public class DatabaseHandler implements Runnable {
 		Object result = null;
 
 		byte[] scriptBytes = txOutput.getScriptBytes();
-		if (scriptBytes.length == 25
-				&& scriptBytes[0] == (byte) ScriptOpCodes.OP_DUP
-				&& scriptBytes[1] == (byte) ScriptOpCodes.OP_HASH160
-				&& scriptBytes[2] == 20
+		if (scriptBytes.length == 25 && scriptBytes[0] == (byte) ScriptOpCodes.OP_DUP
+				&& scriptBytes[1] == (byte) ScriptOpCodes.OP_HASH160 && scriptBytes[2] == 20
 				&& scriptBytes[23] == (byte) ScriptOpCodes.OP_EQUALVERIFY
 				&& scriptBytes[24] == (byte) ScriptOpCodes.OP_CHECKSIG) {
 

@@ -33,7 +33,7 @@ public class BouncyCastlePQCProvider
     /*
     * Configurable symmetric ciphers
     */
-    private static final String ALGORITHM_PACKAGE = "org.bouncycastle.pqc.jcajce.provider.";
+    private static final String ALGORITHM_PACKAGE = "org.ripple.bouncycastle.pqc.jcajce.provider.";
     private static final String[] ALGORITHMS =
         {
             "Rainbow", "McEliece"

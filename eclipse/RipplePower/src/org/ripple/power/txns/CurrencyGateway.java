@@ -14,11 +14,11 @@ public class CurrencyGateway {
 		public String currencyName;
 
 		public ArrayList<GatewayItem> gateways = new ArrayList<GatewayItem>(10);
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			StringBuilder sbr = new StringBuilder();
-			for(GatewayItem item:gateways){
+			for (GatewayItem item : gateways) {
 				sbr.append(item);
 				sbr.append(LSystem.LS);
 			}
@@ -27,8 +27,7 @@ public class CurrencyGateway {
 
 	}
 
-	public ArrayList<CurrencyGateway.Item> currencys = new ArrayList<CurrencyGateway.Item>(
-			10);
+	public ArrayList<CurrencyGateway.Item> currencys = new ArrayList<CurrencyGateway.Item>(10);
 
 	public JSONObject json;
 

@@ -45,12 +45,10 @@ public class TimePeriodValue implements Cloneable, Serializable {
 
 		TimePeriodValue timePeriodValue = (TimePeriodValue) obj;
 
-		if (this.period != null ? !this.period.equals(timePeriodValue.period)
-				: timePeriodValue.period != null) {
+		if (this.period != null ? !this.period.equals(timePeriodValue.period) : timePeriodValue.period != null) {
 			return false;
 		}
-		if (this.value != null ? !this.value.equals(timePeriodValue.value)
-				: timePeriodValue.value != null) {
+		if (this.value != null ? !this.value.equals(timePeriodValue.value) : timePeriodValue.value != null) {
 			return false;
 		}
 

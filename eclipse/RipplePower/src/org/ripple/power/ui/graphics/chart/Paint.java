@@ -97,10 +97,8 @@ class Paint {
 	}
 
 	public int getTextHeight(String text) {
-		BufferedImage bufferedImage = new BufferedImage(1, 1,
-				BufferedImage.TYPE_INT_ARGB);
-		FontMetrics fontMetrics = bufferedImage.getGraphics().getFontMetrics(
-				this.font);
+		BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		FontMetrics fontMetrics = bufferedImage.getGraphics().getFontMetrics(this.font);
 		return fontMetrics.getHeight();
 	}
 
@@ -109,10 +107,8 @@ class Paint {
 	}
 
 	public int getTextWidth(String text) {
-		BufferedImage bufferedImage = new BufferedImage(1, 1,
-				BufferedImage.TYPE_INT_ARGB);
-		FontMetrics fontMetrics = bufferedImage.getGraphics().getFontMetrics(
-				this.font);
+		BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		FontMetrics fontMetrics = bufferedImage.getGraphics().getFontMetrics(this.font);
 		return fontMetrics.stringWidth(text);
 	}
 
@@ -121,10 +117,9 @@ class Paint {
 	}
 
 	public void setBitmapShader(Bitmap bitmap) {
-		Rectangle rectangle = new Rectangle(0, 0, bitmap.getWidth(),
-				bitmap.getHeight());
-		this.texturePaint = new TexturePaint(JavaSEGraphicFactory
-				.getBufferedImage(bitmap).getBufferedImage(), rectangle);
+		Rectangle rectangle = new Rectangle(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		this.texturePaint = new TexturePaint(JavaSEGraphicFactory.getBufferedImage(bitmap).getBufferedImage(),
+				rectangle);
 	}
 
 	public void setColor(LColor color) {
@@ -192,8 +187,7 @@ class Paint {
 
 	private void createFont() {
 		if (this.textSize > 0) {
-			this.font = new Font(this.fontName, this.fontStyle,
-					(int) this.textSize);
+			this.font = new Font(this.fontName, this.fontStyle, (int) this.textSize);
 		} else {
 			this.font = null;
 		}
@@ -203,7 +197,6 @@ class Paint {
 		if (this.strokeWidth <= 0) {
 			return;
 		}
-		this.stroke = new BasicStroke(this.strokeWidth, this.cap,
-				BasicStroke.JOIN_ROUND, 0, this.strokeDasharray, 0);
+		this.stroke = new BasicStroke(this.strokeWidth, this.cap, BasicStroke.JOIN_ROUND, 0, this.strokeDasharray, 0);
 	}
 }

@@ -42,8 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class UnitValue implements Serializable {
-	private static final HashMap<String, Integer> UNIT_MAP = new HashMap<String, Integer>(
-			32);
+	private static final HashMap<String, Integer> UNIT_MAP = new HashMap<String, Integer>(32);
 
 	private static final ArrayList<UnitConverter> CONVERTERS = new ArrayList<UnitConverter>();
 
@@ -236,30 +235,19 @@ public final class UnitValue implements Serializable {
 		UNIT_MAP.put("label", LABEL_ALIGN);
 	}
 
-	static final UnitValue ZERO = new UnitValue(0, null, PIXEL, true, STATIC,
-			null, null, "0px");
-	static final UnitValue TOP = new UnitValue(0, null, PERCENT, false, STATIC,
-			null, null, "top");
-	static final UnitValue LEADING = new UnitValue(0, null, PERCENT, true,
-			STATIC, null, null, "leading");
-	static final UnitValue LEFT = new UnitValue(0, null, PERCENT, true, STATIC,
-			null, null, "left");
-	static final UnitValue CENTER = new UnitValue(50, null, PERCENT, true,
-			STATIC, null, null, "center");
-	static final UnitValue TRAILING = new UnitValue(100, null, PERCENT, true,
-			STATIC, null, null, "trailing");
-	static final UnitValue RIGHT = new UnitValue(100, null, PERCENT, true,
-			STATIC, null, null, "right");
-	static final UnitValue BOTTOM = new UnitValue(100, null, PERCENT, false,
-			STATIC, null, null, "bottom");
-	static final UnitValue LABEL = new UnitValue(0, null, LABEL_ALIGN, false,
-			STATIC, null, null, "label");
+	static final UnitValue ZERO = new UnitValue(0, null, PIXEL, true, STATIC, null, null, "0px");
+	static final UnitValue TOP = new UnitValue(0, null, PERCENT, false, STATIC, null, null, "top");
+	static final UnitValue LEADING = new UnitValue(0, null, PERCENT, true, STATIC, null, null, "leading");
+	static final UnitValue LEFT = new UnitValue(0, null, PERCENT, true, STATIC, null, null, "left");
+	static final UnitValue CENTER = new UnitValue(50, null, PERCENT, true, STATIC, null, null, "center");
+	static final UnitValue TRAILING = new UnitValue(100, null, PERCENT, true, STATIC, null, null, "trailing");
+	static final UnitValue RIGHT = new UnitValue(100, null, PERCENT, true, STATIC, null, null, "right");
+	static final UnitValue BOTTOM = new UnitValue(100, null, PERCENT, false, STATIC, null, null, "bottom");
+	static final UnitValue LABEL = new UnitValue(0, null, LABEL_ALIGN, false, STATIC, null, null, "label");
 
-	static final UnitValue INF = new UnitValue(LayoutUtil.INF, null, PIXEL,
-			true, STATIC, null, null, "inf");
+	static final UnitValue INF = new UnitValue(LayoutUtil.INF, null, PIXEL, true, STATIC, null, null, "inf");
 
-	static final UnitValue BASELINE_IDENTITY = new UnitValue(0, null, IDENTITY,
-			false, STATIC, null, null, "baseline");
+	static final UnitValue BASELINE_IDENTITY = new UnitValue(0, null, IDENTITY, false, STATIC, null, null, "baseline");
 
 	private final transient float value;
 	private final transient int unit;
@@ -283,34 +271,30 @@ public final class UnitValue implements Serializable {
 		this(value, null, unit, true, STATIC, null, null, createString);
 	}
 
-	UnitValue(float value, String unitStr, boolean isHor, int oper,
-			String createString) {
+	UnitValue(float value, String unitStr, boolean isHor, int oper, String createString) {
 		this(value, unitStr, -1, isHor, oper, null, null, createString);
 	}
 
-	UnitValue(boolean isHor, int oper, UnitValue sub1, UnitValue sub2,
-			String createString) {
+	UnitValue(boolean isHor, int oper, UnitValue sub1, UnitValue sub2, String createString) {
 		this(0, "", -1, isHor, oper, sub1, sub2, createString);
 		if (sub1 == null || sub2 == null)
 			throw new IllegalArgumentException("Sub units is null!");
 	}
 
-	private UnitValue(float value, String unitStr, int unit, boolean isHor,
-			int oper, UnitValue sub1, UnitValue sub2, String createString) {
+	private UnitValue(float value, String unitStr, int unit, boolean isHor, int oper, UnitValue sub1, UnitValue sub2,
+			String createString) {
 		if (oper < STATIC || oper > MID)
 			throw new IllegalArgumentException("Unknown Operation: " + oper);
 
 		if (oper >= ADD && oper <= MID && (sub1 == null || sub2 == null))
-			throw new IllegalArgumentException(oper
-					+ " Operation may not have null sub-UnitValues.");
+			throw new IllegalArgumentException(oper + " Operation may not have null sub-UnitValues.");
 
 		this.value = value;
 		this.oper = oper;
 		this.isHor = isHor;
 		this.unitStr = unitStr;
 		this.unit = unitStr != null ? parseUnitString() : unit;
-		this.subUnits = sub1 != null && sub2 != null ? new UnitValue[] { sub1,
-				sub2 } : null;
+		this.subUnits = sub1 != null && sub2 != null ? new UnitValue[] { sub1, sub2 } : null;
 
 		LayoutUtil.putCCString(this, createString); // "this" escapes!! Safe
 													// though.
@@ -333,13 +317,11 @@ public final class UnitValue implements Serializable {
 	 *            component.
 	 * @return The size in pixels.
 	 */
-	public final int getPixels(float refValue, ContainerWrapper parent,
-			ComponentWrapper comp) {
+	public final int getPixels(float refValue, ContainerWrapper parent, ComponentWrapper comp) {
 		return Math.round(getPixelsExact(refValue, parent, comp));
 	}
 
-	private static final float[] SCALE = new float[] { 25.4f, 2.54f, 1f, 0f,
-			72f };
+	private static final float[] SCALE = new float[] { 25.4f, 2.54f, 1f, 0f, 72f };
 
 	/**
 	 * Returns the size in pixels.
@@ -358,8 +340,7 @@ public final class UnitValue implements Serializable {
 	 *            component.
 	 * @return The size in pixels.
 	 */
-	public final float getPixelsExact(float refValue, ContainerWrapper parent,
-			ComponentWrapper comp) {
+	public final float getPixelsExact(float refValue, ContainerWrapper parent, ComponentWrapper comp) {
 		if (parent == null)
 			return 1;
 
@@ -381,20 +362,17 @@ public final class UnitValue implements Serializable {
 						: PlatformDefaults.getVerticalScaleFactor();
 				if (s != null)
 					f *= s;
-				return (isHor ? parent.getHorizontalScreenDPI() : parent
-						.getVerticalScreenDPI()) * value / f;
+				return (isHor ? parent.getHorizontalScreenDPI() : parent.getVerticalScreenDPI()) * value / f;
 
 			case PERCENT:
 				return value * refValue * 0.01f;
 
 			case SPX:
 			case SPY:
-				return (unit == SPX ? parent.getScreenWidth() : parent
-						.getScreenHeight()) * value * 0.01f;
+				return (unit == SPX ? parent.getScreenWidth() : parent.getScreenHeight()) * value * 0.01f;
 
 			case ALIGN:
-				Integer st = LinkHandler.getValue(parent.getLayout(), "visual",
-						isHor ? LinkHandler.X : LinkHandler.Y);
+				Integer st = LinkHandler.getValue(parent.getLayout(), "visual", isHor ? LinkHandler.X : LinkHandler.Y);
 				Integer sz = LinkHandler.getValue(parent.getLayout(), "visual",
 						isHor ? LinkHandler.WIDTH : LinkHandler.HEIGHT);
 				if (st == null || sz == null)
@@ -404,24 +382,20 @@ public final class UnitValue implements Serializable {
 			case MIN_SIZE:
 				if (comp == null)
 					return 0;
-				return isHor ? comp.getMinimumWidth(comp.getHeight()) : comp
-						.getMinimumHeight(comp.getWidth());
+				return isHor ? comp.getMinimumWidth(comp.getHeight()) : comp.getMinimumHeight(comp.getWidth());
 
 			case PREF_SIZE:
 				if (comp == null)
 					return 0;
-				return isHor ? comp.getPreferredWidth(comp.getHeight()) : comp
-						.getPreferredHeight(comp.getWidth());
+				return isHor ? comp.getPreferredWidth(comp.getHeight()) : comp.getPreferredHeight(comp.getWidth());
 
 			case MAX_SIZE:
 				if (comp == null)
 					return 0;
-				return isHor ? comp.getMaximumWidth(comp.getHeight()) : comp
-						.getMaximumHeight(comp.getWidth());
+				return isHor ? comp.getMaximumWidth(comp.getHeight()) : comp.getMaximumHeight(comp.getWidth());
 
 			case BUTTON:
-				return PlatformDefaults.getMinimumButtonWidth().getPixels(
-						refValue, parent, comp);
+				return PlatformDefaults.getMinimumButtonWidth().getPixels(refValue, parent, comp);
 
 			case LINK_X:
 			case LINK_Y:
@@ -431,9 +405,8 @@ public final class UnitValue implements Serializable {
 			case LINK_Y2:
 			case LINK_XPOS:
 			case LINK_YPOS:
-				Integer v = LinkHandler.getValue(parent.getLayout(),
-						getLinkTargetId(), unit
-								- (unit >= LINK_XPOS ? LINK_XPOS : LINK_X));
+				Integer v = LinkHandler.getValue(parent.getLayout(), getLinkTargetId(),
+						unit - (unit >= LINK_XPOS ? LINK_XPOS : LINK_X));
 				if (v == null)
 					return 0;
 
@@ -454,8 +427,7 @@ public final class UnitValue implements Serializable {
 
 			case IDENTITY:
 			}
-			throw new IllegalArgumentException("Unknown/illegal unit: " + unit
-					+ ", unitStr: " + unitStr);
+			throw new IllegalArgumentException("Unknown/illegal unit: " + unit + ", unitStr: " + unitStr);
 		}
 
 		if (subUnits != null && subUnits.length == 2) {
@@ -482,24 +454,20 @@ public final class UnitValue implements Serializable {
 		throw new IllegalArgumentException("Internal: Unknown Oper: " + oper);
 	}
 
-	private float lookup(float refValue, ContainerWrapper parent,
-			ComponentWrapper comp) {
+	private float lookup(float refValue, ContainerWrapper parent, ComponentWrapper comp) {
 		float res = UnitConverter.UNABLE;
 		for (int i = CONVERTERS.size() - 1; i >= 0; i--) {
-			res = CONVERTERS.get(i).convertToPixels(value, unitStr, isHor,
-					refValue, parent, comp);
+			res = CONVERTERS.get(i).convertToPixels(value, unitStr, isHor, refValue, parent, comp);
 			if (res != UnitConverter.UNABLE)
 				return res;
 		}
-		return PlatformDefaults.convertToPixels(value, unitStr, isHor,
-				refValue, parent, comp);
+		return PlatformDefaults.convertToPixels(value, unitStr, isHor, refValue, parent, comp);
 	}
 
 	private int parseUnitString() {
 		int len = unitStr.length();
 		if (len == 0)
-			return isHor ? PlatformDefaults.getDefaultHorizontalUnit()
-					: PlatformDefaults.getDefaultVerticalUnit();
+			return isHor ? PlatformDefaults.getDefaultHorizontalUnit() : PlatformDefaults.getDefaultVerticalUnit();
 
 		Integer u = UNIT_MAP.get(unitStr);
 		if (u != null)
@@ -596,9 +564,8 @@ public final class UnitValue implements Serializable {
 	}
 
 	final public String toString() {
-		return getClass().getName() + ". Value=" + value + ", unit=" + unit
-				+ ", unitString: " + unitStr + ", oper=" + oper + ", isHor: "
-				+ isHor;
+		return getClass().getName() + ". Value=" + value + ", unit=" + unit + ", unitString: " + unitStr + ", oper="
+				+ oper + ", isHor: " + isHor;
 	}
 
 	/**
@@ -640,8 +607,7 @@ public final class UnitValue implements Serializable {
 	 *            The converter.
 	 * @return If there was a converter found and thus removed.
 	 */
-	public synchronized static boolean removeGlobalUnitConverter(
-			UnitConverter unit) {
+	public synchronized static boolean removeGlobalUnitConverter(UnitConverter unit) {
 		return CONVERTERS.remove(unit);
 	}
 
@@ -696,11 +662,8 @@ public final class UnitValue implements Serializable {
 						throw new IllegalStateException(
 								"Design time must be on to use XML persistence. See LayoutUtil.");
 
-					return new Expression(oldInstance, ConstraintParser.class,
-							"parseUnitValueOrAlign", new Object[] {
-									uv.getConstraintString(),
-									(uv.isHorizontal() ? Boolean.TRUE
-											: Boolean.FALSE), null });
+					return new Expression(oldInstance, ConstraintParser.class, "parseUnitValueOrAlign", new Object[] {
+							uv.getConstraintString(), (uv.isHorizontal() ? Boolean.TRUE : Boolean.FALSE), null });
 				}
 			});
 		}
@@ -721,8 +684,7 @@ public final class UnitValue implements Serializable {
 			LayoutUtil.writeAsXML(out, this);
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException,
-			ClassNotFoundException {
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 }

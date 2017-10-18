@@ -8,9 +8,9 @@ public class BOT_SET {
 	public String gateway_address;
 	public String currency_code;
 	public boolean cleanup_zombies;
-	public double minDifference ;
-	public double minPriceUpdate ;
-	
+	public double minDifference;
+	public double minPriceUpdate;
+
 	public boolean arbitrage = false;
 	public String baseCurrency;
 	public String baseGateway;
@@ -21,6 +21,5 @@ public class BOT_SET {
 	public String parity;
 	public String arbFactor;
 	public int intervalMs;
-	
 
 }

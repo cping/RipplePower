@@ -87,8 +87,7 @@ public class ArrayByte implements Closed {
 		if (length != data.length) {
 			byte[] oldData = data;
 			data = new byte[length];
-			System.arraycopy(oldData, 0, data, 0,
-					Math.min(oldData.length, length));
+			System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, length));
 			if (position > length) {
 				position = length;
 			}
@@ -130,8 +129,7 @@ public class ArrayByte implements Closed {
 		return read(buffer, 0, buffer.length);
 	}
 
-	public int read(byte[] buffer, int offset, int length)
-			throws IndexOutOfBoundsException {
+	public int read(byte[] buffer, int offset, int length) throws IndexOutOfBoundsException {
 		if (length == 0) {
 			return 0;
 		}
@@ -180,25 +178,20 @@ public class ArrayByte implements Closed {
 	public int readInt() throws IndexOutOfBoundsException {
 		checkAvailable(4);
 		if (byteOrder == type) {
-			return (data[position++] & 0xff) | ((data[position++] & 0xff) << 8)
-					| ((data[position++] & 0xff) << 16)
+			return (data[position++] & 0xff) | ((data[position++] & 0xff) << 8) | ((data[position++] & 0xff) << 16)
 					| ((data[position++] & 0xff) << 24);
 		} else {
-			return ((data[position++] & 0xff) << 24)
-					| ((data[position++] & 0xff) << 16)
-					| ((data[position++] & 0xff) << 8)
-					| (data[position++] & 0xff);
+			return ((data[position++] & 0xff) << 24) | ((data[position++] & 0xff) << 16)
+					| ((data[position++] & 0xff) << 8) | (data[position++] & 0xff);
 		}
 	}
 
 	public long readLong() throws IndexOutOfBoundsException {
 		checkAvailable(8);
 		if (byteOrder == type) {
-			return (readInt() & 0xffffffffL)
-					| ((readInt() & 0xffffffffL) << 32L);
+			return (readInt() & 0xffffffffL) | ((readInt() & 0xffffffffL) << 32L);
 		} else {
-			return ((readInt() & 0xffffffffL) << 32L)
-					| (readInt() & 0xffffffffL);
+			return ((readInt() & 0xffffffffL) << 32L) | (readInt() & 0xffffffffL);
 		}
 	}
 
@@ -210,8 +203,7 @@ public class ArrayByte implements Closed {
 		return Double.longBitsToDouble(readLong());
 	}
 
-	public String readUTF() throws IndexOutOfBoundsException,
-			UTFDataFormatException {
+	public String readUTF() throws IndexOutOfBoundsException, UTFDataFormatException {
 		checkAvailable(2);
 		int utfLength = readShort() & 0xffff;
 		checkAvailable(utfLength);

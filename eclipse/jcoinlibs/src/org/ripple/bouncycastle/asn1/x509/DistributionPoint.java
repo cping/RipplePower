@@ -8,7 +8,6 @@ import org.ripple.bouncycastle.asn1.ASN1TaggedObject;
 import org.ripple.bouncycastle.asn1.DERBitString;
 import org.ripple.bouncycastle.asn1.DERSequence;
 import org.ripple.bouncycastle.asn1.DERTaggedObject;
-import org.ripple.bouncycastle.util.Strings;
 
 /**
  * The DistributionPoint object.
@@ -122,7 +121,7 @@ public class DistributionPoint
 
     public String toString()
     {
-        String       sep = Strings.lineSeparator();
+        String       sep = System.getProperty("line.separator");
         StringBuffer buf = new StringBuffer();
         buf.append("DistributionPoint: [");
         buf.append(sep);

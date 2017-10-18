@@ -8,8 +8,7 @@ import org.ripple.power.timer.LTimer;
 
 public class Cycle extends LObject {
 
-	public final static Cycle newSample(int type, float srcWidth,
-			float srcHeight) {
+	public final static Cycle newSample(int type, float srcWidth, float srcHeight) {
 		float width = 1;
 		float height = 1;
 		float offset = 0;
@@ -79,13 +78,11 @@ public class Cycle extends LObject {
 		default:
 			return null;
 		}
-		return Cycle.getSample(type, srcWidth, srcHeight, width, height,
-				offset, padding);
+		return Cycle.getSample(type, srcWidth, srcHeight, width, height, offset, padding);
 	}
 
-	public final static Cycle getSample(int type, float srcWidth,
-			float srcHeight, float width, float height, float offset,
-			int padding) {
+	public final static Cycle getSample(int type, float srcWidth, float srcHeight, float width, float height,
+			float offset, int padding) {
 		Cycle cycle = new Cycle();
 		float s = 1;
 		if (srcWidth > srcHeight) {
@@ -101,14 +98,12 @@ public class Cycle extends LObject {
 			cycle.setTrailLength(1);
 			cycle.setPointDistance(0.10f);
 			cycle.setMultiplier(2);
-			cycle.addPath(Cycle.ARC, 10 * scale, 10 * scale, 10 * scale, -270,
-					-90);
-			cycle.addPath(Cycle.BEZIER, 10 * scale, 0 * scale, 40 * scale,
-					20 * scale, 20 * scale, 0, 30 * scale, 20 * scale);
-			cycle.addPath(Cycle.ARC, 40 * scale, 10 * scale, 10 * scale, 90,
-					-90);
-			cycle.addPath(Cycle.BEZIER, 40 * scale, 0 * scale, 10 * scale,
-					20 * scale, 30 * scale, 0, 20 * scale, 20 * scale);
+			cycle.addPath(Cycle.ARC, 10 * scale, 10 * scale, 10 * scale, -270, -90);
+			cycle.addPath(Cycle.BEZIER, 10 * scale, 0 * scale, 40 * scale, 20 * scale, 20 * scale, 0, 30 * scale,
+					20 * scale);
+			cycle.addPath(Cycle.ARC, 40 * scale, 10 * scale, 10 * scale, 90, -90);
+			cycle.addPath(Cycle.BEZIER, 40 * scale, 0 * scale, 10 * scale, 20 * scale, 30 * scale, 0, 20 * scale,
+					20 * scale);
 			break;
 		case 1:
 			cycle.setColor(0xD4FF00);
@@ -118,8 +113,7 @@ public class Cycle extends LObject {
 			cycle.setTrailLength(0.3f);
 			cycle.setPointDistance(0.1f);
 			cycle.addPath(Cycle.LINE, 0, 0, 30 * scale, 0);
-			cycle.addPath(Cycle.LINE, 30 * scale, 0 * scale, 30 * scale,
-					30 * scale);
+			cycle.addPath(Cycle.LINE, 30 * scale, 0 * scale, 30 * scale, 30 * scale);
 			cycle.addPath(Cycle.LINE, 30 * scale, 30 * scale, 0, 30 * scale);
 			cycle.addPath(Cycle.LINE, 0, 30 * scale, 0, 0);
 			break;
@@ -145,12 +139,9 @@ public class Cycle extends LObject {
 			cycle.setTrailLength(0.7f);
 			cycle.setPointDistance(0.01f);
 			cycle.setDelay(35);
-			cycle.addPath(Cycle.LINE, 20 * scale, 70 * scale, 50 * scale,
-					20 * scale);
-			cycle.addPath(Cycle.LINE, 50 * scale, 20 * scale, 80 * scale,
-					70 * scale);
-			cycle.addPath(Cycle.LINE, 80 * scale, 70 * scale, 20 * scale,
-					70 * scale);
+			cycle.addPath(Cycle.LINE, 20 * scale, 70 * scale, 50 * scale, 20 * scale);
+			cycle.addPath(Cycle.LINE, 50 * scale, 20 * scale, 80 * scale, 70 * scale);
+			cycle.addPath(Cycle.LINE, 80 * scale, 70 * scale, 20 * scale, 70 * scale);
 			break;
 		case 5:
 			cycle.setColor(0x05E2FF);
@@ -162,20 +153,15 @@ public class Cycle extends LObject {
 		case 6:
 			cycle.setStepType(1);
 			cycle.setColor(LColor.yellow);
-			cycle.addPath(Cycle.LINE, 10 * scale, 10 * scale, 90 * scale,
-					10 * scale);
-			cycle.addPath(Cycle.LINE, 90 * scale, 10 * scale, 90 * scale,
-					90 * scale);
-			cycle.addPath(Cycle.LINE, 90 * scale, 90 * scale, 10 * scale,
-					90 * scale);
-			cycle.addPath(Cycle.LINE, 10 * scale, 90 * scale, 10 * scale,
-					10 * scale);
+			cycle.addPath(Cycle.LINE, 10 * scale, 10 * scale, 90 * scale, 10 * scale);
+			cycle.addPath(Cycle.LINE, 90 * scale, 10 * scale, 90 * scale, 90 * scale);
+			cycle.addPath(Cycle.LINE, 90 * scale, 90 * scale, 10 * scale, 90 * scale);
+			cycle.addPath(Cycle.LINE, 10 * scale, 90 * scale, 10 * scale, 10 * scale);
 			break;
 		default:
 			return null;
 		}
-		float size = Math.min(srcWidth / (1 / cycle.getPointDistance()),
-				srcHeight / (1 / cycle.getPointDistance()));
+		float size = Math.min(srcWidth / (1 / cycle.getPointDistance()), srcHeight / (1 / cycle.getPointDistance()));
 		cycle.setPadding(padding);
 		cycle.setBlockWidth(size + offset);
 		cycle.setBlockHeight(size + offset);
@@ -350,17 +336,14 @@ public class Cycle extends LObject {
 		this.isUpdate = false;
 	}
 
-	private final void step(LGraphics g, Progress e, int index, int frame,
-			LColor color, float alpha) {
+	private final void step(LGraphics g, Progress e, int index, int frame, LColor color, float alpha) {
 		switch (stepType) {
 		case 0:
-			g.fillOval((int) (x() + e.x - blockHalfWidth),
-					(int) (y() + e.y - blockHalfHeight), (int) blockWidth,
+			g.fillOval((int) (x() + e.x - blockHalfWidth), (int) (y() + e.y - blockHalfHeight), (int) blockWidth,
 					(int) blockHeight);
 			break;
 		case 1:
-			g.fillRect((int) (x() + e.x - blockHalfWidth),
-					(int) (y() + e.y - blockHalfHeight), (int) blockWidth,
+			g.fillRect((int) (x() + e.x - blockHalfWidth), (int) (y() + e.y - blockHalfHeight), (int) blockWidth,
 					(int) blockHeight);
 			break;
 		case 2:
@@ -373,8 +356,7 @@ public class Cycle extends LObject {
 			break;
 		case 3:
 			if (last != null) {
-				g.drawLine((int) (x() + last.x), (int) (y() + last.y),
-						(int) (x() + e.x), (int) (y() + e.y));
+				g.drawLine((int) (x() + last.x), (int) (y() + last.y), (int) (x() + e.x), (int) (y() + e.y));
 			}
 			last = e;
 			break;
@@ -384,8 +366,7 @@ public class Cycle extends LObject {
 		}
 	}
 
-	public void step(LGraphics g, float x, float y, float progress, int index,
-			int frame, LColor color, float alpha) {
+	public void step(LGraphics g, float x, float y, float progress, int index, int frame, LColor color, float alpha) {
 
 	}
 
@@ -404,8 +385,7 @@ public class Cycle extends LObject {
 			t = Math.round(t * 1f / pd) / (1f / pd);
 			switch (index) {
 			case BEZIER:
-				result = bezier(t, f[0], f[1], f[2], f[3], f[4], f[5], f[6],
-						f[7]);
+				result = bezier(t, f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7]);
 				break;
 			case ARC:
 				result = arc(t, f[0], f[1], f[2], f[3], f[4]);
@@ -423,24 +403,20 @@ public class Cycle extends LObject {
 
 	}
 
-	private final float[] bezier(float t, float p0x, float p0y, float p1x,
-			float p1y, float c0x, float c0y, float c1x, float c1y) {
+	private final float[] bezier(float t, float p0x, float p0y, float p1x, float p1y, float c0x, float c0y, float c1x,
+			float c1y) {
 
 		t = 1 - t;
 
-		float i = 1 - t, x = t * t, y = i * i, a = x * t, b = 3 * x * i, c = 3
-				* t * y, d = y * i;
+		float i = 1 - t, x = t * t, y = i * i, a = x * t, b = 3 * x * i, c = 3 * t * y, d = y * i;
 
-		return new float[] { a * p0x + b * c0x + c * c1x + d * p1x,
-				a * p0y + b * c0y + c * c1y + d * p1y };
+		return new float[] { a * p0x + b * c0x + c * c1x + d * p1x, a * p0y + b * c0y + c * c1y + d * p1y };
 	}
 
-	private final float[] arc(float t, float cx, float cy, float radius,
-			float start, float end) {
+	private final float[] arc(float t, float cx, float cy, float radius, float start, float end) {
 		float point = (end - start) * t + start;
 
-		return new float[] { (float) ((Math.cos(point) * radius) + cx),
-				(float) ((Math.sin(point) * radius) + cy) };
+		return new float[] { (float) ((Math.cos(point) * radius) + cx), (float) ((Math.sin(point) * radius) + cy) };
 
 	}
 

@@ -17,8 +17,7 @@ import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
-public final class DownloadBlocksDialog extends ABaseDialog implements
-		ActionListener {
+public final class DownloadBlocksDialog extends ABaseDialog implements ActionListener {
 
 	/**
 	 * 
@@ -35,13 +34,11 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 	}
 
 	public DownloadBlocksDialog(String text, Window parent) {
-		super(LSystem.applicationMain, "Download Bitcoin Blocks",
-				Dialog.ModalityType.DOCUMENT_MODAL);
+		super(LSystem.applicationMain, "Download Bitcoin Blocks", Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(parent.getWidth() - 150,
-				parent.getHeight() - 100);
+		Dimension dim = new Dimension(parent.getWidth() - 150, parent.getHeight() - 100);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -61,8 +58,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 				break;
 			}
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 
@@ -95,8 +91,7 @@ public final class DownloadBlocksDialog extends ABaseDialog implements
 			try {
 				exit();
 			} catch (Exception exc) {
-				ErrorLog.get().logException(
-						"Exception while closing application window", exc);
+				ErrorLog.get().logException("Exception while closing application window", exc);
 			}
 		}
 	}

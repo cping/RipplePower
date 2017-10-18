@@ -35,8 +35,7 @@ public class FadeEffect extends LObject implements ISprite {
 	private boolean visible;
 
 	public static FadeEffect getInstance(int type, LColor c) {
-		return new FadeEffect(c, 60, type, LSystem.screenRect.getWidth(),
-				LSystem.screenRect.getHeight());
+		return new FadeEffect(c, 60, type, LSystem.screenRect.getWidth(), LSystem.screenRect.getHeight());
 
 	}
 
@@ -122,10 +121,8 @@ public class FadeEffect extends LObject implements ISprite {
 		setOpacity((int) op);
 		if (opacity > 0) {
 			Color tempColor = g.getColor();
-			g.setColor(new Color(color.getRed(), color.getGreen(), color
-					.getBlue(), opacity));
-			g.fillRect((int) (offsetX + this.x()), (int) (offsetY + this.y()),
-					width, height);
+			g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity));
+			g.fillRect((int) (offsetX + this.x()), (int) (offsetY + this.y()), width, height);
 			g.setColor(tempColor);
 			return;
 		}

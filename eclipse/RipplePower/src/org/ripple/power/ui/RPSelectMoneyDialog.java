@@ -30,8 +30,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 
 	private RPDialogTool tool;
 
-	public static RPSelectMoneyDialog showDialog(String text, Window parent,
-			WalletItem item, boolean show) {
+	public static RPSelectMoneyDialog showDialog(String text, Window parent, WalletItem item, boolean show) {
 		if (show) {
 			synchronized (RPSelectMoneyDialog.class) {
 				if (lock == null) {
@@ -48,8 +47,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		return null;
 	}
 
-	public static RPSelectMoneyDialog showDialog(String text, Window parent,
-			WalletItem item) {
+	public static RPSelectMoneyDialog showDialog(String text, Window parent, WalletItem item) {
 		return showDialog(text, parent, item, true);
 	}
 
@@ -71,20 +69,20 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 	private RPCButton _sendXRPButton;
 	private WalletItem _item;
 
-	private final static ImageIcon iconXRP = new ImageIcon(new LImage(
-			"icons/wallet.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconXRP = new ImageIcon(
+			new LImage("icons/wallet.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconIOU = new ImageIcon(new LImage(
-			"icons/bank.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconIOU = new ImageIcon(
+			new LImage("icons/bank.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconMemo = new ImageIcon(new LImage(
-			"icons/credit.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconMemo = new ImageIcon(
+			new LImage("icons/credit.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconFlag = new ImageIcon(new LImage(
-			"icons/safe.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconFlag = new ImageIcon(
+			new LImage("icons/safe.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconExit = new ImageIcon(new LImage(
-			"icons/arrowright.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon iconExit = new ImageIcon(
+			new LImage("icons/arrowright.png").scaledInstance(48, 48).getBufferedImage());
 
 	public RPSelectMoneyDialog(String text, Window parent, WalletItem item) {
 		Dimension dim = new Dimension(399, 390);
@@ -124,8 +122,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		_sendIOUButton.setBounds(30, 90, 338, 55);
 		_sendIOUButton.addActionListener(this);
 
-		_sendMemoButton.setText(LangConfig.get(this, "send_memo",
-				"Memo Send/Receive"));
+		_sendMemoButton.setText(LangConfig.get(this, "send_memo", "Memo Send/Receive"));
 		_sendMemoButton.setFont(font);
 		_sendMemoButton.setActionCommand("memo");
 		add(_sendMemoButton);
@@ -140,11 +137,9 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		_sendFlagButton.addActionListener(this);
 
 		setBackground(UIConfig.dialogbackground);
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 
-		HelperDialog
-				.setSystemHelperMessage("Send XRP / IOU to the specified Ripple address or Ripple account name . ");
+		HelperDialog.setSystemHelperMessage("Send XRP / IOU to the specified Ripple address or Ripple account name . ");
 	}
 
 	@Override
@@ -157,44 +152,29 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 		if ("xrp".equalsIgnoreCase(eve)) {
 			BigDecimal number = new BigDecimal(_item.getAmount());
 			if (number.compareTo(BigDecimal.ZERO) < 1) {
-				UIRes.showWarningMessage(this, LangConfig.get(MainPanel.class,
-						"txfails", "Transaction fails"), LangConfig.get(
-						MainPanel.class, "stop",
-						"Sorry, currently the address  XRP not send XRP"));
+				UIRes.showWarningMessage(this, LangConfig.get(MainPanel.class, "txfails", "Transaction fails"),
+						LangConfig.get(MainPanel.class, "stop", "Sorry, currently the address  XRP not send XRP"));
 			} else {
-				RPToast.makeText(LSystem.applicationMain, "Send XRP.",
-						Style.SUCCESS).display();
+				RPToast.makeText(LSystem.applicationMain, "Send XRP.", Style.SUCCESS).display();
 				RPSendXRPDialog.showDialog(
-						_item.getPublicKey()
-								+ " "
-								+ LangConfig.get(MainPanel.class, "send_xrp",
-										"Send XRP"), LSystem.applicationMain,
-						_item);
+						_item.getPublicKey() + " " + LangConfig.get(MainPanel.class, "send_xrp", "Send XRP"),
+						LSystem.applicationMain, _item);
 			}
 		} else if ("iou".equalsIgnoreCase(eve)) {
-			RPToast.makeText(LSystem.applicationMain, "Send IOU.",
-					Style.SUCCESS).display();
-			RPSendIOUDialog
-					.showDialog(
-							_item.getPublicKey()
-									+ " "
-									+ LangConfig.get(MainPanel.class,
-											"send_iou", "Send IOU"),
-							LSystem.applicationMain, _item);
+			RPToast.makeText(LSystem.applicationMain, "Send IOU.", Style.SUCCESS).display();
+			RPSendIOUDialog.showDialog(
+					_item.getPublicKey() + " " + LangConfig.get(MainPanel.class, "send_iou", "Send IOU"),
+					LSystem.applicationMain, _item);
 		} else if ("memo".equalsIgnoreCase(eve)) {
-			RPToast.makeText(LSystem.applicationMain, "Memo Send/Receive.",
-					Style.SUCCESS).display();
-			RPRippledMemoDialog.showDialog(
-					LangConfig.get(MainPanel.class, "send_memo",
-							"Memo Send/Receive") + " " + _item.getPublicKey(),
+			RPToast.makeText(LSystem.applicationMain, "Memo Send/Receive.", Style.SUCCESS).display();
+			RPSendMemoDialog.showDialog(
+					LangConfig.get(MainPanel.class, "send_memo", "Memo Send/Receive") + " " + _item.getPublicKey(),
 					LSystem.applicationMain, _item);
 		} else if ("flag".equalsIgnoreCase(eve)) {
-			RPToast.makeText(LSystem.applicationMain, "Send Flags.",
-					Style.SUCCESS).display();
-			RPSendFlagsDialog.showDialog(_item.getPublicKey() + " Send Flags",
-					LSystem.applicationMain, _item);
+			RPToast.makeText(LSystem.applicationMain, "Send Flags.", Style.SUCCESS).display();
+			RPSendFlagsDialog.showDialog(_item.getPublicKey() + " Send Flags", LSystem.applicationMain, _item);
 		}
-	
+
 	}
 
 }

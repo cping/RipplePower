@@ -27,16 +27,14 @@ public class RPPopupMenu extends JPopupMenu {
 		}
 
 		public Insets getBorderInsets(Component c) {
-			return new Insets(this.radius + 1, this.radius + 1,
-					this.radius + 2, this.radius);
+			return new Insets(this.radius + 1, this.radius + 1, this.radius + 2, this.radius);
 		}
 
 		public boolean isBorderOpaque() {
 			return true;
 		}
 
-		public void paintBorder(Component c, Graphics g, int x, int y,
-				int width, int height) {
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 			g.setColor(color);
 			g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
 			g.setColor(LColor.black);
@@ -49,8 +47,7 @@ public class RPPopupMenu extends JPopupMenu {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (_gradation == null) {
-			_gradation = Gradation.getInstance(LColor.WHITE, LColor.BLACK,
-					getWidth(), getHeight(), 255);
+			_gradation = Gradation.getInstance(LColor.WHITE, LColor.BLACK, getWidth(), getHeight(), 255);
 		}
 		_gradation.drawHeight(g, 0, 0);
 

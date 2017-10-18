@@ -16,15 +16,13 @@ public class IntHashMap {
 
 	public IntHashMap(int initialCapacity, float _loadFactor) {
 		if (initialCapacity < 0) {
-			throw new IllegalArgumentException("Illegal initial capacity: "
-					+ initialCapacity);
+			throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
 		}
 		if (initialCapacity > 1 << 30) {
 			initialCapacity = 1 << 30;
 		}
 		if (_loadFactor <= 0 || Float.isNaN(_loadFactor)) {
-			throw new IllegalArgumentException("Illegal load factor: "
-					+ _loadFactor);
+			throw new IllegalArgumentException("Illegal load factor: " + _loadFactor);
 		}
 		int capacity = 1;
 		while (capacity < initialCapacity) {
@@ -354,16 +352,14 @@ public class IntHashMap {
 	}
 
 	void addEntry(int key, Object value, int bucketIndex) {
-		valueTables[bucketIndex] = new Entry(key, value,
-				valueTables[bucketIndex]);
+		valueTables[bucketIndex] = new Entry(key, value, valueTables[bucketIndex]);
 		if (_size++ >= _threshold) {
 			resize(2 * valueTables.length);
 		}
 	}
 
 	void createEntry(int key, Object value, int bucketIndex) {
-		valueTables[bucketIndex] = new Entry(key, value,
-				valueTables[bucketIndex]);
+		valueTables[bucketIndex] = new Entry(key, value, valueTables[bucketIndex]);
 		_size++;
 	}
 
@@ -375,9 +371,4 @@ public class IntHashMap {
 		return _loadFactor;
 	}
 
-	/*
-	 * public static void main(String[]args){ IntHashMap ints=new IntHashMap();
-	 * ints.put(9, "111"); ints.remove(9); ints.put(6, "000");
-	 * System.out.println(ints.get(6)); }
-	 */
 }

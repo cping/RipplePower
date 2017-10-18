@@ -13,8 +13,7 @@ public class Cookie {
 	private String domain = null;
 	private String path = null;
 
-	public Cookie(String name, String value, String expires, String domain,
-			String path) {
+	public Cookie(String name, String value, String expires, String domain, String path) {
 		this.name = name;
 		this.value = value;
 		this.expires = dateToTimeStamp(expires);

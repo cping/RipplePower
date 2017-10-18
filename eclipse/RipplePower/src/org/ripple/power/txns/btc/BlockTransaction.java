@@ -16,8 +16,8 @@ public class BlockTransaction {
 
 	protected BigInteger value;
 
-	public BlockTransaction(Sha256Hash normID, Sha256Hash txHash, long txTime,
-			Sha256Hash blockHash, Address address, BigInteger value) {
+	public BlockTransaction(Sha256Hash normID, Sha256Hash txHash, long txTime, Sha256Hash blockHash, Address address,
+			BigInteger value) {
 		this.normID = normID;
 		this.txHash = txHash;
 		this.txTime = txTime;

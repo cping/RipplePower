@@ -7,7 +7,6 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
-
 /**
  * 极值点计算器, 用来辅助判断局部顶或底
  *
@@ -30,8 +29,7 @@ public class ExtremumComputer {
 	 * @return
 	 */
 	public int[] findExtremum(double[] input, int lookbackPeriod, double variancePercent) {
-		double[] samplePoints = Arrays.copyOfRange(input, input.length - lookbackPeriod,
-				input.length);
+		double[] samplePoints = Arrays.copyOfRange(input, input.length - lookbackPeriod, input.length);
 		int centerIndex = (lookbackPeriod - 1) / 2;
 
 		// 把x,y正则化到0-1之间

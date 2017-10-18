@@ -9,8 +9,7 @@ public class Meta {
 
 	public int TransactionIndex;
 
-	public ArrayList<AffectedNode> AffectedNodes = new ArrayList<AffectedNode>(
-			20);
+	public ArrayList<AffectedNode> AffectedNodes = new ArrayList<AffectedNode>(20);
 
 	public String TransactionResult;
 

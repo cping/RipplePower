@@ -9,8 +9,7 @@ import org.ripple.power.config.LSystem;
 public class Backup {
 
 	public static String create() {
-		String fileName = LSystem.getRippleDirectory() + LSystem.FS
-				+ LSystem.walletName;
+		String fileName = LSystem.getRippleDirectory() + LSystem.FS + LSystem.walletName;
 		File file = new File(fileName);
 		if (file.exists() && file.length() > 0) {
 			fileName = file.getName();
@@ -20,8 +19,7 @@ public class Backup {
 				int counter = 0;
 				do {
 					counter++;
-					backupFile = new File(file.getParent(), backupFileName
-							+ counter);
+					backupFile = new File(file.getParent(), backupFileName + counter);
 				} while (backupFile.exists());
 			}
 			try {

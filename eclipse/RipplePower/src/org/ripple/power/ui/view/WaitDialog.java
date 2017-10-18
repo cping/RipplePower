@@ -19,9 +19,9 @@ import org.ripple.power.ui.graphics.LGraphics;
 import org.ripple.power.utils.MathUtils;
 
 public class WaitDialog {
-	
+
 	private static WaitDialog lock = null;
-	
+
 	private boolean isRunning = false;
 
 	private RPDialogTool tool;
@@ -34,8 +34,7 @@ public class WaitDialog {
 		panel.setSize(dim);
 		isRunning = true;
 		new ShowPanel(panel, dim.width, dim.height);
-		tool = RPDialogTool.show(parent, "Transaction Broadcast", panel, -1,
-				-1, true, LSystem.MINUTE);
+		tool = RPDialogTool.show(parent, "Transaction Broadcast", panel, -1, -1, true, LSystem.MINUTE);
 	}
 
 	public static WaitDialog showDialog(Window parent, boolean show) {
@@ -130,25 +129,23 @@ public class WaitDialog {
 							}
 							g.setAntiAlias(true);
 							g.setFont(font);
-							g.drawString(message,
-									(w - font.stringWidth(message)) / 2 - 5,
+							g.drawString(message, (w - font.stringWidth(message)) / 2 - 5,
 									(h - font.getHeight()) / 2 + 15);
 							g.setAntiAlias(false);
 						}
 						LSystem.invokeLater(new Runnable() {
-							
+
 							@Override
 							public void run() {
-								if (panel != null && isRunning
-										&& panel.getGraphics() != null) {
+								if (panel != null && isRunning && panel.getGraphics() != null) {
 									panel.update(panel.getGraphics());
 									panel.repaint();
 								}
 								repaint();
-							
+
 							}
 						});
-				
+
 						LSystem.sleep(45);
 					}
 				}

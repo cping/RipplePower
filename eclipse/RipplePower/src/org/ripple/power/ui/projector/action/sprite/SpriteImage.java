@@ -103,8 +103,7 @@ public class SpriteImage extends LObject implements ISprite {
 		int size = width * height;
 		pixels = new int[width * height];
 		transform = Sprite.TRANS_NONE;
-		PixelGrabber pixelGrabber = new PixelGrabber(img, 0, 0, width, height,
-				pixels, 0, width);
+		PixelGrabber pixelGrabber = new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
 		if (width < 48 && height < 48) {
 			makePolygonInterval = 1;
 		} else {
@@ -126,11 +125,9 @@ public class SpriteImage extends LObject implements ISprite {
 		}
 		BufferedImage awtImage = null;
 		if (isOpaque) {
-			awtImage = GraphicsUtils
-					.newAwtRGBImage(pixels, width, height, size);
+			awtImage = GraphicsUtils.newAwtRGBImage(pixels, width, height, size);
 		} else {
-			awtImage = GraphicsUtils.newAwtARGBImage(pixels, width, height,
-					size);
+			awtImage = GraphicsUtils.newAwtARGBImage(pixels, width, height, size);
 		}
 		image = new LImage(serializablelImage = awtImage);
 	}
@@ -253,8 +250,7 @@ public class SpriteImage extends LObject implements ISprite {
 	 */
 	public SpriteRotate rotate(int angle) {
 		if (sRotate == null) {
-			sRotate = new SpriteRotate(this, width, height, angle == -1 ? 0
-					: angle);
+			sRotate = new SpriteRotate(this, width, height, angle == -1 ? 0 : angle);
 		} else {
 			sRotate.setAngle(angle);
 		}
@@ -297,8 +293,7 @@ public class SpriteImage extends LObject implements ISprite {
 			if (t != Sprite.TRANS_NONE) {
 				sRotate = makeRotate(t);
 				int[] trans = sRotate.makeSpritePixels();
-				py = makePolygon(trans, 0, 0, 0, 0, sRotate.getWidth(),
-						sRotate.getHeight());
+				py = makePolygon(trans, 0, 0, 0, 0, sRotate.getWidth(), sRotate.getHeight());
 			} else {
 				py = makePolygon(0, 0);
 			}
@@ -324,8 +319,7 @@ public class SpriteImage extends LObject implements ISprite {
 		return makePolygon(pixels, 0, 0, startX, startY, limitX, limitY);
 	}
 
-	public Polygon makePolygon(int[] pixels, int offsetX, int offsetY,
-			int startX, int startY, int limitX, int limitY) {
+	public Polygon makePolygon(int[] pixels, int offsetX, int offsetY, int startX, int startY, int limitX, int limitY) {
 		Polygon split = null;
 		Polygon result = null;
 		ArrayList<Point[]> points = new ArrayList<Point[]>();
@@ -422,8 +416,7 @@ public class SpriteImage extends LObject implements ISprite {
 	private static Polygon filterPolygon(Polygon polygon) {
 		Area area = new Area(polygon);
 		Polygon newPoly = new Polygon();
-		PathIterator it = area.getPathIterator(
-				AffineTransform.getTranslateInstance(0, 0), 0);
+		PathIterator it = area.getPathIterator(AffineTransform.getTranslateInstance(0, 0), 0);
 		float[] coords = new float[6];
 		LinkedHashSet<String> set = new LinkedHashSet<String>();
 		while (!it.isDone()) {

@@ -8,8 +8,7 @@ public class PasswordEasy {
 
 	private final static Integer LENGTH_PASS = 9;
 
-	private final static char[] DEFAULT_PASS_MAP = Alphabet.ENGLISH
-			.getAlphabet();
+	private final static char[] DEFAULT_PASS_MAP = Alphabet.ENGLISH.getAlphabet();
 
 	public final static char[] getDefaultMap() {
 		return DEFAULT_PASS_MAP;

@@ -56,14 +56,11 @@ public class SpriteRotate {
 			if (oldAngle != newAngle) {
 				oldAngle = newAngle;
 				BufferedImage tmp = showImage;
-				set(bufferImage, bufferImage.getWidth(),
-						bufferImage.getHeight(), newAngle);
+				set(bufferImage, bufferImage.getWidth(), bufferImage.getHeight(), newAngle);
 				if (type == 0 || type == 3) {
-					showImage = GraphicsUtils.rotateImageRect(bufferImage,
-							newAngle);
+					showImage = GraphicsUtils.rotateImageRect(bufferImage, newAngle);
 				} else {
-					showImage = GraphicsUtils
-							.rotateImage(bufferImage, newAngle);
+					showImage = GraphicsUtils.rotateImage(bufferImage, newAngle);
 				}
 				if (tmp != null) {
 					tmp.flush();
@@ -150,8 +147,7 @@ public class SpriteRotate {
 			break;
 		}
 		}
-		BufferedImage img = new BufferedImage(dW, dH,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(dW, dH, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
 		g.setTransform(t);
 		g.drawImage(bufferImage, (dW - width) / 2, (dH - height) / 2, null);

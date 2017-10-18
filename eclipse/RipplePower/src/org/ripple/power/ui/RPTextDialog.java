@@ -33,8 +33,7 @@ public class RPTextDialog extends ABaseDialog {
 		showDialog(name, parent, -1, -1);
 	}
 
-	public static void showDialog(String name, JFrame parent, int width,
-			int height) {
+	public static void showDialog(String name, JFrame parent, int width, int height) {
 		try {
 			RPTextDialog dialog = new RPTextDialog(parent, name);
 			if (width != -1 && height != -1) {
@@ -50,14 +49,13 @@ public class RPTextDialog extends ABaseDialog {
 		}
 	}
 
-	public RPTextDialog(String title, boolean modal, JComponent component,
-			String oKButtonText, String cancelButtonText) {
-		this(LSystem.applicationMain, title, modal, component, oKButtonText,
-				cancelButtonText);
+	public RPTextDialog(String title, boolean modal, JComponent component, String oKButtonText,
+			String cancelButtonText) {
+		this(LSystem.applicationMain, title, modal, component, oKButtonText, cancelButtonText);
 	}
 
-	public RPTextDialog(JFrame frame, String title, boolean modal,
-			JComponent component, String oKButtonText, String cancelButtonText) {
+	public RPTextDialog(JFrame frame, String title, boolean modal, JComponent component, String oKButtonText,
+			String cancelButtonText) {
 		super(frame, title, modal);
 		if (null != oKButtonText) {
 			okButton.setText(oKButtonText);
@@ -97,13 +95,11 @@ public class RPTextDialog extends ABaseDialog {
 		JPanel jPanel2 = new JPanel(new BorderLayout());
 		JPanel jPanel3 = new JPanel(new GridLayout());
 
-		jPanel1.add(okButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,
-						5, 5, 5), 5, 5));
+		jPanel1.add(okButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 5, 5));
 
-		jPanel1.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-				new Insets(5, 5, 5, 5), 5, 5));
+		jPanel1.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 5, 5));
 
 		detailArea.getViewport().add(_component, null);
 		jPanel2.add(detailArea, BorderLayout.CENTER);
@@ -115,8 +111,7 @@ public class RPTextDialog extends ABaseDialog {
 		pack();
 	}
 
-	public RPTextDialog(JFrame frame, String title, boolean modal,
-			JComponent component) {
+	public RPTextDialog(JFrame frame, String title, boolean modal, JComponent component) {
 		this(frame, title, modal, component, null, null);
 	}
 

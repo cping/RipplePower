@@ -51,11 +51,8 @@ public final class CodaBarReader extends OneDReader {
 	 * pattern of wide and narrow, with 1s representing "wide" and 0s
 	 * representing narrow.
 	 */
-	static final int[] CHARACTER_ENCODINGS = { 0x003, 0x006, 0x009, 0x060,
-			0x012, 0x042, 0x021, 0x024, 0x030,
-			0x048, // 0-9
-			0x00c, 0x018, 0x045, 0x051, 0x054, 0x015, 0x01A, 0x029, 0x00B,
-			0x00E, // -$:/.+ABCD
+	static final int[] CHARACTER_ENCODINGS = { 0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024, 0x030, 0x048, // 0-9
+			0x00c, 0x018, 0x045, 0x051, 0x054, 0x015, 0x01A, 0x029, 0x00B, 0x00E, // -$:/.+ABCD
 	};
 
 	// minimal number of characters that should be present (inclusing start and
@@ -85,8 +82,7 @@ public final class CodaBarReader extends OneDReader {
 	}
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints) throws NotFoundException {
 
 		Arrays.fill(counters, 0);
 		setCounters(row);
@@ -105,8 +101,7 @@ public final class CodaBarReader extends OneDReader {
 			decodeRowResult.append((char) charOffset);
 			nextStart += 8;
 			// Stop as soon as we see the end character.
-			if (decodeRowResult.length() > 1
-					&& arrayContains(STARTEND_ENCODING, ALPHABET[charOffset])) {
+			if (decodeRowResult.length() > 1 && arrayContains(STARTEND_ENCODING, ALPHABET[charOffset])) {
 				break;
 			}
 		} while (nextStart < counterLength); // no fixed end pattern so keep on
@@ -124,8 +119,7 @@ public final class CodaBarReader extends OneDReader {
 		// otherwise this is probably a false positive. The exception is if we
 		// are
 		// at the end of the row. (I.e. the barcode barely fits.)
-		if (nextStart < counterLength
-				&& trailingWhitespace < lastPatternSize / 2) {
+		if (nextStart < counterLength && trailingWhitespace < lastPatternSize / 2) {
 			throw NotFoundException.getNotFoundInstance();
 		}
 
@@ -153,8 +147,7 @@ public final class CodaBarReader extends OneDReader {
 			throw NotFoundException.getNotFoundInstance();
 		}
 
-		if (hints == null
-				|| !hints.containsKey(DecodeHintType.RETURN_CODABAR_START_END)) {
+		if (hints == null || !hints.containsKey(DecodeHintType.RETURN_CODABAR_START_END)) {
 			decodeRowResult.deleteCharAt(decodeRowResult.length() - 1);
 			decodeRowResult.deleteCharAt(0);
 		}
@@ -169,8 +162,7 @@ public final class CodaBarReader extends OneDReader {
 		}
 		float right = (float) runningCount;
 		return new Result(decodeRowResult.toString(), null, new ResultPoint[] {
-				new ResultPoint(left, (float) rowNumber),
-				new ResultPoint(right, (float) rowNumber) },
+				new ResultPoint(left, (float) rowNumber), new ResultPoint(right, (float) rowNumber) },
 				BarcodeFormat.CODABAR);
 	}
 
@@ -209,11 +201,9 @@ public final class CodaBarReader extends OneDReader {
 		// should be on the "wrong" side of that line.
 		for (int i = 0; i < 2; i++) {
 			mins[i] = 0.0f; // Accept arbitrarily small "short" stripes.
-			mins[i + 2] = ((float) sizes[i] / counts[i] + (float) sizes[i + 2]
-					/ counts[i + 2]) / 2.0f;
+			mins[i + 2] = ((float) sizes[i] / counts[i] + (float) sizes[i + 2] / counts[i + 2]) / 2.0f;
 			maxes[i] = mins[i + 2];
-			maxes[i + 2] = (sizes[i + 2] * MAX_ACCEPTABLE + PADDING)
-					/ counts[i + 2];
+			maxes[i + 2] = (sizes[i + 2] * MAX_ACCEPTABLE + PADDING) / counts[i + 2];
 		}
 
 		// Now verify that all of the stripes are within the thresholds.
@@ -282,8 +272,7 @@ public final class CodaBarReader extends OneDReader {
 	private int findStartPattern() throws NotFoundException {
 		for (int i = 1; i < counterLength; i += 2) {
 			int charOffset = toNarrowWidePattern(i);
-			if (charOffset != -1
-					&& arrayContains(STARTEND_ENCODING, ALPHABET[charOffset])) {
+			if (charOffset != -1 && arrayContains(STARTEND_ENCODING, ALPHABET[charOffset])) {
 				// Look for whitespace before start pattern, >= 50% of width of
 				// start pattern
 				// We make an exception if the whitespace is the first element.

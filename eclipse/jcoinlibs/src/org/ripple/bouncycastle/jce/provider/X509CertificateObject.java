@@ -62,7 +62,6 @@ import org.ripple.bouncycastle.jce.X509Principal;
 import org.ripple.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 import org.ripple.bouncycastle.util.Arrays;
 import org.ripple.bouncycastle.util.Integers;
-import org.ripple.bouncycastle.util.Strings;
 import org.ripple.bouncycastle.util.encoders.Hex;
 
 public class X509CertificateObject
@@ -654,7 +653,7 @@ public class X509CertificateObject
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("  [0]         Version: ").append(this.getVersion()).append(nl);
         buf.append("         SerialNumber: ").append(this.getSerialNumber()).append(nl);
@@ -773,39 +772,9 @@ public class X509CertificateObject
         throws CertificateException, NoSuchAlgorithmException,
         InvalidKeyException, NoSuchProviderException, SignatureException
     {
-        String sigName = X509SignatureUtil.getSignatureName(c.getSignatureAlgorithm());
-        Signature signature;
-
-        if (sigProvider != null)
-        {
-            signature = Signature.getInstance(sigName, sigProvider);
-        }
-        else
-        {
-            signature = Signature.getInstance(sigName);
-        }
+        String    sigName = X509SignatureUtil.getSignatureName(c.getSignatureAlgorithm());
+        Signature signature = Signature.getInstance(sigName, sigProvider);
         
-        checkSignature(key, signature);
-    }
-
-    public final void verify(
-        PublicKey   key,
-        Provider    sigProvider)
-        throws CertificateException, NoSuchAlgorithmException,
-        InvalidKeyException, SignatureException
-    {
-        String sigName = X509SignatureUtil.getSignatureName(c.getSignatureAlgorithm());
-        Signature signature;
-
-        if (sigProvider != null)
-        {
-            signature = Signature.getInstance(sigName, sigProvider);
-        }
-        else
-        {
-            signature = Signature.getInstance(sigName);
-        }
-
         checkSignature(key, signature);
     }
 

@@ -41,8 +41,7 @@ public abstract class LContainer extends LComponent {
 			comp.setContainer(null);
 		}
 		comp.setContainer(this);
-		this.childs = (LComponent[]) CollectionUtils.expand(this.childs, 1,
-				false);
+		this.childs = (LComponent[]) CollectionUtils.expand(this.childs, 1, false);
 		this.childs[0] = comp;
 		this.childCount++;
 		this.desktop.setDesktop(comp);
@@ -52,8 +51,7 @@ public abstract class LContainer extends LComponent {
 
 	public synchronized void add(LComponent comp, int index) {
 		if (comp.getContainer() != null) {
-			throw new IllegalStateException(comp
-					+ " already reside in another container!!!");
+			throw new IllegalStateException(comp + " already reside in another container!!!");
 		}
 		comp.setContainer(this);
 		LComponent[] newChilds = new LComponent[this.childs.length + 1];
@@ -106,8 +104,7 @@ public abstract class LContainer extends LComponent {
 			int index = i - 1;
 			LComponent comp = (LComponent) this.childs[index];
 			Class<? extends LComponent> cls = comp.getClass();
-			if (clazz == null || clazz == cls || clazz.isInstance(comp)
-					|| clazz.equals(cls)) {
+			if (clazz == null || clazz == cls || clazz.isInstance(comp) || clazz.equals(cls)) {
 				this.remove(index);
 				count++;
 			}
@@ -165,8 +162,7 @@ public abstract class LContainer extends LComponent {
 
 		if (!this.elastic) {
 			for (int i = 0; i < this.childCount; i++) {
-				if (this.childs[i].getX() > this.getWidth()
-						|| this.childs[i].getY() > this.getHeight()
+				if (this.childs[i].getX() > this.getWidth() || this.childs[i].getY() > this.getHeight()
 						|| this.childs[i].getX() + this.childs[i].getWidth() < 0
 						|| this.childs[i].getY() + this.childs[i].getHeight() < 0) {
 					this.elastic = true;
@@ -191,8 +187,7 @@ public abstract class LContainer extends LComponent {
 		super.createUI(g);
 		if (this.elastic) {
 			this.oldClip = g.getClip();
-			g.clipRect(this.getScreenX(), this.getScreenY(), this.getWidth(),
-					this.getHeight());
+			g.clipRect(this.getScreenX(), this.getScreenY(), this.getWidth(), this.getHeight());
 		}
 		this.renderComponents(g);
 		if (this.elastic) {
@@ -216,10 +211,8 @@ public abstract class LContainer extends LComponent {
 		}
 		for (int i = 0; i < this.childCount; i++) {
 			if (this.childs[i] == comp) {
-				this.childs = (LComponent[]) CollectionUtils
-						.cut(this.childs, i);
-				this.childs = (LComponent[]) CollectionUtils.expand(
-						this.childs, 1, false);
+				this.childs = (LComponent[]) CollectionUtils.cut(this.childs, i);
+				this.childs = (LComponent[]) CollectionUtils.expand(this.childs, 1, false);
 				this.childs[0] = comp;
 				this.sortComponents();
 				break;
@@ -236,10 +229,8 @@ public abstract class LContainer extends LComponent {
 		}
 		for (int i = 0; i < this.childCount; i++) {
 			if (this.childs[i] == comp) {
-				this.childs = (LComponent[]) CollectionUtils
-						.cut(this.childs, i);
-				this.childs = (LComponent[]) CollectionUtils.expand(
-						this.childs, 1, true);
+				this.childs = (LComponent[]) CollectionUtils.cut(this.childs, i);
+				this.childs = (LComponent[]) CollectionUtils.expand(this.childs, 1, true);
 				this.childs[this.childCount - 1] = comp;
 				this.sortComponents();
 				break;

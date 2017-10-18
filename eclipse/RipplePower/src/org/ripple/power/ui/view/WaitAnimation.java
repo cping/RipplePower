@@ -29,15 +29,15 @@ public class WaitAnimation {
 	public WaitAnimation(int width, int height) {
 		int r1 = width / 8, r2 = height / 8;
 		this.r = (r1 < r2 ? r1 : r2) / 2;
-		this.list = new LinkedList<Object>(Arrays.asList(new Object[] {
-				new Ellipse2D.Double(sx + 3 * r, sy + 0 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 5 * r, sy + 1 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 6 * r, sy + 3 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 5 * r, sy + 5 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 3 * r, sy + 6 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 1 * r, sy + 5 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 0 * r, sy + 3 * r, 2 * r, 2 * r),
-				new Ellipse2D.Double(sx + 1 * r, sy + 1 * r, 2 * r, 2 * r) }));
+		this.list = new LinkedList<Object>(
+				Arrays.asList(new Object[] { new Ellipse2D.Double(sx + 3 * r, sy + 0 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 5 * r, sy + 1 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 6 * r, sy + 3 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 5 * r, sy + 5 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 3 * r, sy + 6 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 1 * r, sy + 5 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 0 * r, sy + 3 * r, 2 * r, 2 * r),
+						new Ellipse2D.Double(sx + 1 * r, sy + 1 * r, 2 * r, 2 * r) }));
 	}
 
 	public void setColor(Color color) {
@@ -75,8 +75,7 @@ public class WaitAnimation {
 		for (Iterator<Object> it = list.iterator(); it.hasNext();) {
 			Shape s = (Shape) it.next();
 			alpha = isRunning ? alpha + 0.1f : 0.5f;
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-					alpha));
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 			g.fill(s);
 		}
 		g.setAntialiasAll(false);

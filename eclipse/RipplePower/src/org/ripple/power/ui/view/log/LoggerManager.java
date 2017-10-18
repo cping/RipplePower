@@ -6,12 +6,12 @@ import java.util.List;
 import org.ripple.power.ui.view.log.LoggerMode.Level;
 
 public class LoggerManager {
-	
-	private static boolean debug;	
-	private static boolean debugFramework;	
-	private static List<Logger> frameworkLoggerList;	
 
-	static{
+	private static boolean debug;
+	private static boolean debugFramework;
+	private static List<Logger> frameworkLoggerList;
+
+	static {
 		frameworkLoggerList = new ArrayList<Logger>();
 		setDebug(true);
 		setFrameworkDebug(true);
@@ -32,11 +32,11 @@ public class LoggerManager {
 		return logger;
 	}
 
-	public static Logger getLogger(String className){
+	public static Logger getLogger(String className) {
 		return getLogger(debug, className);
 	}
 
-	public static Logger getLogger(){
+	public static Logger getLogger() {
 		return getLogger(debug, "Logger");
 	}
 
@@ -46,7 +46,7 @@ public class LoggerManager {
 		return logger;
 	}
 
-	public static Logger getFrameworkLogger(String className){
+	public static Logger getFrameworkLogger(String className) {
 		return getFrameworkLogger(debugFramework, className);
 	}
 }

@@ -205,8 +205,7 @@ public class GroupLayout implements LayoutManager2 {
 	 */
 	private boolean honorsVisibility;
 
-	private static void checkSize(int min, int pref, int max,
-			boolean isComponentSpring) {
+	private static void checkSize(int min, int pref, int max, boolean isComponentSpring) {
 		checkResizeType(min, isComponentSpring);
 		if (!isComponentSpring && pref < 0) {
 			throw new IllegalArgumentException("Pref must be >= 0");
@@ -219,16 +218,15 @@ public class GroupLayout implements LayoutManager2 {
 	}
 
 	private static void checkResizeType(int type, boolean isComponentSpring) {
-		if (type < 0
-				&& ((isComponentSpring && type != DEFAULT_SIZE && type != PREFERRED_SIZE) || (!isComponentSpring && type != PREFERRED_SIZE))) {
+		if (type < 0 && ((isComponentSpring && type != DEFAULT_SIZE && type != PREFERRED_SIZE)
+				|| (!isComponentSpring && type != PREFERRED_SIZE))) {
 			throw new IllegalArgumentException("Invalid size");
 		}
 	}
 
 	private static void checkLessThan(int min, int max) {
 		if (min >= 0 && max >= 0 && min > max) {
-			throw new IllegalArgumentException(
-					"Following is not met: min<=pref<=max");
+			throw new IllegalArgumentException("Following is not met: min<=pref<=max");
 		}
 	}
 
@@ -316,8 +314,7 @@ public class GroupLayout implements LayoutManager2 {
 	 *             if <code>component</code> is <code>null</code>
 	 * @see #setHonorsVisibility(boolean)
 	 */
-	public void setHonorsVisibility(Component component,
-			Boolean honorsVisibility) {
+	public void setHonorsVisibility(Component component, Boolean honorsVisibility) {
 		if (component == null) {
 			throw new IllegalArgumentException("Component must be non-null");
 		}
@@ -346,8 +343,7 @@ public class GroupLayout implements LayoutManager2 {
 		return buffer.toString();
 	}
 
-	private void dump(StringBuffer buffer, Spring spring, String indent,
-			int axis) {
+	private void dump(StringBuffer buffer, Spring spring, String indent, int axis) {
 		String origin = "";
 		String padding = "";
 		if (spring instanceof ComponentSpring) {
@@ -360,16 +356,13 @@ public class GroupLayout implements LayoutManager2 {
 		}
 		if (spring instanceof AutopaddingSpring) {
 			AutopaddingSpring paddingSpring = (AutopaddingSpring) spring;
-			padding = ", userCreated=" + paddingSpring.getUserCreated()
-					+ ", matches=" + paddingSpring.getMatchDescription();
+			padding = ", userCreated=" + paddingSpring.getUserCreated() + ", matches="
+					+ paddingSpring.getMatchDescription();
 		}
-		buffer.append(indent + spring.getClass().getName() + " "
-				+ Integer.toHexString(spring.hashCode()) + " " + origin
-				+ ", size=" + spring.getSize() + ", alignment="
-				+ spring.getAlignment() + " prefs=["
-				+ spring.getMinimumSize(axis) + " "
-				+ spring.getPreferredSize(axis) + " "
-				+ spring.getMaximumSize(axis) + padding + "]\n");
+		buffer.append(indent + spring.getClass().getName() + " " + Integer.toHexString(spring.hashCode()) + " " + origin
+				+ ", size=" + spring.getSize() + ", alignment=" + spring.getAlignment() + " prefs=["
+				+ spring.getMinimumSize(axis) + " " + spring.getPreferredSize(axis) + " " + spring.getMaximumSize(axis)
+				+ padding + "]\n");
 		if (spring instanceof Group) {
 			List springs = ((Group) spring).springs;
 			indent += "  ";
@@ -598,8 +591,7 @@ public class GroupLayout implements LayoutManager2 {
 	 * @see #createBaselineGroup
 	 * @see ParallelGroup
 	 */
-	public ParallelGroup createBaselineGroup(boolean resizable,
-			boolean anchorBaselineToTop) {
+	public ParallelGroup createBaselineGroup(boolean resizable, boolean anchorBaselineToTop) {
 		return new BaselineGroup(resizable, anchorBaselineToTop);
 	}
 
@@ -642,14 +634,12 @@ public class GroupLayout implements LayoutManager2 {
 		boolean horizontal = ((axis & HORIZONTAL) == HORIZONTAL);
 		boolean vertical = ((axis & VERTICAL) == VERTICAL);
 		if (!vertical && !horizontal) {
-			throw new IllegalArgumentException(
-					"Axis must contain HORIZONTAL or VERTICAL");
+			throw new IllegalArgumentException("Axis must contain HORIZONTAL or VERTICAL");
 		}
 		for (int counter = components.length - 1; counter >= 0; counter--) {
 			Component c = components[counter];
 			if (components[counter] == null) {
-				throw new IllegalArgumentException(
-						"Components must be non-null");
+				throw new IllegalArgumentException("Components must be non-null");
 			}
 			// Force the component to be added
 			getComponentInfo(c);
@@ -664,8 +654,7 @@ public class GroupLayout implements LayoutManager2 {
 	}
 
 	private void linkSize0(Component[] components, int axis) {
-		LinkInfo master = getComponentInfo(components[components.length - 1])
-				.getLinkInfo(axis);
+		LinkInfo master = getComponentInfo(components[components.length - 1]).getLinkInfo(axis);
 		for (int counter = components.length - 2; counter >= 0; counter--) {
 			master.add(getComponentInfo(components[counter]));
 		}
@@ -693,8 +682,7 @@ public class GroupLayout implements LayoutManager2 {
 			registerComponents(horizontalGroup, HORIZONTAL);
 			registerComponents(verticalGroup, VERTICAL);
 		}
-		ComponentInfo info = (ComponentInfo) componentInfos
-				.remove(existingComponent);
+		ComponentInfo info = (ComponentInfo) componentInfos.remove(existingComponent);
 		if (info == null) {
 			throw new IllegalArgumentException("Component must already exist");
 		}
@@ -796,8 +784,7 @@ public class GroupLayout implements LayoutManager2 {
 	public Dimension preferredLayoutSize(Container parent) {
 		checkParent(parent);
 		prepare(PREF_SIZE);
-		return adjustSize(horizontalGroup.getPreferredSize(HORIZONTAL),
-				verticalGroup.getPreferredSize(VERTICAL));
+		return adjustSize(horizontalGroup.getPreferredSize(HORIZONTAL), verticalGroup.getPreferredSize(VERTICAL));
 	}
 
 	/**
@@ -816,8 +803,7 @@ public class GroupLayout implements LayoutManager2 {
 	public Dimension minimumLayoutSize(Container parent) {
 		checkParent(parent);
 		prepare(MIN_SIZE);
-		return adjustSize(horizontalGroup.getMinimumSize(HORIZONTAL),
-				verticalGroup.getMinimumSize(VERTICAL));
+		return adjustSize(horizontalGroup.getMinimumSize(HORIZONTAL), verticalGroup.getMinimumSize(VERTICAL));
 	}
 
 	/**
@@ -836,13 +822,10 @@ public class GroupLayout implements LayoutManager2 {
 		int width = parent.getWidth() - insets.left - insets.right;
 		int height = parent.getHeight() - insets.top - insets.bottom;
 		boolean ltr = isLeftToRight();
-		if (getAutocreateGaps() || getAutocreateContainerGaps()
-				|| hasPreferredPaddingSprings) {
+		if (getAutocreateGaps() || getAutocreateContainerGaps() || hasPreferredPaddingSprings) {
 			// Step 2: Calculate autopadding springs
-			calculateAutopadding(horizontalGroup, HORIZONTAL, SPECIFIC_SIZE, 0,
-					width);
-			calculateAutopadding(verticalGroup, VERTICAL, SPECIFIC_SIZE, 0,
-					height);
+			calculateAutopadding(horizontalGroup, HORIZONTAL, SPECIFIC_SIZE, 0, width);
+			calculateAutopadding(verticalGroup, VERTICAL, SPECIFIC_SIZE, 0, height);
 		}
 		// Step 3: set the size of the groups.
 		horizontalGroup.setSize(HORIZONTAL, 0, width);
@@ -889,8 +872,7 @@ public class GroupLayout implements LayoutManager2 {
 	public Dimension maximumLayoutSize(Container parent) {
 		checkParent(parent);
 		prepare(MAX_SIZE);
-		return adjustSize(horizontalGroup.getMaximumSize(HORIZONTAL),
-				verticalGroup.getMaximumSize(VERTICAL));
+		return adjustSize(horizontalGroup.getMaximumSize(HORIZONTAL), verticalGroup.getMaximumSize(VERTICAL));
 	}
 
 	/**
@@ -959,8 +941,7 @@ public class GroupLayout implements LayoutManager2 {
 			isValid = true;
 			horizontalGroup.setSize(HORIZONTAL, UNSET, UNSET);
 			verticalGroup.setSize(VERTICAL, UNSET, UNSET);
-			for (Iterator cis = componentInfos.values().iterator(); cis
-					.hasNext();) {
+			for (Iterator cis = componentInfos.values().iterator(); cis.hasNext();) {
 				ComponentInfo ci = (ComponentInfo) cis.next();
 				if (ci.updateVisibility()) {
 					visChanged = true;
@@ -981,8 +962,7 @@ public class GroupLayout implements LayoutManager2 {
 			verticalGroup.removeAutopadding();
 			if (getAutocreateGaps()) {
 				insertAutopadding(true);
-			} else if (hasPreferredPaddingSprings
-					|| getAutocreateContainerGaps()) {
+			} else if (hasPreferredPaddingSprings || getAutocreateContainerGaps()) {
 				insertAutopadding(false);
 			}
 			springsChanged = false;
@@ -999,8 +979,7 @@ public class GroupLayout implements LayoutManager2 {
 		}
 	}
 
-	private void calculateAutopadding(Group group, int axis, int sizeType,
-			int origin, int size) {
+	private void calculateAutopadding(Group group, int axis, int sizeType, int origin, int size) {
 		group.unsetAutopadding();
 		switch (sizeType) {
 		case MIN_SIZE:
@@ -1022,12 +1001,10 @@ public class GroupLayout implements LayoutManager2 {
 		while (infos.hasNext()) {
 			ComponentInfo info = (ComponentInfo) infos.next();
 			if (info.horizontalSpring == null) {
-				throw new IllegalStateException(info.component
-						+ " is not attached to a horizontal group");
+				throw new IllegalStateException(info.component + " is not attached to a horizontal group");
 			}
 			if (info.verticalSpring == null) {
-				throw new IllegalStateException(info.component
-						+ " is not attached to a vertical group");
+				throw new IllegalStateException(info.component + " is not attached to a vertical group");
 			}
 		}
 	}
@@ -1046,14 +1023,12 @@ public class GroupLayout implements LayoutManager2 {
 
 	private Dimension adjustSize(int width, int height) {
 		Insets insets = host.getInsets();
-		return new Dimension(width + insets.left + insets.right, height
-				+ insets.top + insets.bottom);
+		return new Dimension(width + insets.left + insets.right, height + insets.top + insets.bottom);
 	}
 
 	private void checkParent(Container parent) {
 		if (parent != host) {
-			throw new IllegalArgumentException(
-					"GroupLayout can only be used with one Container at a time");
+			throw new IllegalArgumentException("GroupLayout can only be used with one Container at a time");
 		}
 	}
 
@@ -1079,18 +1054,17 @@ public class GroupLayout implements LayoutManager2 {
 	 * padding springs.
 	 */
 	private void insertAutopadding(boolean insert) {
-		horizontalGroup.insertAutopadding(HORIZONTAL, new ArrayList(1),
-				new ArrayList(1), new ArrayList(1), new ArrayList(1), insert);
-		verticalGroup.insertAutopadding(VERTICAL, new ArrayList(1),
-				new ArrayList(1), new ArrayList(1), new ArrayList(1), insert);
+		horizontalGroup.insertAutopadding(HORIZONTAL, new ArrayList(1), new ArrayList(1), new ArrayList(1),
+				new ArrayList(1), insert);
+		verticalGroup.insertAutopadding(VERTICAL, new ArrayList(1), new ArrayList(1), new ArrayList(1),
+				new ArrayList(1), insert);
 	}
 
 	/**
 	 * Returns true if the two Components have a common ParallelGroup ancestor
 	 * along the particular axis.
 	 */
-	private boolean areParallelSiblings(Component source, Component target,
-			int axis) {
+	private boolean areParallelSiblings(Component source, Component target, int axis) {
 		ComponentInfo sourceInfo = getComponentInfo(source);
 		ComponentInfo targetInfo = getComponentInfo(target);
 		Spring sourceSpring;
@@ -1319,8 +1293,7 @@ public class GroupLayout implements LayoutManager2 {
 		Group addSpring(Spring spring) {
 			springs.add(spring);
 			spring.setParent(this);
-			if (!(spring instanceof AutopaddingSpring)
-					|| !((AutopaddingSpring) spring).getUserCreated()) {
+			if (!(spring instanceof AutopaddingSpring) || !((AutopaddingSpring) spring).getUserCreated()) {
 				springsChanged = true;
 			}
 			return this;
@@ -1380,12 +1353,10 @@ public class GroupLayout implements LayoutManager2 {
 			if (count == 1) {
 				return getSpringSize(getSpring(0), axis, type);
 			}
-			int size = constrain(operator(
-					getSpringSize(getSpring(0), axis, type),
-					getSpringSize(getSpring(1), axis, type)));
+			int size = constrain(
+					operator(getSpringSize(getSpring(0), axis, type), getSpringSize(getSpring(1), axis, type)));
 			for (int counter = 2; counter < count; counter++) {
-				size = constrain(operator(size,
-						getSpringSize(getSpring(counter), axis, type)));
+				size = constrain(operator(size, getSpringSize(getSpring(counter), axis, type)));
 			}
 			return size;
 		}
@@ -1428,9 +1399,8 @@ public class GroupLayout implements LayoutManager2 {
 		 *            Whether or not to insert AutopaddingSprings or just adjust
 		 *            any existing AutopaddingSprings.
 		 */
-		abstract void insertAutopadding(int axis, List leadingPadding,
-				List trailingPadding, List leading, List trailing,
-				boolean insert);
+		abstract void insertAutopadding(int axis, List leadingPadding, List trailingPadding, List leading,
+				List trailing, boolean insert);
 
 		/**
 		 * Removes any AutopaddingSprings.
@@ -1588,10 +1558,8 @@ public class GroupLayout implements LayoutManager2 {
 		 *             PREFERRED_SIZE or DEFAULT_SIZE
 		 * @return this <code>SequentialGroup</code>
 		 */
-		public SequentialGroup add(Component component, int min, int pref,
-				int max) {
-			return (SequentialGroup) addSpring(new ComponentSpring(component,
-					min, pref, max));
+		public SequentialGroup add(Component component, int min, int pref, int max) {
+			return (SequentialGroup) addSpring(new ComponentSpring(component, min, pref, max));
 		}
 
 		/**
@@ -1614,8 +1582,7 @@ public class GroupLayout implements LayoutManager2 {
 		 *            <code>PREFERRED_SIZE</code>
 		 * @return this <code>Group</code>
 		 */
-		public SequentialGroup add(boolean useAsBaseline, Component component,
-				int min, int pref, int max) {
+		public SequentialGroup add(boolean useAsBaseline, Component component, int min, int pref, int max) {
 			add(component, min, pref, max);
 			if (useAsBaseline) {
 				baselineSpring = getSpring(springs.size() - 1);
@@ -1671,8 +1638,7 @@ public class GroupLayout implements LayoutManager2 {
 		 *             if <code>type</code> is not a valid LayoutStyle constant
 		 * @see LayoutStyle
 		 */
-		public SequentialGroup addPreferredGap(JComponent comp1,
-				JComponent comp2, int type) {
+		public SequentialGroup addPreferredGap(JComponent comp1, JComponent comp2, int type) {
 			return addPreferredGap(comp1, comp2, type, false);
 		}
 
@@ -1694,18 +1660,14 @@ public class GroupLayout implements LayoutManager2 {
 		 *             if <code>type</code> is not a valid LayoutStyle constant
 		 * @see LayoutStyle
 		 */
-		public SequentialGroup addPreferredGap(JComponent comp1,
-				JComponent comp2, int type, boolean canGrow) {
-			if (type != LayoutStyle.RELATED && type != LayoutStyle.UNRELATED
-					&& type != LayoutStyle.INDENT) {
+		public SequentialGroup addPreferredGap(JComponent comp1, JComponent comp2, int type, boolean canGrow) {
+			if (type != LayoutStyle.RELATED && type != LayoutStyle.UNRELATED && type != LayoutStyle.INDENT) {
 				throw new IllegalArgumentException("Invalid type argument");
 			}
 			if (comp1 == null || comp2 == null) {
-				throw new IllegalArgumentException(
-						"Components must be non-null");
+				throw new IllegalArgumentException("Components must be non-null");
 			}
-			return (SequentialGroup) addSpring(new PaddingSpring(comp1, comp2,
-					type, canGrow));
+			return (SequentialGroup) addSpring(new PaddingSpring(comp1, comp2, type, canGrow));
 		}
 
 		/**
@@ -1755,19 +1717,16 @@ public class GroupLayout implements LayoutManager2 {
 		 */
 		public SequentialGroup addPreferredGap(int type, int pref, int max) {
 			if (type != LayoutStyle.RELATED && type != LayoutStyle.UNRELATED) {
-				throw new IllegalArgumentException(
-						"Padding type must be one of Padding.RELATED or Padding.UNRELATED");
+				throw new IllegalArgumentException("Padding type must be one of Padding.RELATED or Padding.UNRELATED");
 			}
 			if ((pref < 0 && pref != DEFAULT_SIZE && pref != PREFERRED_SIZE)
 					|| (max < 0 && max != DEFAULT_SIZE && max != PREFERRED_SIZE)
 					|| (pref >= 0 && max >= 0 && pref > max)) {
 				throw new IllegalArgumentException(
-						"Pref and max must be either DEFAULT_SIZE, "
-								+ "PREFERRED_SIZE, or >= 0 and pref <= max");
+						"Pref and max must be either DEFAULT_SIZE, " + "PREFERRED_SIZE, or >= 0 and pref <= max");
 			}
 			hasPreferredPaddingSprings = true;
-			return (SequentialGroup) addSpring(new AutopaddingSpring(type,
-					pref, max));
+			return (SequentialGroup) addSpring(new AutopaddingSpring(type, pref, max));
 		}
 
 		/**
@@ -1798,15 +1757,12 @@ public class GroupLayout implements LayoutManager2 {
 		 * @return this <code>SequentialGroup</code>
 		 */
 		public SequentialGroup addContainerGap(int pref, int max) {
-			if ((pref < 0 && pref != DEFAULT_SIZE)
-					|| (max < 0 && max != DEFAULT_SIZE && max != PREFERRED_SIZE)
+			if ((pref < 0 && pref != DEFAULT_SIZE) || (max < 0 && max != DEFAULT_SIZE && max != PREFERRED_SIZE)
 					|| (pref >= 0 && max >= 0 && pref > max)) {
-				throw new IllegalArgumentException(
-						"Pref and max must be either DEFAULT_VALUE or >= 0 and pref <= max");
+				throw new IllegalArgumentException("Pref and max must be either DEFAULT_VALUE or >= 0 and pref <= max");
 			}
 			hasPreferredPaddingSprings = true;
-			return (SequentialGroup) addSpring(new ContainerAutopaddingSpring(
-					pref, max));
+			return (SequentialGroup) addSpring(new ContainerAutopaddingSpring(pref, max));
 		}
 
 		int operator(int a, int b) {
@@ -1824,9 +1780,8 @@ public class GroupLayout implements LayoutManager2 {
 				}
 			} else if (springs.size() == 1) {
 				Spring spring = getSpring(0);
-				spring.setSize(axis, origin, Math.min(
-						Math.max(size, spring.getMinimumSize(axis)),
-						spring.getMaximumSize(axis)));
+				spring.setSize(axis, origin,
+						Math.min(Math.max(size, spring.getMinimumSize(axis)), spring.getMaximumSize(axis)));
 			} else if (springs.size() > 1) {
 				// Adjust between min/pref
 				setValidSizeNotPreferred(axis, origin, size);
@@ -1867,15 +1822,13 @@ public class GroupLayout implements LayoutManager2 {
 				// Second pass, accumulate the resulting deltas (relative to
 				// preferred) into sizes.
 				for (int counter = 0; counter < resizableCount; counter++) {
-					SpringDelta springDelta = (SpringDelta) resizable
-							.get(counter);
+					SpringDelta springDelta = (SpringDelta) resizable.get(counter);
 					if ((counter + 1) == resizableCount) {
 						sDelta += slop;
 					}
 					springDelta.delta = Math.min(sDelta, springDelta.delta);
 					delta -= springDelta.delta;
-					if (springDelta.delta != sDelta
-							&& counter + 1 < resizableCount) {
+					if (springDelta.delta != sDelta && counter + 1 < resizableCount) {
 						// Spring didn't take all the space, reset how much
 						// each spring will get.
 						sDelta = delta / (resizableCount - counter - 1);
@@ -1920,11 +1873,9 @@ public class GroupLayout implements LayoutManager2 {
 				Spring spring = getSpring(counter);
 				int sDelta;
 				if (useMin) {
-					sDelta = spring.getPreferredSize(axis)
-							- spring.getMinimumSize(axis);
+					sDelta = spring.getPreferredSize(axis) - spring.getMinimumSize(axis);
 				} else {
-					sDelta = spring.getMaximumSize(axis)
-							- spring.getPreferredSize(axis);
+					sDelta = spring.getMaximumSize(axis) - spring.getPreferredSize(axis);
 				}
 				if (sDelta > 0) {
 					sorted.add(new SpringDelta(counter, sDelta));
@@ -1934,12 +1885,10 @@ public class GroupLayout implements LayoutManager2 {
 			return sorted;
 		}
 
-		private int indexOfNextNonZeroSpring(int index,
-				boolean treatAutopaddingAsZeroSized) {
+		private int indexOfNextNonZeroSpring(int index, boolean treatAutopaddingAsZeroSized) {
 			while (index < springs.size()) {
 				Spring spring = (Spring) springs.get(index);
-				if (!((Spring) spring)
-						.willHaveZeroSize(treatAutopaddingAsZeroSized)) {
+				if (!((Spring) spring).willHaveZeroSize(treatAutopaddingAsZeroSized)) {
 					return index;
 				}
 				index++;
@@ -1947,8 +1896,7 @@ public class GroupLayout implements LayoutManager2 {
 			return index;
 		}
 
-		void insertAutopadding(int axis, List leadingPadding,
-				List trailingPadding, List leading, List trailing,
+		void insertAutopadding(int axis, List leadingPadding, List trailingPadding, List leading, List trailing,
 				boolean insert) {
 			List newLeadingPadding = new ArrayList(leadingPadding);
 			List newTrailingPadding = new ArrayList(1);
@@ -1964,8 +1912,7 @@ public class GroupLayout implements LayoutManager2 {
 						AutopaddingSpring padding = (AutopaddingSpring) spring;
 						padding.setSources(newLeading);
 						newLeading.clear();
-						int nextCounter = indexOfNextNonZeroSpring(counter + 1,
-								true);
+						int nextCounter = indexOfNextNonZeroSpring(counter + 1, true);
 						if (nextCounter == springs.size()) {
 							// Last spring in the list, add it to
 							// trailingPadding.
@@ -2000,13 +1947,11 @@ public class GroupLayout implements LayoutManager2 {
 							continue;
 						}
 						for (int i = 0; i < newLeadingPadding.size(); i++) {
-							((AutopaddingSpring) newLeadingPadding.get(i))
-									.addTarget(cSpring, axis);
+							((AutopaddingSpring) newLeadingPadding.get(i)).addTarget(cSpring, axis);
 						}
 						newLeading.clear();
 						newLeadingPadding.clear();
-						int nextCounter = indexOfNextNonZeroSpring(counter + 1,
-								false);
+						int nextCounter = indexOfNextNonZeroSpring(counter + 1, false);
 						if (nextCounter == springs.size()) {
 							// Last Spring, add it to trailing
 							trailing.add(cSpring);
@@ -2023,13 +1968,11 @@ public class GroupLayout implements LayoutManager2 {
 							newTrailing.clear();
 						}
 						newTrailingPadding.clear();
-						((Group) spring).insertAutopadding(axis,
-								newLeadingPadding, newTrailingPadding,
-								newLeading, newTrailing, insert);
+						((Group) spring).insertAutopadding(axis, newLeadingPadding, newTrailingPadding, newLeading,
+								newTrailing, insert);
 						newLeading.clear();
 						newLeadingPadding.clear();
-						int nextCounter = indexOfNextNonZeroSpring(counter + 1,
-								newTrailing.size() == 0);
+						int nextCounter = indexOfNextNonZeroSpring(counter + 1, newTrailing.size() == 0);
 						if (nextCounter == springs.size()) {
 							trailing.addAll(newTrailing);
 							trailingPadding.addAll(newTrailingPadding);
@@ -2150,8 +2093,7 @@ public class GroupLayout implements LayoutManager2 {
 		}
 
 		public String toString() {
-			return super.toString() + "[index=" + index + ", delta=" + delta
-					+ "]";
+			return super.toString() + "[index=" + index + ", delta=" + delta + "]";
 		}
 	}
 
@@ -2223,8 +2165,7 @@ public class GroupLayout implements LayoutManager2 {
 		 * @return this <code>SequentialGroup</code>
 		 */
 		public ParallelGroup add(Component component, int min, int pref, int max) {
-			return (ParallelGroup) addSpring(new ComponentSpring(component,
-					min, pref, max));
+			return (ParallelGroup) addSpring(new ComponentSpring(component, min, pref, max));
 		}
 
 		/**
@@ -2291,8 +2232,7 @@ public class GroupLayout implements LayoutManager2 {
 		 *             <code>TRAILING</code> or <code>CENTER</code>
 		 */
 		public ParallelGroup add(int alignment, Component component) {
-			return add(alignment, component, DEFAULT_SIZE, DEFAULT_SIZE,
-					DEFAULT_SIZE);
+			return add(alignment, component, DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE);
 		}
 
 		/**
@@ -2322,11 +2262,9 @@ public class GroupLayout implements LayoutManager2 {
 		 *             PREFERRED_SIZE or DEFAULT_SIZE.
 		 * @return this <code>Group</code>
 		 */
-		public ParallelGroup add(int alignment, Component component, int min,
-				int pref, int max) {
+		public ParallelGroup add(int alignment, Component component, int min, int pref, int max) {
 			checkChildAlignment(alignment);
-			ComponentSpring spring = new ComponentSpring(component, min, pref,
-					max);
+			ComponentSpring spring = new ComponentSpring(component, min, pref, max);
 			spring.setAlignment(alignment);
 			return (ParallelGroup) addSpring(spring);
 		}
@@ -2361,9 +2299,7 @@ public class GroupLayout implements LayoutManager2 {
 
 		void setChildSize(Spring spring, int axis, int origin, int size) {
 			int alignment = spring.getAlignment();
-			int springSize = Math.min(
-					Math.max(spring.getMinimumSize(axis), size),
-					spring.getMaximumSize(axis));
+			int springSize = Math.min(Math.max(spring.getMinimumSize(axis), size), spring.getMaximumSize(axis));
 			if (alignment == NO_ALIGNMENT) {
 				alignment = childAlignment;
 			}
@@ -2372,8 +2308,7 @@ public class GroupLayout implements LayoutManager2 {
 				spring.setSize(axis, origin + size - springSize, springSize);
 				break;
 			case CENTER:
-				spring.setSize(axis, origin + (size - springSize) / 2,
-						springSize);
+				spring.setSize(axis, origin + (size - springSize) / 2, springSize);
 				break;
 			default: // LEADING, or BASELINE
 				spring.setSize(axis, origin, springSize);
@@ -2381,22 +2316,20 @@ public class GroupLayout implements LayoutManager2 {
 			}
 		}
 
-		void insertAutopadding(int axis, List leadingPadding,
-				List trailingPadding, List leading, List trailing,
+		void insertAutopadding(int axis, List leadingPadding, List trailingPadding, List leading, List trailing,
 				boolean insert) {
 			for (int counter = 0, max = springs.size(); counter < max; counter++) {
 				Spring spring = getSpring(counter);
 				if (spring instanceof ComponentSpring) {
 					if (((ComponentSpring) spring).isVisible()) {
 						for (int i = 0; i < leadingPadding.size(); i++) {
-							((AutopaddingSpring) leadingPadding.get(i))
-									.addTarget((ComponentSpring) spring, axis);
+							((AutopaddingSpring) leadingPadding.get(i)).addTarget((ComponentSpring) spring, axis);
 						}
 						trailing.add(spring);
 					}
 				} else if (spring instanceof Group) {
-					((Group) spring).insertAutopadding(axis, leadingPadding,
-							trailingPadding, leading, trailing, insert);
+					((Group) spring).insertAutopadding(axis, leadingPadding, trailingPadding, leading, trailing,
+							insert);
 				} else if (spring instanceof AutopaddingSpring) {
 					((AutopaddingSpring) spring).setSources(leading);
 					trailingPadding.add(spring);
@@ -2407,13 +2340,10 @@ public class GroupLayout implements LayoutManager2 {
 		private void checkChildAlignment(int alignment) {
 			boolean allowsBaseline = (this instanceof BaselineGroup);
 			if (!allowsBaseline && alignment == BASELINE) {
-				throw new IllegalArgumentException("Alignment must be one of:"
-						+ "LEADING, TRAILING or CENTER");
+				throw new IllegalArgumentException("Alignment must be one of:" + "LEADING, TRAILING or CENTER");
 			}
-			if (alignment != CENTER && alignment != BASELINE
-					&& alignment != LEADING && alignment != TRAILING) {
-				throw new IllegalArgumentException("Alignment must be one of:"
-						+ "LEADING, TRAILING or CENTER");
+			if (alignment != CENTER && alignment != BASELINE && alignment != LEADING && alignment != TRAILING) {
+				throw new IllegalArgumentException("Alignment must be one of:" + "LEADING, TRAILING or CENTER");
 			}
 		}
 	}
@@ -2487,8 +2417,7 @@ public class GroupLayout implements LayoutManager2 {
 			if (allSpringsHaveBaseline) {
 				return prefAscent + prefDescent;
 			}
-			return Math.max(prefAscent + prefDescent,
-					super.calculateSize(axis, type));
+			return Math.max(prefAscent + prefDescent, super.calculateSize(axis, type));
 		}
 
 		private void calculateBaselineAndResizeBehavior() {
@@ -2499,8 +2428,7 @@ public class GroupLayout implements LayoutManager2 {
 			int resizeBehavior = Baseline.BRB_NONE;
 			for (int counter = springs.size() - 1; counter >= 0; counter--) {
 				Spring spring = getSpring(counter);
-				if (spring.getAlignment() == NO_ALIGNMENT
-						|| spring.getAlignment() == BASELINE) {
+				if (spring.getAlignment() == NO_ALIGNMENT || spring.getAlignment() == BASELINE) {
 					int baseline = spring.getBaseline();
 					if (baseline >= 0) {
 						if (spring.isResizable(VERTICAL)) {
@@ -2512,8 +2440,7 @@ public class GroupLayout implements LayoutManager2 {
 							}
 						}
 						prefAscent = Math.max(prefAscent, baseline);
-						prefDescent = Math.max(prefDescent,
-								spring.getPreferredSize(VERTICAL) - baseline);
+						prefDescent = Math.max(prefDescent, spring.getPreferredSize(VERTICAL) - baseline);
 						baselineSpringCount++;
 					}
 				}
@@ -2537,22 +2464,19 @@ public class GroupLayout implements LayoutManager2 {
 				Spring spring = getSpring(counter);
 				int baseline;
 				int springMax = spring.getMaximumSize(VERTICAL);
-				if ((spring.getAlignment() == NO_ALIGNMENT || spring
-						.getAlignment() == BASELINE)
+				if ((spring.getAlignment() == NO_ALIGNMENT || spring.getAlignment() == BASELINE)
 						&& (baseline = spring.getBaseline()) >= 0) {
 					int springPref = spring.getPreferredSize(VERTICAL);
 					if (springPref != springMax) {
 						switch (spring.getBaselineResizeBehavior()) {
 						case Baseline.BRB_CONSTANT_ASCENT:
 							if (baselineAnchoredToTop) {
-								maxDescent = Math.max(maxDescent, springMax
-										- baseline);
+								maxDescent = Math.max(maxDescent, springMax - baseline);
 							}
 							break;
 						case Baseline.BRB_CONSTANT_DESCENT:
 							if (!baselineAnchoredToTop) {
-								maxAscent = Math.max(maxAscent, springMax
-										- springPref + baseline);
+								maxAscent = Math.max(maxAscent, springMax - springPref + baseline);
 							}
 							break;
 						default: // CENTER_OFFSET and OTHER, not resizable
@@ -2580,34 +2504,29 @@ public class GroupLayout implements LayoutManager2 {
 				Spring spring = getSpring(counter);
 				int springMin = spring.getMinimumSize(VERTICAL);
 				int baseline;
-				if ((spring.getAlignment() == NO_ALIGNMENT || spring
-						.getAlignment() == BASELINE)
+				if ((spring.getAlignment() == NO_ALIGNMENT || spring.getAlignment() == BASELINE)
 						&& (baseline = spring.getBaseline()) >= 0) {
 					int springPref = spring.getPreferredSize(VERTICAL);
 					switch (spring.getBaselineResizeBehavior()) {
 					case Baseline.BRB_CONSTANT_ASCENT:
 						if (baselineAnchoredToTop) {
-							minDescent = Math.max(springMin - baseline,
-									minDescent);
+							minDescent = Math.max(springMin - baseline, minDescent);
 						} else {
 							minAscent = Math.max(baseline, minAscent);
 						}
 						break;
 					case Baseline.BRB_CONSTANT_DESCENT:
 						if (!baselineAnchoredToTop) {
-							minAscent = Math.max(baseline
-									- (springPref - springMin), minAscent);
+							minAscent = Math.max(baseline - (springPref - springMin), minAscent);
 						} else {
-							minDescent = Math.max(springPref - baseline,
-									minDescent);
+							minDescent = Math.max(springPref - baseline, minDescent);
 						}
 						break;
 					default:
 						// CENTER_OFFSET and OTHER are !resizable, use
 						// the preferred size.
 						minAscent = Math.max(baseline, minAscent);
-						minDescent = Math
-								.max(springPref - baseline, minDescent);
+						minDescent = Math.max(springPref - baseline, minDescent);
 						break;
 					}
 				} else {
@@ -2645,15 +2564,11 @@ public class GroupLayout implements LayoutManager2 {
 						switch (spring.getBaselineResizeBehavior()) {
 						case Baseline.BRB_CONSTANT_ASCENT:
 							y = origin + ascent - baseline;
-							height = Math.min(descent, springMax - baseline)
-									+ baseline;
+							height = Math.min(descent, springMax - baseline) + baseline;
 							break;
 						case Baseline.BRB_CONSTANT_DESCENT:
-							height = Math.min(ascent, springMax - springPref
-									+ baseline)
-									+ (springPref - baseline);
-							y = origin + ascent + (springPref - baseline)
-									- height;
+							height = Math.min(ascent, springMax - springPref + baseline) + (springPref - baseline);
+							y = origin + ascent + (springPref - baseline) - height;
 							break;
 						default: // CENTER_OFFSET & OTHER, not resizable
 							y = origin + ascent - baseline;
@@ -2693,8 +2608,7 @@ public class GroupLayout implements LayoutManager2 {
 		// If the axis is VERTICAL, throws an IllegalStateException
 		private void checkAxis(int axis) {
 			if (axis == HORIZONTAL) {
-				throw new IllegalStateException(
-						"Baseline must be used along vertical axis");
+				throw new IllegalStateException("Baseline must be used along vertical axis");
 			}
 		}
 	}
@@ -2763,8 +2677,7 @@ public class GroupLayout implements LayoutManager2 {
 			if (isLinked(axis)) {
 				return getLinkSize(axis, MAX_SIZE);
 			}
-			return Math.max(getMinimumSize(axis),
-					calculateNonlinkedMaximumSize(axis));
+			return Math.max(getMinimumSize(axis), calculateNonlinkedMaximumSize(axis));
 		}
 
 		boolean isVisible() {
@@ -2848,8 +2761,7 @@ public class GroupLayout implements LayoutManager2 {
 				int width = horizontalSpring.getPreferredSize(HORIZONTAL);
 				int height = getPreferredSize(VERTICAL);
 				if (width > 0 && height > 0) {
-					baseline = Baseline.getBaseline((JComponent) component,
-							width, getPreferredSize(VERTICAL));
+					baseline = Baseline.getBaseline((JComponent) component, width, getPreferredSize(VERTICAL));
 				}
 			}
 			return baseline;
@@ -2888,8 +2800,7 @@ public class GroupLayout implements LayoutManager2 {
 		private final int type;
 		private final boolean canGrow;
 
-		PaddingSpring(JComponent source, JComponent target, int type,
-				boolean canGrow) {
+		PaddingSpring(JComponent source, JComponent target, int type, boolean canGrow) {
 			this.source = source;
 			this.target = target;
 			this.type = type;
@@ -2918,8 +2829,7 @@ public class GroupLayout implements LayoutManager2 {
 			} else {
 				position = SwingConstants.SOUTH;
 			}
-			return getLayoutStyle0().getPreferredGap(source, target, type,
-					position, host);
+			return getLayoutStyle0().getPreferredGap(source, target, type, position, host);
 		}
 
 		boolean willHaveZeroSize(boolean treatAutopaddingAsZeroSized) {
@@ -3046,10 +2956,7 @@ public class GroupLayout implements LayoutManager2 {
 				}
 				for (int i = matches.size() - 1; i >= 0; i--) {
 					AutopaddingMatch match = (AutopaddingMatch) matches.get(i);
-					maxPadding = Math.max(
-							maxPadding,
-							calculatePadding(p, position, match.source,
-									match.target));
+					maxPadding = Math.max(maxPadding, calculatePadding(p, position, match.source, match.target));
 				}
 			}
 			if (size == UNSET) {
@@ -3063,18 +2970,13 @@ public class GroupLayout implements LayoutManager2 {
 			}
 		}
 
-		private int calculatePadding(LayoutStyle p, int position,
-				ComponentSpring source, ComponentSpring target) {
-			int delta = target.getOrigin()
-					- (source.getOrigin() + source.getSize());
+		private int calculatePadding(LayoutStyle p, int position, ComponentSpring source, ComponentSpring target) {
+			int delta = target.getOrigin() - (source.getOrigin() + source.getSize());
 			if (delta >= 0) {
 				int padding;
-				if ((source.getComponent() instanceof JComponent)
-						&& (target.getComponent() instanceof JComponent)) {
-					padding = p.getPreferredGap(
-							(JComponent) source.getComponent(),
-							(JComponent) target.getComponent(), type, position,
-							host);
+				if ((source.getComponent() instanceof JComponent) && (target.getComponent() instanceof JComponent)) {
+					padding = p.getPreferredGap((JComponent) source.getComponent(), (JComponent) target.getComponent(),
+							type, position, host);
 				} else {
 					padding = 10;
 				}
@@ -3089,25 +2991,21 @@ public class GroupLayout implements LayoutManager2 {
 		public void addTarget(ComponentSpring spring, int axis) {
 			int oAxis = (axis == HORIZONTAL) ? VERTICAL : HORIZONTAL;
 			if (source != null) {
-				if (areParallelSiblings(source.getComponent(),
-						spring.getComponent(), oAxis)) {
+				if (areParallelSiblings(source.getComponent(), spring.getComponent(), oAxis)) {
 					addValidTarget(source, spring);
 				}
 			} else {
 				Component component = spring.getComponent();
 				for (int counter = sources.size() - 1; counter >= 0; counter--) {
-					ComponentSpring source = (ComponentSpring) sources
-							.get(counter);
-					if (areParallelSiblings(source.getComponent(), component,
-							oAxis)) {
+					ComponentSpring source = (ComponentSpring) sources.get(counter);
+					if (areParallelSiblings(source.getComponent(), component, oAxis)) {
 						addValidTarget(source, spring);
 					}
 				}
 			}
 		}
 
-		private void addValidTarget(ComponentSpring source,
-				ComponentSpring target) {
+		private void addValidTarget(ComponentSpring source, ComponentSpring target) {
 			if (matches == null) {
 				matches = new ArrayList(1);
 			}
@@ -3207,13 +3105,10 @@ public class GroupLayout implements LayoutManager2 {
 					position = SwingConstants.SOUTH;
 				}
 				for (int i = targets.size() - 1; i >= 0; i--) {
-					ComponentSpring targetSpring = (ComponentSpring) targets
-							.get(i);
+					ComponentSpring targetSpring = (ComponentSpring) targets.get(i);
 					int padding = 10;
 					if (targetSpring.getComponent() instanceof JComponent) {
-						padding = p.getContainerGap(
-								(JComponent) targetSpring.getComponent(),
-								position, host);
+						padding = p.getContainerGap((JComponent) targetSpring.getComponent(), position, host);
 						maxPadding = Math.max(padding, maxPadding);
 						padding -= targetSpring.getOrigin();
 					} else {
@@ -3234,10 +3129,8 @@ public class GroupLayout implements LayoutManager2 {
 				}
 				if (sources != null) {
 					for (int i = sources.size() - 1; i >= 0; i--) {
-						ComponentSpring sourceSpring = (ComponentSpring) sources
-								.get(i);
-						maxPadding = Math.max(maxPadding,
-								updateSize(p, sourceSpring, position));
+						ComponentSpring sourceSpring = (ComponentSpring) sources.get(i);
+						maxPadding = Math.max(maxPadding, updateSize(p, sourceSpring, position));
 					}
 				} else if (source != null) {
 					maxPadding = updateSize(p, source, position);
@@ -3248,17 +3141,12 @@ public class GroupLayout implements LayoutManager2 {
 			}
 		}
 
-		private int updateSize(LayoutStyle p, ComponentSpring sourceSpring,
-				int position) {
+		private int updateSize(LayoutStyle p, ComponentSpring sourceSpring, int position) {
 			int padding = 10;
 			if (sourceSpring.getComponent() instanceof JComponent) {
-				padding = p.getContainerGap(
-						(JComponent) sourceSpring.getComponent(), position,
-						host);
+				padding = p.getContainerGap((JComponent) sourceSpring.getComponent(), position, host);
 			}
-			int delta = Math.max(0,
-					getParent().getSize() - sourceSpring.getSize()
-							- sourceSpring.getOrigin());
+			int delta = Math.max(0, getParent().getSize() - sourceSpring.getSize() - sourceSpring.getOrigin());
 			size = Math.max(size, padding - delta);
 			return padding;
 		}
@@ -3295,8 +3183,7 @@ public class GroupLayout implements LayoutManager2 {
 			} else if (childMaster != this) {
 				linked.addAll(childMaster.linked);
 				for (int i = 0; i < childMaster.linked.size(); i++) {
-					ComponentInfo childInfo = (ComponentInfo) childMaster.linked
-							.get(i);
+					ComponentInfo childInfo = (ComponentInfo) childMaster.linked.get(i);
 					childInfo.setLinkInfo(axis, this);
 				}
 			}
@@ -3334,8 +3221,7 @@ public class GroupLayout implements LayoutManager2 {
 					assert (axis == VERTICAL);
 					spring = info.verticalSpring;
 				}
-				size = Math.max(size,
-						spring.calculateNonlinkedPreferredSize(axis));
+				size = Math.max(size, spring.calculateNonlinkedPreferredSize(axis));
 			}
 			return size;
 		}
@@ -3407,8 +3293,7 @@ public class GroupLayout implements LayoutManager2 {
 			} else {
 				honorsVisibility = this.honorsVisibility.booleanValue();
 			}
-			boolean newVisible = (honorsVisibility) ? component.isVisible()
-					: true;
+			boolean newVisible = (honorsVisibility) ? component.isVisible() : true;
 			if (visible != newVisible) {
 				visible = newVisible;
 				return true;

@@ -207,8 +207,7 @@ public class ChartBaseCanvas extends JPanel {
 		p_paddleft = padleft;
 	}
 
-	public void setPaddingDip(int paddtop, int padright, int paddbot,
-			int padleft) {
+	public void setPaddingDip(int paddtop, int padright, int paddbot, int padleft) {
 		p_paddtop = (int) dipToPixel(paddtop);
 		p_paddright = (int) dipToPixel(padright);
 		p_paddbottom = (int) dipToPixel(paddbot);
@@ -241,8 +240,7 @@ public class ChartBaseCanvas extends JPanel {
 
 	}
 
-	public void setGridVis(boolean bBorderShow, boolean bGridShow,
-			boolean bAxisShow) {
+	public void setGridVis(boolean bBorderShow, boolean bGridShow, boolean bAxisShow) {
 		p_border_vis = bBorderShow;
 		p_grid_vis = bGridShow;
 		p_axis_vis = bAxisShow;
@@ -268,8 +266,7 @@ public class ChartBaseCanvas extends JPanel {
 
 	}
 
-	public void setGridWidthDip(float borderWidth, float gridWidth,
-			float axisWidth) {
+	public void setGridWidthDip(float borderWidth, float gridWidth, float axisWidth) {
 		p_border_width = dipToPixel(borderWidth);
 		p_grid_width = dipToPixel(gridWidth);
 		p_axis_width = dipToPixel(axisWidth);
@@ -285,8 +282,7 @@ public class ChartBaseCanvas extends JPanel {
 
 	}
 
-	public void setTextVis(boolean xtext, boolean ytext, boolean xbottom,
-			boolean yleft) {
+	public void setTextVis(boolean xtext, boolean ytext, boolean xbottom, boolean yleft) {
 		p_xtext_vis = xtext;
 		p_ytext_vis = ytext;
 		p_xtext_bottom = xbottom;
@@ -350,8 +346,7 @@ public class ChartBaseCanvas extends JPanel {
 	}
 
 	protected void calcXgridRange() {
-		mXdivGrid = (float) Math.pow(10,
-				Math.floor(Math.log10(Math.abs(mXmax - mXmin))));
+		mXdivGrid = (float) Math.pow(10, Math.floor(Math.log10(Math.abs(mXmax - mXmin))));
 		mXminGrid = (float) (mXdivGrid * Math.floor(mXmin / mXdivGrid));
 		mXmaxGrid = (float) (mXdivGrid * Math.ceil(mXmax / mXdivGrid));
 		mXgridNum = (int) ((mXmaxGrid - mXminGrid) / mXdivGrid);
@@ -377,8 +372,7 @@ public class ChartBaseCanvas extends JPanel {
 	}
 
 	protected void calcYgridRange() {
-		mYdivGrid = (float) Math.pow(10,
-				Math.floor(Math.log10(Math.abs(mYmax - mYmin))));
+		mYdivGrid = (float) Math.pow(10, Math.floor(Math.log10(Math.abs(mYmax - mYmin))));
 		mYminGrid = (float) (mYdivGrid * Math.floor(mYmin / mYdivGrid));
 		mYmaxGrid = (float) (mYdivGrid * Math.ceil(mYmax / mYdivGrid));
 		mYgridNum = (int) ((mYmaxGrid - mYminGrid) / mYdivGrid);
@@ -431,16 +425,14 @@ public class ChartBaseCanvas extends JPanel {
 				mPath.moveTo(sX + ii * (dX / mXgridNum), eY - 3);
 				mPath.lineTo(sX + ii * (dX / mXgridNum), eY + 3);
 				float ff = mXminGrid + ii * (mXmaxGrid - mXminGrid) / mXgridNum;
-				mCnv.drawText(String.format("%.1f", ff), sX + ii
-						* (dX / mXgridNum), eY + p_text_size + 2, mPntText);
+				mCnv.drawText(String.format("%.1f", ff), sX + ii * (dX / mXgridNum), eY + p_text_size + 2, mPntText);
 			}
 		} else {
 			for (int ii = 1; ii < mXgridNum; ii++) {
 				mPath.moveTo(sX + ii * (dX / mXgridNum), sY - 3);
 				mPath.lineTo(sX + ii * (dX / mXgridNum), sY + 3);
 				float ff = mXminGrid + ii * (mXmaxGrid - mXminGrid) / mXgridNum;
-				mCnv.drawText(String.format("%.1f", ff), sX + ii
-						* (dX / mXgridNum), sY - p_text_size + 2, mPntText);
+				mCnv.drawText(String.format("%.1f", ff), sX + ii * (dX / mXgridNum), sY - p_text_size + 2, mPntText);
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);
@@ -465,12 +457,11 @@ public class ChartBaseCanvas extends JPanel {
 				mPath.lineTo(sX + 3, eY - ii * (dY / mYgridNum));
 				float ff = mYminGrid + ii * (mYmaxGrid - mYminGrid) / mYgridNum;
 				if (mYLabelFlag == null) {
-					mCnv.drawText(String.format("%s", (int) ff), sX - 6, eY
-							- ii * (dY / mYgridNum) + p_text_size / 2, mPntText);
+					mCnv.drawText(String.format("%s", (int) ff), sX - 6, eY - ii * (dY / mYgridNum) + p_text_size / 2,
+							mPntText);
 				} else {
-					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
-							sX - 6, eY - ii * (dY / mYgridNum) + p_text_size
-									/ 2, mPntText);
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag), sX - 6,
+							eY - ii * (dY / mYgridNum) + p_text_size / 2, mPntText);
 				}
 			}
 
@@ -480,13 +471,11 @@ public class ChartBaseCanvas extends JPanel {
 				mPath.lineTo(eX + 3, eY - ii * (dY / mYgridNum));
 				float ff = mYminGrid + ii * (mYmaxGrid - mYminGrid) / mYgridNum;
 				if (mYLabelFlag == null) {
-					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
-							eX + 6, eY - ii * (dY / mYgridNum) + p_text_size
-									/ 2, mPntText);
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag), eX + 6,
+							eY - ii * (dY / mYgridNum) + p_text_size / 2, mPntText);
 				} else {
-					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag),
-							eX + 6, eY - ii * (dY / mYgridNum) + p_text_size
-									/ 2, mPntText);
+					mCnv.drawText(String.format("%s%s", (int) ff, mYLabelFlag), eX + 6,
+							eY - ii * (dY / mYgridNum) + p_text_size / 2, mPntText);
 				}
 			}
 		}

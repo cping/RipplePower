@@ -77,8 +77,7 @@ final class AlignmentPatternFinder {
 	 * @param moduleSize
 	 *            estimated module size so far
 	 */
-	AlignmentPatternFinder(BitMatrix image, int startX, int startY, int width,
-			int height, float moduleSize,
+	AlignmentPatternFinder(BitMatrix image, int startX, int startY, int width, int height, float moduleSize,
 			ResultPointCallback resultPointCallback) {
 		this.image = image;
 		this.possibleCenters = new ArrayList<>(5);
@@ -112,8 +111,7 @@ final class AlignmentPatternFinder {
 		int[] stateCount = new int[3];
 		for (int iGen = 0; iGen < height; iGen++) {
 			// Search from middle outwards
-			int i = middleI
-					+ ((iGen & 0x01) == 0 ? (iGen + 1) / 2 : -((iGen + 1) / 2));
+			int i = middleI + ((iGen & 0x01) == 0 ? (iGen + 1) / 2 : -((iGen + 1) / 2));
 			stateCount[0] = 0;
 			stateCount[1] = 0;
 			stateCount[2] = 0;
@@ -135,8 +133,7 @@ final class AlignmentPatternFinder {
 					} else { // Counting white pixels
 						if (currentState == 2) { // A winner?
 							if (foundPatternCross(stateCount)) { // Yes
-								AlignmentPattern confirmed = handlePossibleCenter(
-										stateCount, i, j);
+								AlignmentPattern confirmed = handlePossibleCenter(stateCount, i, j);
 								if (confirmed != null) {
 									return confirmed;
 								}
@@ -158,8 +155,7 @@ final class AlignmentPatternFinder {
 				j++;
 			}
 			if (foundPatternCross(stateCount)) {
-				AlignmentPattern confirmed = handlePossibleCenter(stateCount,
-						i, maxJ);
+				AlignmentPattern confirmed = handlePossibleCenter(stateCount, i, maxJ);
 				if (confirmed != null) {
 					return confirmed;
 				}
@@ -220,8 +216,7 @@ final class AlignmentPatternFinder {
 	 * @return vertical center of alignment pattern, or {@link Float#NaN} if not
 	 *         found
 	 */
-	private float crossCheckVertical(int startI, int centerJ, int maxCount,
-			int originalStateCountTotal) {
+	private float crossCheckVertical(int startI, int centerJ, int maxCount, int originalStateCountTotal) {
 		BitMatrix image = this.image;
 
 		int maxI = image.getHeight();
@@ -270,8 +265,7 @@ final class AlignmentPatternFinder {
 			return Float.NaN;
 		}
 
-		return foundPatternCross(stateCount) ? centerFromEnd(stateCount, i)
-				: Float.NaN;
+		return foundPatternCross(stateCount) ? centerFromEnd(stateCount, i) : Float.NaN;
 	}
 
 	/**
@@ -294,20 +288,17 @@ final class AlignmentPatternFinder {
 	private AlignmentPattern handlePossibleCenter(int[] stateCount, int i, int j) {
 		int stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
 		float centerJ = centerFromEnd(stateCount, j);
-		float centerI = crossCheckVertical(i, (int) centerJ, 2 * stateCount[1],
-				stateCountTotal);
+		float centerI = crossCheckVertical(i, (int) centerJ, 2 * stateCount[1], stateCountTotal);
 		if (!Float.isNaN(centerI)) {
 			float estimatedModuleSize = (float) (stateCount[0] + stateCount[1] + stateCount[2]) / 3.0f;
 			for (AlignmentPattern center : possibleCenters) {
 				// Look for about the same center and module size:
 				if (center.aboutEquals(estimatedModuleSize, centerI, centerJ)) {
-					return center.combineEstimate(centerI, centerJ,
-							estimatedModuleSize);
+					return center.combineEstimate(centerI, centerJ, estimatedModuleSize);
 				}
 			}
 			// Hadn't found this before; save it
-			AlignmentPattern point = new AlignmentPattern(centerJ, centerI,
-					estimatedModuleSize);
+			AlignmentPattern point = new AlignmentPattern(centerJ, centerI, estimatedModuleSize);
 			possibleCenters.add(point);
 			if (resultPointCallback != null) {
 				resultPointCallback.foundPossibleResultPoint(point);

@@ -44,17 +44,13 @@ public abstract class SoundBox {
 
 	public static final int SOUNDTYPE_RMF = 6;
 
-	public static final int SOUNDTYPE_MP3 = 7;
+	public static final int SOUNDTYPE_AAC = 7;
 
-	public static final int SOUNDTYPE_AAC = 8;
-
-	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(
-			9);
+	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(9);
 
 	static {
 		supportedFiles.put("mid", new Integer(SOUNDTYPE_MIDI));
 		supportedFiles.put("ogg", new Integer(SOUNDTYPE_OGG));
-		supportedFiles.put("mp3", new Integer(SOUNDTYPE_MP3));
 		supportedFiles.put("wav", new Integer(SOUNDTYPE_WAV));
 		supportedFiles.put("au", new Integer(SOUNDTYPE_AU));
 		supportedFiles.put("aiff", new Integer(SOUNDTYPE_AIFF));
@@ -91,9 +87,6 @@ public abstract class SoundBox {
 					break;
 				case SOUNDTYPE_OGG:
 					players[currentPlayer] = new LOggSound();
-					break;
-				case SOUNDTYPE_MP3:
-					players[currentPlayer] = new LMP3Sound();
 					break;
 				default:
 					players[currentPlayer] = new OtherSound();

@@ -30,8 +30,7 @@ public class LTransition {
 	 */
 	public final static LTransition newCrossRandom(LColor c) {
 		return newCross(LSystem.getRandomBetWeen(0, 1),
-				GraphicsUtils.createLImage(LSystem.screenRect.width,
-						LSystem.screenRect.height, c));
+				GraphicsUtils.createLImage(LSystem.screenRect.width, LSystem.screenRect.height, c));
 	}
 
 	/**
@@ -133,8 +132,7 @@ public class LTransition {
 	 * @return
 	 */
 	public final static LTransition newSplitRandom(LColor c) {
-		return newSplitRandom(GraphicsUtils.createLImage(
-				LSystem.screenRect.width, LSystem.screenRect.height, c));
+		return newSplitRandom(GraphicsUtils.createLImage(LSystem.screenRect.width, LSystem.screenRect.height, c));
 	}
 
 	/**

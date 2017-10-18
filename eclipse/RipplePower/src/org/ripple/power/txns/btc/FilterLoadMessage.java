@@ -4,12 +4,17 @@ import java.io.EOFException;
 import java.nio.ByteBuffer;
 
 /**
- * <p>The 'filterload' message supplies a Bloom filter to select transactions
- * of interest to the requester.  The requester will be notified when transactions
- * are received that match the supplied filter.  The requester can then respond
- * with a 'getdata' message to request Merkle blocks for those transactions.</p>
+ * <p>
+ * The 'filterload' message supplies a Bloom filter to select transactions of
+ * interest to the requester. The requester will be notified when transactions
+ * are received that match the supplied filter. The requester can then respond
+ * with a 'getdata' message to request Merkle blocks for those transactions.
+ * </p>
  *
- * <p>FilterLoad Message</p>
+ * <p>
+ * FilterLoad Message
+ * </p>
+ * 
  * <pre>
  *   Size       Field           Description
  *   ====       =====           ===========
@@ -22,46 +27,53 @@ import java.nio.ByteBuffer;
  */
 public class FilterLoadMessage {
 
-    /**
-     * Builds a FilterLoad message
-     *
-     * @param       peer                Destination peer
-     * @param       filter              Bloom filter
-     * @return                          'filterload' message
-     */
-    public static Message buildFilterLoadMessage(Peer peer, BloomFilter filter) {
-        //
-        // Build the message
-        //
-        ByteBuffer buffer = MessageHeader.buildMessage("filterload", filter.getBytes());
-        return new Message(buffer, peer, MessageHeader.MessageCommand.FILTERLOAD);
-    }
+	/**
+	 * Builds a FilterLoad message
+	 *
+	 * @param peer
+	 *            Destination peer
+	 * @param filter
+	 *            Bloom filter
+	 * @return 'filterload' message
+	 */
+	public static Message buildFilterLoadMessage(Peer peer, BloomFilter filter) {
+		//
+		// Build the message
+		//
+		ByteBuffer buffer = MessageHeader.buildMessage("filterload", filter.getBytes());
+		return new Message(buffer, peer, MessageHeader.MessageCommand.FILTERLOAD);
+	}
 
-    /**
-     * Creates the Bloom filter
-     *
-     * @param       msg                     Message
-     * @param       inBuffer                Input buffer
-     * @param       msgListener             Message listener
-     * @throws      EOFException            End-of-data processing input stream
-     * @throws      VerificationException   Verification error
-     */
-    public static void processFilterLoadMessage(Message msg, SerializedBuffer inBuffer, MessageListener msgListener)
-                                            throws EOFException, VerificationException {
-        //
-        // Load the new bloom filter
-        //
-        Peer peer = msg.getPeer();
-        BloomFilter newFilter = new BloomFilter(inBuffer);
-        BloomFilter oldFilter;
-        synchronized(peer) {
-            oldFilter = peer.getBloomFilter();
-            newFilter.setPeer(peer);
-            peer.setBloomFilter(newFilter);
-        }
-        //
-        // Notify the message listener
-        //
-        msgListener.processFilterLoad(msg, oldFilter, newFilter);
-    }
+	/**
+	 * Creates the Bloom filter
+	 *
+	 * @param msg
+	 *            Message
+	 * @param inBuffer
+	 *            Input buffer
+	 * @param msgListener
+	 *            Message listener
+	 * @throws EOFException
+	 *             End-of-data processing input stream
+	 * @throws VerificationException
+	 *             Verification error
+	 */
+	public static void processFilterLoadMessage(Message msg, SerializedBuffer inBuffer, MessageListener msgListener)
+			throws EOFException, VerificationException {
+		//
+		// Load the new bloom filter
+		//
+		Peer peer = msg.getPeer();
+		BloomFilter newFilter = new BloomFilter(inBuffer);
+		BloomFilter oldFilter;
+		synchronized (peer) {
+			oldFilter = peer.getBloomFilter();
+			newFilter.setPeer(peer);
+			peer.setBloomFilter(newFilter);
+		}
+		//
+		// Notify the message listener
+		//
+		msgListener.processFilterLoad(msg, oldFilter, newFilter);
+	}
 }

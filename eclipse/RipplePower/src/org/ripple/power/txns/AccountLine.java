@@ -62,8 +62,8 @@ public class AccountLine {
 	public long getQuality_in() {
 		return quality_in;
 	}
-	
-	public boolean getNo_ripple(){
+
+	public boolean getNo_ripple() {
 		return no_ripple;
 	}
 
@@ -74,7 +74,7 @@ public class AccountLine {
 	public void setPeer_authorized(boolean peer_authorized) {
 		this.peer_authorized = peer_authorized;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
@@ -113,6 +113,5 @@ public class AccountLine {
 		}
 		return count == 6;
 	}
-
 
 }

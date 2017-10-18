@@ -16,8 +16,8 @@ public class ROCEditorListener implements UndoableEditListener {
 	@Override
 	public void undoableEditHappened(UndoableEditEvent ev) {
 		UndoableEdit edit = ev.getEdit();
-		if (edit instanceof AbstractDocument.DefaultDocumentEvent
-				&& ((AbstractDocument.DefaultDocumentEvent) edit).getType() == AbstractDocument.DefaultDocumentEvent.EventType.CHANGE) {
+		if (edit instanceof AbstractDocument.DefaultDocumentEvent && ((AbstractDocument.DefaultDocumentEvent) edit)
+				.getType() == AbstractDocument.DefaultDocumentEvent.EventType.CHANGE) {
 			return;
 		}
 		manager.addEdit(edit);

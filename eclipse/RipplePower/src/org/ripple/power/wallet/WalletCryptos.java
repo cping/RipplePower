@@ -75,8 +75,7 @@ public class WalletCryptos {
 		}
 	}
 
-	public static String encrypt(String value, File keyFile)
-			throws GeneralSecurityException, IOException {
+	public static String encrypt(String value, File keyFile) throws GeneralSecurityException, IOException {
 		if (!keyFile.exists()) {
 			KeyGenerator keyGen = KeyGenerator.getInstance(AES);
 			keyGen.init(128);
@@ -93,8 +92,7 @@ public class WalletCryptos {
 		return byteArrayToHexString(encrypted);
 	}
 
-	public static String decrypt(String message, File keyFile)
-			throws GeneralSecurityException, IOException {
+	public static String decrypt(String message, File keyFile) throws GeneralSecurityException, IOException {
 		SecretKeySpec sks = getSecretKeySpec(keyFile);
 		Cipher cipher = Cipher.getInstance(AES);
 		cipher.init(Cipher.DECRYPT_MODE, sks);
@@ -102,15 +100,13 @@ public class WalletCryptos {
 		return new String(decrypted);
 	}
 
-	private static SecretKeySpec getSecretKeySpec(File keyFile)
-			throws NoSuchAlgorithmException, IOException {
+	private static SecretKeySpec getSecretKeySpec(File keyFile) throws NoSuchAlgorithmException, IOException {
 		byte[] key = readKeyFile(keyFile);
 		SecretKeySpec sks = new SecretKeySpec(key, AES);
 		return sks;
 	}
 
-	private static byte[] readKeyFile(File keyFile)
-			throws FileNotFoundException {
+	private static byte[] readKeyFile(File keyFile) throws FileNotFoundException {
 		Scanner scanner = null;
 		String keyValue;
 		try {
@@ -146,8 +142,7 @@ public class WalletCryptos {
 		return b;
 	}
 
-	public static byte[] encrypt(String passphrase, byte[] plaintext)
-			throws EncryptException {
+	public static byte[] encrypt(String passphrase, byte[] plaintext) throws EncryptException {
 		try {
 			SecretKeySpec key = getKey(passphrase);
 			return encrypt(key, plaintext);
@@ -168,8 +163,7 @@ public class WalletCryptos {
 		}
 	}
 
-	public static byte[] decrypt(String passphrase, byte[] ciphertext)
-			throws DecryptException {
+	public static byte[] decrypt(String passphrase, byte[] ciphertext) throws DecryptException {
 		try {
 			SecretKeySpec key = getKey(passphrase);
 			return decrypt(key, ciphertext);
@@ -178,40 +172,35 @@ public class WalletCryptos {
 		}
 	}
 
+	public static final String algorithm = "PBKDF2WithHmacSHA1";
+
 	private static SecretKeySpec getKey(String passphrase)
-			throws NoSuchAlgorithmException, InvalidKeySpecException,
-			UnsupportedEncodingException {
-		byte[] salt = makeSHA1Hash(
-				passphrase + "my name cping is very cool !RE%$%$67opop00943% "
-						+ passphrase + " ").getBytes(LSystem.encoding);
+			throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException {
+		byte[] salt = makeSHA1Hash(passphrase + "my name cping is very cool !RE%$%$67opop00943% " + passphrase + " ")
+				.getBytes(LSystem.encoding);
 		int iterations = 10000;
-		SecretKeyFactory factory = SecretKeyFactory
-				.getInstance("PBKDF2WithHmacSHA1");
-		SecretKey tmp = factory.generateSecret(new PBEKeySpec(passphrase
-				.toCharArray(), salt, iterations, 128));
+		SecretKeyFactory factory = SecretKeyFactory.getInstance(algorithm);
+
+		SecretKey tmp = factory.generateSecret(new PBEKeySpec(passphrase.toCharArray(), salt, iterations, 128));
 		return new SecretKeySpec(tmp.getEncoded(), AES);
 	}
 
 	private static byte[] encrypt(SecretKeySpec key, byte[] plaintext)
-			throws NoSuchAlgorithmException, NoSuchPaddingException,
-			InvalidKeyException, IllegalBlockSizeException,
+			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, UnsupportedEncodingException {
 		Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
 		aes.init(Cipher.ENCRYPT_MODE, key);
 		return aes.doFinal(plaintext);
 	}
 
-	private static byte[] decrypt(SecretKeySpec key, byte[] ciphertext)
-			throws IllegalBlockSizeException, BadPaddingException,
-			InvalidKeyException, NoSuchAlgorithmException,
-			NoSuchPaddingException {
+	private static byte[] decrypt(SecretKeySpec key, byte[] ciphertext) throws IllegalBlockSizeException,
+			BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 		Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
 		aes.init(Cipher.DECRYPT_MODE, key);
 		return aes.doFinal(ciphertext);
 	}
 
-	public static String makeSHA1Hash(String input)
-			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	public static String makeSHA1Hash(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA1");
 		md.reset();
 		byte[] buffer = input.getBytes(LSystem.encoding);
@@ -219,8 +208,7 @@ public class WalletCryptos {
 		byte[] digest = md.digest();
 		String hexStr = "";
 		for (int i = 0; i < digest.length; i++) {
-			hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16)
-					.substring(1);
+			hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return hexStr;
 	}

@@ -1,7 +1,5 @@
 package org.ripple.bouncycastle;
 
-import org.ripple.bouncycastle.util.Strings;
-
 /**
  * The Bouncy Castle License
  *
@@ -27,34 +25,34 @@ public class LICENSE
 {
     public static String licenseText =
       "Copyright (c) 2000-2015 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org) "
-      + Strings.lineSeparator()
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
+      + System.getProperty("line.separator")
       + "Permission is hereby granted, free of charge, to any person obtaining a copy of this software "
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "and associated documentation files (the \"Software\"), to deal in the Software without restriction, "
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, "
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "subject to the following conditions:"
-      + Strings.lineSeparator()
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
+      + System.getProperty("line.separator")
       + "The above copyright notice and this permission notice shall be included in all copies or substantial"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "portions of the Software."
-      + Strings.lineSeparator()
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
+      + System.getProperty("line.separator")
       + "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER"
-      + Strings.lineSeparator()
+      + System.getProperty("line.separator")
       + "DEALINGS IN THE SOFTWARE.";
 
     public static void main(

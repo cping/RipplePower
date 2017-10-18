@@ -44,8 +44,7 @@ public final class MultiFormatUPCEANReader extends OneDReader {
 	public MultiFormatUPCEANReader(Map<DecodeHintType, ?> hints) {
 		@SuppressWarnings("unchecked")
 		Collection<BarcodeFormat> possibleFormats = hints == null ? null
-				: (Collection<BarcodeFormat>) hints
-						.get(DecodeHintType.POSSIBLE_FORMATS);
+				: (Collection<BarcodeFormat>) hints.get(DecodeHintType.POSSIBLE_FORMATS);
 		Collection<UPCEANReader> readers = new ArrayList<>();
 		if (possibleFormats != null) {
 			if (possibleFormats.contains(BarcodeFormat.EAN_13)) {
@@ -70,15 +69,13 @@ public final class MultiFormatUPCEANReader extends OneDReader {
 	}
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints) throws NotFoundException {
 		// Compute this location once and reuse it on multiple implementations
 		int[] startGuardPattern = UPCEANReader.findStartGuardPattern(row);
 		for (UPCEANReader reader : readers) {
 			Result result;
 			try {
-				result = reader.decodeRow(rowNumber, row, startGuardPattern,
-						hints);
+				result = reader.decodeRow(rowNumber, row, startGuardPattern, hints);
 			} catch (ReaderException ignored) {
 				continue;
 			}
@@ -105,16 +102,13 @@ public final class MultiFormatUPCEANReader extends OneDReader {
 					&& result.getText().charAt(0) == '0';
 			@SuppressWarnings("unchecked")
 			Collection<BarcodeFormat> possibleFormats = hints == null ? null
-					: (Collection<BarcodeFormat>) hints
-							.get(DecodeHintType.POSSIBLE_FORMATS);
-			boolean canReturnUPCA = possibleFormats == null
-					|| possibleFormats.contains(BarcodeFormat.UPC_A);
+					: (Collection<BarcodeFormat>) hints.get(DecodeHintType.POSSIBLE_FORMATS);
+			boolean canReturnUPCA = possibleFormats == null || possibleFormats.contains(BarcodeFormat.UPC_A);
 
 			if (ean13MayBeUPCA && canReturnUPCA) {
 				// Transfer the metdata across
-				Result resultUPCA = new Result(result.getText().substring(1),
-						result.getRawBytes(), result.getResultPoints(),
-						BarcodeFormat.UPC_A);
+				Result resultUPCA = new Result(result.getText().substring(1), result.getRawBytes(),
+						result.getResultPoints(), BarcodeFormat.UPC_A);
 				resultUPCA.putAllMetadata(result.getResultMetadata());
 				return resultUPCA;
 			}

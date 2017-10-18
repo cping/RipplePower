@@ -65,16 +65,14 @@ public class CBEntrySignalGenerator implements EntrySignalGenerator {
 
 				// 重算最小值
 				if (dropValue == currentLowest) {
-					currentLowest = this.computeLowest(input, period, i
-							- period);
+					currentLowest = this.computeLowest(input, period, i - period);
 				} else {
 					currentLowest = Math.min(currentLowest, input[i]);
 				}
 
 				// 重算最大值
 				if (dropValue == currentHighest) {
-					currentHighest = this.computeHighest(input, period, i
-							- period);
+					currentHighest = this.computeHighest(input, period, i - period);
 				} else {
 					currentHighest = Math.max(currentHighest, input[i]);
 				}

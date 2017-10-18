@@ -61,7 +61,7 @@ public class X931Signer
 
     /**
      * Generate a signer for the with either implicit or explicit trailers
-     * for X9.31
+     * for ISO9796-2.
      *
      * @param cipher base cipher to use for signature creation/verification
      * @param digest digest to use.
@@ -172,11 +172,20 @@ public class X931Signer
         createSignatureBlock();
 
         BigInteger t = new BigInteger(1, cipher.processBlock(block, 0, block.length));
+        BigInteger nSubT = kParam.getModulus().subtract(t);
+
         clearBlock(block);
 
-        t = t.min(kParam.getModulus().subtract(t));
+        BigInteger v = kParam.getModulus().shiftRight(2);
 
-        return BigIntegers.asUnsignedByteArray((kParam.getModulus().bitLength() + 7) / 8, t);
+        if (t.compareTo(nSubT) > 0)
+        {
+            return BigIntegers.asUnsignedByteArray((kParam.getModulus().bitLength() + 7) / 8, nSubT);
+        }
+        else
+        {
+            return BigIntegers.asUnsignedByteArray((kParam.getModulus().bitLength() + 7) / 8, t);
+        }
     }
 
     private void createSignatureBlock()
@@ -223,17 +232,17 @@ public class X931Signer
             return false;
         }
 
-        BigInteger t = new BigInteger(1, block);
+        BigInteger t = new BigInteger(block);
         BigInteger f;
 
-        if ((t.intValue() & 15) == 12)
+        if (t.mod(BigInteger.valueOf(16)).equals(BigInteger.valueOf(12)))
         {
              f = t;
         }
         else
         {
             t = kParam.getModulus().subtract(t);
-            if ((t.intValue() & 15) == 12)
+            if (t.mod(BigInteger.valueOf(16)).equals(BigInteger.valueOf(12)))
             {
                  f = t;
             }

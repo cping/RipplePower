@@ -47,8 +47,7 @@ public final class Decoder {
 		rsDecoder = new ReedSolomonDecoder(GenericGF.MAXICODE_FIELD_64);
 	}
 
-	public DecoderResult decode(BitMatrix bits) throws ChecksumException,
-			FormatException {
+	public DecoderResult decode(BitMatrix bits) throws ChecksumException, FormatException {
 		return decode(bits, null);
 	}
 
@@ -83,8 +82,7 @@ public final class Decoder {
 		return DecodedBitStreamParser.decode(datawords, mode);
 	}
 
-	private void correctErrors(byte[] codewordBytes, int start,
-			int dataCodewords, int ecCodewords, int mode)
+	private void correctErrors(byte[] codewordBytes, int start, int dataCodewords, int ecCodewords, int mode)
 			throws ChecksumException {
 		int codewords = dataCodewords + ecCodewords;
 

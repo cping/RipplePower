@@ -53,8 +53,7 @@ public final class LSystem {
 
 	public static Model current = Model.Ripple;
 
-	private final static String USER_HOME_NAME = System
-			.getProperty("user.home");
+	private final static String USER_HOME_NAME = System.getProperty("user.home");
 
 	private static String BTC_PATH = System.getProperty("bitcoin.datadir");
 
@@ -79,15 +78,12 @@ public final class LSystem {
 		}
 
 		if (LSystem.isWindows()) {
-			applicationDataDirectory = System.getenv("APPDATA")
-					+ File.separator + applicationName;
+			applicationDataDirectory = System.getenv("APPDATA") + File.separator + applicationName;
 		} else {
 			if (LSystem.isAnyMac()) {
-				applicationDataDirectory = USER_HOME_NAME
-						+ "/Library/Application Support/" + applicationName;
+				applicationDataDirectory = USER_HOME_NAME + "/Library/Application Support/" + applicationName;
 			} else {
-				applicationDataDirectory = USER_HOME_NAME + "/"
-						+ applicationName;
+				applicationDataDirectory = USER_HOME_NAME + "/" + applicationName;
 			}
 		}
 		return applicationDataDirectory;
@@ -103,8 +99,7 @@ public final class LSystem {
 			} else if (LSystem.isLinux()) {
 				BTC_PATH = USER_HOME_NAME + "/." + BTC_WALLET;
 			} else if (LSystem.isAnyMac()) {
-				BTC_PATH = USER_HOME_NAME + "/Library/Application Support/"
-						+ BTC_WALLET;
+				BTC_PATH = USER_HOME_NAME + "/Library/Application Support/" + BTC_WALLET;
 			} else {
 				BTC_PATH = USER_HOME_NAME + "/" + BTC_WALLET;
 			}
@@ -240,24 +235,20 @@ public final class LSystem {
 					return mainContext;
 				}
 
-				ThreadGroup currentThreadGroup = Thread.currentThread()
-						.getThreadGroup();
+				ThreadGroup currentThreadGroup = Thread.currentThread().getThreadGroup();
 				for (int i = 0; i < allContexts.size(); i++) {
 					UIContext context = (UIContext) allContexts.get(i);
 					ThreadGroup contextThreadGroup = context.getThreadGroup();
-					if (contextThreadGroup == currentThreadGroup
-							|| contextThreadGroup.parentOf(currentThreadGroup)) {
+					if (contextThreadGroup == currentThreadGroup || contextThreadGroup.parentOf(currentThreadGroup)) {
 						return context;
 					}
 				}
 
-				if (initContext != null
-						&& Thread.currentThread() == initContextThread) {
+				if (initContext != null && Thread.currentThread() == initContextThread) {
 					return initContext;
 				}
 
-				return (UIContext) (allContexts
-						.get(UIContext.nextContextID - 1));
+				return (UIContext) (allContexts.get(UIContext.nextContextID - 1));
 
 			}
 		}
@@ -372,8 +363,7 @@ public final class LSystem {
 		public LHandler getSystemHandler(int id) {
 			if (allContexts != null) {
 				if (id > 0 && id < allContexts.size()) {
-					return ((UIContext) allContexts.get(id)).getView()
-							.getHandler();
+					return ((UIContext) allContexts.get(id)).getView().getHandler();
 				}
 			}
 			return null;
@@ -421,14 +411,11 @@ public final class LSystem {
 
 	public final static String nativeCurrency = "xrp";
 
-	public final static DecimalFormat NUMBER_8_FORMAT = new DecimalFormat(
-			"0.00000000");
+	public final static DecimalFormat NUMBER_8_FORMAT = new DecimalFormat("0.00000000");
 
-	public final static DecimalFormat NUMBER_6_FORMAT = new DecimalFormat(
-			"0.000000");
+	public final static DecimalFormat NUMBER_6_FORMAT = new DecimalFormat("0.000000");
 
-	final public static ArrayList<String> send_addresses = new ArrayList<String>(
-			1000);
+	final public static ArrayList<String> send_addresses = new ArrayList<String>(1000);
 
 	final static public long SECOND = 1000;
 	final static public long MINUTE = SECOND * 60;
@@ -461,8 +448,7 @@ public final class LSystem {
 
 	public static long applicationSleep = SECOND * 30;
 
-	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(
-			100);
+	private static HashMap<String, Session> ripple_store = new HashMap<String, Session>(100);
 
 	private static boolean _isWindows = false;
 	private static boolean _isWindowsNTor2000 = false;
@@ -492,8 +478,7 @@ public final class LSystem {
 		} catch (NumberFormatException ex) {
 			_isClassicWindows = false;
 		}
-		if (os.indexOf("Windows XP") != -1 || os.indexOf("Windows NT") != -1
-				|| os.indexOf("Windows 2000") != -1) {
+		if (os.indexOf("Windows XP") != -1 || os.indexOf("Windows NT") != -1 || os.indexOf("Windows 2000") != -1) {
 			_isWindowsNTor2000 = true;
 		}
 		if (os.indexOf("Windows XP") != -1) {
@@ -521,8 +506,7 @@ public final class LSystem {
 		if (_isWindows) {
 			_supportsTray = true;
 		}
-		_isSolaris = (os.indexOf("Solaris") != -1)
-				|| (os.indexOf("SunOS") != -1);
+		_isSolaris = (os.indexOf("Solaris") != -1) || (os.indexOf("SunOS") != -1);
 		_isLinux = os.indexOf("Linux") != -1;
 		if (os.startsWith("Mac OS")) {
 			if (os.endsWith("X")) {
@@ -814,25 +798,19 @@ public final class LSystem {
 		return _currentVersion.compareVersion(1.8, 0, 0) >= 0;
 	}
 
-	public static boolean isJdkVersion(double majorVersion, int minorVersion,
-			int build) {
+	public static boolean isJdkVersion(double majorVersion, int minorVersion, int build) {
 		checkJdkVersion();
-		return _currentVersion
-				.compareVersion(majorVersion, minorVersion, build) == 0;
+		return _currentVersion.compareVersion(majorVersion, minorVersion, build) == 0;
 	}
 
-	public static boolean isJdkVersionAbove(double majorVersion,
-			int minorVersion, int build) {
+	public static boolean isJdkVersionAbove(double majorVersion, int minorVersion, int build) {
 		checkJdkVersion();
-		return _currentVersion
-				.compareVersion(majorVersion, minorVersion, build) >= 0;
+		return _currentVersion.compareVersion(majorVersion, minorVersion, build) >= 0;
 	}
 
-	public static boolean isJdkVersionBelow(double majorVersion,
-			int minorVersion, int build) {
+	public static boolean isJdkVersionBelow(double majorVersion, int minorVersion, int build) {
 		checkJdkVersion();
-		return _currentVersion
-				.compareVersion(majorVersion, minorVersion, build) <= 0;
+		return _currentVersion.compareVersion(majorVersion, minorVersion, build) <= 0;
 	}
 
 	public static boolean isMinJavaVersion(int major, int minor) {
@@ -857,17 +835,13 @@ public final class LSystem {
 		return true;
 	}
 
-	public static void sendRESTCoin(String address, String name, String label,
-			long amount) {
-		LSystem.sendRESTCoin(address, name, label, amount,
-				nativeCurrency.toUpperCase(), MathUtils.random(1, 9999));
+	public static void sendRESTCoin(String address, String name, String label, long amount) {
+		LSystem.sendRESTCoin(address, name, label, amount, nativeCurrency.toUpperCase(), MathUtils.random(1, 9999));
 	}
 
-	public static void sendRESTCoin(String address, String name, String label,
-			long amount, String currency, long dt) {
-		String page = "https://ripple.com//send?to=" + address + "&name="
-				+ name + "&label=" + label.replace(" ", "%20") + "&amount="
-				+ amount + "/" + currency + "&dt=" + dt;
+	public static void sendRESTCoin(String address, String name, String label, long amount, String currency, long dt) {
+		String page = "https://ripple.com//send?to=" + address + "&name=" + name + "&label=" + label.replace(" ", "%20")
+				+ "&amount=" + amount + "/" + currency + "&dt=" + dt;
 		openURL(page);
 	}
 
@@ -888,20 +862,15 @@ public final class LSystem {
 		String osName = System.getProperty("os.name", "");
 		if (osName.startsWith("Mac OS")) {
 			Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
-			Method openURL = fileMgr.getDeclaredMethod("openURL",
-					new Class[] { String.class });
+			Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] { String.class });
 			openURL.invoke(null, new Object[] { url });
 		} else if (osName.startsWith("Windows")) {
-			Runtime.getRuntime().exec(
-					"rundll32 url.dll,FileProtocolHandler " + url);
+			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
 		} else {
-			String[] browsers = { "firefox", "opera", "konqueror", "epiphany",
-					"mozilla", "netscape" };
+			String[] browsers = { "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape" };
 			String browser = null;
 			for (int count = 0; count < browsers.length && browser == null; count++) {
-				if (Runtime.getRuntime()
-						.exec(new String[] { "which", browsers[count] })
-						.waitFor() == 0) {
+				if (Runtime.getRuntime().exec(new String[] { "which", browsers[count] }).waitFor() == 0) {
 					browser = browsers[count];
 				}
 			}
@@ -955,8 +924,7 @@ public final class LSystem {
 		try {
 			String command = "cmd.exe /c ipconfig /all";
 			Process p = Runtime.getRuntime().exec(command);
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					p.getInputStream(), "gbk"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "gbk"));
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.indexOf("Physical Address") > 0) {
@@ -999,17 +967,14 @@ public final class LSystem {
 	private static String getOtherMACAddress() {
 		String str = "", strMAC = "", macAddress = "";
 		try {
-			Process pp = Runtime.getRuntime().exec(
-					"nbtstat -a " + getIPAddress());
-			InputStreamReader ir = new InputStreamReader(pp.getInputStream(),
-					LSystem.encoding);
+			Process pp = Runtime.getRuntime().exec("nbtstat -a " + getIPAddress());
+			InputStreamReader ir = new InputStreamReader(pp.getInputStream(), LSystem.encoding);
 			LineNumberReader input = new LineNumberReader(ir);
 			for (int i = 1; i < 100; i++) {
 				str = input.readLine();
 				if (str != null) {
 					if (str.toLowerCase().indexOf("mac") != -1) {
-						strMAC = str.substring(str.indexOf("=") + 1,
-								str.length()).trim();
+						strMAC = str.substring(str.indexOf("=") + 1, str.length()).trim();
 						break;
 					}
 				}
@@ -1022,10 +987,9 @@ public final class LSystem {
 		if (strMAC.length() < 17) {
 			return "Error!";
 		}
-		macAddress = (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5)
-				+ ":" + strMAC.substring(6, 8) + ":" + strMAC.substring(9, 11)
-				+ ":" + strMAC.substring(12, 14) + ":" + strMAC.substring(15,
-				17)).toUpperCase();
+		macAddress = (strMAC.substring(0, 2) + ":" + strMAC.substring(3, 5) + ":" + strMAC.substring(6, 8) + ":"
+				+ strMAC.substring(9, 11) + ":" + strMAC.substring(12, 14) + ":" + strMAC.substring(15, 17))
+						.toUpperCase();
 		return macAddress;
 	}
 
@@ -1042,6 +1006,7 @@ public final class LSystem {
 			session = new Session(name);
 			ripple_store.put(name, session);
 		}
+
 		return session;
 	}
 
@@ -1057,11 +1022,13 @@ public final class LSystem {
 					session.save();
 				}
 			}
-			if (LSystem.applicationMain != null) {
-				SwingUtils.close(LSystem.applicationMain);
-			}
+
 			ApplicationInfo.unlock();
 			BTCLoader.shutdown();
+			if (LSystem.applicationMain != null) {
+				LSystem.applicationMain.close();
+				SwingUtils.close(LSystem.applicationMain);
+			}
 			System.exit(-1);
 		}
 	}
@@ -1182,10 +1149,8 @@ public final class LSystem {
 
 	public static class JavaVersion {
 
-		private static Pattern SUN_JAVA_VERSION = Pattern
-				.compile("(\\d+\\.\\d+)(\\.(\\d+))?(_([^-]+))?(.*)");
-		private static Pattern SUN_JAVA_VERSION_SIMPLE = Pattern
-				.compile("(\\d+\\.\\d+)(\\.(\\d+))?(.*)");
+		private static Pattern SUN_JAVA_VERSION = Pattern.compile("(\\d+\\.\\d+)(\\.(\\d+))?(_([^-]+))?(.*)");
+		private static Pattern SUN_JAVA_VERSION_SIMPLE = Pattern.compile("(\\d+\\.\\d+)(\\.(\\d+))?(.*)");
 		private double _majorVersion;
 		private int _minorVersion;
 		private int _buildNumber;
@@ -1227,9 +1192,8 @@ public final class LSystem {
 						}
 					}
 				} catch (NumberFormatException e1) {
-					System.err
-							.println("Please check the installation of your JDK. The version number "
-									+ version + " is not right.");
+					System.err.println("Please check the installation of your JDK. The version number " + version
+							+ " is not right.");
 				}
 			}
 		}
@@ -1282,8 +1246,7 @@ public final class LSystem {
 			buffer = password.getBytes();
 		}
 		OpenSSL ssl = new OpenSSL();
-		buffer = ssl.encrypt(buffer, LSystem.getUserName()
-				+ LSystem.applicationName + LSystem.getMACAddress());
+		buffer = ssl.encrypt(buffer, LSystem.getUserName() + LSystem.applicationName + LSystem.getMACAddress());
 		return CoinUtils.toHex(buffer);
 	}
 
@@ -1294,8 +1257,7 @@ public final class LSystem {
 		password = password.trim();
 		OpenSSL ssl = new OpenSSL();
 		byte[] buffer = CoinUtils.fromHex(password);
-		buffer = ssl.decrypt(buffer, LSystem.getUserName()
-				+ LSystem.applicationName + LSystem.getMACAddress());
+		buffer = ssl.decrypt(buffer, LSystem.getUserName() + LSystem.applicationName + LSystem.getMACAddress());
 		password = new String(buffer, LSystem.encoding);
 		LSystem.applicationPassword = password.trim();
 		return LSystem.applicationPassword;

@@ -37,7 +37,6 @@ import org.ripple.bouncycastle.jce.interfaces.ECPointEncoder;
 import org.ripple.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.util.Strings;
 
 public class JCEECPrivateKey
     implements ECPrivateKey, org.ripple.bouncycastle.jce.interfaces.ECPrivateKey, PKCS12BagAttributeCarrier, ECPointEncoder
@@ -427,7 +426,7 @@ public class JCEECPrivateKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("EC Private Key").append(nl);
         buf.append("             S: ").append(this.d.toString(16)).append(nl);

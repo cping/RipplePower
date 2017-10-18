@@ -88,7 +88,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities
     private static final String CRL_DIST_POINTS = X509Extensions.CRLDistributionPoints.getId();
     private static final String AUTH_INFO_ACCESS = X509Extensions.AuthorityInfoAccess.getId();
     
-    private static final String RESOURCE_NAME = "org.bouncycastle.x509.CertPathReviewerMessages";
+    private static final String RESOURCE_NAME = "org.ripple.bouncycastle.x509.CertPathReviewerMessages";
     
     // input parameters
     
@@ -639,7 +639,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities
             {
                 if (maxPathLength <= 0)
                 {
-                    ErrorBundle msg = new ErrorBundle(RESOURCE_NAME,"CertPathReviewer.pathLengthExtended");
+                    ErrorBundle msg = new ErrorBundle(RESOURCE_NAME,"CertPathReviewer.pathLenghtExtended");
                     addError(msg);
                 }
                 maxPathLength--;
@@ -827,7 +827,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities
             try
             {
                 workingAlgId = getAlgorithmIdentifier(workingPublicKey);
-                workingPublicKeyAlgorithm = workingAlgId.getAlgorithm();
+                workingPublicKeyAlgorithm = workingAlgId.getObjectId();
                 workingPublicKeyParameters = workingAlgId.getParameters();
             }
             catch (CertPathValidatorException ex)
@@ -1083,7 +1083,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities
             {
                 workingPublicKey = getNextWorkingKey(certs, index);
                 workingAlgId = getAlgorithmIdentifier(workingPublicKey);
-                workingPublicKeyAlgorithm = workingAlgId.getAlgorithm();
+                workingPublicKeyAlgorithm = workingAlgId.getObjectId();
                 workingPublicKeyParameters = workingAlgId.getParameters();
             }
             catch (CertPathValidatorException ex)

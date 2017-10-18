@@ -5,7 +5,7 @@ import java.security.KeyStore;
 import java.security.KeyStore.ProtectionParameter;
 
 /**
- * @deprecated use org.bouncycastle.jcajce.PKCS12StoreParameter
+ * @deprecated use org.ripple.bouncycastle.jcajce.PKCS12StoreParameter
  */
 public class PKCS12StoreParameter
     extends org.ripple.bouncycastle.jcajce.PKCS12StoreParameter

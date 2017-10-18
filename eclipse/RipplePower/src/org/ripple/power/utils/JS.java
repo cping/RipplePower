@@ -21,8 +21,7 @@ public class JS {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T[] splice(T[] array, int index, int num, T... ts)
-			throws Exception {
+	public static <T> T[] splice(T[] array, int index, int num, T... ts) throws Exception {
 		if (!ts.getClass().equals(array.getClass())) {
 			throw new Exception("Wrong Array types");
 		}
@@ -33,8 +32,7 @@ public class JS {
 			index++;
 		}
 		T[] firstPart = (T[]) Array.newInstance(array[0].getClass(), index);
-		T[] secondPart = (T[]) Array.newInstance(array[0].getClass(),
-				array.length - index - num);
+		T[] secondPart = (T[]) Array.newInstance(array[0].getClass(), array.length - index - num);
 		System.arraycopy(array, 0, firstPart, 0, firstPart.length);
 		System.arraycopy(array, index + num, secondPart, 0, secondPart.length);
 		return JS.concatenateArrays(firstPart, ts, secondPart);
@@ -46,8 +44,7 @@ public class JS {
 		for (T[] s : ts) {
 			list.addAll(Arrays.asList(s));
 		}
-		return list.toArray((T[]) Array.newInstance(ts[0].getClass()
-				.getComponentType(), 0));
+		return list.toArray((T[]) Array.newInstance(ts[0].getClass().getComponentType(), 0));
 	}
 
 	public static <T> String[] convertArraytoStringArray(T[] array) {
@@ -58,52 +55,36 @@ public class JS {
 		return newStrs;
 	}
 
-	public static int[] splice(int[] ints, int index, int num, int... ts)
-			throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(ints), index, num,
-				ArrayUtils.toObject(ts)));
+	public static int[] splice(int[] ints, int index, int num, int... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(ints), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static long[] splice(long[] longs, int index, int num, long... ts)
-			throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(longs), index,
-				num, ArrayUtils.toObject(ts)));
+	public static long[] splice(long[] longs, int index, int num, long... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(longs), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static short[] splice(short[] shorts, int index, int num,
-			short... ts) throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(shorts), index,
-				num, ArrayUtils.toObject(ts)));
+	public static short[] splice(short[] shorts, int index, int num, short... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(shorts), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static double[] splice(double[] doubles, int index, int num,
-			double... ts) throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(doubles), index,
-				num, ArrayUtils.toObject(ts)));
+	public static double[] splice(double[] doubles, int index, int num, double... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(doubles), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static float[] splice(float[] floats, int index, int num,
-			float... ts) throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(floats), index,
-				num, ArrayUtils.toObject(ts)));
+	public static float[] splice(float[] floats, int index, int num, float... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(floats), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static char[] splice(char[] chars, int index, int num, char... ts)
-			throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(chars), index,
-				num, ArrayUtils.toObject(ts)));
+	public static char[] splice(char[] chars, int index, int num, char... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(chars), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static boolean[] splice(boolean[] booleans, int index, int num,
-			boolean... ts) throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(booleans), index,
-				num, ArrayUtils.toObject(ts)));
+	public static boolean[] splice(boolean[] booleans, int index, int num, boolean... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(booleans), index, num, ArrayUtils.toObject(ts)));
 	}
 
-	public static byte[] splice(byte[] bytes, int index, int num, byte... ts)
-			throws Exception {
-		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(bytes), index,
-				num, ArrayUtils.toObject(ts)));
+	public static byte[] splice(byte[] bytes, int index, int num, byte... ts) throws Exception {
+		return JS.objectToPrim(JS.splice(ArrayUtils.toObject(bytes), index, num, ArrayUtils.toObject(ts)));
 	}
 
 	public static int[] objectToPrim(Integer[] is) {

@@ -35,7 +35,6 @@ import org.ripple.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.util.Strings;
 
 public class BCECPrivateKey
     implements ECPrivateKey, org.ripple.bouncycastle.jce.interfaces.ECPrivateKey, PKCS12BagAttributeCarrier, ECPointEncoder
@@ -211,8 +210,38 @@ public class BCECPrivateKey
     {
         X962Parameters params = X962Parameters.getInstance(info.getPrivateKeyAlgorithm().getParameters());
 
-        ECCurve curve = EC5Util.getCurve(configuration, params);
-        ecSpec = EC5Util.convertToSpec(params, curve);
+        if (params.isNamedCurve())
+        {
+            ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(params.getParameters());
+            X9ECParameters ecP = ECUtil.getNamedCurveByOid(oid);
+            EllipticCurve ellipticCurve = EC5Util.convertCurve(ecP.getCurve(), ecP.getSeed());
+
+            ecSpec = new ECNamedCurveSpec(
+                    ECUtil.getCurveName(oid),
+                    ellipticCurve,
+                    new ECPoint(
+                            ecP.getG().getAffineXCoord().toBigInteger(),
+                            ecP.getG().getAffineYCoord().toBigInteger()),
+                    ecP.getN(),
+                    ecP.getH());
+        }
+        else if (params.isImplicitlyCA())
+        {
+            ecSpec = null;
+        }
+        else
+        {
+            X9ECParameters      ecP = X9ECParameters.getInstance(params.getParameters());
+            EllipticCurve       ellipticCurve = EC5Util.convertCurve(ecP.getCurve(), ecP.getSeed());
+
+            this.ecSpec = new ECParameterSpec(
+                ellipticCurve,
+                new ECPoint(
+                        ecP.getG().getAffineXCoord().toBigInteger(),
+                        ecP.getG().getAffineYCoord().toBigInteger()),
+                ecP.getN(),
+                ecP.getH().intValue());
+        }
 
         ASN1Encodable privKey = info.parsePrivateKey();
         if (privKey instanceof ASN1Integer)
@@ -389,7 +418,7 @@ public class BCECPrivateKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("EC Private Key").append(nl);
         buf.append("             S: ").append(this.d.toString(16)).append(nl);

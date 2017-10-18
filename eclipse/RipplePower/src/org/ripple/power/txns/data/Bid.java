@@ -40,7 +40,6 @@ public class Bid implements IMarketOrder {
 
 	public void from(JSONObject obj) {
 		if (obj != null) {
-			System.out.println(obj);
 			this.owner_funds = obj.optString("owner_funds");
 			this.Account = obj.optString("Account");
 			this.PreviousTxnLgrSeq = obj.optLong("PreviousTxnLgrSeq");

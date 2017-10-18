@@ -7,7 +7,7 @@ public class Tick {
 	public float price;
 	public float volume;
 	public Calendar timestamp;
-	
+
 	public Tick(String symbol, float price, float volume, Calendar timestamp) {
 		super();
 		this.symbol = symbol;
@@ -25,5 +25,5 @@ public class Tick {
 		s += "Timestamp: " + timestamp.getTime().toString();
 		return s;
 	}
-	
+
 }

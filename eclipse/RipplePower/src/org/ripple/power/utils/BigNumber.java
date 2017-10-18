@@ -37,14 +37,10 @@ public class BigNumber {
 			}
 			for (int i = 0; i < this.mt; ++i) {
 				long j = x.limbs.get(i) & 0x7fff;
-				long u0 = (j * this.mpl + (((j * this.mph + (x.limbs.get(i) >> 15)
-						* this.mpl) & this.um) << 15))
+				long u0 = (j * this.mpl + (((j * this.mph + (x.limbs.get(i) >> 15) * this.mpl) & this.um) << 15))
 						& x.radixMask;
 				j = i + this.mt;
-				x.limbs.set(
-						(int) j,
-						x.limbs.get((int) j)
-								+ this.m.am(0, u0, x, i, (long) 0, this.mt));
+				x.limbs.set((int) j, x.limbs.get((int) j) + this.m.am(0, u0, x, i, (long) 0, this.mt));
 				while (x.limbs.get((int) j) >= radixMod) {
 					x.limbs.set((int) j, x.limbs.get((int) j) - radixMod);
 					long idx = ++j;
@@ -79,10 +75,9 @@ public class BigNumber {
 
 	public static String encodeURIComponent(String s) {
 		try {
-			return URLEncoder.encode(s, LSystem.encoding)
-					.replaceAll("\\+", "%20").replaceAll("\\%21", "!")
-					.replaceAll("\\%27", "'").replaceAll("\\%28", "(")
-					.replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
+			return URLEncoder.encode(s, LSystem.encoding).replaceAll("\\+", "%20").replaceAll("\\%21", "!")
+					.replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")")
+					.replaceAll("\\%7E", "~");
 		} catch (Exception e) {
 			return s;
 		}
@@ -90,8 +85,7 @@ public class BigNumber {
 
 	public static String decodeURIComponent(String s) {
 		try {
-			s = s.replaceAll("%20", "\\+").replaceAll("!", "\\%21")
-					.replaceAll("'", "\\%27").replaceAll("(", "\\%28")
+			s = s.replaceAll("%20", "\\+").replaceAll("!", "\\%21").replaceAll("'", "\\%27").replaceAll("(", "\\%28")
 					.replaceAll(")", "\\%29").replaceAll("~", "\\%7E");
 
 			return URLDecoder.decode(s, LSystem.encoding);
@@ -200,8 +194,7 @@ public class BigNumber {
 	}
 
 	public BigNumber[] divRem(BigNumber that) {
-		BigNumber thisa = this.abs(), thata = that.abs(), quot = new BigNumber(
-				0);
+		BigNumber thisa = this.abs(), thata = that.abs(), quot = new BigNumber(0);
 		int ci = 0;
 		if (!(thisa.greaterEquals(thata) > 0)) {
 			return new BigNumber[] { new BigNumber(0), this.copy() };
@@ -336,8 +329,7 @@ public class BigNumber {
 	}
 
 	public BigNumber inverseMod(BigNumber p) {
-		BigNumber a = new BigNumber(1), b = new BigNumber(0), x = new BigNumber(
-				this), y = new BigNumber(p), tmp;
+		BigNumber a = new BigNumber(1), b = new BigNumber(0), x = new BigNumber(this), y = new BigNumber(p), tmp;
 		int i, nz = 1;
 		if (!((p.limbs.get(0) & 1) > 0)) {
 			throw new RuntimeException("inverseMod: p must be odd");
@@ -373,8 +365,7 @@ public class BigNumber {
 		} while (nz > 0);
 
 		if (!y.equals(1)) {
-			throw new RuntimeException(
-					"inverseMod: p and x must be relatively prime");
+			throw new RuntimeException("inverseMod: p and x must be relatively prime");
 		}
 
 		return b;
@@ -436,8 +427,7 @@ public class BigNumber {
 
 	public long bitLength() {
 		this.fullReduce();
-		long out = this.radix * (this.limbs.length - 1), b = this.limbs
-				.get(this.limbs.length - 1);
+		long out = this.radix * (this.limbs.length - 1), b = this.limbs.get(this.limbs.length - 1);
 		for (; b > 0; b >>>= 1) {
 			out++;
 		}
@@ -450,8 +440,7 @@ public class BigNumber {
 
 	public LongArray toBits(long len) {
 		this.fullReduce();
-		len = JS.OR(JS.OR(len, this.exponent).longValue(), this.bitLength())
-				.longValue();
+		len = JS.OR(JS.OR(len, this.exponent).longValue(), this.bitLength()).longValue();
 
 		int i = (int) Math.floor((len - 1) / 24);
 
@@ -460,8 +449,7 @@ public class BigNumber {
 
 		LongArray out = new LongArray(new long[] { c });
 		for (i--; i >= 0; i--) {
-			long a = BitArray.partial(Math.min(this.radix, len),
-					this.getLimb(i));
+			long a = BitArray.partial(Math.min(this.radix, len), this.getLimb(i));
 			long[] arrays = new long[] { a };
 			out = BitArray.concat(out, new LongArray(arrays));
 
@@ -517,8 +505,7 @@ public class BigNumber {
 	}
 
 	public long testBit(int bitIndex) {
-		int limbIndex = (int) Math.floor((double) bitIndex
-				/ (double) this.radix);
+		int limbIndex = (int) Math.floor((double) bitIndex / (double) this.radix);
 		int bitIndexInLimb = (int) (bitIndex % this.radix);
 		if (limbIndex >= this.limbs.length) {
 			return 0;
@@ -532,8 +519,7 @@ public class BigNumber {
 		while (limbIndex >= this.limbs.length) {
 			this.limbs.push(0);
 		}
-		this.limbs.set(limbIndex, this.limbs.get(limbIndex)
-				| 1 << bitIndexInLimb);
+		this.limbs.set(limbIndex, this.limbs.get(limbIndex) | 1 << bitIndexInLimb);
 		this.cnormalize();
 		return this;
 	}
@@ -587,8 +573,7 @@ public class BigNumber {
 	}
 
 	public BigNumber powermod(BigNumber x, BigNumber N) {
-		BigNumber result = new BigNumber(1), a = new BigNumber(this), k = new BigNumber(
-				x);
+		BigNumber result = new BigNumber(1), a = new BigNumber(this), k = new BigNumber(x);
 		for (;;) {
 			if ((k.limbs.get(0) & 1) > 0) {
 				result = result.mulmod(a, N);
@@ -605,9 +590,8 @@ public class BigNumber {
 	public BigNumber fromBits(LongArray bits) {
 		BigNumber out = new BigNumber();
 		LongArray words = new LongArray();
-		long l = Math.min(JS.OR(this.bitLength(), 0x100000000l).longValue(),
-				BitArray.bitLength(bits)), e = l
-				% JS.OR(radix, radix).longValue();
+		long l = Math.min(JS.OR(this.bitLength(), 0x100000000l).longValue(), BitArray.bitLength(bits)),
+				e = l % JS.OR(radix, radix).longValue();
 		words.set(0, BitArray.extract(bits, 0, (int) e));
 		for (; e < l; e += radix) {
 			words.unshift(BitArray.extract(bits, (int) e, (int) radix));
@@ -725,9 +709,7 @@ public class BigNumber {
 			this.limbs = new LongArray();
 			k = (int) (this.radix / 4);
 			for (i = 0; i < itStr.length(); i += k) {
-				int v = Integer.parseInt(
-						itStr.substring(Math.max(itStr.length() - i - k, 0),
-								itStr.length() - i), 16);
+				int v = Integer.parseInt(itStr.substring(Math.max(itStr.length() - i - k, 0), itStr.length() - i), 16);
 				this.limbs.add(v);
 			}
 		} else if (it instanceof LongArray) {
@@ -875,8 +857,8 @@ public class BigNumber {
 				if (words.get(l - 1) < 0) {
 					words.set(l - 1, (words.get(l - 1) + 0x100000000l));
 				}
-			} while (Math.floor((double) words.get(l - 1) / (double) m) == (Math
-					.floor((double) 0x100000000l / (double) m)));
+			} while (Math
+					.floor((double) words.get(l - 1) / (double) m) == (Math.floor((double) 0x100000000l / (double) m)));
 			words.set(l - 1, ((words.get(l - 1) % m)));
 			for (i = 0; i < l - 1; i++) {
 				words.set(i, words.get(i) & modulus.radixMask);
@@ -892,8 +874,7 @@ public class BigNumber {
 		String out = "";
 		int i;
 		for (i = 0; i < arr.length; i++) {
-			out += Long.toHexString(((int) (arr.get(i) | 0) + 0xF00000000000l))
-					.substring(4);
+			out += Long.toHexString(((int) (arr.get(i) | 0) + 0xF00000000000l)).substring(4);
 		}
 		return out.substring(0, (int) BitArray.bitLength(arr) / 4);
 	}
@@ -980,8 +961,7 @@ public class BigNumber {
 		return base64_fromBits(arr, false, false);
 	}
 
-	public static String base64_fromBits(LongArray arr, boolean _noEquals,
-			boolean _url) {
+	public static String base64_fromBits(LongArray arr, boolean _noEquals, boolean _url) {
 		String out = "";
 		int i, bits = 0;
 		String c = base64_chars;
@@ -990,8 +970,7 @@ public class BigNumber {
 			c = c.substring(0, 62) + "-_";
 		}
 		for (i = 0; out.length() * 6 < bl;) {
-			out += c.charAt((int) (JS.MOVE_RightUShift(
-					(ta ^ JS.MOVE_RightUShift(arr.get(i), bits)), 26)));
+			out += c.charAt((int) (JS.MOVE_RightUShift((ta ^ JS.MOVE_RightUShift(arr.get(i), bits)), 26)));
 			if (bits < 6) {
 				ta = arr.get(i) << (6 - bits);
 				bits += 26;
@@ -1053,8 +1032,7 @@ public class BigNumber {
 		LongArray output = new LongArray();
 
 		while (BitArray.bitLength(output) < bitlen) {
-			LongArray res = BitArray.concat(new LongArray(
-					new long[] { counter }), data);
+			LongArray res = BitArray.concat(new LongArray(new long[] { counter }), data);
 			LongArray hash = SHA512.hash(res);
 			output = BitArray.concat(output, hash);
 			counter++;

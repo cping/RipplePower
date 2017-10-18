@@ -79,11 +79,10 @@ public class WalletSeed {
 		return buffer;
 	}
 
-	public void save(File file, String context) throws Exception {
+	public synchronized void save(File file, String context) throws Exception {
 		if (context != null && context.length() > 0) {
 			FileUtils.makedirs(file);
-			DataOutputStream out = new DataOutputStream(new FileOutputStream(
-					file, false));
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file, false));
 			String pass = LSystem.getAppPassword();
 			byte[] buffer = context.getBytes(LSystem.encoding);
 			byte[] keyChars = pass.getBytes(LSystem.encoding);
@@ -101,7 +100,8 @@ public class WalletSeed {
 			out.close();
 		}
 	}
-	public String load(File file) throws Exception {
+
+	public synchronized String load(File file) throws Exception {
 		if (!file.exists()) {
 			return null;
 		}

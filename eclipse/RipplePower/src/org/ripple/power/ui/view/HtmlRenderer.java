@@ -24,18 +24,16 @@ public class HtmlRenderer extends DefaultListCellRenderer {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public void paintBorder(Component c, Graphics g, int x, int y,
-				int width, int height) {
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 			g.setColor(LColor.gray);
 			g.drawRect(x + 1, y + 1, width - 3, height - 3);
 		}
 	};
 
 	@Override
-	public Component getListCellRendererComponent(JList<? extends Object> list,
-			Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		super.getListCellRendererComponent(list, value, index, isSelected,
-				cellHasFocus);
+	public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
+			boolean isSelected, boolean cellHasFocus) {
+		super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		setBorder(noFocusBorder);
 		if (value instanceof OfferFruit) {
 			OfferFruit fruit = (OfferFruit) value;

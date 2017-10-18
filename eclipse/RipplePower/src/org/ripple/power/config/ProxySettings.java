@@ -1,10 +1,14 @@
 package org.ripple.power.config;
 
+import java.net.Authenticator;
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
+import java.util.Properties;
 
 import org.ripple.power.utils.HttpRequest.Base64;
+import org.ripple.power.utils.StringUtils;
 
 public class ProxySettings {
 
@@ -15,13 +19,13 @@ public class ProxySettings {
 	private boolean enabled;
 	private Proxy.Type type = Proxy.Type.HTTP;
 
+	private boolean isSocket = false;
+
 	public ProxySettings(String server, int port) {
-		this.hostname = server;
-		this.port = port;
+		this(null, null, server, port);
 	}
 
-	public ProxySettings(String username, String password, String server,
-			int port) {
+	public ProxySettings(String username, String password, String server, int port) {
 		this.username = username;
 		this.password = password;
 		this.hostname = server;
@@ -64,13 +68,32 @@ public class ProxySettings {
 		return enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setEnabled(boolean e) {
+		this.enabled = e;
+		if (enabled) {
+			Properties prop = System.getProperties();
+			if (isSocket()) {
+				prop.setProperty("socksProxyHost", hostname);
+				prop.setProperty("socksProxyPort", String.valueOf(port));
+			} else {
+				prop.setProperty("http.proxyHost", hostname);
+				prop.setProperty("http.proxyPort", String.valueOf(port));
+				prop.setProperty("https.proxyHost", hostname);
+				prop.setProperty("https.proxyPort", String.valueOf(port));
+			}
+		} else {
+			Properties prop = System.getProperties();
+			prop.remove("socksProxyHost");
+			prop.remove("socksProxyPort");
+			prop.remove("http.proxyHost");
+			prop.remove("http.proxyPort");
+			prop.remove("https.proxyHost");
+			prop.remove("https.proxyPort");
+		}
 	}
 
 	public boolean isProxyWithAuthentication() {
-		return username != null && !username.isEmpty() && password != null
-				&& !password.isEmpty();
+		return username != null && !username.isEmpty() && password != null && !password.isEmpty();
 	}
 
 	public String getProxyAuthentication() {
@@ -82,8 +105,28 @@ public class ProxySettings {
 	}
 
 	public boolean isProxyEnabled() {
-		return isEnabled() && hostname != null && !hostname.isEmpty()
-				&& port > 0;
+		boolean result = isEnabled() && hostname != null && !hostname.isEmpty() && port > 0;
+		if (result) {
+			Properties prop = System.getProperties();
+			if (isSocket()) {
+				prop.setProperty("socksProxyHost", hostname);
+				prop.setProperty("socksProxyPort", String.valueOf(port));
+			} else {
+				prop.setProperty("http.proxyHost", hostname);
+				prop.setProperty("http.proxyPort", String.valueOf(port));
+				prop.setProperty("https.proxyHost", hostname);
+				prop.setProperty("https.proxyPort", String.valueOf(port));
+			}
+		} else {
+			Properties prop = System.getProperties();
+			prop.remove("socksProxyHost");
+			prop.remove("socksProxyPort");
+			prop.remove("http.proxyHost");
+			prop.remove("http.proxyPort");
+			prop.remove("https.proxyHost");
+			prop.remove("https.proxyPort");
+		}
+		return result;
 	}
 
 	public Proxy.Type getType() {
@@ -94,9 +137,30 @@ public class ProxySettings {
 		this.type = type;
 	}
 
+	public void setSocket(boolean flag) {
+		this.isSocket = flag;
+		this.type = Proxy.Type.SOCKS;
+	}
+
+	public boolean isSocket() {
+		return isSocket || (this.type == Proxy.Type.SOCKS);
+	}
+
 	public Proxy getProxy() {
 		Proxy proxy = null;
+		if (isSocket) {
+			this.type = Proxy.Type.SOCKS;
+		}
 		if (isProxyEnabled()) {
+			if (!StringUtils.isEmpty(username) && !StringUtils.isEmail(password)) {
+				Authenticator.setDefault(new Authenticator() {
+
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password.toCharArray());
+					}
+				});
+			}
 			SocketAddress address = new InetSocketAddress(hostname, port);
 			proxy = new Proxy(type, address);
 		} else {

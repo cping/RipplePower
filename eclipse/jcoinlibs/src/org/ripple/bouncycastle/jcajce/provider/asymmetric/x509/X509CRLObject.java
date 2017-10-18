@@ -6,7 +6,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Principal;
-import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -20,7 +19,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.IllegalFormatCodePointException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -42,9 +40,8 @@ import org.ripple.bouncycastle.asn1.x509.Extensions;
 import org.ripple.bouncycastle.asn1.x509.GeneralNames;
 import org.ripple.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.ripple.bouncycastle.asn1.x509.TBSCertList;
-import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 import org.ripple.bouncycastle.jce.X509Principal;
-import org.ripple.bouncycastle.util.Strings;
+import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.util.encoders.Hex;
 
 /**
@@ -59,7 +56,6 @@ import org.ripple.bouncycastle.util.encoders.Hex;
 class X509CRLObject
     extends X509CRL
 {
-    private JcaJceHelper bcHelper;
     private CertificateList c;
     private String sigAlgName;
     private byte[] sigAlgParams;
@@ -84,11 +80,9 @@ class X509CRLObject
     }
 
     protected X509CRLObject(
-        JcaJceHelper bcHelper,
         CertificateList c)
         throws CRLException
     {
-        this.bcHelper = bcHelper;
         this.c = c;
         
         try
@@ -208,66 +202,30 @@ class X509CRLObject
     }
 
     public void verify(PublicKey key)
-        throws CRLException, NoSuchAlgorithmException,
-        InvalidKeyException, NoSuchProviderException, SignatureException
+        throws CRLException,  NoSuchAlgorithmException,
+            InvalidKeyException, NoSuchProviderException, SignatureException
     {
-        Signature sig;
-
-        try
-        {
-            sig = bcHelper.createSignature(getSigAlgName());
-        }
-        catch (Exception e)
-        {
-            sig = Signature.getInstance(getSigAlgName());
-        }
-
-        doVerify(key, sig);
+        verify(key, BouncyCastleProvider.PROVIDER_NAME);
     }
 
     public void verify(PublicKey key, String sigProvider)
         throws CRLException, NoSuchAlgorithmException,
-        InvalidKeyException, NoSuchProviderException, SignatureException
-    {
-        Signature sig;
-
-        if (sigProvider != null)
-        {
-            sig = Signature.getInstance(getSigAlgName(), sigProvider);
-        }
-        else
-        {
-            sig = Signature.getInstance(getSigAlgName());
-        }
-
-        doVerify(key, sig);
-    }
-
-    public void verify(PublicKey key, Provider sigProvider)
-        throws CRLException, NoSuchAlgorithmException,
-        InvalidKeyException, SignatureException
-    {
-        Signature sig;
-
-        if (sigProvider != null)
-        {
-            sig = Signature.getInstance(getSigAlgName(), sigProvider);
-        }
-        else
-        {
-            sig = Signature.getInstance(getSigAlgName());
-        }
-
-        doVerify(key, sig);
-    }
-
-    private void doVerify(PublicKey key, Signature sig)
-        throws CRLException, NoSuchAlgorithmException,
-        InvalidKeyException, SignatureException
+            InvalidKeyException, NoSuchProviderException, SignatureException
     {
         if (!c.getSignatureAlgorithm().equals(c.getTBSCertList().getSignature()))
         {
             throw new CRLException("Signature algorithm on CertificateList does not match TBSCertList.");
+        }
+
+        Signature sig;
+
+        if (sigProvider != null)
+        {
+            sig = Signature.getInstance(getSigAlgName(), sigProvider);
+        }
+        else
+        {
+            sig = Signature.getInstance(getSigAlgName());
         }
 
         sig.initVerify(key);
@@ -431,7 +389,7 @@ class X509CRLObject
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
 
         buf.append("              Version: ").append(this.getVersion()).append(
             nl);
@@ -562,7 +520,7 @@ class X509CRLObject
     {
         if (!cert.getType().equals("X.509"))
         {
-            throw new IllegalArgumentException("X.509 CRL used with non X.509 Cert");
+            throw new RuntimeException("X.509 CRL used with non X.509 Cert");
         }
 
         Enumeration certs = c.getRevokedCertificateEnumeration();
@@ -603,7 +561,7 @@ class X509CRLObject
                         }
                         catch (CertificateEncodingException e)
                         {
-                            throw new IllegalArgumentException("Cannot process certificate: " + e.getMessage());
+                            throw new RuntimeException("Cannot process certificate");
                         }
                     }
 

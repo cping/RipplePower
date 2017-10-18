@@ -20,10 +20,10 @@ import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.ripple.bouncycastle.asn1.x509.DSAParameter;
 import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.asn1.x509.X509ObjectIdentifiers;
+import org.ripple.bouncycastle.asn1.x9.DHDomainParameters;
 import org.ripple.bouncycastle.asn1.x9.DHPublicKey;
-import org.ripple.bouncycastle.asn1.x9.DomainParameters;
+import org.ripple.bouncycastle.asn1.x9.DHValidationParms;
 import org.ripple.bouncycastle.asn1.x9.ECNamedCurveTable;
-import org.ripple.bouncycastle.asn1.x9.ValidationParams;
 import org.ripple.bouncycastle.asn1.x9.X962Parameters;
 import org.ripple.bouncycastle.asn1.x9.X9ECParameters;
 import org.ripple.bouncycastle.asn1.x9.X9ECPoint;
@@ -96,24 +96,24 @@ public class PublicKeyFactory
 
             BigInteger y = dhPublicKey.getY().getValue();
 
-            DomainParameters dhParams = DomainParameters.getInstance(algId.getParameters());
+            DHDomainParameters dhParams = DHDomainParameters.getInstance(algId.getParameters());
 
-            BigInteger p = dhParams.getP();
-            BigInteger g = dhParams.getG();
-            BigInteger q = dhParams.getQ();
+            BigInteger p = dhParams.getP().getValue();
+            BigInteger g = dhParams.getG().getValue();
+            BigInteger q = dhParams.getQ().getValue();
 
             BigInteger j = null;
             if (dhParams.getJ() != null)
             {
-                j = dhParams.getJ();
+                j = dhParams.getJ().getValue();
             }
 
             DHValidationParameters validation = null;
-            ValidationParams dhValidationParms = dhParams.getValidationParams();
+            DHValidationParms dhValidationParms = dhParams.getValidationParms();
             if (dhValidationParms != null)
             {
-                byte[] seed = dhValidationParms.getSeed();
-                BigInteger pgenCounter = dhValidationParms.getPgenCounter();
+                byte[] seed = dhValidationParms.getSeed().getBytes();
+                BigInteger pgenCounter = dhValidationParms.getPgenCounter().getValue();
 
                 // TODO Check pgenCounter size?
 

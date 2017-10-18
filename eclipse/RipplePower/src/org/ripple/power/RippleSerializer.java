@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ripple.power.RippleSchemas.BinaryFormatField;
 import org.ripple.power.RippleSchemas.PrimitiveTypes;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.IssuedCurrency;
 
 import com.ripple.core.coretypes.Amount;
@@ -32,8 +33,7 @@ public class RippleSerializer {
 				firstByte = (byte) field;
 			}
 
-			BinaryFormatField serializedField = BinaryFormatField.lookup(type,
-					field);
+			BinaryFormatField serializedField = BinaryFormatField.lookup(type, field);
 			Object value = readPrimitive(input, serializedField.primitive);
 			serializedObject.fields.put(serializedField, value);
 		}
@@ -87,8 +87,7 @@ public class RippleSerializer {
 	protected IssuedCurrency readAmount(ByteBuffer input) {
 		long offsetNativeSignMagnitudeBytes = input.getLong();
 		boolean isXRPAmount = (0x8000000000000000l & offsetNativeSignMagnitudeBytes) == 0;
-		int sign = (0x4000000000000000l & offsetNativeSignMagnitudeBytes) == 0 ? -1
-				: 1;
+		int sign = (0x4000000000000000l & offsetNativeSignMagnitudeBytes) == 0 ? -1 : 1;
 		int offset = (int) ((offsetNativeSignMagnitudeBytes & 0x3FC0000000000000l) >>> 54);
 		long longMagnitude = offsetNativeSignMagnitudeBytes & 0x3FFFFFFFFFFFFFl;
 		if (isXRPAmount) {
@@ -102,13 +101,11 @@ public class RippleSerializer {
 			}
 
 			int decimalPosition = 97 - offset;
-			if (decimalPosition < IssuedCurrency.MIN_SCALE
-					|| decimalPosition > IssuedCurrency.MAX_SCALE) {
+			if (decimalPosition < IssuedCurrency.MIN_SCALE || decimalPosition > IssuedCurrency.MAX_SCALE) {
 				throw new RuntimeException("invalid scale " + decimalPosition);
 			}
 			BigInteger biMagnitude = BigInteger.valueOf(sign * longMagnitude);
-			BigDecimal fractionalValue = new BigDecimal(biMagnitude,
-					decimalPosition);
+			BigDecimal fractionalValue = new BigDecimal(biMagnitude, decimalPosition);
 			return new IssuedCurrency(fractionalValue, issuer, currencyStr);
 		}
 	}
@@ -139,11 +136,9 @@ public class RippleSerializer {
 		} else if (firstByte < 254) {
 			secondByte = input.get();
 			int thirdByte = input.get();
-			byteLen = 12481 + (firstByte - 241) * 65536 + secondByte * 256
-					+ thirdByte;
+			byteLen = 12481 + (firstByte - 241) * 65536 + secondByte * 256 + thirdByte;
 		} else {
-			throw new RuntimeException("firstByte=" + firstByte
-					+ ", value reserved");
+			throw new RuntimeException("firstByte=" + firstByte + ", value reserved");
 		}
 
 		byte[] variableBytes = new byte[byteLen];
@@ -204,8 +199,7 @@ public class RippleSerializer {
 				output.put((byte) field.fieldId);
 			}
 
-			writePrimitive(output, field.primitive,
-					serializedObj.getField(field));
+			writePrimitive(output, field.primitive, serializedObj.getField(field));
 		}
 		output.flip();
 		ByteBuffer compactBuffer = ByteBuffer.allocate(output.limit());
@@ -214,8 +208,7 @@ public class RippleSerializer {
 		return compactBuffer;
 	}
 
-	protected void writePrimitive(ByteBuffer output, PrimitiveTypes primitive,
-			Object value) {
+	protected void writePrimitive(ByteBuffer output, PrimitiveTypes primitive, Object value) {
 		if (primitive == PrimitiveTypes.UINT16) {
 			int intValue = (int) value;
 			if (intValue > 0xFFFF) {
@@ -233,8 +226,7 @@ public class RippleSerializer {
 			output.put((byte) (longValue >> 8 & 0xFF));
 			output.put((byte) (longValue & 0xFF));
 		} else if (primitive == PrimitiveTypes.UINT64) {
-			byte[] biBytes = RipplePrivateKey.bigIntegerToBytes(
-					(BigInteger) value, 8);
+			byte[] biBytes = RipplePrivateKey.bigIntegerToBytes((BigInteger) value, 8);
 			if (biBytes.length != 8) {
 				throw new RuntimeException("UINT64 overflow for value " + value);
 			}
@@ -242,15 +234,13 @@ public class RippleSerializer {
 		} else if (primitive == PrimitiveTypes.HASH128) {
 			byte[] sixteenBytes = (byte[]) value;
 			if (sixteenBytes.length != 16) {
-				throw new RuntimeException("value " + value
-						+ " is not a HASH128");
+				throw new RuntimeException("value " + value + " is not a HASH128");
 			}
 			output.put(sixteenBytes);
 		} else if (primitive == PrimitiveTypes.HASH256) {
 			byte[] thirtyTwoBytes = (byte[]) value;
 			if (thirtyTwoBytes.length != 32) {
-				throw new RuntimeException("value " + value
-						+ " is not a HASH256");
+				throw new RuntimeException("value " + value + " is not a HASH256");
 			}
 			output.put(thirtyTwoBytes);
 		} else if (primitive == PrimitiveTypes.AMOUNT) {
@@ -366,19 +356,18 @@ public class RippleSerializer {
 		output.put(value);
 	}
 
-	protected void writeAmount(ByteBuffer output,
-			IssuedCurrency denominatedCurrency) {
+	protected void writeAmount(ByteBuffer output, IssuedCurrency denominatedCurrency) {
 		long offsetNativeSignMagnitudeBytes = 0;
 		if (denominatedCurrency.amount.signum() > 0) {
 			offsetNativeSignMagnitudeBytes |= 0x4000000000000000l;
 		}
-		if (denominatedCurrency.currency == null) {
+		if (denominatedCurrency.currency == null
+				|| LSystem.nativeCurrency.equals(denominatedCurrency.currency.toLowerCase())) {
 			long drops = denominatedCurrency.amount.longValue();
 			offsetNativeSignMagnitudeBytes |= drops;
 			output.putLong(offsetNativeSignMagnitudeBytes);
 		} else {
-			Amount amount = Amount
-					.fromIOUString(denominatedCurrency.toString());
+			Amount amount = Amount.fromIOUString(denominatedCurrency.toString());
 			output.put(amount.toBytes());
 		}
 	}

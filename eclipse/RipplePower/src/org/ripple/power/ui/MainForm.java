@@ -51,8 +51,7 @@ public class MainForm extends JFrame implements ActionListener {
 			dialog.setVisible(true);
 			if (dialog.wasPasswordEntered() && dialog.getPassword().length > 0) {
 				password = new String(dialog.getPassword());
-				LSystem.session("system").set("password",
-						LSystem.setPassword(password));
+				LSystem.session("system").set("password", LSystem.setPassword(password));
 				LSystem.session("system").save();
 			} else {
 				System.exit(0);
@@ -63,8 +62,7 @@ public class MainForm extends JFrame implements ActionListener {
 	}
 
 	public MainForm() {
-		super(LSystem.applicationName.concat(" ").concat(
-				LSystem.applicationVersion));
+		super(LSystem.applicationName.concat(" ").concat(LSystem.applicationVersion));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setIconImage(UIConfig.getDefaultAppIcon());
 		getContentPane().setBackground(LColor.WHITE);
@@ -101,10 +99,8 @@ public class MainForm extends JFrame implements ActionListener {
 		propValue = LSystem.session("main").get("dimension");
 		if (propValue != null) {
 			int sep = propValue.indexOf(',');
-			frameWidth = Math.max(frameWidth,
-					Integer.parseInt(propValue.substring(0, sep)));
-			frameHeight = Math.max(frameHeight,
-					Integer.parseInt(propValue.substring(sep + 1)));
+			frameWidth = Math.max(frameWidth, Integer.parseInt(propValue.substring(0, sep)));
+			frameHeight = Math.max(frameHeight, Integer.parseInt(propValue.substring(sep + 1)));
 		}
 		Dimension dim = new Dimension(frameWidth, frameHeight);
 		setPreferredSize(dim);
@@ -121,8 +117,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menu.setFont(font);
 		menu.setIcon(UIRes.getImage("images/zip.png"));
 
-		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password",
-				"Wallet Password"));
+		menuItem = new JMenuItem(LangConfig.get(this, "wallet_password", "Wallet Password"));
 
 		menuItem.setActionCommand("password");
 		menuItem.addActionListener(this);
@@ -181,20 +176,17 @@ public class MainForm extends JFrame implements ActionListener {
 		menu.setFont(font);
 		menuBar.add(menu);
 
-		menu = new JMenu(LangConfig.get(this, "rippled_config",
-				"Rippled Config"));
+		menu = new JMenu(LangConfig.get(this, "rippled_config", "Rippled Config"));
 		menu.setIcon(UIRes.getImage("images/node.png"));
 		menu.setFont(font);
 
-		menuItem = new JMenuItem(LangConfig.get(this, "server_settings",
-				"Server Settings"));
+		menuItem = new JMenuItem(LangConfig.get(this, "server_settings", "Server Settings"));
 		menuItem.setFont(font);
 		menuItem.setActionCommand("server");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem(LangConfig.get(this, "proxy_settings",
-				"Proxy Settings"));
+		menuItem = new JMenuItem(LangConfig.get(this, "proxy_settings", "Proxy Settings"));
 		menuItem.setFont(font);
 		menuItem.setActionCommand("proxy");
 		menuItem.addActionListener(this);
@@ -205,8 +197,7 @@ public class MainForm extends JFrame implements ActionListener {
 		menu = new JMenu(LangConfig.get(this, "gae_config", "GAE Config"));
 		menu.setIcon(UIRes.getImage("images/server.png"));
 		menu.setFont(font);
-		menuItem = new JMenuItem(LangConfig.get(this, "automation",
-				"Automation"));
+		menuItem = new JMenuItem(LangConfig.get(this, "automation", "Automation"));
 		menuItem.setFont(font);
 		menuItem.setActionCommand("keyopen");
 		menuItem.addActionListener(this);
@@ -254,11 +245,9 @@ public class MainForm extends JFrame implements ActionListener {
 			case "password":
 				RPPasswordDialog dialog = new RPPasswordDialog(this);
 				dialog.setVisible(true);
-				if (dialog.wasPasswordEntered()
-						&& dialog.getPassword().length > 0) {
+				if (dialog.wasPasswordEntered() && dialog.getPassword().length > 0) {
 					String password = new String(dialog.getPassword());
-					LSystem.session("system").set("password",
-							LSystem.setPassword(password));
+					LSystem.session("system").set("password", LSystem.setPassword(password));
 					LSystem.session("system").save();
 				}
 				break;
@@ -269,8 +258,8 @@ public class MainForm extends JFrame implements ActionListener {
 				exitProgram();
 				break;
 			case "donation":
-				LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp",
-						"cping", "Thank you donate to RipplePower", 100);
+				LSystem.sendRESTCoin("rGmaiL8f7VDRrYouZokr5qv61b5zvhePcp", "cping", "Thank you donate to RipplePower",
+						100);
 				break;
 			case "about":
 				aboutMyWallet();
@@ -340,10 +329,15 @@ public class MainForm extends JFrame implements ActionListener {
 
 	}
 
+	public void close() {
+		if (mainPanel != null) {
+			mainPanel.removeTrayIcon();
+		}
+	}
+
 	private void aboutMyWallet() {
 		StringBuilder info = new StringBuilder(256);
-		info.append(String.format("<html>%s Version %s<br>",
-				LSystem.applicationName, LSystem.applicationVersion));
+		info.append(String.format("<html>%s Version %s<br>", LSystem.applicationName, LSystem.applicationVersion));
 
 		info.append("<br>User name: ");
 		info.append((String) LSystem.getUserName());
@@ -370,12 +364,10 @@ public class MainForm extends JFrame implements ActionListener {
 		info.append((String) System.getProperty("java.home"));
 
 		info.append("<br><br>Current Java memory usage: ");
-		info.append(String.format("%,.3f MB", (double) Runtime.getRuntime()
-				.totalMemory() / (1024.0 * 1024.0)));
+		info.append(String.format("%,.3f MB", (double) Runtime.getRuntime().totalMemory() / (1024.0 * 1024.0)));
 
 		info.append("<br>Maximum Java memory size: ");
-		info.append(String.format("%,.3f MB", (double) Runtime.getRuntime()
-				.maxMemory() / (1024.0 * 1024.0)));
+		info.append(String.format("%,.3f MB", (double) Runtime.getRuntime().maxMemory() / (1024.0 * 1024.0)));
 
 		info.append("</html>");
 		UIRes.showInfoMessage(this, "About RipplePower(Ripple&Bitcoin) Wallet", info.toString());

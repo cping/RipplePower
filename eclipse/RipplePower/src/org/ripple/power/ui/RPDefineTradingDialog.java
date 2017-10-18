@@ -89,8 +89,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 
 	public static void showDialog(String text, Window parent) {
 		try {
-			RPDefineTradingDialog dialog = new RPDefineTradingDialog(text,
-					parent);
+			RPDefineTradingDialog dialog = new RPDefineTradingDialog(text, parent);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -357,8 +356,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				if (_existGatewayList.getSelectedIndex() != -1) {
-					String result = (String) _existGatewayList
-							.getSelectedValue();
+					String result = (String) _existGatewayList.getSelectedValue();
 					if (!gatewaySelectlist.contains(result)) {
 						gatewaySelectlist.add(result);
 						Collections.sort(gatewaySelectlist);
@@ -386,8 +384,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 						gatewaylist.add(result);
 						Collections.sort(gatewaylist);
 						_existGatewayList.updateUI();
-						gatewaySelectlist.remove(_dstGatewayList
-								.getSelectedIndex());
+						gatewaySelectlist.remove(_dstGatewayList.getSelectedIndex());
 						_dstGatewayList.updateUI();
 						updateData();
 					}
@@ -454,8 +451,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		getContentPane().add(_xrpPriceLabel1);
 		_xrpPriceLabel1.setBounds(220, 310, 50, 30);
 
-		_typeSelectComboBox1.setItemModel(new Object[] { ">", ">=", "<", "<=",
-				"==" });
+		_typeSelectComboBox1.setItemModel(new Object[] { ">", ">=", "<", "<=", "==" });
 		getContentPane().add(_typeSelectComboBox1);
 		_typeSelectComboBox1.setBounds(420, 260, 60, 30);
 

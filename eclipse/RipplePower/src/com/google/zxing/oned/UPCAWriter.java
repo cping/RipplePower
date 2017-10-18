@@ -34,20 +34,17 @@ public final class UPCAWriter implements Writer {
 	private final EAN13Writer subWriter = new EAN13Writer();
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height) throws WriterException {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height) throws WriterException {
 		return encode(contents, format, width, height, null);
 	}
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) throws WriterException {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType, ?> hints)
+			throws WriterException {
 		if (format != BarcodeFormat.UPC_A) {
-			throw new IllegalArgumentException(
-					"Can only encode UPC-A, but got " + format);
+			throw new IllegalArgumentException("Can only encode UPC-A, but got " + format);
 		}
-		return subWriter.encode(preencode(contents), BarcodeFormat.EAN_13,
-				width, height, hints);
+		return subWriter.encode(preencode(contents), BarcodeFormat.EAN_13, width, height, hints);
 	}
 
 	/**
@@ -65,8 +62,7 @@ public final class UPCAWriter implements Writer {
 			contents += (1000 - sum) % 10;
 		} else if (length != 12) {
 			throw new IllegalArgumentException(
-					"Requested contents should be 11 or 12 digits long, but got "
-							+ contents.length());
+					"Requested contents should be 11 or 12 digits long, but got " + contents.length());
 		}
 		return '0' + contents;
 	}

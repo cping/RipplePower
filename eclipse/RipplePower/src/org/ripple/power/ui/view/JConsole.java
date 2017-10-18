@@ -81,8 +81,7 @@ public class JConsole extends JScrollPane {
 
 		imageLabel.setForeground(LColor.white);
 		imageLabel.setBackground(LColor.white);
-		imageLabel.setBounds(RPJSonLog.WIDTH / 2 - size / 2, RPJSonLog.HEIGHT
-				/ 2 - size / 2 - 10, size, size);
+		imageLabel.setBounds(RPJSonLog.WIDTH / 2 - size / 2, RPJSonLog.HEIGHT / 2 - size / 2 - 10, size, size);
 		imageLabel.setVisible(false);
 
 		text.setLayout(null);
@@ -90,14 +89,10 @@ public class JConsole extends JScrollPane {
 
 		contextMenu = new JPopupMenu();
 		final ActionListener lActionListener = new MyActionListener();
-		contextMenu.add(new JMenuItem(CMD_CUT)).addActionListener(
-				lActionListener);
-		contextMenu.add(new JMenuItem(CMD_COPY)).addActionListener(
-				lActionListener);
-		contextMenu.add(new JMenuItem(CMD_PASTE)).addActionListener(
-				lActionListener);
-		contextMenu.add(new JMenuItem(CMD_CLEAR)).addActionListener(
-				lActionListener);
+		contextMenu.add(new JMenuItem(CMD_CUT)).addActionListener(lActionListener);
+		contextMenu.add(new JMenuItem(CMD_COPY)).addActionListener(lActionListener);
+		contextMenu.add(new JMenuItem(CMD_PASTE)).addActionListener(lActionListener);
+		contextMenu.add(new JMenuItem(CMD_CLEAR)).addActionListener(lActionListener);
 		text.addMouseListener(new MyMouseListener());
 
 		MutableAttributeSet attr = new SimpleAttributeSet();
@@ -259,8 +254,7 @@ public class JConsole extends JScrollPane {
 		if (commandHistoryIndex == 0)
 			lShowLine = currentCommand;
 		else
-			lShowLine = commandHistory.get(commandHistory.size()
-					- commandHistoryIndex);
+			lShowLine = commandHistory.get(commandHistory.size() - commandHistoryIndex);
 
 		replaceConsoleText(lShowLine, commandPos, textLength());
 		text.setCaretPosition(textLength());
@@ -492,13 +486,11 @@ public class JConsole extends JScrollPane {
 			case (KeyEvent.VK_C):
 				break;
 			default:
-				if ((e.getModifiers() & (InputEvent.CTRL_MASK
-						| InputEvent.ALT_MASK | InputEvent.META_MASK)) == 0) {
+				if ((e.getModifiers() & (InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.META_MASK)) == 0) {
 					moveCaret();
 				}
 
-				if ((e.paramString().contains("Backspace"))
-						&& (text.getCaretPosition() <= commandPos)) {
+				if ((e.paramString().contains("Backspace")) && (text.getCaretPosition() <= commandPos)) {
 					e.consume();
 				}
 				break;
@@ -509,14 +501,12 @@ public class JConsole extends JScrollPane {
 	private class MyMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent aEvent) {
 			if (aEvent.isPopupTrigger())
-				contextMenu.show((Component) aEvent.getSource(), aEvent.getX(),
-						aEvent.getY());
+				contextMenu.show((Component) aEvent.getSource(), aEvent.getX(), aEvent.getY());
 		}
 
 		public void mouseReleased(MouseEvent aEvent) {
 			if (aEvent.isPopupTrigger())
-				contextMenu.show((Component) aEvent.getSource(), aEvent.getX(),
-						aEvent.getY());
+				contextMenu.show((Component) aEvent.getSource(), aEvent.getX(), aEvent.getY());
 		}
 	}
 

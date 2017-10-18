@@ -53,8 +53,7 @@ public final class LC implements Externalizable {
 
 	private BoundSize gridGapX = null, gridGapY = null;
 
-	private BoundSize width = BoundSize.NULL_SIZE,
-			height = BoundSize.NULL_SIZE;
+	private BoundSize width = BoundSize.NULL_SIZE, height = BoundSize.NULL_SIZE;
 
 	private BoundSize packW = BoundSize.NULL_SIZE, packH = BoundSize.NULL_SIZE;
 
@@ -355,8 +354,7 @@ public final class LC implements Externalizable {
 	 * @see net.miginfocom.layout.ConstraintParser#parseInsets(String, boolean)
 	 */
 	public final UnitValue[] getInsets() {
-		return insets != null ? new UnitValue[] { insets[0], insets[1],
-				insets[2], insets[3] } : null;
+		return insets != null ? new UnitValue[] { insets[0], insets[1], insets[2], insets[3] } : null;
 	}
 
 	/**
@@ -374,8 +372,7 @@ public final class LC implements Externalizable {
 	 * @see net.miginfocom.layout.ConstraintParser#parseInsets(String, boolean)
 	 */
 	public final void setInsets(UnitValue[] ins) {
-		this.insets = ins != null ? new UnitValue[] { ins[0], ins[1], ins[2],
-				ins[3] } : null;
+		this.insets = ins != null ? new UnitValue[] { ins[0], ins[1], ins[2], ins[3] } : null;
 	}
 
 	/**
@@ -386,8 +383,8 @@ public final class LC implements Externalizable {
 	 * 
 	 * @return <code>Boolean.TRUE</code> if force left-to-right.
 	 *         <code>Boolean.FALSE</code> if force tight-to-left.
-	 *         <code>null</code> for the default
-	 *         "let the current Locale decide".
+	 *         <code>null</code> for the default "let the current Locale
+	 *         decide".
 	 */
 	public final Boolean getLeftToRight() {
 		return leftToRight;
@@ -402,8 +399,8 @@ public final class LC implements Externalizable {
 	 * @param b
 	 *            <code>Boolean.TRUE</code> to force left-to-right.
 	 *            <code>Boolean.FALSE</code> to force tight-to-left.
-	 *            <code>null</code> for the default
-	 *            "let the current Locale decide".
+	 *            <code>null</code> for the default "let the current Locale
+	 *            decide".
 	 */
 	public final void setLeftToRight(Boolean b) {
 		this.leftToRight = b;
@@ -752,10 +749,8 @@ public final class LC implements Externalizable {
 	 * @since 3.5
 	 */
 	public final LC pack(String width, String height) {
-		setPackWidth(width != null ? ConstraintParser.parseBoundSize(width,
-				false, false) : BoundSize.NULL_SIZE);
-		setPackHeight(height != null ? ConstraintParser.parseBoundSize(height,
-				false, false) : BoundSize.NULL_SIZE);
+		setPackWidth(width != null ? ConstraintParser.parseBoundSize(width, false, false) : BoundSize.NULL_SIZE);
+		setPackHeight(height != null ? ConstraintParser.parseBoundSize(height, false, false) : BoundSize.NULL_SIZE);
 		return this;
 	}
 
@@ -865,9 +860,9 @@ public final class LC implements Externalizable {
 	}
 
 	/**
-	 * Same functionality as {@link #setFillX(boolean true)} and {@link
-	 * #setFillY(boolean true)} conmbined.T his method returns <code>this</code>
-	 * for chaining multiple calls.
+	 * Same functionality as {@link #setFillX(boolean true)} and
+	 * {@link #setFillY(boolean true)} conmbined.T his method returns
+	 * <code>this</code> for chaining multiple calls.
 	 * <p>
 	 * For a more thorough explanation of what this constraint does see the
 	 * white paper or cheat Sheet at www.migcomponents.com.
@@ -1079,10 +1074,8 @@ public final class LC implements Externalizable {
 	 */
 	public final LC insets(String top, String left, String bottom, String right) {
 		insets = new UnitValue[] { // No setter to avoid copy again
-		ConstraintParser.parseUnitValue(top, false),
-				ConstraintParser.parseUnitValue(left, true),
-				ConstraintParser.parseUnitValue(bottom, false),
-				ConstraintParser.parseUnitValue(right, true) };
+				ConstraintParser.parseUnitValue(top, false), ConstraintParser.parseUnitValue(left, true),
+				ConstraintParser.parseUnitValue(bottom, false), ConstraintParser.parseUnitValue(right, true) };
 		return this;
 	}
 
@@ -1281,8 +1274,7 @@ public final class LC implements Externalizable {
 	 *         <code>new LayoutConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final LC minWidth(String width) {
-		setWidth(LayoutUtil.derive(getWidth(),
-				ConstraintParser.parseUnitValue(width, true), null, null));
+		setWidth(LayoutUtil.derive(getWidth(), ConstraintParser.parseUnitValue(width, true), null, null));
 		return this;
 	}
 
@@ -1319,8 +1311,7 @@ public final class LC implements Externalizable {
 	 *         <code>new LayoutConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final LC maxWidth(String width) {
-		setWidth(LayoutUtil.derive(getWidth(), null, null,
-				ConstraintParser.parseUnitValue(width, true)));
+		setWidth(LayoutUtil.derive(getWidth(), null, null, ConstraintParser.parseUnitValue(width, true)));
 		return this;
 	}
 
@@ -1338,8 +1329,7 @@ public final class LC implements Externalizable {
 	 *         <code>new LayoutConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final LC minHeight(String height) {
-		setHeight(LayoutUtil.derive(getHeight(),
-				ConstraintParser.parseUnitValue(height, false), null, null));
+		setHeight(LayoutUtil.derive(getHeight(), ConstraintParser.parseUnitValue(height, false), null, null));
 		return this;
 	}
 
@@ -1376,8 +1366,7 @@ public final class LC implements Externalizable {
 	 *         <code>new LayoutConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final LC maxHeight(String height) {
-		setHeight(LayoutUtil.derive(getHeight(), null, null,
-				ConstraintParser.parseUnitValue(height, false)));
+		setHeight(LayoutUtil.derive(getHeight(), null, null, ConstraintParser.parseUnitValue(height, false)));
 		return this;
 	}
 
@@ -1389,8 +1378,7 @@ public final class LC implements Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

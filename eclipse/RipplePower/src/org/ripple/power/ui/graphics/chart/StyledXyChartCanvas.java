@@ -150,8 +150,7 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 
 						if (point.markColor != 0) {
 							mMarkPnt.setColor(point.markColor);
-							mCnv.drawCircle(sX + (pX - bX) * aX, eY - (pY - bY)
-									* aY, point.markSize, mMarkPnt);
+							mCnv.drawCircle(sX + (pX - bX) * aX, eY - (pY - bY) * aY, point.markSize, mMarkPnt);
 						}
 						pValid = true;
 					} else {
@@ -160,23 +159,19 @@ public class StyledXyChartCanvas extends ChartBaseCanvas {
 							mFillPnt.setColor(point.fillColor);
 							mPath.reset();
 							mPath.moveTo(sX + (qX - bX) * aX, eY);
-							mPath.lineTo(sX + (qX - bX) * aX, eY - (qY - bY)
-									* aY);
-							mPath.lineTo(sX + (pX - bX) * aX, eY - (pY - bY)
-									* aY);
+							mPath.lineTo(sX + (qX - bX) * aX, eY - (qY - bY) * aY);
+							mPath.lineTo(sX + (pX - bX) * aX, eY - (pY - bY) * aY);
 							mPath.lineTo(sX + (pX - bX) * aX, eY);
 							mPath.close();
 							mCnv.drawPath(mPath, mFillPnt);
 						}
 
 						mLinePnt.setColor(point.lineColor);
-						mCnv.drawLine(sX + (qX - bX) * aX, eY - (qY - bY) * aY,
-								sX + (pX - bX) * aX, eY - (pY - bY) * aY,
-								mLinePnt);
+						mCnv.drawLine(sX + (qX - bX) * aX, eY - (qY - bY) * aY, sX + (pX - bX) * aX,
+								eY - (pY - bY) * aY, mLinePnt);
 						if (point.markColor != 0) {
 							mMarkPnt.setColor(point.markColor);
-							mCnv.drawCircle(sX + (pX - bX) * aX, eY - (pY - bY)
-									* aY, point.markSize, mMarkPnt);
+							mCnv.drawCircle(sX + (pX - bX) * aX, eY - (pY - bY) * aY, point.markSize, mMarkPnt);
 						}
 					}
 					qX = pX;

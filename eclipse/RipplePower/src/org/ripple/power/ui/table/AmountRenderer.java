@@ -29,8 +29,7 @@ public final class AmountRenderer extends DefaultTableCellRenderer {
 		}
 		String text = (String) value;
 
-		if (text.charAt(0) == '-' || text.equals("0.000000")
-				|| text.equals("0")) {
+		if (text.charAt(0) == '-' || text.equals("0.000000") || text.equals("0")) {
 			setForeground(LColor.red.darker().darker());
 		} else {
 			setForeground(LColor.blue.darker().darker());
@@ -39,14 +38,13 @@ public final class AmountRenderer extends DefaultTableCellRenderer {
 	}
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
 		if (isSelected) {
 			setForeground(Color.WHITE);
 		} else {
 			setForeground(Color.BLACK);
 		}
-		return super.getTableCellRendererComponent(table, value, isSelected,
-				hasFocus, row, column);
+		return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 	}
 }

@@ -56,29 +56,26 @@ public class RPConfig {
 	}
 
 	public RPConfig(final File file) throws IOException {
-		this(file != null ? (file.exists() ? new FileInputStream(file)
-				: RPConfig.class.getResourceAsStream(file.getPath()))
+		this(file != null
+				? (file.exists() ? new FileInputStream(file) : RPConfig.class.getResourceAsStream(file.getPath()))
 				: new FileInputStream(new File("default.cfg")));
 	}
 
 	public RPConfig(final InputStream in) throws IOException {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(in,
-					LSystem.encoding));
+			reader = new BufferedReader(new InputStreamReader(in, LSystem.encoding));
 			String record = null;
 			StringBuffer mapBuffer = new StringBuffer();
 			boolean mapFlag = false;
 			String mapName = null;
 			for (; (record = reader.readLine()) != null;) {
 				record = record.trim();
-				if (record.length() > 0 && !record.startsWith(FLAG_L_TAG)
-						&& !record.startsWith(FLAG_C_TAG)
+				if (record.length() > 0 && !record.startsWith(FLAG_L_TAG) && !record.startsWith(FLAG_C_TAG)
 						&& !record.startsWith(FLAG_I_TAG)) {
 					if (record.startsWith("begin")) {
 						mapBuffer.delete(0, mapBuffer.length());
-						String mes = record.substring(5, record.length())
-								.trim();
+						String mes = record.substring(5, record.length()).trim();
 						if (mes.startsWith("name")) {
 							mapName = loadItem(mes, false);
 						}
@@ -176,8 +173,7 @@ public class RPConfig {
 		if (v == null) {
 			return fallback;
 		}
-		return "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
-				|| "ok".equalsIgnoreCase(v);
+		return "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v) || "ok".equalsIgnoreCase(v);
 	}
 
 	public int getIntValue(String name) {

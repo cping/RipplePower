@@ -71,20 +71,16 @@ class Canvas {
 		if (p != null) {
 			setColorAndStroke(p);
 		}
-		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap),
-				left, top);
+		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap), left, top);
 	}
 
 	public void drawBitmap(Bitmap bitmap, int left, int top) {
-		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap),
-				left, top);
+		this._graphics.drawImage(JavaSEGraphicFactory.getBufferedImage(bitmap), left, top);
 	}
 
 	public void drawBitmap(Bitmap bitmap, Matrix matrix) {
-		this._graphics.drawRenderedImage(
-				JavaSEGraphicFactory.getBufferedImage(bitmap)
-						.getBufferedImage(), JavaSEGraphicFactory
-						.getAffineTransform(matrix));
+		this._graphics.drawRenderedImage(JavaSEGraphicFactory.getBufferedImage(bitmap).getBufferedImage(),
+				JavaSEGraphicFactory.getAffineTransform(matrix));
 	}
 
 	public void drawCircle(float x, float y, float radius, Paint paint) {
@@ -102,16 +98,14 @@ class Canvas {
 			if (_isFillAlpha) {
 				_graphics.setAlpha(1.0f);
 			}
-			this._graphics.fillOval((int) (x - radius), (int) (y - radius),
-					(int) doubleRadius, (int) doubleRadius);
+			this._graphics.fillOval((int) (x - radius), (int) (y - radius), (int) doubleRadius, (int) doubleRadius);
 			if (_isFillAlpha) {
 				_graphics.setAlpha(0.5f);
 			}
 			return;
 
 		case STROKE:
-			this._graphics.drawOval((int) (x - radius), (int) (y - radius),
-					(int) doubleRadius, (int) doubleRadius);
+			this._graphics.drawOval((int) (x - radius), (int) (y - radius), (int) doubleRadius, (int) doubleRadius);
 			return;
 		default:
 			break;
@@ -209,30 +203,25 @@ class Canvas {
 	}
 
 	public void drawPointTextContainer(PointTextContainer ptc, int maxWidth) {
-		if (ptc.paintFront.isTransparent()
-				&& (ptc.paintBack == null || ptc.paintBack.isTransparent())) {
+		if (ptc.paintFront.isTransparent() && (ptc.paintBack == null || ptc.paintBack.isTransparent())) {
 			return;
 		}
 		int textWidth = ptc.paintFront.getTextWidth(ptc.text);
 		if (textWidth > maxWidth) {
 			AttributedString attrString = new AttributedString(ptc.text);
-			Paint awtPaintFront = JavaSEGraphicFactory
-					.getAwtPaint(ptc.paintFront);
-			attrString.addAttribute(TextAttribute.FOREGROUND,
-					awtPaintFront.color);
+			Paint awtPaintFront = JavaSEGraphicFactory.getAwtPaint(ptc.paintFront);
+			attrString.addAttribute(TextAttribute.FOREGROUND, awtPaintFront.color);
 			attrString.addAttribute(TextAttribute.FONT, awtPaintFront.font);
 			AttributedCharacterIterator paragraph = attrString.getIterator();
 			int paragraphStart = paragraph.getBeginIndex();
 			int paragraphEnd = paragraph.getEndIndex();
 			FontRenderContext frc = this._graphics.getFontRenderContext();
-			LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph,
-					frc);
+			LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
 			float layoutHeight = 0;
 			lineMeasurer.setPosition(paragraphStart);
 			while (lineMeasurer.getPosition() < paragraphEnd) {
 				TextLayout layout = lineMeasurer.nextLayout(maxWidth);
-				layoutHeight += layout.getAscent() + layout.getDescent()
-						+ layout.getLeading();
+				layoutHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
 			}
 			float drawPosY = (float) ptc.y;
 			lineMeasurer.setPosition(paragraphStart);
@@ -242,37 +231,29 @@ class Canvas {
 				float posY = drawPosY;
 				if (Position.CENTER == ptc.position) {
 					posX += (maxWidth - layout.getAdvance()) * 0.5f;
-					posY += (layout.getAscent() + layout.getDescent()
-							+ layout.getLeading() - layoutHeight) * 0.5f;
+					posY += (layout.getAscent() + layout.getDescent() + layout.getLeading() - layoutHeight) * 0.5f;
 				} else if (Position.BELOW == ptc.position) {
 					posX += (maxWidth - layout.getAdvance()) * 0.5f;
 				} else if (Position.ABOVE == ptc.position) {
 					posX += (maxWidth - layout.getAdvance()) * 0.5f;
-					posY += layout.getAscent() + layout.getDescent()
-							+ layout.getLeading() - layoutHeight;
+					posY += layout.getAscent() + layout.getDescent() + layout.getLeading() - layoutHeight;
 				} else if (Position.LEFT == ptc.position) {
-					posX += textWidth * 0.5f - maxWidth * 0.5f + maxWidth
-							- layout.getAdvance();
-					posY += (layout.getAscent() + layout.getDescent()
-							+ layout.getLeading() - layoutHeight) * 0.5f;
+					posX += textWidth * 0.5f - maxWidth * 0.5f + maxWidth - layout.getAdvance();
+					posY += (layout.getAscent() + layout.getDescent() + layout.getLeading() - layoutHeight) * 0.5f;
 				} else if (Position.RIGHT == ptc.position) {
 					posX += -textWidth * 0.5f + maxWidth * 0.5f;
-					posY += (layout.getAscent() + layout.getDescent()
-							+ layout.getLeading() - layoutHeight) * 0.5f;
+					posY += (layout.getAscent() + layout.getDescent() + layout.getLeading() - layoutHeight) * 0.5f;
 				} else {
-					throw new IllegalArgumentException(
-							"No position for drawing PointTextContainer");
+					throw new IllegalArgumentException("No position for drawing PointTextContainer");
 				}
 				if (ptc.paintBack != null) {
-					setColorAndStroke(JavaSEGraphicFactory
-							.getAwtPaint(ptc.paintBack));
+					setColorAndStroke(JavaSEGraphicFactory.getAwtPaint(ptc.paintBack));
 					AffineTransform affineTransform = new AffineTransform();
 					affineTransform.translate(posX, posY);
 					this._graphics.draw(layout.getOutline(affineTransform));
 				}
 				layout.draw(this._graphics, posX, posY);
-				drawPosY += layout.getAscent() + layout.getDescent()
-						+ layout.getLeading();
+				drawPosY += layout.getAscent() + layout.getDescent() + layout.getLeading();
 			}
 		} else {
 			if (ptc.paintBack != null) {
@@ -311,16 +292,14 @@ class Canvas {
 			}
 		} else {
 			setColorAndStroke(awtPaint);
-			TextLayout textLayout = new TextLayout(text, awtPaint.font,
-					this._graphics.getFontRenderContext());
+			TextLayout textLayout = new TextLayout(text, awtPaint.font, this._graphics.getFontRenderContext());
 			AffineTransform affineTransform = new AffineTransform();
 			affineTransform.translate(x, y);
 			this._graphics.draw(textLayout.getOutline(affineTransform));
 		}
 	}
 
-	public void drawTextRotated(String text, int x1, int y1, int x2, int y2,
-			Paint paint) {
+	public void drawTextRotated(String text, int x1, int y1, int x2, int y2, Paint paint) {
 		if (paint.isTransparent()) {
 			return;
 		}
@@ -352,8 +331,7 @@ class Canvas {
 	}
 
 	public int getHeight() {
-		return this._bufferedImage != null ? this._bufferedImage.getHeight()
-				: 0;
+		return this._bufferedImage != null ? this._bufferedImage.getHeight() : 0;
 	}
 
 	public int getWidth() {

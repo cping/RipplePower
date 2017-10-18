@@ -12,8 +12,7 @@ import java.util.logging.Logger;
 
 public class BriefLogFormatter extends Formatter {
 
-	private static final MessageFormat messageFormat = new MessageFormat(
-			"{3,date,hh:mm:ss} {0} {1}.{2}: {4}\n{5}");
+	private static final MessageFormat messageFormat = new MessageFormat("{3,date,hh:mm:ss} {0} {1}.{2}: {4}\n{5}");
 
 	private static final Logger logger = Logger.getLogger("");
 

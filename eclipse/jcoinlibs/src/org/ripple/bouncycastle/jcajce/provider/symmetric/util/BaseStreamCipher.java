@@ -22,8 +22,6 @@ import org.ripple.bouncycastle.crypto.DataLengthException;
 import org.ripple.bouncycastle.crypto.StreamCipher;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
-import org.ripple.bouncycastle.jcajce.PKCS12Key;
-import org.ripple.bouncycastle.jcajce.PKCS12KeyWithParameters;
 
 public class BaseStreamCipher
     extends BaseWrapCipher
@@ -41,8 +39,6 @@ public class BaseStreamCipher
                                     };
 
     private StreamCipher       cipher;
-    private int keySizeInBits;
-    private int digest;
     private ParametersWithIV   ivParam;
 
     private int                     ivLength = 0;
@@ -54,19 +50,8 @@ public class BaseStreamCipher
         StreamCipher engine,
         int ivLength)
     {
-        this(engine, ivLength, -1, -1);
-    }
-
-    protected BaseStreamCipher(
-        StreamCipher engine,
-        int ivLength,
-        int keySizeInBits,
-        int digest)
-    {
         cipher = engine;
         this.ivLength = ivLength;
-        this.keySizeInBits = keySizeInBits;
-        this.digest = digest;
     }
 
     protected int engineGetBlockSize()
@@ -161,18 +146,7 @@ public class BaseStreamCipher
             throw new InvalidKeyException("Key for algorithm " + key.getAlgorithm() + " not suitable for symmetric enryption.");
         }
 
-        if (key instanceof PKCS12Key)
-        {
-            PKCS12Key k = (PKCS12KeyWithParameters)key;
-            pbeSpec = (PBEParameterSpec)params;
-            if (k instanceof PKCS12KeyWithParameters && pbeSpec == null)
-            {
-                pbeSpec = new PBEParameterSpec(((PKCS12KeyWithParameters)k).getSalt(), ((PKCS12KeyWithParameters)k).getIterationCount());
-            }
-
-            param = PBE.Util.makePBEParameters(k.getEncoded(), PKCS12, digest, keySizeInBits, ivLength * 8, pbeSpec, cipher.getAlgorithmName());
-        }
-        else if (key instanceof BCPBEKey)
+        if (key instanceof BCPBEKey)
         {
             BCPBEKey k = (BCPBEKey)key;
 
@@ -370,14 +344,8 @@ public class BaseStreamCipher
         int     inputOffset,
         int     inputLen,
         byte[]  output,
-        int     outputOffset)
-        throws ShortBufferException
+        int     outputOffset) 
     {
-        if (outputOffset + inputLen > output.length)
-        {
-            throw new ShortBufferException("output buffer too short for input.");
-        }
-
         if (inputLen != 0)
         {
             cipher.processBytes(input, inputOffset, inputLen, output, outputOffset);

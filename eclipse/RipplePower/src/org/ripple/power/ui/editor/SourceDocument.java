@@ -46,8 +46,7 @@ public class SourceDocument extends DefaultStyledDocument {
 		super();
 
 		SimpleAttributeSet commentStyle = new SimpleAttributeSet();
-		commentStyle.addAttribute(StyleConstants.Foreground,
-				LColor.cornFlowerBlue);
+		commentStyle.addAttribute(StyleConstants.Foreground, LColor.cornFlowerBlue);
 		commentStyle.addAttribute(StyleConstants.Italic, Boolean.TRUE);
 		this.setCommentStyle(commentStyle);
 
@@ -57,8 +56,7 @@ public class SourceDocument extends DefaultStyledDocument {
 		this.setKeywordStyle(keywordStyle);
 
 		SimpleAttributeSet stringStyle = new SimpleAttributeSet();
-		stringStyle.addAttribute(StyleConstants.Foreground,
-				LColor.mediumAquamarine);
+		stringStyle.addAttribute(StyleConstants.Foreground, LColor.mediumAquamarine);
 		this.setStringStyle(stringStyle);
 
 		Vector<String> rocKeywords = new Vector<String>();
@@ -80,8 +78,7 @@ public class SourceDocument extends DefaultStyledDocument {
 	}
 
 	@Override
-	public void insertString(int offs, String str, AttributeSet a)
-			throws BadLocationException {
+	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 		super.insertString(offs, str, a);
 		updateHighlightingInRange(offs, str.length());
 	}
@@ -107,33 +104,27 @@ public class SourceDocument extends DefaultStyledDocument {
 
 			Matcher m = keyReg.matcher(text);
 			while (m.find()) {
-				setCharacterAttributes(start + m.start(), m.end() - m.start(),
-						keywordStyle, true);
+				setCharacterAttributes(start + m.start(), m.end() - m.start(), keywordStyle, true);
 			}
 
 			m = stringComments.matcher(text);
 			while (m.find()) {
 				if (text.charAt(m.start()) == '#') {
-					setCharacterAttributes(start + m.start(),
-							m.end() - m.start(), commentStyle, true);
+					setCharacterAttributes(start + m.start(), m.end() - m.start(), commentStyle, true);
 				}
 			}
 
 			m = doubleStringReg.matcher(text);
 			while (m.find()) {
-				if (text.charAt(m.start()) == '\''
-						|| text.charAt(m.start()) == '"') {
-					setCharacterAttributes(start + m.start(),
-							m.end() - m.start(), stringStyle, true);
+				if (text.charAt(m.start()) == '\'' || text.charAt(m.start()) == '"') {
+					setCharacterAttributes(start + m.start(), m.end() - m.start(), stringStyle, true);
 				}
 			}
 
 			m = singleStringReg.matcher(text);
 			while (m.find()) {
-				if (text.charAt(m.start()) == '\''
-						|| text.charAt(m.start()) == '"') {
-					setCharacterAttributes(start + m.start(),
-							m.end() - m.start(), stringStyle, true);
+				if (text.charAt(m.start()) == '\'' || text.charAt(m.start()) == '"') {
+					setCharacterAttributes(start + m.start(), m.end() - m.start(), stringStyle, true);
 				}
 			}
 		} catch (Exception e) {

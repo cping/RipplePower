@@ -1,12 +1,8 @@
 package org.ripple.bouncycastle.asn1;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
-
-import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * ASN.1 <code>SET</code> and <code>SET OF</code> constructs.
@@ -97,7 +93,6 @@ import org.ripple.bouncycastle.util.Arrays;
  */
 public abstract class ASN1Set
     extends ASN1Primitive
-    implements org.ripple.bouncycastle.util.Iterable<ASN1Encodable>
 {
     private Vector set = new Vector();
     private boolean isSorted = false;
@@ -555,10 +550,5 @@ public abstract class ASN1Set
     public String toString() 
     {
         return set.toString();
-    }
-
-    public Iterator<ASN1Encodable> iterator()
-    {
-        return new Arrays.Iterator<ASN1Encodable>(toArray());
     }
 }

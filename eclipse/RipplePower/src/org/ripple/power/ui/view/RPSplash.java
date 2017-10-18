@@ -63,30 +63,22 @@ public class RPSplash extends Canvas {
 
 	private final Color versionTextColour;
 
-	public RPSplash(Color progressBarColour, String imageResourcePath,
-			String build, Color buildTextColour, int buildLabelX,
-			int buildLabelY, String versionNumber, boolean autonClose,
-			Updateable update) {
-		this(progressBarColour, imageResourcePath, build, buildTextColour,
-				buildLabelX, buildLabelY, versionNumber, -1, -1, autonClose,
-				update);
+	public RPSplash(Color progressBarColour, String imageResourcePath, String build, Color buildTextColour,
+			int buildLabelX, int buildLabelY, String versionNumber, boolean autonClose, Updateable update) {
+		this(progressBarColour, imageResourcePath, build, buildTextColour, buildLabelX, buildLabelY, versionNumber, -1,
+				-1, autonClose, update);
 	}
 
-	public RPSplash(Color progressBarColour, String imageResourcePath,
-			String build, Color buildTextColour, int buildLabelX,
-			int buildLabelY, String versionNumber, int versionLabelX,
-			int versionLabelY, boolean autonClose, Updateable update) {
-		this(progressBarColour, imageResourcePath, build, buildTextColour,
-				buildLabelX, buildLabelY, versionNumber, UIConfig
-						.getBrandColor(), versionLabelX, versionLabelY,
-				autonClose, update);
+	public RPSplash(Color progressBarColour, String imageResourcePath, String build, Color buildTextColour,
+			int buildLabelX, int buildLabelY, String versionNumber, int versionLabelX, int versionLabelY,
+			boolean autonClose, Updateable update) {
+		this(progressBarColour, imageResourcePath, build, buildTextColour, buildLabelX, buildLabelY, versionNumber,
+				UIConfig.getBrandColor(), versionLabelX, versionLabelY, autonClose, update);
 	}
 
-	public RPSplash(Color progressBarColour, String imageResourcePath,
-			String buildString, Color buildTextColour, int buildLabelX,
-			int buildLabelY, String versionNumber, Color versionTextColour,
-			int versionLabelX, int versionLabelY, boolean autonClose,
-			final Updateable update) {
+	public RPSplash(Color progressBarColour, String imageResourcePath, String buildString, Color buildTextColour,
+			int buildLabelX, int buildLabelY, String versionNumber, Color versionTextColour, int versionLabelX,
+			int versionLabelY, boolean autonClose, final Updateable update) {
 
 		this.buildTextColour = buildTextColour;
 		this.buildLabelX = buildLabelX;
@@ -114,8 +106,7 @@ public class RPSplash extends Canvas {
 			version = versionNumber;
 		}
 
-		Dimension size = new Dimension(image.getWidth(this),
-				image.getHeight(this));
+		Dimension size = new Dimension(image.getWidth(this), image.getHeight(this));
 		window = new Window(new Frame());
 		window.setSize(size);
 		window.setLayout(new BorderLayout());
@@ -165,11 +156,10 @@ public class RPSplash extends Canvas {
 		_offscreen.setColor(progressColour);
 		Graphics2D offscreen2d = (Graphics2D) _offscreen;
 
-		offscreen2d.setPaint(new GradientPaint(0, image.getHeight(this)
-				- PROGRESS_HEIGHT, gradientColour, 0, image.getHeight(this),
-				progressColour));
-		_offscreen.fillRect(0, image.getHeight(this) - PROGRESS_HEIGHT,
-				(window.getWidth() * progress) / 9, PROGRESS_HEIGHT);
+		offscreen2d.setPaint(new GradientPaint(0, image.getHeight(this) - PROGRESS_HEIGHT, gradientColour, 0,
+				image.getHeight(this), progressColour));
+		_offscreen.fillRect(0, image.getHeight(this) - PROGRESS_HEIGHT, (window.getWidth() * progress) / 9,
+				PROGRESS_HEIGHT);
 
 		if (version != null) {
 			if (versionLabelX == -1) {
@@ -177,8 +167,7 @@ public class RPSplash extends Canvas {
 			}
 
 			if (versionLabelY == -1) {
-				versionLabelY = image.getHeight(this) - PROGRESS_HEIGHT
-						- fontMetrics.getHeight();
+				versionLabelY = image.getHeight(this) - PROGRESS_HEIGHT - fontMetrics.getHeight();
 			}
 
 			GraphicsUtils.setAntialiasAll(offscreen2d, true);

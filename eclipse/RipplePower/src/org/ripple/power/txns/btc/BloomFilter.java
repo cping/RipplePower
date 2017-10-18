@@ -64,8 +64,7 @@ public class BloomFilter implements ByteSerializable {
 	private int nHashFuncs;
 
 	/** Random tweak nonce */
-	private long nTweak = Double.valueOf(Math.random() * Long.MAX_VALUE)
-			.longValue();
+	private long nTweak = Double.valueOf(Math.random() * Long.MAX_VALUE).longValue();
 
 	/** Filter update flags */
 	private int nFlags = UPDATE_P2PUBKEY_ONLY;
@@ -102,17 +101,14 @@ public class BloomFilter implements ByteSerializable {
 		//
 		// Allocate the filter array
 		//
-		int size = Math.min(
-				(int) (-1 / (Math.pow(Math.log(2), 2)) * elements * Math
-						.log(falsePositiveRate)), MAX_FILTER_SIZE * 8) / 8;
+		int size = Math.min((int) (-1 / (Math.pow(Math.log(2), 2)) * elements * Math.log(falsePositiveRate)),
+				MAX_FILTER_SIZE * 8) / 8;
 		filter = new byte[size <= 0 ? 1 : size];
 		//
 		// Optimal number of hash functions for a given filter size and element
 		// count.
 		//
-		nHashFuncs = Math.min(
-				(int) (filter.length * 8 / (double) elements * Math.log(2)),
-				MAX_HASH_FUNCS);
+		nHashFuncs = Math.min((int) (filter.length * 8 / (double) elements * Math.log(2)), MAX_HASH_FUNCS);
 	}
 
 	/**
@@ -125,15 +121,13 @@ public class BloomFilter implements ByteSerializable {
 	 * @throws VerificationException
 	 *             Verification error
 	 */
-	public BloomFilter(SerializedBuffer inBuffer) throws EOFException,
-			VerificationException {
+	public BloomFilter(SerializedBuffer inBuffer) throws EOFException, VerificationException {
 		filter = inBuffer.getBytes();
 		if (filter.length > MAX_FILTER_SIZE)
 			throw new VerificationException("Bloom filter is too large");
 		nHashFuncs = inBuffer.getInt();
 		if (nHashFuncs > MAX_HASH_FUNCS)
-			throw new VerificationException(
-					"Too many Bloom filter hash functions");
+			throw new VerificationException("Too many Bloom filter hash functions");
 		nTweak = inBuffer.getUnsignedInt();
 		nFlags = inBuffer.getByte();
 	}
@@ -147,8 +141,8 @@ public class BloomFilter implements ByteSerializable {
 	 */
 	@Override
 	public SerializedBuffer getBytes(SerializedBuffer outBuffer) {
-		outBuffer.putVarInt(filter.length).putBytes(filter).putInt(nHashFuncs)
-				.putUnsignedInt(nTweak).putByte((byte) nFlags);
+		outBuffer.putVarInt(filter.length).putBytes(filter).putInt(nHashFuncs).putUnsignedInt(nTweak)
+				.putByte((byte) nFlags);
 		return outBuffer;
 	}
 
@@ -275,10 +269,9 @@ public class BloomFilter implements ByteSerializable {
 				//
 				// Update the filter with the outpoint if requested
 				//
-				if (nFlags == BloomFilter.UPDATE_ALL
-						|| (nFlags == BloomFilter.UPDATE_P2PUBKEY_ONLY && (type == ScriptOpCodes.PAY_TO_PUBKEY || type == ScriptOpCodes.PAY_TO_MULTISIG))) {
-					System.arraycopy(Helper.reverseBytes(txHash.getBytes()), 0,
-							outpointData, 0, 32);
+				if (nFlags == BloomFilter.UPDATE_ALL || (nFlags == BloomFilter.UPDATE_P2PUBKEY_ONLY
+						&& (type == ScriptOpCodes.PAY_TO_PUBKEY || type == ScriptOpCodes.PAY_TO_MULTISIG))) {
+					System.arraycopy(Helper.reverseBytes(txHash.getBytes()), 0, outpointData, 0, 32);
 					Helper.uint32ToByteArrayLE(index, outpointData, 32);
 					insert(outpointData);
 				}
@@ -372,10 +365,8 @@ public class BloomFilter implements ByteSerializable {
 		// Body
 		//
 		for (int i = 0; i < numBlocks; i += 4) {
-			int k1 = ((int) object[offset + i] & 0xFF)
-					| (((int) object[offset + i + 1] & 0xFF) << 8)
-					| (((int) object[offset + i + 2] & 0xFF) << 16)
-					| (((int) object[offset + i + 3] & 0xFF) << 24);
+			int k1 = ((int) object[offset + i] & 0xFF) | (((int) object[offset + i + 1] & 0xFF) << 8)
+					| (((int) object[offset + i + 2] & 0xFF) << 16) | (((int) object[offset + i + 3] & 0xFF) << 24);
 			k1 *= c1;
 			k1 = ROTL32(k1, 15);
 			k1 *= c2;

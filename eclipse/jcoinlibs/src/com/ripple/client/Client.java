@@ -26,12 +26,13 @@ import com.ripple.core.types.known.sle.entries.Offer;
 import com.ripple.core.types.known.tx.result.TransactionResult;
 import com.ripple.crypto.ecdsa.IKeyPair;
 import com.ripple.crypto.ecdsa.Seed;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.ripple.client.requests.Request.Manager;
+import static com.ripple.client.requests.Request.VALIDATED_LEDGER;
 
 public class Client extends Publisher<Client.events> implements TransportEventHandler {
     // Logger
@@ -58,17 +60,15 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
     public static interface OnStateChange extends events<Client> {}
     public static interface OnPathFind extends events<JSONObject> {}
     public static interface OnValidatedTransaction extends events<TransactionResult> {}
-	private long speed;
 
-	private long timer;
-	
-	public long getSpeed(){
-		return speed;
-	}
     // Fluent binders
     public Client onValidatedTransaction(OnValidatedTransaction cb) {
         on(OnValidatedTransaction.class, cb);
         return this;
+    }
+    
+    public long getSpeed(){
+    	return 1000;
     }
 
     public Client onLedgerClosed(OnLedgerClosed cb) {
@@ -153,12 +153,11 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
             }
         });
     }
-    
-	@Override
+
 	public void setProxy(Proxy proxy) {
 		ws.setProxy(proxy);
 	}
-	
+
     // ### Getters
 
     private int reconnectDelay() {
@@ -495,7 +494,6 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
             throw new RuntimeException(e);
         } finally {
             emit(OnStateChange.class, this);
-    		speed = System.currentTimeMillis() - timer;
         }
     }
     private void doOnDisconnected() {
@@ -588,8 +586,6 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
         if (logger.isLoggable(Level.FINER)) {
             logger.log(Level.FINER, "Send: {0}", prettyJSON(object));
         }
-
-		timer = System.currentTimeMillis();
         emit(OnSendMessage.class, object);
         ws.sendMessage(object);
 
@@ -799,7 +795,9 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
         makeManagedRequest(Command.ledger_entry, cb, new Request.Builder<LedgerEntry>() {
             @Override
             public void beforeRequest(Request request) {
-                request.json("ledger_index", ledger_index.longValue());
+                if (ledger_index != null) {
+                    request.json("ledger_index", ledgerIndex(ledger_index));
+                }
                 request.json("index", index.toJSON());
             }
             @Override
@@ -810,6 +808,14 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
                 return (LedgerEntry) node;
             }
         });
+    }
+
+    private Object ledgerIndex(Number ledger_index) {
+        long l = ledger_index.longValue();
+        if (l == VALIDATED_LEDGER) {
+            return "validated";
+        }
+        return l;
     }
 
     public void requestAccountInfo(final AccountID addy, final Manager<AccountRoot> manager) {
@@ -927,7 +933,7 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
         makeManagedRequest(Command.ledger, cb, new Request.Builder<JSONObject>() {
             @Override
             public void beforeRequest(Request request) {
-                request.json("ledger_index", ledger_index.longValue());
+                request.json("ledger_index", ledgerIndex(ledger_index));
             }
 
             @Override
@@ -960,7 +966,11 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
         requestTransaction(hash, new Manager<TransactionResult>() {
             @Override
             public void cb(Response response, TransactionResult transactionResult) throws JSONException {
-                cb.called(transactionResult);
+                if (response.succeeded) {
+                    cb.called(transactionResult);
+                } else {
+                    throw new RuntimeException("Failed" + response.message);
+                }
             }
         });
     }
@@ -1002,21 +1012,25 @@ public class Client extends Publisher<Client.events> implements TransportEventHa
         return request;
     }
 
-    public Request subscribeBookOffers(Issue get, Issue pay) {
+    public Request subscribeBookOffers(Issue get, Issue pay,int limit) {
         Request request = newRequest(Command.subscribe);
         JSONObject book = new JSONObject();
         JSONArray books = new JSONArray(new Object[] { book });
         book.put("snapshot", true);
         book.put("taker_gets", get.toJSON());
         book.put("taker_pays", pay.toJSON());
+        book.put("limit", limit);
         request.json("books", books);
+        
         return request;
     }
 
-    public Request requestBookOffers(Issue get, Issue pay) {
+    public Request requestBookOffers(Issue get, Issue pay,int limit) {
         Request request = newRequest(Command.book_offers);
+    	request.json("ledger_index","validated");
         request.json("taker_gets", get.toJSON());
         request.json("taker_pays", pay.toJSON());
+        request.json("limit", limit);
         return request;
     }
 }

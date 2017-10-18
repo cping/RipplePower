@@ -29,15 +29,13 @@ import com.google.zxing.DecodeHintType;
  */
 public final class StringUtils {
 
-	private static final String PLATFORM_DEFAULT_ENCODING = Charset
-			.defaultCharset().name();
+	private static final String PLATFORM_DEFAULT_ENCODING = Charset.defaultCharset().name();
 	public static final String SHIFT_JIS = "SJIS";
 	public static final String GB2312 = "GB2312";
 	private static final String EUC_JP = "EUC_JP";
 	private static final String UTF8 = "UTF8";
 	private static final String ISO88591 = "ISO8859_1";
-	private static final boolean ASSUME_SHIFT_JIS = SHIFT_JIS
-			.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING)
+	private static final boolean ASSUME_SHIFT_JIS = SHIFT_JIS.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING)
 			|| EUC_JP.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING);
 
 	private StringUtils() {
@@ -53,11 +51,9 @@ public final class StringUtils {
 	 *         platform default encoding if none of these can possibly be
 	 *         correct
 	 */
-	public static String guessEncoding(byte[] bytes,
-			Map<DecodeHintType, ?> hints) {
+	public static String guessEncoding(byte[] bytes, Map<DecodeHintType, ?> hints) {
 		if (hints != null) {
-			String characterSet = (String) hints
-					.get(DecodeHintType.CHARACTER_SET);
+			String characterSet = (String) hints.get(DecodeHintType.CHARACTER_SET);
 			if (characterSet != null) {
 				return characterSet;
 			}
@@ -85,11 +81,10 @@ public final class StringUtils {
 		// int isoHighChars = 0;
 		int isoHighOther = 0;
 
-		boolean utf8bom = bytes.length > 3 && bytes[0] == (byte) 0xEF
-				&& bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF;
+		boolean utf8bom = bytes.length > 3 && bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB
+				&& bytes[2] == (byte) 0xBF;
 
-		for (int i = 0; i < length
-				&& (canBeISO88591 || canBeShiftJIS || canBeUTF8); i++) {
+		for (int i = 0; i < length && (canBeISO88591 || canBeShiftJIS || canBeUTF8); i++) {
 
 			int value = bytes[i] & 0xFF;
 
@@ -184,8 +179,7 @@ public final class StringUtils {
 
 		// Easy -- if there is BOM or at least 1 valid not-single byte character
 		// (and no evidence it can't be UTF-8), done
-		if (canBeUTF8
-				&& (utf8bom || utf2BytesChars + utf3BytesChars + utf4BytesChars > 0)) {
+		if (canBeUTF8 && (utf8bom || utf2BytesChars + utf3BytesChars + utf4BytesChars > 0)) {
 			return UTF8;
 		}
 		// Easy -- if assuming Shift_JIS or at least 3 valid consecutive
@@ -202,8 +196,8 @@ public final class StringUtils {
 		// Latin1,
 		// - then we conclude Shift_JIS, else ISO-8859-1
 		if (canBeISO88591 && canBeShiftJIS) {
-			return (sjisMaxKatakanaWordLength == 2 && sjisKatakanaChars == 2)
-					|| isoHighOther * 10 >= length ? SHIFT_JIS : ISO88591;
+			return (sjisMaxKatakanaWordLength == 2 && sjisKatakanaChars == 2) || isoHighOther * 10 >= length ? SHIFT_JIS
+					: ISO88591;
 		}
 
 		// Otherwise, try in order ISO-8859-1, Shift JIS, UTF-8 and fall back to

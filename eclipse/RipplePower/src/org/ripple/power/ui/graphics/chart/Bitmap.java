@@ -38,24 +38,21 @@ public class Bitmap {
 		this.bufferedImage = image;
 	}
 
-	public static Bitmap createBitmap(Bitmap image, int x, int y, int width,
-			int height) {
+	public static Bitmap createBitmap(Bitmap image, int x, int y, int width, int height) {
 		LImage cliped = new LImage(width, height, true);
 		LGraphics g = cliped.getLGraphics();
 		g.drawImage(image.bufferedImage, -x, -y);
 		return new Bitmap(cliped);
 	}
 
-	public static Bitmap createScaledBitmap(Bitmap image, int width,
-			int height, boolean flag) {
+	public static Bitmap createScaledBitmap(Bitmap image, int width, int height, boolean flag) {
 		return new Bitmap(image.bufferedImage.scaledInstance(width, height));
 	}
 
 	public void setBackgroundColor(int color) {
 		LGraphics graphics = bufferedImage.getLGraphics();
 		graphics.setColor(new LColor(color, true));
-		graphics.fillRect(0, 0, bufferedImage.getWidth(),
-				bufferedImage.getHeight());
+		graphics.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 		graphics.dispose();
 	}
 
@@ -73,11 +70,9 @@ public class Bitmap {
 		}
 	}
 
-	public void getPixels(int[] pixels, int offset, int stride, int x, int y,
-			int width, int height) {
+	public void getPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
 		if (bufferedImage != null) {
-			bufferedImage
-					.getPixels(pixels, offset, stride, x, y, width, height);
+			bufferedImage.getPixels(pixels, offset, stride, x, y, width, height);
 		}
 	}
 

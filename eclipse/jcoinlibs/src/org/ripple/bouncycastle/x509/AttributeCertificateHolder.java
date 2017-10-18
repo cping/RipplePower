@@ -45,7 +45,7 @@ import org.ripple.bouncycastle.util.Selector;
  *                         -- for example, an executable
  *          }
  * </pre>
- * @deprecated use org.bouncycastle.cert.AttributeCertificateHolder
+ * @deprecated use org.ripple.bouncycastle.cert.AttributeCertificateHolder
  */
 public class AttributeCertificateHolder
     implements CertSelector, Selector
@@ -126,7 +126,7 @@ public class AttributeCertificateHolder
         String digestAlgorithm, String otherObjectTypeID, byte[] objectDigest)
     {
         holder = new Holder(new ObjectDigestInfo(digestedObjectType,
-            new ASN1ObjectIdentifier(otherObjectTypeID), new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithm)), Arrays
+            new ASN1ObjectIdentifier(otherObjectTypeID), new AlgorithmIdentifier(digestAlgorithm), Arrays
                 .clone(objectDigest)));
     }
 
@@ -164,7 +164,7 @@ public class AttributeCertificateHolder
     {
         if (holder.getObjectDigestInfo() != null)
         {
-            return holder.getObjectDigestInfo().getDigestAlgorithm().getAlgorithm()
+            return holder.getObjectDigestInfo().getDigestAlgorithm().getObjectId()
                 .getId();
         }
         return null;

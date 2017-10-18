@@ -70,10 +70,8 @@ public class RPNavbar extends JPanel {
 				public void mouseEntered(MouseEvent e) {
 					colorSave = titleLabel.getForeground();
 					cursorSave = titleLabel.getCursor().getType();
-					titleLabel.setCursor(Cursor
-							.getPredefinedCursor(Cursor.HAND_CURSOR));
-					titleLabel.setForeground(titleLabel.getForeground()
-							.darker());
+					titleLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					titleLabel.setForeground(titleLabel.getForeground().darker());
 				}
 
 				public void mouseExited(MouseEvent e) {
@@ -106,8 +104,7 @@ public class RPNavbar extends JPanel {
 		setForeground(Color.decode("#5E5E5E"));
 		setBorder(new RoundRectBorder(Color.decode("#E1E1E1"), borderWidth, arc));
 
-		setLayout(new MigLayout("gap 0,insets 0",
-				"[10%][8%][8%][8%][8%][8%][8%][8%][8%][8%][8%][fill]", "[grow]"));
+		setLayout(new MigLayout("gap 0,insets 0", "[10%][8%][8%][8%][8%][8%][8%][8%][8%][8%][8%][fill]", "[grow]"));
 	}
 
 	public RPNavbar(String title) {
@@ -124,15 +121,12 @@ public class RPNavbar extends JPanel {
 		float height = getHeight();
 
 		Graphics2D g2 = (Graphics2D) graphics.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-				RenderingHints.VALUE_STROKE_PURE);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
 		if (getBorder() != null) {
-			RoundRectangle2D rect = new RoundRectangle2D.Float(borderWidth / 2,
-					borderWidth / 2, width - borderWidth, height - borderWidth,
-					arc, arc);
+			RoundRectangle2D rect = new RoundRectangle2D.Float(borderWidth / 2, borderWidth / 2, width - borderWidth,
+					height - borderWidth, arc, arc);
 			g2.setColor(this.getBackground());
 			g2.fill(rect);
 		} else {

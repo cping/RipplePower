@@ -1,7 +1,5 @@
 package org.ripple.bouncycastle.asn1.x9;
 
-import java.io.IOException;
-
 import org.ripple.bouncycastle.asn1.ASN1Choice;
 import org.ripple.bouncycastle.asn1.ASN1Null;
 import org.ripple.bouncycastle.asn1.ASN1Object;
@@ -27,19 +25,7 @@ public class X962Parameters
         {
             return new X962Parameters((ASN1Primitive)obj);
         }
-
-        if (obj instanceof byte[])
-        {
-            try
-            {
-                return new X962Parameters(ASN1Primitive.fromByteArray((byte[])obj));
-            }
-            catch (IOException e)
-            {
-                throw new IllegalArgumentException("unable to parse encoded data: " + e.getMessage());
-            }
-        }
-
+        
         throw new IllegalArgumentException("unknown object in getInstance()");
     }
     

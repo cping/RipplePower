@@ -46,19 +46,16 @@ final class DecodedBitStreamParser {
 	/**
 	 * See ISO 18004:2006, 6.4.4 Table 5
 	 */
-	private static final char[] ALPHANUMERIC_CHARS = { '0', '1', '2', '3', '4',
-			'5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-			'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-			'V', 'W', 'X', 'Y', 'Z', ' ', '$', '%', '*', '+', '-', '.', '/',
-			':' };
+	private static final char[] ALPHANUMERIC_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+			'Y', 'Z', ' ', '$', '%', '*', '+', '-', '.', '/', ':' };
 	private static final int GB2312_SUBSET = 1;
 
 	private DecodedBitStreamParser() {
 	}
 
-	static DecoderResult decode(byte[] bytes, Version version,
-			ErrorCorrectionLevel ecLevel, Map<DecodeHintType, ?> hints)
-			throws FormatException {
+	static DecoderResult decode(byte[] bytes, Version version, ErrorCorrectionLevel ecLevel,
+			Map<DecodeHintType, ?> hints) throws FormatException {
 		BitSource bits = new BitSource(bytes);
 		StringBuilder result = new StringBuilder(50);
 		List<byte[]> byteSegments = new ArrayList<>(1);
@@ -80,8 +77,7 @@ final class DecodedBitStreamParser {
 															// 4 bits
 				}
 				if (mode != Mode.TERMINATOR) {
-					if (mode == Mode.FNC1_FIRST_POSITION
-							|| mode == Mode.FNC1_SECOND_POSITION) {
+					if (mode == Mode.FNC1_FIRST_POSITION || mode == Mode.FNC1_SECOND_POSITION) {
 						// We do little with FNC1 except alter the parsed result
 						// a bit according to the spec
 						fc1InEffect = true;
@@ -98,8 +94,7 @@ final class DecodedBitStreamParser {
 					} else if (mode == Mode.ECI) {
 						// Count doesn't apply to ECI
 						int value = parseECIValue(bits);
-						currentCharacterSetECI = CharacterSetECI
-								.getCharacterSetECIByValue(value);
+						currentCharacterSetECI = CharacterSetECI.getCharacterSetECIByValue(value);
 						if (currentCharacterSetECI == null) {
 							throw FormatException.getFormatInstance();
 						}
@@ -110,8 +105,7 @@ final class DecodedBitStreamParser {
 							// chinese mode contains a sub set indicator right
 							// after mode indicator
 							int subset = bits.readBits(4);
-							int countHanzi = bits.readBits(mode
-									.getCharacterCountBits(version));
+							int countHanzi = bits.readBits(mode.getCharacterCountBits(version));
 							if (subset == GB2312_SUBSET) {
 								decodeHanziSegment(bits, result, countHanzi);
 							}
@@ -119,17 +113,13 @@ final class DecodedBitStreamParser {
 							// "Normal" QR code modes:
 							// How many characters will follow, encoded in this
 							// mode?
-							int count = bits.readBits(mode
-									.getCharacterCountBits(version));
+							int count = bits.readBits(mode.getCharacterCountBits(version));
 							if (mode == Mode.NUMERIC) {
 								decodeNumericSegment(bits, result, count);
 							} else if (mode == Mode.ALPHANUMERIC) {
-								decodeAlphanumericSegment(bits, result, count,
-										fc1InEffect);
+								decodeAlphanumericSegment(bits, result, count, fc1InEffect);
 							} else if (mode == Mode.BYTE) {
-								decodeByteSegment(bits, result, count,
-										currentCharacterSetECI, byteSegments,
-										hints);
+								decodeByteSegment(bits, result, count, currentCharacterSetECI, byteSegments, hints);
 							} else if (mode == Mode.KANJI) {
 								decodeKanjiSegment(bits, result, count);
 							} else {
@@ -144,17 +134,14 @@ final class DecodedBitStreamParser {
 			throw FormatException.getFormatInstance();
 		}
 
-		return new DecoderResult(bytes, result.toString(),
-				byteSegments.isEmpty() ? null : byteSegments,
-				ecLevel == null ? null : ecLevel.toString(), symbolSequence,
-				parityData);
+		return new DecoderResult(bytes, result.toString(), byteSegments.isEmpty() ? null : byteSegments,
+				ecLevel == null ? null : ecLevel.toString(), symbolSequence, parityData);
 	}
 
 	/**
 	 * See specification GBT 18284-2000
 	 */
-	private static void decodeHanziSegment(BitSource bits,
-			StringBuilder result, int count) throws FormatException {
+	private static void decodeHanziSegment(BitSource bits, StringBuilder result, int count) throws FormatException {
 		// Don't crash trying to read more bits than we have available.
 		if (count * 13 > bits.available()) {
 			throw FormatException.getFormatInstance();
@@ -168,8 +155,7 @@ final class DecodedBitStreamParser {
 		while (count > 0) {
 			// Each 13 bits encodes a 2-byte character
 			int twoBytes = bits.readBits(13);
-			int assembledTwoBytes = ((twoBytes / 0x060) << 8)
-					| (twoBytes % 0x060);
+			int assembledTwoBytes = ((twoBytes / 0x060) << 8) | (twoBytes % 0x060);
 			if (assembledTwoBytes < 0x003BF) {
 				// In the 0xA1A1 to 0xAAFE range
 				assembledTwoBytes += 0x0A1A1;
@@ -190,8 +176,7 @@ final class DecodedBitStreamParser {
 		}
 	}
 
-	private static void decodeKanjiSegment(BitSource bits,
-			StringBuilder result, int count) throws FormatException {
+	private static void decodeKanjiSegment(BitSource bits, StringBuilder result, int count) throws FormatException {
 		// Don't crash trying to read more bits than we have available.
 		if (count * 13 > bits.available()) {
 			throw FormatException.getFormatInstance();
@@ -205,8 +190,7 @@ final class DecodedBitStreamParser {
 		while (count > 0) {
 			// Each 13 bits encodes a 2-byte character
 			int twoBytes = bits.readBits(13);
-			int assembledTwoBytes = ((twoBytes / 0x0C0) << 8)
-					| (twoBytes % 0x0C0);
+			int assembledTwoBytes = ((twoBytes / 0x0C0) << 8) | (twoBytes % 0x0C0);
 			if (assembledTwoBytes < 0x01F00) {
 				// In the 0x8140 to 0x9FFC range
 				assembledTwoBytes += 0x08140;
@@ -227,9 +211,8 @@ final class DecodedBitStreamParser {
 		}
 	}
 
-	private static void decodeByteSegment(BitSource bits, StringBuilder result,
-			int count, CharacterSetECI currentCharacterSetECI,
-			Collection<byte[]> byteSegments, Map<DecodeHintType, ?> hints)
+	private static void decodeByteSegment(BitSource bits, StringBuilder result, int count,
+			CharacterSetECI currentCharacterSetECI, Collection<byte[]> byteSegments, Map<DecodeHintType, ?> hints)
 			throws FormatException {
 		// Don't crash trying to read more bits than we have available.
 		if (8 * count > bits.available()) {
@@ -266,8 +249,7 @@ final class DecodedBitStreamParser {
 		return ALPHANUMERIC_CHARS[value];
 	}
 
-	private static void decodeAlphanumericSegment(BitSource bits,
-			StringBuilder result, int count, boolean fc1InEffect)
+	private static void decodeAlphanumericSegment(BitSource bits, StringBuilder result, int count, boolean fc1InEffect)
 			throws FormatException {
 		// Read two characters at a time
 		int start = result.length();
@@ -305,8 +287,7 @@ final class DecodedBitStreamParser {
 		}
 	}
 
-	private static void decodeNumericSegment(BitSource bits,
-			StringBuilder result, int count) throws FormatException {
+	private static void decodeNumericSegment(BitSource bits, StringBuilder result, int count) throws FormatException {
 		// Read three digits at a time
 		while (count >= 3) {
 			// Each 10 bits encodes three digits

@@ -208,15 +208,6 @@ public class PBEPBKDF2
         }
     }
 
-    public static class PBKDF2with8BIT
-        extends BasePBKDF2
-    {
-        public PBKDF2with8BIT()
-        {
-            super("PBKDF2", PKCS5S2);
-        }
-    }
-
     public static class Mappings
         extends AlgorithmProvider
     {
@@ -232,8 +223,6 @@ public class PBEPBKDF2
             provider.addAlgorithm("Alg.Alias.AlgorithmParameters." + PKCSObjectIdentifiers.id_PBKDF2, "PBKDF2");
             provider.addAlgorithm("SecretKeyFactory.PBKDF2", PREFIX + "$PBKDF2withUTF8");
             provider.addAlgorithm("Alg.Alias.SecretKeyFactory." + PKCSObjectIdentifiers.id_PBKDF2, "PBKDF2");
-            provider.addAlgorithm("SecretKeyFactory.PBKDF2WITHASCII", PREFIX + "$PBKDF2with8BIT");
-            provider.addAlgorithm("Alg.Alias.SecretKeyFactory.PBKDF2WITH8BIT", "PBKDF2WITHASCII");
         }
     }
 }

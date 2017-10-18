@@ -9,8 +9,7 @@ import com.ripple.client.responses.Response;
 
 public class RippleCommand {
 
-	public static void get(final Command cmd, JSONObject obj,
-			final Rollback back) {
+	public static void get(final Command cmd, JSONObject obj, final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(cmd);

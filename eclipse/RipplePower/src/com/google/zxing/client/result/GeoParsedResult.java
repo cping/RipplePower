@@ -26,8 +26,7 @@ public final class GeoParsedResult extends ParsedResult {
 	private final double altitude;
 	private final String query;
 
-	GeoParsedResult(double latitude, double longitude, double altitude,
-			String query) {
+	GeoParsedResult(double latitude, double longitude, double altitude, String query) {
 		super(ParsedResultType.GEO);
 		this.latitude = latitude;
 		this.longitude = longitude;

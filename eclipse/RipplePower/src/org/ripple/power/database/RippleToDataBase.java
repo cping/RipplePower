@@ -10,13 +10,11 @@ import org.ripple.power.utils.StringUtils;
 
 public class RippleToDataBase {
 
-	public static AddressManager go(String userFile, String baseDir)
-			throws IOException {
+	public static AddressManager go(String userFile, String baseDir) throws IOException {
 		return go(new File(userFile), baseDir);
 	}
 
-	public static AddressManager go(File userFile, String baseDir)
-			throws IOException {
+	public static AddressManager go(File userFile, String baseDir) throws IOException {
 		HashSet<String> caches = new HashSet<String>(10000);
 		AddressManager manager = new AddressManager(baseDir);
 		BufferedReader reader = new BufferedReader(new FileReader(userFile));
@@ -34,8 +32,7 @@ public class RippleToDataBase {
 						caches.clear();
 					}
 					if (i % 1000 == 0) {
-						System.out
-								.println(String.format("Has been read %s", i));
+						System.out.println(String.format("Has been read %s", i));
 					}
 					break;
 				default:

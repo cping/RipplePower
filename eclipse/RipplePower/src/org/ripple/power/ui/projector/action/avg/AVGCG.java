@@ -131,8 +131,7 @@ public class AVGCG {
 			if (old != null) {
 				final int x = old.getX();
 				final int y = old.getY();
-				AVGChara newObject = new AVGChara(path2, 0, 0, old.maxWidth,
-						old.maxHeight);
+				AVGChara newObject = new AVGChara(path2, 0, 0, old.maxWidth, old.maxHeight);
 				newObject.setMove(false);
 				newObject.setX(x);
 				newObject.setY(y);
@@ -144,8 +143,7 @@ public class AVGCG {
 	public void paint(LGraphics g) {
 		if (background != null) {
 			if (shakeNumber > 0) {
-				g.drawImage(background,
-						shakeNumber / 2 - LSystem.random.nextInt(shakeNumber),
+				g.drawImage(background, shakeNumber / 2 - LSystem.random.nextInt(shakeNumber),
 						shakeNumber / 2 - LSystem.random.nextInt(shakeNumber));
 			} else {
 				g.drawImage(background, 0, 0);

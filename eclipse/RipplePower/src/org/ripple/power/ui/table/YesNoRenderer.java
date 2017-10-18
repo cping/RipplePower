@@ -13,15 +13,14 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
-public class YesNoRenderer extends JCheckBox implements TableCellRenderer,
-		Serializable {
+public class YesNoRenderer extends JCheckBox implements TableCellRenderer, Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+	protected static Border noFocusBorder = new EmptyBorder(4, 4, 4, 4);
 
 	private Color unselectedForeground;
 
@@ -50,16 +49,14 @@ public class YesNoRenderer extends JCheckBox implements TableCellRenderer,
 		setBackground(null);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
 		if (isSelected) {
 			super.setForeground(table.getSelectionForeground());
 			super.setBackground(table.getSelectionBackground());
 		} else {
-			super.setForeground((unselectedForeground != null) ? unselectedForeground
-					: table.getForeground());
-			super.setBackground((unselectedBackground != null) ? unselectedBackground
-					: table.getBackground());
+			super.setForeground((unselectedForeground != null) ? unselectedForeground : table.getForeground());
+			super.setBackground((unselectedBackground != null) ? unselectedBackground : table.getBackground());
 		}
 
 		setFont(table.getFont());
@@ -68,18 +65,15 @@ public class YesNoRenderer extends JCheckBox implements TableCellRenderer,
 			setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
 
 			if (table.isCellEditable(row, column)) {
-				super.setForeground(UIManager
-						.getColor("Table.focusCellForeground"));
-				super.setBackground(UIManager
-						.getColor("Table.focusCellBackground"));
+				super.setForeground(UIManager.getColor("Table.focusCellForeground"));
+				super.setBackground(UIManager.getColor("Table.focusCellBackground"));
 			}
 		} else {
 			setBorder(noFocusBorder);
 		}
 		setValue(value);
 		Color back = getBackground();
-		boolean colorMatch = (back != null)
-				&& (back.equals(table.getBackground())) && table.isOpaque();
+		boolean colorMatch = (back != null) && (back.equals(table.getBackground())) && table.isOpaque();
 		setOpaque(!colorMatch);
 		return this;
 	}
@@ -96,15 +90,13 @@ public class YesNoRenderer extends JCheckBox implements TableCellRenderer,
 	public void repaint(Rectangle r) {
 	}
 
-	protected void firePropertyChange(String propertyName, Object oldValue,
-			Object newValue) {
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		if (propertyName.equals("text")) {
 			super.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
-	public void firePropertyChange(String propertyName, boolean oldValue,
-			boolean newValue) {
+	public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
 	}
 
 	protected void setValue(Object value) {
@@ -113,8 +105,7 @@ public class YesNoRenderer extends JCheckBox implements TableCellRenderer,
 			selected = ((Boolean) value).booleanValue();
 		}
 		if (value instanceof String) {
-			selected = "ok".equalsIgnoreCase((String) value)
-					|| "yes".equalsIgnoreCase((String) value)
+			selected = "ok".equalsIgnoreCase((String) value) || "yes".equalsIgnoreCase((String) value)
 					|| "true".equalsIgnoreCase((String) value);
 		}
 		setSelected(selected);

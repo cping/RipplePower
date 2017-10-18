@@ -57,8 +57,7 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
 	public static RPExchangeMinRateViewDialog showDialog(String text, JFrame parent) {
-		RPExchangeMinRateViewDialog dialog = new RPExchangeMinRateViewDialog(text,
-				parent);
+		RPExchangeMinRateViewDialog dialog = new RPExchangeMinRateViewDialog(text, parent);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.setVisible(true);
@@ -81,8 +80,7 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 			LSystem.invokeLater(new Updateable() {
 				public void action(Object o) {
 					RPExchangeMinRateViewDialog.this.repaint();
-					RPToast.makeText(RPExchangeMinRateViewDialog.this,
-							Currencies.name(name)).display();
+					RPToast.makeText(RPExchangeMinRateViewDialog.this, Currencies.name(name)).display();
 					RPExchangeMinRateViewDialog.this.repaint();
 				}
 			});
@@ -212,39 +210,40 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 			public void action(Object o) {
 				try {
 					for (; !_closed;) {
-						ArrayList<CoinmarketcapData> datas = OtherData
-								.getCoinmarketcapAllTo(30);
+						ArrayList<CoinmarketcapData> datas = null;
+						try {
+							datas = OtherData.getCoinmarketcapAllTo(30);
+						} catch (Exception e) {
+							datas = new ArrayList<CoinmarketcapData>();
+						}
 						final ArrayList<String> list = new ArrayList<String>(30);
 						for (CoinmarketcapData data : datas) {
 							list.add(data.toHTMLString());
 						}
-						_encryptcoinList
-								.setModel(new javax.swing.AbstractListModel<Object>() {
-									private static final long serialVersionUID = 1L;
+						_encryptcoinList.setModel(new javax.swing.AbstractListModel<Object>() {
+							private static final long serialVersionUID = 1L;
 
-									public int getSize() {
-										return list.size();
-									}
+							public int getSize() {
+								return list.size();
+							}
 
-									public Object getElementAt(int i) {
-										return list.get(i);
-									}
-								});
-						final ArrayList<String> curs = new ArrayList<String>(
-								100);
+							public Object getElementAt(int i) {
+								return list.get(i);
+							}
+						});
+						final ArrayList<String> curs = new ArrayList<String>(100);
 						curs.addAll(OtherData.getAllLegalTenderRateHTML());
-						_legalTenderList
-								.setModel(new javax.swing.AbstractListModel<Object>() {
-									private static final long serialVersionUID = 1L;
+						_legalTenderList.setModel(new javax.swing.AbstractListModel<Object>() {
+							private static final long serialVersionUID = 1L;
 
-									public int getSize() {
-										return curs.size();
-									}
+							public int getSize() {
+								return curs.size();
+							}
 
-									public Object getElementAt(int i) {
-										return curs.get(i);
-									}
-								});
+							public Object getElementAt(int i) {
+								return curs.get(i);
+							}
+						});
 
 						waitDialog.closeDialog();
 						Thread.sleep(LSystem.MINUTE);
@@ -268,15 +267,13 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 
 		_threeLabel.setFont(UIRes.getFont()); // NOI18N
 		_threeLabel.setForeground(LColor.white);
-		_threeLabel.setText(LangConfig.get(this, "lt", "Legal tender")
-				+ "(usd-cny)");
+		_threeLabel.setText(LangConfig.get(this, "lt", "Legal tender") + "(usd-cny)");
 		panelOne.add(_threeLabel);
 		_threeLabel.setBounds(380, 10, 360, 20);
 
 		_fourLabel.setFont(UIRes.getFont()); // NOI18N
 		_fourLabel.setForeground(LColor.white);
-		_fourLabel.setText(LangConfig.get(this, "em", "Electronic money")
-				+ "(coinmarketcap)");
+		_fourLabel.setText(LangConfig.get(this, "em", "Electronic money") + "(coinmarketcap)");
 		panelOne.add(_fourLabel);
 		_fourLabel.setBounds(10, 10, 360, 20);
 
@@ -304,10 +301,8 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				final String src = ((String) _srcComboBox.getSelectedItem())
-						.trim();
-				final String dst = ((String) _dstComboBox.getSelectedItem())
-						.trim();
+				final String src = ((String) _srcComboBox.getSelectedItem()).trim();
+				final String dst = ((String) _dstComboBox.getSelectedItem()).trim();
 				if (src.length() != 3 || dst.length() != 3) {
 					return;
 				}
@@ -326,15 +321,13 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 					_dstText.setText(_srcText.getText());
 					return;
 				}
-				final WaitDialog dialog = WaitDialog
-						.showDialog(RPExchangeMinRateViewDialog.this);
+				final WaitDialog dialog = WaitDialog.showDialog(RPExchangeMinRateViewDialog.this);
 				_waitDialogs.add(dialog);
 				Updateable updateable = new Updateable() {
 
 					@Override
 					public void action(Object o) {
-						_dstText.setText(OfferPrice.getMoneyConvert(srcValue,
-								src, dst));
+						_dstText.setText(OfferPrice.getMoneyConvert(srcValue, src, dst));
 						dialog.closeDialog();
 					}
 				};
@@ -350,13 +343,13 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -373,24 +366,24 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

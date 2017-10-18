@@ -39,7 +39,7 @@ import org.ripple.bouncycastle.x509.extension.X509ExtensionUtil;
 
 /**
  * class to produce an X.509 Version 3 certificate.
- *  @deprecated use org.bouncycastle.cert.X509v3CertificateBuilder.
+ *  @deprecated use org.ripple.bouncycastle.cert.X509v3CertificateBuilder.
  */
 public class X509V3CertificateGenerator
 {

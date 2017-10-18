@@ -42,8 +42,7 @@ public class Millisecond extends RegularTimer implements Serializable {
 		peg(Calendar.getInstance());
 	}
 
-	public Millisecond(int millisecond, int second, int minute, int hour,
-			int day, int month, int year) {
+	public Millisecond(int millisecond, int second, int minute, int hour, int day, int month, int year) {
 
 		this(millisecond, new Second(second, minute, hour, day, month, year));
 
@@ -69,8 +68,7 @@ public class Millisecond extends RegularTimer implements Serializable {
 	}
 
 	public Second getSecond() {
-		return new Second(this.second, this.minute, this.hour,
-				this.day.getDayOfMonth(), this.day.getMonth(),
+		return new Second(this.second, this.minute, this.hour, this.day.getDayOfMonth(), this.day.getMonth(),
 				this.day.getYear());
 	}
 
@@ -184,8 +182,7 @@ public class Millisecond extends RegularTimer implements Serializable {
 			RegularTimer rtp = (RegularTimer) obj;
 			final long thisVal = this.getFirstMillisecond();
 			final long anotherVal = rtp.getFirstMillisecond();
-			result = (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0
-					: 1));
+			result = (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 		} else {
 			result = 1;
 		}

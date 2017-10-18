@@ -61,8 +61,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 
 	private boolean isEnglish;
 
-	public AVGScreen(boolean isEnglish, final String initscript,
-			final String initdialog) {
+	public AVGScreen(boolean isEnglish, final String initscript, final String initdialog) {
 		this(isEnglish, initscript, new LImage(initdialog));
 	}
 
@@ -70,8 +69,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		this(isEnglish, initscript, new LImage(img));
 	}
 
-	public AVGScreen(boolean isEnglish, final String initscript,
-			final LImage img) {
+	public AVGScreen(boolean isEnglish, final String initscript, final LImage img) {
 		if (initscript == null) {
 			return;
 		}
@@ -118,8 +116,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		this.desktop = new Desktop(this, getWidth(), getHeight());
 		this.sprites = new Sprites(getWidth(), getHeight());
 		if (dialog == null) {
-			dialog = LImage.createImage(getWidth() - 20, getHeight() / 2 - 20,
-					true);
+			dialog = LImage.createImage(getWidth() - 20, getHeight() / 2 - 20, true);
 			LGraphics g = dialog.getLGraphics();
 			g.setColor(0, 0, 0, 125);
 			g.fillRect(0, 0, dialog.getWidth(), dialog.getHeight());
@@ -132,21 +129,18 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		if (isEnglish) {
 			int size = 35;
 			this.message.setMessageLength(size);
-			this.message.setLocation((getWidth() - message.getWidth()) / 2,
-					getHeight() - message.getHeight() - 10);
+			this.message.setLocation((getWidth() - message.getWidth()) / 2, getHeight() - message.getHeight() - 10);
 			this.message.setTopOffset(+5);
 
 		} else {
-			int size = message.getWidth()
-					/ (message.getMessageFont().getSize());
+			int size = message.getWidth() / (message.getMessageFont().getSize());
 			if (size % 2 != 0) {
 				size = size - 3;
 			} else {
 				size = size - 4;
 			}
 			this.message.setMessageLength(size);
-			this.message.setLocation((getWidth() - message.getWidth()) / 2,
-					getHeight() - message.getHeight() - 10);
+			this.message.setLocation((getWidth() - message.getWidth()) / 2, getHeight() - message.getHeight() - 10);
 			this.message.setTopOffset(-5);
 		}
 		this.message.setVisible(false);
@@ -231,8 +225,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 		} else {
 			scrCG.sleep--;
 			if (color != null) {
-				float alpha = (float) (scrCG.sleepMax - scrCG.sleep)
-						/ scrCG.sleepMax;
+				float alpha = (float) (scrCG.sleepMax - scrCG.sleep) / scrCG.sleepMax;
 				if (alpha > 0.1f && alpha < 1.0f) {
 					if (scrCG.getBackgroundCG() != null) {
 						g.drawImage(scrCG.getBackgroundCG(), 0, 0);
@@ -288,11 +281,10 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						scrFlag = true;
 						break;
 					}
-		
+
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_SNOWSTOP)
 							|| cmdFlag.equalsIgnoreCase(CommandType.L_RAINSTOP)
-							|| cmdFlag
-									.equalsIgnoreCase(CommandType.L_PETALSTOP)) {
+							|| cmdFlag.equalsIgnoreCase(CommandType.L_PETALSTOP)) {
 						continue;
 					}
 
@@ -320,11 +312,9 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						if (sprites != null) {
 							sprites.removeAll();
 							if (cmdFlag.equalsIgnoreCase(CommandType.L_FADEIN)) {
-								sprites.add(FadeEffect.getInstance(
-										FadeEffect.TYPE_FADE_IN, color));
+								sprites.add(FadeEffect.getInstance(FadeEffect.TYPE_FADE_IN, color));
 							} else {
-								sprites.add(FadeEffect.getInstance(
-										FadeEffect.TYPE_FADE_OUT, color));
+								sprites.add(FadeEffect.getInstance(FadeEffect.TYPE_FADE_OUT, color));
 							}
 						}
 						continue;
@@ -348,8 +338,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_MESLEN)) {
 						if (mesFlag != null) {
 							if (MathUtils.isNan(mesFlag)) {
-								message.setMessageLength(Integer
-										.parseInt(mesFlag));
+								message.setMessageLength(Integer.parseInt(mesFlag));
 							}
 						}
 						continue;
@@ -398,8 +387,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						}
 						scrFlag = true;
 						String nMessage = mesFlag;
-						message.setMessage(StringUtils.replace(nMessage, "&",
-								" "));
+						message.setMessage(StringUtils.replace(nMessage, "&", " "));
 						message.setVisible(true);
 						break;
 					}
@@ -441,12 +429,9 @@ public abstract class AVGScreen extends Screen implements Runnable {
 					if (cmdFlag.equalsIgnoreCase(CommandType.L_FLASH)) {
 						scrFlag = true;
 						String[] colors = mesFlag.split(",");
-						if (color == null && colors != null
-								&& colors.length == 3) {
-							color = new LColor(Integer.valueOf(colors[0])
-									.intValue(), Integer.valueOf(colors[1])
-									.intValue(), Integer.valueOf(colors[2])
-									.intValue());
+						if (color == null && colors != null && colors.length == 3) {
+							color = new LColor(Integer.valueOf(colors[0]).intValue(),
+									Integer.valueOf(colors[1]).intValue(), Integer.valueOf(colors[2]).intValue());
 							scrCG.sleep = 20;
 							scrCG.sleepMax = scrCG.sleep;
 							scrFlag = false;
@@ -470,8 +455,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 						if (mesFlag == null) {
 							return;
 						}
-						if (scrCG != null
-								&& scrCG.count() > LSystem.DEFAULT_MAX_CACHE_SIZE) {
+						if (scrCG != null && scrCG.count() > LSystem.DEFAULT_MAX_CACHE_SIZE) {
 							scrCG.dispose();
 						}
 						if (mesFlag.equalsIgnoreCase(CommandType.L_DEL)) {
@@ -480,8 +464,7 @@ public abstract class AVGScreen extends Screen implements Runnable {
 							} else {
 								scrCG.dispose();
 							}
-						} else if (lastFlag != null
-								&& CommandType.L_TO.equalsIgnoreCase(orderFlag)) {
+						} else if (lastFlag != null && CommandType.L_TO.equalsIgnoreCase(orderFlag)) {
 							scrCG.replace(mesFlag, lastFlag);
 						} else {
 							int x = 0, y = 0;

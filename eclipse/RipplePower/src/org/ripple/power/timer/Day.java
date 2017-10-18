@@ -16,17 +16,13 @@ public class Day extends RegularTimer implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected static final DateFormat DATE_FORMAT = new SimpleDateFormat(
-			"yyyy-MM-dd");
+	protected static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-	protected static final DateFormat DATE_FORMAT_SHORT = DateFormat
-			.getDateInstance(DateFormat.SHORT);
+	protected static final DateFormat DATE_FORMAT_SHORT = DateFormat.getDateInstance(DateFormat.SHORT);
 
-	protected static final DateFormat DATE_FORMAT_MEDIUM = DateFormat
-			.getDateInstance(DateFormat.MEDIUM);
+	protected static final DateFormat DATE_FORMAT_MEDIUM = DateFormat.getDateInstance(DateFormat.MEDIUM);
 
-	protected static final DateFormat DATE_FORMAT_LONG = DateFormat
-			.getDateInstance(DateFormat.LONG);
+	protected static final DateFormat DATE_FORMAT_LONG = DateFormat.getDateInstance(DateFormat.LONG);
 
 	private SerialDate serialDate;
 

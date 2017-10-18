@@ -15,19 +15,17 @@ import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
 import com.ripple.config.Config;
+import com.ripple.crypto.ecdsa.K256KeyPair;
 import com.ripple.crypto.ecdsa.SECP256K1;
 import com.ripple.utils.Utils;
 
 public class NativeSupport {
 
-	public static boolean isWindows = System.getProperty("os.name").contains(
-			"Windows");
-	public static boolean isLinux = System.getProperty("os.name").contains(
-			"Linux");
+	public static boolean isWindows = System.getProperty("os.name").contains("Windows");
+	public static boolean isLinux = System.getProperty("os.name").contains("Linux");
 	public static boolean isMac = System.getProperty("os.name").contains("Mac");
 	public static boolean isAndroid = false;
-	public static boolean is64Bit = System.getProperty("os.arch").equals(
-			"amd64");
+	public static boolean is64Bit = System.getProperty("os.arch").equals("amd64");
 
 	private static HashSet<String> loadedLibraries = new HashSet<String>();
 
@@ -66,8 +64,7 @@ public class NativeSupport {
 		return libraryName;
 	}
 
-	public static synchronized void loadJNI(String libraryName)
-			throws Throwable {
+	public static synchronized void loadJNI(String libraryName) throws Throwable {
 		libraryName = libNames(libraryName);
 		if (loadedLibraries.contains(libraryName)) {
 			return;
@@ -84,22 +81,19 @@ public class NativeSupport {
 		loadedLibraries.add(libraryName);
 	}
 
-	public static File export(String sourcePath, String dirName)
-			throws IOException {
+	public static File export(String sourcePath, String dirName) throws IOException {
 		return export(sourcePath, dirName, null);
 	}
 
-	public static File export(String sourcePath, String dirName, String name)
-			throws IOException {
+	public static File export(String sourcePath, String dirName, String name) throws IOException {
 		ClassLoader loader = NativeSupport.class.getClassLoader();
 		String sourceCrc = CRC(loader.getResourceAsStream(sourcePath));
 		if (dirName == null) {
 			dirName = sourceCrc;
 		}
-		File extractedDir = new File(System.getProperty("java.io.tmpdir")
-				+ "/loon" + LSystem.getUserName() + "/" + dirName);
-		File extractedFile = new File(extractedDir, name == null ? new File(
-				sourcePath).getName() : name);
+		File extractedDir = new File(
+				System.getProperty("java.io.tmpdir") + "/loon" + LSystem.getUserName() + "/" + dirName);
+		File extractedFile = new File(extractedDir, name == null ? new File(sourcePath).getName() : name);
 		String extractedCrc = null;
 		if (extractedFile.exists()) {
 			try {
@@ -125,8 +119,7 @@ public class NativeSupport {
 				input.close();
 				output.close();
 			} catch (IOException ex) {
-				throw new RuntimeException("Error extracting file: "
-						+ sourcePath, ex);
+				throw new RuntimeException("Error extracting file: " + sourcePath, ex);
 			}
 		}
 		return extractedFile.exists() ? extractedFile : null;
@@ -215,7 +208,7 @@ public class NativeSupport {
 			return getNxtHashKeys(publicKeyHash);
 		} else {
 			byte[] publicKey = new byte[32];
-			Curve25519.keygen(publicKey, Helper.update(publicKeyHash));
+			Curve25519.keygen(publicKey, null, Helper.update(publicKeyHash));
 			publicKeyHash = Helper.update(publicKey);
 		}
 		return publicKeyHash;
@@ -228,8 +221,7 @@ public class NativeSupport {
 	public static String getBitcoinPrivateKey(String secret, boolean compressed) {
 		if (useLoonNative) {
 			try {
-				return getByteKeys(secret.getBytes(LSystem.encoding),
-						compressed);
+				return getByteKeys(secret.getBytes(LSystem.encoding), compressed);
 			} catch (Exception e) {
 				return "";
 			}
@@ -240,8 +232,7 @@ public class NativeSupport {
 			} catch (UnsupportedEncodingException e) {
 				return "";
 			}
-			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(1, hash),
-					compressed);
+			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(1, hash), compressed);
 			boolean c = (pub.length == 33);
 			byte[] bytes = hash;
 			if (c) {
@@ -256,15 +247,12 @@ public class NativeSupport {
 			System.arraycopy(bytes, 0, addressBytes, 1, size);
 			byte[] check = Helper.doubleDigest(addressBytes, 0, size + 1);
 			System.arraycopy(check, 0, addressBytes, size + 1, 4);
-			return CoinUtils.publicKeyToAddress(pub) + ","
-					+ CoinUtils.encodeBase58(addressBytes);
+			return CoinUtils.publicKeyToAddress(pub) + "," + CoinUtils.encodeBase58(addressBytes);
 		}
 	}
 
-	public static String getBitcoinBigIntegerPrivateKey(BigInteger id,
-			boolean compressed) {
-		String hashString = MathUtils.addZeros(
-				CoinUtils.toHex(id.toByteArray()), 64);
+	public static String getBitcoinBigIntegerPrivateKey(BigInteger id, boolean compressed) {
+		String hashString = MathUtils.addZeros(CoinUtils.toHex(id.toByteArray()), 64);
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
 			try {
@@ -273,8 +261,7 @@ public class NativeSupport {
 				return "";
 			}
 		} else {
-			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(hash),
-					compressed);
+			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(hash), compressed);
 			boolean c = (pub.length == 33);
 			byte[] bytes = hash;
 			if (c) {
@@ -289,13 +276,11 @@ public class NativeSupport {
 			System.arraycopy(bytes, 0, addressBytes, 1, size);
 			byte[] check = Helper.doubleDigest(addressBytes, 0, size + 1);
 			System.arraycopy(check, 0, addressBytes, size + 1, 4);
-			return CoinUtils.publicKeyToAddress(pub) + ","
-					+ CoinUtils.encodeBase58(addressBytes);
+			return CoinUtils.publicKeyToAddress(pub) + "," + CoinUtils.encodeBase58(addressBytes);
 		}
 	}
 
-	public static String getBitcoinBigIntegerPrivateKey(String hashString,
-			boolean compressed) {
+	public static String getBitcoinBigIntegerPrivateKey(String hashString, boolean compressed) {
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
 			try {
@@ -304,8 +289,7 @@ public class NativeSupport {
 				return "";
 			}
 		} else {
-			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(hash),
-					compressed);
+			byte[] pub = CoinUtils.generatePublicKey(new BigInteger(hash), compressed);
 			boolean c = (pub.length == 33);
 			byte[] bytes = hash;
 			if (c) {
@@ -320,8 +304,7 @@ public class NativeSupport {
 			System.arraycopy(bytes, 0, addressBytes, 1, size);
 			byte[] check = Helper.doubleDigest(addressBytes, 0, size + 1);
 			System.arraycopy(check, 0, addressBytes, size + 1, 4);
-			return CoinUtils.publicKeyToAddress(pub) + ","
-					+ CoinUtils.encodeBase58(addressBytes);
+			return CoinUtils.publicKeyToAddress(pub) + "," + CoinUtils.encodeBase58(addressBytes);
 		}
 	}
 
@@ -346,8 +329,7 @@ public class NativeSupport {
 		publicGenBytes = CoinUtils.generateKey(privateGen);
 		i = 0;
 		for (;;) {
-			byte[] secretBytes = hashedIncrement(
-					appendIntBytes(publicGenBytes, seq), i++);
+			byte[] secretBytes = hashedIncrement(appendIntBytes(publicGenBytes, seq), i++);
 
 			secret = Utils.uBigInt(secretBytes);
 			if (secret.compareTo(order) == -1) {
@@ -385,29 +367,23 @@ public class NativeSupport {
 	}
 
 	public static String getRipplePrivateKey(String secret) {
-		if (useLoonNative) {
+		if (true) {
 			try {
 				return getRippleByteKeys(secret.getBytes(LSystem.encoding));
 			} catch (Throwable t) {
 				try {
-					byte[] master = Helper.quarterSha512(secret
-							.getBytes(LSystem.encoding));
-					String seed = Config.getB58IdentiferCodecs()
-							.encodeFamilySeed(master);
-					return new RipplePublicKey(createKeyPair(master))
-							.getAddress().toString() + "," + seed;
+					byte[] master = Helper.quarterSha512(secret.getBytes(LSystem.encoding));
+					String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(master);
+					return new RipplePublicKey(createKeyPair(master)).getAddress().toString() + "," + seed;
 				} catch (Exception ex) {
 					return "";
 				}
 			}
 		} else {
 			try {
-				byte[] master = Helper.quarterSha512(secret
-						.getBytes(LSystem.encoding));
-				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(
-						master);
-				return new RipplePublicKey(createKeyPair(master)).getAddress()
-						.toString() + "," + seed;
+				byte[] master = Helper.quarterSha512(secret.getBytes(LSystem.encoding));
+				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(master);
+				return new RipplePublicKey(createKeyPair(master)).getAddress().toString() + "," + seed;
 			} catch (Exception e) {
 				return "";
 			}
@@ -415,28 +391,23 @@ public class NativeSupport {
 	}
 
 	public static String getRippleBigIntegerPrivateKey(BigInteger id) {
-		String hashString = MathUtils.addZeros(
-				CoinUtils.toHex(id.toByteArray()), 32);
+		String hashString = MathUtils.addZeros(CoinUtils.toHex(id.toByteArray()), 32);
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
 			try {
 				return new String(getRippleHashKeys(hash));
 			} catch (Throwable t) {
 				try {
-					String seed = Config.getB58IdentiferCodecs()
-							.encodeFamilySeed(hash);
-					return new RipplePublicKey(createKeyPair(hash))
-							.getAddress().toString() + "," + seed;
+					String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+					return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 				} catch (Exception e) {
 					return "";
 				}
 			}
 		} else {
 			try {
-				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(
-						hash);
-				return new RipplePublicKey(createKeyPair(hash)).getAddress()
-						.toString() + "," + seed;
+				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+				return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 			} catch (Exception e) {
 				return "";
 			}
@@ -450,20 +421,16 @@ public class NativeSupport {
 				return new String(getRippleHashKeys(hash));
 			} catch (Throwable t) {
 				try {
-					String seed = Config.getB58IdentiferCodecs()
-							.encodeFamilySeed(hash);
-					return new RipplePublicKey(createKeyPair(hash))
-							.getAddress().toString() + "," + seed;
+					String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+					return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 				} catch (Exception e) {
 					return "";
 				}
 			}
 		} else {
 			try {
-				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(
-						hash);
-				return new RipplePublicKey(createKeyPair(hash)).getAddress()
-						.toString() + "," + seed;
+				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+				return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 			} catch (Exception e) {
 				return "";
 			}
@@ -471,8 +438,7 @@ public class NativeSupport {
 	}
 
 	public static String[] getRippleBatch(BigInteger id, int max) {
-		String hashString = MathUtils.addZeros(
-				CoinUtils.toHex(id.toByteArray()), 32);
+		String hashString = MathUtils.addZeros(CoinUtils.toHex(id.toByteArray()), 32);
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
 			try {
@@ -506,28 +472,23 @@ public class NativeSupport {
 	}
 
 	public static String getRippleBigIntegerPrivateKeys(BigInteger id) {
-		String hashString = MathUtils.addZeros(
-				CoinUtils.toHex(id.toByteArray()), 32);
+		String hashString = MathUtils.addZeros(CoinUtils.toHex(id.toByteArray()), 32);
 		byte[] hash = CoinUtils.fromHex(hashString);
 		if (useLoonNative) {
 			try {
 				return new String(getRippleHashKeys(hash));
 			} catch (Throwable t) {
 				try {
-					String seed = Config.getB58IdentiferCodecs()
-							.encodeFamilySeed(hash);
-					return new RipplePublicKey(createKeyPair(hash))
-							.getAddress().toString() + "," + seed;
+					String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+					return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 				} catch (Exception e) {
 					return "";
 				}
 			}
 		} else {
 			try {
-				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(
-						hash);
-				return new RipplePublicKey(createKeyPair(hash)).getAddress()
-						.toString() + "," + seed;
+				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+				return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
 			} catch (Exception e) {
 				return "";
 			}
@@ -560,8 +521,7 @@ public class NativeSupport {
 						int go = 34 - skip;
 						if (go + index < size && src[go + index] == _tag) {
 							index = index + go;
-						} else if ((go + index - 1) < size
-								&& src[(go + index - 1)] == _tag) {
+						} else if ((go + index - 1) < size && src[(go + index - 1)] == _tag) {
 							index = (index + go - 1);
 						}
 					}

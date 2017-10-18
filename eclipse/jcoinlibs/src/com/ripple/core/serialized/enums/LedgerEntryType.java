@@ -15,13 +15,15 @@ public enum LedgerEntryType implements SerializedType{
     DirectoryNode('d'),
     GeneratorMap ('g'),
     RippleState ('r'),
+    SuspendedPayment ('u'),
     // Nickname ('n'), // deprecated
     Offer ('o'),
     Contract ('c'),
     LedgerHashes ('h'),
-    EnabledAmendments('f'),
+    Amendments('f'),
     FeeSettings ('s'),
-    Ticket('T');
+    Ticket('T'),
+    SignerList('S');
 
     final int ord;
     LedgerEntryType(int i) {

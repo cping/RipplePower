@@ -75,14 +75,13 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 	}
 
 	public RPAddressDialog(JFrame parent) {
-		super(parent, LangConfig.get(RPAddressDialog.class, "title",
-				"Import or create a public key and a secret key"),
+		super(parent, LangConfig.get(RPAddressDialog.class, "title", "Import or create a public key and a secret key"),
 				Dialog.ModalityType.DOCUMENT_MODAL);
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setLayout(new FlowLayout());
 		setResizable(false);
-		Dimension dim = new Dimension(610, 365);
+		Dimension dim = new Dimension(610, 375);
 		setPreferredSize(dim);
 		setSize(dim);
 		initUI();
@@ -216,11 +215,9 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 			dialog.setModal(true);
 			dialog.setVisible(true);
 			if (dialog.getAddress() != null) {
-				byte[] buffer = Config.getB58IdentiferCodecs()
-						.decodeFamilySeed(dialog.getAddress());
+				byte[] buffer = Config.getB58IdentiferCodecs().decodeFamilySeed(dialog.getAddress());
 				String hex = CoinUtils.toHex(buffer);
-				String result = NativeSupport
-						.getRippleBigIntegerPrivateKey(hex);
+				String result = NativeSupport.getRippleBigIntegerPrivateKey(hex);
 				String[] splits = result.split(",");
 				publicAddressText.setText(splits[0]);
 				privateAddressText.setText(splits[1]);
@@ -230,8 +227,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 				pInput = true;
 			}
 		} catch (IOException e) {
-			UIRes.showErrorMessage(this, "Import failed",
-					"Paper wallet import fails !" + e.getMessage());
+			UIRes.showErrorMessage(this, "Import failed", "Paper wallet import fails !" + e.getMessage());
 		}
 
 	}
@@ -243,8 +239,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 			try {
 				String[] res = text.split(" ");
 				if (res.length < 3) {
-					UIRes.showErrorMessage(this, UIMessage.error,
-							"Less than three words, The phrase is malformed !");
+					UIRes.showErrorMessage(this, UIMessage.error, "Less than three words, The phrase is malformed !");
 					return;
 				}
 				PasswordMnemonic mnemonic = new PasswordMnemonic();
@@ -256,13 +251,11 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 				privateAddressText.setText(splits[1]);
 				pInput = true;
 			} catch (Exception ex) {
-				UIRes.showErrorMessage(this, UIMessage.error,
-						"The phrase can not be decrypted !");
+				UIRes.showErrorMessage(this, UIMessage.error, "The phrase can not be decrypted !");
 				return;
 			}
 		} else {
-			UIRes.showErrorMessage(this, UIMessage.error,
-					"Less than three words, The phrase is malformed !");
+			UIRes.showErrorMessage(this, UIMessage.error, "Less than three words, The phrase is malformed !");
 		}
 	}
 
@@ -272,16 +265,13 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		pInput = false;
 		String pri = privateAddressText.getText();
 		if (!AccountFind.isRippleSecret(pri)) {
-			UIRes.showErrorMessage(this, UIMessage.error,
-					"This is not a Ripple Address Secret !");
+			UIRes.showErrorMessage(this, UIMessage.error, "This is not a Ripple Address Secret !");
 			return;
 		} else {
 			try {
-				byte[] buffer = Config.getB58IdentiferCodecs()
-						.decodeFamilySeed(pri);
+				byte[] buffer = Config.getB58IdentiferCodecs().decodeFamilySeed(pri);
 				String hex = CoinUtils.toHex(buffer);
-				String result = NativeSupport
-						.getRippleBigIntegerPrivateKey(hex);
+				String result = NativeSupport.getRippleBigIntegerPrivateKey(hex);
 				String[] splits = result.split(",");
 				publicAddressText.setText(splits[0]);
 				privateAddressText.setText(splits[1]);
@@ -290,8 +280,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				UIRes.showErrorMessage(this, UIMessage.error,
-						"Private Key data exception, the import failed !");
+				UIRes.showErrorMessage(this, UIMessage.error, "Private Key data exception, the import failed !");
 			}
 		}
 	}
@@ -308,8 +297,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		}
 		if (hex.length() > 1) {
 			try {
-				String result = NativeSupport
-						.getRippleBigIntegerPrivateKey(hex);
+				String result = NativeSupport.getRippleBigIntegerPrivateKey(hex);
 				String[] splits = result.split(",");
 				publicAddressText.setText(splits[0]);
 				privateAddressText.setText(splits[1]);
@@ -318,11 +306,8 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				UIRes.showErrorMessage(
-						this,
-						UIMessage.error,
-						"Private Key data exception, the import failed !"
-								+ ex.getMessage());
+				UIRes.showErrorMessage(this, UIMessage.error,
+						"Private Key data exception, the import failed !" + ex.getMessage());
 			}
 		}
 	}
@@ -331,16 +316,13 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		pInput = false;
 		String password = passwordText.getText();
 		if (password.length() < 6) {
-			UIRes.showErrorMessage(this, UIMessage.error,
-					"Brain wallet password at least not less than six figures!");
+			UIRes.showErrorMessage(this, UIMessage.error, "Brain wallet password at least not less than six figures!");
 			brainError = true;
 		} else if (StringUtils.isAlphabet(password)) {
-			UIRes.showErrorMessage(this, UIMessage.error,
-					"All alphabet are not allowed !");
+			UIRes.showErrorMessage(this, UIMessage.error, "All alphabet are not allowed !");
 			brainError = true;
 		} else if (StringUtils.isNumber(password)) {
-			UIRes.showErrorMessage(this, UIMessage.error,
-					"All number are not allowed !");
+			UIRes.showErrorMessage(this, UIMessage.error, "All number are not allowed !");
 			brainError = true;
 		}
 		if (!brainError && password.length() > 5) {
@@ -359,11 +341,8 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 				shortSayText.setText(result);
 				pInput = true;
 			} catch (Exception ex) {
-				UIRes.showErrorMessage(
-						this,
-						UIMessage.error,
-						"Private Key data exception, the import failed !"
-								+ ex.getMessage());
+				UIRes.showErrorMessage(this, UIMessage.error,
+						"Private Key data exception, the import failed !" + ex.getMessage());
 			}
 		}
 	}
@@ -409,8 +388,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		pMyButton.setFont(defFont);
 		pPaperButton.setFont(defFont);
 
-		pBrainButton.setText(LangConfig.get(this, "brain_wallet",
-				"Brain Wallet"));
+		pBrainButton.setText(LangConfig.get(this, "brain_wallet", "Brain Wallet"));
 		pBrainButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jRadioButton1ActionPerformed(evt);
@@ -419,8 +397,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		add(pBrainButton);
 		pBrainButton.setBounds(15, 10, 100, 28);
 
-		pRandButton.setText(LangConfig.get(this, "random_secret",
-				"Random Secret"));
+		pRandButton.setText(LangConfig.get(this, "random_secret", "Random Secret"));
 		pRandButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jRadioButton2ActionPerformed(evt);
@@ -447,8 +424,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		add(pPassButton);
 		pPassButton.setBounds(310, 10, 100, 28);
 
-		pPaperButton.setText(LangConfig.get(this, "use_paperwallet",
-				"Use Paper Wallet"));
+		pPaperButton.setText(LangConfig.get(this, "use_paperwallet", "Use Paper Wallet"));
 		pPaperButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jRadioButton5ActionPerformed(evt);
@@ -588,10 +564,9 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 			String pub = publicAddressText.getText();
 			String pri = privateAddressText.getText();
 			if (pub.length() > 0 && pri.length() > 0) {
-				int result = UIRes.showConfirmMessage(this,
-						"Private Key import", LangConfig.get(this, "import",
-								"Import the data to current wallet ?"),
-						UIMessage.ok, UIMessage.cancel);
+				int result = UIRes.showConfirmMessage(this, "Private Key import",
+						LangConfig.get(this, "import", "Import the data to current wallet ?"), UIMessage.ok,
+						UIMessage.cancel);
 				if (result == 0) {
 					WalletCache.get().add(pub, pri);
 					try {
@@ -599,8 +574,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 					} catch (Exception e) {
 						UIRes.showErrorMessage(this,
 
-						UIMessage.error,
-								"System exception, wallets save failed !");
+								UIMessage.error, "System exception, wallets save failed !");
 						return;
 					}
 					SwingUtils.close(this);
@@ -643,19 +617,13 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 			String context = copy.toString();
 			if (context.length() > 0) {
 				clip.setClipboardContents(context);
-				UIRes.showInfoMessage(this,UIMessage.info,
-						"Current data has been saved to the clipboard"
-						);
+				UIRes.showInfoMessage(this, UIMessage.info, "Current data has been saved to the clipboard");
 			} else {
-				UIRes.showWarningMessage(this,UIMessage.warning, "No data can be copy"
-						);
+				UIRes.showWarningMessage(this, UIMessage.warning, "No data can be copy");
 			}
 		} catch (Exception ex) {
-			UIRes
-					.showErrorMessage(
-							this,UIMessage.error,
-							"Failure, the current data can not be saved to the clipboard !"
-							);
+			UIRes.showErrorMessage(this, UIMessage.error,
+					"Failure, the current data can not be saved to the clipboard !");
 			return;
 		}
 	}

@@ -123,12 +123,11 @@ public class RPButton extends JButton {
 		if (g != null) {
 			g2d.setRenderingHints(GraphicsUtils.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setRenderingHints(GraphicsUtils.VALUE_ANTIALIAS_ON);
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		}
 		super.paintComponent(g2d);
 		g2d.dispose();
 	}
+
 }

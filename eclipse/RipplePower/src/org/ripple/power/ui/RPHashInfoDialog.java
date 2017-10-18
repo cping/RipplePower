@@ -93,7 +93,7 @@ public class RPHashInfoDialog extends ABaseDialog implements WindowListener {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(505, 750);
+		Dimension dim = new Dimension(505, 760);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -346,9 +346,7 @@ public class RPHashInfoDialog extends ABaseDialog implements WindowListener {
 
 	private void loadHash(final String hash) {
 		if (!AccountFind.is256hash(hash)) {
-			RPToast.makeText(RPHashInfoDialog.this,
-					"Here only query transaction Hash !", Style.ERROR)
-					.display();
+			RPToast.makeText(RPHashInfoDialog.this, "Here only query transaction Hash !", Style.ERROR).display();
 			return;
 		}
 		if (_hashFindText.getText().trim().equals(hash.trim())) {

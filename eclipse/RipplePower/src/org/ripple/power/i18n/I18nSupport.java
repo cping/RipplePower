@@ -26,15 +26,13 @@ public class I18nSupport {
 	public void addBundle(String baseName, Language language) {
 		Locale oldLocale = Locale.getDefault();
 		Locale.setDefault(language.getLocale());
-		ResourceBundle bundle = ResourceBundle.getBundle(baseName,
-				language.getLocale());
+		ResourceBundle bundle = ResourceBundle.getBundle(baseName, language.getLocale());
 		addBundle(bundle, language);
 		Locale.setDefault(oldLocale);
 		pDirty = true;
 	}
 
-	public void addBundleOnlyIfNeeded(String baseName, Language language,
-			String key) {
+	public void addBundleOnlyIfNeeded(String baseName, Language language, String key) {
 		try {
 			translate(key, language);
 		} catch (IllegalArgumentException e) {
@@ -47,8 +45,7 @@ public class I18nSupport {
 	public String translate(String key, Language language) {
 		List<ResourceBundle> bundles = pLanguageToBundles.get(language);
 		if (bundles == null) {
-			throw new IllegalArgumentException("Can't find bundle for '"
-					+ language + "' language.");
+			throw new IllegalArgumentException("Can't find bundle for '" + language + "' language.");
 		}
 		MissingResourceException exception = null;
 		for (ResourceBundle bundle : bundles) {

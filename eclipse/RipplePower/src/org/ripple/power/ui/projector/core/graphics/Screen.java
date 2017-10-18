@@ -36,8 +36,8 @@ import org.ripple.power.ui.projector.core.LTransition;
 import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
 
-public abstract class Screen implements MouseListener, MouseMotionListener,
-		KeyListener, FocusListener, LInput, LRelease {
+public abstract class Screen
+		implements MouseListener, MouseMotionListener, KeyListener, FocusListener, LInput, LRelease {
 
 	public void sleep(long time) {
 		try {
@@ -126,8 +126,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 			if (e == this) {
 				return true;
 			}
-			if (e.type == type && e.x == x && e.y == y && e.action == action
-					&& e.pointer == pointer) {
+			if (e.type == type && e.x == x && e.y == y && e.action == action && e.pointer == pointer) {
 				return true;
 			}
 			return false;
@@ -181,11 +180,9 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 
 	private final static boolean[] touchType, keyType;
 
-	private int touchButtonPressed = LInput.NO_BUTTON,
-			touchButtonReleased = LInput.NO_BUTTON;
+	private int touchButtonPressed = LInput.NO_BUTTON, touchButtonReleased = LInput.NO_BUTTON;
 
-	private int keyButtonPressed = LInput.NO_KEY,
-			keyButtonReleased = LInput.NO_KEY;
+	private int keyButtonPressed = LInput.NO_KEY, keyButtonReleased = LInput.NO_KEY;
 
 	private LInput baseInput;
 
@@ -361,8 +358,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 	 * @param i
 	 */
 	public synchronized void waitTime(long i) {
-		for (long time = System.currentTimeMillis() + i; System
-				.currentTimeMillis() < time;)
+		for (long time = System.currentTimeMillis() + i; System.currentTimeMillis() < time;)
 			try {
 				super.wait(time - System.currentTimeMillis());
 			} catch (Exception ex) {
@@ -662,8 +658,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 		}
 		if (sprite.isVisible()) {
 			RectBox rect = sprite.getCollisionBox();
-			if (rect.contains(touchX, touchY)
-					|| rect.intersects(touchX, touchY)) {
+			if (rect.contains(touchX, touchY) || rect.intersects(touchX, touchY)) {
 				return true;
 			}
 		}
@@ -682,8 +677,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 		}
 		if (component.isVisible()) {
 			RectBox rect = component.getCollisionBox();
-			if (rect.contains(touchX, touchY)
-					|| rect.intersects(touchX, touchY)) {
+			if (rect.contains(touchX, touchY) || rect.intersects(touchX, touchY)) {
 				return true;
 			}
 		}
@@ -997,13 +991,11 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 	}
 
 	public int getTouchPressed() {
-		return touchButtonPressed > LInput.NO_BUTTON ? touchButtonPressed
-				: LInput.NO_BUTTON;
+		return touchButtonPressed > LInput.NO_BUTTON ? touchButtonPressed : LInput.NO_BUTTON;
 	}
 
 	public int getTouchReleased() {
-		return touchButtonReleased > LInput.NO_BUTTON ? touchButtonReleased
-				: LInput.NO_BUTTON;
+		return touchButtonReleased > LInput.NO_BUTTON ? touchButtonReleased : LInput.NO_BUTTON;
 	}
 
 	public boolean isTouchPressed(int button) {
@@ -1039,8 +1031,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 	}
 
 	public int getKeyPressed() {
-		return keyButtonPressed > LInput.NO_KEY ? keyButtonPressed
-				: LInput.NO_KEY;
+		return keyButtonPressed > LInput.NO_KEY ? keyButtonPressed : LInput.NO_KEY;
 	}
 
 	public boolean isKeyPressed(int keyCode) {
@@ -1048,8 +1039,7 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 	}
 
 	public int getKeyReleased() {
-		return keyButtonReleased > LInput.NO_KEY ? keyButtonReleased
-				: LInput.NO_KEY;
+		return keyButtonReleased > LInput.NO_KEY ? keyButtonReleased : LInput.NO_KEY;
 	}
 
 	public boolean isKeyReleased(int keyCode) {
@@ -1082,10 +1072,8 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 	 */
 	public void setBackground(BufferedImage screen) {
 		if (screen != null) {
-			if (screen.getWidth() != getWidth()
-					|| screen.getHeight() != getHeight()) {
-				screen = GraphicsUtils.getResize(screen, getWidth(),
-						getHeight());
+			if (screen.getWidth() != getWidth() || screen.getHeight() != getHeight()) {
+				screen = GraphicsUtils.getResize(screen, getWidth(), getHeight());
 			}
 			BufferedImage tmp = currentScreen;
 			this.currentScreen = screen;
@@ -1198,9 +1186,8 @@ public abstract class Screen implements MouseListener, MouseMotionListener,
 		Window window = handler.getScene();
 		Rectangle bounds = window.getBounds();
 		Insets insets = window.getInsets();
-		return new Rectangle(bounds.x + insets.left, bounds.y + insets.top,
-				bounds.width - (insets.left + insets.top), bounds.height
-						- (insets.top + insets.bottom));
+		return new Rectangle(bounds.x + insets.left, bounds.y + insets.top, bounds.width - (insets.left + insets.top),
+				bounds.height - (insets.top + insets.bottom));
 	}
 
 	/**

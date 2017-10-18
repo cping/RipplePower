@@ -68,10 +68,8 @@ final class DataBlock {
 		for (Version.ECB ecBlock : ecBlockArray) {
 			for (int i = 0; i < ecBlock.getCount(); i++) {
 				int numDataCodewords = ecBlock.getDataCodewords();
-				int numBlockCodewords = ecBlocks.getECCodewords()
-						+ numDataCodewords;
-				result[numResultBlocks++] = new DataBlock(numDataCodewords,
-						new byte[numBlockCodewords]);
+				int numBlockCodewords = ecBlocks.getECCodewords() + numDataCodewords;
+				result[numResultBlocks++] = new DataBlock(numDataCodewords, new byte[numBlockCodewords]);
 			}
 		}
 
@@ -82,8 +80,7 @@ final class DataBlock {
 		int longerBlocksTotalCodewords = result[0].codewords.length;
 		// int shorterBlocksTotalCodewords = longerBlocksTotalCodewords - 1;
 
-		int longerBlocksNumDataCodewords = longerBlocksTotalCodewords
-				- ecBlocks.getECCodewords();
+		int longerBlocksNumDataCodewords = longerBlocksTotalCodewords - ecBlocks.getECCodewords();
 		int shorterBlocksNumDataCodewords = longerBlocksNumDataCodewords - 1;
 		// The last elements of result may be 1 element shorter for 144 matrix
 		// first fill out as many elements as all of them have minus 1

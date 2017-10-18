@@ -33,8 +33,7 @@ public class RainbowTable {
 	}
 
 	public void add(String key, String value) {
-		pTable.insert(new HashBytes(key.getBytes()),
-				new HashBytes(value.getBytes()));
+		pTable.insert(new HashBytes(key.getBytes()), new HashBytes(value.getBytes()));
 	}
 
 	public void add(byte[] key) {
@@ -59,12 +58,6 @@ public class RainbowTable {
 
 	public HashBytes search(byte[] key) {
 		return pTable.search(new HashBytes(key));
-	}
-
-	public static void main(String[] args) {
-		RainbowTable table = new RainbowTable(4096);
-		table.add("fdh");
-		System.out.println(table.find("fdh"));
 	}
 
 }

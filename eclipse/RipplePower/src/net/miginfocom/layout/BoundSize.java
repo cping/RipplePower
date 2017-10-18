@@ -53,8 +53,7 @@ import java.io.*;
  */
 public class BoundSize implements Serializable {
 	public static final BoundSize NULL_SIZE = new BoundSize(null, null);
-	public static final BoundSize ZERO_PIXEL = new BoundSize(UnitValue.ZERO,
-			"0px");
+	public static final BoundSize ZERO_PIXEL = new BoundSize(UnitValue.ZERO, "0px");
 
 	private final transient UnitValue min;
 	private final transient UnitValue pref;
@@ -88,8 +87,10 @@ public class BoundSize implements Serializable {
 	 * @param createString
 	 *            The string used to create the BoundsSize.
 	 */
-	public BoundSize(UnitValue min, UnitValue preferred, UnitValue max,
-			String createString) // Bound to old delegate!!!!!
+	public BoundSize(UnitValue min, UnitValue preferred, UnitValue max, String createString) // Bound
+																								// to
+																								// old
+																								// delegate!!!!!
 	{
 		this(min, preferred, max, false, createString);
 	}
@@ -112,8 +113,7 @@ public class BoundSize implements Serializable {
 	 * @param createString
 	 *            The string used to create the BoundsSize.
 	 */
-	public BoundSize(UnitValue min, UnitValue preferred, UnitValue max,
-			boolean gapPush, String createString) {
+	public BoundSize(UnitValue min, UnitValue preferred, UnitValue max, boolean gapPush, String createString) {
 		this.min = min;
 		this.pref = preferred;
 		this.max = max;
@@ -170,8 +170,7 @@ public class BoundSize implements Serializable {
 	 */
 	public boolean isUnset() {
 		// Most common case by far is this == ZERO_PIXEL...
-		return this == ZERO_PIXEL
-				|| (pref == null && min == null && max == null && gapPush == false);
+		return this == ZERO_PIXEL || (pref == null && min == null && max == null && gapPush == false);
 	}
 
 	/**
@@ -228,13 +227,10 @@ public class BoundSize implements Serializable {
 	 *            The component, if applicable, can be <code>null</code>.
 	 * @return An array of lenth three (min,pref,max).
 	 */
-	final int[] getPixelSizes(float refSize, ContainerWrapper parent,
-			ComponentWrapper comp) {
-		return new int[] {
-				min != null ? min.getPixels(refSize, parent, comp) : 0,
+	final int[] getPixelSizes(float refSize, ContainerWrapper parent, ComponentWrapper comp) {
+		return new int[] { min != null ? min.getPixels(refSize, parent, comp) : 0,
 				pref != null ? pref.getPixels(refSize, parent, comp) : 0,
-				max != null ? max.getPixels(refSize, parent, comp)
-						: LayoutUtil.INF };
+				max != null ? max.getPixels(refSize, parent, comp) : LayoutUtil.INF };
 	}
 
 	/**
@@ -265,8 +261,7 @@ public class BoundSize implements Serializable {
 		}
 
 		if (max != null)
-			sb.append(sb.length() == 0 ? "::" : ":").append(
-					max.getConstraintString());
+			sb.append(sb.length() == 0 ? "::" : ":").append(max.getConstraintString());
 
 		if (gapPush) {
 			if (sb.length() > 0)
@@ -278,8 +273,8 @@ public class BoundSize implements Serializable {
 	}
 
 	void checkNotLinked() {
-		if (min != null && min.isLinkedDeep() || pref != null
-				&& pref.isLinkedDeep() || max != null && max.isLinkedDeep())
+		if (min != null && min.isLinkedDeep() || pref != null && pref.isLinkedDeep()
+				|| max != null && max.isLinkedDeep())
 			throw new IllegalArgumentException("Size may not contain links");
 	}
 
@@ -289,16 +284,11 @@ public class BoundSize implements Serializable {
 				protected Expression instantiate(Object oldInstance, Encoder out) {
 					BoundSize bs = (BoundSize) oldInstance;
 					if (Grid.TEST_GAPS) {
-						return new Expression(oldInstance, BoundSize.class,
-								"new", new Object[] { bs.getMin(),
-										bs.getPreferred(), bs.getMax(),
-										bs.getGapPush(),
-										bs.getConstraintString() });
+						return new Expression(oldInstance, BoundSize.class, "new", new Object[] { bs.getMin(),
+								bs.getPreferred(), bs.getMax(), bs.getGapPush(), bs.getConstraintString() });
 					} else {
-						return new Expression(oldInstance, BoundSize.class,
-								"new", new Object[] { bs.getMin(),
-										bs.getPreferred(), bs.getMax(),
-										bs.getConstraintString() });
+						return new Expression(oldInstance, BoundSize.class, "new",
+								new Object[] { bs.getMin(), bs.getPreferred(), bs.getMax(), bs.getConstraintString() });
 					}
 				}
 			});
@@ -320,8 +310,7 @@ public class BoundSize implements Serializable {
 			LayoutUtil.writeAsXML(out, this);
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException,
-			ClassNotFoundException {
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 }

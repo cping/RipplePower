@@ -38,19 +38,16 @@ public final class AddressBookParsedResult extends ParsedResult {
 	private final String[] urls;
 	private final String[] geo;
 
-	public AddressBookParsedResult(String[] names, String[] phoneNumbers,
-			String[] phoneTypes, String[] emails, String[] emailTypes,
-			String[] addresses, String[] addressTypes) {
-		this(names, null, null, phoneNumbers, phoneTypes, emails, emailTypes,
-				null, null, addresses, addressTypes, null, null, null, null,
-				null);
+	public AddressBookParsedResult(String[] names, String[] phoneNumbers, String[] phoneTypes, String[] emails,
+			String[] emailTypes, String[] addresses, String[] addressTypes) {
+		this(names, null, null, phoneNumbers, phoneTypes, emails, emailTypes, null, null, addresses, addressTypes, null,
+				null, null, null, null);
 	}
 
-	public AddressBookParsedResult(String[] names, String[] nicknames,
-			String pronunciation, String[] phoneNumbers, String[] phoneTypes,
-			String[] emails, String[] emailTypes, String instantMessenger,
-			String note, String[] addresses, String[] addressTypes, String org,
-			String birthday, String title, String[] urls, String[] geo) {
+	public AddressBookParsedResult(String[] names, String[] nicknames, String pronunciation, String[] phoneNumbers,
+			String[] phoneTypes, String[] emails, String[] emailTypes, String instantMessenger, String note,
+			String[] addresses, String[] addressTypes, String org, String birthday, String title, String[] urls,
+			String[] geo) {
 		super(ParsedResultType.ADDRESSBOOK);
 		this.names = names;
 		this.nicknames = nicknames;

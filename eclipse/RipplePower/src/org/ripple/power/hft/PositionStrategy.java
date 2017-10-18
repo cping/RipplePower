@@ -55,8 +55,7 @@ public class PositionStrategy {
 		}
 	}
 
-	public void buy(IHTransactionFactory trans, IHInfoPacks info, String stockCode,
-			int strategyType, double param) {
+	public void buy(IHTransactionFactory trans, IHInfoPacks info, String stockCode, int strategyType, double param) {
 		switch (strategyType) {
 		case PST_PERCENT:
 			buyPercent(trans, info, stockCode, param);
@@ -66,8 +65,7 @@ public class PositionStrategy {
 		}
 	}
 
-	public void sell(IHTransactionFactory trans, IHInfoPacks info, String stockCode,
-			int strategyType, double param) {
+	public void sell(IHTransactionFactory trans, IHInfoPacks info, String stockCode, int strategyType, double param) {
 		switch (strategyType) {
 		case PST_PERCENT:
 			sellPercent(trans, info, stockCode, param);
@@ -77,13 +75,11 @@ public class PositionStrategy {
 		}
 	}
 
-	public void buyPercent(IHTransactionFactory trans, IHInfoPacks info, String stockCode,
-			double percent) {
+	public void buyPercent(IHTransactionFactory trans, IHInfoPacks info, String stockCode, double percent) {
 		trans.buy(stockCode).percent(percent).commit();
 	}
 
-	public void sellPercent(IHTransactionFactory trans, IHInfoPacks info, String stockCode,
-			double percent) {
+	public void sellPercent(IHTransactionFactory trans, IHInfoPacks info, String stockCode, double percent) {
 		IHPosition position = info.position(stockCode);
 		if (allowShortSell || position.getNonClosedTradeQuantity() != 0) {
 			trans.sell(stockCode).percent(percent).commit();

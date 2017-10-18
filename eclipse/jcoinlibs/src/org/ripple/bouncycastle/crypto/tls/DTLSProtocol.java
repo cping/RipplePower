@@ -38,33 +38,13 @@ public abstract class DTLSProtocol
         }
     }
 
-    protected static void applyMaxFragmentLengthExtension(DTLSRecordLayer recordLayer, short maxFragmentLength)
-        throws IOException
-    {
-        if (maxFragmentLength >= 0)
-        {
-            if (!MaxFragmentLength.isValid(maxFragmentLength))
-            {
-                throw new TlsFatalAlert(AlertDescription.internal_error); 
-            }
-
-            int plainTextLimit = 1 << (8 + maxFragmentLength);
-            recordLayer.setPlaintextLimit(plainTextLimit);
-        }
-    }
-
-    protected static short evaluateMaxFragmentLengthExtension(boolean resumedSession, Hashtable clientExtensions,
-        Hashtable serverExtensions, short alertDescription) throws IOException
+    protected static short evaluateMaxFragmentLengthExtension(Hashtable clientExtensions, Hashtable serverExtensions,
+        short alertDescription) throws IOException
     {
         short maxFragmentLength = TlsExtensionsUtils.getMaxFragmentLengthExtension(serverExtensions);
-        if (maxFragmentLength >= 0)
+        if (maxFragmentLength >= 0 && maxFragmentLength != TlsExtensionsUtils.getMaxFragmentLengthExtension(clientExtensions))
         {
-            if (!MaxFragmentLength.isValid(maxFragmentLength)
-                || (!resumedSession && maxFragmentLength != TlsExtensionsUtils
-                    .getMaxFragmentLengthExtension(clientExtensions)))
-            {
-                throw new TlsFatalAlert(alertDescription);
-            }
+            throw new TlsFatalAlert(alertDescription);
         }
         return maxFragmentLength;
     }

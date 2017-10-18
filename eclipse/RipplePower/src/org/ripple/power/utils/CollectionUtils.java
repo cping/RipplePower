@@ -13,9 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.ripple.power.collection.ArrayIterator;
-import org.ripple.power.collection.ConverterMap;
 import org.ripple.power.collection.MapArray;
-import org.ripple.power.ioc.injector.Dispose;
 
 public class CollectionUtils {
 
@@ -75,8 +73,7 @@ public class CollectionUtils {
 	 */
 	public static Object expand(Object obj, int i, boolean flag) {
 		int j = Array.getLength(obj);
-		Object obj1 = Array.newInstance(obj.getClass().getComponentType(), j
-				+ i);
+		Object obj1 = Array.newInstance(obj.getClass().getComponentType(), j + i);
 		System.arraycopy(obj, 0, obj1, flag ? 0 : i, j);
 		return obj1;
 	}
@@ -101,8 +98,7 @@ public class CollectionUtils {
 	 * @param class1
 	 * @return
 	 */
-	public static Object expand(Object obj, int size, boolean flag,
-			Class<?> class1) {
+	public static Object expand(Object obj, int size, boolean flag, Class<?> class1) {
 		if (obj == null) {
 			return Array.newInstance(class1, 1);
 		} else {
@@ -212,13 +208,10 @@ public class CollectionUtils {
 	 * @param newType
 	 * @return
 	 */
-	public static Object[] copyOf(Object[] original, int newLength,
-			Class<?> newType) {
+	public static Object[] copyOf(Object[] original, int newLength, Class<?> newType) {
 		Object[] copy = (newType == Object[].class) ? new Object[newLength]
-				: (Object[]) Array.newInstance(newType.getComponentType(),
-						newLength);
-		System.arraycopy(original, 0, copy, 0,
-				MathUtils.min(original.length, newLength));
+				: (Object[]) Array.newInstance(newType.getComponentType(), newLength);
+		System.arraycopy(original, 0, copy, 0, MathUtils.min(original.length, newLength));
 		return copy;
 	}
 
@@ -403,17 +396,12 @@ public class CollectionUtils {
 		return size > 0 ? new ArrayList<Object>(size) : createList();
 	}
 
-	final static public ConverterMap createConverterMap() {
-		return new ConverterMap();
-	}
-
 	final static public Map<Object, Object> createMap() {
 		return createMap(INITIAL_CAPACITY);
 	}
 
 	final static public Map<Object, Object> createMap(final int size) {
-		return size > 0 ? new HashMap<Object, Object>(size)
-				: new HashMap<Object, Object>();
+		return size > 0 ? new HashMap<Object, Object>(size) : new HashMap<Object, Object>();
 	}
 
 	final static public MapArray createArrayMap() {
@@ -486,8 +474,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean contains(Collection<Object> collection,
-			Object item) {
+	final static public boolean contains(Collection<Object> collection, Object item) {
 		return collection != null && collection.contains(item);
 	}
 
@@ -498,8 +485,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsKey(Map<Object, Object> collection,
-			Object item) {
+	final static public boolean containsKey(Map<Object, Object> collection, Object item) {
 		return collection != null && collection.containsKey(item);
 	}
 
@@ -510,8 +496,7 @@ public class CollectionUtils {
 	 * @param item
 	 * @return
 	 */
-	final static public boolean containsValue(Map<Object, Object> collection,
-			Object item) {
+	final static public boolean containsValue(Map<Object, Object> collection, Object item) {
 		return collection != null && collection.containsValue(item);
 	}
 
@@ -531,8 +516,7 @@ public class CollectionUtils {
 	}
 
 	final static public Set<Object> synchronizedSet() {
-		return Collections
-				.synchronizedSet(new HashSet<Object>(INITIAL_CAPACITY));
+		return Collections.synchronizedSet(new HashSet<Object>(INITIAL_CAPACITY));
 	}
 
 	final static public List<Object> synchronizedList(final int size) {
@@ -553,15 +537,6 @@ public class CollectionUtils {
 			result.add(objects[i]);
 		}
 		return result;
-	}
-
-	final static public void visitor(final Collection<Object> collection,
-			final Dispose dispose) {
-		if (collection != null && dispose != null) {
-			for (Iterator<Object> it = collection.iterator(); it.hasNext();) {
-				dispose.accept(it.next());
-			}
-		}
 	}
 
 }

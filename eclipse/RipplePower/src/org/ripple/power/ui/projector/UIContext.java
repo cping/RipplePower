@@ -32,8 +32,7 @@ public final class UIContext {
 				if (getThreadGroup() != currentGroup) {
 					continue;
 				}
-				Thread thread = new Thread(currentGroup, runnable, "LGame-View"
-						+ nextContextID);
+				Thread thread = new Thread(currentGroup, runnable, "LGame-View" + nextContextID);
 				return thread;
 			}
 		}
@@ -41,8 +40,7 @@ public final class UIContext {
 
 	public void setAnimationThread(Thread thread) {
 		if (thread != null) {
-			if (threadGroup == null
-					|| !threadGroup.parentOf(thread.getThreadGroup())) {
+			if (threadGroup == null || !threadGroup.parentOf(thread.getThreadGroup())) {
 				threadGroup = thread.getThreadGroup();
 			}
 		}

@@ -40,28 +40,24 @@ import java.util.Map;
 public final class DataMatrixWriter implements Writer {
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height) {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height) {
 		return encode(contents, format, width, height, null);
 	}
 
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height,
+			Map<EncodeHintType, ?> hints) {
 
 		if (contents.isEmpty()) {
 			throw new IllegalArgumentException("Found empty contents");
 		}
 
 		if (format != BarcodeFormat.DATA_MATRIX) {
-			throw new IllegalArgumentException(
-					"Can only encode DATA_MATRIX, but got " + format);
+			throw new IllegalArgumentException("Can only encode DATA_MATRIX, but got " + format);
 		}
 
 		if (width < 0 || height < 0) {
-			throw new IllegalArgumentException(
-					"Requested dimensions are too small: " + width + 'x'
-							+ height);
+			throw new IllegalArgumentException("Requested dimensions are too small: " + width + 'x' + height);
 		}
 
 		// Try to get force shape & min / max size
@@ -69,36 +65,30 @@ public final class DataMatrixWriter implements Writer {
 		Dimension minSize = null;
 		Dimension maxSize = null;
 		if (hints != null) {
-			SymbolShapeHint requestedShape = (SymbolShapeHint) hints
-					.get(EncodeHintType.DATA_MATRIX_SHAPE);
+			SymbolShapeHint requestedShape = (SymbolShapeHint) hints.get(EncodeHintType.DATA_MATRIX_SHAPE);
 			if (requestedShape != null) {
 				shape = requestedShape;
 			}
-			Dimension requestedMinSize = (Dimension) hints
-					.get(EncodeHintType.MIN_SIZE);
+			Dimension requestedMinSize = (Dimension) hints.get(EncodeHintType.MIN_SIZE);
 			if (requestedMinSize != null) {
 				minSize = requestedMinSize;
 			}
-			Dimension requestedMaxSize = (Dimension) hints
-					.get(EncodeHintType.MAX_SIZE);
+			Dimension requestedMaxSize = (Dimension) hints.get(EncodeHintType.MAX_SIZE);
 			if (requestedMaxSize != null) {
 				maxSize = requestedMaxSize;
 			}
 		}
 
 		// 1. step: Data encodation
-		String encoded = HighLevelEncoder.encodeHighLevel(contents, shape,
-				minSize, maxSize);
+		String encoded = HighLevelEncoder.encodeHighLevel(contents, shape, minSize, maxSize);
 
-		SymbolInfo symbolInfo = SymbolInfo.lookup(encoded.length(), shape,
-				minSize, maxSize, true);
+		SymbolInfo symbolInfo = SymbolInfo.lookup(encoded.length(), shape, minSize, maxSize, true);
 
 		// 2. step: ECC generation
 		String codewords = ErrorCorrection.encodeECC200(encoded, symbolInfo);
 
 		// 3. step: Module placement in Matrix
-		DefaultPlacement placement = new DefaultPlacement(codewords,
-				symbolInfo.getSymbolDataWidth(),
+		DefaultPlacement placement = new DefaultPlacement(codewords, symbolInfo.getSymbolDataWidth(),
 				symbolInfo.getSymbolDataHeight());
 		placement.place();
 
@@ -115,13 +105,11 @@ public final class DataMatrixWriter implements Writer {
 	 *            The symbol info to encode.
 	 * @return The bit matrix generated.
 	 */
-	private static BitMatrix encodeLowLevel(DefaultPlacement placement,
-			SymbolInfo symbolInfo) {
+	private static BitMatrix encodeLowLevel(DefaultPlacement placement, SymbolInfo symbolInfo) {
 		int symbolWidth = symbolInfo.getSymbolDataWidth();
 		int symbolHeight = symbolInfo.getSymbolDataHeight();
 
-		ByteMatrix matrix = new ByteMatrix(symbolInfo.getSymbolWidth(),
-				symbolInfo.getSymbolHeight());
+		ByteMatrix matrix = new ByteMatrix(symbolInfo.getSymbolWidth(), symbolInfo.getSymbolHeight());
 
 		int matrixY = 0;
 

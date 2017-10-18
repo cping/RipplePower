@@ -17,7 +17,6 @@ import org.ripple.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.asn1.x9.DHDomainParameters;
-import org.ripple.bouncycastle.asn1.x9.DomainParameters;
 import org.ripple.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.ripple.bouncycastle.crypto.params.DHPublicKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
@@ -97,9 +96,9 @@ public class BCDHPublicKey
         }
         else if (id.equals(X9ObjectIdentifiers.dhpublicnumber))
         {
-            DomainParameters params = DomainParameters.getInstance(seq);
+            DHDomainParameters params = DHDomainParameters.getInstance(seq);
 
-            this.dhSpec = new DHParameterSpec(params.getP(), params.getG());
+            this.dhSpec = new DHParameterSpec(params.getP().getValue(), params.getG().getValue());
         }
         else
         {

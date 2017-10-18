@@ -55,7 +55,7 @@ public class OpenPGPCFBBlockCipher
     /**
      * return the algorithm name and mode.
      *
-     * @return the name of the underlying algorithm followed by "/OpenPGPCFB"
+     * @return the name of the underlying algorithm followed by "/PGPCFB"
      * and the block size in bits.
      */
     public String getAlgorithmName()

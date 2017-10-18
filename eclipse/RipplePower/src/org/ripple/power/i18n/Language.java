@@ -4,8 +4,8 @@ import java.util.Locale;
 
 public enum Language {
 
-	SIMPLECN(Locale.SIMPLIFIED_CHINESE), TRADITIONALCN(
-			Locale.TRADITIONAL_CHINESE), EN(Locale.ENGLISH), JP(Locale.JAPANESE), DEF();
+	SIMPLECN(Locale.SIMPLIFIED_CHINESE), TRADITIONALCN(Locale.TRADITIONAL_CHINESE), EN(Locale.ENGLISH), JP(
+			Locale.JAPANESE), DEF();
 
 	private Locale locale;
 

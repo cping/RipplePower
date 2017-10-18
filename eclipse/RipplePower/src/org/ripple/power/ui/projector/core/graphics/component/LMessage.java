@@ -165,8 +165,7 @@ public class LMessage extends LContainer {
 	}
 
 	protected void processKeyPressed() {
-		if (this.isSelected()
-				&& this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
+		if (this.isSelected() && this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
 			this.doClick();
 		}
 	}
@@ -186,8 +185,7 @@ public class LMessage extends LContainer {
 		}
 	}
 
-	protected synchronized void createCustomUI(LGraphics g, int x, int y,
-			int w, int h) {
+	protected synchronized void createCustomUI(LGraphics g, int x, int y, int w, int h) {
 		if (!visible) {
 			return;
 		}
@@ -229,8 +227,8 @@ public class LMessage extends LContainer {
 	}
 
 	private void updateIcon() {
-		this.setPauseIconAnimationLocation(getScreenX() + getWidth() - dw / 2
-				- 20, getScreenY() + getHeight() - dh - 10);
+		this.setPauseIconAnimationLocation(getScreenX() + getWidth() - dw / 2 - 20,
+				getScreenY() + getHeight() - dh - 10);
 	}
 
 	public Color getFontColor() {
@@ -261,8 +259,7 @@ public class LMessage extends LContainer {
 		super.validateSize();
 	}
 
-	public void createUI(LGraphics g, int x, int y, LComponent component,
-			LImage[] buttonImage) {
+	public void createUI(LGraphics g, int x, int y, LComponent component, LImage[] buttonImage) {
 
 	}
 

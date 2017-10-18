@@ -11,8 +11,7 @@ import org.ripple.power.txns.IssuedCurrency;
 public class MarketsRespone {
 
 	public String rowkey;
-	public List<MarketComponent> components = new ArrayList<MarketComponent>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<MarketComponent> components = new ArrayList<MarketComponent>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 	public long count;
 	public String startTime;
 	public String endTime;

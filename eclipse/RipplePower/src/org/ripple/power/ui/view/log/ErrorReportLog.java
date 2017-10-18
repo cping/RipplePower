@@ -4,93 +4,93 @@ import java.util.HashMap;
 
 public class ErrorReportLog {
 
-	  private String timestamp;
+	private String timestamp;
 
-	  private Integer version;
+	private Integer version;
 
-	  private String message;
+	private String message;
 
-	  private String stackTrace;
+	private String stackTrace;
 
-	  private String loggerName;
-	
-	  private String threadName;
+	private String loggerName;
 
-	  private String level;
-	
-	  private Integer levelValue;
+	private String threadName;
 
-	  private HashMap<String, Object> additionalProperties = new HashMap<String, Object>();
+	private String level;
 
-	  public HashMap<String, Object> getAdditionalProperties() {
-	    return additionalProperties;
-	  }
+	private Integer levelValue;
 
-	  public void setAdditionalProperties(HashMap<String, Object> additionalProperties) {
-	    this.additionalProperties = additionalProperties;
-	  }
+	private HashMap<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	  public String getLevel() {
-	    return level;
-	  }
+	public HashMap<String, Object> getAdditionalProperties() {
+		return additionalProperties;
+	}
 
-	  public void setLevel(String level) {
-	    this.level = level;
-	  }
+	public void setAdditionalProperties(HashMap<String, Object> additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
 
-	  public Integer getLevelValue() {
-	    return levelValue;
-	  }
+	public String getLevel() {
+		return level;
+	}
 
-	  public void setLevelValue(Integer levelValue) {
-	    this.levelValue = levelValue;
-	  }
+	public void setLevel(String level) {
+		this.level = level;
+	}
 
-	  public String getLoggerName() {
-	    return loggerName;
-	  }
+	public Integer getLevelValue() {
+		return levelValue;
+	}
 
-	  public void setLoggerName(String loggerName) {
-	    this.loggerName = loggerName;
-	  }
+	public void setLevelValue(Integer levelValue) {
+		this.levelValue = levelValue;
+	}
 
-	  public String getMessage() {
-	    return message;
-	  }
+	public String getLoggerName() {
+		return loggerName;
+	}
 
-	  public void setMessage(String message) {
-	    this.message = message;
-	  }
+	public void setLoggerName(String loggerName) {
+		this.loggerName = loggerName;
+	}
 
-	  public String getStackTrace() {
-	    return stackTrace;
-	  }
+	public String getMessage() {
+		return message;
+	}
 
-	  public void setStackTrace(String stackTrace) {
-	    this.stackTrace = stackTrace;
-	  }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-	  public String getThreadName() {
-	    return threadName;
-	  }
+	public String getStackTrace() {
+		return stackTrace;
+	}
 
-	  public void setThreadName(String threadName) {
-	    this.threadName = threadName;
-	  }
+	public void setStackTrace(String stackTrace) {
+		this.stackTrace = stackTrace;
+	}
 
-	  public String getTimestamp() {
-	    return timestamp;
-	  }
+	public String getThreadName() {
+		return threadName;
+	}
 
-	  public void setTimestamp(String timestamp) {
-	    this.timestamp = timestamp;
-	  }
+	public void setThreadName(String threadName) {
+		this.threadName = threadName;
+	}
 
-	  public Integer getVersion() {
-	    return version;
-	  }
+	public String getTimestamp() {
+		return timestamp;
+	}
 
-	  public void setVersion(Integer version) {
-	    this.version = version;
-	  }
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 }

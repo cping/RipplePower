@@ -113,8 +113,7 @@ public final class BitArray implements Cloneable {
 			}
 			currentBits = bits[bitsOffset];
 		}
-		int result = (bitsOffset * 32)
-				+ Integer.numberOfTrailingZeros(currentBits);
+		int result = (bitsOffset * 32) + Integer.numberOfTrailingZeros(currentBits);
 		return result > size ? size : result;
 	}
 
@@ -139,8 +138,7 @@ public final class BitArray implements Cloneable {
 			}
 			currentBits = ~bits[bitsOffset];
 		}
-		int result = (bitsOffset * 32)
-				+ Integer.numberOfTrailingZeros(currentBits);
+		int result = (bitsOffset * 32) + Integer.numberOfTrailingZeros(currentBits);
 		return result > size ? size : result;
 	}
 
@@ -273,8 +271,7 @@ public final class BitArray implements Cloneable {
 	 */
 	public void appendBits(int value, int numBits) {
 		if (numBits < 0 || numBits > 32) {
-			throw new IllegalArgumentException(
-					"Num bits must be between 0 and 32");
+			throw new IllegalArgumentException("Num bits must be between 0 and 32");
 		}
 		ensureCapacity(size + numBits);
 		for (int numBitsLeft = numBits; numBitsLeft > 0; numBitsLeft--) {

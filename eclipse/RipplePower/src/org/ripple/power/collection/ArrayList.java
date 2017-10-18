@@ -26,8 +26,7 @@ public class ArrayList {
 	public void addAll(ArrayList array, int offset, int length) {
 		if (offset + length > array._size) {
 			throw new IllegalArgumentException(
-					"offset + length must be <= size: " + offset + " + "
-							+ length + " <= " + array._size);
+					"offset + length must be <= size: " + offset + " + " + length + " <= " + array._size);
 		}
 		addAll(array._items, offset, length);
 	}
@@ -79,8 +78,7 @@ public class ArrayList {
 
 	private Object[] expandCapacity(int newSize) {
 		Object[] items = this._items;
-		Object[] obj = (Object[]) java.lang.reflect.Array.newInstance(items
-				.getClass().getComponentType(), newSize);
+		Object[] obj = (Object[]) java.lang.reflect.Array.newInstance(items.getClass().getComponentType(), newSize);
 		System.arraycopy(items, 0, obj, 0, MathUtils.min(_size, obj.length));
 		this._items = obj;
 		return obj;
@@ -266,8 +264,7 @@ public class ArrayList {
 	}
 
 	public Object[] toArray() {
-		Object[] result = (Object[]) java.lang.reflect.Array.newInstance(_items
-				.getClass().getComponentType(), _size);
+		Object[] result = (Object[]) java.lang.reflect.Array.newInstance(_items.getClass().getComponentType(), _size);
 		System.arraycopy(_items, 0, result, 0, _size);
 		return result;
 	}
@@ -282,8 +279,7 @@ public class ArrayList {
 			return "[]";
 		}
 		Object[] items = this._items;
-		StringBuilder buffer = new StringBuilder(
-				CollectionUtils.INITIAL_CAPACITY);
+		StringBuilder buffer = new StringBuilder(CollectionUtils.INITIAL_CAPACITY);
 		buffer.append('[');
 		buffer.append(items[0]);
 		for (int i = 1; i < _size; i++) {

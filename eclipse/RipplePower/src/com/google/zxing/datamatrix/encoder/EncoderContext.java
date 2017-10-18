@@ -39,8 +39,7 @@ final class EncoderContext {
 		for (int i = 0, c = msgBinary.length; i < c; i++) {
 			char ch = (char) (msgBinary[i] & 0xff);
 			if (ch == '?' && msg.charAt(i) != '?') {
-				throw new IllegalArgumentException(
-						"Message contains characters outside ISO-8859-1 encoding.");
+				throw new IllegalArgumentException("Message contains characters outside ISO-8859-1 encoding.");
 			}
 			sb.append(ch);
 		}
@@ -125,8 +124,7 @@ final class EncoderContext {
 
 	public void updateSymbolInfo(int len) {
 		if (this.symbolInfo == null || len > this.symbolInfo.getDataCapacity()) {
-			this.symbolInfo = SymbolInfo.lookup(len, shape, minSize, maxSize,
-					true);
+			this.symbolInfo = SymbolInfo.lookup(len, shape, minSize, maxSize, true);
 		}
 	}
 

@@ -101,13 +101,11 @@ public class AnimationHelper {
 		return cursor.getBufferedImage();
 	}
 
-	public static AnimationHelper makeObject(String fileName, int row, int col,
-			int tileWidth, int tileHeight) {
+	public static AnimationHelper makeObject(String fileName, int row, int col, int tileWidth, int tileHeight) {
 		String key = fileName.trim().toLowerCase();
 		AnimationHelper animation = (AnimationHelper) animations.get(key);
 		if (animation == null) {
-			Image[][] images = GraphicsUtils.getSplit2Images(fileName,
-					tileWidth, tileHeight);
+			Image[][] images = GraphicsUtils.getSplit2Images(fileName, tileWidth, tileHeight);
 			Image[][] result = new Image[row][col];
 			for (int y = 0; y < col; y++) {
 				for (int x = 0; x < row; x++) {
@@ -115,16 +113,12 @@ public class AnimationHelper {
 				}
 			}
 			images = null;
-			animations.put(
-					key,
-					animation = makeObject(result[0], result[1], result[2],
-							result[3]));
+			animations.put(key, animation = makeObject(result[0], result[1], result[2], result[3]));
 		}
 		return animation;
 	}
 
-	public static AnimationHelper makeObject(String fileName, int tileWidth,
-			int tileHeight, Color col) {
+	public static AnimationHelper makeObject(String fileName, int tileWidth, int tileHeight, Color col) {
 		String key = fileName.trim().toLowerCase();
 		AnimationHelper animation = (AnimationHelper) animations.get(key);
 		if (animation == null) {
@@ -135,17 +129,13 @@ public class AnimationHelper {
 			Image[][] images = new Image[wlength][hlength];
 			for (int y = 0; y < hlength; y++) {
 				for (int x = 0; x < wlength; x++) {
-					images[x][y] = GraphicsUtils.createImage(tileWidth,
-							tileHeight, true);
+					images[x][y] = GraphicsUtils.createImage(tileWidth, tileHeight, true);
 					Graphics g = images[x][y].getGraphics();
-					g.drawImage(image, 0, 0, tileWidth, tileHeight,
-							(x * tileWidth), (y * tileHeight), tileWidth
-									+ (x * tileWidth), tileHeight
-									+ (y * tileHeight), null);
+					g.drawImage(image, 0, 0, tileWidth, tileHeight, (x * tileWidth), (y * tileHeight),
+							tileWidth + (x * tileWidth), tileHeight + (y * tileHeight), null);
 					g.dispose();
 					g = null;
-					PixelGrabber pgr = new PixelGrabber(images[x][y], 0, 0, -1,
-							-1, true);
+					PixelGrabber pgr = new PixelGrabber(images[x][y], 0, 0, -1, -1, true);
 					try {
 						pgr.grabPixels();
 					} catch (InterruptedException ex) {
@@ -157,8 +147,8 @@ public class AnimationHelper {
 							pixels[i] = 0;
 						}
 					}
-					ImageProducer ip = new MemoryImageSource(pgr.getWidth(),
-							pgr.getHeight(), pixels, 0, pgr.getWidth());
+					ImageProducer ip = new MemoryImageSource(pgr.getWidth(), pgr.getHeight(), pixels, 0,
+							pgr.getWidth());
 					images[x][y] = GraphicsUtils.toolKit.createImage(ip);
 				}
 			}
@@ -169,17 +159,13 @@ public class AnimationHelper {
 				}
 			}
 			images = null;
-			animations.put(
-					key,
-					animation = makeObject(result[0], result[1], result[3],
-							result[2]));
+			animations.put(key, animation = makeObject(result[0], result[1], result[3], result[2]));
 		}
 		return animation;
 
 	}
 
-	public final static AnimationHelper makeObject(Image[] down, Image[] left,
-			Image[] right, Image[] up) {
+	public final static AnimationHelper makeObject(Image[] down, Image[] left, Image[] right, Image[] up) {
 		AnimationHelper animation = new AnimationHelper();
 		animation.downImages = down;
 		animation.leftImages = left;

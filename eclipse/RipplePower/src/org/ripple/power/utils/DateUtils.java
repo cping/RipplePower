@@ -22,12 +22,10 @@ final public class DateUtils {
 	public static final String STANDARD_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String FILENAME_DATE_PATTERN = "yyyyMMdd'T'HHmmss";
 
-	public static final SimpleDateFormat standardDateFormat = new SimpleDateFormat(
-			STANDARD_DATE_PATTERN);
+	public static final SimpleDateFormat standardDateFormat = new SimpleDateFormat(STANDARD_DATE_PATTERN);
 
-	public static final SimpleDateFormat fileNameDateFormat = new SimpleDateFormat(
-			FILENAME_DATE_PATTERN);
-	static{
+	public static final SimpleDateFormat fileNameDateFormat = new SimpleDateFormat(FILENAME_DATE_PATTERN);
+	static {
 		standardDateFormat.setTimeZone(UTC);
 		fileNameDateFormat.setTimeZone(UTC);
 	}
@@ -48,8 +46,7 @@ final public class DateUtils {
 			timezone = TimeZone.getTimeZone(System.getProperty("user.country"));
 		}
 		if (locale == null) {
-			locale = new Locale(System.getProperty("user.language"),
-					System.getProperty("user.timezone"));
+			locale = new Locale(System.getProperty("user.language"), System.getProperty("user.timezone"));
 		}
 		calendar = Calendar.getInstance();
 	}
@@ -71,8 +68,7 @@ final public class DateUtils {
 		return dateFormat.format(calendar.getTime());
 	}
 
-	public void resetTimeZone(String timezoneString, String language,
-			String country) {
+	public void resetTimeZone(String timezoneString, String language, String country) {
 		timezone = TimeZone.getTimeZone(timezoneString);
 		locale = new Locale(language, country);
 	}
@@ -83,8 +79,8 @@ final public class DateUtils {
 
 	public String getMonth() {
 		int m = getMonthInt();
-		String[] months = new String[] { "Jan", "Feb", "Mar", "Apr", "May",
-				"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+		String[] months = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+				"Dec" };
 		if (m > 12) {
 			return "Unknown to Man";
 		}
@@ -94,8 +90,7 @@ final public class DateUtils {
 
 	public String getDay() {
 		int x = getDayOfWeek();
-		String[] days = new String[] { "Sunday", "Monday", "Tuesday",
-				"Wednesday", "Thursday", "Friday", "Saturday" };
+		String[] days = new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
 		if (x > 7) {
 			return "Unknown to Man";
@@ -115,14 +110,12 @@ final public class DateUtils {
 
 	public String getDate(char delimeter) {
 		String year = Integer.toString(getYear());
-		return getDayOfMonth() + delimeter + getMonth() + delimeter
-				+ year.substring(2);
+		return getDayOfMonth() + delimeter + getMonth() + delimeter + year.substring(2);
 	}
 
 	public String getDateInt(String delimeter) {
 		String year = Integer.toString(getYear());
-		return getDayOfMonth() + delimeter + getMonthInt() + delimeter
-				+ year.substring(2);
+		return getDayOfMonth() + delimeter + getMonthInt() + delimeter + year.substring(2);
 	}
 
 	public String getTime() {
@@ -138,8 +131,7 @@ final public class DateUtils {
 	}
 
 	public String getLongDateTime() {
-		return getDayOfMonth() + DASH + getMonth() + DASH + getYear() + SPACE
-				+ getLongTime();
+		return getDayOfMonth() + DASH + getMonth() + DASH + getYear() + SPACE + getLongTime();
 	}
 
 	public int getDayOfMonth() {
@@ -160,14 +152,12 @@ final public class DateUtils {
 
 	public String getSecond() {
 		int tempSecond = calendar.get(Calendar.SECOND);
-		return tempSecond < 10 ? ZERO + tempSecond : Integer
-				.toString(tempSecond);
+		return tempSecond < 10 ? ZERO + tempSecond : Integer.toString(tempSecond);
 	}
 
 	public String getMinute() {
 		int tempMinute = calendar.get(Calendar.MINUTE);
-		return tempMinute < 10 ? ZERO + tempMinute : Integer
-				.toString(tempMinute);
+		return tempMinute < 10 ? ZERO + tempMinute : Integer.toString(tempMinute);
 	}
 
 	public int getMinuteForCalc() {
@@ -214,8 +204,7 @@ final public class DateUtils {
 		if (date == null)
 			return "";
 		else {
-			SimpleDateFormat sdFormat = new SimpleDateFormat(
-					DEFAULT_DATE_FORMATE, Locale.getDefault());
+			SimpleDateFormat sdFormat = new SimpleDateFormat(DEFAULT_DATE_FORMATE, Locale.getDefault());
 			String str_Date = sdFormat.format(date);
 			return str_Date;
 		}
@@ -277,8 +266,7 @@ final public class DateUtils {
 	 * @param dateNum
 	 * @return
 	 */
-	public static String causeDate(String date, int yearNum, int monthNum,
-			int dateNum) {
+	public static String causeDate(String date, int yearNum, int monthNum, int dateNum) {
 		String result = "";
 		try {
 			SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
@@ -368,6 +356,7 @@ final public class DateUtils {
 		TimeZone.setDefault(CN);
 		return new GregorianCalendar(CN);
 	}
+
 	/**
 	 * 清除0返回
 	 * 
@@ -408,8 +397,7 @@ final public class DateUtils {
 	public static String toConvertTimeto12(String strTime) {
 		String strRet = "";
 		try {
-			SimpleDateFormat simFormat = new SimpleDateFormat(
-					"yyyy-MM-dd kk:mm ");
+			SimpleDateFormat simFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm ");
 			Date dDate = DateFormat.getDateInstance().parse(strTime);
 			strRet = simFormat.format(dDate);
 		} catch (ParseException ex) {
@@ -480,8 +468,7 @@ final public class DateUtils {
 	 */
 	public static String toChineseFullDate(Date date) {
 		String strDate = "";
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy年MM月dd日 kk时mm分ss秒");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 kk时mm分ss秒");
 		strDate = dateFormat.format(date);
 		return strDate;
 	}
@@ -510,10 +497,8 @@ final public class DateUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String toDateProgression(int year, int month, int day,
-			String seed, int pedometer) throws Exception {
-		GregorianCalendar dateAntetype = new GregorianCalendar(year, month - 1,
-				day);
+	public static String toDateProgression(int year, int month, int day, String seed, int pedometer) throws Exception {
+		GregorianCalendar dateAntetype = new GregorianCalendar(year, month - 1, day);
 		if ("year".equals(seed))
 			dateAntetype.add(GregorianCalendar.YEAR, pedometer);
 		else if ("month".equals(seed))
@@ -543,8 +528,7 @@ final public class DateUtils {
 	 * @param endDate
 	 * @return
 	 */
-	public static long toDayInterval(GregorianCalendar startDate,
-			GregorianCalendar endDate) {
+	public static long toDayInterval(GregorianCalendar startDate, GregorianCalendar endDate) {
 		return (endDate.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000;
 
 	}
@@ -556,8 +540,7 @@ final public class DateUtils {
 	 * @param end
 	 * @return
 	 */
-	public static long toCountWorkDays(GregorianCalendar start,
-			GregorianCalendar end) {
+	public static long toCountWorkDays(GregorianCalendar start, GregorianCalendar end) {
 		long result = 0;
 		GregorianCalendar startDate = new GregorianCalendar();
 		GregorianCalendar endDate = new GregorianCalendar();
@@ -565,16 +548,13 @@ final public class DateUtils {
 		startDate.setTime(start.getTime());
 		endDate.setTime(end.getTime());
 		if ((startDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) <= 1) {
-			startDate.add(GregorianCalendar.DATE,
-					2 - (startDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
+			startDate.add(GregorianCalendar.DATE, 2 - (startDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
 		}
 		if ((endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) <= 1) {
-			endDate.add(GregorianCalendar.DATE,
-					-1 - (endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
+			endDate.add(GregorianCalendar.DATE, -1 - (endDate.get(GregorianCalendar.DAY_OF_WEEK) % 7));
 		}
 		long totaldays = toDayInterval(startDate, endDate);
-		int s = endDate.get(GregorianCalendar.DAY_OF_WEEK)
-				- startDate.get(GregorianCalendar.DAY_OF_WEEK);
+		int s = endDate.get(GregorianCalendar.DAY_OF_WEEK) - startDate.get(GregorianCalendar.DAY_OF_WEEK);
 		if (s < 0) {
 			s += 5;
 		}
@@ -645,8 +625,7 @@ final public class DateUtils {
 					strConvertTime = "0" + strHours + ":0" + strMin + " AM";
 				}
 			}
-		} else if (Integer.parseInt(strHours) > 12
-				&& Integer.parseInt(strHours) < 24) {
+		} else if (Integer.parseInt(strHours) > 12 && Integer.parseInt(strHours) < 24) {
 			int xiaoshi = Integer.parseInt(strHours) - 12;
 			int fenzhong = Integer.parseInt(strMin);
 			if (fenzhong >= 10 && xiaoshi >= 10) {
@@ -725,8 +704,7 @@ final public class DateUtils {
 				dayNum = 30;
 				break;
 			case 2:
-				if (nowYear % 4 == 0 && nowYear % 100 != 0
-						|| nowYear % 400 != 0) {
+				if (nowYear % 4 == 0 && nowYear % 100 != 0 || nowYear % 400 != 0) {
 					dayNum = 29;
 				} else {
 					dayNum = 28;
@@ -834,10 +812,8 @@ final public class DateUtils {
 		int day = rightNow.get(Calendar.DAY_OF_MONTH);
 		int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 		int min = rightNow.get(Calendar.MINUTE);
-		return year + "-" + (month < 10 ? "0" + month : "" + month) + "-"
-				+ (day < 10 ? "0" + day : "" + day) + " "
-				+ (hour < 10 ? "0" + hour : "" + hour) + ":"
-				+ (min < 10 ? "0" + min : "" + min);
+		return year + "-" + (month < 10 ? "0" + month : "" + month) + "-" + (day < 10 ? "0" + day : "" + day) + " "
+				+ (hour < 10 ? "0" + hour : "" + hour) + ":" + (min < 10 ? "0" + min : "" + min);
 	}
 
 	/**
@@ -849,8 +825,7 @@ final public class DateUtils {
 	public static String toDayOfWeekName(Calendar cal) {
 		int dayofweek = 0;
 		String tmp = cal.toString();
-		tmp = tmp.substring(tmp.indexOf("DAY_OF_WEEK=") + 12,
-				tmp.indexOf("DAY_OF_WEEK=") + 13);
+		tmp = tmp.substring(tmp.indexOf("DAY_OF_WEEK=") + 12, tmp.indexOf("DAY_OF_WEEK=") + 13);
 		dayofweek = Integer.parseInt(tmp);
 		String dayName = "";
 		switch (dayofweek) {
@@ -949,14 +924,12 @@ final public class DateUtils {
 		try {
 			if (!year.equals("") && !month.equals("") && !day.equals("")) {
 				Calendar tmpData = Calendar.getInstance();
-				tmpData.set(Integer.valueOf(year).intValue(),
-						Integer.valueOf(month).intValue() - 1,
+				tmpData.set(Integer.valueOf(year).intValue(), Integer.valueOf(month).intValue() - 1,
 						Integer.valueOf(day).intValue());
 				return tmpData;
 			} else if (!year.equals("") && !month.equals("") && day.equals("")) {
 				Calendar tmpData1 = Calendar.getInstance();
-				tmpData1.set(Integer.valueOf(year).intValue(),
-						Integer.valueOf(month).intValue() - 1, 1);
+				tmpData1.set(Integer.valueOf(year).intValue(), Integer.valueOf(month).intValue() - 1, 1);
 				return tmpData1;
 			} else if (!year.equals("") && month.equals("") && day.equals("")) {
 				Calendar tmpData2 = Calendar.getInstance();
@@ -981,11 +954,11 @@ final public class DateUtils {
 	public static long[] toTimeperiodMSEL(int timeperiodType, long originalMSEL) {
 		long[] timeperiodMSEL = new long[2];
 		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-				calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0,
+				0, 0);
 		timeperiodMSEL[0] = calendar.getTime().getTime();
-		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-				calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23,
+				59, 59);
 		timeperiodMSEL[1] = calendar.getTime().getTime();
 		if (timeperiodType == TimeState.YESTERDAY) { // 日期时段为“昨天”
 			timeperiodMSEL[0] = timeperiodMSEL[0] - (24 * 60 * 60 * 1000);
@@ -994,23 +967,17 @@ final public class DateUtils {
 			timeperiodMSEL[0] = timeperiodMSEL[0] - (7 * 24 * 60 * 60 * 1000);
 			timeperiodMSEL[1] = timeperiodMSEL[1] - (24 * 60 * 60 * 1000);
 		} else if (timeperiodType == TimeState.THISMONTH) { // 日期时段为“本月”
-			calendar.set(calendar.get(Calendar.YEAR),
-					calendar.get(Calendar.MONTH),
+			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
 					calendar.getActualMinimum(Calendar.DAY_OF_MONTH), 0, 0, 0);
 			timeperiodMSEL[0] = calendar.getTime().getTime();
-			calendar.set(calendar.get(Calendar.YEAR),
-					calendar.get(Calendar.MONTH),
-					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59,
-					59);
+			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
 			timeperiodMSEL[1] = calendar.getTime().getTime();
 		} else if (timeperiodType == TimeState.LASTMONTH) { // 日期时段为“上月”
-			calendar.set(calendar.get(Calendar.YEAR),
-					calendar.get(Calendar.MONTH) - 1, 1, 0, 0, 0);
+			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 1, 1, 0, 0, 0);
 			timeperiodMSEL[0] = calendar.getTime().getTime();
-			calendar.set(calendar.get(Calendar.YEAR),
-					calendar.get(Calendar.MONTH),
-					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59,
-					59);
+			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
 			timeperiodMSEL[1] = calendar.getTime().getTime();
 		} else if (timeperiodType == TimeState.ALLTIME) { // 所有时间
 			timeperiodMSEL[0] = originalMSEL;
@@ -1129,52 +1096,37 @@ final public class DateUtils {
 		} else if (diffInMills < hour) {
 			long lmin = diffInMills / min;
 			long lsec = (diffInMills - lmin * min) / sec;
-			return String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
-					+ " [s]";
+			return String.valueOf(lmin) + " [min] " + String.valueOf(lsec) + " [s]";
 		} else if (diffInMills < day) {
 			long lhour = diffInMills / hour;
 			long lmin = (diffInMills - lhour * hour) / min;
 			long lsec = (diffInMills - lhour * hour - lmin * min) / sec;
-			return String.valueOf(lhour) + " [h] " + String.valueOf(lmin)
-					+ " [min] " + String.valueOf(lsec) + " [s]";
+			return String.valueOf(lhour) + " [h] " + String.valueOf(lmin) + " [min] " + String.valueOf(lsec) + " [s]";
 		} else if (diffInMills < month) {
 			long lday = diffInMills / day;
 			long lhour = (diffInMills - lday * day) / hour;
 			long lmin = (diffInMills - lday * day - lhour * hour) / min;
-			long lsec = (diffInMills - lday * day - lhour * hour - lmin * min)
-					/ sec;
-			return String.valueOf(lday) + " [d] " + String.valueOf(lhour)
-					+ " [h] " + String.valueOf(lmin) + " [min] "
+			long lsec = (diffInMills - lday * day - lhour * hour - lmin * min) / sec;
+			return String.valueOf(lday) + " [d] " + String.valueOf(lhour) + " [h] " + String.valueOf(lmin) + " [min] "
 					+ String.valueOf(lsec) + " [s]";
 		} else if (diffInMills < year) {
 			long mn = diffInMills / month;
 			long lday = (diffInMills - mn * month) / day;
 			long lhour = (diffInMills - mn * month - lday * day) / hour;
-			long lmin = (diffInMills - mn * month - lday * day - lhour * hour)
-					/ min;
-			long lsec = (diffInMills - mn * month - lday * day - lhour * hour - lmin
-					* min)
-					/ sec;
-			return String.valueOf(mn) + " [m] " + String.valueOf(lday)
-					+ " [d] " + String.valueOf(lhour) + " [h] "
-					+ String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
-					+ " [s]";
+			long lmin = (diffInMills - mn * month - lday * day - lhour * hour) / min;
+			long lsec = (diffInMills - mn * month - lday * day - lhour * hour - lmin * min) / sec;
+			return String.valueOf(mn) + " [m] " + String.valueOf(lday) + " [d] " + String.valueOf(lhour) + " [h] "
+					+ String.valueOf(lmin) + " [min] " + String.valueOf(lsec) + " [s]";
 		} else {
 			long lyear = diffInMills / year;
 			long mn = (diffInMills - lyear * year) / month;
 			long lday = (diffInMills - lyear * year - mn * month) / day;
-			long lhour = (diffInMills - lyear * year - mn * month - lday * day)
-					/ hour;
-			long lmin = (diffInMills - lyear * year - mn * month - lday * day - lhour
-					* hour)
-					/ min;
-			long lsec = (diffInMills - lyear * year - mn * month - lday * day
-					- lhour * hour - lmin * min)
-					/ sec;
-			return String.valueOf(lyear) + " [y] " + String.valueOf(mn)
-					+ " [m] " + String.valueOf(lday) + " [d] "
-					+ String.valueOf(lhour) + " [h] " + String.valueOf(lmin)
-					+ " [min] " + String.valueOf(lsec) + " [s]";
+			long lhour = (diffInMills - lyear * year - mn * month - lday * day) / hour;
+			long lmin = (diffInMills - lyear * year - mn * month - lday * day - lhour * hour) / min;
+			long lsec = (diffInMills - lyear * year - mn * month - lday * day - lhour * hour - lmin * min) / sec;
+			return String.valueOf(lyear) + " [y] " + String.valueOf(mn) + " [m] " + String.valueOf(lday) + " [d] "
+					+ String.valueOf(lhour) + " [h] " + String.valueOf(lmin) + " [min] " + String.valueOf(lsec)
+					+ " [s]";
 		}
 	}
 
@@ -1187,13 +1139,11 @@ final public class DateUtils {
 	}
 
 	public static String date2FmtString(Date aDate, String dateFormatString) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-				dateFormatString);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatString);
 		return simpleDateFormat.format(aDate);
 	}
 
-	public static Date fileNameString2date(String dateString)
-			throws ParseException {
+	public static Date fileNameString2date(String dateString) throws ParseException {
 		return fileNameDateFormat.parse(dateString);
 	}
 
@@ -1243,8 +1193,7 @@ final public class DateUtils {
 		c1.setTime(d1);
 		c2.setTime(d2);
 		boolean sameDate = c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR);
-		sameDate = sameDate
-				&& c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+		sameDate = sameDate && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
 		return sameDate;
 	}
 
@@ -1402,18 +1351,16 @@ final public class DateUtils {
 			String day = new Integer(c.get(Calendar.DATE)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
-			if (day.length() == 1) 
+			if (day.length() == 1)
 				day = "0" + day;
 			String date = year + "-" + month + "-" + day;
 			return date;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}
 	}
-	
-	
+
 	public static String getSqlDateTimeString(Calendar c) {
 		try {
 			String year = new Integer(c.get(Calendar.YEAR)).toString();
@@ -1424,9 +1371,9 @@ final public class DateUtils {
 			String second = new Integer(c.get(Calendar.SECOND)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
-			if (day.length() == 1) 
+			if (day.length() == 1)
 				day = "0" + day;
-			if (hour.length() == 1) 
+			if (hour.length() == 1)
 				hour = "0" + hour;
 			if (minute.length() == 1)
 				minute = "0" + minute;
@@ -1434,8 +1381,7 @@ final public class DateUtils {
 				second = "0" + second;
 			String date = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 			return date;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}
@@ -1448,12 +1394,11 @@ final public class DateUtils {
 			String day = new Integer(c.get(Calendar.DATE)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
-			if (day.length() == 1) 
+			if (day.length() == 1)
 				day = "0" + day;
 			String date = month + "-" + day + "-" + year;
 			return date;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}

@@ -34,16 +34,15 @@ public final class CalendarParsedResult extends ParsedResult {
 
 	private static final Pattern RFC2445_DURATION = Pattern
 			.compile("P(?:(\\d+)W)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?");
-	private static final long[] RFC2445_DURATION_FIELD_UNITS = {
-			7 * 24 * 60 * 60 * 1000L, // 1 week
+	private static final long[] RFC2445_DURATION_FIELD_UNITS = { 7 * 24 * 60 * 60 * 1000L, // 1
+																							// week
 			24 * 60 * 60 * 1000L, // 1 day
 			60 * 60 * 1000L, // 1 hour
 			60 * 1000L, // 1 minute
 			1000L, // 1 second
 	};
 
-	private static final Pattern DATE_TIME = Pattern
-			.compile("[0-9]{8}(T[0-9]{6}Z?)?");
+	private static final Pattern DATE_TIME = Pattern.compile("[0-9]{8}(T[0-9]{6}Z?)?");
 
 	private final String summary;
 	private final Date start;
@@ -57,10 +56,9 @@ public final class CalendarParsedResult extends ParsedResult {
 	private final double latitude;
 	private final double longitude;
 
-	public CalendarParsedResult(String summary, String startString,
-			String endString, String durationString, String location,
-			String organizer, String[] attendees, String description,
-			double latitude, double longitude) {
+	public CalendarParsedResult(String summary, String startString, String endString, String durationString,
+			String location, String organizer, String[] attendees, String description, double latitude,
+			double longitude) {
 		super(ParsedResultType.CALENDAR);
 		this.summary = summary;
 
@@ -72,8 +70,7 @@ public final class CalendarParsedResult extends ParsedResult {
 
 		if (endString == null) {
 			long durationMS = parseDurationMS(durationString);
-			end = durationMS < 0L ? null : new Date(start.getTime()
-					+ durationMS);
+			end = durationMS < 0L ? null : new Date(start.getTime() + durationMS);
 		} else {
 			try {
 				this.end = parseDate(endString);
@@ -206,9 +203,8 @@ public final class CalendarParsedResult extends ParsedResult {
 		if (date == null) {
 			return null;
 		}
-		DateFormat format = allDay ? DateFormat
-				.getDateInstance(DateFormat.MEDIUM) : DateFormat
-				.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+		DateFormat format = allDay ? DateFormat.getDateInstance(DateFormat.MEDIUM)
+				: DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 		return format.format(date);
 	}
 
@@ -224,8 +220,7 @@ public final class CalendarParsedResult extends ParsedResult {
 		for (int i = 0; i < RFC2445_DURATION_FIELD_UNITS.length; i++) {
 			String fieldValue = m.group(i + 1);
 			if (fieldValue != null) {
-				durationMS += RFC2445_DURATION_FIELD_UNITS[i]
-						* Integer.parseInt(fieldValue);
+				durationMS += RFC2445_DURATION_FIELD_UNITS[i] * Integer.parseInt(fieldValue);
 			}
 		}
 		return durationMS;

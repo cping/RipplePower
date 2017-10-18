@@ -54,11 +54,9 @@ public class LWaveSound implements Sound {
 
 			if ((format.getEncoding() == AudioFormat.Encoding.ULAW)
 					|| (format.getEncoding() == AudioFormat.Encoding.ALAW)) {
-				AudioFormat temp = new AudioFormat(
-						AudioFormat.Encoding.PCM_SIGNED,
-						format.getSampleRate(),
-						format.getSampleSizeInBits() * 2, format.getChannels(),
-						format.getFrameSize() * 2, format.getFrameRate(), true);
+				AudioFormat temp = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(),
+						format.getSampleSizeInBits() * 2, format.getChannels(), format.getFrameSize() * 2,
+						format.getFrameRate(), true);
 				if (ain != null) {
 					ain.close();
 				}
@@ -83,8 +81,8 @@ public class LWaveSound implements Sound {
 		this.volume = volume;
 	}
 
-	private void rawplay(AudioFormat trgFormat, AudioInputStream ain,
-			float volume) throws IOException, LineUnavailableException {
+	private void rawplay(AudioFormat trgFormat, AudioInputStream ain, float volume)
+			throws IOException, LineUnavailableException {
 		byte[] data = new byte[8192];
 		try {
 			clip = getLine(ain, trgFormat);
@@ -92,17 +90,14 @@ public class LWaveSound implements Sound {
 				return;
 			}
 			Control.Type vol1 = FloatControl.Type.VOLUME, vol2 = FloatControl.Type.MASTER_GAIN;
-			FloatControl c = (FloatControl) clip
-					.getControl(FloatControl.Type.MASTER_GAIN);
+			FloatControl c = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			float min = c.getMinimum();
 			float v = volume * (c.getMaximum() - min) / 100f + min;
 			if (this.clip.isControlSupported(vol1)) {
-				FloatControl volumeControl = (FloatControl) this.clip
-						.getControl(vol1);
+				FloatControl volumeControl = (FloatControl) this.clip.getControl(vol1);
 				volumeControl.setValue(v);
 			} else if (this.clip.isControlSupported(vol2)) {
-				FloatControl gainControl = (FloatControl) this.clip
-						.getControl(vol2);
+				FloatControl gainControl = (FloatControl) this.clip.getControl(vol2);
 				gainControl.setValue(v);
 			}
 			clip.start();
@@ -121,10 +116,8 @@ public class LWaveSound implements Sound {
 		}
 	}
 
-	private SourceDataLine getLine(AudioInputStream ain, AudioFormat audioFormat)
-			throws LineUnavailableException {
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-				ain.getFormat(),
+	private SourceDataLine getLine(AudioInputStream ain, AudioFormat audioFormat) throws LineUnavailableException {
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class, ain.getFormat(),
 				((int) ain.getFrameLength() * audioFormat.getFrameSize()));
 		clip = (SourceDataLine) AudioSystem.getLine(info);
 		clip.open(audioFormat);

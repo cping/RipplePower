@@ -73,8 +73,7 @@ public class IntArray {
 	public void addAll(IntArray array, int offset, int length) {
 		if (offset + length > array.length)
 			throw new IllegalArgumentException(
-					"offset + length must be <= length: " + offset + " + "
-							+ length + " <= " + array.length);
+					"offset + length must be <= length: " + offset + " + " + length + " <= " + array.length);
 		addAll(array.items, offset, length);
 	}
 
@@ -113,22 +112,19 @@ public class IntArray {
 
 	public void incr(int index, int value) {
 		if (index >= length)
-			throw new IndexOutOfBoundsException("index can't be >= length: "
-					+ index + " >= " + length);
+			throw new IndexOutOfBoundsException("index can't be >= length: " + index + " >= " + length);
 		items[index] += value;
 	}
 
 	public void mul(int index, int value) {
 		if (index >= length)
-			throw new IndexOutOfBoundsException("index can't be >= length: "
-					+ index + " >= " + length);
+			throw new IndexOutOfBoundsException("index can't be >= length: " + index + " >= " + length);
 		items[index] *= value;
 	}
 
 	public void insert(int index, long value) {
 		if (index > length) {
-			throw new IndexOutOfBoundsException("index can't be > length: "
-					+ index + " > " + length);
+			throw new IndexOutOfBoundsException("index can't be > length: " + index + " > " + length);
 		}
 		long[] items = this.items;
 		if (length == items.length)
@@ -143,11 +139,9 @@ public class IntArray {
 
 	public void swap(int first, int second) {
 		if (first >= length)
-			throw new IndexOutOfBoundsException("first can't be >= length: "
-					+ first + " >= " + length);
+			throw new IndexOutOfBoundsException("first can't be >= length: " + first + " >= " + length);
 		if (second >= length)
-			throw new IndexOutOfBoundsException("second can't be >= length: "
-					+ second + " >= " + length);
+			throw new IndexOutOfBoundsException("second can't be >= length: " + second + " >= " + length);
 		long[] items = this.items;
 		long firstValue = items[first];
 		items[first] = items[second];
@@ -192,8 +186,7 @@ public class IntArray {
 
 	public long removeIndex(int index) {
 		if (index >= length) {
-			throw new IndexOutOfBoundsException("index can't be >= length: "
-					+ index + " >= " + length);
+			throw new IndexOutOfBoundsException("index can't be >= length: " + index + " >= " + length);
 		}
 		long[] items = this.items;
 		long value = items[index];
@@ -208,18 +201,15 @@ public class IntArray {
 
 	public void removeRange(int start, int end) {
 		if (end >= length) {
-			throw new IndexOutOfBoundsException("end can't be >= length: "
-					+ end + " >= " + length);
+			throw new IndexOutOfBoundsException("end can't be >= length: " + end + " >= " + length);
 		}
 		if (start > end) {
-			throw new IndexOutOfBoundsException("start can't be > end: "
-					+ start + " > " + end);
+			throw new IndexOutOfBoundsException("start can't be > end: " + start + " > " + end);
 		}
 		long[] items = this.items;
 		int count = end - start + 1;
 		if (ordered) {
-			System.arraycopy(items, start + count, items, start, length
-					- (start + count));
+			System.arraycopy(items, start + count, items, start, length - (start + count));
 		} else {
 			int lastIndex = this.length - 1;
 			for (int i = 0; i < count; i++)
@@ -284,8 +274,7 @@ public class IntArray {
 	protected long[] relength(int newlength) {
 		long[] newItems = new long[newlength];
 		long[] items = this.items;
-		System.arraycopy(items, 0, newItems, 0,
-				Math.min(length, newItems.length));
+		System.arraycopy(items, 0, newItems, 0, Math.min(length, newItems.length));
 		this.items = newItems;
 		return newItems;
 	}
@@ -433,8 +422,7 @@ public class IntArray {
 			return "[]";
 		}
 		long[] items = this.items;
-		StringBuilder buffer = new StringBuilder(
-				CollectionUtils.INITIAL_CAPACITY);
+		StringBuilder buffer = new StringBuilder(CollectionUtils.INITIAL_CAPACITY);
 		buffer.append('[');
 		buffer.append(items[0]);
 		for (int i = 1; i < length; i++) {

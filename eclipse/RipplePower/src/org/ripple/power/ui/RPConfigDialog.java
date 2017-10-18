@@ -13,7 +13,6 @@ import org.ripple.power.RippleBlobObj;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.txns.BTC2Ripple;
 import org.ripple.power.txns.RippleHistoryAPI;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
@@ -117,8 +116,7 @@ public class RPConfigDialog extends JDialog {
 		_min_fee_text.setBounds(320, 140, 110, 22);
 
 		_min_amount_label.setFont(font); // NOI18N
-		_min_amount_label.setText("Set "
-				+ LangConfig.get(this, "amount", "Amount"));
+		_min_amount_label.setText("Set " + LangConfig.get(this, "amount", "Amount"));
 		getContentPane().add(_min_amount_label);
 		_min_amount_label.setBounds(10, 140, 90, 16);
 
@@ -135,8 +133,7 @@ public class RPConfigDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPSRippledDialog.showDialog(LangConfig.get(
-						RPSRippledDialog.class, "update_node", "Rippled Node"),
+				RPSRippledDialog.showDialog(LangConfig.get(RPSRippledDialog.class, "update_node", "Rippled Node"),
 						LSystem.applicationMain);
 			}
 		});
@@ -170,8 +167,7 @@ public class RPConfigDialog extends JDialog {
 				String fee = _min_fee_text.getText().trim();
 				if (StringUtils.isNumber(amount) && StringUtils.isNumber(fee)) {
 					LSystem.setMinAmountAndFee(amount, fee);
-					RPToast.makeText(RPConfigDialog.this, "Save Completed",
-							Style.SUCCESS).display();
+					RPToast.makeText(RPConfigDialog.this, "Save Completed", Style.SUCCESS).display();
 				}
 			}
 		});
@@ -191,8 +187,7 @@ public class RPConfigDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPProxyDialog
-						.showDialog("ProxyConfig", LSystem.applicationMain);
+				RPProxyDialog.showDialog("ProxyConfig", LSystem.applicationMain);
 			}
 		});
 		getContentPane().add(_spTwo);
@@ -234,7 +229,7 @@ public class RPConfigDialog extends JDialog {
 		_onlineText.setBounds(130, 20, 300, 22);
 
 		_btc2rippleText.setFont(font); // NOI18N
-		_btc2rippleText.setText(BTC2Ripple.def_bitcoin_bridge);
+		_btc2rippleText.setText("BTC to Ripple");
 		getContentPane().add(_btc2rippleText);
 		_btc2rippleText.setBounds(130, 100, 300, 22);
 

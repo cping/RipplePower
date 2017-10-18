@@ -22,6 +22,7 @@ package org.ripple.power.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +43,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -58,8 +61,7 @@ final public class FileUtils {
 	 * @param context
 	 * @throws IOException
 	 */
-	public static void write(String fileName, String context)
-			throws IOException {
+	public static void write(String fileName, String context) throws IOException {
 		write(fileName, context, false);
 	}
 
@@ -70,8 +72,7 @@ final public class FileUtils {
 	 * @param context
 	 * @throws IOException
 	 */
-	public static void write(File file, String context, String coding)
-			throws IOException {
+	public static void write(File file, String context, String coding) throws IOException {
 		write(file, context.getBytes(coding), false);
 	}
 
@@ -82,8 +83,7 @@ final public class FileUtils {
 	 * @param context
 	 * @throws IOException
 	 */
-	public static void write(String fileName, String context, boolean append)
-			throws IOException {
+	public static void write(String fileName, String context, boolean append) throws IOException {
 		write(new File(fileName), context.getBytes(LSystem.encoding), append);
 	}
 
@@ -106,8 +106,7 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, byte[] bytes, boolean append)
-			throws IOException {
+	public static void write(File file, byte[] bytes, boolean append) throws IOException {
 		write(file, new ByteArrayInputStream(bytes), append);
 	}
 
@@ -130,14 +129,12 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, InputStream input, boolean append)
-			throws IOException {
+	public static void write(File file, InputStream input, boolean append) throws IOException {
 		makedirs(file);
 		BufferedOutputStream output = null;
 		try {
 			int contentLength = input.available();
-			output = new BufferedOutputStream(
-					new FileOutputStream(file, append));
+			output = new BufferedOutputStream(new FileOutputStream(file, append));
 			while (contentLength-- > 0) {
 				output.write(input.read());
 			}
@@ -166,8 +163,7 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, char[] chars, boolean append)
-			throws IOException {
+	public static void write(File file, char[] chars, boolean append) throws IOException {
 		write(file, new CharArrayReader(chars), append);
 	}
 
@@ -190,8 +186,7 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, String string, boolean append)
-			throws IOException {
+	public static void write(File file, String string, boolean append) throws IOException {
 		write(file, new CharArrayReader(string.toCharArray()), append);
 	}
 
@@ -214,8 +209,7 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, Reader reader, boolean append)
-			throws IOException {
+	public static void write(File file, Reader reader, boolean append) throws IOException {
 		makedirs(file);
 		BufferedWriter writer = null;
 		try {
@@ -238,8 +232,7 @@ final public class FileUtils {
 	 * @param records
 	 * @throws IOException
 	 */
-	public static void write(File file, ArrayList<String> records)
-			throws IOException {
+	public static void write(File file, ArrayList<String> records) throws IOException {
 		write(file, records, false);
 	}
 
@@ -251,8 +244,7 @@ final public class FileUtils {
 	 * @param append
 	 * @throws IOException
 	 */
-	public static void write(File file, ArrayList<String> records,
-			boolean append) throws IOException {
+	public static void write(File file, ArrayList<String> records, boolean append) throws IOException {
 		makedirs(file);
 		BufferedWriter writer = null;
 		try {
@@ -261,6 +253,23 @@ final public class FileUtils {
 				writer.write(it.next());
 				writer.write(LSystem.LS);
 			}
+		} finally {
+			close(writer);
+		}
+	}
+
+	public static void write(File file, HashSet<String> records, boolean append) throws IOException {
+		makedirs(file);
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(file, append));
+			for (Iterator<String> it = records.iterator(); it.hasNext();) {
+				writer.write(it.next());
+				writer.write(LSystem.LS);
+			}
+		} catch (Exception e) {
+			System.out.println(file + "," + records.size());
+			e.printStackTrace();
 		} finally {
 			close(writer);
 		}
@@ -288,8 +297,7 @@ final public class FileUtils {
 		File parentFile = file.getParentFile();
 		if (parentFile != null) {
 			if (!parentFile.exists() && !parentFile.mkdirs()) {
-				throw new IOException("Creating directories "
-						+ parentFile.getPath() + " failed.");
+				throw new IOException("Creating directories " + file + "," + parentFile.getPath() + " failed.");
 			}
 		}
 	}
@@ -303,8 +311,7 @@ final public class FileUtils {
 	private static void checkFile(File file) throws IOException {
 		boolean exists = file.exists();
 		if (exists && !file.isFile()) {
-			throw new IOException("File " + file.getPath()
-					+ " is actually not a file.");
+			throw new IOException("File " + file.getPath() + " is actually not a file.");
 		}
 	}
 
@@ -391,8 +398,7 @@ final public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static long copy(InputStream is, OutputStream os, long len)
-			throws IOException {
+	public static long copy(InputStream is, OutputStream os, long len) throws IOException {
 		byte[] buf = new byte[1024];
 		long copied = 0;
 		int read;
@@ -413,8 +419,7 @@ final public class FileUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static long copy(InputStream in, OutputStream out)
-			throws IOException {
+	public static long copy(InputStream in, OutputStream out) throws IOException {
 		long written = 0;
 		byte[] buffer = new byte[4096];
 		while (true) {
@@ -495,14 +500,12 @@ final public class FileUtils {
 	 * @throws IOException
 	 */
 	public static byte[] readBytesFromFile(File file) throws IOException {
-		InputStream is = new DataInputStream(new BufferedInputStream(
-				new FileInputStream(file)));
+		InputStream is = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 		long length = file.length();
 		byte[] bytes = new byte[(int) length];
 		int offset = 0;
 		int numRead = 0;
-		while (offset < bytes.length
-				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+		while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
 			offset += numRead;
 		}
 		if (offset < bytes.length) {
@@ -513,8 +516,7 @@ final public class FileUtils {
 	}
 
 	private static void extracted(File file) throws IOException {
-		throw new IOException("Could not completely read file "
-				+ file.getName());
+		throw new IOException("Could not completely read file " + file.getName());
 	}
 
 	/**
@@ -545,8 +547,41 @@ final public class FileUtils {
 		}
 	}
 
-	public static final String readAsText(InputStream input, String charset)
-			throws IOException {
+	public static final ArrayList<String> readList(String fileName) {
+		ArrayList<String> list = new ArrayList<String>(1000);
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
+			String result = null;
+			for (; (result = reader.readLine()) != null;) {
+				if (!StringUtils.isEmpty(result)) {
+					list.add(result.trim());
+				}
+			}
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	public static final ArrayList<String> readList(String fileName, int start, int end) {
+		ArrayList<String> list = new ArrayList<String>(1000);
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
+			String result = null;
+			for (; (result = reader.readLine()) != null;) {
+				if (!StringUtils.isEmpty(result)) {
+					list.add(result.trim().substring(start, end));
+				}
+			}
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	public static final String readAsText(InputStream input, String charset) throws IOException {
 		Reader rd;
 		if (null == charset) {
 			rd = new InputStreamReader(input);
@@ -645,8 +680,7 @@ final public class FileUtils {
 	 * @return ArrayList 所有文件(包含全路径)
 	 * @throws IOException
 	 */
-	public static ArrayList<String> getAllFiles(String path, String ext)
-			throws IOException {
+	public static ArrayList<String> getAllFiles(String path, String ext) throws IOException {
 		File file = new File(path);
 		if (!file.exists()) {
 			return new ArrayList<String>(0);
@@ -664,8 +698,7 @@ final public class FileUtils {
 					arr = null;
 				} else {
 					for (int j = 0; j < exts.length; j++) {
-						if (getExtension(tempfile.getAbsolutePath())
-								.equalsIgnoreCase(exts[j])) {
+						if (getExtension(tempfile.getAbsolutePath()).equalsIgnoreCase(exts[j])) {
 							ret.add(tempfile.getAbsolutePath());
 						}
 					}
@@ -688,8 +721,7 @@ final public class FileUtils {
 			File file = new File(fileName);
 			InputStream is = null;
 			if (file.exists()) {
-				is = new DataInputStream(new BufferedInputStream(
-						new FileInputStream(file)));
+				is = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				len = (int) file.length();
 			} else {
 				is = UIRes.getStream(fileName);
@@ -705,8 +737,7 @@ final public class FileUtils {
 					uc.setUseCaches(true);
 					if (fileName.endsWith(".zip")) {
 						try {
-							is = new ZipInputStream(new BufferedInputStream(
-									uc.getInputStream(), 8192));
+							is = new ZipInputStream(new BufferedInputStream(uc.getInputStream(), 8192));
 							ZipEntry ze = ((ZipInputStream) is).getNextEntry();
 							len = (int) ze.getSize();
 						} catch (Exception ex) {
@@ -715,8 +746,7 @@ final public class FileUtils {
 					}
 					if (is == null) {
 						len = uc.getContentLength();
-						is = new DataInputStream(new BufferedInputStream(
-								uc.getInputStream(), 8192));
+						is = new DataInputStream(new BufferedInputStream(uc.getInputStream(), 8192));
 					}
 				}
 
@@ -788,8 +818,7 @@ final public class FileUtils {
 	 * @return ArrayList 文件名
 	 * @throws IOException
 	 */
-	public static ArrayList<String> getFiles(String path, String ext)
-			throws IOException {
+	public static ArrayList<String> getFiles(String path, String ext) throws IOException {
 		File file = new File(path);
 		ArrayList<String> ret = new ArrayList<String>();
 		String[] listFile = file.list();
@@ -798,8 +827,7 @@ final public class FileUtils {
 				File tempfile = new File(path + LSystem.FS + listFile[i]);
 
 				if (!tempfile.isDirectory()) {
-					if (getExtension(tempfile.getAbsolutePath())
-							.equalsIgnoreCase(ext))
+					if (getExtension(tempfile.getAbsolutePath()).equalsIgnoreCase(ext))
 						ret.add(tempfile.getAbsolutePath());
 
 				}
@@ -835,6 +863,27 @@ final public class FileUtils {
 				return "";
 			}
 		}
+	}
+
+	public static String getLastDirName(String name) {
+		if (name == null) {
+			return "";
+		}
+		if (name.indexOf("\\") != -1) {
+			String[] list = StringUtils.splitNoCoalesce(name, '\\');
+			if (list.length > 1) {
+				return list[list.length - 2];
+			}
+			return list[list.length - 1];
+		} else if (name.indexOf("/") != -1) {
+			String[] list = StringUtils.splitNoCoalesce(name, '/');
+			if (list.length > 1) {
+				return list[list.length - 2];
+			}
+			return list[list.length - 1];
+
+		}
+		return name;
 	}
 
 	/**

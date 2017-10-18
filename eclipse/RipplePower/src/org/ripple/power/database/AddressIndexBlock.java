@@ -19,7 +19,7 @@ public class AddressIndexBlock {
 
 	protected File pDataBaseFile;
 	protected final int MAXLENGTH = 1 << 20;
-	protected HashMap<String, String> pDict = new HashMap<String, String>();
+	protected HashMap<String, String> pDict = new HashMap<String, String>(128);
 
 	public AddressIndexBlock(String path) {
 		this(new File(path));
@@ -39,8 +39,7 @@ public class AddressIndexBlock {
 		}
 	}
 
-	private static byte[] output(HashMap<String, ArrayList<String>> keys)
-			throws IOException {
+	private static byte[] output(HashMap<String, ArrayList<String>> keys) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
 		DataOutputStream db = new DataOutputStream(out);
 		for (String name : keys.keySet()) {
@@ -61,11 +60,9 @@ public class AddressIndexBlock {
 		return bytes;
 	}
 
-	protected static void putBlock(String tableFile,
-			HashMap<String, HashMap<String, ArrayList<String>>> keys)
+	protected static void putBlock(String tableFile, HashMap<String, HashMap<String, ArrayList<String>>> keys)
 			throws IOException {
-		try (DataOutputStream db = new DataOutputStream(new FileOutputStream(
-				tableFile))) {
+		try (DataOutputStream db = new DataOutputStream(new FileOutputStream(tableFile))) {
 			for (String name : keys.keySet()) {
 				byte[] key = name.getBytes(LSystem.encoding);
 				ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
@@ -77,8 +74,7 @@ public class AddressIndexBlock {
 				db.write(value);
 			}
 		} catch (IOException e) {
-			throw new IOException(String.format(
-					"Conformity saving: IOException: %s", e.getMessage()));
+			throw new IOException(String.format("Conformity saving: IOException: %s", e.getMessage()));
 		}
 	}
 
@@ -100,8 +96,7 @@ public class AddressIndexBlock {
 		}
 	}
 
-	protected static byte[] findBlock(byte[] ins, String name)
-			throws IOException {
+	protected static byte[] findBlock(byte[] ins, String name) throws IOException {
 		DataInputStream db = new DataInputStream(new ByteArrayInputStream(ins));
 		int find = Character.toLowerCase(name.charAt(3));
 		for (;;) {
@@ -118,10 +113,8 @@ public class AddressIndexBlock {
 		}
 	}
 
-	protected static byte[] findBlock(String tableFile, String name)
-			throws IOException {
-		try (DataInputStream db = new DataInputStream(new FileInputStream(
-				tableFile))) {
+	protected static byte[] findBlock(String tableFile, String name) throws IOException {
+		try (DataInputStream db = new DataInputStream(new FileInputStream(tableFile))) {
 			int find = Character.toLowerCase(name.charAt(3));
 			for (;;) {
 				db.readInt();
@@ -140,10 +133,8 @@ public class AddressIndexBlock {
 		}
 	}
 
-	protected static byte[] findBlock(File tableFile, String name)
-			throws IOException {
-		try (DataInputStream db = new DataInputStream(new FileInputStream(
-				tableFile))) {
+	protected static byte[] findBlock(File tableFile, String name) throws IOException {
+		try (DataInputStream db = new DataInputStream(new FileInputStream(tableFile))) {
 			int find = Character.toLowerCase(name.charAt(3));
 			for (;;) {
 				db.readInt();
@@ -168,8 +159,7 @@ public class AddressIndexBlock {
 			pDict = new HashMap<String, String>();
 			return;
 		}
-		try (DataInputStream db = new DataInputStream(new FileInputStream(
-				pDataBaseFile))) {
+		try (DataInputStream db = new DataInputStream(new FileInputStream(pDataBaseFile))) {
 			while (true) {
 				int keyLength;
 				try {
@@ -178,13 +168,11 @@ public class AddressIndexBlock {
 					break;
 				}
 				if (keyLength <= 0 || keyLength > MAXLENGTH) {
-					throw new Exception(String.format(
-							"Key length must be in [1; %d]", MAXLENGTH));
+					throw new Exception(String.format("Key length must be in [1; %d]", MAXLENGTH));
 				}
 				int valueLength = db.readInt();
 				if (valueLength <= 0 || valueLength > MAXLENGTH) {
-					throw new Exception(String.format(
-							"Value length must be in [1; %d]", MAXLENGTH));
+					throw new Exception(String.format("Value length must be in [1; %d]", MAXLENGTH));
 				}
 				byte[] keyBuffer = new byte[keyLength];
 				db.readFully(keyBuffer, 0, keyLength);
@@ -197,22 +185,17 @@ public class AddressIndexBlock {
 		} catch (IOException e) {
 			pDict = new HashMap<String, String>();
 			throw new IOException(
-					String.format(
-							"Conformity loading: IOException: %s. Empty database applied",
-							e.getMessage()));
+					String.format("Conformity loading: IOException: %s. Empty database applied", e.getMessage()));
 		} catch (Exception e) {
 			pDict = new HashMap<String, String>();
 			throw new IOException(
-					String.format(
-							"Conformity loading: Exception: %s. Empty database applied",
-							e.getMessage()));
+					String.format("Conformity loading: Exception: %s. Empty database applied", e.getMessage()));
 		}
 	}
 
 	public void save() throws IOException {
 		checkValid();
-		try (DataOutputStream db = new DataOutputStream(new FileOutputStream(
-				pDataBaseFile))) {
+		try (DataOutputStream db = new DataOutputStream(new FileOutputStream(pDataBaseFile))) {
 			for (Map.Entry<String, String> entry : pDict.entrySet()) {
 				byte[] key = entry.getKey().getBytes(LSystem.encoding);
 				byte[] value = entry.getValue().getBytes(LSystem.encoding);
@@ -222,8 +205,7 @@ public class AddressIndexBlock {
 				db.write(value);
 			}
 		} catch (IOException e) {
-			throw new IOException(String.format(
-					"Conformity saving: IOException: %s", e.getMessage()));
+			throw new IOException(String.format("Conformity saving: IOException: %s", e.getMessage()));
 		}
 	}
 
@@ -248,16 +230,4 @@ public class AddressIndexBlock {
 		return null;
 	}
 
-	public static void main(String[] args) throws IOException {
-		/*
-		 * AddressIndexBlock addressDataBase=new
-		 * AddressIndexBlock("d:\\tablettttttt.txt"); addressDataBase.open();
-		 * addressDataBase.put("SSSSSSSSSSSS", "BBBBBBBBBBBBBBBBBBBBBBB");
-		 * addressDataBase.save();
-		 */
-
-		System.out.println(new String(AddressIndexBlock.findBlock(
-				"d:\\tablettttttt.txt", "SSSSSSSSSSSS")));
-
-	}
 }

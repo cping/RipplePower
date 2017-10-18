@@ -11,8 +11,7 @@ public class TransactionStatsResponse {
 	public String startTime;
 	public String endTime;
 	public String timeIncrement;
-	public List<TransactionStats> results = new ArrayList<TransactionStats>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<TransactionStats> results = new ArrayList<TransactionStats>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	public void from(Object obj) {
 		if (obj != null) {

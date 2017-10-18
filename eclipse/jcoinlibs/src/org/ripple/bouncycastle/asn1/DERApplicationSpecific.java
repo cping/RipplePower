@@ -50,8 +50,7 @@ public class DERApplicationSpecific
 
         byte[] data = primitive.getEncoded(ASN1Encoding.DER);
 
-        this.isConstructed = explicit || (primitive instanceof ASN1Set || primitive instanceof ASN1Sequence
-            || primitive instanceof ASN1TaggedObject || primitive instanceof ASN1Choice || primitive instanceof BEROctetString);
+        this.isConstructed = explicit || (primitive instanceof ASN1Set || primitive instanceof ASN1Sequence);
         this.tag = tag;
 
         if (explicit)
@@ -193,7 +192,7 @@ public class DERApplicationSpecific
     }
 
     /* (non-Javadoc)
-     * @see org.bouncycastle.asn1.ASN1Primitive#encode(org.bouncycastle.asn1.DEROutputStream)
+     * @see org.ripple.bouncycastle.asn1.ASN1Primitive#encode(org.ripple.bouncycastle.asn1.DEROutputStream)
      */
     void encode(ASN1OutputStream out) throws IOException
     {

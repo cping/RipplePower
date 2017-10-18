@@ -27,9 +27,7 @@ public class RPOtherServicesDialog extends JPanel {
 	private RPCButton _activeRipple;
 	private RPCButton _downloader;
 	private RPCButton _xrp2vpn;
-	private RPCButton _ripple_bitcoin_news;
 	private RPCButton _script_editor;
-	private RPCButton _p2pchat;
 	private RPCButton _btc38forRippleFox;
 	private RPCButton _botTraded;
 	private RPCButton _contacts;
@@ -61,24 +59,20 @@ public class RPOtherServicesDialog extends JPanel {
 	private static RPPushTool load() {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		if (LSystem.applicationMain != null) {
-			Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-					LSystem.applicationMain.getGraphicsConfiguration());
+			Insets screenInsets = Toolkit.getDefaultToolkit()
+					.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
-			return RPPushTool.pop(new Point(
-					(size.width - services.getWidth()) - 10, size.getHeight()),
-					(int) (screenInsets.bottom + services.getHeight() + 40),
-					"Other Apps/Services", services);
+			return RPPushTool.pop(new Point((size.width - services.getWidth()) - 10, size.getHeight()),
+					(int) (screenInsets.bottom + services.getHeight() + 100), "Other Apps/Services", services);
 		} else {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
-			return RPPushTool.pop(new Point(
-					(size.width - services.getWidth()) - 10, size.getHeight()),
-					(int) (services.getHeight() + 200), "Other Apps/Services",
-					services);
+			return RPPushTool.pop(new Point((size.width - services.getWidth()) - 10, size.getHeight()),
+					(int) (services.getHeight() + 200), "Other Apps/Services", services);
 		}
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 570);
+		Dimension dim = new Dimension(246, 500);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -92,10 +86,8 @@ public class RPOtherServicesDialog extends JPanel {
 		_activeRipple = new RPCButton();
 		_xrp2vpn = new RPCButton();
 		_btc2ripple_sn = new RPCButton();
-		_ripple_bitcoin_news = new RPCButton();
 		_script_editor = new RPCButton();
 		_downloader = new RPCButton();
-		_p2pchat = new RPCButton();
 		_btc38forRippleFox = new RPCButton();
 		_botTraded = new RPCButton();
 		_contacts = new RPCButton();
@@ -103,16 +95,16 @@ public class RPOtherServicesDialog extends JPanel {
 		setLayout(null);
 		int size = 10;
 
-		_rippleTrade.setText(LangConfig.get(this, "rl",
-				"RippleTrade(RL Server)"));
+		_rippleTrade.setText(LangConfig.get(this, "rl", "GateHub Wallet"));
 		_rippleTrade.setFont(font);
 		add(_rippleTrade);
 		_rippleTrade.setBounds(10, size, 224, 34);
+
 		_rippleTrade.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://www.rippletrade.com");
+				LSystem.openURL("https://gatehub.net/");
 
 			}
 		});
@@ -129,8 +121,7 @@ public class RPOtherServicesDialog extends JPanel {
 
 					@Override
 					public void run() {
-						ContactDialog.showDialog("Ripple Contacts",
-								LSystem.applicationMain);
+						ContactDialog.showDialog("Ripple Contacts", LSystem.applicationMain);
 					}
 				});
 			}
@@ -145,8 +136,7 @@ public class RPOtherServicesDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (LSystem.applicationMain != null) {
-					UIMessage.infoMessage(LSystem.applicationMain,
-							"The next version open function......");
+					UIMessage.infoMessage(LSystem.applicationMain, "The next version open function......");
 				}
 			}
 		});
@@ -159,12 +149,11 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPPayPortDialog
-						.showDialog("Pay Money", LSystem.applicationMain);
+				RPPayPortDialog.showDialog("Pay Money", LSystem.applicationMain);
 			}
 		});
 
-		_xrp2vpn.setText(LangConfig.get(this, "vpn", "XRP Buy VPN"));
+		_xrp2vpn.setText(LangConfig.get(this, "buyxrp", "Buy XRP"));
 		_xrp2vpn.setFont(font);
 		add(_xrp2vpn);
 		_xrp2vpn.setBounds(10, size += 50, 224, 34);
@@ -172,12 +161,12 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://www.privateinternetaccess.com/pages/buy-vpn");
+				LSystem.openURL("https://ripple.com/xrp/buy-xrp/");
 
 			}
 		});
 
-		_btc38forRippleFox.setText("RippleFox Send to BTC38");
+		_btc38forRippleFox.setText("Localbitcoins");
 		_btc38forRippleFox.setFont(font);
 		add(_btc38forRippleFox);
 		_btc38forRippleFox.setBounds(10, size += 50, 224, 34);
@@ -185,27 +174,12 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://ripplefox.com/cny/btc38");
+				LSystem.openURL("https://localbitcoins.com");
 
 			}
 		});
 
-		_ripple_bitcoin_news.setText(LangConfig.get(this, "news",
-				"Ripple/Bitcoin News"));
-		_ripple_bitcoin_news.setFont(font);
-		add(_ripple_bitcoin_news);
-		_ripple_bitcoin_news.setBounds(10, size += 50, 224, 34);
-		_ripple_bitcoin_news.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPNewsDialog.showDialog();
-
-			}
-		});
-
-		_script_editor.setText(LangConfig.get(this, "script",
-				"Ripple Script Editor"));
+		_script_editor.setText(LangConfig.get(this, "script", "Ripple Script Editor"));
 		_script_editor.setFont(font);
 		add(_script_editor);
 		_script_editor.setBounds(10, size += 50, 224, 34);
@@ -217,8 +191,7 @@ public class RPOtherServicesDialog extends JPanel {
 			}
 		});
 
-		_activeRipple.setText(LangConfig.get(this, "tools",
-				"Ripple Trading Tools"));
+		_activeRipple.setText(LangConfig.get(this, "tools", "Ripple Trading Tools"));
 		_activeRipple.setFont(font);
 		add(_activeRipple);
 		_activeRipple.setBounds(10, size += 50, 224, 34);
@@ -226,9 +199,7 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPTradingToolsDialog.showDialog(
-						"Ripple Trading Tools(Developing)",
-						LSystem.applicationMain);
+				RPTradingToolsDialog.showDialog("Ripple Trading Tools(Developing)", LSystem.applicationMain);
 			}
 		});
 
@@ -243,20 +214,6 @@ public class RPOtherServicesDialog extends JPanel {
 				RPDownloadDialog.showDialog(LSystem.applicationMain);
 			}
 		});
-
-		_p2pchat.setText(LangConfig.get(this, "chat", "Ripple P2P Chat"));
-		_p2pchat.setFont(font);
-		add(_p2pchat);
-		_p2pchat.setBounds(10, size += 50, 224, 34);
-		_p2pchat.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RPSelectChatDialog.showDialog("P2P Chat",
-						LSystem.applicationMain);
-			}
-		});
-
 		setBackground(UIConfig.dialogbackground);
 	}
 }

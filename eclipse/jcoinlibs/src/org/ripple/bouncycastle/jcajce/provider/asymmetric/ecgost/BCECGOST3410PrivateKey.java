@@ -25,7 +25,6 @@ import org.ripple.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
 import org.ripple.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.ripple.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.ripple.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.ripple.bouncycastle.asn1.util.ASN1Dump;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.asn1.x9.X962Parameters;
@@ -42,7 +41,6 @@ import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.util.Strings;
 
 public class BCECGOST3410PrivateKey
     implements ECPrivateKey, org.ripple.bouncycastle.jce.interfaces.ECPrivateKey, PKCS12BagAttributeCarrier, ECPointEncoder
@@ -223,22 +221,15 @@ public class BCECGOST3410PrivateKey
 
             ASN1Encodable privKey = info.parsePrivateKey();
 
-            if (privKey instanceof ASN1Integer)
-            {
-                this.d = ASN1Integer.getInstance(privKey).getPositiveValue();
-            }
-            else
-            {
-                byte[] encVal = ASN1OctetString.getInstance(privKey).getOctets();
-                byte[] dVal = new byte[encVal.length];
+            byte[] encVal = ASN1OctetString.getInstance(privKey).getOctets();
+            byte[] dVal = new byte[encVal.length];
 
-                for (int i = 0; i != encVal.length; i++)
-                {
-                    dVal[i] = encVal[encVal.length - 1 - i];
-                }
-
-                this.d = new BigInteger(1, dVal);
+            for (int i = 0; i != encVal.length; i++)
+            {
+                dVal[i] = encVal[encVal.length - 1 - i];
             }
+
+            this.d = new BigInteger(1, dVal);
         }
         else
         {
@@ -507,7 +498,7 @@ public class BCECGOST3410PrivateKey
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
 
         buf.append("EC Private Key").append(nl);
         buf.append("             S: ").append(this.d.toString(16)).append(nl);

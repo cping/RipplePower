@@ -1,4 +1,5 @@
 package com.ripple.core.types.shamap;
+
 import com.ripple.core.coretypes.STObject;
 import com.ripple.core.coretypes.Vector256;
 import com.ripple.core.coretypes.hash.Hash256;
@@ -109,11 +110,11 @@ public class AccountState extends ShaMap {
                     @Override
                     public boolean hasNext() {
                         boolean hasNext = iter.hasNext();
-                        return hasNext && nextEntry().ledgerEntryType() == LedgerEntryType.DirectoryNode;
-                    }
-
-                    private LedgerEntry nextEntry() {
-                        return ((LedgerEntryItem) iter.next.item).entry;
+                        // In case we  need to skip some entries
+                        if (hasNext && !(iter.next() instanceof OfferDirectory)) {
+                            return this.hasNext();
+                        }
+                        return hasNext;
                     }
 
                     @Override
@@ -243,7 +244,7 @@ public class AccountState extends ShaMap {
         }
     }
 
-    private QualityIterator qualityIterator(final Hash256 bookBase) {
+    public QualityIterator qualityIterator(final Hash256 bookBase) {
         return new QualityIterator(bookBase);
     }
 

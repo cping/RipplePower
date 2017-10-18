@@ -5,7 +5,6 @@ import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.DataLengthException;
 import org.ripple.bouncycastle.crypto.OutputLengthException;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
-import org.ripple.bouncycastle.util.encoders.Hex;
 
 /**
  * Block cipher Shacal2, designed by Helena Handschuh and David Naccache,

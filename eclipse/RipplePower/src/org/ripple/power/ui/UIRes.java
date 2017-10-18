@@ -80,8 +80,7 @@ public class UIRes {
 
 	private final static LColor fontColorTitle = LColor.black;
 
-	private final static LColor fontColor = new LColor(
-			LColor.lightSkyBlue.darker());
+	private final static LColor fontColor = new LColor(LColor.lightSkyBlue.darker());
 
 	private final static BufferedImage icon;
 
@@ -102,10 +101,8 @@ public class UIRes {
 			classLoader = Thread.currentThread().getContextClassLoader();
 		}
 		icon = LImage.createImage("icons/ripple.png").getBufferedImage();
-		postIcon = new ImageIcon(new LImage("icons/post.png").scaledInstance(
-				48, 48).getBufferedImage());
-		exitIcon = new ImageIcon(new LImage("icons/down.png").scaledInstance(
-				48, 48).getBufferedImage());
+		postIcon = new ImageIcon(new LImage("icons/post.png").scaledInstance(48, 48).getBufferedImage());
+		exitIcon = new ImageIcon(new LImage("icons/down.png").scaledInstance(48, 48).getBufferedImage());
 	}
 
 	public static BufferedImage getIcon() {
@@ -125,8 +122,7 @@ public class UIRes {
 		try {
 			Font font = Font.createFont(type, UIRes.getStream(fontName));
 			font = font.deriveFont(style, size);
-			final GraphicsEnvironment ge = GraphicsEnvironment
-					.getLocalGraphicsEnvironment();
+			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(font);
 			return font;
 		} catch (Exception e) {
@@ -135,8 +131,7 @@ public class UIRes {
 		return new Font(Font.DIALOG, style, size);
 	}
 
-	public static void addPopMenu(final JPopupMenu menu, final String name,
-			final Updateable update) {
+	public static void addPopMenu(final JPopupMenu menu, final String name, final Updateable update) {
 		JMenuItem tempMenu = new JMenuItem(name);
 		tempMenu.setFont(getFont());
 		tempMenu.addActionListener(new ActionListener() {
@@ -201,8 +196,7 @@ public class UIRes {
 		addStyle(textField, labelName, true);
 	}
 
-	public static void addStyle(JTextField textField, String labelName,
-			boolean bottom) {
+	public static void addStyle(JTextField textField, String labelName, boolean bottom) {
 		textField.setHorizontalAlignment(SwingConstants.RIGHT);
 		Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
 		TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
@@ -232,13 +226,11 @@ public class UIRes {
 		textField.setFont(GraphicsUtils.getFont("Monospaced", 0, 13));
 	}
 
-	public static void addStyle(JTextArea textArea, String labelName,
-			boolean isBorder) {
+	public static void addStyle(JTextArea textArea, String labelName, boolean isBorder) {
 		Border border = null;
 		if (isBorder) {
 			Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
-			TitledBorder titled = BorderFactory.createTitledBorder(line,
-					labelName);
+			TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
 			titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
 			titled.setTitleColor(fontColorTitle);
 		}
@@ -251,8 +243,7 @@ public class UIRes {
 		addStyle(jScrollPane, labelName, false);
 	}
 
-	public static void addStyle(JScrollPane jScrollPane, String labelName,
-			boolean bottom) {
+	public static void addStyle(JScrollPane jScrollPane, String labelName, boolean bottom) {
 		Border line = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
 		TitledBorder titled = BorderFactory.createTitledBorder(line, labelName);
 		titled.setTitleFont(GraphicsUtils.getFont("Verdana", 0, 13));
@@ -309,9 +300,8 @@ public class UIRes {
 	}
 
 	public static Color getDarker(Color color, double factor) {
-		return new Color(Math.max((int) (color.getRed() * factor), 0),
-				Math.max((int) (color.getGreen() * factor), 0), Math.max(
-						(int) (color.getBlue() * factor), 0));
+		return new Color(Math.max((int) (color.getRed() * factor), 0), Math.max((int) (color.getGreen() * factor), 0),
+				Math.max((int) (color.getBlue() * factor), 0));
 	}
 
 	public static Color getBrighter(Color color, double factor) {
@@ -330,8 +320,8 @@ public class UIRes {
 		if (b > 0 && b < i)
 			b = i;
 
-		return new Color(Math.min((int) (r / factor), 255), Math.min(
-				(int) (g / factor), 255), Math.min((int) (b / factor), 255));
+		return new Color(Math.min((int) (r / factor), 255), Math.min((int) (g / factor), 255),
+				Math.min((int) (b / factor), 255));
 	}
 
 	static Icon getCheckBoxMenuItemIcon() {
@@ -355,8 +345,7 @@ public class UIRes {
 		return collapsedTreeIcon;
 	}
 
-	private static class CheckBoxMenuItemIcon implements Icon, UIResource,
-			Serializable {
+	private static class CheckBoxMenuItemIcon implements Icon, UIResource, Serializable {
 
 		/**
 		 * 
@@ -443,8 +432,7 @@ public class UIRes {
 		return visibleRect;
 	}
 
-	public static Point getPointToCenter(Component component,
-			Dimension dimension) {
+	public static Point getPointToCenter(Component component, Dimension dimension) {
 
 		Dimension screenSize = getDefaultDeviceScreenSize();
 
@@ -458,13 +446,12 @@ public class UIRes {
 				dimension.width = screenSize.width;
 			}
 
-			return new Point((screenSize.width - dimension.width) / 2,
-					(screenSize.height - dimension.height) / 2);
+			return new Point((screenSize.width - dimension.width) / 2, (screenSize.height - dimension.height) / 2);
 		}
 
 		Dimension frameDim = component.getSize();
-		Rectangle dRec = new Rectangle(component.getX(), component.getY(),
-				(int) frameDim.getWidth(), (int) frameDim.getHeight());
+		Rectangle dRec = new Rectangle(component.getX(), component.getY(), (int) frameDim.getWidth(),
+				(int) frameDim.getHeight());
 
 		int dialogX = dRec.x + ((dRec.width - dimension.width) / 2);
 		int dialogY = dRec.y + ((dRec.height - dimension.height) / 2);
@@ -488,18 +475,15 @@ public class UIRes {
 
 	public static Dimension getDefaultDeviceScreenSize() {
 
-		GraphicsEnvironment ge = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gs = ge.getScreenDevices()[0];
-		Dimension screenSize = gs.getDefaultConfiguration().getBounds()
-				.getSize();
+		Dimension screenSize = gs.getDefaultConfiguration().getBounds().getSize();
 
 		return screenSize;
 	}
 
 	public static Vector<String> getSystemFonts() {
-		GraphicsEnvironment gEnv = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
+		GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		Font[] tempFonts = gEnv.getAllFonts();
 
 		char dot = '.';
@@ -556,10 +540,9 @@ public class UIRes {
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR), component);
 	}
 
-	private static Object displayDialog(final Component parent,
-			final int optionType, final int messageType,
-			final boolean wantsInput, final String icon, final String title,
-			final Object message, final Object... args) {
+	private static Object displayDialog(final Component parent, final int optionType, final int messageType,
+			final boolean wantsInput, final String icon, final String title, final Object message,
+			final Object... args) {
 
 		dialogReturnValue = null;
 
@@ -568,11 +551,10 @@ public class UIRes {
 				showNormalCursor(parent);
 				JOptionPane pane = null;
 				if (args == null || args.length == 0) {
-					pane = new JOptionPane(message, messageType, optionType,
-							UIManager.getIcon(icon), new Object[] { "OK" });
+					pane = new JOptionPane(message, messageType, optionType, UIManager.getIcon(icon),
+							new Object[] { "OK" });
 				} else {
-					pane = new JOptionPane(message, messageType, optionType,
-							UIManager.getIcon(icon), args);
+					pane = new JOptionPane(message, messageType, optionType, UIManager.getIcon(icon), args);
 				}
 				pane.setWantsInput(wantsInput);
 				pane.setFont(UIRes.getFont());
@@ -603,67 +585,48 @@ public class UIRes {
 		return dialogReturnValue;
 	}
 
-	public static final int displayConfirmCancelErrorMessage(Component parent,
-			Object message) {
-		return formatDialogReturnValue(displayDialog(parent,
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, false,
-				"OptionPane.errorIcon", UIMessage.error, message));
+	public static final int displayConfirmCancelErrorMessage(Component parent, Object message) {
+		return formatDialogReturnValue(displayDialog(parent, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE,
+				false, "OptionPane.errorIcon", UIMessage.error, message));
 	}
 
-	public static void showMessage(Component parent, String message,
-			String title) {
-		displayDialog(parent, JOptionPane.DEFAULT_OPTION,
-				JOptionPane.INFORMATION_MESSAGE, false,
+	public static void showMessage(Component parent, String message, String title) {
+		displayDialog(parent, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, false,
 				"OptionPane.informationIcon", title, message);
 	}
 
-	public static void showInfoMessage(Component parent, String title,
-			String message) {
-		displayDialog(parent, JOptionPane.DEFAULT_OPTION,
-				JOptionPane.INFORMATION_MESSAGE, false,
+	public static void showInfoMessage(Component parent, String title, String message) {
+		displayDialog(parent, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, false,
 				"OptionPane.informationIcon", title, message);
 	}
 
-	public static void showWarningMessage(Component parent, String title,
-			String message) {
-		displayDialog(parent, JOptionPane.DEFAULT_OPTION,
-				JOptionPane.WARNING_MESSAGE, false, "OptionPane.warningIcon",
+	public static void showWarningMessage(Component parent, String title, String message) {
+		displayDialog(parent, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, false, "OptionPane.warningIcon",
 				title, message);
 	}
 
-	public static void showErrorMessage(Component parent, String title,
-			String message) {
-		displayDialog(parent, JOptionPane.DEFAULT_OPTION,
-				JOptionPane.ERROR_MESSAGE, false, "OptionPane.errorIcon",
+	public static void showErrorMessage(Component parent, String title, String message) {
+		displayDialog(parent, JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, false, "OptionPane.errorIcon",
 				title, message);
 	}
 
-	public static int showConfirmMessage(Component parent, String title,
-			String message, String a, String b) {
+	public static int showConfirmMessage(Component parent, String title, String message, String a, String b) {
 		Object[] args = new Object[] { a, b };
-		return formatDialogReturnValue(
-				displayDialog(parent, JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, false,
-						"OptionPane.questionIcon", title, message, args), args);
+		return formatDialogReturnValue(displayDialog(parent, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+				false, "OptionPane.questionIcon", title, message, args), args);
 	}
 
-	public static int showConfirmMessage(Component parent, String title,
-			String message, Object[] args) {
-		return formatDialogReturnValue(
-				displayDialog(parent, JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, false,
-						"OptionPane.questionIcon", title, message, args), args);
+	public static int showConfirmMessage(Component parent, String title, String message, Object[] args) {
+		return formatDialogReturnValue(displayDialog(parent, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+				false, "OptionPane.questionIcon", title, message, args), args);
 	}
 
-	public static String showInputMessage(Component parent, String title,
-			Object message) {
-		return displayDialog(parent, JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE, true, "OptionPane.questionIcon",
-				title, message).toString();
+	public static String showInputMessage(Component parent, String title, Object message) {
+		return displayDialog(parent, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, true,
+				"OptionPane.questionIcon", title, message).toString();
 	}
 
-	private static int formatDialogReturnValue(Object returnValue,
-			Object... objs) {
+	private static int formatDialogReturnValue(Object returnValue, Object... objs) {
 		if (objs == null) {
 			if (returnValue instanceof Integer) {
 				return ((Integer) returnValue).intValue();
@@ -688,8 +651,7 @@ public class UIRes {
 
 	public static Color getSlightlyBrighter(Color color, float factor) {
 		float[] hsbValues = new float[3];
-		Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(),
-				hsbValues);
+		Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsbValues);
 		float hue = hsbValues[0];
 		float saturation = hsbValues[1];
 		float brightness = hsbValues[2];

@@ -133,10 +133,8 @@ public class CrossEffect extends LObject implements ISprite {
 
 				left = i * 2 * part;
 				right = width - ((i + 1) * 2 - 1) * part;
-				g.drawImage(tmp, x() + left, y(), part, height, left, 0, left
-						+ part, height);
-				g.drawImage(tmp, x() + right, y(), part, height, right, 0,
-						right + part, height);
+				g.drawImage(tmp, x() + left, y(), part, height, left, 0, left + part, height);
+				g.drawImage(tmp, x() + right, y(), part, height, right, 0, right + part, height);
 
 			}
 			break;
@@ -155,8 +153,7 @@ public class CrossEffect extends LObject implements ISprite {
 				int down = height - ((i + 1) * 2 - 1) * part;
 
 				g.drawImage(tmp, 0, up, width, part, 0, up, width, up + part);
-				g.drawImage(tmp, 0, down, width, part, 0, down, width, down
-						+ part);
+				g.drawImage(tmp, 0, down, width, part, 0, down, width, down + part);
 
 			}
 			break;

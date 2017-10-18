@@ -22,8 +22,7 @@ public class RPPayPortDialog extends JPanel {
 
 	private RPDialogTool tool;
 
-	public static RPPayPortDialog showDialog(String text, Window parent,
-			boolean show) {
+	public static RPPayPortDialog showDialog(String text, Window parent, boolean show) {
 		if (show) {
 			synchronized (RPPayPortDialog.class) {
 				if (lock == null) {
@@ -123,8 +122,7 @@ public class RPPayPortDialog extends JPanel {
 		_toAppletButton.setBounds(23, 324, 370, 59);
 
 		this.setBackground(UIConfig.dialogbackground);
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 	}
 
 }

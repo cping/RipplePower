@@ -7,14 +7,11 @@ import java.util.TimeZone;
 
 public abstract class RegularTimer implements TimePeriod, MonthConstants {
 
-	public static RegularTimer createInstance(Class<?> c, Date millisecond,
-			TimeZone zone) {
+	public static RegularTimer createInstance(Class<?> c, Date millisecond, TimeZone zone) {
 		RegularTimer result = null;
 		try {
-			Constructor<?> constructor = c.getDeclaredConstructor(new Class[] {
-					Date.class, TimeZone.class });
-			result = (RegularTimer) constructor.newInstance(new Object[] {
-					millisecond, zone });
+			Constructor<?> constructor = c.getDeclaredConstructor(new Class[] { Date.class, TimeZone.class });
+			result = (RegularTimer) constructor.newInstance(new Object[] { millisecond, zone });
 		} catch (Exception e) {
 
 		}
@@ -51,8 +48,7 @@ public abstract class RegularTimer implements TimePeriod, MonthConstants {
 
 	public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getDefault();
 
-	public static final Calendar WORKING_CALENDAR = Calendar
-			.getInstance(DEFAULT_TIME_ZONE);
+	public static final Calendar WORKING_CALENDAR = Calendar.getInstance(DEFAULT_TIME_ZONE);
 
 	public abstract void peg(Calendar calendar);
 

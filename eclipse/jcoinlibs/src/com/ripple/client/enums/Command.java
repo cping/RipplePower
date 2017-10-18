@@ -7,8 +7,6 @@ public enum Command {
     account_offers,
     account_objects,
     account_tx,
-    noripple_check,
-    gateway_balances,
     blacklist,
     book_offers,
     connect,
@@ -60,5 +58,6 @@ public enum Command {
     validation_seed,
     wallet_accounts,
     wallet_propose,
-    wallet_seed
+    wallet_seed,
+    noripple_check
 }

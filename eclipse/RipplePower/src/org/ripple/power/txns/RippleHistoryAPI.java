@@ -32,9 +32,8 @@ public class RippleHistoryAPI {
 		this(def_historyApi, account);
 	}
 
-	public JSONObject getHistory()  {
+	public JSONObject getHistory() {
 		String url = _baseUrl + "accounts/" + this._account + "/transactions";
-		System.out.println(url);
 		String result;
 		try {
 			result = HttpRequest.fix_ssl_open(url);
@@ -62,5 +61,5 @@ public class RippleHistoryAPI {
 	public String getAccount() {
 		return _account;
 	}
-	
+
 }

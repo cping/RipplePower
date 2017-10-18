@@ -6,24 +6,19 @@ public final class Curve25519 {
 	public static final int KEY_SIZE = 32;
 
 	/* 0 */
-	public static final byte[] ZERO = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	public static final byte[] ZERO = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0 };
 
 	/* the prime 2^255-19 */
-	public static final byte[] PRIME = { (byte) 237, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
-			(byte) 255, (byte) 255, (byte) 255, (byte) 127 };
+	public static final byte[] PRIME = { (byte) 237, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
+			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
+			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255,
+			(byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 127 };
 
 	/* group order (a prime near 2^252+2^124) */
-	public static final byte[] ORDER = { (byte) 237, (byte) 211, (byte) 245,
-			(byte) 92, (byte) 26, (byte) 99, (byte) 18, (byte) 88, (byte) 214,
-			(byte) 156, (byte) 247, (byte) 162, (byte) 222, (byte) 249,
-			(byte) 222, (byte) 20, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-			(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+	public static final byte[] ORDER = { (byte) 237, (byte) 211, (byte) 245, (byte) 92, (byte) 26, (byte) 99, (byte) 18,
+			(byte) 88, (byte) 214, (byte) 156, (byte) 247, (byte) 162, (byte) 222, (byte) 249, (byte) 222, (byte) 20,
+			(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
 			(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 16 };
 
 	/********* KEY AGREEMENT *********/
@@ -42,12 +37,12 @@ public final class Curve25519 {
 	 * Key-pair generation P [out] your public key s [out] your private key for
 	 * signing k [out] your private key for key agreement k [in] 32 random bytes
 	 * s may be NULL if you don't care
-	 * 
+	 *
 	 * WARNING: if s is not NULL, this function has data-dependent timing
 	 */
-	public static void keygen(byte[] P, byte[] k) {
+	public static void keygen(byte[] P, byte[] s, byte[] k) {
 		clamp(k);
-		core(P, k, null);
+		core(P, s, k, null);
 	}
 
 	/*
@@ -55,35 +50,35 @@ public final class Curve25519 {
 	 * your private key for key agreement P [in] peer's public key
 	 */
 	public static void curve(byte[] Z, byte[] k, byte[] P) {
-		core(Z, null, P);
+		core(Z, null, k, P);
 	}
 
 	/********* DIGITAL SIGNATURES *********/
 
 	/*
 	 * deterministic EC-KCDSA
-	 * 
+	 *
 	 * s is the private key for signing P is the corresponding public key Z is
 	 * the context data (signer public key or certificate, etc)
-	 * 
+	 *
 	 * signing:
-	 * 
+	 *
 	 * m = hash(Z, message) x = hash(m, s) keygen25519(Y, NULL, x); r = hash(Y);
 	 * h = m XOR r sign25519(v, h, x, s);
-	 * 
+	 *
 	 * output (v,r) as the signature
-	 * 
+	 *
 	 * verification:
-	 * 
+	 *
 	 * m = hash(Z, message); h = m XOR r verify25519(Y, v, h, P)
-	 * 
+	 *
 	 * confirm r == hash(Y)
-	 * 
+	 *
 	 * It would seem to me that it would be simpler to have the signer directly
 	 * do h = hash(m, Y) and send that to the recipient instead of r, who can
 	 * verify the signature by checking h == hash(m, Y). If there are any
 	 * problems with such a scheme, please let me know.
-	 * 
+	 *
 	 * Also, EC-KCDSA (like most DS algorithms) picks x random, which is a waste
 	 * of perfectly good entropy, but does allow Y to be calculated in advance
 	 * of (or parallel to) hashing the message.
@@ -135,12 +130,11 @@ public final class Curve25519 {
 	public static void verify(byte[] Y, byte[] v, byte[] h, byte[] P) {
 		/* Y = v abs(P) + h G */
 		byte[] d = new byte[32];
-		long10[] p = new long10[] { new long10(), new long10() }, s = new long10[] {
-				new long10(), new long10() }, yx = new long10[] { new long10(),
-				new long10(), new long10() }, yz = new long10[] { new long10(),
-				new long10(), new long10() }, t1 = new long10[] { new long10(),
-				new long10(), new long10() }, t2 = new long10[] { new long10(),
-				new long10(), new long10() };
+		long10[] p = new long10[] { new long10(), new long10() }, s = new long10[] { new long10(), new long10() },
+				yx = new long10[] { new long10(), new long10(), new long10() },
+				yz = new long10[] { new long10(), new long10(), new long10() },
+				t1 = new long10[] { new long10(), new long10(), new long10() },
+				t2 = new long10[] { new long10(), new long10(), new long10() };
 
 		int vi = 0, hi = 0, di = 0, nvh = 0, i, j, k;
 
@@ -224,11 +218,9 @@ public final class Curve25519 {
 				mont_dbl(yx[2], yz[2], t1[k], t2[k], yx[0], yz[0]);
 
 				k = (di >> j & 2) ^ ((di >> j & 1) << 1);
-				mont_add(t1[1], t2[1], t1[k], t2[k], yx[1], yz[1],
-						p[di >> j & 1]);
+				mont_add(t1[1], t2[1], t1[k], t2[k], yx[1], yz[1], p[di >> j & 1]);
 
-				mont_add(t1[2], t2[2], t1[0], t2[0], yx[2], yz[2],
-						s[((vi ^ hi) >> j & 2) >> 1]);
+				mont_add(t1[2], t2[2], t1[0], t2[0], yx[2], yz[2], s[((vi ^ hi) >> j & 2) >> 1]);
 			}
 		}
 
@@ -266,7 +258,7 @@ public final class Curve25519 {
 		return true;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 
 	/*
 	 * sahn0: Using this class instead of long[10] to avoid bounds checks.
@@ -275,8 +267,7 @@ public final class Curve25519 {
 		public long10() {
 		}
 
-		public long10(long _0, long _1, long _2, long _3, long _4, long _5,
-				long _6, long _7, long _8, long _9) {
+		public long10(long _0, long _1, long _2, long _3, long _4, long _5, long _6, long _7, long _8, long _9) {
 			this._0 = _0;
 			this._1 = _1;
 			this._2 = _2;
@@ -303,8 +294,7 @@ public final class Curve25519 {
 	/* p[m..n+m-1] = q[m..n+m-1] + z * x */
 	/* n is the size of x */
 	/* n+m is the size of p and q */
-	private static int mula_small(byte[] p, byte[] q, int m, byte[] x, int n,
-			int z) {
+	private static int mula_small(byte[] p, byte[] q, int m, byte[] x, int n, int z) {
 		int v = 0;
 		for (int i = 0; i < n; ++i) {
 			v += (q[i + m] & 0xFF) + z * (x[i] & 0xFF);
@@ -325,8 +315,7 @@ public final class Curve25519 {
 		int i = 0;
 		for (; i < t; i++) {
 			int zy = z * (y[i] & 0xFF);
-			w += mula_small(p, p, i, x, n, zy) + (p[i + n] & 0xFF) + zy
-					* (x[n] & 0xFF);
+			w += mula_small(p, p, i, x, n, zy) + (p[i + n] & 0xFF) + zy * (x[n] & 0xFF);
 			p[i + n] = (byte) w;
 			w >>= 8;
 		}
@@ -353,12 +342,51 @@ public final class Curve25519 {
 			}
 			z /= dt;
 			rn += mula_small(r, r, n - t + 1, d, t, -z);
-			q[n - t + 1] = (byte) ((z + rn) & 0xFF); /* rn is 0 or -1 (underflow) */
+			q[n - t + 1] = (byte) ((z + rn)
+					& 0xFF); /* rn is 0 or -1 (underflow) */
 			mula_small(r, r, n - t + 1, d, t, -rn);
 			rn = (r[n] & 0xFF);
 			r[n] = 0;
 		}
 		r[t - 1] = (byte) rn;
+	}
+
+	private static int numsize(byte[] x, int n) {
+		while (n-- != 0 && x[n] == 0)
+			;
+		return n + 1;
+	}
+
+	/*
+	 * Returns x if a contains the gcd, y if b. Also, the returned buffer
+	 * contains the inverse of a mod b, as 32-byte signed. x and y must have 64
+	 * bytes space for temporary use. requires that a[-1] and b[-1] are valid
+	 * memory locations
+	 */
+	private static byte[] egcd32(byte[] x, byte[] y, byte[] a, byte[] b) {
+		int an, bn = 32, qn, i;
+		for (i = 0; i < 32; i++)
+			x[i] = y[i] = 0;
+		x[0] = 1;
+		an = numsize(a, 32);
+		if (an == 0)
+			return y; /* division by zero */
+		byte[] temp = new byte[32];
+		while (true) {
+			qn = bn - an + 1;
+			divmod(temp, b, bn, a, an);
+			bn = numsize(b, bn);
+			if (bn == 0)
+				return x;
+			mula32(y, x, temp, qn, -1);
+
+			qn = an - bn + 1;
+			divmod(temp, a, an, b, bn);
+			an = numsize(a, an);
+			if (an == 0)
+				return y;
+			mula32(x, y, temp, qn, -1);
+		}
 	}
 
 	/********************* radix 2^25.5 GF(2^255-19) math *********************/
@@ -368,34 +396,22 @@ public final class Curve25519 {
 
 	/* Convert to internal format from little-endian byte format */
 	private static void unpack(long10 x, byte[] m) {
-		x._0 = ((m[0] & 0xFF)) | ((m[1] & 0xFF)) << 8 | (m[2] & 0xFF) << 16
-				| ((m[3] & 0xFF) & 3) << 24;
-		x._1 = ((m[3] & 0xFF) & ~3) >> 2 | (m[4] & 0xFF) << 6
-				| (m[5] & 0xFF) << 14 | ((m[6] & 0xFF) & 7) << 22;
-		x._2 = ((m[6] & 0xFF) & ~7) >> 3 | (m[7] & 0xFF) << 5
-				| (m[8] & 0xFF) << 13 | ((m[9] & 0xFF) & 31) << 21;
-		x._3 = ((m[9] & 0xFF) & ~31) >> 5 | (m[10] & 0xFF) << 3
-				| (m[11] & 0xFF) << 11 | ((m[12] & 0xFF) & 63) << 19;
-		x._4 = ((m[12] & 0xFF) & ~63) >> 6 | (m[13] & 0xFF) << 2
-				| (m[14] & 0xFF) << 10 | (m[15] & 0xFF) << 18;
-		x._5 = (m[16] & 0xFF) | (m[17] & 0xFF) << 8 | (m[18] & 0xFF) << 16
-				| ((m[19] & 0xFF) & 1) << 24;
-		x._6 = ((m[19] & 0xFF) & ~1) >> 1 | (m[20] & 0xFF) << 7
-				| (m[21] & 0xFF) << 15 | ((m[22] & 0xFF) & 7) << 23;
-		x._7 = ((m[22] & 0xFF) & ~7) >> 3 | (m[23] & 0xFF) << 5
-				| (m[24] & 0xFF) << 13 | ((m[25] & 0xFF) & 15) << 21;
-		x._8 = ((m[25] & 0xFF) & ~15) >> 4 | (m[26] & 0xFF) << 4
-				| (m[27] & 0xFF) << 12 | ((m[28] & 0xFF) & 63) << 20;
-		x._9 = ((m[28] & 0xFF) & ~63) >> 6 | (m[29] & 0xFF) << 2
-				| (m[30] & 0xFF) << 10 | (m[31] & 0xFF) << 18;
+		x._0 = ((m[0] & 0xFF)) | ((m[1] & 0xFF)) << 8 | (m[2] & 0xFF) << 16 | ((m[3] & 0xFF) & 3) << 24;
+		x._1 = ((m[3] & 0xFF) & ~3) >> 2 | (m[4] & 0xFF) << 6 | (m[5] & 0xFF) << 14 | ((m[6] & 0xFF) & 7) << 22;
+		x._2 = ((m[6] & 0xFF) & ~7) >> 3 | (m[7] & 0xFF) << 5 | (m[8] & 0xFF) << 13 | ((m[9] & 0xFF) & 31) << 21;
+		x._3 = ((m[9] & 0xFF) & ~31) >> 5 | (m[10] & 0xFF) << 3 | (m[11] & 0xFF) << 11 | ((m[12] & 0xFF) & 63) << 19;
+		x._4 = ((m[12] & 0xFF) & ~63) >> 6 | (m[13] & 0xFF) << 2 | (m[14] & 0xFF) << 10 | (m[15] & 0xFF) << 18;
+		x._5 = (m[16] & 0xFF) | (m[17] & 0xFF) << 8 | (m[18] & 0xFF) << 16 | ((m[19] & 0xFF) & 1) << 24;
+		x._6 = ((m[19] & 0xFF) & ~1) >> 1 | (m[20] & 0xFF) << 7 | (m[21] & 0xFF) << 15 | ((m[22] & 0xFF) & 7) << 23;
+		x._7 = ((m[22] & 0xFF) & ~7) >> 3 | (m[23] & 0xFF) << 5 | (m[24] & 0xFF) << 13 | ((m[25] & 0xFF) & 15) << 21;
+		x._8 = ((m[25] & 0xFF) & ~15) >> 4 | (m[26] & 0xFF) << 4 | (m[27] & 0xFF) << 12 | ((m[28] & 0xFF) & 63) << 20;
+		x._9 = ((m[28] & 0xFF) & ~63) >> 6 | (m[29] & 0xFF) << 2 | (m[30] & 0xFF) << 10 | (m[31] & 0xFF) << 18;
 	}
 
 	/* Check if reduced-form input >= 2^255-19 */
 	private static boolean is_overflow(long10 x) {
-		return (((x._0 > P26 - 19))
-				&& ((x._1 & x._3 & x._5 & x._7 & x._9) == P25) && ((x._2 & x._4
-				& x._6 & x._8) == P26))
-				|| (x._9 > P25);
+		return (((x._0 > P26 - 19)) && ((x._1 & x._3 & x._5 & x._7 & x._9) == P25)
+				&& ((x._2 & x._4 & x._6 & x._8) == P26)) || (x._9 > P25);
 	}
 
 	/*
@@ -553,59 +569,40 @@ public final class Curve25519 {
 		 * sahn0: Using local variables to avoid class access. This seem to
 		 * improve performance a bit...
 		 */
-		long x_0 = x._0, x_1 = x._1, x_2 = x._2, x_3 = x._3, x_4 = x._4, x_5 = x._5, x_6 = x._6, x_7 = x._7, x_8 = x._8, x_9 = x._9;
-		long y_0 = y._0, y_1 = y._1, y_2 = y._2, y_3 = y._3, y_4 = y._4, y_5 = y._5, y_6 = y._6, y_7 = y._7, y_8 = y._8, y_9 = y._9;
+		long x_0 = x._0, x_1 = x._1, x_2 = x._2, x_3 = x._3, x_4 = x._4, x_5 = x._5, x_6 = x._6, x_7 = x._7, x_8 = x._8,
+				x_9 = x._9;
+		long y_0 = y._0, y_1 = y._1, y_2 = y._2, y_3 = y._3, y_4 = y._4, y_5 = y._5, y_6 = y._6, y_7 = y._7, y_8 = y._8,
+				y_9 = y._9;
 		long t;
 		t = (x_0 * y_8) + (x_2 * y_6) + (x_4 * y_4) + (x_6 * y_2) + (x_8 * y_0)
-				+ 2 * ((x_1 * y_7) + (x_3 * y_5) + (x_5 * y_3) + (x_7 * y_1))
-				+ 38 * (x_9 * y_9);
+				+ 2 * ((x_1 * y_7) + (x_3 * y_5) + (x_5 * y_3) + (x_7 * y_1)) + 38 * (x_9 * y_9);
 		xy._8 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + (x_0 * y_9) + (x_1 * y_8) + (x_2 * y_7) + (x_3 * y_6)
-				+ (x_4 * y_5) + (x_5 * y_4) + (x_6 * y_3) + (x_7 * y_2)
-				+ (x_8 * y_1) + (x_9 * y_0);
+		t = (t >> 26) + (x_0 * y_9) + (x_1 * y_8) + (x_2 * y_7) + (x_3 * y_6) + (x_4 * y_5) + (x_5 * y_4) + (x_6 * y_3)
+				+ (x_7 * y_2) + (x_8 * y_1) + (x_9 * y_0);
 		xy._9 = (t & ((1 << 25) - 1));
-		t = (x_0 * y_0)
-				+ 19
-				* ((t >> 25) + (x_2 * y_8) + (x_4 * y_6) + (x_6 * y_4) + (x_8 * y_2))
-				+ 38
-				* ((x_1 * y_9) + (x_3 * y_7) + (x_5 * y_5) + (x_7 * y_3) + (x_9 * y_1));
+		t = (x_0 * y_0) + 19 * ((t >> 25) + (x_2 * y_8) + (x_4 * y_6) + (x_6 * y_4) + (x_8 * y_2))
+				+ 38 * ((x_1 * y_9) + (x_3 * y_7) + (x_5 * y_5) + (x_7 * y_3) + (x_9 * y_1));
 		xy._0 = (t & ((1 << 26) - 1));
-		t = (t >> 26)
-				+ (x_0 * y_1)
-				+ (x_1 * y_0)
-				+ 19
-				* ((x_2 * y_9) + (x_3 * y_8) + (x_4 * y_7) + (x_5 * y_6)
-						+ (x_6 * y_5) + (x_7 * y_4) + (x_8 * y_3) + (x_9 * y_2));
+		t = (t >> 26) + (x_0 * y_1) + (x_1 * y_0) + 19 * ((x_2 * y_9) + (x_3 * y_8) + (x_4 * y_7) + (x_5 * y_6)
+				+ (x_6 * y_5) + (x_7 * y_4) + (x_8 * y_3) + (x_9 * y_2));
 		xy._1 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + (x_0 * y_2) + (x_2 * y_0) + 19
-				* ((x_4 * y_8) + (x_6 * y_6) + (x_8 * y_4)) + 2 * (x_1 * y_1)
+		t = (t >> 25) + (x_0 * y_2) + (x_2 * y_0) + 19 * ((x_4 * y_8) + (x_6 * y_6) + (x_8 * y_4)) + 2 * (x_1 * y_1)
 				+ 38 * ((x_3 * y_9) + (x_5 * y_7) + (x_7 * y_5) + (x_9 * y_3));
 		xy._2 = (t & ((1 << 26) - 1));
-		t = (t >> 26)
-				+ (x_0 * y_3)
-				+ (x_1 * y_2)
-				+ (x_2 * y_1)
-				+ (x_3 * y_0)
-				+ 19
-				* ((x_4 * y_9) + (x_5 * y_8) + (x_6 * y_7) + (x_7 * y_6)
-						+ (x_8 * y_5) + (x_9 * y_4));
+		t = (t >> 26) + (x_0 * y_3) + (x_1 * y_2) + (x_2 * y_1) + (x_3 * y_0)
+				+ 19 * ((x_4 * y_9) + (x_5 * y_8) + (x_6 * y_7) + (x_7 * y_6) + (x_8 * y_5) + (x_9 * y_4));
 		xy._3 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + (x_0 * y_4) + (x_2 * y_2) + (x_4 * y_0) + 19
-				* ((x_6 * y_8) + (x_8 * y_6)) + 2 * ((x_1 * y_3) + (x_3 * y_1))
-				+ 38 * ((x_5 * y_9) + (x_7 * y_7) + (x_9 * y_5));
+		t = (t >> 25) + (x_0 * y_4) + (x_2 * y_2) + (x_4 * y_0) + 19 * ((x_6 * y_8) + (x_8 * y_6))
+				+ 2 * ((x_1 * y_3) + (x_3 * y_1)) + 38 * ((x_5 * y_9) + (x_7 * y_7) + (x_9 * y_5));
 		xy._4 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + (x_0 * y_5) + (x_1 * y_4) + (x_2 * y_3) + (x_3 * y_2)
-				+ (x_4 * y_1) + (x_5 * y_0) + 19
-				* ((x_6 * y_9) + (x_7 * y_8) + (x_8 * y_7) + (x_9 * y_6));
+		t = (t >> 26) + (x_0 * y_5) + (x_1 * y_4) + (x_2 * y_3) + (x_3 * y_2) + (x_4 * y_1) + (x_5 * y_0)
+				+ 19 * ((x_6 * y_9) + (x_7 * y_8) + (x_8 * y_7) + (x_9 * y_6));
 		xy._5 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + (x_0 * y_6) + (x_2 * y_4) + (x_4 * y_2) + (x_6 * y_0)
-				+ 19 * (x_8 * y_8) + 2
-				* ((x_1 * y_5) + (x_3 * y_3) + (x_5 * y_1)) + 38
-				* ((x_7 * y_9) + (x_9 * y_7));
+		t = (t >> 25) + (x_0 * y_6) + (x_2 * y_4) + (x_4 * y_2) + (x_6 * y_0) + 19 * (x_8 * y_8)
+				+ 2 * ((x_1 * y_5) + (x_3 * y_3) + (x_5 * y_1)) + 38 * ((x_7 * y_9) + (x_9 * y_7));
 		xy._6 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + (x_0 * y_7) + (x_1 * y_6) + (x_2 * y_5) + (x_3 * y_4)
-				+ (x_4 * y_3) + (x_5 * y_2) + (x_6 * y_1) + (x_7 * y_0) + 19
-				* ((x_8 * y_9) + (x_9 * y_8));
+		t = (t >> 26) + (x_0 * y_7) + (x_1 * y_6) + (x_2 * y_5) + (x_3 * y_4) + (x_4 * y_3) + (x_5 * y_2) + (x_6 * y_1)
+				+ (x_7 * y_0) + 19 * ((x_8 * y_9) + (x_9 * y_8));
 		xy._7 = (t & ((1 << 25) - 1));
 		t = (t >> 25) + xy._8;
 		xy._8 = (t & ((1 << 26) - 1));
@@ -615,42 +612,32 @@ public final class Curve25519 {
 
 	/* Square a number. Optimization of mul25519(x2, x, x) */
 	private static long10 sqr(long10 x2, long10 x) {
-		long x_0 = x._0, x_1 = x._1, x_2 = x._2, x_3 = x._3, x_4 = x._4, x_5 = x._5, x_6 = x._6, x_7 = x._7, x_8 = x._8, x_9 = x._9;
+		long x_0 = x._0, x_1 = x._1, x_2 = x._2, x_3 = x._3, x_4 = x._4, x_5 = x._5, x_6 = x._6, x_7 = x._7, x_8 = x._8,
+				x_9 = x._9;
 		long t;
-		t = (x_4 * x_4) + 2 * ((x_0 * x_8) + (x_2 * x_6)) + 38 * (x_9 * x_9)
-				+ 4 * ((x_1 * x_7) + (x_3 * x_5));
+		t = (x_4 * x_4) + 2 * ((x_0 * x_8) + (x_2 * x_6)) + 38 * (x_9 * x_9) + 4 * ((x_1 * x_7) + (x_3 * x_5));
 		x2._8 = (t & ((1 << 26) - 1));
-		t = (t >> 26)
-				+ 2
-				* ((x_0 * x_9) + (x_1 * x_8) + (x_2 * x_7) + (x_3 * x_6) + (x_4 * x_5));
+		t = (t >> 26) + 2 * ((x_0 * x_9) + (x_1 * x_8) + (x_2 * x_7) + (x_3 * x_6) + (x_4 * x_5));
 		x2._9 = (t & ((1 << 25) - 1));
-		t = 19 * (t >> 25) + (x_0 * x_0) + 38
-				* ((x_2 * x_8) + (x_4 * x_6) + (x_5 * x_5)) + 76
-				* ((x_1 * x_9) + (x_3 * x_7));
+		t = 19 * (t >> 25) + (x_0 * x_0) + 38 * ((x_2 * x_8) + (x_4 * x_6) + (x_5 * x_5))
+				+ 76 * ((x_1 * x_9) + (x_3 * x_7));
 		x2._0 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + 2 * (x_0 * x_1) + 38
-				* ((x_2 * x_9) + (x_3 * x_8) + (x_4 * x_7) + (x_5 * x_6));
+		t = (t >> 26) + 2 * (x_0 * x_1) + 38 * ((x_2 * x_9) + (x_3 * x_8) + (x_4 * x_7) + (x_5 * x_6));
 		x2._1 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + 19 * (x_6 * x_6) + 2 * ((x_0 * x_2) + (x_1 * x_1)) + 38
-				* (x_4 * x_8) + 76 * ((x_3 * x_9) + (x_5 * x_7));
+		t = (t >> 25) + 19 * (x_6 * x_6) + 2 * ((x_0 * x_2) + (x_1 * x_1)) + 38 * (x_4 * x_8)
+				+ 76 * ((x_3 * x_9) + (x_5 * x_7));
 		x2._2 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + 2 * ((x_0 * x_3) + (x_1 * x_2)) + 38
-				* ((x_4 * x_9) + (x_5 * x_8) + (x_6 * x_7));
+		t = (t >> 26) + 2 * ((x_0 * x_3) + (x_1 * x_2)) + 38 * ((x_4 * x_9) + (x_5 * x_8) + (x_6 * x_7));
 		x2._3 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + (x_2 * x_2) + 2 * (x_0 * x_4) + 38
-				* ((x_6 * x_8) + (x_7 * x_7)) + 4 * (x_1 * x_3) + 76
-				* (x_5 * x_9);
+		t = (t >> 25) + (x_2 * x_2) + 2 * (x_0 * x_4) + 38 * ((x_6 * x_8) + (x_7 * x_7)) + 4 * (x_1 * x_3)
+				+ 76 * (x_5 * x_9);
 		x2._4 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + 2 * ((x_0 * x_5) + (x_1 * x_4) + (x_2 * x_3)) + 38
-				* ((x_6 * x_9) + (x_7 * x_8));
+		t = (t >> 26) + 2 * ((x_0 * x_5) + (x_1 * x_4) + (x_2 * x_3)) + 38 * ((x_6 * x_9) + (x_7 * x_8));
 		x2._5 = (t & ((1 << 25) - 1));
-		t = (t >> 25) + 19 * (x_8 * x_8) + 2
-				* ((x_0 * x_6) + (x_2 * x_4) + (x_3 * x_3)) + 4 * (x_1 * x_5)
+		t = (t >> 25) + 19 * (x_8 * x_8) + 2 * ((x_0 * x_6) + (x_2 * x_4) + (x_3 * x_3)) + 4 * (x_1 * x_5)
 				+ 76 * (x_7 * x_9);
 		x2._6 = (t & ((1 << 26) - 1));
-		t = (t >> 26) + 2
-				* ((x_0 * x_7) + (x_1 * x_6) + (x_2 * x_5) + (x_3 * x_4)) + 38
-				* (x_8 * x_9);
+		t = (t >> 26) + 2 * ((x_0 * x_7) + (x_1 * x_6) + (x_2 * x_5) + (x_3 * x_4)) + 38 * (x_8 * x_9);
 		x2._7 = (t & ((1 << 25) - 1));
 		t = (t >> 25) + x2._8;
 		x2._8 = (t & ((1 << 26) - 1));
@@ -674,8 +661,8 @@ public final class Curve25519 {
 		mul(t0, t2, t1); /* 11 == 9 + 2 */
 		sqr(t1, t0); /* 22 == 2 * 11 */
 		mul(t3, t1, t2); /*
-						 * 31 == 22 + 9 == 2^5 - 2^0
-						 */
+							 * 31 == 22 + 9 == 2^5 - 2^0
+							 */
 		sqr(t1, t3); /* 2^6 - 2^1 */
 		sqr(t2, t1); /* 2^7 - 2^2 */
 		sqr(t1, t2); /* 2^8 - 2^3 */
@@ -687,38 +674,38 @@ public final class Curve25519 {
 		for (i = 1; i < 5; i++) {
 			sqr(t1, t3);
 			sqr(t3, t1);
-		} /* t3 *//* 2^20 - 2^10 */
+		} /* t3 */ /* 2^20 - 2^10 */
 		mul(t1, t3, t2); /* 2^20 - 2^0 */
 		sqr(t3, t1); /* 2^21 - 2^1 */
 		sqr(t4, t3); /* 2^22 - 2^2 */
 		for (i = 1; i < 10; i++) {
 			sqr(t3, t4);
 			sqr(t4, t3);
-		} /* t4 *//* 2^40 - 2^20 */
+		} /* t4 */ /* 2^40 - 2^20 */
 		mul(t3, t4, t1); /* 2^40 - 2^0 */
 		for (i = 0; i < 5; i++) {
 			sqr(t1, t3);
 			sqr(t3, t1);
-		} /* t3 *//* 2^50 - 2^10 */
+		} /* t3 */ /* 2^50 - 2^10 */
 		mul(t1, t3, t2); /* 2^50 - 2^0 */
 		sqr(t2, t1); /* 2^51 - 2^1 */
 		sqr(t3, t2); /* 2^52 - 2^2 */
 		for (i = 1; i < 25; i++) {
 			sqr(t2, t3);
 			sqr(t3, t2);
-		} /* t3 *//* 2^100 - 2^50 */
+		} /* t3 */ /* 2^100 - 2^50 */
 		mul(t2, t3, t1); /* 2^100 - 2^0 */
 		sqr(t3, t2); /* 2^101 - 2^1 */
 		sqr(t4, t3); /* 2^102 - 2^2 */
 		for (i = 1; i < 50; i++) {
 			sqr(t3, t4);
 			sqr(t4, t3);
-		} /* t4 *//* 2^200 - 2^100 */
+		} /* t4 */ /* 2^200 - 2^100 */
 		mul(t3, t4, t2); /* 2^200 - 2^0 */
 		for (i = 0; i < 25; i++) {
 			sqr(t4, t3);
 			sqr(t3, t4);
-		} /* t3 *//* 2^250 - 2^50 */
+		} /* t3 */ /* 2^250 - 2^50 */
 		mul(t2, t3, t1); /* 2^250 - 2^0 */
 		sqr(t1, t2); /* 2^251 - 2^1 */
 		sqr(t2, t1); /* 2^252 - 2^2 */
@@ -765,8 +752,7 @@ public final class Curve25519 {
 	 * A = P + Q where X(A) = ax/az X(P) = (t1+t2)/(t1-t2) X(Q) =
 	 * (t3+t4)/(t3-t4) X(P-Q) = dx clobbers t1 and t2, preserves t3 and t4
 	 */
-	private static void mont_add(long10 t1, long10 t2, long10 t3, long10 t4,
-			long10 ax, long10 az, long10 dx) {
+	private static void mont_add(long10 t1, long10 t2, long10 t3, long10 t4, long10 ax, long10 az, long10 dx) {
 		mul(ax, t2, t3);
 		mul(az, t1, t4);
 		add(t1, ax, az);
@@ -780,8 +766,7 @@ public final class Curve25519 {
 	 * B = 2 * Q where X(B) = bx/bz X(Q) = (t3+t4)/(t3-t4) clobbers t1 and t2,
 	 * preserves t3 and t4
 	 */
-	private static void mont_dbl(long10 t1, long10 t2, long10 t3, long10 t4,
-			long10 bx, long10 bz) {
+	private static void mont_dbl(long10 t1, long10 t2, long10 t3, long10 t4, long10 bx, long10 bz) {
 		sqr(t1, t3);
 		sqr(t2, t4);
 		mul(bx, t1, t2);
@@ -803,10 +788,9 @@ public final class Curve25519 {
 	}
 
 	/* P = kG and s = sign(P)/k */
-	private static void core(byte[] Px, byte[] k, byte[] Gx) {
+	private static void core(byte[] Px, byte[] s, byte[] k, byte[] Gx) {
 		long10 dx = new long10(), t1 = new long10(), t2 = new long10(), t3 = new long10(), t4 = new long10();
-		long10[] x = new long10[] { new long10(), new long10() }, z = new long10[] {
-				new long10(), new long10() };
+		long10[] x = new long10[] { new long10(), new long10() }, z = new long10[] { new long10(), new long10() };
 		int i, j;
 
 		/* unpack the base */
@@ -849,11 +833,50 @@ public final class Curve25519 {
 		mul(dx, x[0], t1);
 		pack(dx, Px);
 
+		/* calculate s such that s abs(P) = G .. assumes G is std base point */
+		if (s != null) {
+			x_to_y2(t2, t1, dx); /* t1 = Py^2 */
+			recip(t3, z[1], 0); /* where Q=P+G ... */
+			mul(t2, x[1], t3); /* t2 = Qx */
+			add(t2, t2, dx); /* t2 = Qx + Px */
+			t2._0 += 9 + 486662; /* t2 = Qx + Px + Gx + 486662 */
+			dx._0 -= 9; /* dx = Px - Gx */
+			sqr(t3, dx); /* t3 = (Px - Gx)^2 */
+			mul(dx, t2, t3); /* dx = t2 (Px - Gx)^2 */
+			sub(dx, dx, t1); /* dx = t2 (Px - Gx)^2 - Py^2 */
+			dx._0 -= 39420360; /* dx = t2 (Px - Gx)^2 - Py^2 - Gy^2 */
+			mul(t1, dx, BASE_R2Y); /* t1 = -Py */
+			if (is_negative(t1) != 0) /* sign is 1, so just copy */
+				cpy32(s, k);
+			else /* sign is -1, so negate */
+				mula_small(s, ORDER_TIMES_8, 0, k, 32, -1);
+
+			/*
+			 * reduce s mod q (is this needed? do it just in case, it's fast
+			 * anyway)
+			 */
+			// divmod((dstptr) t1, s, 32, order25519, 32);
+
+			/* take reciprocal of s mod q */
+			byte[] temp1 = new byte[32];
+			byte[] temp2 = new byte[64];
+			byte[] temp3 = new byte[64];
+			cpy32(temp1, ORDER);
+			cpy32(s, egcd32(temp2, temp3, s, temp1));
+			if ((s[31] & 0x80) != 0)
+				mula_small(s, s, 0, ORDER, 32, 1);
+		}
 	}
 
-	/* constants 2Gy and 1/(2Gy) */
-	private static final long10 BASE_2Y = new long10(39999547, 18689728,
-			59995525, 1648697, 57546132, 24010086, 19059592, 5425144, 63499247,
-			16420658);
+	/* smallest multiple of the order that's >= 2^255 */
+	private static final byte[] ORDER_TIMES_8 = { (byte) 104, (byte) 159, (byte) 174, (byte) 231, (byte) 210, (byte) 24,
+			(byte) 147, (byte) 192, (byte) 178, (byte) 230, (byte) 188, (byte) 23, (byte) 245, (byte) 206, (byte) 247,
+			(byte) 166, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+			(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 128 };
 
+	/* constants 2Gy and 1/(2Gy) */
+	private static final long10 BASE_2Y = new long10(39999547, 18689728, 59995525, 1648697, 57546132, 24010086,
+			19059592, 5425144, 63499247, 16420658);
+	private static final long10 BASE_R2Y = new long10(5744, 8160848, 4790893, 13779497, 35730846, 12541209, 49101323,
+			30047407, 40071253, 6226132);
 }

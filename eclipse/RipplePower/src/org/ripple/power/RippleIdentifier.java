@@ -23,14 +23,12 @@ public class RippleIdentifier implements Serializable {
 	public RippleIdentifier(String stringID) {
 		this.humanReadableIdentifier = stringID;
 		byte[] stridBytes = RippleExt.decodeRipple(stringID);
-		byte[] checksumArray = Helper.doubleDigest(stridBytes, 0,
-				stridBytes.length - 4);
+		byte[] checksumArray = Helper.doubleDigest(stridBytes, 0, stridBytes.length - 4);
 		if (checksumArray[0] != stridBytes[stridBytes.length - 4]
 				|| checksumArray[1] != stridBytes[stridBytes.length - 3]
 				|| checksumArray[2] != stridBytes[stridBytes.length - 2]
 				|| checksumArray[3] != stridBytes[stridBytes.length - 1]) {
-			throw new RuntimeException("Checksum failed on identifier "
-					+ stringID);
+			throw new RuntimeException("Checksum failed on identifier " + stringID);
 		}
 		payloadBytes = Arrays.copyOfRange(stridBytes, 1, stridBytes.length - 4);
 		identifierType = stridBytes[0];
@@ -41,14 +39,10 @@ public class RippleIdentifier implements Serializable {
 		if (humanReadableIdentifier == null) {
 			byte[] versionPayloadChecksumBytes = new byte[1 + payloadBytes.length + 4];
 			versionPayloadChecksumBytes[0] = (byte) identifierType;
-			System.arraycopy(payloadBytes, 0, versionPayloadChecksumBytes, 1,
-					payloadBytes.length);
-			byte[] hashBytes = Helper.doubleDigest(versionPayloadChecksumBytes,
-					0, 1 + payloadBytes.length);
-			System.arraycopy(hashBytes, 0, versionPayloadChecksumBytes,
-					1 + payloadBytes.length, 4);
-			humanReadableIdentifier = RippleExt
-					.encodeRipple(versionPayloadChecksumBytes);
+			System.arraycopy(payloadBytes, 0, versionPayloadChecksumBytes, 1, payloadBytes.length);
+			byte[] hashBytes = Helper.doubleDigest(versionPayloadChecksumBytes, 0, 1 + payloadBytes.length);
+			System.arraycopy(hashBytes, 0, versionPayloadChecksumBytes, 1 + payloadBytes.length, 4);
+			humanReadableIdentifier = RippleExt.encodeRipple(versionPayloadChecksumBytes);
 		}
 		return humanReadableIdentifier;
 	}

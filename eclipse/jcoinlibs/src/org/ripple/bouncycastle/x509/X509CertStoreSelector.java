@@ -13,7 +13,7 @@ import org.ripple.bouncycastle.util.Selector;
  * @see org.ripple.bouncycastle.util.Selector
  * @see org.ripple.bouncycastle.x509.X509Store
  * @see org.ripple.bouncycastle.jce.provider.X509StoreCertCollection
- * @deprecated use the classes under org.bouncycastle.cert.selector
+ * @deprecated use the classes under org.ripple.bouncycastle.cert.selector
  */
 public class X509CertStoreSelector
     extends X509CertSelector

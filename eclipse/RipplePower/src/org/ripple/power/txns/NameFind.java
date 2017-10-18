@@ -12,8 +12,7 @@ public class NameFind {
 	// https://id.staging.ripple.com/v1
 	private final static String page = "https://id.ripple.com/v1";
 
-	private static HashMap<String, String> _caches = new HashMap<String, String>(
-			10);
+	private static HashMap<String, String> _caches = new HashMap<String, String>(10);
 
 	public static String getAddress(String name) throws Exception {
 		String result = _caches.get(name);
@@ -51,8 +50,7 @@ public class NameFind {
 	public static String getName(String address) throws Exception {
 		String result = _caches.get(address);
 		if (result == null) {
-			result = HttpRequest.getHttps(page + "/authinfo?username="
-					+ address);
+			result = HttpRequest.getHttps(page + "/authinfo?username=" + address);
 			if (result != null) {
 				JSONObject obj = new JSONObject(result);
 				result = obj.getString("username");

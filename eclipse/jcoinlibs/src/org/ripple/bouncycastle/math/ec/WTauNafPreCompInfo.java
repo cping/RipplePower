@@ -7,19 +7,19 @@ package org.ripple.bouncycastle.math.ec;
 public class WTauNafPreCompInfo implements PreCompInfo
 {
     /**
-     * Array holding the precomputed <code>ECPoint.AbstractF2m</code>s used for the
+     * Array holding the precomputed <code>ECPoint.F2m</code>s used for the
      * WTNAF multiplication in <code>
-     * {@link org.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
+     * {@link org.ripple.bouncycastle.math.ec.multiplier.WTauNafMultiplier.multiply()
      * WTauNafMultiplier.multiply()}</code>.
      */
-    protected ECPoint.AbstractF2m[] preComp = null;
+    protected ECPoint.F2m[] preComp = null;
 
-    public ECPoint.AbstractF2m[] getPreComp()
+    public ECPoint.F2m[] getPreComp()
     {
         return preComp;
     }
 
-    public void setPreComp(ECPoint.AbstractF2m[] preComp)
+    public void setPreComp(ECPoint.F2m[] preComp)
     {
         this.preComp = preComp;
     }

@@ -30,7 +30,7 @@ public class ExporterLabel
     public static final String dtls_srtp = "EXTRACTOR-dtls_srtp";
 
     /*
-     * draft-ietf-tls-session-hash-04
+     * draft-ietf-tls-session-hash-01
      */
     public static final String extended_master_secret = "extended master secret";
 }

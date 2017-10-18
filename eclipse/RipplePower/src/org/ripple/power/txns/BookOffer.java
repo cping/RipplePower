@@ -9,8 +9,7 @@ public class BookOffer {
 
 	public long flags;
 
-	public BookOffer(IssuedCurrency buy, IssuedCurrency sell, long seq,
-			long flags) {
+	public BookOffer(IssuedCurrency buy, IssuedCurrency sell, long seq, long flags) {
 		this.buy = buy;
 		this.sell = sell;
 		this.sequence = seq;

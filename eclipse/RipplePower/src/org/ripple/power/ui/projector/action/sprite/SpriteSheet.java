@@ -62,19 +62,16 @@ public class SpriteSheet {
 	private void checkImage(int x, int y) {
 		update();
 		if ((x < 0) || (x >= subImages.length)) {
-			throw new RuntimeException("SubImage out of sheet bounds " + x
-					+ "," + y);
+			throw new RuntimeException("SubImage out of sheet bounds " + x + "," + y);
 		}
 		if ((y < 0) || (y >= subImages[0].length)) {
-			throw new RuntimeException("SubImage out of sheet bounds " + x
-					+ "," + y);
+			throw new RuntimeException("SubImage out of sheet bounds " + x + "," + y);
 		}
 	}
 
 	private LImage getImage(int x, int y) {
 		checkImage(x, y);
-		return target.getSubImage(x * (tw + spacing) + margin, y
-				* (th + spacing) + margin, tw, th);
+		return target.getSubImage(x * (tw + spacing) + margin, y * (th + spacing) + margin, tw, th);
 	}
 
 	public int getHorizontalCount() {

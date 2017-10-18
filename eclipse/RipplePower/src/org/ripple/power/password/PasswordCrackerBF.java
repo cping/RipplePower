@@ -4,8 +4,11 @@ import java.util.Arrays;
 
 public class PasswordCrackerBF {
 
+	private boolean completed = false;
 	private char[] charSet;
 	private char[] currentPass;
+	private int count = 0;
+	private int skip = 1;
 
 	public void init(char[] charS, String from) {
 		charSet = charS;
@@ -17,7 +20,9 @@ public class PasswordCrackerBF {
 	}
 
 	public String next() {
-		nextGuess();
+		for (int i = 0; i < skip; i++) {
+			nextGuess();
+		}
 		return String.valueOf(currentPass);
 	}
 
@@ -43,7 +48,23 @@ public class PasswordCrackerBF {
 				}
 				break;
 			}
+
 		}
+		if (currentPass[index] == charSet[charSet.length - 1]) {
+			count++;
+		}
+		if (count >= (currentPass.length * charSet.length) * (currentPass.length * charSet.length)
+				* (currentPass.length * charSet.length) * (currentPass.length * charSet.length)) {
+			completed = true;
+		}
+	}
+
+	public void setSkin(int s) {
+		this.skip = s;
+	}
+
+	public boolean isCompleted() {
+		return completed;
 	}
 
 }

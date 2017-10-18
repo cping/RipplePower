@@ -123,30 +123,25 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.drawString(s, x, y);
 	}
 
-	public void drawShadeString(String s, int x, int y, Color color,
-			Color color1, int k) {
+	public void drawShadeString(String s, int x, int y, Color color, Color color1, int k) {
 		g2d.setColor(color);
 		g2d.drawString(s, x + k, y + k);
 		g2d.setColor(color1);
 		g2d.drawString(s, x, y);
 	}
 
-	public void drawCenterShadeString(String s, int x, int y, Color color,
-			Color color1, int k) {
+	public void drawCenterShadeString(String s, int x, int y, Color color, Color color1, int k) {
 		FontMetrics fontmetrics = g2d.getFontMetrics();
 		x -= fontmetrics.stringWidth(s) >> 1;
 		y += fontmetrics.getAscent() - fontmetrics.getDescent() >> 1;
 		drawShadeString(s, x, y, color, color1, k);
 	}
 
-	public void drawCenterShadeString(String s, int x, int y, Color color,
-			Color color1) {
-		drawCenterShadeString(s, x, y, color, color1,
-				g2d.getFont().getSize() / 14 + 2);
+	public void drawCenterShadeString(String s, int x, int y, Color color, Color color1) {
+		drawCenterShadeString(s, x, y, color, color1, g2d.getFont().getSize() / 14 + 2);
 	}
 
-	public void drawCenterRoundedString(String s, int x, int y, Color color,
-			Color color1) {
+	public void drawCenterRoundedString(String s, int x, int y, Color color, Color color1) {
 		g2d.setColor(color);
 		FontMetrics fontmetrics = g2d.getFontMetrics();
 		x -= fontmetrics.stringWidth(s) >> 1;
@@ -159,8 +154,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.drawString(s, x, y);
 	}
 
-	public void drawStyleString(String message, int x, int y, Color color,
-			Color color1) {
+	public void drawStyleString(String message, int x, int y, Color color, Color color1) {
 		GraphicsUtils.drawStyleString(g2d, message, x, y, color, color1);
 	}
 
@@ -175,16 +169,15 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.drawString(s, x, y);
 	}
 
-	public void drawRGB(final int[] rgbData, int offset, int scanlength, int x,
-			int y, int width, int height, boolean processAlpha) {
+	public void drawRGB(final int[] rgbData, int offset, int scanlength, int x, int y, int width, int height,
+			boolean processAlpha) {
 		if (rgbData == null) {
 			return;
 		}
 		if (width == 0 || height == 0) {
 			return;
 		}
-		BufferedImage buf = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage buf = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		buf.setRGB(0, 0, width, height, rgbData, 0, scanlength);
 		g2d.drawImage(buf, x, y, null);
 
@@ -296,8 +289,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.drawString(str, x, y);
 	}
 
-	public void drawSubString(String str, int offset, int len, int x, int y,
-			int anchor) {
+	public void drawSubString(String str, int offset, int len, int x, int y, int anchor) {
 		drawString(str.substring(offset, offset + len), x, y, anchor);
 	}
 
@@ -328,8 +320,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.drawString(iterator, x, y);
 	}
 
-	public void drawString(AttributedCharacterIterator iterator, float x,
-			float y) {
+	public void drawString(AttributedCharacterIterator iterator, float x, float y) {
 		g2d.drawString(iterator, x, y);
 	}
 
@@ -349,21 +340,19 @@ public class LGraphics extends Graphics2D implements LTrans {
 		return g2d.hit(rect, s, onStroke);
 	}
 
-	public void drawRegion(LImage src, int x_src, int y_src, int width,
-			int height, int transform, int x_dst, int y_dst, int anchor) {
+	public void drawRegion(LImage src, int x_src, int y_src, int width, int height, int transform, int x_dst, int y_dst,
+			int anchor) {
 		Image img = src.getBufferedImage();
 		if (img != null) {
-			drawRegion(img, x_src, y_src, width, height, transform, x_dst,
-					y_dst, anchor);
+			drawRegion(img, x_src, y_src, width, height, transform, x_dst, y_dst, anchor);
 		}
 	}
 
-	public void drawRegion(Image img, int x_src, int y_src, int width,
-			int height, int transform, int x_dst, int y_dst, int anchor) {
+	public void drawRegion(Image img, int x_src, int y_src, int width, int height, int transform, int x_dst, int y_dst,
+			int anchor) {
 
-		if (x_src + width > img.getWidth(null)
-				|| y_src + height > img.getHeight(null) || width <= 0
-				|| height <= 0 || x_src < 0 || y_src < 0) {
+		if (x_src + width > img.getWidth(null) || y_src + height > img.getHeight(null) || width <= 0 || height <= 0
+				|| x_src < 0 || y_src < 0) {
 			throw new IllegalArgumentException("Image size Exception !");
 		}
 
@@ -470,28 +459,25 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.translate(x_dst, y_dst);
 		g2d.transform(t);
 
-		g2d.drawImage(img, 0, 0, width, height, x_src, y_src, x_src + width,
-				y_src + height, null);
+		g2d.drawImage(img, 0, 0, width, height, x_src, y_src, x_src + width, y_src + height, null);
 
 		g2d.setTransform(savedT);
 	}
 
-	public void drawRegion(LImage src, int x_src, int y_src, int width,
-			int height, int transform, int x_dst, int y_dst) {
+	public void drawRegion(LImage src, int x_src, int y_src, int width, int height, int transform, int x_dst,
+			int y_dst) {
 		Image img = src.getBufferedImage();
 		if (img != null) {
-			drawRegion(img, x_src, y_src, width, height, transform, x_dst,
-					y_dst);
+			drawRegion(img, x_src, y_src, width, height, transform, x_dst, y_dst);
 		}
 	}
 
-	public void drawRegion(Image img, int x_src, int y_src, int width,
-			int height, int transform, int x_dst, int y_dst) {
+	public void drawRegion(Image img, int x_src, int y_src, int width, int height, int transform, int x_dst,
+			int y_dst) {
 		AffineTransform savedT = g2d.getTransform();
 		g2d.translate(x_dst, y_dst);
 		transform(transform, width, height);
-		g2d.drawImage(img, 0, 0, width, height, x_src, y_src, x_src + width,
-				y_src + height, null);
+		g2d.drawImage(img, 0, 0, width, height, x_src, y_src, x_src + width, y_src + height, null);
 		g2d.setTransform(savedT);
 	}
 
@@ -772,8 +758,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.copyArea(x, y, width, height, dx, dy);
 	}
 
-	public void copyArea(int x_src, int y_src, int width, int height,
-			int x_dest, int y_dest, int anchor) {
+	public void copyArea(int x_src, int y_src, int width, int height, int x_dest, int y_dest, int anchor) {
 		if (width <= 0 || height <= 0) {
 			return;
 		}
@@ -812,8 +797,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		if (badAnchor) {
 			throw new IllegalArgumentException("Bad Anchor");
 		}
-		g2d.copyArea(x_src, y_src, width, height, x_dest - x_src, y_dest
-				- y_src);
+		g2d.copyArea(x_src, y_src, width, height, x_dest - x_src, y_dest - y_src);
 	}
 
 	public void drawLine(int x1, int y1, int x2, int y2) {
@@ -843,13 +827,11 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.clearRect(x, y, width, height);
 	}
 
-	public void drawRoundRect(int x, int y, int width, int height,
-			int arcWidth, int arcHeight) {
+	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
 		g2d.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
 	}
 
-	public void fillRoundRect(int x, int y, int width, int height,
-			int arcWidth, int arcHeight) {
+	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
 		g2d.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
 	}
 
@@ -861,13 +843,11 @@ public class LGraphics extends Graphics2D implements LTrans {
 		g2d.fillOval(x, y, width, height);
 	}
 
-	public void drawArc(int x, int y, int width, int height, int startAngle,
-			int arcAngle) {
+	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
 		g2d.drawArc(x, y, width, height, startAngle, arcAngle);
 	}
 
-	public void fillArc(int x, int y, int width, int height, int startAngle,
-			int arcAngle) {
+	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
 		if (arcAngle == 0) {
 			return;
 		}
@@ -923,8 +903,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 
 	public boolean drawImage(LImage img, int x, int y, int width, int height) {
 		if (img != null) {
-			return g2d.drawImage(img.getBufferedImage(), x, y, width, height,
-					null);
+			return g2d.drawImage(img.getBufferedImage(), x, y, width, height, null);
 		}
 		return false;
 	}
@@ -950,20 +929,16 @@ public class LGraphics extends Graphics2D implements LTrans {
 		}
 	}
 
-	public boolean drawImage(LImage img, int dx1, int dy1, int dx2, int dy2,
-			int sx1, int sy1, int sx2, int sy2) {
+	public boolean drawImage(LImage img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		if (img != null) {
-			return g2d.drawImage(img.getBufferedImage(), dx1, dy1, dx2 + dx1,
-					dy2 + dy1, sx1, sy1, sx2, sy2, null);
+			return g2d.drawImage(img.getBufferedImage(), dx1, dy1, dx2 + dx1, dy2 + dy1, sx1, sy1, sx2, sy2, null);
 		}
 		return false;
 	}
 
-	public boolean drawJavaImage(LImage img, int dx1, int dy1, int dx2,
-			int dy2, int sx1, int sy1, int sx2, int sy2) {
+	public boolean drawJavaImage(LImage img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		if (img != null) {
-			return g2d.drawImage(img.getBufferedImage(), dx1, dy1, dx2, dy2,
-					sx1, sy1, sx2, sy2, null);
+			return g2d.drawImage(img.getBufferedImage(), dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		}
 		return false;
 	}
@@ -972,8 +947,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		if (img != null) {
 			int w = img.getWidth();
 			int h = img.getHeight();
-			g2d.drawImage(img.getBufferedImage(), x + w, y, x, y + h, 0, 0, w,
-					h, null);
+			g2d.drawImage(img.getBufferedImage(), x + w, y, x, y + h, 0, 0, w, h, null);
 		}
 	}
 
@@ -1008,15 +982,13 @@ public class LGraphics extends Graphics2D implements LTrans {
 		return g2d.drawImage(img, x, y, width, height, null);
 	}
 
-	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-			int sx1, int sy1, int sx2, int sy2) {
+	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
 
-	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-			int sx1, int sy1, int sx2, int sy2, Color bgcolor) {
-		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2,
-				bgcolor, null);
+	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
+			Color bgcolor) {
+		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, null);
 	}
 
 	public void drawMirrorImage(Image img, int x, int y) {
@@ -1029,8 +1001,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 
 	private final AffineTransform atform = new AffineTransform();
 
-	public boolean drawImage(Image img, float x, float y, float w, float h,
-			float rotation) {
+	public boolean drawImage(Image img, float x, float y, float w, float h, float rotation) {
 		int width = (int) w;
 		int height = (int) h;
 		float sx = w / img.getWidth(null);
@@ -1048,8 +1019,7 @@ public class LGraphics extends Graphics2D implements LTrans {
 		return g2d.drawImage(img, atform, null);
 	}
 
-	public boolean drawImage(LImage img, float x, float y, float w, float h,
-			float rotation) {
+	public boolean drawImage(LImage img, float x, float y, float w, float h, float rotation) {
 		if (img != null) {
 			return drawImage(img.getBufferedImage(), x, y, w, h, rotation);
 		}
@@ -1058,16 +1028,14 @@ public class LGraphics extends Graphics2D implements LTrans {
 
 	public boolean drawImage(Image img, float x, float y, float rotation) {
 		if (img != null) {
-			return drawImage(img, x, y, img.getWidth(null),
-					img.getHeight(null), rotation);
+			return drawImage(img, x, y, img.getWidth(null), img.getHeight(null), rotation);
 		}
 		return false;
 	}
 
 	public boolean drawImage(LImage img, float x, float y, float rotation) {
 		if (img != null) {
-			return drawImage(img.getBufferedImage(), x, y, img.getWidth(),
-					img.getHeight(), rotation);
+			return drawImage(img.getBufferedImage(), x, y, img.getWidth(), img.getHeight(), rotation);
 		}
 		return false;
 	}
@@ -1076,32 +1044,26 @@ public class LGraphics extends Graphics2D implements LTrans {
 		return g2d.drawImage(img, x, y, observer);
 	}
 
-	public boolean drawImage(Image img, int x, int y, int width, int height,
-			ImageObserver observer) {
+	public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
 		return g2d.drawImage(img, x, y, width, height, observer);
 	}
 
-	public boolean drawImage(Image img, int x, int y, Color bgcolor,
-			ImageObserver observer) {
+	public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
 		return g2d.drawImage(img, x, y, bgcolor, observer);
 	}
 
-	public boolean drawImage(Image img, int x, int y, int width, int height,
-			Color bgcolor, ImageObserver observer) {
+	public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
 		return g2d.drawImage(img, x, y, width, height, bgcolor, observer);
 	}
 
-	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-			int sx1, int sy1, int sx2, int sy2, ImageObserver observer) {
-		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2,
-				observer);
+	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
+			ImageObserver observer) {
+		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
 	}
 
-	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-			int sx1, int sy1, int sx2, int sy2, Color bgcolor,
-			ImageObserver observer) {
-		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2,
-				bgcolor, observer);
+	public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
+			Color bgcolor, ImageObserver observer) {
+		return g2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
 	}
 
 	public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
@@ -1119,18 +1081,15 @@ public class LGraphics extends Graphics2D implements LTrans {
 		this.strokeStyle = style;
 	}
 
-	public void setGradientPaint(int x1, int y1, Color c1, int x2, int y2,
-			Color c2) {
-		this.g2d.setPaint(new GradientPaint((float) x1, (float) y1, c1,
-				(float) x2, (float) y2, c2, true));
+	public void setGradientPaint(int x1, int y1, Color c1, int x2, int y2, Color c2) {
+		this.g2d.setPaint(new GradientPaint((float) x1, (float) y1, c1, (float) x2, (float) y2, c2, true));
 	}
 
 	public void draw(Shape s) {
 		g2d.draw(s);
 	}
 
-	public void drawChars(char[] chars, int ofs, int len, int x, int y,
-			int align) {
+	public void drawChars(char[] chars, int ofs, int len, int x, int y, int align) {
 		drawString(new String(chars, ofs, len), x, y, align);
 	}
 

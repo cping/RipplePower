@@ -5,13 +5,14 @@ import java.math.BigInteger;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 
+import org.ripple.bouncycastle.asn1.ASN1Sequence;
 import org.ripple.bouncycastle.asn1.DERNull;
 import org.ripple.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.ripple.bouncycastle.asn1.x509.RSAPublicKeyStructure;
 import org.ripple.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.ripple.bouncycastle.crypto.params.RSAKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
-import org.ripple.bouncycastle.util.Strings;
 
 public class JCERSAPublicKey
     implements RSAPublicKey
@@ -47,7 +48,7 @@ public class JCERSAPublicKey
     {
         try
         {
-            org.ripple.bouncycastle.asn1.pkcs.RSAPublicKey   pubKey = org.ripple.bouncycastle.asn1.pkcs.RSAPublicKey.getInstance(info.parsePublicKey());
+            RSAPublicKeyStructure   pubKey = new RSAPublicKeyStructure((ASN1Sequence)info.parsePublicKey());
 
             this.modulus = pubKey.getModulus();
             this.publicExponent = pubKey.getPublicExponent();
@@ -90,7 +91,7 @@ public class JCERSAPublicKey
 
     public byte[] getEncoded()
     {
-        return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), new org.ripple.bouncycastle.asn1.pkcs.RSAPublicKey(getModulus(), getPublicExponent()));
+        return KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), new RSAPublicKeyStructure(getModulus(), getPublicExponent()));
     }
 
     public int hashCode()
@@ -119,7 +120,7 @@ public class JCERSAPublicKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("RSA Public Key").append(nl);
         buf.append("            modulus: ").append(this.getModulus().toString(16)).append(nl);

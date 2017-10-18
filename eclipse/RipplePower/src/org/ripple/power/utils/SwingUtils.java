@@ -58,8 +58,7 @@ public class SwingUtils {
 		return addModelessWindow((Window) null, jpanel, title);
 	}
 
-	static public JDialog addModelessWindow(Window mainWindow,
-			Component jpanel, String title) {
+	static public JDialog addModelessWindow(Window mainWindow, Component jpanel, String title) {
 		JDialog dialog;
 		if (mainWindow != null) {
 			dialog = new JDialog(mainWindow, title);
@@ -78,8 +77,7 @@ public class SwingUtils {
 		return dialog;
 	}
 
-	static public JDialog addModelessWindow(Frame mainWindow, Component jpanel,
-			String title) {
+	static public JDialog addModelessWindow(Frame mainWindow, Component jpanel, String title) {
 		JDialog dialog = new JDialog(mainWindow, title, true);
 		dialog.getContentPane().setLayout(new BorderLayout());
 		dialog.getContentPane().add(jpanel, BorderLayout.CENTER);
@@ -92,8 +90,7 @@ public class SwingUtils {
 		return dialog;
 	}
 
-	static public JDialog addDialogWindow(Frame mainWindow, Component jpanel,
-			String title) {
+	static public JDialog addDialogWindow(Frame mainWindow, Component jpanel, String title) {
 		JDialog dialog = new JDialog(mainWindow, title, true);
 		dialog.getContentPane().setLayout(new BorderLayout());
 		dialog.getContentPane().add(jpanel, BorderLayout.CENTER);
@@ -168,8 +165,7 @@ public class SwingUtils {
 	public static Rectangle getScreenSize(Window win) {
 		Rectangle sb;
 		if (win == null) {
-			sb = GraphicsEnvironment.getLocalGraphicsEnvironment()
-					.getDefaultScreenDevice().getDefaultConfiguration()
+			sb = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 					.getBounds();
 		} else {
 			sb = win.getGraphicsConfiguration().getBounds();
@@ -180,14 +176,10 @@ public class SwingUtils {
 	public static Insets getScreenInsets(Window win) {
 		Insets si;
 		if (win == null) {
-			si = Toolkit.getDefaultToolkit()
-					.getScreenInsets(
-							GraphicsEnvironment.getLocalGraphicsEnvironment()
-									.getDefaultScreenDevice()
-									.getDefaultConfiguration());
+			si = Toolkit.getDefaultToolkit().getScreenInsets(GraphicsEnvironment.getLocalGraphicsEnvironment()
+					.getDefaultScreenDevice().getDefaultConfiguration());
 		} else {
-			si = win.getToolkit().getScreenInsets(
-					win.getGraphicsConfiguration());
+			si = win.getToolkit().getScreenInsets(win.getGraphicsConfiguration());
 		}
 		return si;
 	}
@@ -200,8 +192,7 @@ public class SwingUtils {
 	public static void centerOnScreen(Window win) {
 		Rectangle screenBounds = SwingUtils.getScreenSize(win);
 		win.setBounds((int) (screenBounds.getWidth() - win.getWidth()) / 2,
-				(int) (screenBounds.getHeight() - win.getHeight()) / 2,
-				win.getWidth(), win.getHeight());
+				(int) (screenBounds.getHeight() - win.getHeight()) / 2, win.getWidth(), win.getHeight());
 	}
 
 	public static void centerOnParent(Window win) {
@@ -209,18 +200,15 @@ public class SwingUtils {
 
 		if (parent != null) {
 			Point parentPosition = parent.getLocationOnScreen();
-			win.setLocation(
-					parentPosition.x + (parent.getWidth() - win.getWidth()) / 2,
-					parentPosition.y + (parent.getHeight() - win.getHeight())
-							/ 2);
+			win.setLocation(parentPosition.x + (parent.getWidth() - win.getWidth()) / 2,
+					parentPosition.y + (parent.getHeight() - win.getHeight()) / 2);
 		} else {
 			centerOnScreen(win);
 		}
 	}
 
 	public static boolean isTranslucentSupported() {
-		GraphicsEnvironment ge = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 
 		boolean isUniformTranslucencySupported = gd
@@ -235,16 +223,15 @@ public class SwingUtils {
 	}
 
 	public BufferedImage toCompatibleImage(BufferedImage image) {
-		GraphicsConfiguration gfx_config = GraphicsEnvironment
-				.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+		GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDefaultConfiguration();
 
 		if (image.getColorModel().equals(gfx_config.getColorModel())) {
 			return image;
 		}
 
-		BufferedImage new_image = gfx_config.createCompatibleImage(
-				image.getWidth(), image.getHeight(), image.getTransparency());
+		BufferedImage new_image = gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(),
+				image.getTransparency());
 
 		Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 
@@ -254,8 +241,7 @@ public class SwingUtils {
 		return new_image;
 	}
 
-	public static void addWindowListener(final Component source,
-			final WindowListener listener) {
+	public static void addWindowListener(final Component source, final WindowListener listener) {
 		if (source instanceof Window) {
 			((Window) source).addWindowListener(listener);
 		} else {
@@ -263,8 +249,7 @@ public class SwingUtils {
 				@Override
 				public void hierarchyChanged(HierarchyEvent e) {
 					if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
-						SwingUtilities.getWindowAncestor(source)
-								.addWindowListener(listener);
+						SwingUtilities.getWindowAncestor(source).addWindowListener(listener);
 					}
 				}
 			});
@@ -290,8 +275,7 @@ public class SwingUtils {
 	public static void importFont(InputStream stream) {
 		try {
 			Font font1 = Font.createFont(Font.TRUETYPE_FONT, stream);
-			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
-					font1);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font1);
 		} catch (FontFormatException ex) {
 			throw new RuntimeException(ex);
 		} catch (IOException ex) {

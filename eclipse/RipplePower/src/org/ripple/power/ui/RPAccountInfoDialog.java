@@ -69,6 +69,31 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 	private ArrayList<String> _accountLineItems3 = new ArrayList<String>();
 
 	private AccountInfo _accountinfo = new AccountInfo();
+	private JPopupMenu _popMenu = new JPopupMenu();
+
+	private class infoMouseListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+				// 双击触发
+			} else if (e.getClickCount() > 1) {
+				int size = _tableThree.getSelectedRow();
+				if (_accountinfo.transactions.size() > 0 && size > -1) {
+					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:" + size);
+					TransactionTx tx = _accountinfo.getTxs("Payment").get(size);
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
+				} else {
+					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this);
+				}
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
+			}
+		}
+	}
 
 	class AccountTableModel extends AbstractTableModel {
 
@@ -84,8 +109,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		public AccountTableModel(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length)
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
 		}
@@ -113,8 +137,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row > getRowCount()) {
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			Object value = null;
 			AccountLine item = (AccountLine) _accountLineItems.get(row);
@@ -129,8 +152,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 				value = item.getBalance();
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}
@@ -155,8 +177,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		public AccountTableModel2(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length)
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
 		}
@@ -184,8 +205,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row > getRowCount()) {
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			if (_accountLineItems2.size() == 0) {
 				return null;
@@ -203,8 +223,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 				value = item.getBalance();
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}
@@ -229,8 +248,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		public AccountTableModel3(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length)
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
 		}
@@ -258,8 +276,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row > getRowCount()) {
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			Object value = null;
 			String v = _accountLineItems3.get(row);
@@ -268,8 +285,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 				value = v;
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}
@@ -280,10 +296,8 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 
 	}
 
-	public static RPAccountInfoDialog showDialog(JFrame parent, String text,
-			String address) {
-		RPAccountInfoDialog dialog = new RPAccountInfoDialog(parent, text,
-				address);
+	public static RPAccountInfoDialog showDialog(JFrame parent, String text, String address) {
+		RPAccountInfoDialog dialog = new RPAccountInfoDialog(parent, text, address);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
 		dialog.setVisible(true);
@@ -294,7 +308,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(668, 620);
+		Dimension dim = new Dimension(668, 630);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents(address);
@@ -325,13 +339,10 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		_exitButton.setFont(font);
 
 		Class<?>[] columnClasses = { String.class, String.class, String.class };
-		String[] columnNames = { UIMessage.currency, UIMessage.gateway,
-				UIMessage.amount };
-		int[] columnTypes = { AddressTable.ICON, AddressTable.ADDRESS,
-				AddressTable.AMOUNT };
+		String[] columnNames = { UIMessage.currency, UIMessage.gateway, UIMessage.amount };
+		int[] columnTypes = { AddressTable.ICON, AddressTable.ADDRESS, AddressTable.AMOUNT };
 
-		final AccountTableModel tableModel = new AccountTableModel(columnNames,
-				columnClasses);
+		final AccountTableModel tableModel = new AccountTableModel(columnNames, columnClasses);
 		_tableOne = new AddressTable(tableModel, columnTypes);
 		_tableOne.setFont(UIRes.getFont());
 		_tableOne.setRowSorter(new TableRowSorter<TableModel>(tableModel));
@@ -342,8 +353,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		getContentPane().add(_panelOne);
 		_panelOne.setBounds(10, 90, 640, 120);
 
-		final AccountTableModel2 tableModel2 = new AccountTableModel2(
-				columnNames, columnClasses);
+		final AccountTableModel2 tableModel2 = new AccountTableModel2(columnNames, columnClasses);
 		_tableTwo = new AddressTable(tableModel2, columnTypes);
 		_tableTwo.setFont(UIRes.getFont());
 		_tableTwo.setRowSorter(new TableRowSorter<TableModel>(tableModel));
@@ -363,13 +373,11 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		_booksLabel.setBounds(20, 360, 90, 20);
 
 		Class<?>[] columnClasses1 = { String.class };
-		String[] columnNames1 = { LangConfig.get(this, "tx",
-				"Transaction Records") };
+		String[] columnNames1 = { LangConfig.get(this, "tx", "Transaction Records") };
 
 		int[] columnTypes1 = { AddressTable.INFO };
 
-		final AccountTableModel3 tableModel3 = new AccountTableModel3(
-				columnNames1, columnClasses1);
+		final AccountTableModel3 tableModel3 = new AccountTableModel3(columnNames1, columnClasses1);
 		_tableThree = new AddressTable(tableModel3, columnTypes1);
 		_tableThree.setFont(UIRes.getFont());
 		_tableThree.setRowSorter(new TableRowSorter<TableModel>(tableModel3));
@@ -431,18 +439,15 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 					try {
 						address = NameFind.getAddress(address);
 					} catch (Exception ex) {
-						RPToast.makeText(RPAccountInfoDialog.this,
-								UIMessage.errAddress, Style.ERROR).display();
+						RPToast.makeText(RPAccountInfoDialog.this, UIMessage.errAddress, Style.ERROR).display();
 						return;
 					}
 				}
 				if (!AccountFind.isRippleAddress(address)) {
-					RPToast.makeText(RPAccountInfoDialog.this,
-							UIMessage.errAddress, Style.ERROR).display();
+					RPToast.makeText(RPAccountInfoDialog.this, UIMessage.errAddress, Style.ERROR).display();
 					return;
 				}
-				RPRippledMemoDialog.showDialog(
-						LangConfig.get(this, "send_memo", "Memo Send/Receive"),
+				RPSendMemoDialog.showDialog(LangConfig.get(this, "send_memo", "Memo Send/Receive"),
 						LSystem.applicationMain, address, null);
 			}
 		});
@@ -456,8 +461,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 			public void actionPerformed(ActionEvent e) {
 				int size = _tableThree.getSelectedRow();
 				if (_accountinfo.transactions.size() > 0 && size > -1) {
-					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:"
-							+ size);
+					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:" + size);
 					TransactionTx tx = _accountinfo.getTxs("Payment").get(size);
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
 				} else {
@@ -496,8 +500,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 			public void action(Object o) {
 				int size = _tableThree.getSelectedRow();
 				if (_accountinfo.transactions.size() > 0 && size > -1) {
-					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:"
-							+ size);
+					UIMessage.infoMessage(RPAccountInfoDialog.this, "No:" + size);
 					TransactionTx tx = _accountinfo.getTxs("Payment").get(size);
 					RPHashInfoDialog.showDialog(RPAccountInfoDialog.this, tx);
 				} else {
@@ -506,25 +509,10 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 			}
 		});
 		pack();
-		
-		HelperDialog.setSystemHelperMessage("View the Ripple address detail data [ if your using a Ripple Labs public node , please update node to the s2.ripple.com view all history , s1.ripple.com only save one month's transactions ] . ");
 
-	}
+		HelperDialog.setSystemHelperMessage(
+				"View the Ripple address detail data [ if your using a Ripple Labs public node , please update node to the s2.ripple.com view all history , s1.ripple.com only save one month's transactions ] . ");
 
-	private JPopupMenu _popMenu = new JPopupMenu();
-
-	private class infoMouseListener extends MouseAdapter {
-		public void mousePressed(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
-			}
-		}
-
-		public void mouseReleased(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				_popMenu.show((Component) e.getSource(), e.getX(), e.getY());
-			}
-		}
 	}
 
 	private final static ArrayList<Store> _storage = new ArrayList<Store>();
@@ -544,8 +532,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 
 	private static AccountInfo reset(String name) {
 		for (Store s : _storage) {
-			if (s.name.equals(name)
-					&& (System.currentTimeMillis() - s.date) <= (LSystem.MINUTE / 2)) {
+			if (s.name.equals(name) && (System.currentTimeMillis() - s.date) <= (LSystem.MINUTE / 2)) {
 				return s.info;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);
@@ -562,20 +549,15 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		}
 	}
 
-	private static void addList(ArrayList<String> list, TransactionTx tx,
-			int count) {
+	private static void addList(ArrayList<String> list, TransactionTx tx, int count) {
 		if ("Payment".equals(tx.clazz)) {
 			if (tx.counterparty != null) {
-				list.add("No:" + count + " in " + tx.date + "<br>"
-						+ "<font size=4 color=red>" + tx.mode + "</font>" + " "
-						+ "<font size=4 color=blue>" + tx.counterparty
-						+ "</font>" + "<br>" + tx.currency.toGatewayString()
-						+ "<br>" + "Fee:" + tx.fee);
+				list.add("No:" + count + " in " + tx.date + "<br>" + "<font size=4 color=red>" + tx.mode + "</font>"
+						+ " " + "<font size=4 color=blue>" + tx.counterparty + "</font>" + "<br>"
+						+ tx.currency.toGatewayString() + "<br>" + "Fee:" + tx.fee);
 			} else {
-				list.add("No:" + count + " in " + tx.date + "<br>"
-						+ "<font size=4 color=red>" + tx.mode + "</font>" + " "
-						+ tx.currency.toGatewayString() + "<br>" + "Fee:"
-						+ tx.fee);
+				list.add("No:" + count + " in " + tx.date + "<br>" + "<font size=4 color=red>" + tx.mode + "</font>"
+						+ " " + tx.currency.toGatewayString() + "<br>" + "Fee:" + tx.fee);
 			}
 			count++;
 		}
@@ -584,66 +566,70 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
-	public void call(final AccountInfo info,
-			final AccountTableModel tableModel,
-			final AccountTableModel2 tableModel2,
+	private int countInfoError = 0, countTxError = 0;
+
+	public void call(final AccountInfo info, final AccountTableModel tableModel, final AccountTableModel2 tableModel2,
 			final AccountTableModel3 tableModel3) {
 		LSystem.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
-
 
 				String address = _addressText.getText().trim();
 
 				AccountInfo info_tmp = reset(address);
 
+				// 如果存在缓存数据
 				if (info_tmp != null) {
 					info.copy(info_tmp);
 					if (info.balance != null) {
 						synchronized (_accountLineItems) {
 							_accountLineItems.clear();
-							_accountLineItems
-									.add(new AccountLine("RippleLabels",
-											LSystem.nativeCurrency.toUpperCase(),
-											info.balance));
-							tableModel.update();
+							_accountLineItems.add(new AccountLine("RippleLabels", LSystem.nativeCurrency.toUpperCase(),
+									info.balance));
+							if (_accountLineItems.size() > 0) {
+								tableModel.update();
+							}
 						}
 					}
 					_addressNameText.setText(info.address);
 					if (info.lines.size() > 0) {
 						synchronized (_accountLineItems) {
 							_accountLineItems.clear();
-							_accountLineItems
-									.add(new AccountLine("RippleLabels",
-											LSystem.nativeCurrency.toUpperCase(),
-											info.balance));
+							_accountLineItems.add(new AccountLine("RippleLabels", LSystem.nativeCurrency.toUpperCase(),
+									info.balance));
 							_accountLineItems.addAll(info.lines);
 						}
-						tableModel.update();
+						if (_accountLineItems.size() > 0) {
+							tableModel.update();
+						}
 					}
 					if (info.debt.size() > 0) {
 						synchronized (_accountLineItems2) {
 							_accountLineItems2.clear();
 							for (String cur : info.debt.keySet()) {
-								AccountLine line = new AccountLine(address, cur,
-										String.valueOf(info.debt.get(cur)));
+								AccountLine line = new AccountLine(address, cur, String.valueOf(info.debt.get(cur)));
 								_accountLineItems2.add(line);
 							}
 						}
-						tableModel2.update();
+						if (_accountLineItems2.size() > 0) {
+							tableModel2.update();
+						}
 					}
 					if (info.transactions.size() > 0) {
 						synchronized (_accountLineItems3) {
 							_accountLineItems3.clear();
 							int count = 0;
-							for (TransactionTx tx : info.transactions) {
+							for (int i = info.transactions.size() - 1; i > -1; i--) {
+								TransactionTx tx = info.transactions.get(i);
 								if ("Payment".equals(tx.clazz)) {
 									addList(_accountLineItems3, tx, count++);
 								}
 							}
 						}
-						tableModel3.update();
+						if (_accountLineItems3.size() > 0) {
+							tableModel3.update();
+						}
 					}
 					return;
 				}
@@ -655,8 +641,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 						String addressTmp = _addressText.getText().trim();
 						// revalidate();
 						// repaint();
-						final WaitDialog waitDialog = WaitDialog
-								.showDialog(RPAccountInfoDialog.this);
+						final WaitDialog waitDialog = WaitDialog.showDialog(RPAccountInfoDialog.this);
 						_waitDialogs.add(waitDialog);
 						// revalidate();
 						// repaint();
@@ -664,18 +649,16 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 							try {
 								addressTmp = NameFind.getAddress(addressTmp);
 							} catch (Exception ex) {
-								RPToast.makeText(RPAccountInfoDialog.this,
-										UIMessage.errAddress, Style.ERROR).display();
+								RPToast.makeText(RPAccountInfoDialog.this, UIMessage.errAddress, Style.ERROR).display();
 								return;
 							}
 						}
 						if (!AccountFind.isRippleAddress(addressTmp)) {
-							RPToast.makeText(RPAccountInfoDialog.this,
-									UIMessage.errAddress, Style.ERROR).display();
+							RPToast.makeText(RPAccountInfoDialog.this, UIMessage.errAddress, Style.ERROR).display();
 							return;
 						}
 						final String address = addressTmp;
-						AccountFind find = new AccountFind();
+						final AccountFind find = new AccountFind();
 						// revalidate();
 						// repaint();
 						Updateable update_info = new Updateable() {
@@ -686,25 +669,29 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 									if (info.balance != null) {
 										synchronized (_accountLineItems) {
 											_accountLineItems.clear();
-											_accountLineItems.add(new AccountLine(
-													"RippleLabels",
-													LSystem.nativeCurrency
-															.toUpperCase(),
-													info.balance));
-											tableModel.update();
+											_accountLineItems.add(new AccountLine("RippleLabels",
+													LSystem.nativeCurrency.toUpperCase(), info.balance));
+											if (_accountLineItems.size() > 0) {
+												tableModel.update();
+											}
 										}
 									}
+									String name = null;
+									try {
+										name = NameFind.getName(address);
+									} catch (Exception ex) {
+										name = "Unkown";
+									}
+									if (name == null || name.equalsIgnoreCase(address)) {
+										name = "Unkown";
+									}
+									_addressNameText.setText(name);
+								} else if (countInfoError < 1) {
+									countInfoError++;
+									find.processInfo(address, info, this);
+									return;
 								}
-								String name = null;
-								try {
-									name = NameFind.getName(address);
-								} catch (Exception ex) {
-									name = "Unkown";
-								}
-								if (name == null || name.equalsIgnoreCase(address)) {
-									name = "Unkown";
-								}
-								_addressNameText.setText(name);
+
 								// RPAccountInfoDialog.this.revalidate();
 								// RPAccountInfoDialog.this.repaint();
 							}
@@ -717,24 +704,26 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 								if (info.lines.size() > 0) {
 									synchronized (_accountLineItems) {
 										_accountLineItems.clear();
-										_accountLineItems.add(new AccountLine(
-												"RippleLabels", LSystem.nativeCurrency
-														.toUpperCase(), info.balance));
+										_accountLineItems.add(new AccountLine("RippleLabels",
+												LSystem.nativeCurrency.toUpperCase(), info.balance));
 										_accountLineItems.addAll(info.lines);
 									}
-									tableModel.update();
+									if (_accountLineItems.size() > 0) {
+										tableModel.update();
+									}
 								}
 								if (info.debt.size() > 0) {
 									synchronized (_accountLineItems2) {
 										_accountLineItems2.clear();
 										for (String cur : info.debt.keySet()) {
-											AccountLine line = new AccountLine(address,
-													cur, String.valueOf(info.debt
-															.get(cur)));
+											AccountLine line = new AccountLine(address, cur,
+													String.valueOf(info.debt.get(cur)));
 											_accountLineItems2.add(line);
 										}
 									}
-									tableModel2.update();
+									if (_accountLineItems2.size() > 0) {
+										tableModel2.update();
+									}
 								}
 								// RPAccountInfoDialog.this.revalidate();
 								// RPAccountInfoDialog.this.repaint();
@@ -749,16 +738,24 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 									synchronized (_accountLineItems3) {
 										_accountLineItems3.clear();
 										int count = 0;
-										for (TransactionTx tx : info.transactions) {
+										for (int i = info.transactions.size() - 1; i > -1; i--) {
+											TransactionTx tx = info.transactions.get(i);
 											if ("Payment".equals(tx.clazz)) {
 												addList(_accountLineItems3, tx, count++);
 											}
 										}
 									}
-									tableModel3.update();
-									addStorage(new Store(address,
-											new AccountInfo().copy(info)));
+									if (_accountLineItems3.size() > 0) {
+										tableModel3.update();
+										addStorage(new Store(address, new AccountInfo().copy(info)));
+									}
+									// 如果一次没有读出来数据，则尝试继续加载2次
+								} else if (countTxError < 1) {
+									countTxError++;
+									find.processTx(address, info, this);
+									return;
 								}
+
 								waitDialog.closeDialog();
 								/*
 								 * RPAccountInfoDialog.this.revalidate();
@@ -767,6 +764,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 								 * LSystem.applicationMain.revalidate();
 								 * LSystem.applicationMain.repaint(); }
 								 */
+
 							}
 
 						};

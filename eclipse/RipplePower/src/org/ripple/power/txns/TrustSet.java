@@ -27,9 +27,7 @@ public class TrustSet {
 			if (AccountFind.isRippleAddress(address)) {
 				currency = new IssuedCurrency(split[0], address, split[1]);
 			} else {
-				currency = new IssuedCurrency(split[0],
-						Gateway.getAddress(address).accounts.get(0).address,
-						split[1]);
+				currency = new IssuedCurrency(split[0], Gateway.getAddress(address).accounts.get(0).address, split[1]);
 			}
 		} else {
 			throw new RuntimeException(res);
@@ -37,13 +35,13 @@ public class TrustSet {
 		return currency;
 	}
 
-	public static void setTxJson(final String seed,
-			final IssuedCurrency currency, final String fee, final Rollback back) {
+	public static void setTxJson(final String seed, final IssuedCurrency currency, final String fee,
+			final Rollback back) {
 		TrustSet.setTxJson(new RippleSeedAddress(seed), currency, fee, back);
 	}
 
-	public static void setTxJson(final RippleSeedAddress seed,
-			final IssuedCurrency currency, final String fee, final Rollback back) {
+	public static void setTxJson(final RippleSeedAddress seed, final IssuedCurrency currency, final String fee,
+			final Rollback back) {
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);
@@ -52,8 +50,7 @@ public class TrustSet {
 			obj.put("Account", seed.getPublicKey());
 			JSONObject limitAmount = new JSONObject();
 			limitAmount.put("currency", currency.currency);
-			limitAmount.put("value",
-					String.valueOf(currency.amount.longValue()));
+			limitAmount.put("value", String.valueOf(currency.amount.longValue()));
 			limitAmount.put("issuer", currency.issuer.toString());
 			obj.put("LimitAmount", limitAmount);
 			obj.put("Fee", CurrencyUtils.getValueToRipple(fee));
@@ -81,13 +78,12 @@ public class TrustSet {
 
 	}
 
-	public static void set(final String seed, final IssuedCurrency currency,
-			final String fee, final Rollback back) {
+	public static void set(final String seed, final IssuedCurrency currency, final String fee, final Rollback back) {
 		TrustSet.set(new RippleSeedAddress(seed), currency, fee, back);
 	}
 
-	public static void set(final RippleSeedAddress seed,
-			final IssuedCurrency currency, final String fee, final Rollback back) {
+	public static void set(final RippleSeedAddress seed, final IssuedCurrency currency, final String fee,
+			final Rollback back) {
 		final String address = seed.getPublicRippleAddress().toString();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -96,13 +92,10 @@ public class TrustSet {
 				try {
 					long sequence = TransactionUtils.getSequence(message);
 					RippleObject item = new RippleObject();
-					item.putField(BinaryFormatField.TransactionType,
-							(int) TransactionTypes.TRUST_SET.byteValue);
-					item.putField(BinaryFormatField.Account,
-							seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.TRUST_SET.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
 					item.putField(BinaryFormatField.LimitAmount, currency);
-					item.putField(BinaryFormatField.Fee,
-							CurrencyUtils.getValueToRipple(fee));
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					item.putField(BinaryFormatField.Sequence, sequence);
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {

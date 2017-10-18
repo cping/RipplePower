@@ -137,10 +137,10 @@ public final class LayoutUtil {
 	 * 
 	 * @param cw
 	 *            The container to set design time for. <code>null</code> is
-	 *            legal and can be used as a key to turn on/off design time
-	 *            "in general". Note though that design time "in general" is
-	 *            always on as long as there is at least one ContainerWrapper
-	 *            with design time.
+	 *            legal and can be used as a key to turn on/off design time "in
+	 *            general". Note though that design time "in general" is always
+	 *            on as long as there is at least one ContainerWrapper with
+	 *            design time.
 	 *            <p>
 	 *            <strong>If this method has not ever been called it will
 	 *            default to what <code>Beans.isDesignTime()</code>
@@ -235,8 +235,8 @@ public final class LayoutUtil {
 	 */
 	static synchronized void setDelegate(Class c, PersistenceDelegate del) {
 		try {
-			Introspector.getBeanInfo(c, Introspector.IGNORE_ALL_BEANINFO)
-					.getBeanDescriptor().setValue("persistenceDelegate", del);
+			Introspector.getBeanInfo(c, Introspector.IGNORE_ALL_BEANINFO).getBeanDescriptor()
+					.setValue("persistenceDelegate", del);
 		} catch (Exception ignored) {
 		}
 	}
@@ -257,8 +257,7 @@ public final class LayoutUtil {
 	}
 
 	static void throwCC() {
-		throw new IllegalStateException(
-				"setStoreConstraintData(true) must be set for strings to be saved.");
+		throw new IllegalStateException("setStoreConstraintData(true) must be set for strings to be saved.");
 	}
 
 	/**
@@ -290,8 +289,8 @@ public final class LayoutUtil {
 	 *            To use for relative sizes.
 	 * @return The sizes. Array length will match <code>sizes</code>.
 	 */
-	static int[] calculateSerial(int[][] sizes, ResizeConstraint[] resConstr,
-			Float[] defPushWeights, int startSizeType, int bounds) {
+	static int[] calculateSerial(int[][] sizes, ResizeConstraint[] resConstr, Float[] defPushWeights, int startSizeType,
+			int bounds) {
 		float[] lengths = new float[sizes.length]; // heights/widths that are
 													// set
 		float usedLength = 0.0f;
@@ -299,10 +298,8 @@ public final class LayoutUtil {
 		// Give all preferred size to start with
 		for (int i = 0; i < sizes.length; i++) {
 			if (sizes[i] != null) {
-				float len = sizes[i][startSizeType] != NOT_SET ? sizes[i][startSizeType]
-						: 0;
-				int newSizeBounded = getBrokenBoundary(len, sizes[i][MIN],
-						sizes[i][MAX]);
+				float len = sizes[i][startSizeType] != NOT_SET ? sizes[i][startSizeType] : 0;
+				int newSizeBounded = getBrokenBoundary(len, sizes[i][MIN], sizes[i][MAX]);
 				if (newSizeBounded != NOT_SET)
 					len = newSizeBounded;
 
@@ -318,17 +315,21 @@ public final class LayoutUtil {
 			// Create a Set with the available priorities
 			TreeSet<Integer> prioList = new TreeSet<Integer>();
 			for (int i = 0; i < sizes.length; i++) {
-				ResizeConstraint resC = (ResizeConstraint) getIndexSafe(
-						resConstr, i);
+				ResizeConstraint resC = (ResizeConstraint) getIndexSafe(resConstr, i);
 				if (resC != null)
 					prioList.add(isGrow ? resC.growPrio : resC.shrinkPrio);
 			}
-			Integer[] prioIntegers = prioList.toArray(new Integer[prioList
-					.size()]);
+			Integer[] prioIntegers = prioList.toArray(new Integer[prioList.size()]);
 
-			for (int force = 0; force <= ((isGrow && defPushWeights != null) ? 1
-					: 0); force++) { // Run twice if defGrow and the need for
-										// growing.
+			for (int force = 0; force <= ((isGrow && defPushWeights != null) ? 1 : 0); force++) { // Run
+																									// twice
+																									// if
+																									// defGrow
+																									// and
+																									// the
+																									// need
+																									// for
+																									// growing.
 				for (int pr = prioIntegers.length - 1; pr >= 0; pr--) {
 					int curPrio = prioIntegers[pr];
 
@@ -339,8 +340,7 @@ public final class LayoutUtil {
 												// do not grow or shrink.
 							continue;
 
-						ResizeConstraint resC = (ResizeConstraint) getIndexSafe(
-								resConstr, i);
+						ResizeConstraint resC = (ResizeConstraint) getIndexSafe(resConstr, i);
 						if (resC != null) {
 							int prio = isGrow ? resC.growPrio : resC.shrinkPrio;
 
@@ -364,19 +364,15 @@ public final class LayoutUtil {
 							float toChange = bounds - usedLength;
 							hit = false;
 							float changedWeight = 0f;
-							for (int i = 0; i < sizes.length
-									&& totWeight > 0.0001f; i++) {
+							for (int i = 0; i < sizes.length && totWeight > 0.0001f; i++) {
 
 								Float weight = resizeWeight[i];
 								if (weight != null) {
-									float sizeDelta = toChange * weight
-											/ totWeight;
+									float sizeDelta = toChange * weight / totWeight;
 									float newSize = lengths[i] + sizeDelta;
 
 									if (sizes[i] != null) {
-										int newSizeBounded = getBrokenBoundary(
-												newSize, sizes[i][MIN],
-												sizes[i][MAX]);
+										int newSizeBounded = getBrokenBoundary(newSize, sizes[i][MIN], sizes[i][MAX]);
 										if (newSizeBounded != NOT_SET) {
 											resizeWeight[i] = null;
 											hit = true;
@@ -448,14 +444,12 @@ public final class LayoutUtil {
 		return sizes[sizeType];
 	}
 
-	static BoundSize derive(BoundSize bs, UnitValue min, UnitValue pref,
-			UnitValue max) {
+	static BoundSize derive(BoundSize bs, UnitValue min, UnitValue pref, UnitValue max) {
 		if (bs == null || bs.isUnset())
 			return new BoundSize(min, pref, max, null);
 
-		return new BoundSize(min != null ? min : bs.getMin(),
-				pref != null ? pref : bs.getPreferred(), max != null ? max
-						: bs.getMax(), bs.getGapPush(), null);
+		return new BoundSize(min != null ? min : bs.getMin(), pref != null ? pref : bs.getPreferred(),
+				max != null ? max : bs.getMax(), bs.getGapPush(), null);
 	}
 
 	/**
@@ -550,8 +544,7 @@ public final class LayoutUtil {
 	static UnitValue getInsets(LC lc, int side, boolean getDefault) {
 		UnitValue[] i = lc.getInsets();
 		return (i != null && i[side] != null) ? i[side]
-				: (getDefault ? PlatformDefaults.getPanelInsets(side)
-						: UnitValue.ZERO);
+				: (getDefault ? PlatformDefaults.getPanelInsets(side) : UnitValue.ZERO);
 	}
 
 	/**
@@ -566,12 +559,9 @@ public final class LayoutUtil {
 	 *            The listener to recieve the exeptions if there are any. If
 	 *            <code>null</code> not used.
 	 */
-	static void writeXMLObject(OutputStream os, Object o,
-			ExceptionListener listener) {
-		ClassLoader oldClassLoader = Thread.currentThread()
-				.getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(
-				LayoutUtil.class.getClassLoader());
+	static void writeXMLObject(OutputStream os, Object o, ExceptionListener listener) {
+		ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(LayoutUtil.class.getClassLoader());
 
 		XMLEncoder encoder = new XMLEncoder(os);
 
@@ -594,8 +584,7 @@ public final class LayoutUtil {
 	 * @param o
 	 *            The object to write.
 	 */
-	public static synchronized void writeAsXML(ObjectOutput out, Object o)
-			throws IOException {
+	public static synchronized void writeAsXML(ObjectOutput out, Object o) throws IOException {
 		if (writeOutputStream == null)
 			writeOutputStream = new ByteArrayOutputStream(16384);
 
@@ -624,8 +613,7 @@ public final class LayoutUtil {
 	 * @throws IOException
 	 *             If there was a problem saving as XML
 	 */
-	public static synchronized Object readAsXML(ObjectInput in)
-			throws IOException {
+	public static synchronized Object readAsXML(ObjectInput in) throws IOException {
 		if (readBuf == null)
 			readBuf = new byte[16384];
 
@@ -646,8 +634,7 @@ public final class LayoutUtil {
 
 			in.readFully(readBuf, 0, length);
 
-			o = new XMLDecoder(new ByteArrayInputStream(readBuf, 0, length))
-					.readObject();
+			o = new XMLDecoder(new ByteArrayInputStream(readBuf, 0, length)).readObject();
 
 		} catch (EOFException ignored) {
 		}
@@ -658,8 +645,7 @@ public final class LayoutUtil {
 		return o;
 	}
 
-	private static final IdentityHashMap<Object, Object> SER_MAP = new IdentityHashMap<Object, Object>(
-			2);
+	private static final IdentityHashMap<Object, Object> SER_MAP = new IdentityHashMap<Object, Object>(2);
 
 	/**
 	 * Sets the serialized object and associates it with <code>caller</code>.

@@ -3,6 +3,7 @@ package org.ripple.power.txns;
 import java.util.Calendar;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ripple.power.utils.DateUtils;
 import org.ripple.power.utils.HttpRequest;
 
@@ -21,65 +22,57 @@ public class CoinmarketcapAPI {
 	}
 
 	public static JSONArray getCoinmarketcapVolume(String coinName, String model) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/volume", coinName),
-				model);
+		return getCoinmarketcap("volume_usd",
+				String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName), model);
 	}
 
 	public static JSONArray getCoinmarketcapUSD(String coinName, String model) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/price_usd", coinName),
+		return getCoinmarketcap("price_usd", String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName),
 				model);
 	}
 
 	public static JSONArray getCoinmarketcapBTC(String coinName, String model) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/price_btc", coinName),
+		return getCoinmarketcap("price_btc", String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName),
 				model);
 	}
 
-	public static JSONArray getCoinmarketcapMarketCap(String coinName,
-			String model) {
-		return getCoinmarketcap(
-				String.format(
-						"http://coinmarketcap.com/datapoints/%s/market_cap_by_available_supply",
-						coinName), model);
+	public static JSONArray getCoinmarketcapMarketCap(String coinName, String model) {
+		return getCoinmarketcap("market_cap_by_available_supply",
+				String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName), model);
 	}
 
 	public static JSONArray getCoinmarketcapVolume(String coinName, int day) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/volume", coinName), day);
+		return getCoinmarketcap("volume_usd",
+				String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName), day);
 	}
 
 	public static JSONArray getCoinmarketcapUSD(String coinName, int day) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/price_usd", coinName),
+		return getCoinmarketcap("price_usd", String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName),
 				day);
 	}
 
 	public static JSONArray getCoinmarketcapBTC(String coinName, int day) {
-		return getCoinmarketcap(String.format(
-				"http://coinmarketcap.com/datapoints/%s/price_btc", coinName),
+		return getCoinmarketcap("price_btc", String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName),
 				day);
 	}
 
 	public static JSONArray getCoinmarketcapMarketCap(String coinName, int day) {
-		return getCoinmarketcap(
-				String.format(
-						"http://coinmarketcap.com/datapoints/%s/market_cap_by_available_supply",
-						coinName), day);
+		return getCoinmarketcap("market_cap_by_available_supply",
+				String.format("https://graphs.coinmarketcap.com/currencies/%s/", coinName), day);
 	}
 
-	public static JSONArray getCoinmarketcap(String url, int day) {
+	public static JSONArray getCoinmarketcap(String mode, String url, int day) {
 		long startTime = getCoinmarketcapCalendar(-day).getTimeInMillis();
 		long endTime = getCoinmarketcapCalendar(0).getTimeInMillis();
 		try {
-			HttpRequest request = HttpRequest.get(url
-					+ String.format("/%s/%s/", startTime, endTime));
+			String page = url + String.format("/%s/%s/", startTime, endTime);
+			HttpRequest request = HttpRequest.get(page);
 			request.acceptGzipEncoding();
 			if (request.ok()) {
 				request.uncompress(true);
-				return new JSONArray(request.body());
+				String result = request.body();
+				JSONObject obj = new JSONObject(result);
+				return obj.optJSONArray(mode);
 			}
 		} catch (Exception ex) {
 			return null;
@@ -87,7 +80,7 @@ public class CoinmarketcapAPI {
 		return null;
 	}
 
-	public static JSONArray getCoinmarketcap(String url, String model) {
+	public static JSONArray getCoinmarketcap(String type, String url, String model) {
 		long startTime = -1;
 		long endTime = getCoinmarketcapCalendar(0).getTimeInMillis();
 		switch (model) {
@@ -113,12 +106,13 @@ public class CoinmarketcapAPI {
 			startTime = endTime;
 		}
 		try {
-			HttpRequest request = HttpRequest.get(url
-					+ String.format("/%s/%s/", startTime, endTime));
+			HttpRequest request = HttpRequest.get(url + String.format("/%s/%s/", startTime, endTime));
 			request.acceptGzipEncoding();
 			if (request.ok()) {
 				request.uncompress(true);
-				return new JSONArray(request.body());
+				String result = request.body();
+				JSONObject obj = new JSONObject(result);
+				return obj.optJSONArray(type);
 			}
 		} catch (Exception ex) {
 			return null;

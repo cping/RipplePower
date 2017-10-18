@@ -65,10 +65,10 @@ public final class Grid {
 	/**
 	 * A constraint used for gaps.
 	 */
-	private static final ResizeConstraint GAP_RC_CONST = new ResizeConstraint(
-			200, ResizeConstraint.WEIGHT_100, 50, null);
-	private static final ResizeConstraint GAP_RC_CONST_PUSH = new ResizeConstraint(
-			200, ResizeConstraint.WEIGHT_100, 50, ResizeConstraint.WEIGHT_100);
+	private static final ResizeConstraint GAP_RC_CONST = new ResizeConstraint(200, ResizeConstraint.WEIGHT_100, 50,
+			null);
+	private static final ResizeConstraint GAP_RC_CONST_PUSH = new ResizeConstraint(200, ResizeConstraint.WEIGHT_100, 50,
+			ResizeConstraint.WEIGHT_100);
 
 	/**
 	 * The constraints. Never <code>null</code>.
@@ -113,8 +113,7 @@ public final class Grid {
 	/**
 	 * The size of the grid. Row count and column count.
 	 */
-	private final TreeSet<Integer> rowIndexes = new TreeSet<Integer>(),
-			colIndexes = new TreeSet<Integer>();
+	private final TreeSet<Integer> rowIndexes = new TreeSet<Integer>(), colIndexes = new TreeSet<Integer>();
 
 	/**
 	 * The row and column specifications.
@@ -184,8 +183,7 @@ public final class Grid {
 	 *            A list of callbacks or <code>null</code> if none. Will not be
 	 *            alterted.
 	 */
-	public Grid(ContainerWrapper container, LC lc, AC rowConstr, AC colConstr,
-			Map<ComponentWrapper, CC> ccMap,
+	public Grid(ContainerWrapper container, LC lc, AC rowConstr, AC colConstr, Map<ComponentWrapper, CC> ccMap,
 			ArrayList<LayoutCallback> callbackList) {
 		this.lc = lc;
 		this.rowConstr = rowConstr;
@@ -205,8 +203,7 @@ public final class Grid {
 		final int[] cellXY = new int[2];
 		final ArrayList<int[]> spannedRects = new ArrayList<int[]>(2);
 
-		final DimConstraint[] specs = (lc.isFlowX() ? rowConstr : colConstr)
-				.getConstaints();
+		final DimConstraint[] specs = (lc.isFlowX() ? rowConstr : colConstr).getConstaints();
 
 		int sizeGroupsX = 0, sizeGroupsY = 0;
 		int[] dockInsets = null; // top, left, bottom, right insets for docks.
@@ -219,15 +216,13 @@ public final class Grid {
 
 			addLinkIDs(rootCc);
 
-			int hideMode = comp.isVisible() ? -1
-					: rootCc.getHideMode() != -1 ? rootCc.getHideMode() : lc
-							.getHideMode();
+			int hideMode = comp.isVisible() ? -1 : rootCc.getHideMode() != -1 ? rootCc.getHideMode() : lc.getHideMode();
 
 			if (hideMode == 3) { // To work with situations where there are
 									// components that does not have a layout
 									// manager, or not this one.
-				setLinkedBounds(comp, rootCc, comp.getX(), comp.getY(),
-						comp.getWidth(), comp.getHeight(), rootCc.isExternal());
+				setLinkedBounds(comp, rootCc, comp.getX(), comp.getY(), comp.getWidth(), comp.getHeight(),
+						rootCc.isExternal());
 				i++;
 				continue; // The "external" component should not be handled
 							// further.
@@ -252,8 +247,7 @@ public final class Grid {
 				}
 
 				if (rootCc.isBoundsInGrid() == false || rootCc.isExternal()) {
-					setLinkedBounds(comp, rootCc, comp.getX(), comp.getY(),
-							comp.getWidth(), comp.getHeight(),
+					setLinkedBounds(comp, rootCc, comp.getX(), comp.getY(), comp.getWidth(), comp.getHeight(),
 							rootCc.isExternal());
 					i++;
 					continue;
@@ -262,11 +256,9 @@ public final class Grid {
 
 			if (rootCc.getDockSide() != -1) {
 				if (dockInsets == null)
-					dockInsets = new int[] { -MAX_DOCK_GRID, -MAX_DOCK_GRID,
-							MAX_DOCK_GRID, MAX_DOCK_GRID };
+					dockInsets = new int[] { -MAX_DOCK_GRID, -MAX_DOCK_GRID, MAX_DOCK_GRID, MAX_DOCK_GRID };
 
-				addDockingCell(dockInsets, rootCc.getDockSide(), new CompWrap(
-						comp, rootCc, hideMode, pos, cbSz));
+				addDockingCell(dockInsets, rootCc.getDockSide(), new CompWrap(comp, rootCc, hideMode, pos, cbSz));
 				i++;
 				continue;
 			}
@@ -282,15 +274,21 @@ public final class Grid {
 			hitEndOfRow = false;
 
 			final boolean rowNoGrid = lc.isNoGrid()
-					|| ((DimConstraint) LayoutUtil.getIndexSafe(specs,
-							lc.isFlowX() ? cellXY[1] : cellXY[0])).isNoGrid();
+					|| ((DimConstraint) LayoutUtil.getIndexSafe(specs, lc.isFlowX() ? cellXY[1] : cellXY[0]))
+							.isNoGrid();
 
 			// Move to a free y, x if no absolute grid specified
 			int cx = rootCc.getCellX();
 			int cy = rootCc.getCellY();
-			if ((cx < 0 || cy < 0) && rowNoGrid == false
-					&& rootCc.getSkip() == 0) { // 3.7.2: If skip, don't find an
-												// empty cell first.
+			if ((cx < 0 || cy < 0) && rowNoGrid == false && rootCc.getSkip() == 0) { // 3.7.2:
+																						// If
+																						// skip,
+																						// don't
+																						// find
+																						// an
+																						// empty
+																						// cell
+																						// first.
 				while (isCellFree(cellXY[1], cellXY[0], spannedRects) == false) {
 					if (Math.abs(increase(cellXY, 1)) >= wrap)
 						wrap(cellXY, null);
@@ -324,22 +322,19 @@ public final class Grid {
 
 			// If cell is not created yet, create it and set it.
 			if (cell == null) {
-				int spanx = Math.min(rowNoGrid && lc.isFlowX() ? LayoutUtil.INF
-						: rootCc.getSpanX(), MAX_GRID - cellXY[0]);
-				int spany = Math.min(
-						rowNoGrid && !lc.isFlowX() ? LayoutUtil.INF : rootCc
-								.getSpanY(), MAX_GRID - cellXY[1]);
+				int spanx = Math.min(rowNoGrid && lc.isFlowX() ? LayoutUtil.INF : rootCc.getSpanX(),
+						MAX_GRID - cellXY[0]);
+				int spany = Math.min(rowNoGrid && !lc.isFlowX() ? LayoutUtil.INF : rootCc.getSpanY(),
+						MAX_GRID - cellXY[1]);
 
-				cell = new Cell(spanx, spany, cellFlowX != null ? cellFlowX
-						: lc.isFlowX());
+				cell = new Cell(spanx, spany, cellFlowX != null ? cellFlowX : lc.isFlowX());
 
 				setCell(cellXY[1], cellXY[0], cell);
 
 				// Add a rectangle so we can know that spanned cells occupy more
 				// space.
 				if (spanx > 1 || spany > 1)
-					spannedRects.add(new int[] { cellXY[0], cellXY[1], spanx,
-							spany });
+					spannedRects.add(new int[] { cellXY[0], cellXY[1], spanx, spany });
 			}
 
 			// Add the one, or all, components that split the grid position to
@@ -347,8 +342,7 @@ public final class Grid {
 			boolean wrapHandled = false;
 			int splitLeft = rowNoGrid ? LayoutUtil.INF : rootCc.getSplit() - 1;
 			boolean splitExit = false;
-			final boolean spanRestOfRow = (lc.isFlowX() ? rootCc.getSpanX()
-					: rootCc.getSpanY()) == LayoutUtil.INF;
+			final boolean spanRestOfRow = (lc.isFlowX() ? rootCc.getSpanX() : rootCc.getSpanY()) == LayoutUtil.INF;
 
 			for (; splitLeft >= 0 && i < comps.length; splitLeft--) {
 				ComponentWrapper compAdd = comps[i];
@@ -357,8 +351,7 @@ public final class Grid {
 				addLinkIDs(cc);
 
 				boolean visible = compAdd.isVisible();
-				hideMode = visible ? -1 : cc.getHideMode() != -1 ? cc
-						.getHideMode() : lc.getHideMode();
+				hideMode = visible ? -1 : cc.getHideMode() != -1 ? cc.getHideMode() : lc.getHideMode();
 
 				if (cc.isExternal() || hideMode == 3) {
 					i++;
@@ -369,14 +362,11 @@ public final class Grid {
 								// manager, or not this one.
 				}
 
-				hasPushX |= (visible || hideMode > 1)
-						&& (cc.getPushX() != null);
-				hasPushY |= (visible || hideMode > 1)
-						&& (cc.getPushY() != null);
+				hasPushX |= (visible || hideMode > 1) && (cc.getPushX() != null);
+				hasPushY |= (visible || hideMode > 1) && (cc.getPushY() != null);
 
 				if (cc != rootCc) { // If not first in a cell
-					if (cc.isNewline() || cc.isBoundsInGrid() == false
-							|| cc.getDockSide() != -1)
+					if (cc.isNewline() || cc.isBoundsInGrid() == false || cc.getDockSide() != -1)
 						break;
 
 					if (splitLeft > 0 && cc.getSkip() > 0) {
@@ -426,12 +416,9 @@ public final class Grid {
 		// If there were size groups, calculate the largest values in the groups
 		// (for min/pref/max) and enforce them on the rest in the group.
 		if (sizeGroupsX > 0 || sizeGroupsY > 0) {
-			HashMap<String, int[]> sizeGroupMapX = sizeGroupsX > 0 ? new HashMap<String, int[]>(
-					sizeGroupsX) : null;
-			HashMap<String, int[]> sizeGroupMapY = sizeGroupsY > 0 ? new HashMap<String, int[]>(
-					sizeGroupsY) : null;
-			ArrayList<CompWrap> sizeGroupCWs = new ArrayList<CompWrap>(
-					Math.max(sizeGroupsX, sizeGroupsY));
+			HashMap<String, int[]> sizeGroupMapX = sizeGroupsX > 0 ? new HashMap<String, int[]>(sizeGroupsX) : null;
+			HashMap<String, int[]> sizeGroupMapY = sizeGroupsY > 0 ? new HashMap<String, int[]>(sizeGroupsY) : null;
+			ArrayList<CompWrap> sizeGroupCWs = new ArrayList<CompWrap>(Math.max(sizeGroupsX, sizeGroupsY));
 
 			for (Cell cell : grid.values()) {
 				for (int i = 0; i < cell.compWraps.size(); i++) {
@@ -452,25 +439,26 @@ public final class Grid {
 			// Set/equalize the sizeGroups to same the values.
 			for (CompWrap cw : sizeGroupCWs) {
 				if (sizeGroupMapX != null)
-					cw.setSizes(sizeGroupMapX.get(cw.cc.getHorizontal()
-							.getSizeGroup()), true); // Target method handles
-														// null sizes
+					cw.setSizes(sizeGroupMapX.get(cw.cc.getHorizontal().getSizeGroup()), true); // Target
+																								// method
+																								// handles
+																								// null
+																								// sizes
 				if (sizeGroupMapY != null)
-					cw.setSizes(sizeGroupMapY.get(cw.cc.getVertical()
-							.getSizeGroup()), false); // Target method handles
-														// null sizes
+					cw.setSizes(sizeGroupMapY.get(cw.cc.getVertical().getSizeGroup()), false); // Target
+																								// method
+																								// handles
+																								// null
+																								// sizes
 			}
 		} // Component loop
 
 		// If there were size groups, calculate the largest values in the groups
 		// (for min/pref/max) and enforce them on the rest in the group.
 		if (sizeGroupsX > 0 || sizeGroupsY > 0) {
-			HashMap<String, int[]> sizeGroupMapX = sizeGroupsX > 0 ? new HashMap<String, int[]>(
-					sizeGroupsX) : null;
-			HashMap<String, int[]> sizeGroupMapY = sizeGroupsY > 0 ? new HashMap<String, int[]>(
-					sizeGroupsY) : null;
-			ArrayList<CompWrap> sizeGroupCWs = new ArrayList<CompWrap>(
-					Math.max(sizeGroupsX, sizeGroupsY));
+			HashMap<String, int[]> sizeGroupMapX = sizeGroupsX > 0 ? new HashMap<String, int[]>(sizeGroupsX) : null;
+			HashMap<String, int[]> sizeGroupMapY = sizeGroupsY > 0 ? new HashMap<String, int[]>(sizeGroupsY) : null;
+			ArrayList<CompWrap> sizeGroupCWs = new ArrayList<CompWrap>(Math.max(sizeGroupsX, sizeGroupsY));
 
 			for (Cell cell : grid.values()) {
 				for (int i = 0; i < cell.compWraps.size(); i++) {
@@ -491,13 +479,17 @@ public final class Grid {
 			// Set/equalize the sizeGroups to same the values.
 			for (CompWrap cw : sizeGroupCWs) {
 				if (sizeGroupMapX != null)
-					cw.setSizes(sizeGroupMapX.get(cw.cc.getHorizontal()
-							.getSizeGroup()), true); // Target method handles
-														// null sizes
+					cw.setSizes(sizeGroupMapX.get(cw.cc.getHorizontal().getSizeGroup()), true); // Target
+																								// method
+																								// handles
+																								// null
+																								// sizes
 				if (sizeGroupMapY != null)
-					cw.setSizes(sizeGroupMapY.get(cw.cc.getVertical()
-							.getSizeGroup()), false); // Target method handles
-														// null sizes
+					cw.setSizes(sizeGroupMapY.get(cw.cc.getVertical().getSizeGroup()), false); // Target
+																								// method
+																								// handles
+																								// null
+																								// sizes
 			}
 		}
 
@@ -543,8 +535,7 @@ public final class Grid {
 			saveGrid(container, grid);
 	}
 
-	private static CC getCC(ComponentWrapper comp,
-			Map<ComponentWrapper, CC> ccMap) {
+	private static CC getCC(ComponentWrapper comp, Map<ComponentWrapper, CC> ccMap) {
 		CC cc = ccMap.get(comp);
 		return cc != null ? cc : new CC();
 	}
@@ -584,8 +575,7 @@ public final class Grid {
 	 * @return If the layout has probably changed the preferred size and there
 	 *         is need for a new layout (normally only SWT).
 	 */
-	public boolean layout(int[] bounds, UnitValue alignX, UnitValue alignY,
-			boolean debug, boolean checkPrefChange) {
+	public boolean layout(int[] bounds, UnitValue alignX, UnitValue alignY, boolean debug, boolean checkPrefChange) {
 		if (debug)
 			debugRects = new ArrayList<int[]>();
 
@@ -633,15 +623,11 @@ public final class Grid {
 														// bother this time
 														// around
 									if (cw.cc.getHorizontal().getEndGroup() != null)
-										endGrpXMap = addToEndGroup(endGrpXMap,
-												cw.cc.getHorizontal()
-														.getEndGroup(), cw.x
-														+ cw.w);
+										endGrpXMap = addToEndGroup(endGrpXMap, cw.cc.getHorizontal().getEndGroup(),
+												cw.x + cw.w);
 									if (cw.cc.getVertical().getEndGroup() != null)
-										endGrpYMap = addToEndGroup(endGrpYMap,
-												cw.cc.getVertical()
-														.getEndGroup(), cw.y
-														+ cw.h);
+										endGrpYMap = addToEndGroup(endGrpYMap, cw.cc.getVertical().getEndGroup(),
+												cw.y + cw.h);
 								}
 
 								// @since 3.7.2 Needed or absolute "pos"
@@ -649,25 +635,20 @@ public final class Grid {
 								// work if
 								// their bounds changed during the layout cycle.
 								// At least not in SWT.
-								if (linkTargetIDs != null
-										&& (linkTargetIDs.containsKey("visual") || linkTargetIDs
-												.containsKey("container")))
+								if (linkTargetIDs != null && (linkTargetIDs.containsKey("visual")
+										|| linkTargetIDs.containsKey("container")))
 									layoutAgain = true;
 							}
 
 							if (linkTargetIDs == null || j == 1) {
 								if (cw.cc.getHorizontal().getEndGroup() != null)
-									cw.w = endGrpXMap.get(cw.cc.getHorizontal()
-											.getEndGroup()) - cw.x;
+									cw.w = endGrpXMap.get(cw.cc.getHorizontal().getEndGroup()) - cw.x;
 								if (cw.cc.getVertical().getEndGroup() != null)
-									cw.h = endGrpYMap.get(cw.cc.getVertical()
-											.getEndGroup()) - cw.y;
+									cw.h = endGrpYMap.get(cw.cc.getVertical().getEndGroup()) - cw.y;
 
 								cw.x += bounds[0];
 								cw.y += bounds[1];
-								layoutAgain |= cw
-										.transferBounds(checkPrefChange
-												&& !layoutAgain);
+								layoutAgain |= cw.transferBounds(checkPrefChange && !layoutAgain);
 
 								if (callbackList != null) {
 									for (LayoutCallback callback : callbackList)
@@ -678,8 +659,7 @@ public final class Grid {
 					}
 					clearGroupLinkBounds();
 					if (++count > ((compCount << 3) + 10)) {
-						System.err
-								.println("Unstable cyclic dependency in absolute linked values!");
+						System.err.println("Unstable cyclic dependency in absolute linked values!");
 						break;
 					}
 
@@ -698,12 +678,8 @@ public final class Grid {
 					LinkedDimGroup vGrp = getGroupContaining(rowGroupLists, cw);
 
 					if (hGrp != null && vGrp != null)
-						debugRects.add(new int[] {
-								hGrp.lStart + bounds[0]
-										- (hGrp.fromEnd ? hGrp.lSize : 0),
-								vGrp.lStart + bounds[1]
-										- (vGrp.fromEnd ? vGrp.lSize : 0),
-								hGrp.lSize, vGrp.lSize });
+						debugRects.add(new int[] { hGrp.lStart + bounds[0] - (hGrp.fromEnd ? hGrp.lSize : 0),
+								vGrp.lStart + bounds[1] - (vGrp.fromEnd ? vGrp.lSize : 0), hGrp.lSize, vGrp.lSize });
 				}
 			}
 		}
@@ -826,8 +802,7 @@ public final class Grid {
 	 *            {@link #linkTargetIDs}.
 	 * @return If a change has been made.
 	 */
-	private boolean setLinkedBounds(ComponentWrapper cw, CC cc, int x, int y,
-			int w, int h, boolean external) {
+	private boolean setLinkedBounds(ComponentWrapper cw, CC cc, int x, int y, int w, int h, boolean external) {
 		String id = cc.getId() != null ? cc.getId() : cw.getLinkId();
 		if (id == null)
 			return false;
@@ -841,20 +816,15 @@ public final class Grid {
 
 		Object lay = container.getLayout();
 		boolean changed = false;
-		if (external
-				|| (linkTargetIDs != null && linkTargetIDs.containsKey(id)))
-			changed = LinkHandler.setBounds(lay, id, x, y, w, h, !external,
-					false);
+		if (external || (linkTargetIDs != null && linkTargetIDs.containsKey(id)))
+			changed = LinkHandler.setBounds(lay, id, x, y, w, h, !external, false);
 
-		if (gid != null
-				&& (external || (linkTargetIDs != null && linkTargetIDs
-						.containsKey(gid)))) {
+		if (gid != null && (external || (linkTargetIDs != null && linkTargetIDs.containsKey(gid)))) {
 			if (linkTargetIDs == null)
 				linkTargetIDs = new HashMap<String, Boolean>(4);
 
 			linkTargetIDs.put(gid, Boolean.TRUE);
-			changed |= LinkHandler.setBounds(lay, gid, x, y, w, h, !external,
-					true);
+			changed |= LinkHandler.setBounds(lay, gid, x, y, w, h, !external, true);
 		}
 
 		return changed;
@@ -914,17 +884,14 @@ public final class Grid {
 	 * @param parent
 	 *            The parent.
 	 */
-	private static void sortCellsByPlatform(Collection<Cell> cells,
-			ContainerWrapper parent) {
+	private static void sortCellsByPlatform(Collection<Cell> cells, ContainerWrapper parent) {
 		String order = PlatformDefaults.getButtonOrder();
 		String orderLo = order.toLowerCase();
 
-		int unrelSize = PlatformDefaults.convertToPixels(1, "u", true, 0,
-				parent, null);
+		int unrelSize = PlatformDefaults.convertToPixels(1, "u", true, 0, parent, null);
 
 		if (unrelSize == UnitConverter.UNABLE)
-			throw new IllegalArgumentException(
-					"'unrelated' not recognized by PlatformDefaults!");
+			throw new IllegalArgumentException("'unrelated' not recognized by PlatformDefaults!");
 
 		int[] gapUnrel = new int[] { unrelSize, unrelSize, LayoutUtil.NOT_SET };
 		int[] flGap = new int[] { 0, 0, LayoutUtil.NOT_SET };
@@ -936,8 +903,7 @@ public final class Grid {
 			CompWrap prevCW = null;
 			boolean nextUnrel = false;
 			boolean nextPush = false;
-			ArrayList<CompWrap> sortedList = new ArrayList<CompWrap>(
-					cell.compWraps.size());
+			ArrayList<CompWrap> sortedList = new ArrayList<CompWrap>(cell.compWraps.size());
 
 			for (int i = 0, iSz = orderLo.length(); i < iSz; i++) {
 				char c = orderLo.charAt(i);
@@ -952,9 +918,7 @@ public final class Grid {
 							CompWrap cw = cell.compWraps.get(j);
 							if (tag.equals(cw.cc.getTag())) {
 								if (Character.isUpperCase(order.charAt(i))) {
-									int min = PlatformDefaults
-											.getMinimumButtonWidth().getPixels(
-													0, parent, cw.comp);
+									int min = PlatformDefaults.getMinimumButtonWidth().getPixels(0, parent, cw.comp);
 									if (min > cw.horSizes[LayoutUtil.MIN])
 										cw.horSizes[LayoutUtil.MIN] = min;
 
@@ -964,9 +928,7 @@ public final class Grid {
 								sortedList.add(cw);
 
 								if (nextUnrel) {
-									(prevCW != null ? prevCW : cw)
-											.mergeGapSizes(gapUnrel,
-													cell.flowx, prevCW == null);
+									(prevCW != null ? prevCW : cw).mergeGapSizes(gapUnrel, cell.flowx, prevCW == null);
 									if (nextPush) {
 										cw.forcedPushGaps = 1;
 										nextUnrel = false;
@@ -1015,8 +977,7 @@ public final class Grid {
 	}
 
 	private Float[] getDefaultPushWeights(boolean isRows) {
-		ArrayList<LinkedDimGroup>[] groupLists = isRows ? rowGroupLists
-				: colGroupLists;
+		ArrayList<LinkedDimGroup>[] groupLists = isRows ? rowGroupLists : colGroupLists;
 
 		Float[] pushWeightArr = GROW_100; // Only create specific if any of the
 											// components have grow.
@@ -1026,15 +987,12 @@ public final class Grid {
 			for (LinkedDimGroup grp : grps) {
 				for (int c = 0; c < grp._compWraps.size(); c++) {
 					CompWrap cw = grp._compWraps.get(c);
-					int hideMode = cw.comp.isVisible() ? -1 : cw.cc
-							.getHideMode() != -1 ? cw.cc.getHideMode() : lc
-							.getHideMode();
+					int hideMode = cw.comp.isVisible() ? -1
+							: cw.cc.getHideMode() != -1 ? cw.cc.getHideMode() : lc.getHideMode();
 
-					Float pushWeight = hideMode < 2 ? (isRows ? cw.cc
-							.getPushY() : cw.cc.getPushX()) : null;
+					Float pushWeight = hideMode < 2 ? (isRows ? cw.cc.getPushY() : cw.cc.getPushX()) : null;
 					if (rowPushWeight == null
-							|| (pushWeight != null && pushWeight.floatValue() > rowPushWeight
-									.floatValue()))
+							|| (pushWeight != null && pushWeight.floatValue() > rowPushWeight.floatValue()))
 						rowPushWeight = pushWeight;
 				}
 			}
@@ -1066,26 +1024,17 @@ public final class Grid {
 
 		boolean defIns = !hasDocks();
 
-		int parW = parentSize ? lc.getWidth().constrain(container.getWidth(),
-				getParentSize(container, true), container) : 0;
-		int parH = parentSize ? lc.getHeight().constrain(container.getHeight(),
-				getParentSize(container, false), container) : 0;
+		int parW = parentSize ? lc.getWidth().constrain(container.getWidth(), getParentSize(container, true), container)
+				: 0;
+		int parH = parentSize
+				? lc.getHeight().constrain(container.getHeight(), getParentSize(container, false), container) : 0;
 
-		int insX = LayoutUtil.getInsets(lc, 0, defIns).getPixels(0, container,
-				null);
-		int insY = LayoutUtil.getInsets(lc, 1, defIns).getPixels(0, container,
-				null);
-		int visW = parW
-				- insX
-				- LayoutUtil.getInsets(lc, 2, defIns).getPixels(0, container,
-						null);
-		int visH = parH
-				- insY
-				- LayoutUtil.getInsets(lc, 3, defIns).getPixels(0, container,
-						null);
+		int insX = LayoutUtil.getInsets(lc, 0, defIns).getPixels(0, container, null);
+		int insY = LayoutUtil.getInsets(lc, 1, defIns).getPixels(0, container, null);
+		int visW = parW - insX - LayoutUtil.getInsets(lc, 2, defIns).getPixels(0, container, null);
+		int visH = parH - insY - LayoutUtil.getInsets(lc, 3, defIns).getPixels(0, container, null);
 
-		LinkHandler.setBounds(lay, "visual", insX, insY, visW, visH, true,
-				false);
+		LinkHandler.setBounds(lay, "visual", insX, insY, visW, visH, true, false);
 		LinkHandler.setBounds(lay, "container", 0, 0, parW, parH, true, false);
 	}
 
@@ -1100,8 +1049,7 @@ public final class Grid {
 	 * @return The linked group or <code>null</code> if none had the component
 	 *         wrap.
 	 */
-	private static LinkedDimGroup getGroupContaining(
-			ArrayList<LinkedDimGroup>[] groupLists, CompWrap cw) {
+	private static LinkedDimGroup getGroupContaining(ArrayList<LinkedDimGroup>[] groupLists, CompWrap cw) {
 		for (ArrayList<LinkedDimGroup> groups : groupLists) {
 			for (int j = 0, jSz = groups.size(); j < jSz; j++) {
 				ArrayList<CompWrap> cwList = groups.get(j)._compWraps;
@@ -1127,8 +1075,7 @@ public final class Grid {
 
 		// If there is a link id, store the new bounds.
 		if (linkTargetIDs != null)
-			changed = setLinkedBounds(cw.comp, cw.cc, cw.x, cw.y, cw.w, cw.h,
-					false);
+			changed = setLinkedBounds(cw.comp, cw.cc, cw.x, cw.y, cw.w, cw.h, false);
 
 		return changed;
 	}
@@ -1143,7 +1090,8 @@ public final class Grid {
 		ArrayList<CompWrap> cws = absCell.compWraps;
 
 		int maxEnd = 0;
-		for (int j = 0, cwSz = absCell.compWraps.size(); j < cwSz + 3; j++) { // "Do Again"
+		for (int j = 0, cwSz = absCell.compWraps.size(); j < cwSz + 3; j++) { // "Do
+																				// Again"
 																				// max
 																				// absCell.compWraps.size()
 																				// +
@@ -1159,8 +1107,7 @@ public final class Grid {
 
 				// If there is a link id, store the new bounds.
 				if (linkTargetIDs != null)
-					doAgain |= setLinkedBounds(cw.comp, cw.cc, stSz[0],
-							stSz[0], stSz[1], stSz[1], false);
+					doAgain |= setLinkedBounds(cw.comp, cw.cc, stSz[0], stSz[0], stSz[1], stSz[1], false);
 			}
 			if (doAgain == false)
 				break;
@@ -1171,8 +1118,7 @@ public final class Grid {
 			clearGroupLinkBounds();
 		}
 
-		maxEnd += LayoutUtil.getInsets(lc, isHor ? 3 : 2, !hasDocks())
-				.getPixels(0, container, null);
+		maxEnd += LayoutUtil.getInsets(lc, isHor ? 3 : 2, !hasDocks()).getPixels(0, container, null);
 
 		if (curSizes[LayoutUtil.MIN] < maxEnd)
 			curSizes[LayoutUtil.MIN] = maxEnd;
@@ -1189,8 +1135,7 @@ public final class Grid {
 			}
 		}
 
-		int[] plafPad = lc.isVisualPadding() ? cw.comp.getVisualPadding()
-				: null;
+		int[] plafPad = lc.isVisualPadding() ? cw.comp.getVisualPadding() : null;
 		UnitValue[] pad = cw.cc.getPadding();
 
 		// If no changes do not create a lot of objects
@@ -1208,26 +1153,20 @@ public final class Grid {
 
 			int minSz = cw.getSize(LayoutUtil.MIN, isHor);
 			int maxSz = cw.getSize(LayoutUtil.MAX, isHor);
-			sz = Math.min(Math.max(cw.getSize(LayoutUtil.PREF, isHor), minSz),
-					maxSz);
+			sz = Math.min(Math.max(cw.getSize(LayoutUtil.PREF, isHor), minSz), maxSz);
 
 			if (stUV != null) {
-				st = stUV.getPixels(stUV.getUnit() == UnitValue.ALIGN ? sz
-						: refSize, container, cw.comp);
+				st = stUV.getPixels(stUV.getUnit() == UnitValue.ALIGN ? sz : refSize, container, cw.comp);
 
 				if (endUV != null) // if (endUV == null &&
 									// cw.cc.isBoundsIsGrid() == true)
-					sz = Math.min(
-							Math.max((isHor ? (cw.x + cw.w) : (cw.y + cw.h))
-									- st, minSz), maxSz);
+					sz = Math.min(Math.max((isHor ? (cw.x + cw.w) : (cw.y + cw.h)) - st, minSz), maxSz);
 			}
 
 			if (endUV != null) {
 				if (stUV != null) { // if (stUV != null ||
 									// cw.cc.isBoundsIsGrid()) {
-					sz = Math.min(Math.max(
-							endUV.getPixels(refSize, container, cw.comp) - st,
-							minSz), maxSz);
+					sz = Math.min(Math.max(endUV.getPixels(refSize, container, cw.comp) - st, minSz), maxSz);
 				} else {
 					st = endUV.getPixels(refSize, container, cw.comp) - sz;
 				}
@@ -1240,9 +1179,7 @@ public final class Grid {
 			int p = uv != null ? uv.getPixels(refSize, container, cw.comp) : 0;
 			st += p;
 			uv = pad[isHor ? 3 : 2];
-			sz += -p
-					+ (uv != null ? uv.getPixels(refSize, container, cw.comp)
-							: 0);
+			sz += -p + (uv != null ? uv.getPixels(refSize, container, cw.comp) : 0);
 		}
 
 		// If the plaf converter has padding -> correct the start/size
@@ -1255,19 +1192,14 @@ public final class Grid {
 		return new int[] { st, sz };
 	}
 
-	private void layoutInOneDim(int refSize, UnitValue align, boolean isRows,
-			Float[] defaultPushWeights) {
-		boolean fromEnd = !(isRows ? lc.isTopToBottom() : LayoutUtil
-				.isLeftToRight(lc, container));
-		DimConstraint[] primDCs = (isRows ? rowConstr : colConstr)
-				.getConstaints();
+	private void layoutInOneDim(int refSize, UnitValue align, boolean isRows, Float[] defaultPushWeights) {
+		boolean fromEnd = !(isRows ? lc.isTopToBottom() : LayoutUtil.isLeftToRight(lc, container));
+		DimConstraint[] primDCs = (isRows ? rowConstr : colConstr).getConstaints();
 		FlowSizeSpec fss = isRows ? rowFlowSpecs : colFlowSpecs;
-		ArrayList<LinkedDimGroup>[] rowCols = isRows ? rowGroupLists
-				: colGroupLists;
+		ArrayList<LinkedDimGroup>[] rowCols = isRows ? rowGroupLists : colGroupLists;
 
-		int[] rowColSizes = LayoutUtil.calculateSerial(fss.sizes,
-				fss.resConstsInclGaps, defaultPushWeights, LayoutUtil.PREF,
-				refSize);
+		int[] rowColSizes = LayoutUtil.calculateSerial(fss.sizes, fss.resConstsInclGaps, defaultPushWeights,
+				LayoutUtil.PREF, refSize);
 
 		if (LayoutUtil.isDesignTime(container)) {
 			TreeSet<Integer> indexes = isRows ? rowIndexes : colIndexes;
@@ -1276,12 +1208,10 @@ public final class Grid {
 			for (Integer i : indexes)
 				ixArr[ix++] = i;
 
-			putSizesAndIndexes(container.getComponent(), rowColSizes, ixArr,
-					isRows);
+			putSizesAndIndexes(container.getComponent(), rowColSizes, ixArr, isRows);
 		}
 
-		int curPos = align != null ? align.getPixels(
-				refSize - LayoutUtil.sum(rowColSizes), container, null) : 0;
+		int curPos = align != null ? align.getPixels(refSize - LayoutUtil.sum(rowColSizes), container, null) : 0;
 
 		if (fromEnd)
 			curPos = refSize - curPos;
@@ -1295,8 +1225,7 @@ public final class Grid {
 
 			curPos += (fromEnd ? -rowColSizes[bIx] : rowColSizes[bIx]);
 
-			DimConstraint primDC = scIx >= 0 ? primDCs[scIx >= primDCs.length ? primDCs.length - 1
-					: scIx]
+			DimConstraint primDC = scIx >= 0 ? primDCs[scIx >= primDCs.length ? primDCs.length - 1 : scIx]
 					: DOCK_DIM_CONSTRAINT;
 
 			int rowSize = rowColSizes[bIx2];
@@ -1304,11 +1233,8 @@ public final class Grid {
 			for (LinkedDimGroup group : linkedGroups) {
 				int groupSize = rowSize;
 				if (group.span > 1)
-					groupSize = LayoutUtil.sum(
-							rowColSizes,
-							bIx2,
-							Math.min((group.span << 1) - 1, rowColSizes.length
-									- bIx2 - 1));
+					groupSize = LayoutUtil.sum(rowColSizes, bIx2,
+							Math.min((group.span << 1) - 1, rowColSizes.length - bIx2 - 1));
 
 				group.layout(primDC, curPos, groupSize, group.span);
 			}
@@ -1317,24 +1243,19 @@ public final class Grid {
 		}
 	}
 
-	private static void addToSizeGroup(HashMap<String, int[]> sizeGroups,
-			String sizeGroup, int[] size) {
+	private static void addToSizeGroup(HashMap<String, int[]> sizeGroups, String sizeGroup, int[] size) {
 		int[] sgSize = sizeGroups.get(sizeGroup);
 		if (sgSize == null) {
-			sizeGroups.put(sizeGroup, new int[] { size[LayoutUtil.MIN],
-					size[LayoutUtil.PREF], size[LayoutUtil.MAX] });
+			sizeGroups.put(sizeGroup, new int[] { size[LayoutUtil.MIN], size[LayoutUtil.PREF], size[LayoutUtil.MAX] });
 		} else {
-			sgSize[LayoutUtil.MIN] = Math.max(size[LayoutUtil.MIN],
-					sgSize[LayoutUtil.MIN]);
-			sgSize[LayoutUtil.PREF] = Math.max(size[LayoutUtil.PREF],
-					sgSize[LayoutUtil.PREF]);
-			sgSize[LayoutUtil.MAX] = Math.min(size[LayoutUtil.MAX],
-					sgSize[LayoutUtil.MAX]);
+			sgSize[LayoutUtil.MIN] = Math.max(size[LayoutUtil.MIN], sgSize[LayoutUtil.MIN]);
+			sgSize[LayoutUtil.PREF] = Math.max(size[LayoutUtil.PREF], sgSize[LayoutUtil.PREF]);
+			sgSize[LayoutUtil.MAX] = Math.min(size[LayoutUtil.MAX], sgSize[LayoutUtil.MAX]);
 		}
 	}
 
-	private static HashMap<String, Integer> addToEndGroup(
-			HashMap<String, Integer> endGroups, String endGroup, int end) {
+	private static HashMap<String, Integer> addToEndGroup(HashMap<String, Integer> endGroups, String endGroup,
+			int end) {
 		if (endGroup != null) {
 			if (endGroups == null)
 				endGroups = new HashMap<String, Integer>(2);
@@ -1354,18 +1275,15 @@ public final class Grid {
 	 * @return The sizes in a {@link net.miginfocom.layout.Grid.FlowSizeSpec}.
 	 */
 	private FlowSizeSpec calcRowsOrColsSizes(boolean isHor) {
-		ArrayList<LinkedDimGroup>[] groupsLists = isHor ? colGroupLists
-				: rowGroupLists;
+		ArrayList<LinkedDimGroup>[] groupsLists = isHor ? colGroupLists : rowGroupLists;
 		Float[] defPush = isHor ? pushXs : pushYs;
 		int refSize = isHor ? container.getWidth() : container.getHeight();
 
 		BoundSize cSz = isHor ? lc.getWidth() : lc.getHeight();
 		if (cSz.isUnset() == false)
-			refSize = cSz.constrain(refSize, getParentSize(container, isHor),
-					container);
+			refSize = cSz.constrain(refSize, getParentSize(container, isHor), container);
 
-		DimConstraint[] primDCs = (isHor ? colConstr : rowConstr)
-				.getConstaints();
+		DimConstraint[] primDCs = (isHor ? colConstr : rowConstr).getConstaints();
 		TreeSet<Integer> primIndexes = isHor ? colIndexes : rowIndexes;
 
 		int[][] rowColBoundSizes = new int[primIndexes.size()][];
@@ -1378,18 +1296,15 @@ public final class Grid {
 			int[] rowColSizes = new int[3];
 
 			if (cellIx >= -MAX_GRID && cellIx <= MAX_GRID) { // If not dock cell
-				allDCs[r] = primDCs[cellIx >= primDCs.length ? primDCs.length - 1
-						: cellIx];
+				allDCs[r] = primDCs[cellIx >= primDCs.length ? primDCs.length - 1 : cellIx];
 			} else {
 				allDCs[r] = DOCK_DIM_CONSTRAINT;
 			}
 
 			ArrayList<LinkedDimGroup> groups = groupsLists[r];
 
-			int[] groupSizes = new int[] {
-					getTotalGroupsSizeParallel(groups, LayoutUtil.MIN, false),
-					getTotalGroupsSizeParallel(groups, LayoutUtil.PREF, false),
-					LayoutUtil.INF };
+			int[] groupSizes = new int[] { getTotalGroupsSizeParallel(groups, LayoutUtil.MIN, false),
+					getTotalGroupsSizeParallel(groups, LayoutUtil.PREF, false), LayoutUtil.INF };
 
 			correctMinMax(groupSizes);
 			BoundSize dimSize = allDCs[r].getSize();
@@ -1412,13 +1327,19 @@ public final class Grid {
 					} else {
 						rowColSize = uv.getPixels(refSize, container, null);
 					}
-				} else if (cellIx >= -MAX_GRID && cellIx <= MAX_GRID
-						&& rowColSize == 0) {
-					rowColSize = LayoutUtil.isDesignTime(container) ? LayoutUtil
-							.getDesignTimeEmptySize() : 0; // Empty rows with no
-															// size set gets XX
-															// pixels if design
-															// time
+				} else if (cellIx >= -MAX_GRID && cellIx <= MAX_GRID && rowColSize == 0) {
+					rowColSize = LayoutUtil.isDesignTime(container) ? LayoutUtil.getDesignTimeEmptySize() : 0; // Empty
+																												// rows
+																												// with
+																												// no
+																												// size
+																												// set
+																												// gets
+																												// XX
+																												// pixels
+																												// if
+																												// design
+																												// time
 				}
 
 				rowColSizes[sType] = rowColSize;
@@ -1434,8 +1355,7 @@ public final class Grid {
 		if (sizeGroupMap.size() > 0) {
 			for (int r = 0; r < rowColBoundSizes.length; r++) {
 				if (allDCs[r].getSizeGroup() != null)
-					rowColBoundSizes[r] = sizeGroupMap.get(allDCs[r]
-							.getSizeGroup());
+					rowColBoundSizes[r] = sizeGroupMap.get(allDCs[r].getSizeGroup());
 			}
 		}
 
@@ -1445,8 +1365,7 @@ public final class Grid {
 		boolean[] fillInPushGaps = new boolean[allDCs.length + 1];
 		int[][] gapSizes = getRowGaps(allDCs, refSize, isHor, fillInPushGaps);
 
-		FlowSizeSpec fss = mergeSizesGapsAndResConstrs(resConstrs,
-				fillInPushGaps, rowColBoundSizes, gapSizes);
+		FlowSizeSpec fss = mergeSizesGapsAndResConstrs(resConstrs, fillInPushGaps, rowColBoundSizes, gapSizes);
 
 		// Spanning components are not handled yet. Check and adjust the
 		// multi-row min/pref they enforce.
@@ -1473,8 +1392,7 @@ public final class Grid {
 				for (int sType = LayoutUtil.MIN; sType <= LayoutUtil.MAX; sType++) {
 					if (sz.getSize(sType) != null) {
 						if (i == 0)
-							retSizes[sType] = sz.getSize(sType).getPixels(
-									getParentSize(container, isHor), container,
+							retSizes[sType] = sz.getSize(sType).getPixels(getParentSize(container, isHor), container,
 									null);
 					} else {
 						int s = size[sType];
@@ -1495,8 +1413,7 @@ public final class Grid {
 						}
 
 						// So that MAX is always correct.
-						if (size[LayoutUtil.MAX] == LayoutUtil.NOT_SET
-								|| retSizes[LayoutUtil.MAX] > LayoutUtil.INF)
+						if (size[LayoutUtil.MAX] == LayoutUtil.NOT_SET || retSizes[LayoutUtil.MAX] > LayoutUtil.INF)
 							retSizes[LayoutUtil.MAX] = LayoutUtil.INF;
 					}
 				}
@@ -1508,16 +1425,14 @@ public final class Grid {
 		return retSizes;
 	}
 
-	private static ResizeConstraint[] getRowResizeConstraints(
-			DimConstraint[] specs) {
+	private static ResizeConstraint[] getRowResizeConstraints(DimConstraint[] specs) {
 		ResizeConstraint[] resConsts = new ResizeConstraint[specs.length];
 		for (int i = 0; i < resConsts.length; i++)
 			resConsts[i] = specs[i].resize;
 		return resConsts;
 	}
 
-	private static ResizeConstraint[] getComponentResizeConstraints(
-			ArrayList<CompWrap> compWraps, boolean isHor) {
+	private static ResizeConstraint[] getComponentResizeConstraints(ArrayList<CompWrap> compWraps, boolean isHor) {
 		ResizeConstraint[] resConsts = new ResizeConstraint[compWraps.size()];
 		for (int i = 0; i < resConsts.length; i++) {
 			CC fc = compWraps.get(i).cc;
@@ -1527,22 +1442,19 @@ public final class Grid {
 			int dock = fc.getDockSide();
 			if (isHor ? (dock == 0 || dock == 2) : (dock == 1 || dock == 3)) {
 				ResizeConstraint dc = resConsts[i];
-				resConsts[i] = new ResizeConstraint(dc.shrinkPrio, dc.shrink,
-						dc.growPrio, ResizeConstraint.WEIGHT_100);
+				resConsts[i] = new ResizeConstraint(dc.shrinkPrio, dc.shrink, dc.growPrio, ResizeConstraint.WEIGHT_100);
 			}
 		}
 		return resConsts;
 	}
 
-	private static boolean[] getComponentGapPush(ArrayList<CompWrap> compWraps,
-			boolean isHor) {
+	private static boolean[] getComponentGapPush(ArrayList<CompWrap> compWraps, boolean isHor) {
 		// Make one element bigger and or the after gap with the next before
 		// gap.
 		boolean[] barr = new boolean[compWraps.size() + 1];
 		for (int i = 0; i < barr.length; i++) {
 
-			boolean push = i > 0
-					&& compWraps.get(i - 1).isPushGap(isHor, false);
+			boolean push = i > 0 && compWraps.get(i - 1).isPushGap(isHor, false);
 
 			if (push == false && i < (barr.length - 1))
 				push = compWraps.get(i).isPushGap(isHor, true);
@@ -1565,12 +1477,10 @@ public final class Grid {
 	 * @return The row gaps in pixel sizes. One more than there are
 	 *         <code>specs</code> sent in.
 	 */
-	private int[][] getRowGaps(DimConstraint[] specs, int refSize,
-			boolean isHor, boolean[] fillInPushGaps) {
+	private int[][] getRowGaps(DimConstraint[] specs, int refSize, boolean isHor, boolean[] fillInPushGaps) {
 		BoundSize defGap = isHor ? lc.getGridGapX() : lc.getGridGapY();
 		if (defGap == null)
-			defGap = isHor ? PlatformDefaults.getGridGapX() : PlatformDefaults
-					.getGridGapY();
+			defGap = isHor ? PlatformDefaults.getGridGapX() : PlatformDefaults.getGridGapY();
 		int[] defGapArr = defGap.getPixelSizes(refSize, container, null);
 
 		boolean defIns = !hasDocks();
@@ -1590,16 +1500,13 @@ public final class Grid {
 			if (edgeBefore && edgeAfter)
 				continue;
 
-			BoundSize wrapGapSize = (wrapGapMap == null
-					|| isHor == lc.isFlowX() ? null : wrapGapMap.get(Integer
-					.valueOf(wgIx++)));
+			BoundSize wrapGapSize = (wrapGapMap == null || isHor == lc.isFlowX() ? null
+					: wrapGapMap.get(Integer.valueOf(wgIx++)));
 
 			if (wrapGapSize == null) {
 
-				int[] gapBefore = specBefore != null ? specBefore.getRowGaps(
-						container, null, refSize, false) : null;
-				int[] gapAfter = specAfter != null ? specAfter.getRowGaps(
-						container, null, refSize, true) : null;
+				int[] gapBefore = specBefore != null ? specBefore.getRowGaps(container, null, refSize, false) : null;
+				int[] gapAfter = specAfter != null ? specAfter.getRowGaps(container, null, refSize, true) : null;
 
 				if (edgeBefore && gapAfter == null && firstGap != null) {
 
@@ -1612,9 +1519,8 @@ public final class Grid {
 					retValues[i] = new int[] { aft, aft, aft };
 
 				} else {
-					retValues[i] = gapAfter != gapBefore ? mergeSizes(gapAfter,
-							gapBefore) : new int[] { defGapArr[0],
-							defGapArr[1], defGapArr[2] };
+					retValues[i] = gapAfter != gapBefore ? mergeSizes(gapAfter, gapBefore)
+							: new int[] { defGapArr[0], defGapArr[1], defGapArr[2] };
 				}
 
 				if (specBefore != null && specBefore.isGapAfterPush()
@@ -1623,11 +1529,9 @@ public final class Grid {
 			} else {
 
 				if (wrapGapSize.isUnset()) {
-					retValues[i] = new int[] { defGapArr[0], defGapArr[1],
-							defGapArr[2] };
+					retValues[i] = new int[] { defGapArr[0], defGapArr[1], defGapArr[2] };
 				} else {
-					retValues[i] = wrapGapSize.getPixelSizes(refSize,
-							container, null);
+					retValues[i] = wrapGapSize.getPixelSizes(refSize, container, null);
 				}
 				fillInPushGaps[i] = wrapGapSize.getGapPush();
 			}
@@ -1642,8 +1546,7 @@ public final class Grid {
 		retValues[0] = compWraps.get(0).getGaps(isHor, true);
 		for (int i = 0; i < compCount; i++) {
 			int[] gap1 = compWraps.get(i).getGaps(isHor, false);
-			int[] gap2 = i < compCount - 1 ? compWraps.get(i + 1).getGaps(
-					isHor, true) : null;
+			int[] gap2 = i < compCount - 1 ? compWraps.get(i + 1).getGaps(isHor, true) : null;
 
 			retValues[i + 1] = mergeSizes(gap1, gap2);
 		}
@@ -1652,8 +1555,7 @@ public final class Grid {
 	}
 
 	private boolean hasDocks() {
-		return (dockOffX > 0 || dockOffY > 0 || rowIndexes.last() > MAX_GRID || colIndexes
-				.last() > MAX_GRID);
+		return (dockOffX > 0 || dockOffY > 0 || rowIndexes.last() > MAX_GRID || colIndexes.last() > MAX_GRID);
 	}
 
 	/**
@@ -1669,8 +1571,7 @@ public final class Grid {
 	 * @param fss
 	 * @param groupsLists
 	 */
-	private void adjustMinPrefForSpanningComps(DimConstraint[] specs,
-			Float[] defPush, FlowSizeSpec fss,
+	private void adjustMinPrefForSpanningComps(DimConstraint[] specs, Float[] defPush, FlowSizeSpec fss,
 			ArrayList<LinkedDimGroup>[] groupsLists) {
 		for (int r = groupsLists.length - 1; r >= 0; r--) { // Since 3.7.3
 															// Iterate from end
@@ -1694,8 +1595,7 @@ public final class Grid {
 
 					int rowSize = 0;
 					int sIx = (r << 1) + 1;
-					int len = Math.min((group.span << 1), fss.sizes.length
-							- sIx) - 1;
+					int len = Math.min((group.span << 1), fss.sizes.length - sIx) - 1;
 					for (int j = sIx; j < sIx + len; j++) {
 						int sz = fss.sizes[j][s];
 						if (sz != LayoutUtil.NOT_SET)
@@ -1703,10 +1603,8 @@ public final class Grid {
 					}
 
 					if (rowSize < cSize && len > 0) {
-						for (int eagerness = 0, newRowSize = 0; eagerness < 4
-								&& newRowSize < cSize; eagerness++)
-							newRowSize = fss.expandSizes(specs, defPush, cSize,
-									sIx, len, s, eagerness);
+						for (int eagerness = 0, newRowSize = 0; eagerness < 4 && newRowSize < cSize; eagerness++)
+							newRowSize = fss.expandSizes(specs, defPush, cSize, sIx, len, s, eagerness);
 					}
 				}
 			}
@@ -1723,15 +1621,12 @@ public final class Grid {
 	 * @return One <code>ArrayList<LinkedDimGroup></code> for every row/column.
 	 */
 	private ArrayList<LinkedDimGroup>[] divideIntoLinkedGroups(boolean isRows) {
-		boolean fromEnd = !(isRows ? lc.isTopToBottom() : LayoutUtil
-				.isLeftToRight(lc, container));
+		boolean fromEnd = !(isRows ? lc.isTopToBottom() : LayoutUtil.isLeftToRight(lc, container));
 		TreeSet<Integer> primIndexes = isRows ? rowIndexes : colIndexes;
 		TreeSet<Integer> secIndexes = isRows ? colIndexes : rowIndexes;
-		DimConstraint[] primDCs = (isRows ? rowConstr : colConstr)
-				.getConstaints();
+		DimConstraint[] primDCs = (isRows ? rowConstr : colConstr).getConstaints();
 
-		ArrayList<LinkedDimGroup>[] groupLists = new ArrayList[primIndexes
-				.size()];
+		ArrayList<LinkedDimGroup>[] groupLists = new ArrayList[primIndexes.size()];
 
 		int gIx = 0;
 		for (int i : primIndexes) {
@@ -1743,8 +1638,7 @@ public final class Grid {
 				dc = DOCK_DIM_CONSTRAINT;
 			}
 
-			ArrayList<LinkedDimGroup> groupList = new ArrayList<LinkedDimGroup>(
-					2);
+			ArrayList<LinkedDimGroup> groupList = new ArrayList<LinkedDimGroup>(2);
 			groupLists[gIx++] = groupList;
 
 			for (Integer ix : secIndexes) {
@@ -1760,30 +1654,26 @@ public final class Grid {
 
 				if ((isPar == false && cell.compWraps.size() > 1) || span > 1) {
 
-					int linkType = isPar ? LinkedDimGroup.TYPE_PARALLEL
-							: LinkedDimGroup.TYPE_SERIAL;
-					LinkedDimGroup lg = new LinkedDimGroup("p," + ix, span,
-							linkType, !isRows, fromEnd);
+					int linkType = isPar ? LinkedDimGroup.TYPE_PARALLEL : LinkedDimGroup.TYPE_SERIAL;
+					LinkedDimGroup lg = new LinkedDimGroup("p," + ix, span, linkType, !isRows, fromEnd);
 					lg.setCompWraps(cell.compWraps);
 					groupList.add(lg);
 				} else {
 					for (int cwIx = 0; cwIx < cell.compWraps.size(); cwIx++) {
 						CompWrap cw = cell.compWraps.get(cwIx);
-						boolean rowBaselineAlign = (isRows
-								&& lc.isTopToBottom() && dc
-								.getAlignOrDefault(!isRows) == UnitValue.BASELINE_IDENTITY); // Disable
-																								// baseline
-																								// for
-																								// bottomToTop
-																								// since
-																								// I
-																								// can
-																								// not
-																								// verify
-																								// it
-																								// working.
-						boolean isBaseline = isRows
-								&& cw.isBaselineAlign(rowBaselineAlign);
+						boolean rowBaselineAlign = (isRows && lc.isTopToBottom()
+								&& dc.getAlignOrDefault(!isRows) == UnitValue.BASELINE_IDENTITY); // Disable
+																									// baseline
+																									// for
+																									// bottomToTop
+																									// since
+																									// I
+																									// can
+																									// not
+																									// verify
+																									// it
+																									// working.
+						boolean isBaseline = isRows && cw.isBaselineAlign(rowBaselineAlign);
 
 						String linkCtx = isBaseline ? "baseline" : null;
 
@@ -1792,8 +1682,7 @@ public final class Grid {
 						boolean foundList = false;
 						for (int glIx = 0, lastGl = groupList.size() - 1; glIx <= lastGl; glIx++) {
 							LinkedDimGroup group = groupList.get(glIx);
-							if (group.linkCtx == linkCtx || linkCtx != null
-									&& linkCtx.equals(group.linkCtx)) {
+							if (group.linkCtx == linkCtx || linkCtx != null && linkCtx.equals(group.linkCtx)) {
 								group.addCompWrap(cw);
 								foundList = true;
 								break;
@@ -1802,10 +1691,8 @@ public final class Grid {
 
 						// If none found and at last add a new group.
 						if (foundList == false) {
-							int linkType = isBaseline ? LinkedDimGroup.TYPE_BASELINE
-									: LinkedDimGroup.TYPE_PARALLEL;
-							LinkedDimGroup lg = new LinkedDimGroup(linkCtx, 1,
-									linkType, !isRows, fromEnd);
+							int linkType = isBaseline ? LinkedDimGroup.TYPE_BASELINE : LinkedDimGroup.TYPE_PARALLEL;
+							LinkedDimGroup lg = new LinkedDimGroup(linkCtx, 1, linkType, !isRows, fromEnd);
 							lg.addCompWrap(cw);
 							groupList.add(lg);
 						}
@@ -1831,8 +1718,7 @@ public final class Grid {
 	 *            The indexes in the correct dimension.
 	 * @return The converted span.
 	 */
-	private static int convertSpanToSparseGrid(int curIx, int span,
-			TreeSet<Integer> indexes) {
+	private static int convertSpanToSparseGrid(int curIx, int span, TreeSet<Integer> indexes) {
 		int lastIx = curIx + span;
 		int retSpan = 1;
 
@@ -1853,8 +1739,7 @@ public final class Grid {
 			return false;
 
 		for (int[] rect : occupiedRects) {
-			if (rect[0] <= c && rect[1] <= r && rect[0] + rect[2] > c
-					&& rect[1] + rect[3] > r)
+			if (rect[0] <= c && rect[1] <= r && rect[0] + rect[2] > c && rect[1] + rect[3] > r)
 				return false;
 		}
 		return true;
@@ -1866,14 +1751,10 @@ public final class Grid {
 
 	private void setCell(int r, int c, Cell cell) {
 		if (c < 0 || r < 0)
-			throw new IllegalArgumentException(
-					"Cell position cannot be negative. row: " + r + ", col: "
-							+ c);
+			throw new IllegalArgumentException("Cell position cannot be negative. row: " + r + ", col: " + c);
 
 		if (c > MAX_GRID || r > MAX_GRID)
-			throw new IllegalArgumentException(
-					"Cell position out of bounds. Out of cells. row: " + r
-							+ ", col: " + c);
+			throw new IllegalArgumentException("Cell position out of bounds. Out of cells. row: " + r + ", col: " + c);
 
 		rowIndexes.add(r);
 		colIndexes.add(c);
@@ -1972,8 +1853,7 @@ public final class Grid {
 		private int lStart = 0, lSize = 0; // Currently mostly for debug
 											// painting
 
-		private LinkedDimGroup(String linkCtx, int span, int linkType,
-				boolean isHor, boolean fromEnd) {
+		private LinkedDimGroup(String linkCtx, int span, int linkType, boolean isHor, boolean fromEnd) {
 			this.linkCtx = linkCtx;
 			this.span = span;
 			this.linkType = linkType;
@@ -2002,14 +1882,11 @@ public final class Grid {
 
 			ContainerWrapper parent = _compWraps.get(0).comp.getParent();
 			if (linkType == TYPE_PARALLEL) {
-				layoutParallel(parent, _compWraps, dc, start, size, isHor,
-						fromEnd);
+				layoutParallel(parent, _compWraps, dc, start, size, isHor, fromEnd);
 			} else if (linkType == TYPE_BASELINE) {
-				layoutBaseline(parent, _compWraps, dc, start, size,
-						LayoutUtil.PREF, spanCount);
+				layoutBaseline(parent, _compWraps, dc, start, size, LayoutUtil.PREF, spanCount);
 			} else {
-				layoutSerial(parent, _compWraps, dc, start, size, isHor,
-						spanCount, fromEnd);
+				layoutSerial(parent, _compWraps, dc, start, size, isHor, spanCount, fromEnd);
 			}
 		}
 
@@ -2026,15 +1903,12 @@ public final class Grid {
 				sizes = new int[3];
 				for (int sType = LayoutUtil.MIN; sType <= LayoutUtil.PREF; sType++) {
 					if (linkType == TYPE_PARALLEL) {
-						sizes[sType] = getTotalSizeParallel(_compWraps, sType,
-								isHor);
+						sizes[sType] = getTotalSizeParallel(_compWraps, sType, isHor);
 					} else if (linkType == TYPE_BASELINE) {
-						int[] aboveBelow = getBaselineAboveBelow(_compWraps,
-								sType, false);
+						int[] aboveBelow = getBaselineAboveBelow(_compWraps, sType, false);
 						sizes[sType] = aboveBelow[0] + aboveBelow[1];
 					} else {
-						sizes[sType] = getTotalSizeSerial(_compWraps, sType,
-								isHor);
+						sizes[sType] = getTotalSizeSerial(_compWraps, sType, isHor);
 					}
 				}
 				sizes[LayoutUtil.MAX] = LayoutUtil.INF;
@@ -2059,13 +1933,11 @@ public final class Grid {
 		private final int[] horSizes = new int[3];
 		private final int[] verSizes = new int[3];
 
-		private int x = LayoutUtil.NOT_SET, y = LayoutUtil.NOT_SET,
-				w = LayoutUtil.NOT_SET, h = LayoutUtil.NOT_SET;
+		private int x = LayoutUtil.NOT_SET, y = LayoutUtil.NOT_SET, w = LayoutUtil.NOT_SET, h = LayoutUtil.NOT_SET;
 
 		private int forcedPushGaps = 0; // 1 == before, 2 = after. Bitwise.
 
-		private CompWrap(ComponentWrapper c, CC cc, int eHideMode,
-				UnitValue[] pos, BoundSize[] callbackSz) {
+		private CompWrap(ComponentWrapper c, CC cc, int eHideMode, UnitValue[] pos, BoundSize[] callbackSz) {
 			this.comp = c;
 			this.cc = cc;
 			this.pos = pos;
@@ -2084,8 +1956,7 @@ public final class Grid {
 
 				for (int i = LayoutUtil.MIN; i <= LayoutUtil.MAX; i++) {
 					horSizes[i] = getSize(hBS, i, true, hHint);
-					verSizes[i] = getSize(vBS, i, false, wHint > 0 ? wHint
-							: horSizes[i]);
+					verSizes[i] = getSize(vBS, i, false, wHint > 0 ? wHint : horSizes[i]);
 				}
 
 				correctMinMax(horSizes);
@@ -2099,55 +1970,44 @@ public final class Grid {
 			}
 		}
 
-		private int getSize(BoundSize uvs, int sizeType, boolean isHor,
-				int sizeHint) {
+		private int getSize(BoundSize uvs, int sizeType, boolean isHor, int sizeHint) {
 			if (uvs == null || uvs.getSize(sizeType) == null) {
 				switch (sizeType) {
 				case LayoutUtil.MIN:
-					return isHor ? comp.getMinimumWidth(sizeHint) : comp
-							.getMinimumHeight(sizeHint);
+					return isHor ? comp.getMinimumWidth(sizeHint) : comp.getMinimumHeight(sizeHint);
 				case LayoutUtil.PREF:
-					return isHor ? comp.getPreferredWidth(sizeHint) : comp
-							.getPreferredHeight(sizeHint);
+					return isHor ? comp.getPreferredWidth(sizeHint) : comp.getPreferredHeight(sizeHint);
 				default:
-					return isHor ? comp.getMaximumWidth(sizeHint) : comp
-							.getMaximumHeight(sizeHint);
+					return isHor ? comp.getMaximumWidth(sizeHint) : comp.getMaximumHeight(sizeHint);
 				}
 			}
 
 			ContainerWrapper par = comp.getParent();
-			return uvs.getSize(sizeType).getPixels(
-					isHor ? par.getWidth() : par.getHeight(), par, comp);
+			return uvs.getSize(sizeType).getPixels(isHor ? par.getWidth() : par.getHeight(), par, comp);
 		}
 
-		private void calcGaps(ComponentWrapper before, CC befCC,
-				ComponentWrapper after, CC aftCC, String tag, boolean flowX,
-				boolean isLTR) {
+		private void calcGaps(ComponentWrapper before, CC befCC, ComponentWrapper after, CC aftCC, String tag,
+				boolean flowX, boolean isLTR) {
 			ContainerWrapper par = comp.getParent();
 			int parW = par.getWidth();
 			int parH = par.getHeight();
 
-			BoundSize befGap = before != null ? (flowX ? befCC.getHorizontal()
-					: befCC.getVertical()).getGapAfter() : null;
-			BoundSize aftGap = after != null ? (flowX ? aftCC.getHorizontal()
-					: aftCC.getVertical()).getGapBefore() : null;
+			BoundSize befGap = before != null ? (flowX ? befCC.getHorizontal() : befCC.getVertical()).getGapAfter()
+					: null;
+			BoundSize aftGap = after != null ? (flowX ? aftCC.getHorizontal() : aftCC.getVertical()).getGapBefore()
+					: null;
 
 			mergeGapSizes(
-					cc.getVertical().getComponentGaps(par, comp, befGap,
-							(flowX ? null : before), tag, parH, 0, isLTR),
+					cc.getVertical().getComponentGaps(par, comp, befGap, (flowX ? null : before), tag, parH, 0, isLTR),
 					false, true);
+			mergeGapSizes(cc.getHorizontal().getComponentGaps(par, comp, befGap, (flowX ? before : null), tag, parW, 1,
+					isLTR), true, true);
 			mergeGapSizes(
-					cc.getHorizontal().getComponentGaps(par, comp, befGap,
-							(flowX ? before : null), tag, parW, 1, isLTR),
-					true, true);
-			mergeGapSizes(
-					cc.getVertical().getComponentGaps(par, comp, aftGap,
-							(flowX ? null : after), tag, parH, 2, isLTR),
+					cc.getVertical().getComponentGaps(par, comp, aftGap, (flowX ? null : after), tag, parH, 2, isLTR),
 					false, false);
 			mergeGapSizes(
-					cc.getHorizontal().getComponentGaps(par, comp, aftGap,
-							(flowX ? after : null), tag, parW, 3, isLTR), true,
-					false);
+					cc.getHorizontal().getComponentGaps(par, comp, aftGap, (flowX ? after : null), tag, parW, 3, isLTR),
+					true, false);
 		}
 
 		private void setDimBounds(int start, int size, boolean isHor) {
@@ -2216,12 +2076,9 @@ public final class Grid {
 				gaps[gapIX] = oldGaps;
 			}
 
-			oldGaps[LayoutUtil.MIN] = Math.max(sizes[LayoutUtil.MIN],
-					oldGaps[LayoutUtil.MIN]);
-			oldGaps[LayoutUtil.PREF] = Math.max(sizes[LayoutUtil.PREF],
-					oldGaps[LayoutUtil.PREF]);
-			oldGaps[LayoutUtil.MAX] = Math.min(sizes[LayoutUtil.MAX],
-					oldGaps[LayoutUtil.MAX]);
+			oldGaps[LayoutUtil.MIN] = Math.max(sizes[LayoutUtil.MIN], oldGaps[LayoutUtil.MIN]);
+			oldGaps[LayoutUtil.PREF] = Math.max(sizes[LayoutUtil.PREF], oldGaps[LayoutUtil.PREF]);
+			oldGaps[LayoutUtil.MAX] = Math.min(sizes[LayoutUtil.MAX], oldGaps[LayoutUtil.MAX]);
 		}
 
 		private int getGapIx(boolean isHor, boolean isTL) {
@@ -2230,13 +2087,11 @@ public final class Grid {
 
 		private int getSizeInclGaps(int sizeType, boolean isHor) {
 			return filter(sizeType,
-					getGapBefore(sizeType, isHor) + getSize(sizeType, isHor)
-							+ getGapAfter(sizeType, isHor));
+					getGapBefore(sizeType, isHor) + getSize(sizeType, isHor) + getGapAfter(sizeType, isHor));
 		}
 
 		private int getSize(int sizeType, boolean isHor) {
-			return filter(sizeType, isHor ? horSizes[sizeType]
-					: verSizes[sizeType]);
+			return filter(sizeType, isHor ? horSizes[sizeType] : verSizes[sizeType]);
 		}
 
 		private int getGapBefore(int sizeType, boolean isHor) {
@@ -2265,13 +2120,11 @@ public final class Grid {
 				return false;
 
 			UnitValue al = cc.getVertical().getAlign();
-			return (al != null ? al == UnitValue.BASELINE_IDENTITY : defValue)
-					&& comp.hasBaseline();
+			return (al != null ? al == UnitValue.BASELINE_IDENTITY : defValue) && comp.hasBaseline();
 		}
 
 		private int getBaseline(int sizeType) {
-			return comp.getBaseline(getSize(sizeType, true),
-					getSize(sizeType, false));
+			return comp.getBaseline(getSize(sizeType, true), getSize(sizeType, false));
 		}
 	}
 
@@ -2279,9 +2132,8 @@ public final class Grid {
 	// * Helper Methods
 	// ***************************************************************************************
 
-	private static void layoutBaseline(ContainerWrapper parent,
-			ArrayList<CompWrap> compWraps, DimConstraint dc, int start,
-			int size, int sizeType, int spanCount) {
+	private static void layoutBaseline(ContainerWrapper parent, ArrayList<CompWrap> compWraps, DimConstraint dc,
+			int start, int size, int sizeType, int spanCount) {
 		int[] aboveBelow = getBaselineAboveBelow(compWraps, sizeType, true);
 		int blRowSize = aboveBelow[0] + aboveBelow[1];
 
@@ -2294,10 +2146,8 @@ public final class Grid {
 		if (align == UnitValue.BASELINE_IDENTITY)
 			align = UnitValue.CENTER;
 
-		int offset = start
-				+ aboveBelow[0]
-				+ (align != null ? Math.max(0,
-						align.getPixels(size - blRowSize, parent, null)) : 0);
+		int offset = start + aboveBelow[0]
+				+ (align != null ? Math.max(0, align.getPixels(size - blRowSize, parent, null)) : 0);
 		for (int i = 0, iSz = compWraps.size(); i < iSz; i++) {
 			CompWrap cw = compWraps.get(i);
 			cw.y += offset;
@@ -2306,24 +2156,18 @@ public final class Grid {
 		}
 	}
 
-	private static void layoutSerial(ContainerWrapper parent,
-			ArrayList<CompWrap> compWraps, DimConstraint dc, int start,
-			int size, boolean isHor, int spanCount, boolean fromEnd) {
-		FlowSizeSpec fss = mergeSizesGapsAndResConstrs(
-				getComponentResizeConstraints(compWraps, isHor),
-				getComponentGapPush(compWraps, isHor),
-				getComponentSizes(compWraps, isHor), getGaps(compWraps, isHor));
+	private static void layoutSerial(ContainerWrapper parent, ArrayList<CompWrap> compWraps, DimConstraint dc,
+			int start, int size, boolean isHor, int spanCount, boolean fromEnd) {
+		FlowSizeSpec fss = mergeSizesGapsAndResConstrs(getComponentResizeConstraints(compWraps, isHor),
+				getComponentGapPush(compWraps, isHor), getComponentSizes(compWraps, isHor), getGaps(compWraps, isHor));
 
 		Float[] pushW = dc.isFill() ? GROW_100 : null;
-		int[] sizes = LayoutUtil.calculateSerial(fss.sizes,
-				fss.resConstsInclGaps, pushW, LayoutUtil.PREF, size);
-		setCompWrapBounds(parent, sizes, compWraps,
-				dc.getAlignOrDefault(isHor), start, size, isHor, fromEnd);
+		int[] sizes = LayoutUtil.calculateSerial(fss.sizes, fss.resConstsInclGaps, pushW, LayoutUtil.PREF, size);
+		setCompWrapBounds(parent, sizes, compWraps, dc.getAlignOrDefault(isHor), start, size, isHor, fromEnd);
 	}
 
-	private static void setCompWrapBounds(ContainerWrapper parent,
-			int[] allSizes, ArrayList<CompWrap> compWraps, UnitValue rowAlign,
-			int start, int size, boolean isHor, boolean fromEnd) {
+	private static void setCompWrapBounds(ContainerWrapper parent, int[] allSizes, ArrayList<CompWrap> compWraps,
+			UnitValue rowAlign, int start, int size, boolean isHor, boolean fromEnd) {
 		int totSize = LayoutUtil.sum(allSizes);
 		CC cc = compWraps.get(0).cc;
 		UnitValue align = correctAlign(cc, rowAlign, isHor, fromEnd);
@@ -2331,8 +2175,7 @@ public final class Grid {
 		int cSt = start;
 		int slack = size - totSize;
 		if (slack > 0 && align != null) {
-			int al = Math.min(slack,
-					Math.max(0, align.getPixels(slack, parent, null)));
+			int al = Math.min(slack, Math.max(0, align.getPixels(slack, parent, null)));
 			cSt += (fromEnd ? -al : al);
 		}
 
@@ -2350,9 +2193,8 @@ public final class Grid {
 		}
 	}
 
-	private static void layoutParallel(ContainerWrapper parent,
-			ArrayList<CompWrap> compWraps, DimConstraint dc, int start,
-			int size, boolean isHor, boolean fromEnd) {
+	private static void layoutParallel(ContainerWrapper parent, ArrayList<CompWrap> compWraps, DimConstraint dc,
+			int start, int size, boolean isHor, boolean fromEnd) {
 		int[][] sizes = new int[compWraps.size()][]; // [compIx][gapBef,compSize,gapAft]
 
 		for (int i = 0; i < sizes.length; i++) {
@@ -2361,30 +2203,23 @@ public final class Grid {
 			DimConstraint cDc = cw.cc.getDimConstraint(isHor);
 
 			ResizeConstraint[] resConstr = new ResizeConstraint[] {
-					cw.isPushGap(isHor, true) ? GAP_RC_CONST_PUSH
-							: GAP_RC_CONST,
-					cDc.resize,
-					cw.isPushGap(isHor, false) ? GAP_RC_CONST_PUSH
-							: GAP_RC_CONST, };
+					cw.isPushGap(isHor, true) ? GAP_RC_CONST_PUSH : GAP_RC_CONST, cDc.resize,
+					cw.isPushGap(isHor, false) ? GAP_RC_CONST_PUSH : GAP_RC_CONST, };
 
-			int[][] sz = new int[][] { cw.getGaps(isHor, true),
-					(isHor ? cw.horSizes : cw.verSizes),
+			int[][] sz = new int[][] { cw.getGaps(isHor, true), (isHor ? cw.horSizes : cw.verSizes),
 					cw.getGaps(isHor, false) };
 
 			Float[] pushW = dc.isFill() ? GROW_100 : null;
 
-			sizes[i] = LayoutUtil.calculateSerial(sz, resConstr, pushW,
-					LayoutUtil.PREF, size);
+			sizes[i] = LayoutUtil.calculateSerial(sz, resConstr, pushW, LayoutUtil.PREF, size);
 		}
 
 		UnitValue rowAlign = dc.getAlignOrDefault(isHor);
-		setCompWrapBounds(parent, sizes, compWraps, rowAlign, start, size,
-				isHor, fromEnd);
+		setCompWrapBounds(parent, sizes, compWraps, rowAlign, start, size, isHor, fromEnd);
 	}
 
-	private static void setCompWrapBounds(ContainerWrapper parent,
-			int[][] sizes, ArrayList<CompWrap> compWraps, UnitValue rowAlign,
-			int start, int size, boolean isHor, boolean fromEnd) {
+	private static void setCompWrapBounds(ContainerWrapper parent, int[][] sizes, ArrayList<CompWrap> compWraps,
+			UnitValue rowAlign, int start, int size, boolean isHor, boolean fromEnd) {
 		for (int i = 0; i < sizes.length; i++) {
 			CompWrap cw = compWraps.get(i);
 
@@ -2398,8 +2233,7 @@ public final class Grid {
 			int cSt = fromEnd ? start - gapBef : start + gapBef;
 			int slack = size - cSize - gapBef - gapAft;
 			if (slack > 0 && align != null) {
-				int al = Math.min(slack,
-						Math.max(0, align.getPixels(slack, parent, null)));
+				int al = Math.min(slack, Math.max(0, align.getPixels(slack, parent, null)));
 				cSt += (fromEnd ? -al : al);
 			}
 
@@ -2407,10 +2241,8 @@ public final class Grid {
 		}
 	}
 
-	private static UnitValue correctAlign(CC cc, UnitValue rowAlign,
-			boolean isHor, boolean fromEnd) {
-		UnitValue align = (isHor ? cc.getHorizontal() : cc.getVertical())
-				.getAlign();
+	private static UnitValue correctAlign(CC cc, UnitValue rowAlign, boolean isHor, boolean fromEnd) {
+		UnitValue align = (isHor ? cc.getHorizontal() : cc.getVertical()).getAlign();
 		if (align == null)
 			align = rowAlign;
 		if (align == UnitValue.BASELINE_IDENTITY)
@@ -2425,8 +2257,7 @@ public final class Grid {
 		return align;
 	}
 
-	private static int[] getBaselineAboveBelow(ArrayList<CompWrap> compWraps,
-			int sType, boolean centerBaseline) {
+	private static int[] getBaselineAboveBelow(ArrayList<CompWrap> compWraps, int sType, boolean centerBaseline) {
 		int maxAbove = Short.MIN_VALUE;
 		int maxBelow = Short.MIN_VALUE;
 		for (int i = 0, iSz = compWraps.size(); i < iSz; i++) {
@@ -2439,8 +2270,7 @@ public final class Grid {
 			int baseline = cw.getBaseline(sType);
 			int above = baseline + cw.getGapBefore(sType, false);
 			maxAbove = Math.max(above, maxAbove);
-			maxBelow = Math.max(
-					height - baseline + cw.getGapAfter(sType, false), maxBelow);
+			maxBelow = Math.max(height - baseline + cw.getGapAfter(sType, false), maxBelow);
 
 			if (centerBaseline)
 				cw.setDimBounds(-baseline, height, false);
@@ -2448,8 +2278,7 @@ public final class Grid {
 		return new int[] { maxAbove, maxBelow };
 	}
 
-	private static int getTotalSizeParallel(ArrayList<CompWrap> compWraps,
-			int sType, boolean isHor) {
+	private static int getTotalSizeParallel(ArrayList<CompWrap> compWraps, int sType, boolean isHor) {
 		int size = sType == LayoutUtil.MAX ? LayoutUtil.INF : 0;
 
 		for (int i = 0, iSz = compWraps.size(); i < iSz; i++) {
@@ -2464,8 +2293,7 @@ public final class Grid {
 		return constrainSize(size);
 	}
 
-	private static int getTotalSizeSerial(ArrayList<CompWrap> compWraps,
-			int sType, boolean isHor) {
+	private static int getTotalSizeSerial(ArrayList<CompWrap> compWraps, int sType, boolean isHor) {
 		int totSize = 0;
 		for (int i = 0, iSz = compWraps.size(), lastGapAfter = 0; i < iSz; i++) {
 			CompWrap wrap = compWraps.get(i);
@@ -2482,8 +2310,7 @@ public final class Grid {
 		return constrainSize(totSize);
 	}
 
-	private static int getTotalGroupsSizeParallel(
-			ArrayList<LinkedDimGroup> groups, int sType, boolean countSpanning) {
+	private static int getTotalGroupsSizeParallel(ArrayList<LinkedDimGroup> groups, int sType, boolean countSpanning) {
 		int size = sType == LayoutUtil.MAX ? LayoutUtil.INF : 0;
 		for (int i = 0, iSz = groups.size(); i < iSz; i++) {
 			LinkedDimGroup group = groups.get(i);
@@ -2504,8 +2331,7 @@ public final class Grid {
 	 * @param isHor
 	 * @return Might contain LayoutUtil.NOT_SET
 	 */
-	private static int[][] getComponentSizes(ArrayList<CompWrap> compWraps,
-			boolean isHor) {
+	private static int[][] getComponentSizes(ArrayList<CompWrap> compWraps, boolean isHor) {
 		int[][] compSizes = new int[compWraps.size()][];
 		for (int i = 0; i < compSizes.length; i++) {
 			CompWrap cw = compWraps.get(i);
@@ -2533,8 +2359,7 @@ public final class Grid {
 	 *            double sized array.
 	 * @return A holder for the merged values.
 	 */
-	private static FlowSizeSpec mergeSizesGapsAndResConstrs(
-			ResizeConstraint[] resConstr, boolean[] gapPush,
+	private static FlowSizeSpec mergeSizesGapsAndResConstrs(ResizeConstraint[] resConstr, boolean[] gapPush,
 			int[][] minPrefMaxSizes, int[][] gapSizes) {
 		int[][] sizes = new int[(minPrefMaxSizes.length << 1) + 1][]; // Make
 																		// room
@@ -2553,14 +2378,12 @@ public final class Grid {
 			sizes[crIx + 1] = gapSizes[i + 1];
 
 			if (sizes[crIx - 1] != null)
-				resConstsInclGaps[crIx - 1] = gapPush[i < gapPush.length ? i
-						: gapPush.length - 1] ? GAP_RC_CONST_PUSH
+				resConstsInclGaps[crIx - 1] = gapPush[i < gapPush.length ? i : gapPush.length - 1] ? GAP_RC_CONST_PUSH
 						: GAP_RC_CONST;
 
 			if (i == (minPrefMaxSizes.length - 1) && sizes[crIx + 1] != null)
-				resConstsInclGaps[crIx + 1] = gapPush[(i + 1) < gapPush.length ? (i + 1)
-						: gapPush.length - 1] ? GAP_RC_CONST_PUSH
-						: GAP_RC_CONST;
+				resConstsInclGaps[crIx + 1] = gapPush[(i + 1) < gapPush.length ? (i + 1) : gapPush.length - 1]
+						? GAP_RC_CONST_PUSH : GAP_RC_CONST;
 		}
 
 		// Check for null and set it to 0, 0, 0.
@@ -2651,40 +2474,35 @@ public final class Grid {
 		 *            </ul>
 		 * @return The new size.
 		 */
-		private int expandSizes(DimConstraint[] specs, Float[] defGrow,
-				int targetSize, int fromIx, int len, int sizeType, int eagerness) {
+		private int expandSizes(DimConstraint[] specs, Float[] defGrow, int targetSize, int fromIx, int len,
+				int sizeType, int eagerness) {
 			ResizeConstraint[] resConstr = new ResizeConstraint[len];
 			int[][] sizesToExpand = new int[len][];
 			for (int i = 0; i < len; i++) {
 				int[] minPrefMax = sizes[i + fromIx];
-				sizesToExpand[i] = new int[] { minPrefMax[sizeType],
-						minPrefMax[LayoutUtil.PREF], minPrefMax[LayoutUtil.MAX] };
+				sizesToExpand[i] = new int[] { minPrefMax[sizeType], minPrefMax[LayoutUtil.PREF],
+						minPrefMax[LayoutUtil.MAX] };
 
 				if (eagerness <= 1 && i % 2 == 0) { // (i % 2 == 0) means only
 													// odd indexes, which is
 													// only rows/col indexes and
 													// not gaps.
 					int cIx = (i + fromIx - 1) >> 1;
-					DimConstraint spec = (DimConstraint) LayoutUtil
-							.getIndexSafe(specs, cIx);
+					DimConstraint spec = (DimConstraint) LayoutUtil.getIndexSafe(specs, cIx);
 
 					BoundSize sz = spec.getSize();
-					if ((sizeType == LayoutUtil.MIN && sz.getMin() != null && sz
-							.getMin().getUnit() != UnitValue.MIN_SIZE)
-							|| (sizeType == LayoutUtil.PREF
-									&& sz.getPreferred() != null && sz
-									.getPreferred().getUnit() != UnitValue.PREF_SIZE)) {
+					if ((sizeType == LayoutUtil.MIN && sz.getMin() != null
+							&& sz.getMin().getUnit() != UnitValue.MIN_SIZE)
+							|| (sizeType == LayoutUtil.PREF && sz.getPreferred() != null
+									&& sz.getPreferred().getUnit() != UnitValue.PREF_SIZE)) {
 						continue;
 					}
 				}
-				resConstr[i] = (ResizeConstraint) LayoutUtil.getIndexSafe(
-						resConstsInclGaps, i + fromIx);
+				resConstr[i] = (ResizeConstraint) LayoutUtil.getIndexSafe(resConstsInclGaps, i + fromIx);
 			}
 
-			Float[] growW = (eagerness == 1 || eagerness == 3) ? extractSubArray(
-					specs, defGrow, fromIx, len) : null;
-			int[] newSizes = LayoutUtil.calculateSerial(sizesToExpand,
-					resConstr, growW, LayoutUtil.PREF, targetSize);
+			Float[] growW = (eagerness == 1 || eagerness == 3) ? extractSubArray(specs, defGrow, fromIx, len) : null;
+			int[] newSizes = LayoutUtil.calculateSerial(sizesToExpand, resConstr, growW, LayoutUtil.PREF, targetSize);
 			int newSize = 0;
 
 			for (int i = 0; i < len; i++) {
@@ -2696,8 +2514,7 @@ public final class Grid {
 		}
 	}
 
-	private static Float[] extractSubArray(DimConstraint[] specs, Float[] arr,
-			int ix, int len) {
+	private static Float[] extractSubArray(DimConstraint[] specs, Float[] arr, int ix, int len) {
 		if (arr == null || arr.length < ix + len) {
 			Float[] growLastArr = new Float[len];
 
@@ -2721,19 +2538,15 @@ public final class Grid {
 
 	private static WeakHashMap[] PARENT_ROWCOL_SIZES_MAP = null;
 
-	private static synchronized void putSizesAndIndexes(Object parComp,
-			int[] sizes, int[] ixArr, boolean isRows) {
+	private static synchronized void putSizesAndIndexes(Object parComp, int[] sizes, int[] ixArr, boolean isRows) {
 		if (PARENT_ROWCOL_SIZES_MAP == null) // Lazy since only if designing in
 												// IDEs
-			PARENT_ROWCOL_SIZES_MAP = new WeakHashMap[] { new WeakHashMap(4),
-					new WeakHashMap(4) };
+			PARENT_ROWCOL_SIZES_MAP = new WeakHashMap[] { new WeakHashMap(4), new WeakHashMap(4) };
 
-		PARENT_ROWCOL_SIZES_MAP[isRows ? 0 : 1].put(parComp, new int[][] {
-				ixArr, sizes });
+		PARENT_ROWCOL_SIZES_MAP[isRows ? 0 : 1].put(parComp, new int[][] { ixArr, sizes });
 	}
 
-	static synchronized int[][] getSizesAndIndexes(Object parComp,
-			boolean isRows) {
+	static synchronized int[][] getSizesAndIndexes(Object parComp, boolean isRows) {
 		if (PARENT_ROWCOL_SIZES_MAP == null)
 			return null;
 
@@ -2742,8 +2555,7 @@ public final class Grid {
 
 	private static WeakHashMap<Object, LinkedHashMap<Integer, Cell>> PARENT_GRIDPOS_MAP = null;
 
-	private static synchronized void saveGrid(ComponentWrapper parComp,
-			LinkedHashMap<Integer, Cell> grid) {
+	private static synchronized void saveGrid(ComponentWrapper parComp, LinkedHashMap<Integer, Cell> grid) {
 		if (PARENT_GRIDPOS_MAP == null) // Lazy since only if designing in IDEs
 			PARENT_GRIDPOS_MAP = new WeakHashMap<Object, LinkedHashMap<Integer, Cell>>();
 
@@ -2768,8 +2580,7 @@ public final class Grid {
 				int y = xyInt >> 16;
 
 				for (CompWrap cw : cell.compWraps)
-					retMap.put(cw.comp.getComponent(), new int[] { x, y,
-							cell.spanx, cell.spany });
+					retMap.put(cw.comp.getComponent(), new int[] { x, y, cell.spanx, cell.spany });
 			}
 		}
 

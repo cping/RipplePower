@@ -23,14 +23,12 @@ public class Offer {
 	}
 
 	public TradeType getType() {
-		return taker_gets.currency.equalsIgnoreCase(LSystem.nativeCurrency) ? TradeType.SELL
-				: TradeType.BUY;
+		return taker_gets.currency.equalsIgnoreCase(LSystem.nativeCurrency) ? TradeType.SELL : TradeType.BUY;
 	}
 
 	public double getAmountXrp() {
 		if (_amountXrp == 0) {
-			String value = TradeType.BUY == getType() ? taker_pays.value
-					: taker_gets.value;
+			String value = TradeType.BUY == getType() ? taker_pays.value : taker_gets.value;
 			double valNumber = Double.parseDouble(value);
 			_amountXrp = valNumber / Const.DROPS_IN_XRP;
 		}
@@ -39,8 +37,7 @@ public class Offer {
 
 	public double getAmount() {
 		if (_amount == 0) {
-			String value = TradeType.BUY == getType() ? taker_gets.value
-					: taker_pays.value;
+			String value = TradeType.BUY == getType() ? taker_gets.value : taker_pays.value;
 			_amount = Double.parseDouble(value);
 		}
 		return _amount;
@@ -51,8 +48,7 @@ public class Offer {
 	}
 
 	public String getCurrency() {
-		return taker_gets.currency.equalsIgnoreCase(LSystem.nativeCurrency) ? taker_pays.currency
-				: taker_gets.currency;
+		return taker_gets.currency.equalsIgnoreCase(LSystem.nativeCurrency) ? taker_pays.currency : taker_gets.currency;
 	}
 
 	public void from(JSONObject obj) {

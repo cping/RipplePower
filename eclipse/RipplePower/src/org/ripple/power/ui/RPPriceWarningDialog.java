@@ -298,8 +298,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		scrollPanelThree.setBounds(20, 50, 260, 140);
 
 		_existGatewayLabel.setFont(UIRes.getFont()); // NOI18N
-		_existGatewayLabel.setText(LangConfig.get(this, "eg",
-				"Existing gateway"));
+		_existGatewayLabel.setText(LangConfig.get(this, "eg", "Existing gateway"));
 		getContentPane().add(_existGatewayLabel);
 		_existGatewayLabel.setBounds(20, 20, 150, 30);
 
@@ -320,8 +319,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				if (_existGatewayList.getSelectedIndex() != -1) {
-					String result = (String) _existGatewayList
-							.getSelectedValue();
+					String result = (String) _existGatewayList.getSelectedValue();
 					if (!gatewaySelectlist.contains(result)) {
 						gatewaySelectlist.add(result);
 						Collections.sort(gatewaySelectlist);
@@ -349,8 +347,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 						gatewaylist.add(result);
 						Collections.sort(gatewaylist);
 						_existGatewayList.updateUI();
-						gatewaySelectlist.remove(_dstGatewayList
-								.getSelectedIndex());
+						gatewaySelectlist.remove(_dstGatewayList.getSelectedIndex());
 						_dstGatewayList.updateUI();
 						updateData();
 					}
@@ -372,8 +369,8 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		_intervalTimeTexture.setBounds(110, 530, 200, 30);
 
 		_gatewayAndCurLabel.setFont(UIRes.getFont()); // NOI18N
-		_gatewayAndCurLabel.setText(LangConfig.get(this, "gateway", "Gateway")
-				+ "/" + LangConfig.get(this, "currency", "Currency"));
+		_gatewayAndCurLabel.setText(
+				LangConfig.get(this, "gateway", "Gateway") + "/" + LangConfig.get(this, "currency", "Currency"));
 		getContentPane().add(_gatewayAndCurLabel);
 		_gatewayAndCurLabel.setBounds(20, 380, 260, 30);
 
@@ -452,16 +449,13 @@ public class RPPriceWarningDialog extends ABaseDialog {
 				}
 				int idx = _gatewayAndCurComboBox.getSelectedIndex();
 				if (idx != -1) {
-					String item = (String) _gatewayAndCurComboBox
-							.getSelectedItem();
+					String item = (String) _gatewayAndCurComboBox.getSelectedItem();
 					if (!"empty".equalsIgnoreCase(item)) {
 
 						idx = _typeSelectComboBox.getSelectedIndex();
 						if (idx != -1) {
-							String type = (String) _typeSelectComboBox
-									.getSelectedItem();
-							String result = item + " " + type + " " + value
-									+ "," + time;
+							String type = (String) _typeSelectComboBox.getSelectedItem();
+							String result = item + " " + type + " " + value + "," + time;
 							if (!finallist.contains(result)) {
 								finallist.add(result);
 								_finalSetList.updateUI();
@@ -492,8 +486,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		getContentPane().add(_delDataButton);
 		_delDataButton.setBounds(360, 590, 81, 40);
 
-		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "==", ">=",
-				"<=" });
+		_typeSelectComboBox.setItemModel(new String[] { ">", "<", "==", ">=", "<=" });
 		getContentPane().add(_typeSelectComboBox);
 		_typeSelectComboBox.setBounds(110, 480, 70, 30);
 

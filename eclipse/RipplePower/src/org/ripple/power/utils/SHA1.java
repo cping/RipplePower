@@ -55,8 +55,7 @@ public class SHA1 {
 		}
 		LongArray b = this._buffer = BitArray.concat(this._buffer, data);
 
-		int ol = this._length, nl = this._length = ol
-				+ (int) BitArray.bitLength(data);
+		int ol = this._length, nl = this._length = ol + (int) BitArray.bitLength(data);
 
 		for (i = this.blockSize + ol & -this.blockSize; i <= nl; i += this.blockSize) {
 			this._block(b.splice(0, 16));
@@ -94,10 +93,8 @@ public class SHA1 {
 	}
 
 	public void _precompute() {
-		_init = new LongArray(new long[] { 0x67452301, 0xEFCDAB89, 0x98BADCFE,
-				0x10325476, 0xC3D2E1F0 });
-		_key = new LongArray(new long[] { 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC,
-				0xCA62C1D6 });
+		_init = new LongArray(new long[] { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0 });
+		_key = new LongArray(new long[] { 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6 });
 	}
 
 	public long _f(long t, long b, long c, long d) {
@@ -132,13 +129,9 @@ public class SHA1 {
 
 		for (t = 0; t <= 79; t++) {
 			if (t >= 16) {
-				w.items[t] = (int) (this._S(1, w.items[t - 3] ^ w.items[t - 8]
-						^ w.items[t - 14] ^ w.items[t - 16]));
+				w.items[t] = (int) (this._S(1, w.items[t - 3] ^ w.items[t - 8] ^ w.items[t - 14] ^ w.items[t - 16]));
 			}
-			tmp = (this._S(5, a)
-					+ this._f(t, b, c, d)
-					+ e
-					+ w.items[t]
+			tmp = (this._S(5, a) + this._f(t, b, c, d) + e + w.items[t]
 					+ (int) (this._key.items[(int) Math.floor((double) t / 20d)]) | 0);
 			e = d;
 			d = c;

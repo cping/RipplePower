@@ -133,8 +133,7 @@ public class LPaper extends LContainer {
 		super.validateSize();
 	}
 
-	public void createUI(LGraphics g, int x, int y, LComponent component,
-			LImage[] buttonImage) {
+	public void createUI(LGraphics g, int x, int y, LComponent component, LImage[] buttonImage) {
 
 	}
 

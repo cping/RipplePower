@@ -49,8 +49,7 @@ public class RPDialogTool {
 
 		boolean fadeclose = true;
 
-		public BaseDialog(final Window parent, final int x, int y,
-				final int width, final int height) {
+		public BaseDialog(final Window parent, final int x, int y, final int width, final int height) {
 			super(parent, Dialog.ModalityType.MODELESS);
 			this.x = x;
 			this.y = y;
@@ -81,8 +80,8 @@ public class RPDialogTool {
 		public void setClose(Updateable close) {
 			this.closeCall = close;
 		}
-		
-		public boolean isClosed(){
+
+		public boolean isClosed() {
 			return closed;
 		}
 
@@ -114,9 +113,8 @@ public class RPDialogTool {
 
 	private int _width = -1, _height = -1;
 
-	public RPDialogTool(final Window parent, final String title,
-			final Component comp, final int x, final int y, final int w,
-			final int h, final boolean autoClose, final long closeTime) {
+	public RPDialogTool(final Window parent, final String title, final Component comp, final int x, final int y,
+			final int w, final int h, final boolean autoClose, final long closeTime) {
 		_width = w;
 		_height = h;
 		_baseDialog = new BaseDialog(parent, x, y, _width, _height);
@@ -129,8 +127,7 @@ public class RPDialogTool {
 
 		_backagePane = new JPanel(new BorderLayout());
 
-		((JPanel) _baseDialog.getContentPane())
-				.setBackground(UIConfig.dialogbackground);
+		((JPanel) _baseDialog.getContentPane()).setBackground(UIConfig.dialogbackground);
 		_headPane.setBackground(UIConfig.dialogbackground);
 		_backPane.setBackground(UIConfig.dialogbackground);
 		_btnPane.setBackground(UIConfig.dialogbackground);
@@ -140,11 +137,9 @@ public class RPDialogTool {
 		_headPane.setPreferredSize(dim);
 		_headPane.setSize(dim);
 
-		_baseDialog.getRootPane().setBorder(
-				BorderFactory.createMatteBorder(1, 1, 1, 1, LColor.gray));
+		_baseDialog.getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, LColor.gray));
 		_titleLabel.setFont(GraphicsUtils.getFont(12));
-		_titleLabel
-				.setPreferredSize(new Dimension(_width - 40, TITLE_SIZE - 4));
+		_titleLabel.setPreferredSize(new Dimension(_width - 40, TITLE_SIZE - 4));
 		_titleLabel.setVerticalTextPosition(RPLabel.CENTER);
 		_titleLabel.setHorizontalTextPosition(RPLabel.LEFT);
 
@@ -196,8 +191,7 @@ public class RPDialogTool {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
-				_closeLabel.setBorder(BorderFactory
-						.createLineBorder(LColor.gray));
+				_closeLabel.setBorder(BorderFactory.createLineBorder(LColor.gray));
 			}
 
 			@Override
@@ -270,26 +264,20 @@ public class RPDialogTool {
 		return _baseDialog;
 	}
 
-	public static RPDialogTool show(Window parent, String title,
-			Component comp, int x, int y, int w, int h) {
+	public static RPDialogTool show(Window parent, String title, Component comp, int x, int y, int w, int h) {
 		return show(parent, title, comp, x, y, w, h, false, 1);
 	}
 
-	public static RPDialogTool show(Window parent, String title,
-			Component comp, int x, int y, boolean ac, long time) {
-		return show(parent, title, comp, x, y, comp.getWidth(),
-				comp.getHeight(), ac, time);
+	public static RPDialogTool show(Window parent, String title, Component comp, int x, int y, boolean ac, long time) {
+		return show(parent, title, comp, x, y, comp.getWidth(), comp.getHeight(), ac, time);
 	}
 
-	public static RPDialogTool show(Window parent, String title,
-			Component comp, boolean ac, long time) {
-		return show(parent, title, comp, -1, -1, comp.getWidth(),
-				comp.getHeight(), ac, time);
+	public static RPDialogTool show(Window parent, String title, Component comp, boolean ac, long time) {
+		return show(parent, title, comp, -1, -1, comp.getWidth(), comp.getHeight(), ac, time);
 	}
 
-	public static RPDialogTool show(Window parent, String title,
-			Component comp, int x, int y, int w, int h, boolean ac, long time) {
-		return new RPDialogTool(parent, title, comp, x, y, w, h
-				+ RPDialogTool.TITLE_SIZE, ac, time);
+	public static RPDialogTool show(Window parent, String title, Component comp, int x, int y, int w, int h, boolean ac,
+			long time) {
+		return new RPDialogTool(parent, title, comp, x, y, w, h + RPDialogTool.TITLE_SIZE, ac, time);
 	}
 }

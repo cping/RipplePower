@@ -31,8 +31,7 @@ public class ChartValueSerie {
 
 	public ChartValueSerie(LColor color, float width) {
 		mColor = color.getARGB();
-		mFillColor = new LColor(color.getRed(), color.getGreen(),
-				color.getBlue(), 125).getARGB();
+		mFillColor = new LColor(color.getRed(), color.getGreen(), color.getBlue(), 125).getARGB();
 		mWidth = width;
 	}
 
@@ -160,8 +159,7 @@ public class ChartValueSerie {
 		mUseDip = bUsedip;
 	}
 
-	public void setStyle(int iColor, int iFillColor, float fWidth,
-			boolean bUsedip) {
+	public void setStyle(int iColor, int iFillColor, float fWidth, boolean bUsedip) {
 		mColor = iColor;
 		mFillColor = iFillColor;
 		mWidth = fWidth;

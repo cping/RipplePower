@@ -1,7 +1,9 @@
 package org.ripple.power.txns;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -19,6 +21,8 @@ import org.ripple.power.txns.data.TotalNetworkValueResponse;
 import org.ripple.power.txns.data.TransactionStatsResponse;
 import org.ripple.power.utils.DateUtils;
 import org.ripple.power.utils.HttpRequest;
+import org.ripple.power.utils.MathUtils;
+import org.ripple.power.utils.HttpRequest.HttpRequestException;
 
 import com.ripple.core.coretypes.RippleDate;
 
@@ -28,7 +32,7 @@ public class RippleChartsAPI {
 		ALL, YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND
 	}
 
-	private static String CHARTS_URL = "http://api.ripplecharts.com/api/";
+	private static String CHARTS_URL = "https://data.ripple.com/v2/";
 
 	public static void setDataAPI_URL(String url) {
 		CHARTS_URL = url;
@@ -38,21 +42,41 @@ public class RippleChartsAPI {
 		return CHARTS_URL;
 	}
 
-	private final static SimpleDateFormat dateformat = new SimpleDateFormat(
-			"yyyy-MM-dd", Locale.US);
+	private final static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
-	private final static SimpleDateFormat iso8601 = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+	private final static SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 
 	static {
 		iso8601.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
+	public static String getUTCTimeString() {
+		StringBuffer UTCTimeBuffer = new StringBuffer();
+		// 本地时间：
+		Calendar cal = Calendar.getInstance();
+		// 时间偏移量：
+		int zoneOffset = cal.get(java.util.Calendar.ZONE_OFFSET);
+		// 取得夏令时差：
+		int dstOffset = cal.get(java.util.Calendar.DST_OFFSET);
+		// 从本地时间里扣除这些差量，即可以取得UTC时间：
+		cal.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		cal.add(Calendar.HOUR_OF_DAY, -1);
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int minute = cal.get(Calendar.MINUTE);
+		UTCTimeBuffer.append(MathUtils.addZeros(year, 4)).append("-").append(MathUtils.addZeros(month, 2)).append("-")
+				.append(MathUtils.addZeros(day, 2));
+		UTCTimeBuffer.append("T").append(MathUtils.addZeros(hour, 2)).append(":").append(MathUtils.addZeros(minute, 2));
+		return UTCTimeBuffer.toString();
+
+	}
+
 	private static ArrayList<RippleItem> jsonToItems(Object o) {
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
-			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
-					arrays.length() - 1);
+			ArrayList<RippleItem> list = new ArrayList<RippleItem>(arrays.length() - 1);
 			for (int i = 0; i < arrays.length(); i++) {
 				RippleItem item = new RippleItem();
 				JSONArray obj = arrays.getJSONArray(i);
@@ -80,21 +104,17 @@ public class RippleChartsAPI {
 		return offers_exercised24hour(RippleDefault.BASE, issued);
 	}
 
-	public static ArrayList<RippleItem> offers_exercised24hour_items(
-			String currency, String issuer) {
-		Object o = offers_exercised24hour(RippleDefault.BASE,
-				new Take(currency,issuer));
+	public static ArrayList<RippleItem> offers_exercised24hour_items(String currency, String issuer) {
+		Object o = offers_exercised24hour(RippleDefault.BASE, new Take(currency, issuer));
 		return jsonToItems(o);
 	}
 
-	public static ArrayList<RippleItem> offers_exercised24hour_items(
-			Take issued) {
+	public static ArrayList<RippleItem> offers_exercised24hour_items(Take issued) {
 		Object o = offers_exercised24hour(RippleDefault.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercised24hour(Take basecur,
-			Take counter) {
+	public static Object offers_exercised24hour(Take basecur, Take counter) {
 		Calendar calone = DateUtils.getUTCCalendar();
 		calone.add(Calendar.DATE, -1);
 		String yesterday = dateformat.format(calone.getTime());
@@ -108,21 +128,17 @@ public class RippleChartsAPI {
 		return offers_exercisedYear(RippleDefault.BASE, issued);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedYear_items(
-			String currency, String issuer) {
-		Object o = offers_exercisedYear(RippleDefault.BASE,
-				new Take(currency,issuer));
+	public static ArrayList<RippleItem> offers_exercisedYear_items(String currency, String issuer) {
+		Object o = offers_exercisedYear(RippleDefault.BASE, new Take(currency, issuer));
 		return jsonToItems(o);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedYear_items(
-			Take issued) {
+	public static ArrayList<RippleItem> offers_exercisedYear_items(Take issued) {
 		Object o = offers_exercisedYear(RippleDefault.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedYear(Take basecur,
-			Take counter) {
+	public static Object offers_exercisedYear(Take basecur, Take counter) {
 		Calendar calone = DateUtils.getUTCCalendar();
 		calone.add(Calendar.DATE, -365);
 		String yesterday = dateformat.format(calone.getTime());
@@ -136,21 +152,17 @@ public class RippleChartsAPI {
 		return offers_exercisedMonth(RippleDefault.BASE, issued);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedMonth_items(
-			String currency, String issuer) {
-		Object o = offers_exercisedMonth(RippleDefault.BASE,
-				new Take(currency,issuer));
+	public static ArrayList<RippleItem> offers_exercisedMonth_items(String currency, String issuer) {
+		Object o = offers_exercisedMonth(RippleDefault.BASE, new Take(currency, issuer));
 		return jsonToItems(o);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedMonth_items(
-			Take issued) {
+	public static ArrayList<RippleItem> offers_exercisedMonth_items(Take issued) {
 		Object o = offers_exercisedMonth(RippleDefault.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedMonth(Take basecur,
-			Take counter) {
+	public static Object offers_exercisedMonth(Take basecur, Take counter) {
 		Calendar calone = DateUtils.getUTCCalendar();
 		calone.add(Calendar.DATE, -30);
 		String yesterday = dateformat.format(calone.getTime());
@@ -164,21 +176,17 @@ public class RippleChartsAPI {
 		return offers_exercisedWeek(RippleDefault.BASE, issued);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedWeek_items(
-			String currency, String issuer) {
-		Object o = offers_exercisedWeek(RippleDefault.BASE,
-				new Take( currency,issuer));
+	public static ArrayList<RippleItem> offers_exercisedWeek_items(String currency, String issuer) {
+		Object o = offers_exercisedWeek(RippleDefault.BASE, new Take(currency, issuer));
 		return jsonToItems(o);
 	}
 
-	public static ArrayList<RippleItem> offers_exercisedWeek_items(
-			Take issued) {
+	public static ArrayList<RippleItem> offers_exercisedWeek_items(Take issued) {
 		Object o = offers_exercisedWeek(RippleDefault.BASE, issued);
 		return jsonToItems(o);
 	}
 
-	public static Object offers_exercisedWeek(Take basecur,
-			Take counter) {
+	public static Object offers_exercisedWeek(Take basecur, Take counter) {
 		Calendar calone = DateUtils.getUTCCalendar();
 		calone.add(Calendar.DATE, -7);
 		String yesterday = dateformat.format(calone.getTime());
@@ -188,8 +196,7 @@ public class RippleChartsAPI {
 		return offers_exercised(basecur, counter, yesterday, day, false);
 	}
 
-	public static Object offers_exercised(Take basecur,
-			Take counter, String start, String end, boolean hour) {
+	public static Object offers_exercised(Take basecur, Take counter, String start, String end, boolean hour) {
 		JSONObject data = new JSONObject();
 		data.put("base", basecur.getJSON());
 		data.put("counter", counter.getJSON());
@@ -212,8 +219,7 @@ public class RippleChartsAPI {
 	}
 
 	public static Object historicalMetrics(String curreny, String issuer) {
-		HttpRequest request = HttpRequest
-				.post(CHARTS_URL + "historicalMetrics");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "historicalMetrics");
 		JSONObject data = new JSONObject();
 		JSONObject exchange = new JSONObject();
 		exchange.put("currency", curreny.toUpperCase());
@@ -239,11 +245,9 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object getExchangeRates(final String basecur,
-			final String currency, final String issuer) {
+	public static Object getExchangeRates(final String basecur, final String currency, final String issuer) {
 		Calendar now = DateUtils.getUTCCalendar();
-		String startTime = iso8601.format(new Date(now.getTimeInMillis()
-				- LSystem.DAY));
+		String startTime = iso8601.format(new Date(now.getTimeInMillis() - LSystem.DAY));
 		String endTime = iso8601.format(now.getTime());
 		JSONObject data = new JSONObject();
 		data.put("startTime", startTime);
@@ -269,13 +273,11 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static ArrayList<RippleItem> getExchangeRateItems(
-			final String currency, final String issuer) {
+	public static ArrayList<RippleItem> getExchangeRateItems(final String currency, final String issuer) {
 		Object o = getExchangeRates(LSystem.nativeCurrency, currency, issuer);
 		if (o != null && o instanceof JSONArray) {
 			JSONArray arrays = (JSONArray) o;
-			ArrayList<RippleItem> list = new ArrayList<RippleItem>(
-					arrays.length() - 1);
+			ArrayList<RippleItem> list = new ArrayList<RippleItem>(arrays.length() - 1);
 			ArrayMap names = null;
 			for (int i = 0; i < arrays.length(); i++) {
 				if (i == 0) {
@@ -313,52 +315,40 @@ public class RippleChartsAPI {
 							ArrayMap.Entry entry = names.getEntry(j);
 							switch (entry.getKey().toString()) {
 							case "startTime":
-								item.startTime = obj.getString((int) entry
-										.getValue());
+								item.startTime = obj.getString((int) entry.getValue());
 								break;
 							case "baseVolume":
-								item.baseVolume = obj.getDouble((int) entry
-										.getValue());
+								item.baseVolume = obj.getDouble((int) entry.getValue());
 								break;
 							case "counterVolume":
-								item.counterVolume = obj.getDouble((int) entry
-										.getValue());
+								item.counterVolume = obj.getDouble((int) entry.getValue());
 								break;
 							case "count":
-								item.count = obj.getDouble((int) entry
-										.getValue());
+								item.count = obj.getDouble((int) entry.getValue());
 								break;
 							case "open":
-								item.open = obj.getDouble((int) entry
-										.getValue());
+								item.open = obj.getDouble((int) entry.getValue());
 								break;
 							case "high":
-								item.high = obj.getDouble((int) entry
-										.getValue());
+								item.high = obj.getDouble((int) entry.getValue());
 								break;
 							case "low":
-								item.low = obj
-										.getDouble((int) entry.getValue());
+								item.low = obj.getDouble((int) entry.getValue());
 								break;
 							case "close":
-								item.close = obj.getDouble((int) entry
-										.getValue());
+								item.close = obj.getDouble((int) entry.getValue());
 								break;
 							case "vwap":
-								item.vwap = obj.getDouble((int) entry
-										.getValue());
+								item.vwap = obj.getDouble((int) entry.getValue());
 								break;
 							case "openTime":
-								item.openTime = obj.getString((int) entry
-										.getValue());
+								item.openTime = obj.getString((int) entry.getValue());
 								break;
 							case "closeTime":
-								item.openTime = obj.getString((int) entry
-										.getValue());
+								item.openTime = obj.getString((int) entry.getValue());
 								break;
 							case "partial":
-								item.partial = obj.getBoolean((int) entry
-										.getValue());
+								item.partial = obj.getBoolean((int) entry.getValue());
 								break;
 							default:
 								break;
@@ -385,56 +375,66 @@ public class RippleChartsAPI {
 		}
 	}
 
-	public static Object getExchangeRates(Take curreny) {
+	public static ArrayList<Double> getExchangeRates(Take curreny) {
 		ArrayList<Take> issueds = new ArrayList<Take>();
 		issueds.add(curreny);
 		return getExchangeRates(RippleDefault.BASE, issueds);
 	}
 
-	public static Object getExchangeRates(Take base,
-			Take counter) {
+	public static ArrayList<Double> getExchangeRates(Take base, Take counter) {
 		ArrayList<Take> issueds = new ArrayList<Take>();
 		issueds.add(counter);
 		return getExchangeRates(base, issueds);
 	}
 
-	public static Object getExchangeRates(Take basecur,
-			ArrayList<Take> counters) {
-		HttpRequest request = HttpRequest.post(CHARTS_URL + "exchange_rates");
-		JSONObject obj = new JSONObject();
-		JSONArray arrays = new JSONArray();
+	public static ArrayList<Double> getExchangeRates(Take basecur, ArrayList<Take> counters) {
+		ArrayList<Double> lists = new ArrayList<Double>();
 		if (counters != null) {
 			for (Take counter : counters) {
-				JSONObject item = new JSONObject();
-				item.put("base", basecur.getJSON());
-				item.put("counter", counter.getJSON());
-				arrays.put(item);
+				String query = CHARTS_URL + "exchanges/" + basecur + "/" + counter + "?descending=true&&limit=10&start="
+						+ getUTCTimeString();
+				HttpRequest request = HttpRequest.get(query);
+				try {
+					if (request.ok()) {
+						String result = request.body();
+
+						if (result != null && result.length() > 0) {
+							JSONObject json = new JSONObject(result);
+							JSONArray array = json.optJSONArray("exchanges");
+							if (array != null) {
+
+								for (int i = 0; i < array.length(); i++) {
+									JSONObject obj = array.getJSONObject(i);
+
+									if (obj != null) {
+										lists.add(obj.getDouble("rate"));
+									}
+								}
+							}
+						}
+					}
+
+				} catch (Exception e) {
+				}
 			}
 		}
-		obj.put("pairs", arrays);
-		String result = request.send(obj);
-		if (result.startsWith("[")) {
-			return new JSONArray(result);
-		} else if (result.startsWith("{")) {
-			return new JSONObject(result);
-		} else {
-			return result;
-		}
+
+		return lists;
 	}
 
 	public static double getXRPto(ArrayList<Take> list) {
 		double a = -1, b = -1;
-		Object result = getExchangeRates(RippleDefault.BASE, list);
-		if (result != null) {
-			if (result instanceof JSONArray) {
-				a = ((JSONArray) result).getJSONObject(0).getDouble("rate");
-				b = ((JSONArray) result).getJSONObject(1).getDouble("rate");
-			} else if (result instanceof JSONObject) {
-				a = ((JSONObject) result).getDouble("rate");
-			}
+		ArrayList<Double> result = getExchangeRates(RippleDefault.BASE, list);
+		Double[] arrays = (Double[]) result.toArray(new Double[0]);
+		Arrays.sort(arrays);
+		if (arrays.length > 0 && arrays.length == 1) {
+			a = arrays[0];
+		} else {
+			a = arrays[1];
+			b = arrays[arrays.length - 1];
 		}
 		double real = Math.min(a, b);
-		return 1d / real;
+		return real;
 	}
 
 	public static double getXRPtoUSD() {
@@ -516,27 +516,22 @@ public class RippleChartsAPI {
 		return result;
 	}
 
-	public static CandlesResponse getTradeStatistics(String currency,
-			String issuer, long time) {
-		return getTradeStatistics(RippleDefault.BASE, new Take(currency,
-				issuer), time);
+	public static CandlesResponse getTradeStatistics(String currency, String issuer, long time) {
+		return getTradeStatistics(RippleDefault.BASE, new Take(currency, issuer), time);
 	}
 
-	public static CandlesResponse getTradeStatistics(Take basecur,
-			Take counter, long time) {
+	public static CandlesResponse getTradeStatistics(Take basecur, Take counter, long time) {
 		return getTradeStatistics(basecur, counter, time, 15);
 	}
 
-	public static CandlesResponse getTradeStatistics(Take basecur,
-			Take counter, long time, int limit) {
+	public static CandlesResponse getTradeStatistics(Take basecur, Take counter, long time, int limit) {
 		Calendar now = DateUtils.getUTCCalendar();
 		String endTime = iso8601.format(now.getTime());
 		String startTime = endTime;
 		if (time > 0) {
 			startTime = iso8601.format(new Date(now.getTimeInMillis() - time));
 		} else {
-			startTime = iso8601.format(new Date(now.getTimeInMillis()
-					- LSystem.DAY));
+			startTime = iso8601.format(new Date(now.getTimeInMillis() - LSystem.DAY));
 		}
 		JSONObject data = new JSONObject();
 		data.put("base", basecur.getJSON());
@@ -560,16 +555,14 @@ public class RippleChartsAPI {
 		return candles;
 	}
 
-	public static AccountOffersResponse account_offers_exercised(
-			String account, long time, int limit) {
+	public static AccountOffersResponse account_offers_exercised(String account, long time, int limit) {
 		Calendar now = DateUtils.getUTCCalendar();
 		String endTime = iso8601.format(now.getTime());
 		String startTime = endTime;
 		if (time > 0) {
 			startTime = iso8601.format(new Date(now.getTimeInMillis() - time));
 		} else {
-			startTime = iso8601.format(new Date(now.getTimeInMillis()
-					- LSystem.DAY));
+			startTime = iso8601.format(new Date(now.getTimeInMillis() - LSystem.DAY));
 		}
 		JSONObject data = new JSONObject();
 		data.put("account", account);
@@ -578,8 +571,7 @@ public class RippleChartsAPI {
 		data.put("offset", 0);
 		data.put("limit", limit);
 		data.put("format", "json");
-		HttpRequest request = HttpRequest.post(CHARTS_URL
-				+ "account_offers_exercised");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "account_offers_exercised");
 		String result = request.send(data);
 		AccountOffersResponse accountOffers = new AccountOffersResponse();
 		if (result != null && result.indexOf("\"") != -1) {
@@ -594,8 +586,7 @@ public class RippleChartsAPI {
 
 	public static MarketsRespone top_markets(Take exchange, long time) {
 		Calendar now = DateUtils.getUTCCalendar();
-		String startTime = iso8601
-				.format(new Date(now.getTimeInMillis() - time));
+		String startTime = iso8601.format(new Date(now.getTimeInMillis() - time));
 		JSONObject data = new JSONObject();
 		data.put("startTime", startTime);
 		data.put("exchange", exchange.getJSON());
@@ -613,20 +604,17 @@ public class RippleChartsAPI {
 		return topMarkets;
 	}
 
-	public static TotalNetworkValueResponse total_network_value(
-			Take exchange) {
+	public static TotalNetworkValueResponse total_network_value(Take exchange) {
 		return total_network_value(exchange, LSystem.DAY);
 	}
 
-	public static TotalNetworkValueResponse total_network_value(
-			Take exchange, long time) {
+	public static TotalNetworkValueResponse total_network_value(Take exchange, long time) {
 		Calendar now = DateUtils.getUTCCalendar();
 		String timer = iso8601.format(new Date(now.getTimeInMillis() - time));
 		JSONObject data = new JSONObject();
 		data.put("time", timer);
 		data.put("exchange", exchange.getJSON());
-		HttpRequest request = HttpRequest.post(CHARTS_URL
-				+ "total_network_value");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "total_network_value");
 		String result = request.send(data);
 		TotalNetworkValueResponse totalNetwork = new TotalNetworkValueResponse();
 		if (result != null && result.indexOf("\"") != -1) {
@@ -639,13 +627,11 @@ public class RippleChartsAPI {
 		return totalNetwork;
 	}
 
-	public static TotalNetworkValueResponse total_value_sent(
-			Take exchange) {
+	public static TotalNetworkValueResponse total_value_sent(Take exchange) {
 		return total_value_sent(exchange, Model.MONTH, LSystem.YEAR);
 	}
 
-	public static TotalNetworkValueResponse total_value_sent(
-			Take exchange, Model model, long time) {
+	public static TotalNetworkValueResponse total_value_sent(Take exchange, Model model, long time) {
 		Calendar now = DateUtils.getUTCCalendar();
 		String timer = iso8601.format(new Date(now.getTimeInMillis() - time));
 		JSONObject data = new JSONObject();
@@ -718,8 +704,7 @@ public class RippleChartsAPI {
 		return transaction_stats(startTime, endTime, limit, Model.YEAR);
 	}
 
-	public static TransactionStatsResponse transaction_stats(String startTime,
-			String endTime, int limit, Model model) {
+	public static TransactionStatsResponse transaction_stats(String startTime, String endTime, int limit, Model model) {
 		JSONObject data = new JSONObject();
 		data.put("startTime", startTime);
 		data.put("endTime", endTime);
@@ -731,8 +716,7 @@ public class RippleChartsAPI {
 		data.put("limit", limit);
 		data.put("offset", 0);
 		data.put("format", "json");
-		HttpRequest request = HttpRequest
-				.post(CHARTS_URL + "transaction_stats");
+		HttpRequest request = HttpRequest.post(CHARTS_URL + "transaction_stats");
 		String result = request.send(data);
 		TransactionStatsResponse transactionStats = new TransactionStatsResponse();
 		if (result != null && result.indexOf("\"") != -1) {

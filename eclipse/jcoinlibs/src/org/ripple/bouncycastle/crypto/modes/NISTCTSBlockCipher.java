@@ -8,9 +8,6 @@ import org.ripple.bouncycastle.crypto.BlockCipher;
 import org.ripple.bouncycastle.crypto.BufferedBlockCipher;
 import org.ripple.bouncycastle.crypto.DataLengthException;
 import org.ripple.bouncycastle.crypto.InvalidCipherTextException;
-import org.ripple.bouncycastle.crypto.StreamBlockCipher;
-import org.ripple.bouncycastle.util.Arrays;
-import org.ripple.bouncycastle.util.encoders.Hex;
 
 /**
  * A Cipher Text Stealing (CTS) mode cipher. CTS allows block ciphers to

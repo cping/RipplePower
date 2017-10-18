@@ -23,18 +23,14 @@ public class PrintImageOutput {
 			DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
 			PrintRequestAttributeSet requestAttributeSet = new HashPrintRequestAttributeSet();
 			requestAttributeSet.add(MediaSizeName.ISO_A4);
-			requestAttributeSet.add(new JobName(LSystem.applicationName
-					+ LSystem.getTime(), Locale.ENGLISH));
-			PrintService[] services = PrintServiceLookup.lookupPrintServices(
-					flavor, requestAttributeSet);
-			PrintService defaultService = PrintServiceLookup
-					.lookupDefaultPrintService();
-			PrintService service = ServiceUI.printDialog(null, 100, 100,
-					services, defaultService, flavor, requestAttributeSet);
+			requestAttributeSet.add(new JobName(LSystem.applicationName + LSystem.getTime(), Locale.ENGLISH));
+			PrintService[] services = PrintServiceLookup.lookupPrintServices(flavor, requestAttributeSet);
+			PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService();
+			PrintService service = ServiceUI.printDialog(null, 100, 100, services, defaultService, flavor,
+					requestAttributeSet);
 			if (service != null) {
 				DocPrintJob job = service.createPrintJob();
-				SimpleDoc doc = new SimpleDoc(
-						new BufferedImagePrintable(image), flavor, null);
+				SimpleDoc doc = new SimpleDoc(new BufferedImagePrintable(image), flavor, null);
 				job.print(doc, requestAttributeSet);
 			}
 		} catch (Exception e) {

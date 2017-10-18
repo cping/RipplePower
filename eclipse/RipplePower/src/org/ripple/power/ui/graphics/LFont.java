@@ -37,8 +37,8 @@ public class LFont {
 
 	public static final int FONT_INPUT_TEXT = 1;
 
-	private final static Graphics2D g2d = (Graphics2D) new BufferedImage(1, 1,
-			BufferedImage.TYPE_INT_ARGB).getGraphics();
+	private final static Graphics2D g2d = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
+			.getGraphics();
 
 	private String name;
 
@@ -52,8 +52,7 @@ public class LFont {
 
 	private FontMetrics fontMetrics;
 
-	final private static HashMap<String, LFont> fonts = new HashMap<String, LFont>(
-			10);
+	final private static HashMap<String, LFont> fonts = new HashMap<String, LFont>(10);
 
 	public static LFont getAssetsFont(String file, int style, int size) {
 		try {
@@ -66,11 +65,9 @@ public class LFont {
 				o.size = size;
 				o.antialiasing = true;
 				if (o.antialiasing) {
-					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-							RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 				} else {
-					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-							RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 				}
 				Font trueFont = Font.createFont(0, UIRes.getStream(file));
 				Font baseFont = trueFont.deriveFont(style, size);
@@ -97,11 +94,9 @@ public class LFont {
 				o.size = size;
 				o.antialiasing = true;
 				if (o.antialiasing) {
-					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-							RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 				} else {
-					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-							RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+					g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 				}
 				Font trueFont = Font.createFont(0, UIRes.getStream(file));
 				Font baseFont = trueFont.deriveFont(style, size);
@@ -270,11 +265,9 @@ public class LFont {
 	private synchronized void checkInitialized() {
 		if (!initialized) {
 			if (antialiasing) {
-				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-						RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			} else {
-				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-						RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 			}
 			fontMetrics = g2d.getFontMetrics(new Font(name, style, size));
 			initialized = true;

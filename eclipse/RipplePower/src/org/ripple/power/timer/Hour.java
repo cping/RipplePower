@@ -168,8 +168,7 @@ public class Hour extends RegularTimer implements Serializable {
 
 	@Override
 	public String toString() {
-		return "[" + this.hour + "," + getDayOfMonth() + "/" + getMonth() + "/"
-				+ getYear() + "]";
+		return "[" + this.hour + "," + getDayOfMonth() + "/" + getMonth() + "/" + getYear() + "]";
 	}
 
 	@Override
@@ -204,8 +203,7 @@ public class Hour extends RegularTimer implements Serializable {
 		String daystr = s.substring(0, Math.min(10, s.length()));
 		Day day = Day.parseDay(daystr);
 		if (day != null) {
-			String hourstr = s.substring(
-					Math.min(daystr.length() + 1, s.length()), s.length());
+			String hourstr = s.substring(Math.min(daystr.length() + 1, s.length()), s.length());
 			hourstr = hourstr.trim();
 			int hour = Integer.parseInt(hourstr);
 			if ((hour >= FIRST_HOUR_IN_DAY) && (hour <= LAST_HOUR_IN_DAY)) {

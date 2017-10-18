@@ -26,7 +26,7 @@ public class JPAKERound3Payload
     /**
      * The value of MacTag, as computed by round 3.
      *
-     * @see JPAKEUtil#calculateMacTag(String, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, org.bouncycastle.crypto.Digest)
+     * @see JPAKEUtil#calculateMacTag(String, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, org.ripple.bouncycastle.crypto.Digest)
      */
     private final BigInteger macTag;
 

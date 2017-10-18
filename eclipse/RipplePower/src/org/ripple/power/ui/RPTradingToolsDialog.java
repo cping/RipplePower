@@ -21,8 +21,7 @@ public class RPTradingToolsDialog extends JPanel {
 
 	private RPDialogTool tool;
 
-	public static RPTradingToolsDialog showDialog(String text, Window parent,
-			boolean show) {
+	public static RPTradingToolsDialog showDialog(String text, Window parent, boolean show) {
 		if (show) {
 			synchronized (RPTradingToolsDialog.class) {
 				if (lock == null) {
@@ -94,14 +93,12 @@ public class RPTradingToolsDialog extends JPanel {
 
 		setLayout(null);
 
-		pricemonitorButton.setText(LangConfig.get(this, "monitor",
-				"Price Monitor"));
+		pricemonitorButton.setText(LangConfig.get(this, "monitor", "Price Monitor"));
 		pricemonitorButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPPriceWarningDialog.showDialog("Price Monitor",
-						LSystem.applicationMain);
+				RPPriceWarningDialog.showDialog("Price Monitor", LSystem.applicationMain);
 			}
 		});
 		add(pricemonitorButton);
@@ -179,8 +176,7 @@ public class RPTradingToolsDialog extends JPanel {
 
 		setBackground(UIConfig.dialogbackground);
 
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 		revalidate();
 		repaint();
 

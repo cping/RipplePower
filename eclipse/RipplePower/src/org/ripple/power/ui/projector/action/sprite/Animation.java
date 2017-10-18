@@ -40,11 +40,8 @@ public class Animation implements LRelease {
 	 * @param timer
 	 * @return
 	 */
-	public static Animation getDefaultAnimation(String fileName, int row,
-			int col, int timer) {
-		return Animation.getDefaultAnimation(
-				GraphicsUtils.getSplitImages(fileName, row, col, false), -1,
-				timer);
+	public static Animation getDefaultAnimation(String fileName, int row, int col, int timer) {
+		return Animation.getDefaultAnimation(GraphicsUtils.getSplitImages(fileName, row, col, false), -1, timer);
 	}
 
 	/**
@@ -57,11 +54,8 @@ public class Animation implements LRelease {
 	 * @param timer
 	 * @return
 	 */
-	public static Animation getDefaultAnimation(String fileName, int maxFrame,
-			int row, int col, int timer) {
-		return Animation.getDefaultAnimation(
-				GraphicsUtils.getSplitImages(fileName, row, col, false),
-				maxFrame, timer);
+	public static Animation getDefaultAnimation(String fileName, int maxFrame, int row, int col, int timer) {
+		return Animation.getDefaultAnimation(GraphicsUtils.getSplitImages(fileName, row, col, false), maxFrame, timer);
 	}
 
 	/**
@@ -74,8 +68,7 @@ public class Animation implements LRelease {
 	 * @param timer
 	 * @return
 	 */
-	public static Animation getDefaultAnimation(Image[] images, int maxFrame,
-			int timer) {
+	public static Animation getDefaultAnimation(Image[] images, int maxFrame, int timer) {
 		Animation animation = new Animation();
 		if (maxFrame != -1) {
 			for (int i = 0; i < maxFrame; i++) {

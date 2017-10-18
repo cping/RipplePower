@@ -39,15 +39,15 @@ public final class AddressTable extends ColorTable {
 	public static final int INFO = 9;
 
 	public static final int INTEGER = 10;
-	
-	public static final int SERVICES = 11;
-	
-    public static final int HASH = 12;
-    
-    public static final int MESSAGE = 13;
 
-    public static final int YESNO = 14;
-    
+	public static final int SERVICES = 11;
+
+	public static final int HASH = 12;
+
+	public static final int MESSAGE = 13;
+
+	public static final int YESNO = 14;
+
 	public AddressTable(TableModel tableModel, int[] columnTypes) {
 
 		super(tableModel);
@@ -70,8 +70,7 @@ public final class AddressTable extends ColorTable {
 
 		int columnCount = tableModel.getColumnCount();
 		if (columnCount > columnTypes.length) {
-			throw new IllegalArgumentException(
-					"columnCount > columnTypes.length ! More columns than column types.");
+			throw new IllegalArgumentException("columnCount > columnTypes.length ! More columns than column types.");
 		}
 
 		for (int i = 0; i < columnCount; i++) {
@@ -118,35 +117,33 @@ public final class AddressTable extends ColorTable {
 			case INTEGER:
 				value = "mmmmmn";
 				break;
-            case SERVICES:                                 
-                column.setCellRenderer(new StringRenderer(JLabel.CENTER));
-                value = "Mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm";
-                break;
-            case HASH:                                         
-                column.setCellRenderer(new StringRenderer(JLabel.RIGHT));
-                value = "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn";
-                break;
-            case MESSAGE:                                    
-                value = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-                break;
-            case YESNO:                
-                column.setCellRenderer(new YesNoRenderer());
-                value = "mmmmmn";
-                break;
+			case SERVICES:
+				column.setCellRenderer(new StringRenderer(JLabel.CENTER));
+				value = "Mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm";
+				break;
+			case HASH:
+				column.setCellRenderer(new StringRenderer(JLabel.RIGHT));
+				value = "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn";
+				break;
+			case MESSAGE:
+				value = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				break;
+			case YESNO:
+				column.setCellRenderer(new YesNoRenderer());
+				value = "mmmmmn";
+				break;
 			default:
-				throw new IllegalArgumentException("Unsupported column type "
-						+ columnTypes[i]);
+				throw new IllegalArgumentException("Unsupported column type " + columnTypes[i]);
 			}
 
-			component = headRenderer.getTableCellRendererComponent(this,
-					tableModel.getColumnName(i), false, false, 0, i);
+			component = headRenderer.getTableCellRendererComponent(this, tableModel.getColumnName(i), false, false, 0,
+					i);
 			int headWidth = component.getPreferredSize().width;
 			renderer = column.getCellRenderer();
 			if (renderer == null) {
 				renderer = getDefaultRenderer(tableModel.getColumnClass(i));
 			}
-			component = renderer.getTableCellRendererComponent(this, value,
-					false, false, 0, i);
+			component = renderer.getTableCellRendererComponent(this, value, false, false, 0, i);
 			int cellWidth = component.getPreferredSize().width;
 			column.setPreferredWidth(Math.max(headWidth + 5, cellWidth + 5));
 		}

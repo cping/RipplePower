@@ -75,8 +75,7 @@ public class Sprites implements Serializable, LRelease {
 		for (int i = 0; i < this.size; i++) {
 			if (this.sprites[i] == sprite) {
 				this.sprites = (ISprite[]) CollectionUtils.cut(this.sprites, i);
-				this.sprites = (ISprite[]) CollectionUtils.expand(this.sprites,
-						1, false);
+				this.sprites = (ISprite[]) CollectionUtils.expand(this.sprites, 1, false);
 				this.sprites[0] = sprite;
 				this.sortSprites();
 				break;
@@ -99,8 +98,7 @@ public class Sprites implements Serializable, LRelease {
 		for (int i = 0; i < this.size; i++) {
 			if (this.sprites[i] == sprite) {
 				this.sprites = (ISprite[]) CollectionUtils.cut(this.sprites, i);
-				this.sprites = (ISprite[]) CollectionUtils.expand(this.sprites,
-						1, true);
+				this.sprites = (ISprite[]) CollectionUtils.expand(this.sprites, 1, true);
 				this.sprites[this.size - 1] = sprite;
 				this.sortSprites();
 				break;
@@ -178,8 +176,7 @@ public class Sprites implements Serializable, LRelease {
 		if (index == this.size) {
 			this.add(sprite);
 		} else {
-			System.arraycopy(this.sprites, index, this.sprites, index + 1,
-					this.size - index);
+			System.arraycopy(this.sprites, index, this.sprites, index + 1, this.size - index);
 			this.sprites[index] = sprite;
 			if (++this.size >= this.sprites.length) {
 				expandCapacity((size + 1) * 2);
@@ -225,8 +222,7 @@ public class Sprites implements Serializable, LRelease {
 	 * @param clazz
 	 * @return
 	 */
-	public synchronized ArrayList<ISprite> getSprites(
-			Class<? extends ISprite> clazz) {
+	public synchronized ArrayList<ISprite> getSprites(Class<? extends ISprite> clazz) {
 		if (clazz == null) {
 			return null;
 		}
@@ -234,8 +230,7 @@ public class Sprites implements Serializable, LRelease {
 		for (int i = size; i > 0; i--) {
 			ISprite sprite = (ISprite) sprites[i - 1];
 			Class<? extends ISprite> cls = sprite.getClass();
-			if (clazz == null || clazz == cls || clazz.isInstance(sprite)
-					|| clazz.equals(cls)) {
+			if (clazz == null || clazz == cls || clazz.isInstance(sprite) || clazz.equals(cls)) {
 				l.add(sprite);
 			}
 		}
@@ -331,8 +326,7 @@ public class Sprites implements Serializable, LRelease {
 		for (int i = size; i > 0; i--) {
 			ISprite sprite = (ISprite) sprites[i - 1];
 			Class<? extends ISprite> cls = sprite.getClass();
-			if (clazz == null || clazz == cls || clazz.isInstance(sprite)
-					|| clazz.equals(cls)) {
+			if (clazz == null || clazz == cls || clazz.isInstance(sprite) || clazz.equals(cls)) {
 				size--;
 				sprites[i - 1] = sprites[size];
 				sprites[size] = null;
@@ -385,8 +379,7 @@ public class Sprites implements Serializable, LRelease {
 	 */
 	public synchronized void remove(int startIndex, int endIndex) {
 		int numMoved = this.size - endIndex;
-		System.arraycopy(this.sprites, endIndex, this.sprites, startIndex,
-				numMoved);
+		System.arraycopy(this.sprites, endIndex, this.sprites, startIndex, numMoved);
 		int newSize = this.size - (endIndex - startIndex);
 		while (this.size != newSize) {
 			this.sprites[--this.size] = null;
@@ -469,8 +462,7 @@ public class Sprites implements Serializable, LRelease {
 				int layerY = spr.y();
 				int layerWidth = spr.getWidth();
 				int layerHeight = spr.getHeight();
-				if (layerX + layerWidth < minX || layerX > maxX
-						|| layerY + layerHeight < minY || layerY > maxY) {
+				if (layerX + layerWidth < minX || layerX > maxX || layerY + layerHeight < minY || layerY > maxY) {
 					continue;
 				}
 				spr.createUI(g);

@@ -31,11 +31,9 @@ public class Gateway {
 
 	public int level = 0;
 
-	private final static ArrayList<Gateway> gateways = new ArrayList<Gateway>(
-			100);
+	private final static ArrayList<Gateway> gateways = new ArrayList<Gateway>(100);
 
-	private final static ArrayList<Gateway> user_gateways = new ArrayList<Gateway>(
-			100);
+	private final static ArrayList<Gateway> user_gateways = new ArrayList<Gateway>(100);
 
 	public static JSONArray setUserGateway(ArrayList<Gateway> gs) {
 		if (gs == null || gs.size() == 0) {
@@ -264,8 +262,7 @@ public class Gateway {
 		if (gateways.size() == 0) {
 			JSONTokener jsonTokener = null;
 			try {
-				jsonTokener = new JSONTokener(
-						UIRes.getStream("config/gateways.json"));
+				jsonTokener = new JSONTokener(UIRes.getStream("config/gateways.json"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -296,8 +293,7 @@ public class Gateway {
 						if (value instanceof String) {
 							item.currencies.add((String) value);
 						} else if (value instanceof JSONObject) {
-							item.currencies.add(((JSONObject) value)
-									.getString("label"));
+							item.currencies.add(((JSONObject) value).getString("label"));
 						}
 					}
 					gateway.accounts.add(item);

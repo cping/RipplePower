@@ -66,8 +66,7 @@ public class RPToast extends JDialog {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				setShape(new RoundRectangle2D.Double(0, 0, getWidth(),
-						getHeight(), _frame_radius, _frame_radius));
+				setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), _frame_radius, _frame_radius));
 			}
 		});
 		setAlwaysOnTop(true);
@@ -75,8 +74,7 @@ public class RPToast extends JDialog {
 		setFocusableWindowState(false);
 		setModalityType(ModalityType.MODELESS);
 		Font font = GraphicsUtils.getFont(14);
-		int font_size = LFont.getFont(font.getFontName(), font.getStyle(),
-				font.getSize()).stringWidth(mText)
+		int font_size = LFont.getFont(font.getFontName(), font.getStyle(), font.getSize()).stringWidth(mText)
 				+ (_frame_length_multiplier * 10);
 		setSize(font_size, 30);
 		getContentPane().setBackground(mBackgroundColor);
@@ -158,8 +156,7 @@ public class RPToast extends JDialog {
 		return makeText(owner, text, duration, Style.NORMAL);
 	}
 
-	public static RPToast makeText(Window owner, String text, int duration,
-			Style style) {
+	public static RPToast makeText(Window owner, String text, int duration, Style style) {
 		RPToast toast = new RPToast(owner);
 		toast.mText = text;
 		toast.mDuration = duration;

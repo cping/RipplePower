@@ -32,9 +32,6 @@ import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.ripple.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.math.ec.custom.sec.SecP256K1Point;
-import org.ripple.bouncycastle.math.ec.custom.sec.SecP256R1Point;
-import org.ripple.bouncycastle.util.Strings;
 
 public class BCECGOST3410PublicKey
     implements ECPublicKey, org.ripple.bouncycastle.jce.interfaces.ECPublicKey, ECPointEncoder
@@ -343,7 +340,7 @@ public class BCECGOST3410PublicKey
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
 
         buf.append("EC Public Key").append(nl);
         buf.append("            X: ").append(this.q.getAffineXCoord().toBigInteger().toString(16)).append(nl);

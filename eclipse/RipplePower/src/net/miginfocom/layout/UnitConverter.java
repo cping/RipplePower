@@ -71,7 +71,6 @@ public abstract class UnitConverter {
 	 * @return The number of pixels if <code>unit</code> is handled by this
 	 *         converter, <code>UnitConverter.UNABLE</code> if not.
 	 */
-	public abstract int convertToPixels(float value, String unit,
-			boolean isHor, float refValue, ContainerWrapper parent,
-			ComponentWrapper comp);
+	public abstract int convertToPixels(float value, String unit, boolean isHor, float refValue,
+			ContainerWrapper parent, ComponentWrapper comp);
 }

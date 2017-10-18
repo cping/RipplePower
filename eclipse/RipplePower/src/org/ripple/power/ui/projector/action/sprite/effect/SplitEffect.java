@@ -109,16 +109,12 @@ public class SplitEffect extends LObject implements ISprite {
 				}
 
 				if (special) {
-					if (!limit.intersects((int) v1.x, (int) v1.y, halfHeight,
-							halfWidth)
-							&& !limit.intersects((int) v2.x, (int) v2.y,
-									halfHeight, halfWidth)) {
+					if (!limit.intersects((int) v1.x, (int) v1.y, halfHeight, halfWidth)
+							&& !limit.intersects((int) v2.x, (int) v2.y, halfHeight, halfWidth)) {
 						this.complete = true;
 					}
-				} else if (!limit.intersects((int) v1.x, (int) v1.y, halfWidth,
-						halfHeight)
-						&& !limit.intersects((int) v2.x, (int) v2.y, halfWidth,
-								halfHeight)) {
+				} else if (!limit.intersects((int) v1.x, (int) v1.y, halfWidth, halfHeight)
+						&& !limit.intersects((int) v2.x, (int) v2.y, halfWidth, halfHeight)) {
 					this.complete = true;
 				}
 			}
@@ -144,19 +140,15 @@ public class SplitEffect extends LObject implements ISprite {
 			case Config.RIGHT:
 			case Config.TUP:
 			case Config.TDOWN:
-				g.drawImage(image, x1, y1, width, halfHeight, 0, 0, width,
-						halfHeight);
-				g.drawImage(image, x2, y2, width, halfHeight, 0, halfHeight,
-						width, height);
+				g.drawImage(image, x1, y1, width, halfHeight, 0, 0, width, halfHeight);
+				g.drawImage(image, x2, y2, width, halfHeight, 0, halfHeight, width, height);
 				break;
 			case Config.UP:
 			case Config.DOWN:
 			case Config.TLEFT:
 			case Config.TRIGHT:
-				g.drawImage(image, x1, y1, halfWidth, height, 0, 0, halfWidth,
-						height);
-				g.drawImage(image, x2, y2, halfWidth, height, halfWidth, 0,
-						width, height);
+				g.drawImage(image, x1, y1, halfWidth, height, 0, 0, halfWidth, height);
+				g.drawImage(image, x2, y2, halfWidth, height, halfWidth, 0, width, height);
 				break;
 
 			}

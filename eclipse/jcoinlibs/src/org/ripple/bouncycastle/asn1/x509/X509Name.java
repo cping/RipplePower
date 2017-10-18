@@ -33,7 +33,7 @@ import org.ripple.bouncycastle.util.encoders.Hex;
  *                                   type  OBJECT IDENTIFIER,
  *                                   value ANY }
  * </pre>
- * @deprecated use org.bouncycastle.asn1.x500.X500Name.
+ * @deprecated use org.ripple.bouncycastle.asn1.x500.X500Name.
  */
 public class X509Name
     extends ASN1Object

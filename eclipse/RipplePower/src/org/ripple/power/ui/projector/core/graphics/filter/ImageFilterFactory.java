@@ -29,8 +29,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getGray(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.GrayFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.GrayFilter));
 	}
 
 	/**
@@ -63,8 +62,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getYellow(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.GrayFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.GrayFilter));
 	}
 
 	/**
@@ -86,8 +84,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getRate(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.RateFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.RateFilter));
 	}
 
 	/**
@@ -109,8 +106,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getBlackWhite(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.BlackWhiteFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.BlackWhiteFilter));
 	}
 
 	/**
@@ -132,8 +128,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getRed(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.RedFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.RedFilter));
 	}
 
 	/**
@@ -155,8 +150,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getGreen(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.GreenFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.GreenFilter));
 	}
 
 	/**
@@ -178,8 +172,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getMagenta(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.MagentaFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.MagentaFilter));
 	}
 
 	/**
@@ -201,8 +194,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getPink(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.PinkFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.PinkFilter));
 	}
 
 	/**
@@ -224,8 +216,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getWhite(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.WhiteFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.WhiteFilter));
 	}
 
 	/**
@@ -247,8 +238,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getAllRed(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.AllRedFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.AllRedFilter));
 	}
 
 	/**
@@ -270,8 +260,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getAllWhite(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.AllWhiteFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.AllWhiteFilter));
 	}
 
 	/**
@@ -293,8 +282,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	 */
 	public static BufferedImage getAllWBlack(final BufferedImage img) {
 		ImageFilterFactory factory = ImageFilterFactory.getInstance();
-		return GraphicsUtils.getBufferImage(factory.doFilter(img,
-				ImageFilterType.AllBlackFilter));
+		return GraphicsUtils.getBufferImage(factory.doFilter(img, ImageFilterType.AllBlackFilter));
 	}
 
 	public static int HSBtoRGB(float hue, float saturation, float brightness) {
@@ -428,8 +416,7 @@ public class ImageFilterFactory implements ImageFilterType {
 	}
 
 	public Image doFilter(Image img, ImageFilter imgfilter) {
-		ImageProducer imageProducer = new FilteredImageSource(img.getSource(),
-				imgfilter);
+		ImageProducer imageProducer = new FilteredImageSource(img.getSource(), imgfilter);
 		return GraphicsUtils.toolKit.createImage(imageProducer);
 	}
 
@@ -446,8 +433,7 @@ public class ImageFilterFactory implements ImageFilterType {
 		}
 
 		public int filterRGB(int x, int y, int rgb) {
-			int gray = (int) ((0.299 * ((rgb >> 16) & 0xff) + 0.587
-					* ((rgb >> 8) & 0xff) + 0.114 * (rgb & 0xff)) / 3);
+			int gray = (int) ((0.299 * ((rgb >> 16) & 0xff) + 0.587 * ((rgb >> 8) & 0xff) + 0.114 * (rgb & 0xff)) / 3);
 			if (brighter) {
 				gray = (255 - ((255 - gray) * (100 - percent) / 100));
 			} else {
@@ -459,8 +445,7 @@ public class ImageFilterFactory implements ImageFilterType {
 			if (gray > 255) {
 				gray = 255;
 			}
-			return (rgb & 0xff000000) | (gray << 16) | (gray << 8)
-					| (gray << 0);
+			return (rgb & 0xff000000) | (gray << 16) | (gray << 8) | (gray << 0);
 		}
 	}
 
@@ -647,8 +632,7 @@ public class ImageFilterFactory implements ImageFilterType {
 				return rgb;
 			}
 			transparency /= 2;
-			RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb >> 0) & 0xFF,
-					hsv);
+			RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb >> 0) & 0xFF, hsv);
 			hsv[1] = 0;
 
 			return HSBtoRGB(hsv[0], hsv[1], hsv[2]) + (transparency << 24);

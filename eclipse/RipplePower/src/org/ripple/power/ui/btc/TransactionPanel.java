@@ -47,17 +47,14 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Class<?>[] columnClasses = { Date.class, String.class,
-			String.class, String.class, BigInteger.class, BigInteger.class,
-			String.class, String.class };
+	private static final Class<?>[] columnClasses = { Date.class, String.class, String.class, String.class,
+			BigInteger.class, BigInteger.class, String.class, String.class };
 
-	private static final String[] columnNames = { "Date", "Transaction ID",
-			"Type", "Name/Address", "Amount", "Fee", "Location", "Status" };
+	private static final String[] columnNames = { "Date", "Transaction ID", "Type", "Name/Address", "Amount", "Fee",
+			"Location", "Status" };
 
-	private static final int[] columnTypes = { AddressTable.DATE,
-			AddressTable.ADDRESS, AddressTable.TYPE, AddressTable.ADDRESS,
-			AddressTable.AMOUNT, AddressTable.AMOUNT, AddressTable.STATUS,
-			AddressTable.STATUS };
+	private static final int[] columnTypes = { AddressTable.DATE, AddressTable.ADDRESS, AddressTable.TYPE,
+			AddressTable.ADDRESS, AddressTable.AMOUNT, AddressTable.AMOUNT, AddressTable.STATUS, AddressTable.STATUS };
 
 	private final JLabel walletLabel;
 
@@ -90,8 +87,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		if (LSystem.applicationMain != null) {
 			frameHeight = LSystem.applicationMain.getHeight() + 50;
 		}
-		table.setPreferredScrollableViewportSize(new Dimension(table
-				.getPreferredScrollableViewportSize().width,
+		table.setPreferredScrollableViewportSize(new Dimension(table.getPreferredScrollableViewportSize().width,
 				(frameHeight / table.getRowHeight()) * table.getRowHeight()));
 
 		scrollPane = new JScrollPane(table);
@@ -106,9 +102,8 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		blockLabel = new JLabel(getBlockText(), SwingConstants.CENTER);
 		statusPane.add(blockLabel);
 
-		ButtonPane buttonPane = new ButtonPane(this, 20, new String[] {
-				"New Address", "new address" }, new String[] { "Copy TxID",
-				"copy txid" }, new String[] { "Move to Safe", "move to safe" },
+		ButtonPane buttonPane = new ButtonPane(this, 20, new String[] { "New Address", "new address" },
+				new String[] { "Copy TxID", "copy txid" }, new String[] { "Move to Safe", "move to safe" },
 				new String[] { "Move to Wallet", "move to blockStore" });
 
 		buttonPane.setBackground(UIConfig.dialogbackground);
@@ -138,8 +133,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 				case "copy txid":
 					String address = (String) tableModel.getValueAt(row, 1);
 					StringSelection sel = new StringSelection(address);
-					Clipboard cb = Toolkit.getDefaultToolkit()
-							.getSystemClipboard();
+					Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
 					cb.setContents(sel, null);
 					break;
 				case "move to safe":
@@ -161,8 +155,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		} catch (BlockStoreException exc) {
 			ErrorLog.get().logException("Unable to update blockStore", exc);
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 
@@ -184,23 +177,19 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	private boolean moveToSafe(int row) throws BlockStoreException {
 		BlockTransaction tx = tableModel.getTransaction(row);
 		if (!(tx instanceof ReceiveTransaction)) {
-			UIRes.showErrorMessage(this, "Error",
-					"The safe contains coins that you have received and not spent");
+			UIRes.showErrorMessage(this, "Error", "The safe contains coins that you have received and not spent");
 			return false;
 		}
 		ReceiveTransaction rcvTx = (ReceiveTransaction) tx;
 		if (rcvTx.inSafe()) {
-			UIRes.showErrorMessage(this, "Error",
-					"The transaction is already in the safe");
+			UIRes.showErrorMessage(this, "Error", "The transaction is already in the safe");
 			return false;
 		}
 		if (rcvTx.isSpent()) {
-			UIRes.showErrorMessage(this, "Error",
-					"The coins have already been spent");
+			UIRes.showErrorMessage(this, "Error", "The coins have already been spent");
 			return false;
 		}
-		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(),
-				true);
+		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(), true);
 		rcvTx.setSafe(true);
 		safeBalance = safeBalance.add(rcvTx.getValue());
 		walletBalance = walletBalance.subtract(rcvTx.getValue());
@@ -210,18 +199,15 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	private boolean moveToWallet(int row) throws BlockStoreException {
 		BlockTransaction tx = tableModel.getTransaction(row);
 		if (!(tx instanceof ReceiveTransaction)) {
-			UIRes.showErrorMessage(this, "Error",
-					"The safe contains coins that you have received and not spent");
+			UIRes.showErrorMessage(this, "Error", "The safe contains coins that you have received and not spent");
 			return false;
 		}
 		ReceiveTransaction rcvTx = (ReceiveTransaction) tx;
 		if (!rcvTx.inSafe()) {
-			UIRes.showErrorMessage(this, "Error",
-					"The transaction is not in the safe");
+			UIRes.showErrorMessage(this, "Error", "The transaction is not in the safe");
 			return false;
 		}
-		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(),
-				false);
+		BTCLoader.blockStore.setTxSafe(rcvTx.getTxHash(), rcvTx.getTxIndex(), false);
 		walletBalance = walletBalance.add(rcvTx.getValue());
 		safeBalance = safeBalance.subtract(rcvTx.getValue());
 		rcvTx.setSafe(false);
@@ -229,18 +215,15 @@ public class TransactionPanel extends JPanel implements ActionListener {
 	}
 
 	private String getWalletText() {
-		return String.format("<html><h2>Wallet %s BTC</h2></html>",
-				BTCLoader.satoshiToString(walletBalance));
+		return String.format("<html><h2>Wallet %s BTC</h2></html>", BTCLoader.satoshiToString(walletBalance));
 	}
 
 	private String getSafeText() {
-		return String.format("<html><h2>Safe %s BTC</h2></html>",
-				BTCLoader.satoshiToString(safeBalance));
+		return String.format("<html><h2>Safe %s BTC</h2></html>", BTCLoader.satoshiToString(safeBalance));
 	}
 
 	private String getBlockText() {
-		return String.format("<html><h2>Block %d</h2></html>",
-				BTCLoader.blockStore.getChainHeight());
+		return String.format("<html><h2>Block %d</h2></html>", BTCLoader.blockStore.getChainHeight());
 	}
 
 	private class TransactionTableModel extends AbstractTableModel {
@@ -256,12 +239,10 @@ public class TransactionPanel extends JPanel implements ActionListener {
 
 		private final List<BlockTransaction> txList = new LinkedList<>();
 
-		public TransactionTableModel(String[] columnNames,
-				Class<?>[] columnClasses) {
+		public TransactionTableModel(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length)
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
 			buildTxList();
@@ -272,12 +253,10 @@ public class TransactionPanel extends JPanel implements ActionListener {
 			walletBalance = BigInteger.ZERO;
 			safeBalance = BigInteger.ZERO;
 			try {
-				List<SendTransaction> sendList = BTCLoader.blockStore
-						.getSendTxList();
+				List<SendTransaction> sendList = BTCLoader.blockStore.getSendTxList();
 				for (SendTransaction sendTx : sendList) {
 					long txTime = sendTx.getTxTime();
-					walletBalance = walletBalance.subtract(sendTx.getValue())
-							.subtract(sendTx.getFee());
+					walletBalance = walletBalance.subtract(sendTx.getValue()).subtract(sendTx.getFee());
 					boolean added = false;
 					for (int i = 0; i < txList.size(); i++) {
 						if (txList.get(i).getTxTime() <= txTime) {
@@ -289,8 +268,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 					if (!added)
 						txList.add(sendTx);
 				}
-				List<ReceiveTransaction> rcvList = BTCLoader.blockStore
-						.getReceiveTxList();
+				List<ReceiveTransaction> rcvList = BTCLoader.blockStore.getReceiveTxList();
 				for (ReceiveTransaction rcvTx : rcvList) {
 					if (rcvTx.isChange())
 						continue;
@@ -339,8 +317,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row >= txList.size()) {
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			Object value;
 			BlockTransaction tx = txList.get(row);
@@ -363,8 +340,7 @@ public class TransactionPanel extends JPanel implements ActionListener {
 				Address addr = tx.getAddress();
 				if (tx instanceof ReceiveTransaction) {
 					for (ECKey chkKey : BTCLoader.keys) {
-						if (Arrays.equals(chkKey.getPubKeyHash(),
-								addr.getHash())) {
+						if (Arrays.equals(chkKey.getPubKeyHash(), addr.getHash())) {
 							if (chkKey.getLabel().length() > 0) {
 								value = chkKey.getLabel();
 							}
@@ -408,14 +384,11 @@ public class TransactionPanel extends JPanel implements ActionListener {
 				break;
 			case 7: // Status
 				try {
-					if (tx instanceof ReceiveTransaction
-							&& ((ReceiveTransaction) tx).isSpent()) {
+					if (tx instanceof ReceiveTransaction && ((ReceiveTransaction) tx).isSpent()) {
 						value = "Spent";
 					} else {
-						int depth = BTCLoader.blockStore.getTxDepth(tx
-								.getTxHash());
-						if ((tx instanceof ReceiveTransaction)
-								&& ((ReceiveTransaction) tx).isCoinBase()) {
+						int depth = BTCLoader.blockStore.getTxDepth(tx.getTxHash());
+						if ((tx instanceof ReceiveTransaction) && ((ReceiveTransaction) tx).isCoinBase()) {
 							if (depth == 0) {
 								value = "Pending";
 							} else if (depth < BTCLoader.COINBASE_MATURITY) {
@@ -432,14 +405,12 @@ public class TransactionPanel extends JPanel implements ActionListener {
 						}
 					}
 				} catch (BlockStoreException exc) {
-					ErrorLog.get().logException("Unable to get transaction depth",
-							exc);
+					ErrorLog.get().logException("Unable to get transaction depth", exc);
 					value = "Unknown";
 				}
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}

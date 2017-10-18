@@ -31,8 +31,7 @@ public class RPSelectWalletDialog extends ABaseDialog {
 
 	public static void showDialog(String text, Window parent, Updateable call) {
 		try {
-			RPSelectWalletDialog dialog = new RPSelectWalletDialog(text,
-					parent, call);
+			RPSelectWalletDialog dialog = new RPSelectWalletDialog(text, parent, call);
 			dialog.pack();
 			dialog.setLocationRelativeTo(parent);
 			dialog.setVisible(true);
@@ -81,8 +80,7 @@ public class RPSelectWalletDialog extends ABaseDialog {
 				if (call != null) {
 					if (_walletList.getSelectedIndex() != -1) {
 						SwingUtils.close(RPSelectWalletDialog.this);
-						call.action(WalletCache.get().findItem(
-								(String) _walletList.getSelectedValue()));
+						call.action(WalletCache.get().findItem((String) _walletList.getSelectedValue()));
 					}
 				}
 			}
@@ -97,19 +95,18 @@ public class RPSelectWalletDialog extends ABaseDialog {
 			@Override
 			public void action(Object o) {
 				final ArrayList<WalletItem> items = WalletCache.get().all();
-				_walletList
-						.setModel(new javax.swing.AbstractListModel<Object>() {
+				_walletList.setModel(new javax.swing.AbstractListModel<Object>() {
 
-							private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = 1L;
 
-							public int getSize() {
-								return items.size();
-							}
+					public int getSize() {
+						return items.size();
+					}
 
-							public Object getElementAt(int i) {
-								return items.get(i).getPublicKey();
-							}
-						});
+					public Object getElementAt(int i) {
+						return items.get(i).getPublicKey();
+					}
+				});
 			}
 		};
 
@@ -117,8 +114,8 @@ public class RPSelectWalletDialog extends ABaseDialog {
 
 		pack();
 	}
-	
-	public void closeDialog(){
+
+	public void closeDialog() {
 		SwingUtils.close(this);
 	}
 }

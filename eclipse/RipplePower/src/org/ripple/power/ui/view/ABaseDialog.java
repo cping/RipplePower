@@ -26,12 +26,12 @@ public abstract class ABaseDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private void init(){
+	private void init() {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
 	}
-	
+
 	public ABaseDialog() throws HeadlessException {
 		super();
 		init();
@@ -42,8 +42,7 @@ public abstract class ABaseDialog extends JDialog {
 		init();
 	}
 
-	public ABaseDialog(Window parent, String title, ModalityType modal)
-			throws HeadlessException {
+	public ABaseDialog(Window parent, String title, ModalityType modal) throws HeadlessException {
 		super(parent, title, modal);
 		init();
 	}
@@ -63,14 +62,12 @@ public abstract class ABaseDialog extends JDialog {
 		init();
 	}
 
-	public ABaseDialog(Frame parent, String title, boolean modal,
-			GraphicsConfiguration gc) {
+	public ABaseDialog(Frame parent, String title, boolean modal, GraphicsConfiguration gc) {
 		super(parent, title, modal, gc);
 		init();
 	}
 
-	public ABaseDialog(Frame parent, String title, boolean modal)
-			throws HeadlessException {
+	public ABaseDialog(Frame parent, String title, boolean modal) throws HeadlessException {
 		super(parent, title, modal);
 		init();
 	}
@@ -88,8 +85,7 @@ public abstract class ABaseDialog extends JDialog {
 	protected JRootPane createRootPane() {
 		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		JRootPane rootPane = super.createRootPane();
-		rootPane.registerKeyboardAction(closeDialogActionListener(), keyStroke,
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
+		rootPane.registerKeyboardAction(closeDialogActionListener(), keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
 

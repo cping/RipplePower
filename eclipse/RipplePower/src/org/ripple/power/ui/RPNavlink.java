@@ -21,7 +21,7 @@ public class RPNavlink extends JButton {
 		public void down();
 
 		public void up();
-		
+
 		public void move();
 
 		public void exit();
@@ -100,8 +100,7 @@ public class RPNavlink extends JButton {
 		this(null, icon, containerPanel, linkPanel);
 	}
 
-	public RPNavlink(String title, Icon icon, JPanel containerPanel,
-			JPanel linkPanel) {
+	public RPNavlink(String title, Icon icon, JPanel containerPanel, JPanel linkPanel) {
 		super(title, icon);
 		this.containerPanel = containerPanel;
 		this.linkPanel = linkPanel;
@@ -129,10 +128,8 @@ public class RPNavlink extends JButton {
 				}
 				colorSave = RPNavlink.this.getForeground();
 				cursorSave = RPNavlink.this.getCursor().getType();
-				RPNavlink.this.setCursor(Cursor
-						.getPredefinedCursor(Cursor.HAND_CURSOR));
-				RPNavlink.this.setForeground(RPNavlink.this.getForeground()
-						.darker());
+				RPNavlink.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				RPNavlink.this.setForeground(RPNavlink.this.getForeground().darker());
 			}
 
 			public void mouseExited(MouseEvent e) {
@@ -140,8 +137,7 @@ public class RPNavlink extends JButton {
 					click.exit();
 				}
 				RPNavlink.this.setForeground(colorSave);
-				RPNavlink.this
-						.setCursor(Cursor.getPredefinedCursor(cursorSave));
+				RPNavlink.this.setCursor(Cursor.getPredefinedCursor(cursorSave));
 			}
 
 			public void mouseReleased(MouseEvent e) {
@@ -161,8 +157,8 @@ public class RPNavlink extends JButton {
 			}
 		});
 	}
-	
-	public void setClick(Click click){
+
+	public void setClick(Click click) {
 		this.click = click;
 	}
 

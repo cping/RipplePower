@@ -19,8 +19,7 @@ import org.ripple.power.utils.HttpRequest.HttpRequestException;
 
 public class IP46Utils {
 
-	public static class InetAddressComparator implements
-			Comparator<InetAddress> {
+	public static class InetAddressComparator implements Comparator<InetAddress> {
 		private static final Inet4AddressComparator V4_COMPARATOR = new Inet4AddressComparator();
 		private static final Inet6AddressComparator V6_COMPARATOR = new Inet6AddressComparator();
 		private final boolean fourLessThanSix;
@@ -33,8 +32,7 @@ public class IP46Utils {
 		public int compare(final InetAddress ip1, final InetAddress ip2) {
 			if (ip1 instanceof Inet4Address) {
 				if (ip2 instanceof Inet4Address) {
-					return V4_COMPARATOR.compare((Inet4Address) ip1,
-							(Inet4Address) ip2);
+					return V4_COMPARATOR.compare((Inet4Address) ip1, (Inet4Address) ip2);
 				} else {
 					return this.fourLessThanSix ? -1 : 1;
 				}
@@ -42,15 +40,13 @@ public class IP46Utils {
 				if (ip2 instanceof Inet4Address) {
 					return this.fourLessThanSix ? 1 : -1;
 				} else {
-					return V6_COMPARATOR.compare((Inet6Address) ip1,
-							(Inet6Address) ip2);
+					return V6_COMPARATOR.compare((Inet6Address) ip1, (Inet6Address) ip2);
 				}
 			}
 		}
 	}
 
-	private static class Inet4AddressComparator implements
-			Comparator<Inet4Address> {
+	private static class Inet4AddressComparator implements Comparator<Inet4Address> {
 
 		@Override
 		public int compare(final Inet4Address ipOne, final Inet4Address ipTwo) {
@@ -67,8 +63,7 @@ public class IP46Utils {
 		}
 	}
 
-	private static class Inet6AddressComparator implements
-			Comparator<Inet6Address> {
+	private static class Inet6AddressComparator implements Comparator<Inet6Address> {
 
 		@Override
 		public int compare(final Inet6Address ipOne, final Inet6Address ipTwo) {
@@ -96,10 +91,8 @@ public class IP46Utils {
 	private static final String ipv6Pattern = "^(((?=(?>.*?::)(?!.*::)))(::)?([0-9A-F]{1,4}::?){0,5}|([0-9A-F]{1,4}:){6})(\\2([0-9A-F]{1,4}(::?|$)){0,2}|((25[0-5]|(2[0-4]|1\\d|[1-9])?\\d)(\\.|$)){4}|[0-9A-F]{1,4}:[0-9A-F]{1,4})(?<![^:]:|\\.)\\z";
 	static {
 		try {
-			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern,
-					Pattern.CASE_INSENSITIVE);
-			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern,
-					Pattern.CASE_INSENSITIVE);
+			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
+			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException e) {
 		}
 	}
@@ -120,8 +113,7 @@ public class IP46Utils {
 			prefixLength = Integer.parseInt(networkPart);
 			calculate();
 		} else {
-			throw new IllegalArgumentException(
-					"not an valid IPv4 or IPv6 format !");
+			throw new IllegalArgumentException("not an valid IPv4 or IPv6 format !");
 		}
 	}
 
@@ -135,8 +127,7 @@ public class IP46Utils {
 			maskBuffer = ByteBuffer.allocate(16).putLong(-1L).putLong(-1L);
 			targetSize = 16;
 		}
-		BigInteger mask = (new BigInteger(1, maskBuffer.array())).not()
-				.shiftRight(prefixLength);
+		BigInteger mask = (new BigInteger(1, maskBuffer.array())).not().shiftRight(prefixLength);
 		ByteBuffer buffer = ByteBuffer.wrap(inetAddress.getAddress());
 		BigInteger ipVal = new BigInteger(1, buffer.array());
 		BigInteger startIp = ipVal.and(mask);
@@ -219,8 +210,7 @@ public class IP46Utils {
 	}
 
 	static boolean isGLunicast(Inet6Address a) {
-		if (!isUnspecified(a) && !isLoopback(a) && !isMulticast(a)
-				&& !isLLunicast(a)) {
+		if (!isUnspecified(a) && !isLoopback(a) && !isMulticast(a) && !isLLunicast(a)) {
 			return true;
 		} else {
 			return false;
@@ -243,8 +233,8 @@ public class IP46Utils {
 	}
 
 	public static String getTypeAsString(Inet6Address a) {
-		String[] types = new String[] { "unspecified", "loopback", "multicast",
-				"link-layer unicast", "global unicast" };
+		String[] types = new String[] { "unspecified", "loopback", "multicast", "link-layer unicast",
+				"global unicast" };
 		int x = getType(a);
 		return types[x];
 	}
@@ -270,8 +260,7 @@ public class IP46Utils {
 	}
 
 	public static InetAddress randomInetAddress() {
-		return LSystem.random.nextBoolean() ? randomInet4Address()
-				: randomInet6Address();
+		return LSystem.random.nextBoolean() ? randomInet4Address() : randomInet6Address();
 	}
 
 	public static String getLocalIP() throws HttpRequestException, IOException {
@@ -305,9 +294,9 @@ public class IP46Utils {
 	public static String getIpCheckReps(String url) throws HttpRequestException, IOException {
 		HttpRequest request = HttpRequest.get(url);
 		String result = "";
-			if (request.ok()) {
-				result = request.body();
-			}
+		if (request.ok()) {
+			result = request.body();
+		}
 		return result;
 	}
 

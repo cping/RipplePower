@@ -38,7 +38,7 @@ import org.ripple.power.utils.StringUtils;
 import org.ripple.power.wallet.WalletCache;
 import org.ripple.power.wallet.WalletItem;
 
-public class RPSendXRPDialog extends JPanel implements WindowListener{
+public class RPSendXRPDialog extends JPanel implements WindowListener {
 
 	/**
 	 * 
@@ -48,24 +48,22 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 	private final JTextField _addressText;
 	private final JTextField _amountText;
 	private final JTextField _feeText;
+	private final JTextField _destinationTag;
 	private static RPSendXRPDialog lock = null;
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 	private RPDialogTool tool;
 
-	public static RPSendXRPDialog showDialog(String text, Window parent,
-			WalletItem item, String address, String amount, String fee,
-			boolean show) {
+	public static RPSendXRPDialog showDialog(String text, Window parent, WalletItem item, String address, String amount,
+			String fee, boolean show) {
 		if (show) {
 			synchronized (RPSendXRPDialog.class) {
 				if (lock == null) {
-					return (lock = new RPSendXRPDialog(text, parent, item,
-							address, amount, fee));
+					return (lock = new RPSendXRPDialog(text, parent, item, address, amount, fee));
 				} else {
 					if (lock != null) {
 						lock.closeDialog();
-						lock = new RPSendXRPDialog(text, parent, item, address,
-								amount, fee);
+						lock = new RPSendXRPDialog(text, parent, item, address, amount, fee);
 					}
 					return lock;
 				}
@@ -74,15 +72,13 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		return null;
 	}
 
-	public static RPSendXRPDialog showDialog(String text, Window parent,
-			WalletItem item, String address, String amount, String fee) {
+	public static RPSendXRPDialog showDialog(String text, Window parent, WalletItem item, String address, String amount,
+			String fee) {
 		return showDialog(text, parent, item, address, amount, fee, true);
 	}
 
-	public static RPSendXRPDialog showDialog(String name, JFrame parent,
-			WalletItem item) {
-		return new RPSendXRPDialog(name, parent, item, "",
-				LSystem.getMinSend(), LSystem.getFee());
+	public static RPSendXRPDialog showDialog(String name, JFrame parent, WalletItem item) {
+		return new RPSendXRPDialog(name, parent, item, "", LSystem.getMinSend(), LSystem.getFee());
 	}
 
 	public RPDialogTool get() {
@@ -96,10 +92,10 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		}
 	}
 
-	public RPSendXRPDialog(String text, Window parent, final WalletItem item,
-			String address, String amount, String fee) {
+	public RPSendXRPDialog(String text, Window parent, final WalletItem item, String address, String amount,
+			String fee) {
 
-		Dimension dim = new Dimension(500, 215);
+		Dimension dim = new Dimension(500, 270);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -147,6 +143,10 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		_feeText = new JTextField(5);
 		UIRes.addStyle(_feeText, "Fee: ");
 
+		_destinationTag = new JTextField(34);
+		_destinationTag.setText(address);
+		UIRes.addStyle(_destinationTag, "Destination Tag: ", false);
+
 		setBackground(LColor.white);
 		setLayout(null);
 
@@ -159,11 +159,15 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		_feeText.setBounds(330, 80, 90, 45);
 		add(_feeText);
 
+		_destinationTag.setText("");
+		_destinationTag.setBounds(70, 130, 350, 45);
+		add(_destinationTag);
+
 		JLabel exitLabel = new JLabel(UIRes.exitIcon);
 		exitLabel.setToolTipText("Cancel");
 		exitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		exitLabel.setBounds(260, 145, 45, 45);
+		exitLabel.setBounds(260, 205, 45, 45);
 		add(exitLabel);
 		exitLabel.setVisible(true);
 		exitLabel.addMouseListener(new MouseAdapter() {
@@ -177,7 +181,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		submitLabel.setToolTipText("Submit transaction");
 		submitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		submitLabel.setBounds(200, 145, 45, 45);
+		submitLabel.setBounds(200, 205, 45, 45);
 		add(submitLabel);
 		submitLabel.setVisible(true);
 
@@ -188,30 +192,29 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 				try {
 					String address = _addressText.getText().trim();
 					String amountValue = _amountText.getText().trim();
-
+					String destinationTag = _destinationTag.getText().trim();
 					String feeValue = _feeText.getText().trim();
 					if (!MathUtils.isNan(amountValue)) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errMoney);
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errMoney);
 						return;
 					}
 					if (!MathUtils.isNan(feeValue)) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errFee);
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errFee);
+						return;
+					}
+					if (!StringUtils.isEmpty(destinationTag) && !MathUtils.isNan(destinationTag)) {
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errTag);
 						return;
 					}
 					if (!AccountFind.isRippleAddress(address)) {
 						try {
 							address = NameFind.getAddress(address);
 						} catch (Exception ex) {
-							UIMessage.alertMessage(get().getDialog(),
-									UIMessage.errNotAddress);
+							UIMessage.alertMessage(get().getDialog(), UIMessage.errNotAddress);
 							return;
 						}
-						if (StringUtils.isEmpty(address)
-								|| !AccountFind.isRippleAddress(address)) {
-							UIMessage.alertMessage(get().getDialog(),
-									UIMessage.errNotAddress);
+						if (StringUtils.isEmpty(address) || !AccountFind.isRippleAddress(address)) {
+							UIMessage.alertMessage(get().getDialog(), UIMessage.errNotAddress);
 							return;
 						}
 					}
@@ -220,33 +223,31 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 					BigDecimal maxSend = new BigDecimal(item.getAmount());
 
 					if (number.longValue() >= (maxSend.longValue() - 20)) {
-						UIMessage.alertMessage(get().getDialog(),
-								UIMessage.errNotMoney);
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errNotMoney);
 						return;
 					}
 
-					final WaitDialog dialog = WaitDialog.showDialog(get()
-							.getDialog());
+					final WaitDialog dialog = WaitDialog.showDialog(get().getDialog());
 					_waitDialogs.add(dialog);
+					long tagNumber = StringUtils.isEmpty(destinationTag) ? MathUtils.randomLong(1, 999999999)
+							: Integer.parseInt(destinationTag);
 
-					Payment.sendXRP(item.getSeed(), address, amountValue,
-							feeValue, new Rollback() {
+					Payment.sendXRP(item.getSeed(), address, tagNumber, amountValue, feeValue, new Rollback() {
 
-								@Override
-								public void success(JSONObject res) {
-									dialog.closeDialog();
-									RPJSonLog.get().println(res, false);
-									WalletCache.get().reset();
-									UIMessage.infoMessage(get().getDialog(),
-											UIMessage.completed);
-								}
+						@Override
+						public void success(JSONObject res) {
+							dialog.closeDialog();
+							RPJSonLog.get().println(res, false);
+							WalletCache.get().reset();
+							UIMessage.infoMessage(get().getDialog(), UIMessage.completed);
+						}
 
-								@Override
-								public void error(JSONObject res) {
-									dialog.closeDialog();
-									RPJSonLog.get().println(res);
-								}
-							});
+						@Override
+						public void error(JSONObject res) {
+							dialog.closeDialog();
+							RPJSonLog.get().println(res);
+						}
+					});
 
 				} catch (Throwable ex) {
 					ex.printStackTrace();
@@ -258,8 +259,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 		_feeText.setText(fee);
 		_amountText.setText(amount);
 
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 		revalidate();
 		repaint();
 	}
@@ -267,13 +267,13 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -290,25 +290,25 @@ public class RPSendXRPDialog extends JPanel implements WindowListener{
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

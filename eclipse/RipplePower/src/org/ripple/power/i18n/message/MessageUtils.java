@@ -20,11 +20,9 @@ public class MessageUtils {
 		return createMessages(clazz, handlerClass);
 	}
 
-	public static <T> T createMessages(Class<T> clazz,
-			Class<? extends MessageHandler> handlerClass) {
+	public static <T> T createMessages(Class<T> clazz, Class<? extends MessageHandler> handlerClass) {
 		try {
-			MessageHandler handler = handlerClass.getConstructor(Class.class)
-					.newInstance(clazz);
+			MessageHandler handler = handlerClass.getConstructor(Class.class).newInstance(clazz);
 			return createMessages(clazz, handler);
 		} catch (IllegalArgumentException e) {
 			throw new IllegalStateException(e);
@@ -42,8 +40,7 @@ public class MessageUtils {
 	}
 
 	public static <T> T createMessages(Class<T> clazz, MessageHandler handler) {
-		Object obj = Proxy.newProxyInstance(clazz.getClassLoader(),
-				new Class[] { clazz }, handler);
+		Object obj = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz }, handler);
 		return clazz.cast(obj);
 	}
 

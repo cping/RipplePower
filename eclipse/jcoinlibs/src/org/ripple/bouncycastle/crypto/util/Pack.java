@@ -1,7 +1,7 @@
 package org.ripple.bouncycastle.crypto.util;
 
 /**
- * @deprecated use org.bouncycastle.util.pack
+ * @deprecated use org.ripple.bouncycastle.util.pack
  */
 public abstract class Pack
 {

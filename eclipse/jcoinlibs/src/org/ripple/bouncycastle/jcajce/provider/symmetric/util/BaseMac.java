@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.crypto.MacSpi;
-import javax.crypto.SecretKey;
-import javax.crypto.interfaces.PBEKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEParameterSpec;
 
@@ -19,7 +17,6 @@ import org.ripple.bouncycastle.crypto.Mac;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithIV;
 import org.ripple.bouncycastle.crypto.params.SkeinParameters;
-import org.ripple.bouncycastle.jcajce.PKCS12Key;
 import org.ripple.bouncycastle.jcajce.spec.SkeinParameterSpec;
 
 public class BaseMac
@@ -27,7 +24,7 @@ public class BaseMac
 {
     private Mac macEngine;
 
-    private int scheme = PKCS12;
+    private int                     pbeType = PKCS12;
     private int                     pbeHash = SHA1;
     private int                     keySize = 160;
 
@@ -39,12 +36,12 @@ public class BaseMac
 
     protected BaseMac(
         Mac macEngine,
-        int scheme,
+        int pbeType,
         int pbeHash,
         int keySize)
     {
         this.macEngine = macEngine;
-        this.scheme = scheme;
+        this.pbeType = pbeType;
         this.pbeHash = pbeHash;
         this.keySize = keySize;
     }
@@ -61,50 +58,7 @@ public class BaseMac
             throw new InvalidKeyException("key is null");
         }
 
-        if (key instanceof PKCS12Key)
-        {
-            SecretKey k;
-            PBEParameterSpec pbeSpec;
-
-            try
-            {
-                k = (SecretKey)key;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidKeyException("PKCS12 requires a SecretKey/PBEKey");
-            }
-
-            try
-            {
-                pbeSpec = (PBEParameterSpec)params;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidAlgorithmParameterException("PKCS12 requires a PBEParameterSpec");
-            }
-
-            if (k instanceof PBEKey && pbeSpec == null)
-            {
-                pbeSpec = new PBEParameterSpec(((PBEKey)k).getSalt(), ((PBEKey)k).getIterationCount());
-            }
-
-            int digest = SHA1;
-            int keySize = 160;
-            if (macEngine.getAlgorithmName().startsWith("GOST"))
-            {
-                digest = GOST3411;
-                keySize = 256;
-            }
-            else if (macEngine.getAlgorithmName().startsWith("SHA256"))
-            {
-                digest = SHA256;
-                keySize = 256;
-            }
-            // TODO: add correct handling for other digests
-            param = PBE.Util.makePBEMacParameters(k, PKCS12, digest, keySize, pbeSpec);
-        }
-        else if (key instanceof BCPBEKey)
+        if (key instanceof BCPBEKey)
         {
             BCPBEKey k = (BCPBEKey)key;
 

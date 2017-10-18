@@ -13,8 +13,7 @@ public class RipplePublicKey extends RippleIdentifier {
 		super(publicKeyBytes, 35);
 		if (publicKeyBytes.length != 33) {
 			throw new RuntimeException(
-					"The public key must be of length 33 bytes was of length "
-							+ publicKeyBytes.length);
+					"The public key must be of length 33 bytes was of length " + publicKeyBytes.length);
 		}
 	}
 
@@ -22,14 +21,12 @@ public class RipplePublicKey extends RippleIdentifier {
 
 	public RippleAddress getAddress() {
 		if (_address == null) {
-			_address = new RippleAddress(
-					NativeSupport.toRipemd160Sha256(payloadBytes));
+			_address = new RippleAddress(NativeSupport.toRipemd160Sha256(payloadBytes));
 		}
 		return _address;
 	}
 
 	public ECPoint getPublicPoint() {
-		return RippleGenerator.SECP256K1_PARAMS.getCurve().decodePoint(
-				payloadBytes);
+		return RippleGenerator.SECP256K1_PARAMS.getCurve().decodePoint(payloadBytes);
 	}
 }

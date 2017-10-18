@@ -31,7 +31,7 @@ public class CurrencyUtils {
 
 	public static String toFee(String amount) {
 		if (MathUtils.isNan(amount)) {
-			long number = Long.valueOf(amount);
+			double number = Double.valueOf(amount);
 			double fee = Double.valueOf(LSystem.getFee());
 			double old = fee;
 			long limit = 3000;
@@ -42,8 +42,8 @@ public class CurrencyUtils {
 				fee = 1000d;
 			}
 			if (old < fee) {
-				String result = String.valueOf(new BigDecimal(fee).setScale(5,
-						java.math.BigDecimal.ROUND_HALF_UP).doubleValue());
+				String result = String
+						.valueOf(new BigDecimal(fee).setScale(5, java.math.BigDecimal.ROUND_HALF_UP).doubleValue());
 				if (result.endsWith(".0")) {
 					return result.replace(".0", "");
 				} else {
@@ -60,13 +60,11 @@ public class CurrencyUtils {
 	}
 
 	public static String getRippleToValue(String value) {
-		return new BigDecimal(value).divide(MILLION, MathContext.DECIMAL128)
-				.toString();
+		return new BigDecimal(value).divide(MILLION, MathContext.DECIMAL128).toString();
 	}
 
 	public static String getValueToRipple(String value) {
-		String num = new BigDecimal(value).multiply(MILLION,
-				MathContext.DECIMAL128).toString();
+		String num = new BigDecimal(value).multiply(MILLION, MathContext.DECIMAL128).toString();
 		int index = num.indexOf('.');
 		if (index != -1) {
 			num = num.substring(0, index);

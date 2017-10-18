@@ -54,8 +54,7 @@ public final class BitMatrix implements Cloneable {
 
 	public BitMatrix(int width, int height) {
 		if (width < 1 || height < 1) {
-			throw new IllegalArgumentException(
-					"Both dimensions must be greater than 0");
+			throw new IllegalArgumentException("Both dimensions must be greater than 0");
 		}
 		this.width = width;
 		this.height = height;
@@ -142,18 +141,15 @@ public final class BitMatrix implements Cloneable {
 	 */
 	public void setRegion(int left, int top, int width, int height) {
 		if (top < 0 || left < 0) {
-			throw new IllegalArgumentException(
-					"Left and top must be nonnegative");
+			throw new IllegalArgumentException("Left and top must be nonnegative");
 		}
 		if (height < 1 || width < 1) {
-			throw new IllegalArgumentException(
-					"Height and width must be at least 1");
+			throw new IllegalArgumentException("Height and width must be at least 1");
 		}
 		int right = left + width;
 		int bottom = top + height;
 		if (bottom > this.height || right > this.width) {
-			throw new IllegalArgumentException(
-					"The region must fit inside the matrix");
+			throw new IllegalArgumentException("The region must fit inside the matrix");
 		}
 		for (int y = top; y < bottom; y++) {
 			int offset = y * rowSize;
@@ -338,8 +334,8 @@ public final class BitMatrix implements Cloneable {
 			return false;
 		}
 		BitMatrix other = (BitMatrix) o;
-		return width == other.width && height == other.height
-				&& rowSize == other.rowSize && Arrays.equals(bits, other.bits);
+		return width == other.width && height == other.height && rowSize == other.rowSize
+				&& Arrays.equals(bits, other.bits);
 	}
 
 	@Override

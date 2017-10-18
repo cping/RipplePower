@@ -40,8 +40,8 @@ import org.ripple.power.ui.view.Menus;
 import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.SwingUtils;
 
-public final class BitcoinWalletDialog extends JDialog implements
-		ActionListener, ConnectionListener, BlockStoreListener {
+public final class BitcoinWalletDialog extends JDialog
+		implements ActionListener, ConnectionListener, BlockStoreListener {
 
 	/**
 	 * 
@@ -80,22 +80,17 @@ public final class BitcoinWalletDialog extends JDialog implements
 		menuBar.setOpaque(true);
 		menuBar.setBackground(new Color(230, 230, 230));
 		menuBar.add(new Menus(this, "File", new String[] { "Exit", "exit" }));
-		menuBar.add(new Menus(this, "View", new String[] { "Receive Addresses",
-				"view receive" },
+		menuBar.add(new Menus(this, "View", new String[] { "Receive Addresses", "view receive" },
 				new String[] { "Send Addresses", "view send" }));
-		menuBar.add(new Menus(this, "Actions", new String[] { "Send Coins",
-				"send coins" },
-				new String[] { "Sign Message", "sign message" }, new String[] {
-						"Verify Message", "verify message" }));
-		menuBar.add(new Menus(this, "Tools", new String[] { "Export Keys",
-				"export keys" }, new String[] { "Import Keys", "import keys" },
-				new String[] { "Rescan Block Chain", "rescan" }));
-		
+		menuBar.add(new Menus(this, "Actions", new String[] { "Send Coins", "send coins" },
+				new String[] { "Sign Message", "sign message" }, new String[] { "Verify Message", "verify message" }));
+		menuBar.add(new Menus(this, "Tools", new String[] { "Export Keys", "export keys" },
+				new String[] { "Import Keys", "import keys" }, new String[] { "Rescan Block Chain", "rescan" }));
+
 		setJMenuBar(menuBar);
 		transactionPanel = new TransactionPanel(this);
 		setContentPane(transactionPanel);
-		if (BTCLoader.networkChainHeight > BTCLoader.blockStore
-				.getChainHeight()) {
+		if (BTCLoader.networkChainHeight > BTCLoader.blockStore.getChainHeight()) {
 			setTitle("Bitcoin Wallet - Synchronizing with network");
 			synchronizingTitle = true;
 		}
@@ -112,10 +107,8 @@ public final class BitcoinWalletDialog extends JDialog implements
 			public void run() {
 
 				transactionPanel.statusChanged();
-				if (synchronizingTitle
-						&& !rescanChain
-						&& BTCLoader.networkChainHeight <= BTCLoader.blockStore
-								.getChainHeight()) {
+				if (synchronizingTitle && !rescanChain
+						&& BTCLoader.networkChainHeight <= BTCLoader.blockStore.getChainHeight()) {
 					synchronizingTitle = false;
 					setTitle("Bitcoin Wallet");
 				}
@@ -146,9 +139,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 
 				rescanChain = false;
 				transactionPanel.statusChanged();
-				if (synchronizingTitle
-						&& BTCLoader.networkChainHeight <= BTCLoader.blockStore
-								.getChainHeight()) {
+				if (synchronizingTitle && BTCLoader.networkChainHeight <= BTCLoader.blockStore.getChainHeight()) {
 					synchronizingTitle = false;
 					setTitle("Bitcoin Wallet");
 				}
@@ -178,8 +169,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 				break;
 			case "sign message":
 				if (BTCLoader.keys.isEmpty()) {
-					UIRes.showErrorMessage(this,"Error",
-							"There are no keys defined");
+					UIRes.showErrorMessage(this, "Error", "There are no keys defined");
 				} else {
 					SignDialog.showDialog(this);
 				}
@@ -204,15 +194,13 @@ public final class BitcoinWalletDialog extends JDialog implements
 		} catch (BlockStoreException exc) {
 			ErrorLog.get().logException("Unable to perform database operation", exc);
 		} catch (Exception exc) {
-			ErrorLog.get().logException("Exception while processing action event",
-					exc);
+			ErrorLog.get().logException("Exception while processing action event", exc);
 		}
 	}
 
 	private void exportDefPrivateKeys() throws IOException {
 		StringBuilder keyText = new StringBuilder(256);
-		File keyFile = new File(LSystem.getBitcionDirectory() + LSystem.FS
-				+ "BTCWallet.keys");
+		File keyFile = new File(LSystem.getBitcionDirectory() + LSystem.FS + "BTCWallet.keys");
 		if (keyFile.exists()) {
 			keyFile.delete();
 		}
@@ -233,17 +221,13 @@ public final class BitcoinWalletDialog extends JDialog implements
 				keyText.delete(0, keyText.length());
 			}
 		}
-		UIRes.showInfoMessage(this,"Keys Exported", "Keys exported to BTCWallet.keys"
-				);
+		UIRes.showInfoMessage(this, "Keys Exported", "Keys exported to BTCWallet.keys");
 	}
 
-	private void importDefPrivateKeys() throws IOException,
-			AddressFormatException, BlockStoreException {
-		File keyFile = new File(LSystem.getBitcionDirectory() + LSystem.FS
-				+ "BTCWallet.keys");
+	private void importDefPrivateKeys() throws IOException, AddressFormatException, BlockStoreException {
+		File keyFile = new File(LSystem.getBitcionDirectory() + LSystem.FS + "BTCWallet.keys");
 		if (!keyFile.exists()) {
-			UIRes.showErrorMessage(this,"Error",
-					"BTCWallet.keys does not exist");
+			UIRes.showErrorMessage(this, "Error", "BTCWallet.keys does not exist");
 			return;
 		}
 
@@ -281,8 +265,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 					break;
 				}
 				if (foundKey) {
-					DumpedPrivateKey dumpedKey = new DumpedPrivateKey(
-							encodedPrivateKey);
+					DumpedPrivateKey dumpedKey = new DumpedPrivateKey(encodedPrivateKey);
 					ECKey key = dumpedKey.getKey();
 					if (importedAddress.equals(key.toAddress().toString())) {
 						key.setLabel(importedLabel);
@@ -292,8 +275,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 							synchronized (BTCLoader.lock) {
 								boolean added = false;
 								for (int i = 0; i < BTCLoader.keys.size(); i++) {
-									if (BTCLoader.keys.get(i).getLabel()
-											.compareToIgnoreCase(importedLabel) > 0) {
+									if (BTCLoader.keys.get(i).getLabel().compareToIgnoreCase(importedLabel) > 0) {
 										BTCLoader.keys.add(i, key);
 										added = true;
 										break;
@@ -302,16 +284,12 @@ public final class BitcoinWalletDialog extends JDialog implements
 								if (!added)
 									BTCLoader.keys.add(key);
 								BTCLoader.bloomFilter.insert(key.getPubKey());
-								BTCLoader.bloomFilter.insert(key
-										.getPubKeyHash());
+								BTCLoader.bloomFilter.insert(key.getPubKeyHash());
 							}
 						}
 					} else {
-						UIRes.showErrorMessage(
-										this, "Error",
-										String.format(
-												"Address %s does not match imported private key",
-												importedAddress));
+						UIRes.showErrorMessage(this, "Error",
+								String.format("Address %s does not match imported private key", importedAddress));
 					}
 					foundKey = false;
 					importedLabel = "";
@@ -321,8 +299,7 @@ public final class BitcoinWalletDialog extends JDialog implements
 				}
 			}
 		}
-		UIRes.showInfoMessage(this,"Keys Imported",
-				"Keys imported from BTCWallet.keys");
+		UIRes.showInfoMessage(this, "Keys Imported", "Keys imported from BTCWallet.keys");
 	}
 
 	private void rescan() throws BlockStoreException {
@@ -363,17 +340,14 @@ public final class BitcoinWalletDialog extends JDialog implements
 			try {
 				exit();
 			} catch (Exception exc) {
-				ErrorLog.get().logException(
-						"Exception while closing application window", exc);
+				ErrorLog.get().logException("Exception while closing application window", exc);
 			}
 		}
 	}
 
 	@Override
 	public void connectionStarted(Peer peer, int count) {
-		if (!synchronizingTitle
-				&& BTCLoader.networkChainHeight > BTCLoader.blockStore
-						.getChainHeight()) {
+		if (!synchronizingTitle && BTCLoader.networkChainHeight > BTCLoader.blockStore.getChainHeight()) {
 			synchronizingTitle = true;
 			LSystem.invokeLater(new Runnable() {
 
@@ -388,30 +362,23 @@ public final class BitcoinWalletDialog extends JDialog implements
 		if (!txBroadcastDone) {
 			txBroadcastDone = true;
 			try {
-				List<SendTransaction> sendList = BTCLoader.blockStore
-						.getSendTxList();
+				List<SendTransaction> sendList = BTCLoader.blockStore.getSendTxList();
 				if (!sendList.isEmpty()) {
-					List<InventoryItem> invList = new ArrayList<InventoryItem>(
-							sendList.size());
+					List<InventoryItem> invList = new ArrayList<InventoryItem>(sendList.size());
 					for (SendTransaction sendTx : sendList) {
-						int depth = BTCLoader.blockStore.getTxDepth(sendTx
-								.getTxHash());
+						int depth = BTCLoader.blockStore.getTxDepth(sendTx.getTxHash());
 						if (depth == 0)
-							invList.add(new InventoryItem(InventoryItem.INV_TX,
-									sendTx.getTxHash()));
+							invList.add(new InventoryItem(InventoryItem.INV_TX, sendTx.getTxHash()));
 					}
 					if (!invList.isEmpty()) {
-						Message invMsg = InventoryMessage
-								.buildInventoryMessage(peer, invList);
+						Message invMsg = InventoryMessage.buildInventoryMessage(peer, invList);
 						BTCLoader.networkHandler.sendMessage(invMsg);
-						BTCLoader.info(String.format(
-								"Pending transaction inventory sent to %s",
+						BTCLoader.info(String.format("Pending transaction inventory sent to %s",
 								peer.getAddress().toString()));
 					}
 				}
 			} catch (BlockStoreException exc) {
-				ErrorLog.get().logException("Unable to get send transaction list",
-						exc);
+				ErrorLog.get().logException("Unable to get send transaction list", exc);
 			}
 		}
 

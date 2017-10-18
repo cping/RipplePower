@@ -79,8 +79,7 @@ public final class SecureDataBase {
 	}
 
 	private ZipOutputStream outZip() throws FileNotFoundException {
-		return new ZipOutputStream(new BufferedOutputStream(
-				new FileOutputStream(dbFile())));
+		return new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(dbFile())));
 	}
 
 	private ZipFile zipDbFile() throws IOException {
@@ -93,13 +92,10 @@ public final class SecureDataBase {
 
 	public SecureIndex getMasterIndex() throws Exception {
 		try (ZipFile zipFile = zipDbFile();
-				InputStream masterIndexInStream = zipFile
-						.getInputStream(zipFile.getEntry(SECURE_INDEX));) {
-			byte[] encryptedMasterIndex = ByteUtils
-					.readFully(masterIndexInStream);
-			byte[] decryptedMasterIndex = Passphrase.decrypt(this.passphrase,
-					encryptedMasterIndex);
-			return Serialization.<SecureIndex> inflate(decryptedMasterIndex);
+				InputStream masterIndexInStream = zipFile.getInputStream(zipFile.getEntry(SECURE_INDEX));) {
+			byte[] encryptedMasterIndex = ByteUtils.readFully(masterIndexInStream);
+			byte[] decryptedMasterIndex = Passphrase.decrypt(this.passphrase, encryptedMasterIndex);
+			return Serialization.<SecureIndex>inflate(decryptedMasterIndex);
 		} catch (IOException | ClassNotFoundException ex) {
 			ex.printStackTrace();
 		}
@@ -113,8 +109,7 @@ public final class SecureDataBase {
 					if (!fileTableEntry.isSourceAttached()) {
 						continue;
 					}
-					zipOut.putNextEntry(new ZipEntry(fileTableEntry
-							.getFileNameHash()));
+					zipOut.putNextEntry(new ZipEntry(fileTableEntry.getFileNameHash()));
 					Path sourceFilePath = fileTableEntry.getSourceFilePath();
 					byte[] fileBytes = ByteUtils.readFully(sourceFilePath);
 					zipOut.write(Passphrase.encrypt(this.passphrase, fileBytes));
@@ -125,7 +120,7 @@ public final class SecureDataBase {
 			}
 			masterIndex.incrementCommitCount();
 			byte[] encryptedMasterIndex = Passphrase.encrypt(this.passphrase,
-					Serialization.<SecureIndex> deflate(masterIndex));
+					Serialization.<SecureIndex>deflate(masterIndex));
 			zipOut.putNextEntry(new ZipEntry(SECURE_INDEX));
 			zipOut.write(encryptedMasterIndex);
 			zipOut.flush();
@@ -151,8 +146,8 @@ public final class SecureDataBase {
 		}
 		byte[] encryptedFile;
 		try (ZipFile zipFile = zipDbFile();
-				InputStream fileInStream = zipFile.getInputStream(zipFile
-						.getEntry(fileTableEntry.getFileNameHash()));) {
+				InputStream fileInStream = zipFile
+						.getInputStream(zipFile.getEntry(fileTableEntry.getFileNameHash()));) {
 			encryptedFile = ByteUtils.readFully(fileInStream);
 		}
 		fileBytes = Passphrase.decrypt(this.passphrase, encryptedFile);

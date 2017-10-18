@@ -42,9 +42,7 @@ final class BitMatrixParser {
 
 		version = readVersion(bitMatrix);
 		this.mappingBitMatrix = extractDataRegion(bitMatrix);
-		this.readMappingMatrix = new BitMatrix(
-				this.mappingBitMatrix.getWidth(),
-				this.mappingBitMatrix.getHeight());
+		this.readMappingMatrix = new BitMatrix(this.mappingBitMatrix.getWidth(), this.mappingBitMatrix.getHeight());
 	}
 
 	Version getVersion() {
@@ -68,8 +66,7 @@ final class BitMatrixParser {
 	 *             if the dimensions of the mapping matrix are not valid Data
 	 *             Matrix dimensions.
 	 */
-	private static Version readVersion(BitMatrix bitMatrix)
-			throws FormatException {
+	private static Version readVersion(BitMatrix bitMatrix) throws FormatException {
 		int numRows = bitMatrix.getHeight();
 		int numColumns = bitMatrix.getWidth();
 		return Version.getVersionForDimensions(numRows, numColumns);
@@ -110,20 +107,17 @@ final class BitMatrixParser {
 				row -= 2;
 				column += 2;
 				corner1Read = true;
-			} else if ((row == numRows - 2) && (column == 0)
-					&& ((numColumns & 0x03) != 0) && !corner2Read) {
+			} else if ((row == numRows - 2) && (column == 0) && ((numColumns & 0x03) != 0) && !corner2Read) {
 				result[resultOffset++] = (byte) readCorner2(numRows, numColumns);
 				row -= 2;
 				column += 2;
 				corner2Read = true;
-			} else if ((row == numRows + 4) && (column == 2)
-					&& ((numColumns & 0x07) == 0) && !corner3Read) {
+			} else if ((row == numRows + 4) && (column == 2) && ((numColumns & 0x07) == 0) && !corner3Read) {
 				result[resultOffset++] = (byte) readCorner3(numRows, numColumns);
 				row -= 2;
 				column += 2;
 				corner3Read = true;
-			} else if ((row == numRows - 2) && (column == 0)
-					&& ((numColumns & 0x07) == 4) && !corner4Read) {
+			} else if ((row == numRows - 2) && (column == 0) && ((numColumns & 0x07) == 4) && !corner4Read) {
 				result[resultOffset++] = (byte) readCorner4(numRows, numColumns);
 				row -= 2;
 				column += 2;
@@ -131,10 +125,8 @@ final class BitMatrixParser {
 			} else {
 				// Sweep upward diagonally to the right
 				do {
-					if ((row < numRows) && (column >= 0)
-							&& !readMappingMatrix.get(column, row)) {
-						result[resultOffset++] = (byte) readUtah(row, column,
-								numRows, numColumns);
+					if ((row < numRows) && (column >= 0) && !readMappingMatrix.get(column, row)) {
+						result[resultOffset++] = (byte) readUtah(row, column, numRows, numColumns);
 					}
 					row -= 2;
 					column += 2;
@@ -144,10 +136,8 @@ final class BitMatrixParser {
 
 				// Sweep downward diagonally to the left
 				do {
-					if ((row >= 0) && (column < numColumns)
-							&& !readMappingMatrix.get(column, row)) {
-						result[resultOffset++] = (byte) readUtah(row, column,
-								numRows, numColumns);
+					if ((row >= 0) && (column < numColumns) && !readMappingMatrix.get(column, row)) {
+						result[resultOffset++] = (byte) readUtah(row, column, numRows, numColumns);
 					}
 					row += 2;
 					column -= 2;
@@ -468,8 +458,7 @@ final class BitMatrixParser {
 		int symbolSizeColumns = version.getSymbolSizeColumns();
 
 		if (bitMatrix.getHeight() != symbolSizeRows) {
-			throw new IllegalArgumentException(
-					"Dimension of bitMarix must match the version size");
+			throw new IllegalArgumentException("Dimension of bitMarix must match the version size");
 		}
 
 		int dataRegionSizeRows = version.getDataRegionSizeRows();
@@ -481,24 +470,19 @@ final class BitMatrixParser {
 		int sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
 		int sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
 
-		BitMatrix bitMatrixWithoutAlignment = new BitMatrix(
-				sizeDataRegionColumn, sizeDataRegionRow);
+		BitMatrix bitMatrixWithoutAlignment = new BitMatrix(sizeDataRegionColumn, sizeDataRegionRow);
 		for (int dataRegionRow = 0; dataRegionRow < numDataRegionsRow; ++dataRegionRow) {
 			int dataRegionRowOffset = dataRegionRow * dataRegionSizeRows;
 			for (int dataRegionColumn = 0; dataRegionColumn < numDataRegionsColumn; ++dataRegionColumn) {
-				int dataRegionColumnOffset = dataRegionColumn
-						* dataRegionSizeColumns;
+				int dataRegionColumnOffset = dataRegionColumn * dataRegionSizeColumns;
 				for (int i = 0; i < dataRegionSizeRows; ++i) {
-					int readRowOffset = dataRegionRow
-							* (dataRegionSizeRows + 2) + 1 + i;
+					int readRowOffset = dataRegionRow * (dataRegionSizeRows + 2) + 1 + i;
 					int writeRowOffset = dataRegionRowOffset + i;
 					for (int j = 0; j < dataRegionSizeColumns; ++j) {
-						int readColumnOffset = dataRegionColumn
-								* (dataRegionSizeColumns + 2) + 1 + j;
+						int readColumnOffset = dataRegionColumn * (dataRegionSizeColumns + 2) + 1 + j;
 						if (bitMatrix.get(readColumnOffset, readRowOffset)) {
 							int writeColumnOffset = dataRegionColumnOffset + j;
-							bitMatrixWithoutAlignment.set(writeColumnOffset,
-									writeRowOffset);
+							bitMatrixWithoutAlignment.set(writeColumnOffset, writeRowOffset);
 						}
 					}
 				}

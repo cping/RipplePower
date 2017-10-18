@@ -39,16 +39,12 @@ public final class MultiFormatOneDReader extends OneDReader {
 	public MultiFormatOneDReader(Map<DecodeHintType, ?> hints) {
 		@SuppressWarnings("unchecked")
 		Collection<BarcodeFormat> possibleFormats = hints == null ? null
-				: (Collection<BarcodeFormat>) hints
-						.get(DecodeHintType.POSSIBLE_FORMATS);
-		boolean useCode39CheckDigit = hints != null
-				&& hints.get(DecodeHintType.ASSUME_CODE_39_CHECK_DIGIT) != null;
+				: (Collection<BarcodeFormat>) hints.get(DecodeHintType.POSSIBLE_FORMATS);
+		boolean useCode39CheckDigit = hints != null && hints.get(DecodeHintType.ASSUME_CODE_39_CHECK_DIGIT) != null;
 		Collection<OneDReader> readers = new ArrayList<>();
 		if (possibleFormats != null) {
-			if (possibleFormats.contains(BarcodeFormat.EAN_13)
-					|| possibleFormats.contains(BarcodeFormat.UPC_A)
-					|| possibleFormats.contains(BarcodeFormat.EAN_8)
-					|| possibleFormats.contains(BarcodeFormat.UPC_E)) {
+			if (possibleFormats.contains(BarcodeFormat.EAN_13) || possibleFormats.contains(BarcodeFormat.UPC_A)
+					|| possibleFormats.contains(BarcodeFormat.EAN_8) || possibleFormats.contains(BarcodeFormat.UPC_E)) {
 				readers.add(new MultiFormatUPCEANReader(hints));
 			}
 			if (possibleFormats.contains(BarcodeFormat.CODE_39)) {
@@ -79,8 +75,7 @@ public final class MultiFormatOneDReader extends OneDReader {
 	}
 
 	@Override
-	public Result decodeRow(int rowNumber, BitArray row,
-			Map<DecodeHintType, ?> hints) throws NotFoundException {
+	public Result decodeRow(int rowNumber, BitArray row, Map<DecodeHintType, ?> hints) throws NotFoundException {
 		for (OneDReader reader : readers) {
 			try {
 				return reader.decodeRow(rowNumber, row, hints);

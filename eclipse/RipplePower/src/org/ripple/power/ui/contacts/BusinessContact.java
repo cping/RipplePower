@@ -10,13 +10,11 @@ public class BusinessContact extends Contact implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String company;
 
-	public BusinessContact(String firstNameParam, String lastNameParam,
-			String rippleAddressParam, String addressParam, String cityParam,
-			String stateParam, String zipCodeParam, String phoneNumberParam,
-			String emailAddressParam, String companyParam) {
-		super(firstNameParam, lastNameParam, rippleAddressParam, addressParam,
-				cityParam, stateParam, zipCodeParam, phoneNumberParam,
-				emailAddressParam);
+	public BusinessContact(String firstNameParam, String lastNameParam, String rippleAddressParam, String addressParam,
+			String cityParam, String stateParam, String zipCodeParam, String phoneNumberParam, String emailAddressParam,
+			String companyParam) {
+		super(firstNameParam, lastNameParam, rippleAddressParam, addressParam, cityParam, stateParam, zipCodeParam,
+				phoneNumberParam, emailAddressParam);
 		setCompany(companyParam);
 	}
 

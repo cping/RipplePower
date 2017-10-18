@@ -212,8 +212,7 @@ public final class DimConstraint implements Externalizable {
 		if (isCols)
 			return UnitValue.LEADING;
 
-		return fill
-				|| PlatformDefaults.getDefaultRowAlignmentBaseline() == false ? UnitValue.CENTER
+		return fill || PlatformDefaults.getDefaultRowAlignmentBaseline() == false ? UnitValue.CENTER
 				: UnitValue.BASELINE_IDENTITY;
 	}
 
@@ -508,8 +507,7 @@ public final class DimConstraint implements Externalizable {
 	 *         that are <code>null</code>. Returns <code>null</code> if there
 	 *         was no gap specified. A new and free to use array.
 	 */
-	int[] getRowGaps(ContainerWrapper parent, BoundSize defGap, int refSize,
-			boolean before) {
+	int[] getRowGaps(ContainerWrapper parent, BoundSize defGap, int refSize, boolean before) {
 		BoundSize gap = before ? gapBefore : gapAfter;
 		if (gap == null || gap.isUnset())
 			gap = defGap;
@@ -520,8 +518,7 @@ public final class DimConstraint implements Externalizable {
 		int[] ret = new int[3];
 		for (int i = LayoutUtil.MIN; i <= LayoutUtil.MAX; i++) {
 			UnitValue uv = gap.getSize(i);
-			ret[i] = uv != null ? uv.getPixels(refSize, parent, null)
-					: LayoutUtil.NOT_SET;
+			ret[i] = uv != null ? uv.getPixels(refSize, parent, null) : LayoutUtil.NOT_SET;
 		}
 		return ret;
 	}
@@ -554,16 +551,13 @@ public final class DimConstraint implements Externalizable {
 	 *         that are <code>null</code>. Returns <code>null</code> if there
 	 *         was no gap specified. A new and free to use array.
 	 */
-	int[] getComponentGaps(ContainerWrapper parent, ComponentWrapper comp,
-			BoundSize adjGap, ComponentWrapper adjacentComp, String tag,
-			int refSize, int adjacentSide, boolean isLTR) {
+	int[] getComponentGaps(ContainerWrapper parent, ComponentWrapper comp, BoundSize adjGap,
+			ComponentWrapper adjacentComp, String tag, int refSize, int adjacentSide, boolean isLTR) {
 		BoundSize gap = adjacentSide < 2 ? gapBefore : gapAfter;
 
 		boolean hasGap = gap != null && gap.getGapPush();
-		if ((gap == null || gap.isUnset())
-				&& (adjGap == null || adjGap.isUnset()) && comp != null)
-			gap = PlatformDefaults.getDefaultComponentGap(comp, adjacentComp,
-					adjacentSide + 1, tag, isLTR);
+		if ((gap == null || gap.isUnset()) && (adjGap == null || adjGap.isUnset()) && comp != null)
+			gap = PlatformDefaults.getDefaultComponentGap(comp, adjacentComp, adjacentSide + 1, tag, isLTR);
 
 		if (gap == null)
 			return hasGap ? new int[] { 0, 0, LayoutUtil.NOT_SET } : null;
@@ -571,8 +565,7 @@ public final class DimConstraint implements Externalizable {
 		int[] ret = new int[3];
 		for (int i = LayoutUtil.MIN; i <= LayoutUtil.MAX; i++) {
 			UnitValue uv = gap.getSize(i);
-			ret[i] = uv != null ? uv.getPixels(refSize, parent, null)
-					: LayoutUtil.NOT_SET;
+			ret[i] = uv != null ? uv.getPixels(refSize, parent, null) : LayoutUtil.NOT_SET;
 		}
 		return ret;
 	}
@@ -585,8 +578,7 @@ public final class DimConstraint implements Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

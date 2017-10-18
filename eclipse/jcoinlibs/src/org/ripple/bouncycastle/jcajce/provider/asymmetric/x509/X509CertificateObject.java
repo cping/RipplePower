@@ -9,7 +9,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Principal;
-import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -57,20 +56,17 @@ import org.ripple.bouncycastle.asn1.x509.Extensions;
 import org.ripple.bouncycastle.asn1.x509.GeneralName;
 import org.ripple.bouncycastle.asn1.x509.KeyUsage;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.PKCS12BagAttributeCarrierImpl;
-import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 import org.ripple.bouncycastle.jce.X509Principal;
 import org.ripple.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ripple.bouncycastle.util.Arrays;
 import org.ripple.bouncycastle.util.Integers;
-import org.ripple.bouncycastle.util.Strings;
 import org.ripple.bouncycastle.util.encoders.Hex;
 
 class X509CertificateObject
     extends X509Certificate
     implements PKCS12BagAttributeCarrier
 {
-    private JcaJceHelper bcHelper;
     private org.ripple.bouncycastle.asn1.x509.Certificate    c;
     private BasicConstraints            basicConstraints;
     private boolean[]                   keyUsage;
@@ -80,11 +76,9 @@ class X509CertificateObject
     private PKCS12BagAttributeCarrier   attrCarrier = new PKCS12BagAttributeCarrierImpl();
 
     public X509CertificateObject(
-        JcaJceHelper bcHelper,
         org.ripple.bouncycastle.asn1.x509.Certificate    c)
         throws CertificateParsingException
     {
-        this.bcHelper = bcHelper;
         this.c = c;
 
         try
@@ -561,41 +555,38 @@ class X509CertificateObject
             return true;
         }
 
-        if (o instanceof X509CertificateObject)
+        if (!(o instanceof Certificate))
         {
-            X509CertificateObject other = (X509CertificateObject)o;
-
-            if (this.hashValueSet && other.hashValueSet)
-            {
-                if (this.hashValue != other.hashValue)
-                {
-                    return false;
-                }
-            }
-
-            return this.c.equals(other.c);
+            return false;
         }
 
-        return super.equals(o);
-    }
+        Certificate other = (Certificate)o;
 
+        try
+        {
+            byte[] b1 = this.getEncoded();
+            byte[] b2 = other.getEncoded();
+
+            return Arrays.areEqual(b1, b2);
+        }
+        catch (CertificateEncodingException e)
+        {
+            return false;
+        }
+    }
+    
     public synchronized int hashCode()
     {
         if (!hashValueSet)
         {
-            hashValue = super.hashCode();
+            hashValue = calculateHashCode();
             hashValueSet = true;
         }
 
         return hashValue;
     }
-
-    /**
-     * Returns the original hash code for Certificates pre-JDK 1.8.
-     *
-     * @return the pre-JDK 1.8 hashcode calculation.
-     */
-    public int originalHashCode()
+    
+    private int calculateHashCode()
     {
         try
         {
@@ -634,7 +625,7 @@ class X509CertificateObject
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("  [0]         Version: ").append(this.getVersion()).append(nl);
         buf.append("         SerialNumber: ").append(this.getSerialNumber()).append(nl);
@@ -737,7 +728,7 @@ class X509CertificateObject
         
         try
         {
-            signature = bcHelper.createSignature(sigName);
+            signature = Signature.getInstance(sigName, BouncyCastleProvider.PROVIDER_NAME);
         }
         catch (Exception e)
         {
@@ -756,7 +747,7 @@ class X509CertificateObject
         String    sigName = X509SignatureUtil.getSignatureName(c.getSignatureAlgorithm());
         Signature signature;
 
-        if (sigProvider != null)
+        if (sigProvider  != null)
         {
             signature = Signature.getInstance(sigName, sigProvider);
         }
@@ -765,27 +756,6 @@ class X509CertificateObject
             signature = Signature.getInstance(sigName);
         }
         
-        checkSignature(key, signature);
-    }
-
-    public final void verify(
-        PublicKey   key,
-        Provider sigProvider)
-        throws CertificateException, NoSuchAlgorithmException,
-        InvalidKeyException, SignatureException
-    {
-        String    sigName = X509SignatureUtil.getSignatureName(c.getSignatureAlgorithm());
-        Signature signature;
-
-        if (sigProvider != null)
-        {
-            signature = Signature.getInstance(sigName, sigProvider);
-        }
-        else
-        {
-            signature = Signature.getInstance(sigName);
-        }
-
         checkSignature(key, signature);
     }
 

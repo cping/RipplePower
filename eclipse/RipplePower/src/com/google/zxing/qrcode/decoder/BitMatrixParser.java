@@ -85,8 +85,7 @@ final class BitMatrixParser {
 			formatInfoBits2 = copyBit(i, 8, formatInfoBits2);
 		}
 
-		parsedFormatInfo = FormatInformation.decodeFormatInformation(
-				formatInfoBits1, formatInfoBits2);
+		parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits1, formatInfoBits2);
 		if (parsedFormatInfo != null) {
 			return parsedFormatInfo;
 		}
@@ -126,10 +125,8 @@ final class BitMatrixParser {
 			}
 		}
 
-		Version theParsedVersion = Version
-				.decodeVersionInformation(versionBits);
-		if (theParsedVersion != null
-				&& theParsedVersion.getDimensionForVersion() == dimension) {
+		Version theParsedVersion = Version.decodeVersionInformation(versionBits);
+		if (theParsedVersion != null && theParsedVersion.getDimensionForVersion() == dimension) {
 			parsedVersion = theParsedVersion;
 			return theParsedVersion;
 		}
@@ -143,8 +140,7 @@ final class BitMatrixParser {
 		}
 
 		theParsedVersion = Version.decodeVersionInformation(versionBits);
-		if (theParsedVersion != null
-				&& theParsedVersion.getDimensionForVersion() == dimension) {
+		if (theParsedVersion != null && theParsedVersion.getDimensionForVersion() == dimension) {
 			parsedVersion = theParsedVersion;
 			return theParsedVersion;
 		}
@@ -230,8 +226,7 @@ final class BitMatrixParser {
 		if (parsedFormatInfo == null) {
 			return; // We have no format information, and have no data mask
 		}
-		DataMask dataMask = DataMask.forReference(parsedFormatInfo
-				.getDataMask());
+		DataMask dataMask = DataMask.forReference(parsedFormatInfo.getDataMask());
 		int dimension = bitMatrix.getHeight();
 		dataMask.unmaskBitMatrix(bitMatrix, dimension);
 	}

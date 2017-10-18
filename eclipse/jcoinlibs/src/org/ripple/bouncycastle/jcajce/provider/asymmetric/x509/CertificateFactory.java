@@ -24,8 +24,6 @@ import org.ripple.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.ripple.bouncycastle.asn1.pkcs.SignedData;
 import org.ripple.bouncycastle.asn1.x509.Certificate;
 import org.ripple.bouncycastle.asn1.x509.CertificateList;
-import org.ripple.bouncycastle.jcajce.util.BCJcaJceHelper;
-import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 
 /**
  * class for dealing with X509 certificates.
@@ -37,8 +35,6 @@ import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
 public class CertificateFactory
     extends CertificateFactorySpi
 {
-    private final JcaJceHelper bcHelper = new BCJcaJceHelper();
-
     private static final PEMUtil PEM_CERT_PARSER = new PEMUtil("CERTIFICATE");
     private static final PEMUtil PEM_CRL_PARSER = new PEMUtil("CRL");
 
@@ -68,7 +64,7 @@ public class CertificateFactory
             }
         }
 
-        return new X509CertificateObject(bcHelper,
+        return new X509CertificateObject(
                             Certificate.getInstance(seq));
     }
 
@@ -83,7 +79,7 @@ public class CertificateFactory
 
                 if (obj instanceof ASN1Sequence)
                 {
-                   return new X509CertificateObject(bcHelper,
+                   return new X509CertificateObject(
                                     Certificate.getInstance(obj));
                 }
             }
@@ -100,7 +96,7 @@ public class CertificateFactory
 
         if (seq != null)
         {
-            return new X509CertificateObject(bcHelper,
+            return new X509CertificateObject(
                             Certificate.getInstance(seq));
         }
 
@@ -110,7 +106,7 @@ public class CertificateFactory
     protected CRL createCRL(CertificateList c)
     throws CRLException
     {
-        return new X509CRLObject(bcHelper, c);
+        return new X509CRLObject(c);
     }
     
     private CRL readPEMCRL(

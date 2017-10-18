@@ -11,7 +11,7 @@ public class ErrorResponse {
 	public Object request;
 	public String status;
 	public String type;
-	
+
 	public boolean isCritical() {
 		// "tooBusy"
 		if (8 == error_code || 9 == error_code) {
@@ -32,9 +32,9 @@ public class ErrorResponse {
 		}
 		return true;
 	}
-	
-	public void form(JSONObject obj){
-		if(obj!=null){
+
+	public void form(JSONObject obj) {
+		if (obj != null) {
 			this.id = obj.optInt("id");
 			this.error = obj.optString("error");
 			this.error_message = obj.optString("error_message");

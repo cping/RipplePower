@@ -12,10 +12,10 @@ public class Field {
 	public int OwnerCount;
 	public Take LowLimit = new Take();
 	public Take HighLimit = new Take();
-    public String RootIndex;
-    public String HighNode;
-    public String LowNode;
-	
+	public String RootIndex;
+	public String HighNode;
+	public String LowNode;
+
 	public void from(JSONObject obj) {
 		if (obj != null) {
 			this.Flags = obj.optLong("Flags");

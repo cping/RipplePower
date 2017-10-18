@@ -144,8 +144,7 @@ public abstract class Resources {
 		return new ByteArrayInputStream(getNotCacheResource(fileName).getData());
 	}
 
-	public static InputStream openResource(final String resName)
-			throws IOException {
+	public static InputStream openResource(final String resName) throws IOException {
 		File file = new File(resName);
 		if (file.exists()) {
 			try {
@@ -188,8 +187,7 @@ public abstract class Resources {
 			}
 		}
 		BufferedInputStream in = null;
-		boolean canInner = innerName.startsWith(".")
-				|| (innerName.startsWith("/") && LSystem.isWindows());
+		boolean canInner = innerName.startsWith(".") || (innerName.startsWith("/") && LSystem.isWindows());
 		if (!isExists(innerName) && !canInner) {
 			innerName = ("/" + innerName).intern();
 			canInner = true;
@@ -207,8 +205,7 @@ public abstract class Resources {
 		}
 		if (!canInner) {
 			try {
-				in = new BufferedInputStream(new FileInputStream(new File(
-						innerName)));
+				in = new BufferedInputStream(new FileInputStream(new File(innerName)));
 			} catch (FileNotFoundException ex) {
 				throw new RuntimeException(ex);
 			}
@@ -234,8 +231,7 @@ public abstract class Resources {
 	public static ArrayByte getNotCacheResource(final String fileName) {
 		String innerName = fileName;
 		BufferedInputStream in = null;
-		boolean canInner = innerName.startsWith(".")
-				|| (innerName.startsWith("/") && LSystem.isWindows());
+		boolean canInner = innerName.startsWith(".") || (innerName.startsWith("/") && LSystem.isWindows());
 		if (!isExists(innerName) && !canInner) {
 			innerName = ("/" + innerName).intern();
 			canInner = true;
@@ -253,8 +249,7 @@ public abstract class Resources {
 		}
 		if (!canInner) {
 			try {
-				in = new BufferedInputStream(new FileInputStream(new File(
-						innerName)));
+				in = new BufferedInputStream(new FileInputStream(new File(innerName)));
 			} catch (FileNotFoundException ex) {
 				throw new RuntimeException(ex);
 			}

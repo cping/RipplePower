@@ -62,15 +62,15 @@ public class RPJSonLog {
 
 	public RPJSonLog() {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-				LSystem.applicationMain.getGraphicsConfiguration());
+		Insets screenInsets = Toolkit.getDefaultToolkit()
+				.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 		Dimension panSize = new Dimension(WIDTH, HEIGHT);
 		lConsole = new JConsole();
 		lConsole.setPreferredSize(panSize);
 		lConsole.setSize(panSize);
 		_tool = RPPushTool.pop(new Point(20, size.getHeight()),
-				(int) (screenInsets.bottom + lConsole.getHeight()
-						+ (RPPushTool.TITLE_SIZE) + 260), _def_name, lConsole);
+				(int) (screenInsets.bottom + lConsole.getHeight() + (RPPushTool.TITLE_SIZE) + 260), _def_name,
+				lConsole);
 	}
 
 	private JConsole lConsole;
@@ -123,12 +123,9 @@ public class RPJSonLog {
 					engine_result_code = result.getInt("engine_result_code");
 				}
 				if (result.has("engine_result_message")) {
-					String engine_result_message = result
-							.getString("engine_result_message");
-					RPToast toast = RPToast.makeText(LSystem.applicationMain,
-							engine_result_message,
-							(engine_result_code == 0 ? Style.SUCCESS
-									: Style.ERROR));
+					String engine_result_message = result.getString("engine_result_message");
+					RPToast toast = RPToast.makeText(LSystem.applicationMain, engine_result_message,
+							(engine_result_code == 0 ? Style.SUCCESS : Style.ERROR));
 					toast.setDuration(6000);
 					toast.display();
 				}

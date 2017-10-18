@@ -93,8 +93,7 @@ public abstract class LObject {
 	}
 
 	public static void centerOn(final LObject object, int w, int h) {
-		object.setLocation(w / 2 - object.getWidth() / 2,
-				h / 2 - object.getHeight() / 2);
+		object.setLocation(w / 2 - object.getWidth() / 2, h / 2 - object.getHeight() / 2);
 	}
 
 	public static void topOn(final LObject object, int w, int h) {
@@ -106,13 +105,11 @@ public abstract class LObject {
 	}
 
 	public static void rightOn(final LObject object, int w, int h) {
-		object.setLocation(w - object.getWidth(), h / 2 - object.getHeight()
-				/ 2);
+		object.setLocation(w - object.getWidth(), h / 2 - object.getHeight() / 2);
 	}
 
 	public static void bottomOn(final LObject object, int w, int h) {
-		object.setLocation(w / 2 - object.getWidth() / 2,
-				h - object.getHeight());
+		object.setLocation(w / 2 - object.getWidth() / 2, h - object.getHeight());
 	}
 
 	public void centerOn(final LObject object) {

@@ -19,7 +19,6 @@ import org.ripple.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.ripple.bouncycastle.jce.spec.GOST3410ParameterSpec;
 import org.ripple.bouncycastle.jce.spec.GOST3410PublicKeyParameterSetSpec;
 import org.ripple.bouncycastle.jce.spec.GOST3410PublicKeySpec;
-import org.ripple.bouncycastle.util.Strings;
 
 public class BCGOST3410PublicKey
     implements GOST3410PublicKey
@@ -156,7 +155,7 @@ public class BCGOST3410PublicKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("GOST3410 Public Key").append(nl);
         buf.append("            y: ").append(this.getY().toString(16)).append(nl);

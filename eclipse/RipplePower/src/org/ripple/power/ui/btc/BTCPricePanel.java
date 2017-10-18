@@ -54,8 +54,7 @@ public class BTCPricePanel extends JPanel {
 		public AccountTableModel(String[] columnNames, Class<?>[] columnClasses) {
 			super();
 			if (columnNames.length != columnClasses.length)
-				throw new IllegalArgumentException(
-						"Number of names not same as number of classes");
+				throw new IllegalArgumentException("Number of names not same as number of classes");
 			this.columnNames = columnNames;
 			this.columnClasses = columnClasses;
 		}
@@ -87,8 +86,7 @@ public class BTCPricePanel extends JPanel {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row > getRowCount()) {
-				throw new IndexOutOfBoundsException("Table row " + row
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table row " + row + " is not valid");
 			}
 			ArrayList<BTCPrice> temp = (ArrayList<BTCPrice>) _prices.clone();
 			Object value = null;
@@ -101,8 +99,7 @@ public class BTCPricePanel extends JPanel {
 				value = item.price;
 				break;
 			default:
-				throw new IndexOutOfBoundsException("Table column " + column
-						+ " is not valid");
+				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");
 			}
 			return value;
 		}
@@ -128,14 +125,12 @@ public class BTCPricePanel extends JPanel {
 		int[] columnTypes = { AddressTable.NAME, AddressTable.AMOUNT };
 
 		this.tableModel = new AccountTableModel(columnNames, columnClasses);
-		final AddressTable priceTable = new AddressTable(tableModel,
-				columnTypes);
+		final AddressTable priceTable = new AddressTable(tableModel, columnTypes);
 		priceTable.setFont(UIRes.getFont());
 		priceTable.setRowSorter(new TableRowSorter<TableModel>(tableModel));
 		priceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		_srcoll = new RPCScrollPane(priceTable, new LColor(220, 220, 220),
-				LColor.black, 240, false);
+		_srcoll = new RPCScrollPane(priceTable, new LColor(220, 220, 220), LColor.black, 240);
 
 		_srcoll.setViewportView(priceTable);
 
@@ -159,8 +154,7 @@ public class BTCPricePanel extends JPanel {
 			}
 		});
 
-		_curComboBox.setItemModel(new String[] { "USD", "CNY", "JPY", "EUR",
-				"CAD" });
+		_curComboBox.setItemModel(new String[] { "USD", "CNY", "JPY", "EUR", "CAD" });
 
 		add(_curComboBox);
 		_curComboBox.setBounds(300, 10, 110, 40);
@@ -201,8 +195,7 @@ public class BTCPricePanel extends JPanel {
 							_prices.clear();
 							model.update();
 							_loading = true;
-							String item = (String) _curComboBox
-									.getSelectedItem();
+							String item = (String) _curComboBox.getSelectedItem();
 							switch (item) {
 							case "USD":
 								BTCStoreQuery.getUSDPrices(new BTCMonitor() {
@@ -285,9 +278,7 @@ public class BTCPricePanel extends JPanel {
 
 									@Override
 									public void update(BTCPrice price) {
-										if (price != null
-												&& StringUtils
-														.isNumber(price.price)) {
+										if (price != null && StringUtils.isNumber(price.price)) {
 											synchronized (_prices) {
 												_prices.add(price);
 												model.update();

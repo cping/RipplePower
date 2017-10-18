@@ -110,8 +110,7 @@ public class IDEUtil {
 	 */
 	public static final UnitValue BASELINE_IDENTITY = UnitValue.BASELINE_IDENTITY;
 
-	private final static String[] X_Y_STRINGS = new String[] { "x", "y", "x2",
-			"y2" };
+	private final static String[] X_Y_STRINGS = new String[] { "x", "y", "x2", "y2" };
 
 	/**
 	 * Returns the version of IDEUtil
@@ -222,13 +221,11 @@ public class IDEUtil {
 	 *            rows.
 	 * @return A String. Never <code>null</code>.
 	 */
-	public static String getConstraintString(AC ac, boolean asAPI,
-			boolean isCols) {
+	public static String getConstraintString(AC ac, boolean asAPI, boolean isCols) {
 		StringBuffer sb = new StringBuffer(32);
 
 		DimConstraint[] dims = ac.getConstaints();
-		BoundSize defGap = isCols ? PlatformDefaults.getGridGapX()
-				: PlatformDefaults.getGridGapY();
+		BoundSize defGap = isCols ? PlatformDefaults.getGridGapX() : PlatformDefaults.getGridGapY();
 
 		for (int i = 0; i < dims.length; i++) {
 			DimConstraint dc = dims[i];
@@ -269,8 +266,7 @@ public class IDEUtil {
 	 *            .flowX().gap("rel").align("right")) or as a String type (e.g.
 	 *            "flowx, gap rel, right").
 	 */
-	private static void addRowDimConstraintString(DimConstraint dc,
-			StringBuffer sb, boolean asAPI) {
+	private static void addRowDimConstraintString(DimConstraint dc, StringBuffer sb, boolean asAPI) {
 		int gp = dc.getGrowPriority();
 
 		int firstComma = sb.length();
@@ -349,11 +345,9 @@ public class IDEUtil {
 				sb.append(".align(\"").append(getUV(al)).append("\")");
 			} else {
 				String s = getUV(al);
-				String alKw = (s.equals("top") || s.equals("bottom")
-						|| s.equals("left") || s.equals("label")
-						|| s.equals("leading") || s.equals("center")
-						|| s.equals("trailing") || s.equals("right") || s
-						.equals("baseline")) ? "" : "align ";
+				String alKw = (s.equals("top") || s.equals("bottom") || s.equals("left") || s.equals("label")
+						|| s.equals("leading") || s.equals("center") || s.equals("trailing") || s.equals("right")
+						|| s.equals("baseline")) ? "" : "align ";
 				sb.append(',').append(alKw).append(s);
 			}
 		}
@@ -401,13 +395,12 @@ public class IDEUtil {
 	 *            If <code>true</code> no grow constraints will be added.
 	 * @return A constraint string. Never <code>null</code>.
 	 */
-	private static void addComponentDimConstraintString(DimConstraint dc,
-			StringBuffer sb, boolean asAPI, boolean isHor, boolean noGrowAdd) {
+	private static void addComponentDimConstraintString(DimConstraint dc, StringBuffer sb, boolean asAPI, boolean isHor,
+			boolean noGrowAdd) {
 		int gp = dc.getGrowPriority();
 		if (gp != 100) {
 			if (asAPI) {
-				sb.append(isHor ? ".growPrioX(" : ".growPrioY(").append(gp)
-						.append(')');
+				sb.append(isHor ? ".growPrioX(" : ".growPrioY(").append(gp).append(')');
 			} else {
 				sb.append(isHor ? ",growpriox " : ",growprioy ").append(gp);
 			}
@@ -418,11 +411,9 @@ public class IDEUtil {
 			if (gw != null) {
 				String g = gw != 100f ? floatToString(gw, asAPI) : "";
 				if (asAPI) {
-					sb.append(isHor ? ".growX(" : ".growY(").append(g)
-							.append(')');
+					sb.append(isHor ? ".growX(" : ".growY(").append(g).append(')');
 				} else {
-					sb.append(isHor ? ",growx" : ",growy").append(
-							g.length() > 0 ? (" " + g) : "");
+					sb.append(isHor ? ",growx" : ",growy").append(g.length() > 0 ? (" " + g) : "");
 				}
 			}
 		}
@@ -430,8 +421,7 @@ public class IDEUtil {
 		int sp = dc.getShrinkPriority();
 		if (sp != 100) {
 			if (asAPI) {
-				sb.append(isHor ? ".shrinkPrioX(" : ".shrinkPrioY(").append(sp)
-						.append(')');
+				sb.append(isHor ? ".shrinkPrioX(" : ".shrinkPrioY(").append(sp).append(')');
 			} else {
 				sb.append(isHor ? ",shrinkpriox " : ",shrinkprioy ").append(sp);
 			}
@@ -441,8 +431,7 @@ public class IDEUtil {
 		if (sw != null && sw.intValue() != 100) {
 			String s = floatToString(sw, asAPI);
 			if (asAPI) {
-				sb.append(isHor ? ".shrinkX(" : ".shrinkY(").append(s)
-						.append(')');
+				sb.append(isHor ? ".shrinkX(" : ".shrinkY(").append(s).append(')');
 			} else {
 				sb.append(isHor ? ",shrinkx " : ",shrinky ").append(s);
 			}
@@ -451,8 +440,7 @@ public class IDEUtil {
 		String eg = dc.getEndGroup();
 		if (eg != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".endGroupX(\"" : ".endGroupY(\"").append(eg)
-						.append("\")");
+				sb.append(isHor ? ".endGroupX(\"" : ".endGroupY(\"").append(eg).append("\")");
 			} else {
 				sb.append(isHor ? ",endgroupx " : ",endgroupy ").append(eg);
 			}
@@ -461,8 +449,7 @@ public class IDEUtil {
 		String sg = dc.getSizeGroup();
 		if (sg != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".sizeGroupX(\"" : ".sizeGroupY(\"")
-						.append(sg).append("\")");
+				sb.append(isHor ? ".sizeGroupX(\"" : ".sizeGroupY(\"").append(sg).append("\")");
 			} else {
 				sb.append(isHor ? ",sizegroupx " : ",sizegroupy ").append(sg);
 			}
@@ -473,8 +460,7 @@ public class IDEUtil {
 		UnitValue al = dc.getAlign();
 		if (al != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".alignX(\"" : ".alignY(\"")
-						.append(getUV(al)).append("\")");
+				sb.append(isHor ? ".alignX(\"" : ".alignY(\"").append(getUV(al)).append("\")");
 			} else {
 				sb.append(isHor ? ",alignx " : ",aligny ").append(getUV(al));
 			}
@@ -484,9 +470,8 @@ public class IDEUtil {
 		BoundSize gapAft = dc.getGapAfter();
 		if (gapBef != null || gapAft != null) {
 			if (asAPI) {
-				sb.append(isHor ? ".gapX(\"" : ".gapY(\"")
-						.append(getBS(gapBef)).append("\", \"")
-						.append(getBS(gapAft)).append("\")");
+				sb.append(isHor ? ".gapX(\"" : ".gapY(\"").append(getBS(gapBef)).append("\", \"").append(getBS(gapAft))
+						.append("\")");
 			} else {
 				sb.append(isHor ? ",gapx " : ",gapy ").append(getBS(gapBef));
 				if (gapAft != null)
@@ -495,45 +480,36 @@ public class IDEUtil {
 		}
 	}
 
-	private static void appendBoundSize(BoundSize size, StringBuffer sb,
-			boolean isHor, boolean asAPI) {
+	private static void appendBoundSize(BoundSize size, StringBuffer sb, boolean isHor, boolean asAPI) {
 		if (size.isUnset() == false) {
 			if (size.getPreferred() == null) {
 				if (size.getMin() == null) {
 					if (asAPI) {
-						sb.append(isHor ? ".maxWidth(\"" : ".maxHeight(\"")
-								.append(getUV(size.getMax())).append("\")");
+						sb.append(isHor ? ".maxWidth(\"" : ".maxHeight(\"").append(getUV(size.getMax())).append("\")");
 					} else {
-						sb.append(isHor ? ",wmax " : ",hmax ").append(
-								getUV(size.getMax()));
+						sb.append(isHor ? ",wmax " : ",hmax ").append(getUV(size.getMax()));
 					}
 
 				} else if (size.getMax() == null) {
 					if (asAPI) {
-						sb.append(isHor ? ".minWidth(\"" : ".minHeight(\"")
-								.append(getUV(size.getMin())).append("\")");
+						sb.append(isHor ? ".minWidth(\"" : ".minHeight(\"").append(getUV(size.getMin())).append("\")");
 					} else {
-						sb.append(isHor ? ",wmin " : ",hmin ").append(
-								getUV(size.getMin()));
+						sb.append(isHor ? ",wmin " : ",hmin ").append(getUV(size.getMin()));
 					}
 				} else { // None are null
 					if (asAPI) {
-						sb.append(isHor ? ".width(\"" : ".height(\"")
-								.append(getUV(size.getMin())).append("::")
+						sb.append(isHor ? ".width(\"" : ".height(\"").append(getUV(size.getMin())).append("::")
 								.append(getUV(size.getMax())).append("\")");
 					} else {
-						sb.append(isHor ? ",width " : ",height ")
-								.append(getUV(size.getMin())).append("::")
+						sb.append(isHor ? ",width " : ",height ").append(getUV(size.getMin())).append("::")
 								.append(getUV(size.getMax()));
 					}
 				}
 			} else {
 				if (asAPI) {
-					sb.append(isHor ? ".width(\"" : ".height(\"")
-							.append(getBS(size)).append("\")");
+					sb.append(isHor ? ".width(\"" : ".height(\"").append(getBS(size)).append("\")");
 				} else {
-					sb.append(isHor ? ",width " : ",height ").append(
-							getBS(size));
+					sb.append(isHor ? ",width " : ",height ").append(getBS(size));
 				}
 			}
 		}
@@ -584,19 +560,21 @@ public class IDEUtil {
 				for (int i = 0; i < 4; i++) {
 					if (pos[i] != null) {
 						if (asAPI) {
-							sb.append('.').append(X_Y_STRINGS[i]).append("(\"")
-									.append(getUV(pos[i])).append("\")");
+							sb.append('.').append(X_Y_STRINGS[i]).append("(\"").append(getUV(pos[i])).append("\")");
 						} else {
-							sb.append(',').append(X_Y_STRINGS[i])
-									.append(getUV(pos[i]));
+							sb.append(',').append(X_Y_STRINGS[i]).append(getUV(pos[i]));
 						}
 					}
 				}
 			} else {
 				sb.append(asAPI ? ".pos(\"" : ",pos ");
-				int iSz = (pos[2] != null || pos[3] != null) ? 4 : 2; // "pos x y"
+				int iSz = (pos[2] != null || pos[3] != null) ? 4 : 2; // "pos x
+																		// y"
 																		// vs
-																		// "pos x1 y1 x2 y2".
+																		// "pos
+																		// x1 y1
+																		// x2
+																		// y2".
 				for (int i = 0; i < iSz; i++)
 					sb.append(getUV(pos[i])).append(i < iSz - 1 ? " " : "");
 
@@ -668,14 +646,11 @@ public class IDEUtil {
 			}
 		} else if (spanX > 1 || spanY > 1) {
 			if (spanX > 1 && spanY > 1) {
-				sb.append(asAPI ? ".span(" : ",span ").append(spanX)
-						.append(asAPI ? ", " : " ").append(spanY);
+				sb.append(asAPI ? ".span(" : ",span ").append(spanX).append(asAPI ? ", " : " ").append(spanY);
 			} else if (spanX > 1) {
-				sb.append(asAPI ? ".spanX(" : ",spanx ").append(
-						spanX == LayoutUtil.INF ? "" : (String.valueOf(spanX)));
+				sb.append(asAPI ? ".spanX(" : ",spanx ").append(spanX == LayoutUtil.INF ? "" : (String.valueOf(spanX)));
 			} else if (spanY > 1) {
-				sb.append(asAPI ? ".spanY(" : ",spany ").append(
-						spanY == LayoutUtil.INF ? "" : (String.valueOf(spanY)));
+				sb.append(asAPI ? ".spanY(" : ",spany ").append(spanY == LayoutUtil.INF ? "" : (String.valueOf(spanY)));
 			}
 			if (asAPI)
 				sb.append(')');
@@ -689,11 +664,9 @@ public class IDEUtil {
 				if (pushX != 100.0 || pushY != 100.0)
 					sb.append(pushX).append(asAPI ? ", " : " ").append(pushY);
 			} else if (pushX != null) {
-				sb.append(asAPI ? ".pushX(" : ",pushx ").append(
-						pushX == 100 ? "" : (String.valueOf(pushX)));
+				sb.append(asAPI ? ".pushX(" : ",pushx ").append(pushX == 100 ? "" : (String.valueOf(pushX)));
 			} else if (pushY != null) {
-				sb.append(asAPI ? ".pushY(" : ",pushy ").append(
-						pushY == 100 ? "" : (String.valueOf(pushY)));
+				sb.append(asAPI ? ".pushY(" : ",pushy ").append(pushY == 100 ? "" : (String.valueOf(pushY)));
 			}
 			if (asAPI)
 				sb.append(')');
@@ -703,22 +676,17 @@ public class IDEUtil {
 		if (dock >= 0) {
 			String ds = CC.DOCK_SIDES[dock];
 			if (asAPI) {
-				sb.append(".dock").append(Character.toUpperCase(ds.charAt(0)))
-						.append(ds.substring(1)).append("()");
+				sb.append(".dock").append(Character.toUpperCase(ds.charAt(0))).append(ds.substring(1)).append("()");
 			} else {
 				sb.append(",").append(ds);
 			}
 		}
 
-		boolean noGrowAdd = cc.getHorizontal().getGrow() != null
-				&& cc.getHorizontal().getGrow().intValue() == 100
-				&& cc.getVertical().getGrow() != null
-				&& cc.getVertical().getGrow().intValue() == 100;
+		boolean noGrowAdd = cc.getHorizontal().getGrow() != null && cc.getHorizontal().getGrow().intValue() == 100
+				&& cc.getVertical().getGrow() != null && cc.getVertical().getGrow().intValue() == 100;
 
-		addComponentDimConstraintString(cc.getHorizontal(), sb, asAPI, true,
-				noGrowAdd);
-		addComponentDimConstraintString(cc.getVertical(), sb, asAPI, false,
-				noGrowAdd);
+		addComponentDimConstraintString(cc.getHorizontal(), sb, asAPI, true, noGrowAdd);
+		addComponentDimConstraintString(cc.getVertical(), sb, asAPI, false, noGrowAdd);
 		if (noGrowAdd)
 			sb.append(asAPI ? ".grow()" : ",grow"); // Combine
 													// ".growX().growY()" into
@@ -755,8 +723,7 @@ public class IDEUtil {
 			if (fillX == fillY) {
 				sb.append(asAPI ? ".fill()" : ",fill");
 			} else {
-				sb.append(asAPI ? (fillX ? ".fillX()" : ".fillY()")
-						: (fillX ? ",fillx" : ",filly"));
+				sb.append(asAPI ? (fillX ? ".fillX()" : ".fillY()") : (fillX ? ",fillx" : ",filly"));
 			}
 		}
 
@@ -777,13 +744,11 @@ public class IDEUtil {
 				if (w.equals("pref") && h.equals("pref")) {
 					sb.append(')');
 				} else {
-					sb.append('\"').append(w).append("\", \"").append(h)
-							.append("\")");
+					sb.append('\"').append(w).append("\", \"").append(h).append("\")");
 				}
 			} else {
 				sb.append(",pack");
-				String size = getBS(lc.getPackWidth()) + " "
-						+ getBS(lc.getPackHeight());
+				String size = getBS(lc.getPackWidth()) + " " + getBS(lc.getPackHeight());
 				if (size.equals("pref pref") == false)
 					sb.append(' ').append(size);
 			}
@@ -791,15 +756,10 @@ public class IDEUtil {
 
 		if (lc.getPackWidthAlign() != 0.5f || lc.getPackHeightAlign() != 1f) {
 			if (asAPI) {
-				sb.append(".packAlign(")
-						.append(floatToString(lc.getPackWidthAlign(), asAPI))
-						.append(", ")
-						.append(floatToString(lc.getPackHeightAlign(), asAPI))
-						.append(')');
+				sb.append(".packAlign(").append(floatToString(lc.getPackWidthAlign(), asAPI)).append(", ")
+						.append(floatToString(lc.getPackHeightAlign(), asAPI)).append(')');
 			} else {
-				sb.append(",packalign ")
-						.append(floatToString(lc.getPackWidthAlign(), asAPI))
-						.append(' ')
+				sb.append(",packalign ").append(floatToString(lc.getPackWidthAlign(), asAPI)).append(' ')
 						.append(floatToString(lc.getPackHeightAlign(), asAPI));
 			}
 		}
@@ -819,8 +779,7 @@ public class IDEUtil {
 			} else {
 				sb.append(asAPI ? ".insets(\"" : ",insets ");
 				for (int i = 0; i < insets.length; i++)
-					sb.append(getUV(insets[i])).append(
-							i < insets.length - 1 ? " " : "");
+					sb.append(getUV(insets[i])).append(i < insets.length - 1 ? " " : "");
 				if (asAPI)
 					sb.append("\")");
 			}
@@ -848,15 +807,11 @@ public class IDEUtil {
 		UnitValue alignY = lc.getAlignY();
 		if (alignX != null || alignY != null) {
 			if (alignX != null && alignY != null) {
-				sb.append(asAPI ? ".align(\"" : ",align ")
-						.append(getUV(alignX)).append(' ')
-						.append(getUV(alignY));
+				sb.append(asAPI ? ".align(\"" : ",align ").append(getUV(alignX)).append(' ').append(getUV(alignY));
 			} else if (alignX != null) {
-				sb.append(asAPI ? ".alignX(\"" : ",alignx ").append(
-						getUV(alignX));
+				sb.append(asAPI ? ".alignX(\"" : ",alignx ").append(getUV(alignX));
 			} else if (alignY != null) {
-				sb.append(asAPI ? ".alignY(\"" : ",aligny ").append(
-						getUV(alignY));
+				sb.append(asAPI ? ".alignY(\"" : ",aligny ").append(getUV(alignY));
 			}
 			if (asAPI)
 				sb.append("\")");
@@ -866,15 +821,11 @@ public class IDEUtil {
 		BoundSize gridGapY = lc.getGridGapY();
 		if (gridGapX != null || gridGapY != null) {
 			if (gridGapX != null && gridGapY != null) {
-				sb.append(asAPI ? ".gridGap(\"" : ",gap ")
-						.append(getBS(gridGapX)).append(' ')
-						.append(getBS(gridGapY));
+				sb.append(asAPI ? ".gridGap(\"" : ",gap ").append(getBS(gridGapX)).append(' ').append(getBS(gridGapY));
 			} else if (gridGapX != null) {
-				sb.append(asAPI ? ".gridGapX(\"" : ",gapx ").append(
-						getBS(gridGapX));
+				sb.append(asAPI ? ".gridGapX(\"" : ",gapx ").append(getBS(gridGapX));
 			} else if (gridGapY != null) {
-				sb.append(asAPI ? ".gridGapY(\"" : ",gapy ").append(
-						getBS(gridGapY));
+				sb.append(asAPI ? ".gridGapY(\"" : ",gapy ").append(getBS(gridGapY));
 			}
 			if (asAPI)
 				sb.append("\")");
@@ -921,7 +872,6 @@ public class IDEUtil {
 	 */
 	private static String floatToString(float f, boolean asAPI) {
 		String valS = String.valueOf(f);
-		return valS.endsWith(".0") ? valS.substring(0, valS.length() - 2)
-				: (valS + (asAPI ? "f" : ""));
+		return valS.endsWith(".0") ? valS.substring(0, valS.length() - 2) : (valS + (asAPI ? "f" : ""));
 	}
 }

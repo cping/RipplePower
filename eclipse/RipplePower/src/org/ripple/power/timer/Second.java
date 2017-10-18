@@ -200,8 +200,7 @@ public class Second extends RegularTimer implements Serializable {
 		String daystr = s.substring(0, Math.min(10, s.length()));
 		Day day = Day.parseDay(daystr);
 		if (day != null) {
-			String hmsstr = s.substring(
-					Math.min(daystr.length() + 1, s.length()), s.length());
+			String hmsstr = s.substring(Math.min(daystr.length() + 1, s.length()), s.length());
 			hmsstr = hmsstr.trim();
 
 			int l = hmsstr.length();

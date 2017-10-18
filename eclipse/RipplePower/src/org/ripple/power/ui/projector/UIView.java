@@ -38,8 +38,7 @@ public class UIView extends Canvas implements Runnable {
 
 	private String actionName;
 
-	final static private Font fpsFont = GraphicsUtils.getFont(Font.SANS_SERIF,
-			0, 20);
+	final static private Font fpsFont = GraphicsUtils.getFont(Font.SANS_SERIF, 0, 20);
 
 	private transient long remainderMicros;
 
@@ -47,8 +46,7 @@ public class UIView extends Canvas implements Runnable {
 
 	private transient int repaintMode;
 
-	private long maxFrames, startTime, offsetTime, curFPS, calcInterval,
-			lastTimeMicros, elapsedTime;
+	private long maxFrames, startTime, offsetTime, curFPS, calcInterval, lastTimeMicros, elapsedTime;
 
 	private transient double frameCount;
 
@@ -112,14 +110,12 @@ public class UIView extends Canvas implements Runnable {
 		int width = getWidth();
 		int height = getHeight();
 		try {
-			hardwareImage = createVolatileImage(width, height,
-					new ImageCapabilities(true));
+			hardwareImage = createVolatileImage(width, height, new ImageCapabilities(true));
 		} catch (Exception e) {
 			hardwareImage = null;
 			int pixelSize = width * height;
 			int[] pixels = new int[pixelSize];
-			this.awtImage = GraphicsUtils.newAwtRGBImage(pixels, width, height,
-					pixelSize);
+			this.awtImage = GraphicsUtils.newAwtRGBImage(pixels, width, height, pixelSize);
 		}
 		if (hardwareImage == null) {
 			this.isSupportHardware = false;
@@ -201,8 +197,7 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-				currentControl.drawImage(img, getWidth() / 2 - w / 2,
-						getHeight() / 2 - h / 2, null);
+				currentControl.drawImage(img, getWidth() / 2 - w / 2, getHeight() / 2 - h / 2, null);
 				systemToolKit.sync();
 			}
 		}
@@ -219,8 +214,7 @@ public class UIView extends Canvas implements Runnable {
 		if (running) {
 			Graphics currentControl = this.getGraphics();
 			if (currentControl != null) {
-				currentControl.drawImage(img, getWidth() / 2 - w / 2,
-						getHeight() / 2 - h / 2, w, h, null);
+				currentControl.drawImage(img, getWidth() / 2 - w / 2, getHeight() / 2 - h / 2, w, h, null);
 				systemToolKit.sync();
 			}
 		}
@@ -272,8 +266,7 @@ public class UIView extends Canvas implements Runnable {
 
 			goalTimeMicros = lastTimeMicros + 1000000L / maxFrames;
 			currTimeMicros = timer.sleepTimeMicros(goalTimeMicros);
-			elapsedTimeMicros = currTimeMicros - lastTimeMicros
-					+ remainderMicros;
+			elapsedTimeMicros = currTimeMicros - lastTimeMicros + remainderMicros;
 			elapsedTime = Math.max(0, (int) (elapsedTimeMicros / 1000));
 			remainderMicros = elapsedTimeMicros - elapsedTime * 1000;
 			lastTimeMicros = currTimeMicros;
@@ -290,8 +283,7 @@ public class UIView extends Canvas implements Runnable {
 						gl.drawImage(handler.getBackground(), 0, 0);
 					} else {
 						gl.drawClear();
-						gl.drawImage(handler.getBackground(), handler.getX(),
-								handler.getY());
+						gl.drawImage(handler.getBackground(), handler.getX(), handler.getY());
 					}
 					break;
 				case Screen.SCREEN_CANVAS_REPAINT:
@@ -301,19 +293,13 @@ public class UIView extends Canvas implements Runnable {
 					break;
 				default:
 					if (handler.getX() == 0 && handler.getY() == 0) {
-						gl.drawImage(
-								handler.getBackground(),
-								repaintMode / 2
-										- LSystem.random.nextInt(repaintMode),
-								repaintMode / 2
-										- LSystem.random.nextInt(repaintMode));
+						gl.drawImage(handler.getBackground(), repaintMode / 2 - LSystem.random.nextInt(repaintMode),
+								repaintMode / 2 - LSystem.random.nextInt(repaintMode));
 					} else {
 						gl.drawClear();
 						gl.drawImage(handler.getBackground(),
-								handler.getX() + repaintMode / 2
-										- LSystem.random.nextInt(repaintMode),
-								handler.getY() + repaintMode / 2
-										- LSystem.random.nextInt(repaintMode));
+								handler.getX() + repaintMode / 2 - LSystem.random.nextInt(repaintMode),
+								handler.getY() + repaintMode / 2 - LSystem.random.nextInt(repaintMode));
 					}
 					break;
 				}
@@ -330,8 +316,7 @@ public class UIView extends Canvas implements Runnable {
 					Runtime runtime = Runtime.getRuntime();
 					long totalMemory = runtime.totalMemory();
 					long currentMemory = totalMemory - runtime.freeMemory();
-					String memoryUsage = ((float) ((currentMemory * 10) >> 20) / 10)
-							+ " of "
+					String memoryUsage = ((float) ((currentMemory * 10) >> 20) / 10) + " of "
 							+ ((float) ((totalMemory * 10) >> 20) / 10) + " MB";
 					gl.setAntiAlias(true);
 					gl.setFont(fpsFont);
@@ -363,8 +348,7 @@ public class UIView extends Canvas implements Runnable {
 		if (calcInterval >= MAX_INTERVAL) {
 			long timeNow = System.currentTimeMillis();
 			long realElapsedTime = timeNow - startTime;
-			curFPS = Math.min(maxFrames,
-					(long) ((frameCount / realElapsedTime) * MAX_INTERVAL));
+			curFPS = Math.min(maxFrames, (long) ((frameCount / realElapsedTime) * MAX_INTERVAL));
 			frameCount = 0L;
 			calcInterval = 0L;
 			startTime = timeNow;

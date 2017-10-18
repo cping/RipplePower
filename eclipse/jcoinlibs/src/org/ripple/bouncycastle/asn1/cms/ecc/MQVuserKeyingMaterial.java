@@ -28,11 +28,8 @@ public class MQVuserKeyingMaterial
         OriginatorPublicKey ephemeralPublicKey,
         ASN1OctetString addedukm)
     {
-        if (ephemeralPublicKey == null)
-        {
-            throw new IllegalArgumentException("Ephemeral public key cannot be null");
-        }
-
+        // TODO Check ephemeralPublicKey not null
+        
         this.ephemeralPublicKey = ephemeralPublicKey;
         this.addedukm = addedukm;
     }
@@ -40,10 +37,7 @@ public class MQVuserKeyingMaterial
     private MQVuserKeyingMaterial(
         ASN1Sequence seq)
     {
-        if (seq.size() != 1 && seq.size() != 2)
-        {
-            throw new IllegalArgumentException("Sequence has incorrect number of elements");
-        }
+        // TODO Check seq has either 1 or 2 elements
 
         this.ephemeralPublicKey = OriginatorPublicKey.getInstance(
             seq.getObjectAt(0));
@@ -87,16 +81,17 @@ public class MQVuserKeyingMaterial
     public static MQVuserKeyingMaterial getInstance(
         Object obj)
     {
-        if (obj instanceof MQVuserKeyingMaterial)
+        if (obj == null || obj instanceof MQVuserKeyingMaterial)
         {
             return (MQVuserKeyingMaterial)obj;
         }
-        else if (obj != null)
+
+        if (obj instanceof ASN1Sequence)
         {
-            return new MQVuserKeyingMaterial(ASN1Sequence.getInstance(obj));
+            return new MQVuserKeyingMaterial((ASN1Sequence)obj);
         }
 
-        return null;
+        throw new IllegalArgumentException("Invalid MQVuserKeyingMaterial: " + obj.getClass().getName());
     }
 
     public OriginatorPublicKey getEphemeralPublicKey()

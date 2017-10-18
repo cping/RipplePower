@@ -20,10 +20,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.config.ProxySettings;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.HttpRequest.HttpRequestException;
+import org.ripple.power.utils.HttpsUtils;
+import org.ripple.power.utils.StringUtils;
+import org.ripple.power.utils.HttpsUtils.ResponseResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -104,59 +109,81 @@ public class OtherData {
 	}
 
 	public static class CoinmarketcapData {
-		public int position = 0;
-		public String marketCap;
-		public String change7d;
+
 		public String currency;
+
 		public String id;
-		public String change1h;
-		public long timestamp;
-		public String volume24;
-		public String price;
+
 		public String name;
-		public String change7h;
-		public String totalSupply;
-		public String change24;
+
+		public String symbol;
+
+		public String rank;
+
+		public String price_usd;
+
+		public String price_btc;
+
+		public String volume_usd_24h;
+
+		public String market_cap_usd;
+
+		public String available_supply;
+
+		public String total_supply;
+
+		public String percent_change_1h;
+
+		public String percent_change_24h;
+
+		public String percent_change_7d;
+
+		public long last_updated;
 
 		public static CoinmarketcapData from(JSONObject o) {
+
 			if (o != null) {
 				CoinmarketcapData data = new CoinmarketcapData();
-				data.position = o.getInt("position");
-				data.marketCap = o.getString("marketCap");
-				data.change7d = o.getString("change7d");
-				data.volume24 = o.getString("volume24");
-				data.currency = o.getString("currency");
-				data.id = o.getString("id");
-				data.change1h = o.getString("change1h");
-				data.timestamp = o.getLong("timestamp");
-				data.price = o.getString("price");
-				if (data.price.toLowerCase().indexOf("e") != -1) {
-					data.price = LSystem.getNumber(new BigDecimal(data.price));
+				data.id = o.optString("id");
+				data.name = o.optString("name");
+				data.symbol = o.optString("symbol");
+				data.rank = o.optString("rank");
+				data.volume_usd_24h = o.optString("24h_volume_usd", o.optString("volume_usd_24h"));
+				data.market_cap_usd = o.optString("market_cap_usd");
+				data.available_supply = o.optString("available_supply");
+				data.total_supply = o.optString("total_supply");
+				data.percent_change_1h = o.optString("percent_change_1h");
+				data.percent_change_24h = o.optString("percent_change_24h");
+				data.percent_change_7d = o.optString("percent_change_7d");
+				data.last_updated = o.optLong("last_updated");
+
+				data.price_btc = o.optString("price_btc");
+				if (data.price_btc.toLowerCase().indexOf("e") != -1) {
+					data.price_btc = LSystem.getNumber(new BigDecimal(data.price_btc));
 				}
-				data.name = o.getString("name");
-				data.change7h = o.getString("change7h");
-				data.totalSupply = o.getString("totalSupply");
-				data.change24 = o.getString("change24");
+				data.price_usd = o.optString("price_usd");
+				if (data.price_usd.toLowerCase().indexOf("e") != -1) {
+					data.price_usd = LSystem.getNumber(new BigDecimal(data.price_usd));
+				}
+				if (data.currency == null) {
+					data.currency = "USD";
+				}
 				return data;
 			}
 			return null;
 		}
 
 		public String toHTMLString() {
-			return name + "/" + currency.toUpperCase() + "<br>" + " Week:"
-					+ change7d + "%<br>" + "7hour:" + change7h + "%<br>"
-					+ "1hour:" + change1h + "%<br>" + price + "/"
-					+ currency.toUpperCase() + "==1/" + name + "<br>"
-					+ "totalSupply:" + totalSupply + "<br>"
+			return currency + "/" + name + "<br>" + " Week:" + percent_change_7d + "%<br>" + "1hour:"
+					+ percent_change_1h + "%<br>" + "24hour:" + percent_change_24h + "%<br>" + price_usd + "/"
+					+ currency + "==1/" + name + "<br>" + "totalSupply:" + total_supply + "<br>"
 					+ RippleDate.now().getTimeString();
 		}
 
 		public String toString() {
-			return name + "/" + currency.toUpperCase() + " " + " Week:"
-					+ change7d + "% " + " 7hour:" + change7h + "% " + " 1hour:"
-					+ change1h + "% " + price + "/" + currency.toUpperCase()
-					+ "==1/" + name + " " + "totalSupply:" + totalSupply + " "
-					+ RippleDate.now().getTimeString();
+			return currency + "/" + name + " " + " Week:" + percent_change_7d + "% " + " 1hour:" + percent_change_1h
+					+ "% " + " 24hour:" + percent_change_24h + "% " + price_usd + "/" + currency + "==1/" + name + " "
+					+ "totalSupply:" + total_supply + " " + RippleDate.now().getTimeString();
 		}
 
 	}
@@ -179,8 +206,7 @@ public class OtherData {
 		}
 	}
 
-	private final static ArrayList<String> _coinmarketcap_limits = new ArrayList<String>(
-			10);
+	private final static ArrayList<String> _coinmarketcap_limits = new ArrayList<String>(10);
 	static {
 		_coinmarketcap_limits.add("usd");
 		_coinmarketcap_limits.add("eur");
@@ -190,22 +216,20 @@ public class OtherData {
 		_coinmarketcap_limits.add("btc");
 	}
 
-	private final static HashMap<String, String> _coinmarketcap_names = new HashMap<String, String>(
-			10);
+	private final static HashMap<String, String> _coinmarketcap_names = new HashMap<String, String>(10);
 	static {
-		_coinmarketcap_names.put("ripple", "xrp");
-		_coinmarketcap_names.put("bitcoin", "btc");
-		_coinmarketcap_names.put("litecoin", "ltc");
-		_coinmarketcap_names.put("dog", "doge");
-		_coinmarketcap_names.put("dogecoin", "doge");
-		_coinmarketcap_names.put("nxtcoin", "nxt");
-		_coinmarketcap_names.put("bts", "btsx");
+		_coinmarketcap_names.put("xrp", "ripple");
+		_coinmarketcap_names.put("btc", "bitcoin");
+		_coinmarketcap_names.put("ltc", "litecoin");
+		_coinmarketcap_names.put("doge", "dog");
+		_coinmarketcap_names.put("doge", "dogecoin");
+		_coinmarketcap_names.put("nxt", "nxtcoin");
+		_coinmarketcap_names.put("btsx", "bts");
 	}
 
 	public static double reset(String name) {
 		for (Store s : _storage) {
-			if (s.name.equals(name)
-					&& (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
+			if (s.name.equals(name) && (System.currentTimeMillis() - s.date) <= LSystem.MINUTE) {
 				return s.price;
 			} else if (s.name.equals(name)) {
 				_storage.remove(s);
@@ -223,39 +247,13 @@ public class OtherData {
 	}
 
 	public static double getLegaltenderCurrencyToUSD(String name) {
-		if (name == null) {
+		String result;
+		try {
+			result = converterMoney("USD", name);
+		} catch (Exception e) {
 			return -1;
 		}
-		try {
-			name = name.trim().toLowerCase();
-			if (_coinmarketcap_names.containsKey(name)) {
-				name = _coinmarketcap_names.get(name);
-			}
-			double ret = reset(name + "currency");
-			if (ret != -1) {
-				return ret;
-			}
-			HttpRequest request = HttpRequest
-					.get("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('"
-							+ name
-							+ "')&format=json&diagnostics=false&env=http://datatables.org/alltables.env");
-
-			if (request.ok()) {
-				String result = request.body();
-				JSONObject obj = new JSONObject(result);
-				obj = obj.getJSONObject("query");
-				obj = obj.getJSONObject("results");
-				obj = obj.getJSONObject("rate");
-				if (obj.has("Rate")) {
-					addStorage(new Store(obj.getDouble("Rate"), name
-							+ "currency"));
-					return obj.getDouble("Rate");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return -1;
+		return StringUtils.isEmpty(result) ? -1 : Double.parseDouble(result);
 	}
 
 	public static String getCoinmarketcapCoinToUSD(String name) {
@@ -264,6 +262,9 @@ public class OtherData {
 		}
 		try {
 			name = name.toLowerCase();
+			if ("usd".equals(name)) {
+				return "1";
+			}
 			if (_coinmarketcap_names.containsKey(name)) {
 				name = _coinmarketcap_names.get(name);
 			}
@@ -271,22 +272,27 @@ public class OtherData {
 			if (ret != -1) {
 				return String.valueOf(ret);
 			}
-			HttpRequest request = HttpRequest
-					.get("http://coinmarketcap.northpole.ro/api/" + name
-							+ ".json");
+
+			HttpRequest request = HttpRequest.get("https://api.coinmarketcap.com/v1/ticker/" + name + "/");
+
 			if (request.ok()) {
-				JSONObject a = new JSONObject(request.body());
-				if (a.has("price")) {
-					double result = a.getDouble("price");
-					double realprice = -1;
-					// Prevent coinmarketcap price fixing
-					if (LSystem.nativeCurrency.equalsIgnoreCase(name)
-							|| "ripple".equalsIgnoreCase(name)) {
-						realprice = RippleChartsAPI.getXRPtoUSD();
+				JSONArray a = new JSONArray(request.body());
+				if (a.length() > 0) {
+					JSONObject res = a.getJSONObject(0);
+					if (res.has("price_usd")) {
+						double result = res.getDouble("price_usd");
+						double realprice = -1;
+						// Prevent coinmarketcap price fixing
+						if (LSystem.nativeCurrency.equalsIgnoreCase(name) || "ripple".equalsIgnoreCase(name)) {
+							realprice = RippleChartsAPI.getXRPtoUSD();
+						}
+						if (realprice <= 0) {
+							realprice = result;
+						}
+						result = Math.max(result, realprice);
+						addStorage(new Store(result, name + "coin"));
+						return LSystem.getNumber(new BigDecimal(result));
 					}
-					result = Math.max(result, realprice);
-					addStorage(new Store(result, name + "coin"));
-					return LSystem.getNumber(new BigDecimal(result));
 				}
 			}
 
@@ -300,6 +306,7 @@ public class OtherData {
 		if (cur == null || name == null) {
 			return null;
 		}
+
 		cur = cur.toLowerCase();
 		name = name.toLowerCase();
 		if (!_coinmarketcap_limits.contains(cur)) {
@@ -308,37 +315,45 @@ public class OtherData {
 		if (_coinmarketcap_names.containsKey(name)) {
 			name = _coinmarketcap_names.get(name);
 		}
-		HttpRequest request = HttpRequest.get(String.format(
-				"http://coinmarketcap.northpole.ro/api/%s/%s.json", cur, name));
-		if (request.ok()) {
-			JSONObject obj = new JSONObject(request.body());
-			CoinmarketcapData data = CoinmarketcapData.from(obj);
-			return data;
+		CoinmarketcapData data = getTickerResult(
+				String.format("https://api.coinmarketcap.com/v1/ticker/%s/?convert=%s", name, cur.toUpperCase()));
+		data.currency = cur.toUpperCase();
+		return data;
+	}
+
+	private final static CoinmarketcapData getTickerResult(String query) {
+		HttpRequest request;
+		try {
+			request = HttpRequest.get(String.format(query));
+			if (request.ok()) {
+				JSONArray obj = new JSONArray(request.body());
+				CoinmarketcapData data = CoinmarketcapData.from(obj.getJSONObject(0));
+				return data;
+			}
+		} catch (Exception e) {
+			return null;
 		}
 		return null;
 	}
 
-	public static ArrayList<CoinmarketcapData> getCoinmarketcapAllTo(int limit)
-			throws Exception {
+	public static ArrayList<CoinmarketcapData> getCoinmarketcapAllTo(int limit) throws Exception {
 		if (limit <= 0) {
 			limit = 1;
 		}
-		HttpRequest request = HttpRequest
-				.get("http://coinmarketcap.northpole.ro/api/all.json");
+		// https://files.coinmarketcap.com/generated/search/quick_search.json
+		HttpRequest request = HttpRequest.get("https://api.coinmarketcap.com/v1/ticker/?limit=" + limit);
 		request.acceptGzipEncoding();
 		if (request.ok()) {
 			request.uncompress(true);
-			JSONObject obj = new JSONObject(request.body());
-			JSONArray arrays = obj.optJSONArray("markets");
+			JSONArray arrays = new JSONArray(request.body());
 			final int size = arrays.length();
-			ArrayList<CoinmarketcapData> list = new ArrayList<CoinmarketcapData>(
-					size);
-			for (int i = size - 1; i > -1; i--) {
+			ArrayList<CoinmarketcapData> list = new ArrayList<CoinmarketcapData>(size);
+			for (int i = 0; i < arrays.length(); i++) {
 				JSONObject o = arrays.getJSONObject(i);
-				if (Integer.valueOf(o.optString("position")) <= limit) {
-					CoinmarketcapData data = CoinmarketcapData.from(o);
-					list.add(data);
-				}
+				CoinmarketcapData data = CoinmarketcapData.from(o);
+				data.currency = "USD";
+				list.add(data);
+
 			}
 			return list;
 		}
@@ -346,22 +361,17 @@ public class OtherData {
 	}
 
 	private static String FromNodeValue(Element el, String name) {
-		return el.getElementsByTagName(name).item(0).getFirstChild()
-				.getNodeValue();
+		return el.getElementsByTagName(name).item(0).getFirstChild().getNodeValue();
 	}
 
-	public static LegalTenderCurrency[] getBoiAllLegalTenderRates()
-			throws Exception {
-		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
+	public static LegalTenderCurrency[] getBoiAllLegalTenderRates() throws Exception {
+		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc;
-		HttpRequest request = HttpRequest
-				.get("http://www.boi.org.il/currency.xml");
+		HttpRequest request = HttpRequest.get("http://www.boi.org.il/currency.xml");
 		if (request.ok()) {
 			doc = dBuilder.parse(request.stream());
 			NodeList currencies = doc.getElementsByTagName("CURRENCY");
-			LegalTenderCurrency result[] = new LegalTenderCurrency[currencies
-					.getLength()];
+			LegalTenderCurrency result[] = new LegalTenderCurrency[currencies.getLength()];
 			for (int i = 0; i < currencies.getLength(); i++) {
 				Element el = (Element) currencies.item(i);
 				result[i] = new LegalTenderCurrency();
@@ -369,71 +379,17 @@ public class OtherData {
 				result[i].country = FromNodeValue(el, "COUNTRY");
 				result[i].currencyCode = FromNodeValue(el, "CURRENCYCODE");
 				result[i].unit = Integer.parseInt(FromNodeValue(el, ("UNIT")));
-				result[i].rate = Double
-						.parseDouble(FromNodeValue(el, ("RATE")));
-				result[i].change = Double.parseDouble(FromNodeValue(el,
-						("CHANGE")));
+				result[i].rate = Double.parseDouble(FromNodeValue(el, ("RATE")));
+				result[i].change = Double.parseDouble(FromNodeValue(el, ("CHANGE")));
 			}
 			return result;
 		}
 		return null;
 	}
 
-	private static String find(int nStartLine, int nEndLine, BufferedReader br)
-			throws IOException {
-		String line;
-		String target = "";
-		String elements = "";
-		int i = 0;
-		while ((line = br.readLine()) != null) {
-			++i;
-			if (i < nStartLine) {
-				continue;
-			}
-			line.trim();
-			target = target + line;
-			if (i >= nEndLine) {
-				break;
-			}
+	private final static DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.00000");
 
-		}
-		Pattern r = Pattern.compile(REGEX_TABLE, Pattern.CASE_INSENSITIVE);
-		Matcher mTable = r.matcher(target);
-		if (mTable.find()) {
-			String strRows = mTable.group(1).trim();
-
-			Matcher mRow = Pattern.compile(REGEX_ROW, Pattern.CASE_INSENSITIVE)
-					.matcher(strRows);
-			while (mRow.find()) {
-				boolean firstEle = true;
-				String strEle = mRow.group(1).trim();
-
-				Matcher mEle = Pattern.compile(REGEX_ELE,
-						Pattern.CASE_INSENSITIVE).matcher(strEle);
-				if (!elements.equals(""))
-					elements = elements + ROW_SEPARATOR;
-				while (mEle.find()) {
-					String result = mEle.group(1).trim();
-					if (firstEle)
-						elements = elements + result;
-					else
-						elements = elements + ELEMENT_SEPARATOR + result;
-					firstEle = false;
-				}
-				if (!elements.equals("")) {
-					int len = elements.length();
-					elements = elements.substring(0, len - 2);
-				}
-			}
-		}
-		return new String(elements);
-	}
-
-	private final static DecimalFormat NUMBER_FORMAT = new DecimalFormat(
-			"0.00000");
-
-	public static ArrayList<String> getAllLegalTenderRateHTML()
-			throws Exception {
+	public static ArrayList<String> getAllLegalTenderRateHTML() throws Exception {
 		HttpRequest request = HttpRequest.get("http://www.usd-cny.com/");
 		request.acceptGzipEncoding();
 		request.uncompress(true);
@@ -442,37 +398,35 @@ public class OtherData {
 			return null;
 		}
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				request.stream(), "gb2312"));
-
-		String result = find(78, 313, br);
-
-		String strRows[] = result.split(ROW_SEPARATOR);
-		String strCur, strRate;
-		NumberFormat numFormat = NumberFormat.getNumberInstance();
-		Number numb = null;
-
-		ArrayList<String> hashTable = new ArrayList<String>();
-
-		for (int i = 1; i < strRows.length; i++) {
-			String strEle[] = strRows[i].split(ELEMENT_SEPARATOR);
-			if (strEle[3].equals("")) {
-				break;
+		ArrayList<String> table = new ArrayList<String>();
+		org.jsoup.nodes.Document doc = Jsoup.parse(request.body("gb2312"));
+		org.jsoup.select.Elements trs = doc.select("table").select("tr");
+		for (int i = 0; i < trs.size(); i++) {
+			org.jsoup.select.Elements tds = trs.get(i).select("td");
+			int size = tds.size();
+			if (size >= 7) {
+				String cur = null;
+				for (int j = 0; j < size; j++) {
+					String txt = tds.get(j).text().trim();
+					if (txt.indexOf(' ') != -1) {
+						txt = StringUtils.split(txt, " ")[1];
+					}
+					txt = StringUtils.trim(txt);
+					if (!StringUtils.containChinaLanguage(txt)) {
+						if (j == 0) {
+							cur = txt;
+						}
+						if (j == 6) {
+							table.add("1/" + cur + "<br>Rate<br>" + NUMBER_FORMAT.format(Double.valueOf(txt) / 100.0d)
+									+ "/CNY");
+							table.add("1/CNY" + "<br>Rate<br>" + NUMBER_FORMAT.format(100.0d / Double.valueOf(txt))
+									+ "/" + cur);
+						}
+					}
+				}
 			}
-			strCur = strEle[0].split(" ")[1];
-			strRate = strEle[3];
-			numb = numFormat.parse(strRate);
-			strRate = numb.toString();
-			hashTable.add("1/" + strCur + "<br>Rate<br>"
-					+ NUMBER_FORMAT.format(Double.valueOf(strRate) / 100.0d)
-					+ "/CNY");
-			hashTable.add("1/CNY" + "<br>Rate<br>"
-					+ NUMBER_FORMAT.format(100.0d / Double.valueOf(strRate))
-					+ "/" + strCur);
 		}
-
-		br.close();
-		return hashTable;
+		return table;
 	}
 
 	private static String getCharacterDataFromElement(Element e) {
@@ -495,12 +449,18 @@ public class OtherData {
 	}
 
 	protected static String getElementValue(Element parent, String label) {
-		return getCharacterDataFromElement((Element) parent
-				.getElementsByTagName(label).item(0));
+		return getCharacterDataFromElement((Element) parent.getElementsByTagName(label).item(0));
 	}
 
-	public static String converterMoney(String src, String cur)
-			throws Exception {
+	/**
+	 * 转换两种货币
+	 * 
+	 * @param src
+	 * @param cur
+	 * @return
+	 * @throws Exception
+	 */
+	public static String converterMoney(String src, String cur) throws Exception {
 		if (src == null || cur == null) {
 			return null;
 		}
@@ -509,33 +469,40 @@ public class OtherData {
 		if (ret != -1) {
 			return String.valueOf(ret);
 		}
-		HttpRequest request = HttpRequest.get(String.format(
-				"http://themoneyconverter.com/rss-feed/%s/rss.xml", src));
+		// 欧盟的免费货币价格转换平台，以前的那个网站api被取消了……
+		HttpRequest request = HttpRequest.get(
+				String.format("http://api.fixer.io/latest?base=%s&symbols=%s", src.toUpperCase(), cur.toUpperCase()));
 		request.acceptGzipEncoding();
 		request.uncompress(true);
 		if (!request.ok()) {
 			return null;
 		}
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-		Document doc = builder.parse(request.stream());
-		NodeList nodes = doc.getElementsByTagName("item");
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Element element = (Element) nodes.item(i);
-			String description = getElementValue(element, "description");
-			if (query.equals(getElementValue(element, "title"))) {
-				String[] leftright = description.split("=");
-				String[] rightWords = leftright[1].split(" ");
-				addStorage(new Store(Double.parseDouble(rightWords[1]), query));
-				return rightWords[1];
+		JSONObject obj = new JSONObject(request.body());
+		if (obj.has("rates")) {
+			String result = obj.optJSONObject("rates").optString(cur.toUpperCase());
+			addStorage(new Store(Double.parseDouble(result), query));
+			return result;
+		} else {
+			// 免费api经常各种悲剧，多加个保险
+			ResponseResult response = HttpsUtils
+					.getSSL(String.format("http://free.currencyconverterapi.com/api/v3/convert?q=%s_%s&compact=y",
+							src.toUpperCase(), cur.toUpperCase()));
+			if (!response.ok()) {
+				return null;
+			}
+			String tag = src.toUpperCase() + "_" + cur.toUpperCase();
+			obj = new JSONObject(response.getResult());
+			if (obj.has(tag)) {
+				String result = obj.optJSONObject(tag).optString("val");
+				addStorage(new Store(Double.parseDouble(result), query));
+				return result;
 			}
 		}
-
 		return null;
+
 	}
 
-	private static HashMap<String, String> _coin_names = new HashMap<String, String>(
-			10);
+	private static HashMap<String, String> _coin_names = new HashMap<String, String>(10);
 	static {
 		_coin_names.put("xrp", "ripple");
 		_coin_names.put("btc", "bitcoin");
@@ -547,14 +514,12 @@ public class OtherData {
 		_coin_names.put("bitsharesx", "bitshares-x");
 	}
 
-	public static ArrayMap getCapitalization(int day, String name)
-			throws Exception {
+	public static ArrayMap getCapitalization(int day, String name) throws Exception {
 		return getCapitalization(day, name, -1);
 	}
 
 	// coinmarketcap data not update……
-	public static ArrayMap getCapitalization(int day, String name,
-			int trend_limit) throws Exception {
+	public static ArrayMap getCapitalization(int day, String name, int trend_limit) throws Exception {
 		if (name == null) {
 			return null;
 		}
@@ -565,8 +530,7 @@ public class OtherData {
 
 		DateFormat YYYY_MM_DD_HHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ArrayMap list = new ArrayMap(100);
-		JSONArray arrays = CoinmarketcapAPI
-				.getCoinmarketcapMarketCap(name, day);
+		JSONArray arrays = CoinmarketcapAPI.getCoinmarketcapMarketCap(name, day);
 
 		if (arrays != null) {
 			if (trend_limit > 0) {
@@ -577,8 +541,7 @@ public class OtherData {
 			} else {
 				for (int i = 0; i < arrays.length(); i++) {
 					JSONArray result = arrays.getJSONArray(i);
-					String key = YYYY_MM_DD_HHMM.format(new Date(result
-							.getLong(0)));
+					String key = YYYY_MM_DD_HHMM.format(new Date(result.getLong(0)));
 					String value = String.valueOf(result.getDouble(1));
 					list.put(key, value);
 				}

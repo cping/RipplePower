@@ -29,8 +29,7 @@ public class Year extends RegularTimer implements Serializable {
 
 	public Year(int year) {
 		if ((year < Year.MINIMUM_YEAR) || (year > Year.MAXIMUM_YEAR)) {
-			throw new IllegalArgumentException("Year constructor: year ("
-					+ year + ") outside valid range.");
+			throw new IllegalArgumentException("Year constructor: year (" + year + ") outside valid range.");
 		}
 		this.year = (short) year;
 		peg(Calendar.getInstance());

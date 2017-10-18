@@ -16,14 +16,11 @@ public class RippleURI {
 	public static final String FIELD_AMOUNT = "amount";
 	public static final String FIELD_ADDRESS = "address";
 
-	public static String convertToBitcoinURI(WalletItem address,
-			BigDecimal amount, String label, String message) {
-		return convertToBitcoinURI(address.getPublicKey(), amount, label,
-				message);
+	public static String convertToBitcoinURI(WalletItem address, BigDecimal amount, String label, String message) {
+		return convertToBitcoinURI(address.getPublicKey(), amount, label, message);
 	}
 
-	public static String convertToBitcoinURI(String address, BigDecimal amount,
-			String label, String message) {
+	public static String convertToBitcoinURI(String address, BigDecimal amount, String label, String message) {
 		if (amount != null && amount.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException("Amount must be positive");
 		}
@@ -34,8 +31,7 @@ public class RippleURI {
 		boolean questionMarkHasBeenOutput = false;
 
 		if (amount != null) {
-			builder.append(QUESTION_MARK_SEPARATOR).append(FIELD_AMOUNT)
-					.append("=");
+			builder.append(QUESTION_MARK_SEPARATOR).append(FIELD_AMOUNT).append("=");
 			builder.append(amount);
 			questionMarkHasBeenOutput = true;
 		}
@@ -47,8 +43,7 @@ public class RippleURI {
 				builder.append(QUESTION_MARK_SEPARATOR);
 				questionMarkHasBeenOutput = true;
 			}
-			builder.append(FIELD_LABEL).append("=")
-					.append(encodeURLString(label));
+			builder.append(FIELD_LABEL).append("=").append(encodeURLString(label));
 		}
 
 		if (message != null && !"".equals(message)) {
@@ -57,8 +52,7 @@ public class RippleURI {
 			} else {
 				builder.append(QUESTION_MARK_SEPARATOR);
 			}
-			builder.append(FIELD_MESSAGE).append("=")
-					.append(encodeURLString(message));
+			builder.append(FIELD_MESSAGE).append("=").append(encodeURLString(message));
 		}
 
 		return builder.toString();
@@ -66,8 +60,7 @@ public class RippleURI {
 
 	static String encodeURLString(String stringToEncode) {
 		try {
-			return java.net.URLEncoder.encode(stringToEncode, "UTF-8").replace(
-					"+", ENCODED_SPACE_CHARACTER);
+			return java.net.URLEncoder.encode(stringToEncode, "UTF-8").replace("+", ENCODED_SPACE_CHARACTER);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}

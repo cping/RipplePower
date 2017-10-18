@@ -4,10 +4,10 @@ import org.json.JSONObject;
 
 public class MarketDepthAsksResponse {
 	public int id;
-	public Asks result=new Asks();
+	public Asks result = new Asks();
 	public String status;
 	public String type;
-	
+
 	public void from(JSONObject obj) {
 		if (obj != null) {
 			this.id = obj.optInt("id");

@@ -29,8 +29,7 @@ public class State {
 				this.last_close.from(last_close_obj);
 			}
 			this.io_latency_ms = result.optInt("io_latency_ms");
-			JSONObject validated_ledger_obj = result
-					.optJSONObject("validated_ledger");
+			JSONObject validated_ledger_obj = result.optJSONObject("validated_ledger");
 			if (validated_ledger_obj != null) {
 				this.validated_ledger.from(validated_ledger_obj);
 			}

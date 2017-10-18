@@ -18,7 +18,6 @@ import org.ripple.power.config.LSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class OpenSSL {
 	private Logger log = LoggerFactory.getLogger(OpenSSL.class);
 
@@ -44,41 +43,30 @@ public class OpenSSL {
 		try {
 			openSSLSaltedBytes = OPENSSL_SALTED_TEXT.getBytes(LSystem.encoding);
 
-			openSSLMagicText = Base64
-					.encodeBase64String(
-							OpenSSL.OPENSSL_SALTED_TEXT
-									.getBytes(LSystem.encoding))
-					.substring(
-							0,
-							OpenSSL.NUMBER_OF_CHARACTERS_TO_MATCH_IN_OPENSSL_MAGIC_TEXT);
+			openSSLMagicText = Base64.encodeBase64String(OpenSSL.OPENSSL_SALTED_TEXT.getBytes(LSystem.encoding))
+					.substring(0, OpenSSL.NUMBER_OF_CHARACTERS_TO_MATCH_IN_OPENSSL_MAGIC_TEXT);
 
 		} catch (UnsupportedEncodingException e) {
 			log.error("Could not construct EncrypterDecrypter", e.getMessage());
 		}
 	}
 
-	private CipherParameters getAESPasswordKey(CharSequence password,
-			byte[] salt) throws Exception {
+	private CipherParameters getAESPasswordKey(CharSequence password, byte[] salt) throws Exception {
 		try {
 			PBEParametersGenerator generator = new OpenSSLPBEParametersGenerator();
-			generator.init(PBEParametersGenerator
-					.PKCS5PasswordToBytes(convertToCharArray(password)), salt,
+			generator.init(PBEParametersGenerator.PKCS5PasswordToBytes(convertToCharArray(password)), salt,
 					NUMBER_OF_ITERATIONS);
 
-			ParametersWithIV key = (ParametersWithIV) generator
-					.generateDerivedParameters(KEY_LENGTH, IV_LENGTH);
+			ParametersWithIV key = (ParametersWithIV) generator.generateDerivedParameters(KEY_LENGTH, IV_LENGTH);
 
 			return key;
 		} catch (Exception e) {
-			throw new Exception(
-					"Could not generate key from password of length "
-							+ password.length() + " and salt '"
-							+ CoinUtils.toHex(salt), e);
+			throw new Exception("Could not generate key from password of length " + password.length() + " and salt '"
+					+ CoinUtils.toHex(salt), e);
 		}
 	}
 
-	public String encrypt(String plainText, CharSequence password)
-			throws Exception {
+	public String encrypt(String plainText, CharSequence password) throws Exception {
 		try {
 			byte[] plainTextAsBytes;
 			if (plainText == null) {
@@ -89,55 +77,43 @@ public class OpenSSL {
 
 			byte[] encryptedBytes = encrypt(plainTextAsBytes, password);
 
-			byte[] encryptedBytesPlusSaltedText = concat(openSSLSaltedBytes,
-					encryptedBytes);
+			byte[] encryptedBytesPlusSaltedText = concat(openSSLSaltedBytes, encryptedBytes);
 
 			return Base64.encodeBase64String(encryptedBytesPlusSaltedText);
 		} catch (Exception e) {
-			throw new Exception("Could not encrypt string '" + plainText + "'",
-					e);
+			throw new Exception("Could not encrypt string '" + plainText + "'", e);
 		}
 	}
 
-	public byte[] encrypt(byte[] plainTextAsBytes, CharSequence password)
-			throws Exception {
+	public byte[] encrypt(byte[] plainTextAsBytes, CharSequence password) throws Exception {
 		try {
 			byte[] salt = new byte[SALT_LENGTH];
 			secureRandom.nextBytes(salt);
 
-			ParametersWithIV key = (ParametersWithIV) getAESPasswordKey(
-					password, salt);
+			ParametersWithIV key = (ParametersWithIV) getAESPasswordKey(password, salt);
 
-			BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(
-					new CBCBlockCipher(new AESFastEngine()));
+			BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESFastEngine()));
 			cipher.init(true, key);
-			byte[] encryptedBytes = new byte[cipher
-					.getOutputSize(plainTextAsBytes.length)];
-			int length = cipher.processBytes(plainTextAsBytes, 0,
-					plainTextAsBytes.length, encryptedBytes, 0);
+			byte[] encryptedBytes = new byte[cipher.getOutputSize(plainTextAsBytes.length)];
+			int length = cipher.processBytes(plainTextAsBytes, 0, plainTextAsBytes.length, encryptedBytes, 0);
 
 			cipher.doFinal(encryptedBytes, length);
 
 			return concat(salt, encryptedBytes);
 		} catch (Exception e) {
-			throw new Exception("Could not encrypt bytes '"
-					+ CoinUtils.toHex(plainTextAsBytes) + "'", e);
+			throw new Exception("Could not encrypt bytes '" + CoinUtils.toHex(plainTextAsBytes) + "'", e);
 		}
 	}
 
-	public String decrypt(String textToDecode, CharSequence password)
-			throws Exception {
+	public String decrypt(String textToDecode, CharSequence password) throws Exception {
 		try {
-			final byte[] decodeTextAsBytes = Base64.decodeBase64(textToDecode
-					.getBytes(LSystem.encoding));
+			final byte[] decodeTextAsBytes = Base64.decodeBase64(textToDecode.getBytes(LSystem.encoding));
 
 			int saltPrefixTextLength = openSSLSaltedBytes.length;
 
-			byte[] cipherBytes = new byte[decodeTextAsBytes.length
-					- saltPrefixTextLength];
-			System.arraycopy(decodeTextAsBytes, saltPrefixTextLength,
-					cipherBytes, 0, decodeTextAsBytes.length
-							- saltPrefixTextLength);
+			byte[] cipherBytes = new byte[decodeTextAsBytes.length - saltPrefixTextLength];
+			System.arraycopy(decodeTextAsBytes, saltPrefixTextLength, cipherBytes, 0,
+					decodeTextAsBytes.length - saltPrefixTextLength);
 
 			byte[] decryptedBytes = decrypt(cipherBytes, password);
 
@@ -147,8 +123,7 @@ public class OpenSSL {
 		}
 	}
 
-	public byte[] decrypt(byte[] bytesToDecode, CharSequence password)
-			throws Exception {
+	public byte[] decrypt(byte[] bytesToDecode, CharSequence password) throws Exception {
 		try {
 
 			byte[] salt = new byte[SALT_LENGTH];
@@ -156,20 +131,15 @@ public class OpenSSL {
 			System.arraycopy(bytesToDecode, 0, salt, 0, SALT_LENGTH);
 
 			byte[] cipherBytes = new byte[bytesToDecode.length - SALT_LENGTH];
-			System.arraycopy(bytesToDecode, SALT_LENGTH, cipherBytes, 0,
-					bytesToDecode.length - SALT_LENGTH);
+			System.arraycopy(bytesToDecode, SALT_LENGTH, cipherBytes, 0, bytesToDecode.length - SALT_LENGTH);
 
-			ParametersWithIV key = (ParametersWithIV) getAESPasswordKey(
-					password, salt);
+			ParametersWithIV key = (ParametersWithIV) getAESPasswordKey(password, salt);
 
-			BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(
-					new CBCBlockCipher(new AESFastEngine()));
+			BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESFastEngine()));
 			cipher.init(false, key);
 
-			byte[] decryptedBytes = new byte[cipher
-					.getOutputSize(cipherBytes.length)];
-			int length = cipher.processBytes(cipherBytes, 0,
-					cipherBytes.length, decryptedBytes, 0);
+			byte[] decryptedBytes = new byte[cipher.getOutputSize(cipherBytes.length)];
+			int length = cipher.processBytes(cipherBytes, 0, cipherBytes.length, decryptedBytes, 0);
 
 			cipher.doFinal(decryptedBytes, length);
 

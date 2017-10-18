@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-import org.ripple.bouncycastle.util.Strings;
 import org.ripple.bouncycastle.util.encoders.Base64;
 
 /**
@@ -28,7 +27,7 @@ public class PemWriter
     {
         super(out);
 
-        String nl = Strings.lineSeparator();
+        String nl = System.getProperty("line.separator");
         if (nl != null)
         {
             nlLength = nl.length();

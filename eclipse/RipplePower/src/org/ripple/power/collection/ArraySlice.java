@@ -44,12 +44,11 @@ public class ArraySlice<T> extends AbstractList<T> {
 		this.right = right = absoluteIndex(right, array.length);
 		if (right < left) {
 			throw new NegativeArraySizeException(
-					"Trying to make a slice with left bound " + left
-							+ " and right bound" + right + ".");
+					"Trying to make a slice with left bound " + left + " and right bound" + right + ".");
 		}
 		if (left != right && (start < left || right <= start)) {
-			throw new IndexOutOfBoundsException("Start of slice is at " + start
-					+ ", while the bounds are [" + left + ", " + right + "[.");
+			throw new IndexOutOfBoundsException(
+					"Start of slice is at " + start + ", while the bounds are [" + left + ", " + right + "[.");
 		}
 	}
 
@@ -67,8 +66,7 @@ public class ArraySlice<T> extends AbstractList<T> {
 		index = stride * index;
 		index = absoluteIndex(index, size());
 		if (index < 0 || size() <= index) {
-			throw new IndexOutOfBoundsException("index " + _index
-					+ " (stride: " + stride + ") in "
+			throw new IndexOutOfBoundsException("index " + _index + " (stride: " + stride + ") in "
 					+ this.getClass().getName() + " instance of size " + size());
 		}
 		return (start + index) % array.length;
@@ -114,8 +112,7 @@ public class ArraySlice<T> extends AbstractList<T> {
 		} else if (left > 0) {
 			shiftLeftBound();
 		} else {
-			throw new IllegalStateException(
-					"Trying to grow a slice that already occupies the whole array.");
+			throw new IllegalStateException("Trying to grow a slice that already occupies the whole array.");
 		}
 	}
 

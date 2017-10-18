@@ -35,8 +35,7 @@ import java.util.Map;
 public abstract class OneDimensionalCodeWriter implements Writer {
 
 	@Override
-	public final BitMatrix encode(String contents, BarcodeFormat format,
-			int width, int height) throws WriterException {
+	public final BitMatrix encode(String contents, BarcodeFormat format, int width, int height) throws WriterException {
 		return encode(contents, format, width, height, null);
 	}
 
@@ -49,16 +48,14 @@ public abstract class OneDimensionalCodeWriter implements Writer {
 	 * {@code IllegalArgumentException} is thrown.
 	 */
 	@Override
-	public BitMatrix encode(String contents, BarcodeFormat format, int width,
-			int height, Map<EncodeHintType, ?> hints) throws WriterException {
+	public BitMatrix encode(String contents, BarcodeFormat format, int width, int height, Map<EncodeHintType, ?> hints)
+			throws WriterException {
 		if (contents.isEmpty()) {
 			throw new IllegalArgumentException("Found empty contents");
 		}
 
 		if (width < 0 || height < 0) {
-			throw new IllegalArgumentException(
-					"Negative size is not allowed. Input: " + width + 'x'
-							+ height);
+			throw new IllegalArgumentException("Negative size is not allowed. Input: " + width + 'x' + height);
 		}
 
 		int sidesMargin = getDefaultMargin();
@@ -76,8 +73,7 @@ public abstract class OneDimensionalCodeWriter implements Writer {
 	/**
 	 * @return a byte array of horizontal pixels (0 = white, 1 = black)
 	 */
-	private static BitMatrix renderResult(boolean[] code, int width,
-			int height, int sidesMargin) {
+	private static BitMatrix renderResult(boolean[] code, int width, int height, int sidesMargin) {
 		int inputWidth = code.length;
 		// Add quiet zone on both sides.
 		int fullWidth = inputWidth + sidesMargin;
@@ -107,8 +103,7 @@ public abstract class OneDimensionalCodeWriter implements Writer {
 	 *            starting color - false for white, true for black
 	 * @return the number of elements added to target.
 	 */
-	protected static int appendPattern(boolean[] target, int pos,
-			int[] pattern, boolean startColor) {
+	protected static int appendPattern(boolean[] target, int pos, int[] pattern, boolean startColor) {
 		boolean color = startColor;
 		int numAdded = 0;
 		for (int len : pattern) {

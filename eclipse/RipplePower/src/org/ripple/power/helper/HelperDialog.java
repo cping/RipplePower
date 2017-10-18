@@ -69,23 +69,18 @@ public class HelperDialog extends JPanel {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets screenInsets = null;
 		if (LSystem.applicationMain != null) {
-			screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-					LSystem.applicationMain.getGraphicsConfiguration());
+			screenInsets = Toolkit.getDefaultToolkit()
+					.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 		} else {
 			screenInsets = new Insets(0, 0, 480, 320);
 		}
 		final HelperDialog helper = new HelperDialog();
-		helper.setSize(new Dimension(GraphicTool.Width_MaidSystem,
-				GraphicTool.Height_MaidSystem));
-		helper.setPreferredSize(new Dimension(GraphicTool.Width_MaidSystem,
-				GraphicTool.Height_MaidSystem));
+		helper.setSize(new Dimension(GraphicTool.Width_MaidSystem, GraphicTool.Height_MaidSystem));
+		helper.setPreferredSize(new Dimension(GraphicTool.Width_MaidSystem, GraphicTool.Height_MaidSystem));
 		helper.setBackground(LColor.black);
-		RPPushTool rpp = RPPushTool.pop(
-				new Point((size.width - GraphicTool.Width_MaidSystem) / 2, size
-						.getHeight()),
+		RPPushTool rpp = RPPushTool.pop(new Point((size.width - GraphicTool.Width_MaidSystem) / 2, size.getHeight()),
 				(int) (screenInsets.bottom + helper.getHeight() + 90),
-				LangConfig.get(HelperDialog.class, "ripple_wizard",
-						"Ripple Wizard"), helper);
+				LangConfig.get(HelperDialog.class, "ripple_wizard", "Ripple Wizard"), helper);
 		rpp.obj = helper;
 		rpp.setListener(new RPPushTool.ClosedListener() {
 
@@ -123,11 +118,9 @@ public class HelperDialog extends JPanel {
 		String line = "";
 
 		// other char flag
-		char[] wrapchars = { '\u3002', '\u3001', '\uff0c', '\uff0e', '\u300d',
-				'\uff3d', '\u3011', '\u300f', '\u30fc', '\uff5e', '\uff09',
-				'\u3041', '\u3043', '\u3045', '\u3047', '\u3049', '\u30a1',
-				'\u30a3', '\u30a5', '\u30a7', '\u30a9', '\u30c3', '\u30e3',
-				'\u30e5', '\u30e7', '\u30ee', '\u308e', '\u3083', '\u3085',
+		char[] wrapchars = { '\u3002', '\u3001', '\uff0c', '\uff0e', '\u300d', '\uff3d', '\u3011', '\u300f', '\u30fc',
+				'\uff5e', '\uff09', '\u3041', '\u3043', '\u3045', '\u3047', '\u3049', '\u30a1', '\u30a3', '\u30a5',
+				'\u30a7', '\u30a9', '\u30c3', '\u30e3', '\u30e5', '\u30e7', '\u30ee', '\u308e', '\u3083', '\u3085',
 				'\u3087', '\u3063', '\u2026', '\uff0d', '\uff01', '\uff1f' };
 
 		int i = 0;
@@ -187,8 +180,7 @@ public class HelperDialog extends JPanel {
 		this.renderCol = 0;
 		this.renderRow = 0;
 		this.finished = false;
-		this.lines = wrapMessage(getMessage(), this.deffont, this.fwidth
-				- (this.deffont.getSize() * 2));
+		this.lines = wrapMessage(getMessage(), this.deffont, this.fwidth - (this.deffont.getSize() * 2));
 		this.messageIndex = (this.renderRow = this.renderCol = 0);
 		this.typeDelayTime = MESSAGE_TYPE_INTERVAL;
 		this.pageBlinkTime = MESSAGE_PAGE_BLINK_TIME;
@@ -261,8 +253,7 @@ public class HelperDialog extends JPanel {
 
 	public static void hideSystem() {
 		if (instance != null) {
-			if (instance.isVisible() && instance.getOpacity() == 1f
-					&& !instance.isClose()) {
+			if (instance.isVisible() && instance.getOpacity() == 1f && !instance.isClose()) {
 				SwingUtils.fadeOut(instance.getDialog(), false);
 			}
 		}
@@ -270,8 +261,7 @@ public class HelperDialog extends JPanel {
 
 	public static void showSystem() {
 		if (instance != null) {
-			if (!instance.isVisible() && instance.getOpacity() == 0f
-					&& !instance.isClose()) {
+			if (!instance.isVisible() && instance.getOpacity() == 0f && !instance.isClose()) {
 				SwingUtils.fadeIn(instance.getDialog());
 			}
 		}
@@ -280,10 +270,8 @@ public class HelperDialog extends JPanel {
 	HelperDialog() {
 		faceImage = GraphicsUtils.getSplitImages("icons/monster.png", 96, 96);
 		GraphicTool tools = new GraphicTool();
-		_backimage = tools.getWinTable(fwidth, fheight, Color.white,
-				UIConfig.background, true);
-		_faceimage = tools.getTable(faceImage[idx].getWidth(this),
-				faceImage[idx].getHeight(this));
+		_backimage = tools.getWinTable(fwidth, fheight, Color.white, UIConfig.background, true);
+		_faceimage = tools.getTable(faceImage[idx].getWidth(this), faceImage[idx].getHeight(this));
 	}
 
 	private void update(int delta) {
@@ -301,8 +289,7 @@ public class HelperDialog extends JPanel {
 	protected void updateType() {
 		if ((this.typeDelayTime <= 0) && (!this.finished)) {
 			this.typeDelayTime = MESSAGE_TYPE_INTERVAL;
-			if (this.renderCol > ((String) this.lines.get(this.renderRow))
-					.length() - 1) {
+			if (this.renderCol > ((String) this.lines.get(this.renderRow)).length() - 1) {
 				if (this.renderRow >= this.lines.size() - 1) {
 					this.finished = true;
 					this.pageBlinkTime = MESSAGE_PAGE_BLINK_TIME;
@@ -376,6 +363,9 @@ public class HelperDialog extends JPanel {
 						} else {
 							len = this.renderCol;
 						}
+						if (line.length() < len) {
+							len = line.length();
+						}
 						String t = line.substring(0, len);
 						if (t.length() != 0) {
 							if (len == line.length()) {
@@ -391,12 +381,10 @@ public class HelperDialog extends JPanel {
 						this.pageBlinkTime = 0;
 					}
 				}
-				drawLineString(g, message.toString(),
-						(int) Math.round(fx + 0.029D * fwidth),
+				drawLineString(g, message.toString(), (int) Math.round(fx + 0.029D * fwidth),
 						(int) Math.round(fy + 0.29D * fheight));
 			} else {
-				drawLineString(g, message.toString(),
-						(int) Math.round(fx + 0.029D * fwidth),
+				drawLineString(g, message.toString(), (int) Math.round(fx + 0.029D * fwidth),
 						(int) Math.round(fy + 0.29D * fheight));
 			}
 		}
@@ -418,15 +406,12 @@ public class HelperDialog extends JPanel {
 			dialog.setMessage(message);
 		}
 	}
-	
-	public static void setSystemHelperMessage(String message){
+
+	public static void setSystemHelperMessage(String message) {
 		if (LSystem.current == Model.Ripple) {
 			if (HelperDialog.isSystemVisible()) {
 				RPPushTool rpp = HelperDialog.get();
-				HelperDialog
-						.setHelperMessage(
-								rpp,
-								message);
+				HelperDialog.setHelperMessage(rpp, message);
 			}
 		}
 	}

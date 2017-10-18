@@ -61,12 +61,10 @@ public final class MatrixToImageWriter {
 	 *            output configuration
 	 * @return {@link BufferedImage} representation of the input
 	 */
-	public static BufferedImage toBufferedImage(BitMatrix matrix,
-			MatrixToImageConfig config) {
+	public static BufferedImage toBufferedImage(BitMatrix matrix, MatrixToImageConfig config) {
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
-		BufferedImage image = new BufferedImage(width, height,
-				config.getBufferedImageColorModel());
+		BufferedImage image = new BufferedImage(width, height, config.getBufferedImageColorModel());
 		int onColor = config.getPixelOnColor();
 		int offColor = config.getPixelOffColor();
 		for (int x = 0; x < width; x++) {
@@ -89,8 +87,7 @@ public final class MatrixToImageWriter {
 	 * @deprecated use {@link #writeToPath(BitMatrix, String, Path)}
 	 */
 	@Deprecated
-	public static void writeToFile(BitMatrix matrix, String format, File file)
-			throws IOException {
+	public static void writeToFile(BitMatrix matrix, String format, File file) throws IOException {
 		writeToPath(matrix, format, file.toPath());
 	}
 
@@ -107,8 +104,7 @@ public final class MatrixToImageWriter {
 	 *             if writes to the stream fail
 	 * @see #toBufferedImage(BitMatrix)
 	 */
-	public static void writeToPath(BitMatrix matrix, String format, Path file)
-			throws IOException {
+	public static void writeToPath(BitMatrix matrix, String format, Path file) throws IOException {
 		writeToPath(matrix, format, file, DEFAULT_CONFIG);
 	}
 
@@ -127,8 +123,8 @@ public final class MatrixToImageWriter {
 	 *             {@link #writeToPath(BitMatrix, String, Path, MatrixToImageConfig)}
 	 */
 	@Deprecated
-	public static void writeToFile(BitMatrix matrix, String format, File file,
-			MatrixToImageConfig config) throws IOException {
+	public static void writeToFile(BitMatrix matrix, String format, File file, MatrixToImageConfig config)
+			throws IOException {
 		writeToPath(matrix, format, file.toPath(), config);
 	}
 
@@ -147,12 +143,11 @@ public final class MatrixToImageWriter {
 	 * @throws IOException
 	 *             if writes to the file fail
 	 */
-	public static void writeToPath(BitMatrix matrix, String format, Path file,
-			MatrixToImageConfig config) throws IOException {
+	public static void writeToPath(BitMatrix matrix, String format, Path file, MatrixToImageConfig config)
+			throws IOException {
 		BufferedImage image = toBufferedImage(matrix, config);
 		if (!ImageIO.write(image, format, file.toFile())) {
-			throw new IOException("Could not write an image of format "
-					+ format + " to " + file);
+			throw new IOException("Could not write an image of format " + format + " to " + file);
 		}
 	}
 
@@ -169,8 +164,7 @@ public final class MatrixToImageWriter {
 	 *             if writes to the stream fail
 	 * @see #toBufferedImage(BitMatrix)
 	 */
-	public static void writeToStream(BitMatrix matrix, String format,
-			OutputStream stream) throws IOException {
+	public static void writeToStream(BitMatrix matrix, String format, OutputStream stream) throws IOException {
 		writeToStream(matrix, format, stream, DEFAULT_CONFIG);
 	}
 
@@ -189,12 +183,11 @@ public final class MatrixToImageWriter {
 	 * @throws IOException
 	 *             if writes to the stream fail
 	 */
-	public static void writeToStream(BitMatrix matrix, String format,
-			OutputStream stream, MatrixToImageConfig config) throws IOException {
+	public static void writeToStream(BitMatrix matrix, String format, OutputStream stream, MatrixToImageConfig config)
+			throws IOException {
 		BufferedImage image = toBufferedImage(matrix, config);
 		if (!ImageIO.write(image, format, stream)) {
-			throw new IOException("Could not write an image of format "
-					+ format);
+			throw new IOException("Could not write an image of format " + format);
 		}
 	}
 

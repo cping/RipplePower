@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.ripple.bouncycastle.asn1.ASN1Encodable;
 import org.ripple.bouncycastle.asn1.ASN1Integer;
 import org.ripple.bouncycastle.asn1.ASN1OctetString;
-import org.ripple.bouncycastle.asn1.ASN1ParsingException;
 import org.ripple.bouncycastle.asn1.ASN1SequenceParser;
 import org.ripple.bouncycastle.asn1.ASN1SetParser;
 import org.ripple.bouncycastle.asn1.ASN1TaggedObjectParser;
@@ -31,18 +30,14 @@ public class AuthEnvelopedDataParser
     private ASN1Integer version;
     private ASN1Encodable nextObject;
     private boolean originatorInfoCalled;
-    private EncryptedContentInfoParser authEncryptedContentInfoParser;
 
     public AuthEnvelopedDataParser(ASN1SequenceParser seq) throws IOException
     {
         this.seq = seq;
 
+        // TODO
         // "It MUST be set to 0."
         this.version = ASN1Integer.getInstance(seq.readObject());
-        if (this.version.getValue().intValue() != 0)
-        {
-            throw new ASN1ParsingException("AuthEnvelopedData version number must be 0");
-        }
     }
 
     public ASN1Integer getVersion()
@@ -88,7 +83,7 @@ public class AuthEnvelopedDataParser
         return recipientInfos;
     }
 
-    public EncryptedContentInfoParser getAuthEncryptedContentInfo()
+    public EncryptedContentInfoParser getAuthEncryptedContentInfo() 
         throws IOException
     {
         if (nextObject == null)
@@ -100,8 +95,7 @@ public class AuthEnvelopedDataParser
         {
             ASN1SequenceParser o = (ASN1SequenceParser) nextObject;
             nextObject = null;
-            authEncryptedContentInfoParser = new EncryptedContentInfoParser(o);
-            return authEncryptedContentInfoParser;
+            return new EncryptedContentInfoParser(o);
         }
 
         return null;
@@ -122,12 +116,9 @@ public class AuthEnvelopedDataParser
             return (ASN1SetParser)((ASN1TaggedObjectParser)o).getObjectParser(BERTags.SET, false);
         }
 
+        // TODO
         // "The authAttrs MUST be present if the content type carried in
         // EncryptedContentInfo is not id-data."
-        if (!authEncryptedContentInfoParser.getContentType().equals(CMSObjectIdentifiers.data))
-        {
-            throw new ASN1ParsingException("authAttrs must be present with non-data content");
-        }
 
         return null;
     }

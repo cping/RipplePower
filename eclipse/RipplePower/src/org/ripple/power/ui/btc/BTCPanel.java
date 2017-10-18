@@ -7,14 +7,13 @@ import javax.swing.BorderFactory;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.view.RoundedPanel;
 
-
 public class BTCPanel extends RoundedPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private BTCCmdPanel panel;
 
 	public BTCPanel() {
@@ -25,12 +24,12 @@ public class BTCPanel extends RoundedPanel {
 		panel = new BTCCmdPanel();
 		add(panel);
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		panel.stop();
 	}
 
-	public void start(){
+	public void start() {
 		panel.start();
 	}
 

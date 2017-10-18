@@ -31,8 +31,7 @@ public class Week extends RegularTimer implements Serializable {
 
 	public Week(int week, int year) {
 		if ((week < FIRST_WEEK_IN_YEAR) && (week > LAST_WEEK_IN_YEAR)) {
-			throw new IllegalArgumentException(
-					"The 'week' argument must be in the range 1 - 53.");
+			throw new IllegalArgumentException("The 'week' argument must be in the range 1 - 53.");
 		}
 		this.week = (byte) week;
 		this.year = (short) year;
@@ -41,8 +40,7 @@ public class Week extends RegularTimer implements Serializable {
 
 	public Week(int week, Year year) {
 		if ((week < FIRST_WEEK_IN_YEAR) && (week > LAST_WEEK_IN_YEAR)) {
-			throw new IllegalArgumentException(
-					"The 'week' argument must be in the range 1 - 53.");
+			throw new IllegalArgumentException("The 'week' argument must be in the range 1 - 53.");
 		}
 		this.week = (byte) week;
 		this.year = (short) year.getYear();
@@ -68,8 +66,7 @@ public class Week extends RegularTimer implements Serializable {
 		} else {
 			this.week = (byte) Math.min(tempWeek, LAST_WEEK_IN_YEAR);
 			int yyyy = calendar.get(Calendar.YEAR);
-			if (calendar.get(Calendar.MONTH) == Calendar.JANUARY
-					&& this.week >= 52) {
+			if (calendar.get(Calendar.MONTH) == Calendar.JANUARY && this.week >= 52) {
 				yyyy--;
 			}
 			this.year = (short) yyyy;
@@ -115,10 +112,7 @@ public class Week extends RegularTimer implements Serializable {
 				int yy = this.year - 1;
 				Calendar prevYearCalendar = Calendar.getInstance();
 				prevYearCalendar.set(yy, Calendar.DECEMBER, 31);
-				result = new Week(
-						prevYearCalendar
-								.getActualMaximum(Calendar.WEEK_OF_YEAR),
-						yy);
+				result = new Week(prevYearCalendar.getActualMaximum(Calendar.WEEK_OF_YEAR), yy);
 			} else {
 				result = null;
 			}
@@ -136,8 +130,7 @@ public class Week extends RegularTimer implements Serializable {
 		} else {
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(this.year, Calendar.DECEMBER, 31);
-			int actualMaxWeek = calendar
-					.getActualMaximum(Calendar.WEEK_OF_YEAR);
+			int actualMaxWeek = calendar.getActualMaximum(Calendar.WEEK_OF_YEAR);
 			if (this.week < actualMaxWeek) {
 				result = new Week(this.week + 1, this.year);
 			} else {
@@ -268,8 +261,7 @@ public class Week extends RegularTimer implements Serializable {
 					if (y != null) {
 						w = Week.stringToWeek(s1);
 						if (w == -1) {
-							throw new RuntimeException(
-									"Can't evaluate the week.");
+							throw new RuntimeException("Can't evaluate the week.");
 						}
 						result = new Week(w, y);
 					} else {

@@ -98,8 +98,7 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 
 	}
 
-	public void setLineStyle(int index, int color, int fillcolor, float size,
-			boolean usedip) {
+	public void setLineStyle(int index, int color, int fillcolor, float size, boolean usedip) {
 		mSeries.get(index).setStyle(color, fillcolor, size, usedip);
 		bRedraw = true;
 
@@ -155,15 +154,12 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 					pY = v.y;
 
 					if (!Float.isNaN(pY)) {
-						RectF rect = new RectF(sX + aX / 4 + jj * aX + 1, eY,
-								sX + aX / 4 + aX / 2 + jj * aX, eY - (pY - bY)
-										* aY);
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPntFill);
-						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY,
-								rect.right + offsetX, rect.bottom + offsetY,
-								mPnt);
+						RectF rect = new RectF(sX + aX / 4 + jj * aX + 1, eY, sX + aX / 4 + aX / 2 + jj * aX,
+								eY - (pY - bY) * aY);
+						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY, rect.right + offsetX,
+								rect.bottom + offsetY, mPntFill);
+						mCnv.drawRect(rect.left + offsetX, rect.top + offsetY, rect.right + offsetX,
+								rect.bottom + offsetY, mPnt);
 					}
 					mStacked.updatePoint(jj, v.y - serie.getPoint(jj).y);
 				}
@@ -191,8 +187,7 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, eY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size
-							+ 2, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size + 2, mPntText);
 			}
 		} else {
 			for (int ii = 0; ii < mLabel.getSize(); ii++) {
@@ -200,8 +195,7 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, sY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size
-							+ 3, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size + 3, mPntText);
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);
@@ -219,8 +213,7 @@ public class StackedBarChartCanvas extends ChartBaseCanvas {
 			else
 				acc = 0;
 			for (int jj = 1; jj < mSeries.size(); jj++) {
-				if ((mSeries.get(jj).isVisible())
-						&& (ii < mSeries.get(jj).getSize()))
+				if ((mSeries.get(jj).isVisible()) && (ii < mSeries.get(jj).getSize()))
 					acc += mSeries.get(jj).getPoint(ii).y;
 			}
 			mStacked.addPoint(new ChartValue(null, acc));

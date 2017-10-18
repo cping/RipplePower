@@ -67,14 +67,11 @@ public class PrintDirectFunction extends PrintFunction {
 			try {
 				PrintRequestAttributeSet requestAttributeSet = new HashPrintRequestAttributeSet();
 				requestAttributeSet.add(MediaSizeName.ISO_A4);
-				requestAttributeSet.add(new JobName(LSystem.applicationName
-						+ "-" + LSystem.getTime(), Locale.ENGLISH));
-				PrintService defaultService = PrintServiceLookup
-						.lookupDefaultPrintService();
+				requestAttributeSet.add(new JobName(LSystem.applicationName + "-" + LSystem.getTime(), Locale.ENGLISH));
+				PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService();
 				DocPrintJob job = defaultService.createPrintJob();
 				if (df == DocFlavor.SERVICE_FORMATTED.PRINTABLE) {
-					doc = new SimpleDoc(new BufferedImagePrintable(path), df,
-							null);
+					doc = new SimpleDoc(new BufferedImagePrintable(path), df, null);
 					requestAttributeSet.add(new PageRanges("1"));
 				} else {
 					FileInputStream fin = new FileInputStream(path);

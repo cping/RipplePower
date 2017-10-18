@@ -22,23 +22,17 @@ public class SHA512 {
 		return sha.update(data)._finalize();
 	}
 
-	int[] _keyr = new int[] { 0x28ae22, 0xef65cd, 0x4d3b2f, 0x89dbbc, 0x48b538,
-			0x05d019, 0x194f9b, 0x6d8118, 0x030242, 0x706fbe, 0xe4b28c,
-			0xffb4e2, 0x7b896f, 0x1696b1, 0xc71235, 0x692694, 0xf14ad2,
-			0x4f25e3, 0x8cd5b5, 0xac9c65, 0x2b0275, 0xa6e483, 0x41fbd4,
-			0x1153b5, 0x66dfab, 0xb43210, 0xfb213f, 0xef0ee4, 0xa88fc2,
-			0x0aa725, 0x03826f, 0x0e6e70, 0xd22ffc, 0x26c926, 0xc42aed,
-			0x95b3df, 0xaf63de, 0x77b2a8, 0xedaee6, 0x82353b, 0xf10364,
-			0x423001, 0xf89791, 0x54be30, 0xef5218, 0x65a910, 0x71202a,
-			0xbbd1b8, 0xd2d0c8, 0x41ab53, 0x8eeb99, 0x9b48a8, 0xc95a63,
-			0x418acb, 0x63e373, 0xb2b8a3, 0xefb2fc, 0x172f60, 0xf0ab72,
-			0x6439ec, 0x631e28, 0x82bde9, 0xc67915, 0x72532b, 0x26619c,
-			0xc0c207, 0xe0eb1e, 0x6ed178, 0x176fba, 0xc898a6, 0xf90dae,
-			0x1c471b, 0x047d84, 0xc72493, 0xc9bebc, 0x100d4c, 0x3e42b6,
-			0x657e2a, 0xd6faec, 0x475817 };
+	int[] _keyr = new int[] { 0x28ae22, 0xef65cd, 0x4d3b2f, 0x89dbbc, 0x48b538, 0x05d019, 0x194f9b, 0x6d8118, 0x030242,
+			0x706fbe, 0xe4b28c, 0xffb4e2, 0x7b896f, 0x1696b1, 0xc71235, 0x692694, 0xf14ad2, 0x4f25e3, 0x8cd5b5,
+			0xac9c65, 0x2b0275, 0xa6e483, 0x41fbd4, 0x1153b5, 0x66dfab, 0xb43210, 0xfb213f, 0xef0ee4, 0xa88fc2,
+			0x0aa725, 0x03826f, 0x0e6e70, 0xd22ffc, 0x26c926, 0xc42aed, 0x95b3df, 0xaf63de, 0x77b2a8, 0xedaee6,
+			0x82353b, 0xf10364, 0x423001, 0xf89791, 0x54be30, 0xef5218, 0x65a910, 0x71202a, 0xbbd1b8, 0xd2d0c8,
+			0x41ab53, 0x8eeb99, 0x9b48a8, 0xc95a63, 0x418acb, 0x63e373, 0xb2b8a3, 0xefb2fc, 0x172f60, 0xf0ab72,
+			0x6439ec, 0x631e28, 0x82bde9, 0xc67915, 0x72532b, 0x26619c, 0xc0c207, 0xe0eb1e, 0x6ed178, 0x176fba,
+			0xc898a6, 0xf90dae, 0x1c471b, 0x047d84, 0xc72493, 0xc9bebc, 0x100d4c, 0x3e42b6, 0x657e2a, 0xd6faec,
+			0x475817 };
 
-	int[] _initr = new int[] { 0xbcc908, 0xcaa73b, 0x94f82b, 0x1d36f1,
-			0xe682d1, 0x3e6c1f, 0x41bd6b, 0x7e2179 };
+	int[] _initr = new int[] { 0xbcc908, 0xcaa73b, 0x94f82b, 0x1d36f1, 0xe682d1, 0x3e6c1f, 0x41bd6b, 0x7e2179 };
 
 	final static int blockSize = 1024;
 
@@ -75,8 +69,7 @@ public class SHA512 {
 		}
 		LongArray b = this._buffer = BitArray.concat(this._buffer, data);
 
-		int ol = this._length, nl = this._length = ol
-				+ (int) BitArray.bitLength(data);
+		int ol = this._length, nl = this._length = ol + (int) BitArray.bitLength(data);
 
 		for (i = 1024 + ol & -1024; i <= nl; i += 1024) {
 			this._block(b.splice(0, 32));
@@ -134,14 +127,10 @@ public class SHA512 {
 			}
 			if (i < 8) {
 				this._init.set(i * 2, (int) frac(Math.pow(prime, 1d / 2d)));
-				this._init.set(i * 2 + 1,
-						JS.MOVE_LeftShift(frac2(Math.pow(prime, 1d / 2d)), 24)
-								| this._initr[i]);
+				this._init.set(i * 2 + 1, JS.MOVE_LeftShift(frac2(Math.pow(prime, 1d / 2d)), 24) | this._initr[i]);
 			}
 			this._key.set(i * 2, (int) frac(Math.pow(prime, 1d / 3d)));
-			this._key.set(i * 2 + 1,
-					JS.MOVE_LeftShift(frac2(Math.pow(prime, 1d / 3d)), 24)
-							| this._keyr[i]);
+			this._key.set(i * 2 + 1, JS.MOVE_LeftShift(frac2(Math.pow(prime, 1d / 3d)), 24) | this._keyr[i]);
 			i++;
 		}
 
@@ -156,9 +145,12 @@ public class SHA512 {
 		LongArray h = this._h;
 		LongArray k = this._key;
 
-		long h0h = h.items[0], h0l = h.items[1], h1h = h.items[2], h1l = h.items[3], h2h = h.items[4], h2l = h.items[5], h3h = h.items[6], h3l = h.items[7], h4h = h.items[8], h4l = h.items[9], h5h = h.items[10], h5l = h.items[11], h6h = h.items[12], h6l = h.items[13], h7h = h.items[14], h7l = h.items[15];
+		long h0h = h.items[0], h0l = h.items[1], h1h = h.items[2], h1l = h.items[3], h2h = h.items[4], h2l = h.items[5],
+				h3h = h.items[6], h3l = h.items[7], h4h = h.items[8], h4l = h.items[9], h5h = h.items[10],
+				h5l = h.items[11], h6h = h.items[12], h6l = h.items[13], h7h = h.items[14], h7l = h.items[15];
 
-		long ah = h0h, al = h0l, bh = h1h, bl = h1l, ch = h2h, cl = h2l, dh = h3h, dl = h3l, eh = h4h, el = h4l, fh = h5h, fl = h5l, gh = h6h, gl = h6l, hh = h7h, hl = h7l;
+		long ah = h0h, al = h0l, bh = h1h, bl = h1l, ch = h2h, cl = h2l, dh = h3h, dl = h3l, eh = h4h, el = h4l,
+				fh = h5h, fl = h5l, gh = h6h, gl = h6l, hh = h7h, hl = h7l;
 
 		for (i = 0; i < 80; i++) {
 			if (i < 16) {
@@ -168,35 +160,25 @@ public class SHA512 {
 				long gamma0xh = w.items[(i - 15) * 2];
 				long gamma0xl = w.items[(i - 15) * 2 + 1];
 
-				long gamma0h = ((JS.MOVE_LeftShift(gamma0xl, 31) | JS
-						.MOVE_RightUShift(gamma0xh, 1))
-						^ (JS.MOVE_LeftShift(gamma0xl, 24) | JS
-								.MOVE_RightUShift(gamma0xh, 8)) ^ JS
-						.MOVE_RightUShift(gamma0xh, 7));
+				long gamma0h = ((JS.MOVE_LeftShift(gamma0xl, 31) | JS.MOVE_RightUShift(gamma0xh, 1))
+						^ (JS.MOVE_LeftShift(gamma0xl, 24) | JS.MOVE_RightUShift(gamma0xh, 8))
+						^ JS.MOVE_RightUShift(gamma0xh, 7));
 
-				long gamma0l = ((JS.MOVE_LeftShift(gamma0xh, 31) | JS
-						.MOVE_RightUShift(gamma0xl, 1))
-						^ (JS.MOVE_LeftShift(gamma0xh, 24) | JS
-								.MOVE_RightUShift(gamma0xl, 8)) ^ (JS
-						.MOVE_LeftShift(gamma0xh, 25) | JS.MOVE_RightUShift(
-						gamma0xl, 7)));
+				long gamma0l = ((JS.MOVE_LeftShift(gamma0xh, 31) | JS.MOVE_RightUShift(gamma0xl, 1))
+						^ (JS.MOVE_LeftShift(gamma0xh, 24) | JS.MOVE_RightUShift(gamma0xl, 8))
+						^ (JS.MOVE_LeftShift(gamma0xh, 25) | JS.MOVE_RightUShift(gamma0xl, 7)));
 
 				// 434469372,2038397261,16
 
 				long gamma1xh = w.items[(i - 2) * 2];
 				long gamma1xl = w.items[(i - 2) * 2 + 1];
 
-				long gamma1h = (JS.MOVE_LeftShift(gamma1xl, 13) | JS
-						.MOVE_RightUShift(gamma1xh, 19))
-						^ (JS.MOVE_LeftShift(gamma1xh, 3) | JS
-								.MOVE_RightUShift(gamma1xl, 29))
+				long gamma1h = (JS.MOVE_LeftShift(gamma1xl, 13) | JS.MOVE_RightUShift(gamma1xh, 19))
+						^ (JS.MOVE_LeftShift(gamma1xh, 3) | JS.MOVE_RightUShift(gamma1xl, 29))
 						^ JS.MOVE_RightUShift(gamma1xh, 6);
-				long gamma1l = ((JS.MOVE_LeftShift(gamma1xh, 13) | JS
-						.MOVE_RightUShift(gamma1xl, 19))
-						^ (JS.MOVE_LeftShift(gamma1xl, 3) | JS
-								.MOVE_RightUShift(gamma1xh, 29)) ^ (JS
-						.MOVE_LeftShift(gamma1xh, 26) | JS.MOVE_RightUShift(
-						gamma1xl, 6)));
+				long gamma1l = ((JS.MOVE_LeftShift(gamma1xh, 13) | JS.MOVE_RightUShift(gamma1xl, 19))
+						^ (JS.MOVE_LeftShift(gamma1xl, 3) | JS.MOVE_RightUShift(gamma1xh, 29))
+						^ (JS.MOVE_LeftShift(gamma1xh, 26) | JS.MOVE_RightUShift(gamma1xl, 6)));
 
 				long wr7h = w.items[(i - 7) * 2];
 				long wr7l = w.items[(i - 7) * 2 + 1];
@@ -205,21 +187,14 @@ public class SHA512 {
 				long wr16l = w.items[(i - 16) * 2 + 1];
 				// 0,0,0,1346456388,16
 				wrl = gamma0l + wr7l;
-				wrh = gamma0h
-						+ wr7h
-						+ (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(
-								gamma0l, 0) ? 1 : 0);
+				wrh = gamma0h + wr7h + (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(gamma0l, 0) ? 1 : 0);
 				// 2038397261,434469372,16
 				wrl += gamma1l;
-				wrh += gamma1h
-						+ (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(
-								gamma1l, 0) ? 1 : 0);
+				wrh += gamma1h + (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(gamma1l, 0) ? 1 : 0);
 				// 2038397261,434469372,16
 				wrl += wr16l;
 
-				wrh += wr16h
-						+ (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(
-								wr16l, 0) ? 1 : 0);
+				wrh += wr16h + (JS.MOVE_RightUShift(wrl, 0) < JS.MOVE_RightUShift(wr16l, 0) ? 1 : 0);
 
 				// 3384853649
 				// 1346456388
@@ -236,21 +211,17 @@ public class SHA512 {
 			long majh = (ah & bh) ^ (ah & ch) ^ (bh & ch);
 			long majl = (al & bl) ^ (al & cl) ^ (bl & cl);
 
-			long sigma0h = (JS.MOVE_LeftShift(al, 4) | JS.MOVE_RightUShift(ah,
-					28))
+			long sigma0h = (JS.MOVE_LeftShift(al, 4) | JS.MOVE_RightUShift(ah, 28))
 					^ (JS.MOVE_LeftShift(ah, 30) | JS.MOVE_RightUShift(al, 2))
 					^ (JS.MOVE_LeftShift(ah, 25) | JS.MOVE_RightUShift(al, 7));
-			long sigma0l = (JS.MOVE_LeftShift(ah, 4) | JS.MOVE_RightUShift(al,
-					28))
+			long sigma0l = (JS.MOVE_LeftShift(ah, 4) | JS.MOVE_RightUShift(al, 28))
 					^ (JS.MOVE_LeftShift(al, 30) | JS.MOVE_RightUShift(ah, 2))
 					^ (JS.MOVE_LeftShift(al, 25) | JS.MOVE_RightUShift(ah, 7));
 
-			long sigma1h = (JS.MOVE_LeftShift(el, 18) | JS.MOVE_RightUShift(eh,
-					14))
+			long sigma1h = (JS.MOVE_LeftShift(el, 18) | JS.MOVE_RightUShift(eh, 14))
 					^ (JS.MOVE_LeftShift(el, 14) | JS.MOVE_RightUShift(eh, 18))
 					^ (JS.MOVE_LeftShift(eh, 23) | JS.MOVE_RightUShift(el, 9));
-			long sigma1l = (JS.MOVE_LeftShift(eh, 18) | JS.MOVE_RightUShift(el,
-					14))
+			long sigma1l = (JS.MOVE_LeftShift(eh, 18) | JS.MOVE_RightUShift(el, 14))
 					^ (JS.MOVE_LeftShift(eh, 14) | JS.MOVE_RightUShift(el, 18))
 					^ (JS.MOVE_LeftShift(el, 23) | JS.MOVE_RightUShift(eh, 9));
 
@@ -258,31 +229,19 @@ public class SHA512 {
 			long krl = k.get(i * 2 + 1);
 
 			long t1l = hl + sigma1l;
-			long t1h = hh
-					+ sigma1h
-					+ (JS.MOVE_RightUShift(t1l, 0) < JS.MOVE_RightUShift(hl, 0) ? 1
-							: 0);
+			long t1h = hh + sigma1h + (JS.MOVE_RightUShift(t1l, 0) < JS.MOVE_RightUShift(hl, 0) ? 1 : 0);
 
 			t1l += chl;
-			t1h += chh
-					+ (JS.MOVE_RightUShift(t1l, 0) < JS
-							.MOVE_RightUShift(chl, 0) ? 1 : 0);
+			t1h += chh + (JS.MOVE_RightUShift(t1l, 0) < JS.MOVE_RightUShift(chl, 0) ? 1 : 0);
 
 			t1l += krl;
-			t1h += krh
-					+ (JS.MOVE_RightUShift(t1l, 0) < JS
-							.MOVE_RightUShift(krl, 0) ? 1 : 0);
+			t1h += krh + (JS.MOVE_RightUShift(t1l, 0) < JS.MOVE_RightUShift(krl, 0) ? 1 : 0);
 
 			t1l += wrl;
-			t1h += wrh
-					+ (JS.MOVE_RightUShift(t1l, 0) < JS
-							.MOVE_RightUShift(wrl, 0) ? 1 : 0);
+			t1h += wrh + (JS.MOVE_RightUShift(t1l, 0) < JS.MOVE_RightUShift(wrl, 0) ? 1 : 0);
 
 			long t2l = sigma0l + majl;
-			long t2h = sigma0h
-					+ majh
-					+ (JS.MOVE_RightUShift(t2l, 0) < JS.MOVE_RightUShift(
-							sigma0l, 0) ? 1 : 0);
+			long t2h = sigma0h + majh + (JS.MOVE_RightUShift(t2l, 0) < JS.MOVE_RightUShift(sigma0l, 0) ? 1 : 0);
 
 			hh = gh;
 			hl = gl;
@@ -292,8 +251,7 @@ public class SHA512 {
 			fl = el;
 
 			el = (int) ((dl + t1l) | 0);
-			eh = (int) ((dh + t1h + (JS.MOVE_RightUShift(el, 0) < JS
-					.MOVE_RightUShift(dl, 0) ? 1 : 0)) | 0);
+			eh = (int) ((dh + t1h + (JS.MOVE_RightUShift(el, 0) < JS.MOVE_RightUShift(dl, 0) ? 1 : 0)) | 0);
 
 			dh = ch;
 			dl = cl;
@@ -302,36 +260,27 @@ public class SHA512 {
 			bh = ah;
 			bl = al;
 			al = (int) ((t1l + t2l) | 0);
-			ah = (int) ((t1h + t2h + (JS.MOVE_RightUShift(al, 0) < JS
-					.MOVE_RightUShift(t1l, 0) ? 1 : 0)) | 0);
+			ah = (int) ((t1h + t2h + (JS.MOVE_RightUShift(al, 0) < JS.MOVE_RightUShift(t1l, 0) ? 1 : 0)) | 0);
 
 		}
 
 		h0l = h.items[1] = (int) ((h0l + al) | 0);
 
-		h.items[0] = (int) (h0h + ah + (JS.MOVE_RightUShift(h0l, 0) < JS
-				.MOVE_RightUShift(al, 0) ? 1 : 0)) | 0;
+		h.items[0] = (int) (h0h + ah + (JS.MOVE_RightUShift(h0l, 0) < JS.MOVE_RightUShift(al, 0) ? 1 : 0)) | 0;
 		h1l = h.items[3] = (h1l + bl) | 0;
-		h.items[2] = (int) (h1h + bh + (JS.MOVE_RightUShift(h1l, 0) < JS
-				.MOVE_RightUShift(bl, 0) ? 1 : 0)) | 0;
+		h.items[2] = (int) (h1h + bh + (JS.MOVE_RightUShift(h1l, 0) < JS.MOVE_RightUShift(bl, 0) ? 1 : 0)) | 0;
 		h2l = h.items[5] = (int) (h2l + cl) | 0;
-		h.items[4] = (int) (h2h + ch + (JS.MOVE_RightUShift(h2l, 0) < JS
-				.MOVE_RightUShift(cl, 0) ? 1 : 0)) | 0;
+		h.items[4] = (int) (h2h + ch + (JS.MOVE_RightUShift(h2l, 0) < JS.MOVE_RightUShift(cl, 0) ? 1 : 0)) | 0;
 		h3l = h.items[7] = (int) (h3l + dl) | 0;
-		h.items[6] = (int) (h3h + dh + (JS.MOVE_RightUShift(h3l, 0) < JS
-				.MOVE_RightUShift(dl, 0) ? 1 : 0)) | 0;
+		h.items[6] = (int) (h3h + dh + (JS.MOVE_RightUShift(h3l, 0) < JS.MOVE_RightUShift(dl, 0) ? 1 : 0)) | 0;
 		h4l = h.items[9] = (int) (h4l + el) | 0;
-		h.items[8] = (int) (h4h + eh + (JS.MOVE_RightUShift(h4l, 0) < JS
-				.MOVE_RightUShift(el, 0) ? 1 : 0)) | 0;
+		h.items[8] = (int) (h4h + eh + (JS.MOVE_RightUShift(h4l, 0) < JS.MOVE_RightUShift(el, 0) ? 1 : 0)) | 0;
 		h5l = h.items[11] = (int) (h5l + fl) | 0;
-		h.items[10] = (int) (h5h + fh + (JS.MOVE_RightUShift(h5l, 0) < JS
-				.MOVE_RightUShift(fl, 0) ? 1 : 0)) | 0;
+		h.items[10] = (int) (h5h + fh + (JS.MOVE_RightUShift(h5l, 0) < JS.MOVE_RightUShift(fl, 0) ? 1 : 0)) | 0;
 		h6l = h.items[13] = (int) (h6l + gl) | 0;
-		h.items[12] = (int) (h6h + gh + (JS.MOVE_RightUShift(h6l, 0) < JS
-				.MOVE_RightUShift(gl, 0) ? 1 : 0)) | 0;
+		h.items[12] = (int) (h6h + gh + (JS.MOVE_RightUShift(h6l, 0) < JS.MOVE_RightUShift(gl, 0) ? 1 : 0)) | 0;
 		h7l = h.items[15] = (int) (h7l + hl) | 0;
-		h.items[14] = (int) (h7h + hh + (JS.MOVE_RightUShift(h7l, 0) < JS
-				.MOVE_RightUShift(hl, 0) ? 1 : 0)) | 0;
+		h.items[14] = (int) (h7h + hh + (JS.MOVE_RightUShift(h7l, 0) < JS.MOVE_RightUShift(hl, 0) ? 1 : 0)) | 0;
 
 	}
 }

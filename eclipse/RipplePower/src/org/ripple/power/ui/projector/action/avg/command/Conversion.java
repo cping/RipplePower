@@ -73,8 +73,7 @@ public abstract class Conversion implements Expression {
 	}
 
 	public static String updateOperator(String context) {
-		if (context != null
-				&& (context.startsWith("\"") || context.startsWith("'"))) {
+		if (context != null && (context.startsWith("\"") || context.startsWith("'"))) {
 			return context;
 		}
 		int size = context.length();
@@ -127,8 +126,7 @@ public abstract class Conversion implements Expression {
 		private char[] expChr;
 
 		private boolean exp(String exp) {
-			return exp.indexOf("+") != -1 || exp.indexOf("-") != -1
-					|| exp.indexOf("*") != -1 || exp.indexOf("/") != -1
+			return exp.indexOf("+") != -1 || exp.indexOf("-") != -1 || exp.indexOf("*") != -1 || exp.indexOf("/") != -1
 					|| exp.indexOf("%") != -1;
 		}
 
@@ -147,8 +145,7 @@ public abstract class Conversion implements Expression {
 			return eval(v);
 		}
 
-		private void evalFloatValue(Compute compute, int stIdx, int lgt,
-				float sign) {
+		private void evalFloatValue(Compute compute, int stIdx, int lgt, float sign) {
 			if (expChr[stIdx] == '$') {
 				String label = new String(expChr, stIdx + 1, lgt - 1);
 				if (label.equals("rand")) {
@@ -165,9 +162,7 @@ public abstract class Conversion implements Expression {
 				}
 			} else {
 				try {
-					compute.push(
-							new Float(new String(expChr, stIdx, lgt))
-									.floatValue() * sign, STACK_NUM);
+					compute.push(new Float(new String(expChr, stIdx, lgt)).floatValue() * sign, STACK_NUM);
 				} catch (NumberFormatException e) {
 					compute.push(0, STACK_NUM);
 				}
@@ -219,8 +214,7 @@ public abstract class Conversion implements Expression {
 				if (op[1] == stIdx) {
 					switch (expChr[op[1]]) {
 					case '-':
-						evalFloatValue(compute, stIdx + 1, edIdx - stIdx - 1,
-								-1);
+						evalFloatValue(compute, stIdx + 1, edIdx - stIdx - 1, -1);
 						break;
 					case '+':
 						evalFloatValue(compute, stIdx + 1, edIdx - stIdx - 1, 1);
@@ -354,8 +348,7 @@ public abstract class Conversion implements Expression {
 						if (opr[i] >= STACK_VARIABLE) {
 							stkIdx++;
 						} else {
-							stack[stkIdx - 2] = calcOp(opr[i],
-									stack[stkIdx - 2], stack[stkIdx - 1]);
+							stack[stkIdx - 2] = calcOp(opr[i], stack[stkIdx - 2], stack[stkIdx - 1]);
 							stkIdx--;
 						}
 						break;

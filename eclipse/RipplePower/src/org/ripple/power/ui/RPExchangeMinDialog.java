@@ -69,8 +69,10 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private float scale = 1f;
+
 	// default only the first 20 data show
-	private static final int _LIMIT_PAGE = 20;
+	private static final int _LIMIT_PAGE = 400;
 	// automated trading processor
 
 	private RippleBOTLoader.Trend lastTrend = RippleBOTLoader.Trend.UNKOWN;
@@ -90,7 +92,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	private RPCButton _stopautonButton;
 	private RPCButton _canceltradingButton;
 	private RPComboBox _curComboBox;
-	private RPComboBox _selectGateawyCombobox;
+	private RPComboBox _selectGatewayCombobox;
 	private RPLabel _currencyLabel;
 	private RPLabel _mysellLabel;
 	private RPLabel _coinmarketcapLabel;
@@ -122,14 +124,17 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	private final AccountInfo _info = new AccountInfo();
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 
+	private int toScalePixel(int v) {
+		return (int) (v * scale);
+	}
+
 	private void warning_noselect() {
 		UIRes.showWarningMessage(this, UIMessage.info, UIMessage.noselect);
 	}
 
 	private void warning_xrp() {
 		UIRes.showWarningMessage(RPExchangeMinDialog.this, UIMessage.warning,
-				LSystem.nativeCurrency.toUpperCase() + ","
-						+ UIMessage.errNotMoney);
+				LSystem.nativeCurrency.toUpperCase() + "," + UIMessage.errNotMoney);
 	}
 
 	private void warning_iou(String cur) {
@@ -144,16 +149,14 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		UIRes.showWarningMessage(RPExchangeMinDialog.this, UIMessage.warning,
-				String.format(UIMessage.plasetrust, mes));
+		UIRes.showWarningMessage(RPExchangeMinDialog.this, UIMessage.warning, String.format(UIMessage.plasetrust, mes));
 	}
 
 	private void empty_trading(String mes) {
 		if (Strings.isNullOrEmpty(mes)) {
 			return;
 		}
-		RPToast toast = RPToast.makeText(this,
-				String.format(UIMessage.sntr, mes));
+		RPToast toast = RPToast.makeText(this, String.format(UIMessage.sntr, mes));
 		toast.setFrameLengthMultiplier(20);
 		toast.setFrameRadius(25);
 		toast.display();
@@ -163,41 +166,29 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		if (Strings.isNullOrEmpty(mes)) {
 			return -1;
 		}
-		return UIRes.showConfirmMessage(RPExchangeMinDialog.this, UIMessage.info,
-				String.format(UIMessage.ydel, mes), new Object[] {
-						UIMessage.ok, UIMessage.cancel });
+		return UIRes.showConfirmMessage(RPExchangeMinDialog.this, UIMessage.info, String.format(UIMessage.ydel, mes),
+				new Object[] { UIMessage.ok, UIMessage.cancel });
 	}
 
 	private String info_price() {
-		return LangConfig
-				.get(RPExchangeMinDialog.this, "tip1",
-						"The highest price buyer %s, the seller highest price %s, Spread %s");
+		return LangConfig.get(RPExchangeMinDialog.this, "tip1",
+				"The highest price buyer %s, the seller highest price %s, Spread %s");
 	}
 
-	private int info_swap(final String srcAmount, final String srcCurrency,
-			final String dstAmount, final String dstCurrency) {
+	private int info_swap(final String srcAmount, final String srcCurrency, final String dstAmount,
+			final String dstCurrency) {
 		if (_priceTipCheckBox.isSelected()) {
 			Updateable update = new Updateable() {
 
 				@Override
 				public void action(Object o) {
-					RPBubbleDialog.pop(
-							"Exchange tips:"
-									+ srcAmount
-									+ "/"
-									+ srcCurrency
-									+ ", Average exchange "
-									+ OfferPrice.getMoneyConvert(srcAmount,
-											srcCurrency, dstCurrency) + "/"
-									+ dstCurrency, true);
 				}
 			};
 			LSystem.postThread(update);
 		}
 		return UIRes.showConfirmMessage(RPExchangeMinDialog.this, UIMessage.info,
-				UIMessage.you_cancel_tx(srcAmount + "/" + srcCurrency,
-						dstAmount + "/" + dstCurrency), new Object[] {
-						UIMessage.ok, UIMessage.cancel });
+				UIMessage.you_cancel_tx(srcAmount + "/" + srcCurrency, dstAmount + "/" + dstCurrency),
+				new Object[] { UIMessage.ok, UIMessage.cancel });
 
 	}
 
@@ -232,21 +223,17 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 				RPExchangeMinInputDialog dialog = inputs.get(cur);
 				if (dialog == null) {
-					dialog = RPExchangeMinInputDialog.showDialog(
-							RPExchangeMinDialog.this, LangConfig.get(
-									RPExchangeMinInputDialog.class, "ppt",
-									"Price prompt"));
+					dialog = RPExchangeMinInputDialog.showDialog(RPExchangeMinDialog.this,
+							LangConfig.get(RPExchangeMinInputDialog.class, "ppt", "Price prompt"));
 					inputs.put(cur, dialog);
 				}
 
 				switch (type) {
 				case 0:
-					dialog.setTextContext(_mysellText, _cansellText, split[0],
-							split[1]);
+					dialog.setTextContext(_mysellText, _cansellText, split[0], split[1]);
 					break;
 				case 1:
-					dialog.setTextContext(_mybuyText, _canbuyText, split[1],
-							split[0]);
+					dialog.setTextContext(_mybuyText, _canbuyText, split[1], split[0]);
 					break;
 				}
 				if (!dialog.isVisible()) {
@@ -305,8 +292,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		}
 	}
 
-	public static RPExchangeMinDialog showDialog(String text, JFrame parent,
-			final WalletItem item) {
+	public static RPExchangeMinDialog showDialog(String text, JFrame parent, final WalletItem item) {
 		RPExchangeMinDialog dialog = new RPExchangeMinDialog(text, parent, item);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
@@ -322,11 +308,11 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		}
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(992, 620);
+		Dimension dim = new Dimension(toScalePixel(992), toScalePixel(650));
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();
-		
+
 		HelperDialog.setSystemHelperMessage("In the Ripple network, Start online trading . ");
 	}
 
@@ -349,7 +335,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		scrollPanelFour = new javax.swing.JScrollPane();
 		_otherMarketList = new RPList();
 		_gatewayLabel = new RPLabel();
-		_selectGateawyCombobox = new RPComboBox();
+		_selectGatewayCombobox = new RPComboBox();
 		panelTwo = new javax.swing.JPanel();
 		_cansellLabel = new RPLabel();
 		_cansellText = new RPTextBox();
@@ -373,6 +359,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		_addressText = new RPTextBox();
 		_historyButton = new RPCButton();
 		_priceTipCheckBox = new RPCheckBox();
+		addWindowListener(this);
 
 		Font font = GraphicsUtils.getFont(18);
 		Font font14 = UIRes.getFont();
@@ -380,20 +367,19 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		getContentPane().setLayout(null);
 
 		_priceTipCheckBox.setText(LangConfig.get(this, "ppt", "Price prompt"));
-		_priceTipCheckBox.setSelected(LSystem.session("system").getBoolean(
-				"exchange_price_tip"));
-		_priceTipCheckBox
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						Session session = LSystem.session("system");
-						if (_priceTipCheckBox.isSelected()) {
-							session.set("exchange_price_tip", true);
-						} else {
-							session.set("exchange_price_tip", false);
-						}
-						session.save();
-					}
-				});
+		_priceTipCheckBox.setSelected(LSystem.session("system").get("exchange_price_tip") == null ? true
+				: LSystem.session("system").getBoolean("exchange_price_tip"));
+		_priceTipCheckBox.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				Session session = LSystem.session("system");
+				if (_priceTipCheckBox.isSelected()) {
+					session.set("exchange_price_tip", true);
+				} else {
+					session.set("exchange_price_tip", false);
+				}
+				session.save();
+			}
+		});
 		panelTwo.add(_priceTipCheckBox);
 		_priceTipCheckBox.setBounds(858, 50, 110, 23);
 		_priceTipCheckBox.setFont(font14);
@@ -429,8 +415,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 		_mytradingLabel.setFont(font14); // NOI18N
 		_mytradingLabel.setForeground(new LColor(255, 255, 255));
-		_mytradingLabel.setText(LangConfig
-				.get(this, "my_trading", "My trading"));
+		_mytradingLabel.setText(LangConfig.get(this, "my_trading", "My trading"));
 		panelOne.add(_mytradingLabel);
 		_mytradingLabel.setBounds(380, 185, 210, 18);
 
@@ -502,10 +487,8 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 					listsetforeground(list, idx);
 					synchronized (_sellerList) {
 						if (_sellerList.size() > 0 && idx < _sellerList.size()) {
-							_mybuyText.setText(_sellerList.get(idx).offer
-									.takerPays().toText());
-							_canbuyText.setText(_sellerList.get(idx).offer
-									.takerGets().toText());
+							_mybuyText.setText(_sellerList.get(idx).offer.takerPays().toText());
+							_canbuyText.setText(_sellerList.get(idx).offer.takerGets().toText());
 						}
 					}
 				}
@@ -519,8 +502,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 		_coinmarketcapLabel.setFont(font14); // NOI18N
 		_coinmarketcapLabel.setForeground(new LColor(255, 255, 255));
-		_coinmarketcapLabel.setText(LangConfig.get(this, "other_prices",
-				"Other Prices") + "(coinmarketcap)");
+		_coinmarketcapLabel.setText(LangConfig.get(this, "other_prices", "Other Prices") + "(coinmarketcap)");
 		panelOne.add(_coinmarketcapLabel);
 		_coinmarketcapLabel.setBounds(380, 45, 210, 18);
 
@@ -538,11 +520,14 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		getContentPane().add(_gatewayLabel);
 		_gatewayLabel.setBounds(10, 10, 95, 26);
 
-		_selectGateawyCombobox.setFont(font); // NOI18N
-		_selectGateawyCombobox.setItemModel(Gateway.gatewayList().toArray());
-		getContentPane().add(_selectGateawyCombobox);
-		_selectGateawyCombobox.setBounds(90, 10, 250, 30);
-		_selectGateawyCombobox.addItemListener(new ItemListener() {
+		_selectGatewayCombobox.setFont(font14); // NOI18N
+		ArrayList<String> temp = new ArrayList<String>(100);
+		temp.addAll(Gateway.gatewayList());
+		temp.addAll(callGateway());
+		_selectGatewayCombobox.setItemModel(temp.toArray());
+		getContentPane().add(_selectGatewayCombobox);
+		_selectGatewayCombobox.setBounds(90, 10, 250, 30);
+		_selectGatewayCombobox.addItemListener(new ItemListener() {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -551,10 +536,14 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 				}
 			}
 		});
-		_selectGateawyCombobox.setSelectedIndex(0);
-		if (_selectGateawyCombobox.getItemCount() > 0) {
-			callCur((String) _selectGateawyCombobox.getSelectedItem());
+		_selectGatewayCombobox.setSelectedIndex(0);
+		if (_selectGatewayCombobox.getItemCount() > 0) {
+			callCur((String) _selectGatewayCombobox.getSelectedItem());
 		}
+		if (LSystem.session("system").get("exchange_gateway") != null) {
+			_selectGatewayCombobox.setSelectedItem(LSystem.session("system").get("exchange_gateway"));
+		}
+
 		panelTwo.setBackground(new LColor(51, 51, 51));
 		panelTwo.setLayout(null);
 
@@ -640,8 +629,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 			}
 		});
 
-		_stopautonButton.setText(LangConfig.get(this, "stopauto",
-				"Stop auto trading"));
+		_stopautonButton.setText(LangConfig.get(this, "stopauto", "Stop auto trading"));
 		_stopautonButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -653,8 +641,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		panelTwo.add(_stopautonButton);
 		_stopautonButton.setBounds(560, 90, 130, 23);
 
-		_canceltradingButton.setText(LangConfig.get(this, "cancel",
-				"Cancel Transaction"));
+		_canceltradingButton.setText(LangConfig.get(this, "cancel", "Cancel Transaction"));
 		_canceltradingButton.setFont(font14);
 		panelTwo.add(_canceltradingButton);
 		_canceltradingButton.setBounds(410, 10, 140, 23);
@@ -669,29 +656,27 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 					if (result == 0) {
 						BookOffer offer = (BookOffer) o;
-						OfferCancel.set(_item.getSeed(), offer.sequence,
-								LSystem.getFee(), new Rollback() {
+						OfferCancel.set(_item.getSeed(), offer.sequence, LSystem.getFee(), new Rollback() {
 
-									@Override
-									public void success(JSONObject res) {
-										RPJSonLog.get().println(res);
-										updateMyTrading();
-										submitOK();
-									}
+							@Override
+							public void success(JSONObject res) {
+								RPJSonLog.get().println(res);
+								updateMyTrading();
+								submitOK();
+							}
 
-									@Override
-									public void error(JSONObject res) {
-										RPJSonLog.get().println(res);
+							@Override
+							public void error(JSONObject res) {
+								RPJSonLog.get().println(res);
 
-									}
-								});
+							}
+						});
 					}
 				}
 			}
 		});
 
-		_setautoButton.setText(LangConfig
-				.get(this, "setauto", "Set auto trade"));
+		_setautoButton.setText(LangConfig.get(this, "setauto", "Set auto trade"));
 		_setautoButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -703,8 +688,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		panelTwo.add(_setautoButton);
 		_setautoButton.setBounds(270, 90, 130, 23);
 
-		_startautobutton.setText(LangConfig.get(this, "startauto",
-				"Start auto trade"));
+		_startautobutton.setText(LangConfig.get(this, "startauto", "Start auto trade"));
 		_startautobutton.setFont(font14);
 		panelTwo.add(_startautobutton);
 		_startautobutton.setBounds(420, 90, 120, 23);
@@ -719,8 +703,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		getContentPane().add(panelTwo);
 		panelTwo.setBounds(10, 400, 970, 130);
 
-		_editHFTButton.setText(LangConfig
-				.get(this, "editscript", "Edit Script"));
+		_editHFTButton.setText(LangConfig.get(this, "editscript", "Edit Script"));
 		_editHFTButton.setFont(font14);
 		getContentPane().add(_editHFTButton);
 		_editHFTButton.setBounds(10, 540, 130, 40);
@@ -732,8 +715,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 			}
 		});
 
-		_autoHFTButton.setText(LangConfig.get(this, "startscript",
-				"Start Script"));
+		_autoHFTButton.setText(LangConfig.get(this, "startscript", "Start Script"));
 		_autoHFTButton.setFont(font14);
 		getContentPane().add(_autoHFTButton);
 		_autoHFTButton.setBounds(150, 540, 140, 40);
@@ -778,6 +760,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		getContentPane().add(_autoexButton);
 		_autoexButton.setBounds(440, 540, 130, 40);
 		getContentPane().add(_addressText);
+		_addressText.setFont(font14);
 		_addressText.setBounds(360, 10, 330, 30);
 		_addressText.setEnabled(false);
 
@@ -807,13 +790,88 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	}// </editor-fold>
 
 	private void callCur(String name) {
-		ArrayList<String> list = new ArrayList<String>(10);
-		ArrayList<Gateway.Item> items = Gateway.getAddress(name).accounts;
-		_addressText.setText(items.get(0).address);
-		for (int i = 0; i < items.size(); i++) {
-			list.addAll(items.get(i).currencies);
+		if (name.indexOf('/') == -1) {
+			ArrayList<String> list = new ArrayList<String>(10);
+			ArrayList<Gateway.Item> items = Gateway.getAddress(name).accounts;
+			_addressText.setText(items.get(0).address);
+			for (int i = 0; i < items.size(); i++) {
+				list.addAll(items.get(i).currencies);
+			}
+			list.add(LSystem.nativeCurrency.toUpperCase());
+			ArrayList<String> temp = new ArrayList<String>(100);
+			int size = list.size();
+			for (int j = 0; j < size; j++) {
+				String a = list.get(j);
+				for (int i = 0; i < size; i++) {
+					String b = list.get(i);
+					if (!a.equals(b)) {
+						String result = b + "/" + a;
+						if (!temp.contains(result)) {
+							temp.add(result);
+						}
+						result = a + "/" + b;
+						if (!temp.contains(result)) {
+							temp.add(result);
+						}
+					}
+				}
+			}
+			Collections.sort(temp);
+			_curComboBox.setItemModel(temp.toArray());
+			list.clear();
+			list = null;
+			temp.clear();
+			temp = null;
+		} else {
+			String[] split = StringUtils.split(name, "/");
+			String gateway1 = split[0];
+			String gateway2 = split[1];
+			ArrayList<Gateway.Item> items1 = Gateway.getAddress(gateway1).accounts;
+			ArrayList<Gateway.Item> items2 = Gateway.getAddress(gateway2).accounts;
+			_addressText.setText(items1.get(0).address + "/" + items2.get(0).address);
+			_addressText.setEditable(true);
+			ArrayList<String> check1 = new ArrayList<String>(items1.size());
+			ArrayList<String> check2 = new ArrayList<String>(items2.size());
+			ArrayList<String> list = new ArrayList<String>(items1.size() + items2.size());
+			for (int i = 0; i < items1.size(); i++) {
+				list.addAll(items1.get(i).currencies);
+				check1.addAll(items1.get(i).currencies);
+			}
+			for (int i = 0; i < items2.size(); i++) {
+				list.addAll(items2.get(i).currencies);
+				check2.addAll(items2.get(i).currencies);
+			}
+			ArrayList<String> temp = new ArrayList<String>(100);
+			int size = list.size();
+			for (int j = 0; j < size; j++) {
+				String a = list.get(j);
+				for (int i = 0; i < size; i++) {
+					String b = list.get(i);
+					if (!a.equals(b)) {
+						String result = b + "/" + a;
+						if (!temp.contains(result) && check1.contains(b) && check2.contains(a)) {
+							temp.add(result);
+						}
+						result = a + "/" + b;
+						if (!temp.contains(result) && check1.contains(a) && check2.contains(b)) {
+							temp.add(result);
+						}
+					}
+				}
+			}
+			Collections.sort(temp);
+			_curComboBox.setItemModel(temp.toArray());
+			list.clear();
+			list = null;
+			temp.clear();
+			temp = null;
 		}
-		list.add(LSystem.nativeCurrency.toUpperCase());
+	}
+
+	private ArrayList<String> callGateway() {
+		ArrayList<String> list = new ArrayList<String>(10);
+		ArrayList<String> items = Gateway.gatewayList();
+		list.addAll(items);
 		ArrayList<String> temp = new ArrayList<String>(100);
 		int size = list.size();
 		for (int j = 0; j < size; j++) {
@@ -833,11 +891,9 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 			}
 		}
 		Collections.sort(temp);
-		_curComboBox.setItemModel(temp.toArray());
 		list.clear();
 		list = null;
-		temp.clear();
-		temp = null;
+		return temp;
 	}
 
 	private HashMap<String, Boolean> _flags = new HashMap<String, Boolean>(10);
@@ -858,12 +914,11 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		final String cur = (String) _curComboBox.getSelectedItem();
 		final String[] split = StringUtils.split(cur, "/");
 		if (split.length == 2) {
-			//repaint();
-			//getContentPane().repaint();
+			// repaint();
+			// getContentPane().repaint();
 			final String address = _addressText.getText().trim();
 
-			final WaitDialog dialog = WaitDialog.showDialog(
-					RPExchangeMinDialog.this, wait);
+			final WaitDialog dialog = WaitDialog.showDialog(RPExchangeMinDialog.this, wait);
 			_waitDialogs.add(dialog);
 			OfferPrice.load(address, split[0], split[1], new OfferPrice() {
 
@@ -882,10 +937,6 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 					if (dialog != null) {
 						dialog.closeDialog();
 					}
-					/*
-					 * if (obj != null) { JSonLog.get().println(obj.toString());
-					 * }
-					 */
 				}
 
 				@Override
@@ -898,77 +949,66 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 				}
 
 				@Override
-				public void complete(final ArrayList<OfferFruit> buys,
-						final ArrayList<OfferFruit> sells,
+				public void complete(final ArrayList<OfferFruit> buys, final ArrayList<OfferFruit> sells,
 						final OfferPrice price) {
 
 					Updateable update = new Updateable() {
 
 						@Override
 						public void action(Object o) {
-							_tip1Label.setText(String
-									.format(info_price(), price.highBuy,
-											price.highSell, price.spread));
+							_tip1Label
+									.setText(String.format(info_price(), price.highBuy, price.highSell, price.spread));
 							if (buys.size() > 0) {
 								synchronized (_buyerList) {
-									_buymList
-											.setModel(new javax.swing.AbstractListModel<Object>() {
-												private static final long serialVersionUID = 1L;
+									_buymList.setModel(new javax.swing.AbstractListModel<Object>() {
+										private static final long serialVersionUID = 1L;
 
-												public int getSize() {
-													int size = buys.size();
-													if (size > _LIMIT_PAGE) {
-														return _LIMIT_PAGE;
-													}
-													return size;
-												}
+										public int getSize() {
+											int size = buys.size();
+											if (size > _LIMIT_PAGE) {
+												return _LIMIT_PAGE;
+											}
+											return size;
+										}
 
-												public Object getElementAt(int i) {
-													return buys.get(i);
-												}
-											});
+										public Object getElementAt(int i) {
+											return buys.get(i);
+										}
+									});
 
 									_buyerList.clear();
 									_buyerList.addAll(buys);
-									_mysellText.setText(_buyerList.get(0).offer
-											.takerPays().toText());
-									_cansellText.setText(_buyerList.get(0).offer
-											.takerGets().toText());
-									_buymLabel.setText(LangConfig.get(
-											RPExchangeMinDialog.class, "bm",
-											"Buyer's Market")
+									_mysellText.setText(_buyerList.get(0).offer.takerPays().toText());
+									_cansellText.setText(_buyerList.get(0).offer.takerGets().toText());
+									_buymLabel.setText(LangConfig.get(RPExchangeMinDialog.class, "bm", "Buyer's Market")
 											+ " Count:" + buys.size());
 								}
 							}
 							if (sells.size() > 0) {
 								synchronized (_sellerList) {
-									_sellmList
-											.setModel(new javax.swing.AbstractListModel<Object>() {
-												private static final long serialVersionUID = 1L;
+									_sellmList.setModel(new javax.swing.AbstractListModel<Object>() {
+										private static final long serialVersionUID = 1L;
 
-												public int getSize() {
-													int size = sells.size();
-													if (size > _LIMIT_PAGE) {
-														return _LIMIT_PAGE;
-													}
-													return size;
-												}
+										public int getSize() {
+											int size = sells.size();
+											if (size > _LIMIT_PAGE) {
+												return _LIMIT_PAGE;
+											}
+											return size;
+										}
 
-												public Object getElementAt(int i) {
-													return sells.get(i);
-												}
-											});
+										public Object getElementAt(int i) {
+											return sells.get(i);
+										}
+									});
 
 									_sellerList.clear();
 									_sellerList.addAll(sells);
-									_mybuyText.setText(_sellerList.get(0).offer
-											.takerPays().toText());
-									_canbuyText.setText(_sellerList.get(0).offer
-											.takerGets().toText());
-									_sellmLabel.setText(LangConfig.get(
-											RPExchangeMinDialog.class, "sm",
-											"Seller's Market")
-											+ " Count:" + sells.size());
+									_mybuyText.setText(_sellerList.get(0).offer.takerPays().toText());
+									_canbuyText.setText(_sellerList.get(0).offer.takerGets().toText());
+									_sellmLabel
+											.setText(LangConfig.get(RPExchangeMinDialog.class, "sm", "Seller's Market")
+													+ " Count:" + sells.size());
 								}
 							}
 							if (dialog != null) {
@@ -978,8 +1018,8 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 							_showTrend = false;
 							loadTradingList(address, split);
 							loadOtherMarketList(address, split);
-							//repaint();
-						//	getContentPane().repaint();
+							// repaint();
+							// getContentPane().repaint();
 							updateTrend(split[0]);
 						}
 					};
@@ -998,8 +1038,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		}
 		RippleBOTLoader.Trend trend = RippleBOTLoader.getTrend(cur, 7);
 		if (lastTrend != trend) {
-			RPToast.makeText(this,
-					cur.toUpperCase() + "  price trend : " + trend).display();
+			RPToast.makeText(this, cur.toUpperCase() + "  price trend : " + trend).display();
 			lastTrend = trend;
 		}
 	}
@@ -1007,29 +1046,22 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	private void loadOtherMarketList(String address, String[] split) {
 		String srcCurName = split[0];
 		String dstCurName = split[1];
+
 		OtherData.CoinmarketcapData cData = null;
-		if ((srcCurName.equalsIgnoreCase("usd") && dstCurName
-				.equalsIgnoreCase("btc"))
-				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName
-						.equalsIgnoreCase("usd"))) {
+		if ((srcCurName.equalsIgnoreCase("usd") && dstCurName.equalsIgnoreCase("btc"))
+				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName.equalsIgnoreCase("usd"))) {
 			srcCurName = "usd";
 			dstCurName = "btc";
-		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
-				.equalsIgnoreCase("usd"))
-				|| (srcCurName.equalsIgnoreCase("usd") && dstCurName
-						.equalsIgnoreCase(LSystem.nativeCurrency))) {
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName.equalsIgnoreCase("usd"))
+				|| (srcCurName.equalsIgnoreCase("usd") && dstCurName.equalsIgnoreCase(LSystem.nativeCurrency))) {
 			srcCurName = "usd";
 			dstCurName = LSystem.nativeCurrency;
-		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
-				.equalsIgnoreCase("btc"))
-				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName
-						.equalsIgnoreCase(LSystem.nativeCurrency))) {
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName.equalsIgnoreCase("btc"))
+				|| (srcCurName.equalsIgnoreCase("btc") && dstCurName.equalsIgnoreCase(LSystem.nativeCurrency))) {
 			srcCurName = "btc";
 			dstCurName = LSystem.nativeCurrency;
-		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName
-				.equalsIgnoreCase("cny"))
-				|| (srcCurName.equalsIgnoreCase("cny") && dstCurName
-						.equalsIgnoreCase(LSystem.nativeCurrency))) {
+		} else if ((srcCurName.equalsIgnoreCase(LSystem.nativeCurrency) && dstCurName.equalsIgnoreCase("cny"))
+				|| (srcCurName.equalsIgnoreCase("cny") && dstCurName.equalsIgnoreCase(LSystem.nativeCurrency))) {
 			srcCurName = "cny";
 			dstCurName = LSystem.nativeCurrency;
 		}
@@ -1037,12 +1069,11 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 			cData = OtherData.getCoinmarketcapTo(srcCurName, dstCurName);
 			// fix Coinmarketcap not update
 			if (cData != null
-					&& (LSystem.nativeCurrency.equalsIgnoreCase(cData.name) || "ripple"
-							.equalsIgnoreCase(cData.name))) {
-				double price = Double.parseDouble(cData.price);
+					&& (LSystem.nativeCurrency.equalsIgnoreCase(cData.name) || "ripple".equalsIgnoreCase(cData.name))) {
+				double price = Double.parseDouble(cData.price_usd);
 				double realPrice = RippleChartsAPI.getXRPtoUSD();
 				price = Math.max(price, realPrice);
-				cData.price = LSystem.getNumberShort(price);
+				cData.price_usd = LSystem.getNumberShort(price);
 			}
 			if (cData == null) {
 				cData = OtherData.getCoinmarketcapTo("usd", dstCurName);
@@ -1051,38 +1082,11 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 				cData = OtherData.getCoinmarketcapTo("usd", srcCurName);
 			}
 			if (cData == null) {
-				String result = OfferPrice.getMoneyConvert("1", srcCurName,
-						dstCurName);
+				String result = OfferPrice.getMoneyConvert("1", srcCurName, dstCurName);
 				if (result != null && !"unkown".equals(result)) {
 					final ArrayList<String> list = new ArrayList<String>(10);
-					list.add("1/" + srcCurName + "<br>Swap<br>" + result + "/"
-							+ dstCurName);
-					_otherMarketList
-							.setModel(new javax.swing.AbstractListModel<Object>() {
-								private static final long serialVersionUID = 1L;
-
-								public int getSize() {
-									return list.size();
-								}
-
-								public Object getElementAt(int i) {
-									return list.get(i);
-								}
-							});
-					return;
-				}
-			}
-			if (cData == null) {
-				cData = OtherData.getCoinmarketcapTo("usd",
-						LSystem.nativeCurrency);
-			}
-		} catch (Exception e) {
-		}
-		if (cData != null) {
-			final ArrayList<String> list = new ArrayList<String>(10);
-			list.add(cData.toHTMLString());
-			_otherMarketList
-					.setModel(new javax.swing.AbstractListModel<Object>() {
+					list.add("1/" + srcCurName + "<br>Swap<br>" + result + "/" + dstCurName);
+					_otherMarketList.setModel(new javax.swing.AbstractListModel<Object>() {
 						private static final long serialVersionUID = 1L;
 
 						public int getSize() {
@@ -1093,6 +1097,28 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 							return list.get(i);
 						}
 					});
+					return;
+				}
+			}
+			if (cData == null) {
+				cData = OtherData.getCoinmarketcapTo("usd", LSystem.nativeCurrency);
+			}
+		} catch (Exception e) {
+		}
+		if (cData != null) {
+			final ArrayList<String> list = new ArrayList<String>(10);
+			list.add(cData.toHTMLString());
+			_otherMarketList.setModel(new javax.swing.AbstractListModel<Object>() {
+				private static final long serialVersionUID = 1L;
+
+				public int getSize() {
+					return list.size();
+				}
+
+				public Object getElementAt(int i) {
+					return list.get(i);
+				}
+			});
 		}
 	}
 
@@ -1116,8 +1142,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 								@Override
 								public void action(Object o) {
-									submitBuy(address, srcCurName, dstCurName,
-											true);
+									submitBuy(address, srcCurName, dstCurName, true);
 								}
 							});
 						}
@@ -1133,8 +1158,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 							@Override
 							public void action(Object o) {
-								submitSell(address, srcCurName, dstCurName,
-										false);
+								submitSell(address, srcCurName, dstCurName, false);
 							}
 						});
 
@@ -1148,8 +1172,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		}
 	}
 
-	private void submitBuy(final String address, final String srcCurName,
-			final String dstCurName, final boolean flag) {
+	private void submitBuy(final String address, final String srcCurName, final String dstCurName, final boolean flag) {
 		String myBuytmp = _mybuyText.getText().trim();
 		String canBuytmp = _canbuyText.getText().trim();
 		int idx = myBuytmp.indexOf("/");
@@ -1161,8 +1184,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		int result = info_swap(myBuy, dstCurName, canBuy, srcCurName);
 		if (result == 0) {
 
-			final WaitDialog dialog = WaitDialog
-					.showDialog(RPExchangeMinDialog.this);
+			final WaitDialog dialog = WaitDialog.showDialog(RPExchangeMinDialog.this);
 			_waitDialogs.add(dialog);
 			final String myAddress = _item.getPublicKey();
 			final Updateable updateable = new Updateable() {
@@ -1180,16 +1202,14 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 						}
 					} else {
 						boolean dst = false;
-						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(
-								100);
+						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(100);
 						lines.addAll(_info.lines);
 						lines.addAll(_info.zero_lines);
 						for (AccountLine line : lines) {
 							if (line.getIssuer().equals(address)) {
 								if (line.getCurrency().equals(dstCurName)) {
 									dst = true;
-									double a = Double.parseDouble(line
-											.getBalance());
+									double a = Double.parseDouble(line.getBalance());
 									double b = Double.parseDouble(myBuy);
 									if (b > a) {
 										dialog.closeDialog();
@@ -1210,8 +1230,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 					}
 					dialog.closeDialog();
-					callTrade(address, dstCurName, srcCurName, myBuy, canBuy,
-							flag);
+					callTrade(address, dstCurName, srcCurName, myBuy, canBuy, flag);
 				}
 			};
 
@@ -1229,8 +1248,8 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 	}
 
-	private void submitSell(final String address, final String srcCurName,
-			final String dstCurName, final boolean flag) {
+	private void submitSell(final String address, final String srcCurName, final String dstCurName,
+			final boolean flag) {
 		String mySelltmp = _mysellText.getText().trim();
 		String canSelltmp = _cansellText.getText().trim();
 		int idx = mySelltmp.indexOf("/");
@@ -1242,8 +1261,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		int result = info_swap(mySell, srcCurName, canSell, dstCurName);
 		if (result == 0) {
 
-			final WaitDialog dialog = WaitDialog
-					.showDialog(RPExchangeMinDialog.this);
+			final WaitDialog dialog = WaitDialog.showDialog(RPExchangeMinDialog.this);
 			_waitDialogs.add(dialog);
 			final String myAddress = _item.getPublicKey();
 			final Updateable updateable = new Updateable() {
@@ -1264,8 +1282,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 						boolean src = false;
 
-						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(
-								100);
+						ArrayList<AccountLine> lines = new ArrayList<AccountLine>(100);
 
 						lines.addAll(_info.lines);
 						lines.addAll(_info.zero_lines);
@@ -1273,8 +1290,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 							if (line.getIssuer().equals(address)) {
 								if (line.getCurrency().equals(srcCurName)) {
 									src = true;
-									double a = Double.parseDouble(line
-											.getBalance());
+									double a = Double.parseDouble(line.getBalance());
 									double b = Double.parseDouble(mySell);
 									if (b > a) {
 										dialog.closeDialog();
@@ -1296,8 +1312,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 					}
 
 					dialog.closeDialog();
-					callTrade(address, dstCurName, srcCurName, mySell, canSell,
-							flag);
+					callTrade(address, dstCurName, srcCurName, mySell, canSell, flag);
 				}
 			};
 
@@ -1315,42 +1330,37 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 	}
 
-	private void callTrade(final String address, String dstCurName,
-			String srcCurName, String pay, String get, boolean flag) {
+	private void callTrade(final String address, String dstCurName, String srcCurName, String pay, String get,
+			boolean flag) {
 		IssuedCurrency currencySrc = null;
 		IssuedCurrency currencyDst = null;
 
 		if (flag) {
 			if (LSystem.nativeCurrency.equals(dstCurName.toLowerCase())) {
-				currencySrc = new IssuedCurrency(
-						CurrencyUtils.getValueToRipple(pay));
+				currencySrc = new IssuedCurrency(CurrencyUtils.getValueToRipple(pay));
 			} else {
 				currencySrc = new IssuedCurrency(pay, address, dstCurName);
 			}
 			if (LSystem.nativeCurrency.equals(srcCurName.toLowerCase())) {
-				currencyDst = new IssuedCurrency(
-						CurrencyUtils.getValueToRipple(get));
+				currencyDst = new IssuedCurrency(CurrencyUtils.getValueToRipple(get));
 			} else {
 				currencyDst = new IssuedCurrency(get, address, srcCurName);
 			}
 		} else {
 			if (LSystem.nativeCurrency.equals(dstCurName.toLowerCase())) {
-				currencySrc = new IssuedCurrency(
-						CurrencyUtils.getValueToRipple(get));
+				currencySrc = new IssuedCurrency(CurrencyUtils.getValueToRipple(get));
 			} else {
 				currencySrc = new IssuedCurrency(get, address, dstCurName);
 			}
 			if (LSystem.nativeCurrency.equals(srcCurName.toLowerCase())) {
-				currencyDst = new IssuedCurrency(
-						CurrencyUtils.getValueToRipple(pay));
+				currencyDst = new IssuedCurrency(CurrencyUtils.getValueToRipple(pay));
 			} else {
 				currencyDst = new IssuedCurrency(pay, address, srcCurName);
 			}
 		}
 
-		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc,
-				flag ? currencySrc : currencyDst, LSystem.getFee(),
-				new Rollback() {
+		OfferCreate.set(_item.getSeed(), flag ? currencyDst : currencySrc, flag ? currencySrc : currencyDst,
+				LSystem.getFee(), new Rollback() {
 
 					@Override
 					public void success(JSONObject res) {
@@ -1370,8 +1380,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 	}
 
-	private final static void checkText(String text, String curName,
-			RPTextBox textbox) {
+	private final static void checkText(String text, String curName, RPTextBox textbox) {
 		String result = text;
 		if (text.indexOf(curName) == -1) {
 			int idx = text.indexOf("/");
@@ -1393,8 +1402,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 				result = "0" + result;
 			}
 			if (!result.startsWith("0/")) {
-				result = String.valueOf(new BigDecimal(result.split("/")[0]
-						.trim()).toString()) + "/" + curName;
+				result = String.valueOf(new BigDecimal(result.split("/")[0].trim()).toString()) + "/" + curName;
 			}
 			textbox.setText(result);
 		}
@@ -1446,8 +1454,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 	}
 
-	private void checkTrade(final String address, final RPCButton button,
-			final Updateable update) {
+	private void checkTrade(final String address, final RPCButton button, final Updateable update) {
 		Object result = _flags.get(address);
 		if (result == null || (!(boolean) result)) {
 
@@ -1496,22 +1503,21 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 			@Override
 			public void action(Object o) {
-				_mytradingList
-						.setModel(new javax.swing.AbstractListModel<Object>() {
+				_mytradingList.setModel(new javax.swing.AbstractListModel<Object>() {
 
-							/**
-					 * 
-					 */
-							private static final long serialVersionUID = 1L;
+					/**
+					* 
+					*/
+					private static final long serialVersionUID = 1L;
 
-							public int getSize() {
-								return _info.bookOffers.size();
-							}
+					public int getSize() {
+						return _info.bookOffers.size();
+					}
 
-							public Object getElementAt(int i) {
-								return _info.bookOffers.get(i);
-							}
-						});
+					public Object getElementAt(int i) {
+						return _info.bookOffers.get(i);
+					}
+				});
 			}
 		});
 	}
@@ -1520,8 +1526,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 	private boolean _tradeFlag;
 
-	private void updateTrading(final String address, final String src,
-			final String dst) {
+	private void updateTrading(final String address, final String src, final String dst) {
 
 		OfferPrice.load(address, src, dst, new OfferPrice() {
 
@@ -1546,8 +1551,8 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 			}
 
 			@Override
-			public void complete(final ArrayList<OfferFruit> buys,
-					final ArrayList<OfferFruit> sells, final OfferPrice price) {
+			public void complete(final ArrayList<OfferFruit> buys, final ArrayList<OfferFruit> sells,
+					final OfferPrice price) {
 
 				Updateable update = new Updateable() {
 
@@ -1556,61 +1561,54 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 
 						if (sells.size() > 0) {
 							synchronized (_sellerList) {
-								_sellmList
-										.setModel(new javax.swing.AbstractListModel<Object>() {
-											private static final long serialVersionUID = 1L;
+								_sellmList.setModel(new javax.swing.AbstractListModel<Object>() {
+									private static final long serialVersionUID = 1L;
 
-											public int getSize() {
-												int size = sells.size();
-												if (size > _LIMIT_PAGE) {
-													return _LIMIT_PAGE;
-												}
-												return size;
-											}
+									public int getSize() {
+										int size = sells.size();
+										if (size > _LIMIT_PAGE) {
+											return _LIMIT_PAGE;
+										}
+										return size;
+									}
 
-											public Object getElementAt(int i) {
-												return sells.get(i);
-											}
-										});
+									public Object getElementAt(int i) {
+										return sells.get(i);
+									}
+								});
 
 								_sellerList.clear();
 								_sellerList.addAll(sells);
-								_sellmLabel.setText(LangConfig.get(
-										RPExchangeMinDialog.class, "sm",
-										"Seller's Market")
+								_sellmLabel.setText(LangConfig.get(RPExchangeMinDialog.class, "sm", "Seller's Market")
 										+ " Count:" + sells.size());
 							}
 						}
 						if (buys.size() > 0) {
 							synchronized (_buyerList) {
-								_buymList
-										.setModel(new javax.swing.AbstractListModel<Object>() {
-											private static final long serialVersionUID = 1L;
+								_buymList.setModel(new javax.swing.AbstractListModel<Object>() {
+									private static final long serialVersionUID = 1L;
 
-											public int getSize() {
-												int size = buys.size();
-												if (size > _LIMIT_PAGE) {
-													return _LIMIT_PAGE;
-												}
-												return size;
-											}
+									public int getSize() {
+										int size = buys.size();
+										if (size > _LIMIT_PAGE) {
+											return _LIMIT_PAGE;
+										}
+										return size;
+									}
 
-											public Object getElementAt(int i) {
-												return buys.get(i);
-											}
-										});
+									public Object getElementAt(int i) {
+										return buys.get(i);
+									}
+								});
 
 								_buyerList.clear();
 								_buyerList.addAll(buys);
-								_buymLabel.setText(LangConfig.get(
-										RPExchangeMinDialog.class, "bm",
-										"Buyer's Market")
+								_buymLabel.setText(LangConfig.get(RPExchangeMinDialog.class, "bm", "Buyer's Market")
 										+ " Count:" + buys.size());
 							}
 						}
 
-						_tip1Label.setText(String.format(info_price(),
-								price.highBuy, price.highSell, price.spread));
+						_tip1Label.setText(String.format(info_price(), price.highBuy, price.highSell, price.spread));
 					}
 				};
 
@@ -1669,17 +1667,18 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
+		LSystem.session("system").set("exchange_gateway", _selectGatewayCombobox.getSelectedItem().toString());
+		LSystem.session("system").save();
 		if (_waitDialogs != null) {
 			for (WaitDialog wait : _waitDialogs) {
 				if (wait != null) {
@@ -1692,24 +1691,24 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

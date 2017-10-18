@@ -192,7 +192,6 @@ public abstract class ASN1TaggedObject
     public ASN1Encodable getObjectParser(
         int     tag,
         boolean isExplicit)
-        throws IOException
     {
         switch (tag)
         {
@@ -209,7 +208,7 @@ public abstract class ASN1TaggedObject
             return getObject();
         }
 
-        throw new ASN1Exception("implicit tagging not implemented for tag: " + tag);
+        throw new RuntimeException("implicit tagging not implemented for tag: " + tag);
     }
 
     public ASN1Primitive getLoadedObject()

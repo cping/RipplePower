@@ -55,8 +55,7 @@ public class LImage {
 			return loadHeader(in, new State());
 		}
 
-		private static State loadHeader(InputStream in, State info)
-				throws IOException {
+		private static State loadHeader(InputStream in, State info) throws IOException {
 
 			in.read();
 			in.read();
@@ -86,12 +85,10 @@ public class LImage {
 		}
 
 		private static final int getUnsignedShort(byte[] bytes, int byteIndex) {
-			return (getUnsignedByte(bytes, byteIndex + 1) << 8)
-					+ getUnsignedByte(bytes, byteIndex + 0);
+			return (getUnsignedByte(bytes, byteIndex + 1) << 8) + getUnsignedByte(bytes, byteIndex + 0);
 		}
 
-		private static void readBuffer(InputStream in, byte[] buffer)
-				throws IOException {
+		private static void readBuffer(InputStream in, byte[] buffer) throws IOException {
 			int bytesRead = 0;
 			int bytesToRead = buffer.length;
 			for (; bytesToRead > 0;) {
@@ -101,8 +98,7 @@ public class LImage {
 			}
 		}
 
-		private static final void skipBytes(InputStream in, long toSkip)
-				throws IOException {
+		private static final void skipBytes(InputStream in, long toSkip) throws IOException {
 			for (; toSkip > 0L;) {
 				long skipped = in.skip(toSkip);
 				if (skipped > 0) {
@@ -113,8 +109,7 @@ public class LImage {
 			}
 		}
 
-		private static final int compareFormatHeader(InputStream in,
-				byte[] header) throws IOException {
+		private static final int compareFormatHeader(InputStream in, byte[] header) throws IOException {
 
 			readBuffer(in, header);
 			boolean hasPalette = false;
@@ -133,8 +128,7 @@ public class LImage {
 			case 1:
 				hasPalette = true;
 				result = TGA_HEADER_UNCOMPRESSED;
-				throw new RuntimeException(
-						"Indexed State is not yet supported !");
+				throw new RuntimeException("Indexed State is not yet supported !");
 			case 2:
 				result = TGA_HEADER_UNCOMPRESSED;
 				break;
@@ -144,8 +138,7 @@ public class LImage {
 			case 9:
 				hasPalette = true;
 				result = TGA_HEADER_COMPRESSED;
-				throw new RuntimeException(
-						"Indexed State is not yet supported !");
+				throw new RuntimeException("Indexed State is not yet supported !");
 			case 10:
 				result = TGA_HEADER_COMPRESSED;
 				break;
@@ -172,8 +165,8 @@ public class LImage {
 					return TGA_HEADER_INVALID;
 				}
 			} else {
-				if ((paletteEntrySize != 15) && (paletteEntrySize != 16)
-						&& (paletteEntrySize != 24) && (paletteEntrySize != 32)) {
+				if ((paletteEntrySize != 15) && (paletteEntrySize != 16) && (paletteEntrySize != 24)
+						&& (paletteEntrySize != 32)) {
 					return TGA_HEADER_INVALID;
 				}
 			}
@@ -191,8 +184,7 @@ public class LImage {
 			case 8:
 			case 15:
 			case 16:
-				throw new RuntimeException(
-						"this State with non RGB or RGBA pixels are not yet supported.");
+				throw new RuntimeException("this State with non RGB or RGBA pixels are not yet supported.");
 			case 24:
 			case 32:
 				break;
@@ -207,9 +199,8 @@ public class LImage {
 			return result;
 		}
 
-		private static final void writePixel(int[] pixels, final byte red,
-				final byte green, final byte blue, final byte alpha,
-				final boolean hasAlpha, final int offset) {
+		private static final void writePixel(int[] pixels, final byte red, final byte green, final byte blue,
+				final byte alpha, final boolean hasAlpha, final int offset) {
 			int pixel;
 			if (hasAlpha) {
 				pixel = (red & 0xff);
@@ -225,9 +216,8 @@ public class LImage {
 			}
 		}
 
-		private static int[] readBuffer(InputStream in, int width, int height,
-				int srcBytesPerPixel, boolean acceptAlpha,
-				boolean flipVertically) throws IOException {
+		private static int[] readBuffer(InputStream in, int width, int height, int srcBytesPerPixel,
+				boolean acceptAlpha, boolean flipVertically) throws IOException {
 
 			int[] pixels = new int[width * height];
 			byte[] buffer = new byte[srcBytesPerPixel];
@@ -247,16 +237,13 @@ public class LImage {
 					}
 					int actualByteOffset = dstByteOffset;
 					if (!flipVertically) {
-						actualByteOffset = ((height - y - 1) * trgLineSize)
-								+ (x * dstBytesPerPixel);
+						actualByteOffset = ((height - y - 1) * trgLineSize) + (x * dstBytesPerPixel);
 					}
 
 					if (copyAlpha) {
-						writePixel(pixels, buffer[2], buffer[1], buffer[0],
-								buffer[3], true, actualByteOffset);
+						writePixel(pixels, buffer[2], buffer[1], buffer[0], buffer[3], true, actualByteOffset);
 					} else {
-						writePixel(pixels, buffer[2], buffer[1], buffer[0],
-								(byte) 0, false, actualByteOffset);
+						writePixel(pixels, buffer[2], buffer[1], buffer[0], (byte) 0, false, actualByteOffset);
 					}
 
 					dstByteOffset += dstBytesPerPixel;
@@ -265,9 +252,8 @@ public class LImage {
 			return pixels;
 		}
 
-		private static void loadUncompressed(byte[] header, State tga,
-				InputStream in, boolean acceptAlpha, boolean flipVertically)
-				throws IOException {
+		private static void loadUncompressed(byte[] header, State tga, InputStream in, boolean acceptAlpha,
+				boolean flipVertically) throws IOException {
 
 			// 图像宽
 			int orgWidth = getUnsignedShort(header, 12);
@@ -289,23 +275,20 @@ public class LImage {
 			}
 
 			// 不支持的格式
-			if ((orgWidth <= 0) || (orgHeight <= 0)
-					|| ((pixelDepth != 24) && (pixelDepth != 32))) {
+			if ((orgWidth <= 0) || (orgHeight <= 0) || ((pixelDepth != 24) && (pixelDepth != 32))) {
 				throw new IOException("Invalid texture information !");
 			}
 
 			int bytesPerPixel = (pixelDepth / 8);
 
 			// 获取图像数据并转为int[]
-			tga.pixels = readBuffer(in, orgWidth, orgHeight, bytesPerPixel,
-					acceptAlpha, flipVertically);
+			tga.pixels = readBuffer(in, orgWidth, orgHeight, bytesPerPixel, acceptAlpha, flipVertically);
 			// 图像色彩模式
 			tga.type = (acceptAlpha && (bytesPerPixel == 4) ? 4 : 3);
 		}
 
-		private static void loadCompressed(byte[] header, State tga,
-				InputStream in, boolean acceptAlpha, boolean flipVertically)
-				throws IOException {
+		private static void loadCompressed(byte[] header, State tga, InputStream in, boolean acceptAlpha,
+				boolean flipVertically) throws IOException {
 
 			int orgWidth = getUnsignedShort(header, 12);
 			int orgHeight = getUnsignedShort(header, 14);
@@ -321,8 +304,7 @@ public class LImage {
 				flipVertically = !flipVertically;
 			}
 
-			if ((orgWidth <= 0) || (orgHeight <= 0)
-					|| ((pixelDepth != 24) && (pixelDepth != 32))) {
+			if ((orgWidth <= 0) || (orgHeight <= 0) || ((pixelDepth != 24) && (pixelDepth != 32))) {
 				throw new IOException("Invalid texture information !");
 			}
 
@@ -335,8 +317,7 @@ public class LImage {
 			int width = orgWidth;
 			int height = orgHeight;
 
-			final int dstBytesPerPixel = (acceptAlpha && (bytesPerPixel == 4) ? 4
-					: 3);
+			final int dstBytesPerPixel = (acceptAlpha && (bytesPerPixel == 4) ? 4 : 3);
 			final int trgLineSize = orgWidth * dstBytesPerPixel;
 
 			int[] pixels = new int[width * height];
@@ -348,8 +329,7 @@ public class LImage {
 				try {
 					chunkHeader = (byte) in.read() & 0xFF;
 				} catch (IOException e) {
-					throw new IOException(
-							"Could not read RLE imageData header !");
+					throw new IOException("Could not read RLE imageData header !");
 				}
 
 				boolean repeatColor;
@@ -373,17 +353,14 @@ public class LImage {
 
 					int actualByteOffset = dstByteOffset;
 					if (!flipVertically) {
-						actualByteOffset = ((height - y - 1) * trgLineSize)
-								+ (x * dstBytesPerPixel);
+						actualByteOffset = ((height - y - 1) * trgLineSize) + (x * dstBytesPerPixel);
 					}
 
 					if (dstBytesPerPixel == 4) {
-						writePixel(pixels, colorBuffer[2], colorBuffer[1],
-								colorBuffer[0], colorBuffer[3], true,
+						writePixel(pixels, colorBuffer[2], colorBuffer[1], colorBuffer[0], colorBuffer[3], true,
 								actualByteOffset);
 					} else {
-						writePixel(pixels, colorBuffer[2], colorBuffer[1],
-								colorBuffer[0], (byte) 0, false,
+						writePixel(pixels, colorBuffer[2], colorBuffer[1], colorBuffer[0], (byte) 0, false,
 								actualByteOffset);
 					}
 
@@ -419,8 +396,8 @@ public class LImage {
 			return tga;
 		}
 
-		public static State load(InputStream in, State tga,
-				boolean acceptAlpha, boolean flipVertically) throws IOException {
+		public static State load(InputStream in, State tga, boolean acceptAlpha, boolean flipVertically)
+				throws IOException {
 			if (in.available() < TGA_HEADER_SIZE) {
 				return (null);
 			}
@@ -460,10 +437,8 @@ public class LImage {
 		return new LImage(GraphicsUtils.toolKit.createImage(buffer));
 	}
 
-	public static LImage createImage(byte[] buffer, int imageoffset,
-			int imagelength) {
-		return new LImage(GraphicsUtils.toolKit.createImage(buffer,
-				imageoffset, imagelength));
+	public static LImage createImage(byte[] buffer, int imageoffset, int imagelength) {
+		return new LImage(GraphicsUtils.toolKit.createImage(buffer, imageoffset, imagelength));
 	}
 
 	public static LImage createImage(int width, int height) {
@@ -482,16 +457,14 @@ public class LImage {
 		return new LImage(fileName);
 	}
 
-	public static LImage createRGBImage(int[] rgb, int width, int height,
-			boolean processAlpha) {
+	public static LImage createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
 		if (rgb == null) {
 			throw new NullPointerException();
 		}
 		if (width <= 0 || height <= 0) {
 			throw new IllegalArgumentException();
 		}
-		BufferedImage img = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		if (!processAlpha) {
 			int l = rgb.length;
 			int[] rgbAux = new int[l];
@@ -504,8 +477,7 @@ public class LImage {
 		return new LImage(img);
 	}
 
-	public static LImage[] createImage(int count, int w, int h,
-			boolean transparency) {
+	public static LImage[] createImage(int count, int w, int h, boolean transparency) {
 		LImage[] image = new LImage[count];
 		for (int i = 0; i < image.length; i++) {
 			image[i] = new LImage(w, h, transparency);
@@ -521,8 +493,7 @@ public class LImage {
 		return image;
 	}
 
-	public static LImage createImage(LImage image, int x, int y, int width,
-			int height, int transform) {
+	public static LImage createImage(LImage image, int x, int y, int width, int height, int transform) {
 		int[] buf = new int[width * height];
 		image.getPixels(buf, 0, width, x, y, width, height);
 		int th;
@@ -579,8 +550,7 @@ public class LImage {
 					td = tw;
 					break;
 				default:
-					throw new RuntimeException("Illegal transformation: "
-							+ transform);
+					throw new RuntimeException("Illegal transformation: " + transform);
 				}
 
 				int tp = ty * tw + tx;
@@ -603,14 +573,12 @@ public class LImage {
 		try {
 			this.width = width;
 			this.height = height;
-			this.bufferedImage = GraphicsUtils.createImage(width, height,
-					transparency);
+			this.bufferedImage = GraphicsUtils.createImage(width, height, transparency);
 		} catch (Exception e) {
 			try {
 				this.width = width;
 				this.height = height;
-				this.bufferedImage = GraphicsUtils.createImage(width, height,
-						transparency);
+				this.bufferedImage = GraphicsUtils.createImage(width, height, transparency);
 			} catch (Exception ex) {
 			}
 		}
@@ -644,10 +612,8 @@ public class LImage {
 			try {
 				LFormatTGA.State tga = LFormatTGA.load(res);
 				if (tga != null) {
-					img = GraphicsUtils.createImage(tga.width, tga.height,
-							tga.type == 4 ? true : false);
-					img.setRGB(0, 0, tga.width, tga.height, tga.pixels, 0,
-							tga.width);
+					img = GraphicsUtils.createImage(tga.width, tga.height, tga.type == 4 ? true : false);
+					img.setRGB(0, 0, tga.width, tga.height, tga.pixels, 0, tga.width);
 					tga.dispose();
 					tga = null;
 				}
@@ -756,11 +722,9 @@ public class LImage {
 
 	public int getRGBAt(int x, int y) {
 		if (x >= this.getWidth()) {
-			throw new IndexOutOfBoundsException("X is out of bounds: " + x
-					+ "," + this.getWidth());
+			throw new IndexOutOfBoundsException("X is out of bounds: " + x + "," + this.getWidth());
 		} else if (y >= this.getHeight()) {
-			throw new IndexOutOfBoundsException("Y is out of bounds: " + y
-					+ "," + this.getHeight());
+			throw new IndexOutOfBoundsException("Y is out of bounds: " + y + "," + this.getHeight());
 		} else if (x < 0) {
 			throw new IndexOutOfBoundsException("X is out of bounds: " + x);
 		} else if (y < 0) {
@@ -791,15 +755,13 @@ public class LImage {
 		return pixels;
 	}
 
-	public int[] getPixels(int offset, int stride, int x, int y, int width,
-			int height) {
+	public int[] getPixels(int offset, int stride, int x, int y, int width, int height) {
 		int pixels[] = new int[width * height];
 		bufferedImage.getRGB(x, y, width, height, pixels, offset, stride);
 		return pixels;
 	}
 
-	public int[] getPixels(int pixels[], int offset, int stride, int x, int y,
-			int width, int height) {
+	public int[] getPixels(int pixels[], int offset, int stride, int x, int y, int width, int height) {
 		bufferedImage.getRGB(x, y, width, height, pixels, offset, stride);
 		return pixels;
 	}
@@ -808,8 +770,7 @@ public class LImage {
 		bufferedImage.setRGB(0, 0, width, height, pixels, 0, width);
 	}
 
-	public void setPixels(int[] pixels, int offset, int stride, int x, int y,
-			int width, int height) {
+	public void setPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
 		bufferedImage.setRGB(x, y, width, height, pixels, offset, stride);
 	}
 
@@ -849,8 +810,7 @@ public class LImage {
 		hashCode = LSystem.unite(hashCode, h);
 		LImage img = (LImage) subs.get(hashCode);
 		if (img == null) {
-			subs.put(hashCode,
-					img = new LImage(bufferedImage.getSubimage(x, y, w, h)));
+			subs.put(hashCode, img = new LImage(bufferedImage.getSubimage(x, y, w, h)));
 		}
 		return img;
 	}
@@ -872,8 +832,7 @@ public class LImage {
 		return new LImage(GraphicsUtils.getResize(bufferedImage, w, h));
 	}
 
-	public void getRGB(int pixels[], int offset, int stride, int x, int y,
-			int width, int height) {
+	public void getRGB(int pixels[], int offset, int stride, int x, int y, int width, int height) {
 		getPixels(pixels, offset, stride, x, y, width, height);
 	}
 

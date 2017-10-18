@@ -26,17 +26,14 @@ final class ASCIIEncoder implements Encoder {
 	@Override
 	public void encode(EncoderContext context) {
 		// step B
-		int n = HighLevelEncoder.determineConsecutiveDigitCount(
-				context.getMessage(), context.pos);
+		int n = HighLevelEncoder.determineConsecutiveDigitCount(context.getMessage(), context.pos);
 		if (n >= 2) {
-			context.writeCodeword(encodeASCIIDigits(context.getMessage()
-					.charAt(context.pos),
+			context.writeCodeword(encodeASCIIDigits(context.getMessage().charAt(context.pos),
 					context.getMessage().charAt(context.pos + 1)));
 			context.pos += 2;
 		} else {
 			char c = context.getCurrentChar();
-			int newMode = HighLevelEncoder.lookAheadTest(context.getMessage(),
-					context.pos, getEncodingMode());
+			int newMode = HighLevelEncoder.lookAheadTest(context.getMessage(), context.pos, getEncodingMode());
 			if (newMode != getEncodingMode()) {
 				switch (newMode) {
 				case HighLevelEncoder.BASE256_ENCODATION:
@@ -75,8 +72,7 @@ final class ASCIIEncoder implements Encoder {
 	}
 
 	private static char encodeASCIIDigits(char digit1, char digit2) {
-		if (HighLevelEncoder.isDigit(digit1)
-				&& HighLevelEncoder.isDigit(digit2)) {
+		if (HighLevelEncoder.isDigit(digit1) && HighLevelEncoder.isDigit(digit2)) {
 			int num = (digit1 - 48) * 10 + (digit2 - 48);
 			return (char) (num + 130);
 		}

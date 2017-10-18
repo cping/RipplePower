@@ -37,8 +37,7 @@ public class StyledChartPoint {
 		this.fillColor = fillColor;
 	}
 
-	public StyledChartPoint(float x, float y, LColor lineColor,
-			LColor fillColor, LColor markColor, float markSize) {
+	public StyledChartPoint(float x, float y, LColor lineColor, LColor fillColor, LColor markColor, float markSize) {
 		this.x = x;
 		this.y = y;
 		this.lineColor = lineColor.getARGB();
@@ -47,8 +46,7 @@ public class StyledChartPoint {
 		this.markSize = markSize;
 	}
 
-	public StyledChartPoint(float x, float y, LColor lineColor,
-			LColor fillColor, int markColor, float markSize) {
+	public StyledChartPoint(float x, float y, LColor lineColor, LColor fillColor, int markColor, float markSize) {
 		this.x = x;
 		this.y = y;
 		this.lineColor = lineColor.getARGB();
@@ -57,8 +55,7 @@ public class StyledChartPoint {
 		this.markSize = markSize;
 	}
 
-	public StyledChartPoint(float x, float y, int lineColor, int fillColor,
-			int markColor, float markSize) {
+	public StyledChartPoint(float x, float y, int lineColor, int fillColor, int markColor, float markSize) {
 		this.x = x;
 		this.y = y;
 		this.lineColor = lineColor;

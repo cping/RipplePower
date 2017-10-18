@@ -19,18 +19,15 @@ public class SendCodeGenerator {
 		code = new QRCode();
 	}
 
-	public BufferedImage generateQRcode(String address, String amount,
-			String label) {
+	public BufferedImage generateQRcode(String address, String amount, String label) {
 		return generateQRcode(address, amount, label, 1);
 	}
 
-	public BufferedImage generateQRcode(String address, String amount,
-			String label, int scaleFactor) {
+	public BufferedImage generateQRcode(String address, String amount, String label, int scaleFactor) {
 		String bitcoinURI = "";
 		ByteMatrix matrix;
 		try {
-			bitcoinURI = RippleURI.convertToBitcoinURI(address, new BigDecimal(
-					amount), label, null);
+			bitcoinURI = RippleURI.convertToBitcoinURI(address, new BigDecimal(amount), label, null);
 			matrix = encode(bitcoinURI);
 		} catch (com.google.zxing.WriterException e) {
 			return null;
@@ -42,16 +39,14 @@ public class SendCodeGenerator {
 		int swatchWidth = matrixWidth * scaleFactor;
 		int swatchHeight = matrixHeight * scaleFactor;
 
-		BufferedImage image = new BufferedImage(swatchWidth, swatchHeight,
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(swatchWidth, swatchHeight, BufferedImage.TYPE_INT_RGB);
 
 		for (int y = 0; y < matrixHeight; y++) {
 			for (int x = 0; x < matrixWidth; x++) {
 				byte imageValue = matrix.get(x, y);
 				for (int scaleX = 0; scaleX < scaleFactor; scaleX++) {
 					for (int scaleY = 0; scaleY < scaleFactor; scaleY++) {
-						image.setRGB(x * scaleFactor + scaleX, y * scaleFactor
-								+ scaleY, imageValue);
+						image.setRGB(x * scaleFactor + scaleX, y * scaleFactor + scaleY, imageValue);
 					}
 				}
 			}

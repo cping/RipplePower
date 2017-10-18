@@ -73,16 +73,13 @@ public final class ConstraintParser {
 
 			int len = part.length();
 			if (len == 3 || len == 11) { // Optimization
-				if (part.equals("ltr") || part.equals("rtl")
-						|| part.equals("lefttoright")
+				if (part.equals("ltr") || part.equals("rtl") || part.equals("lefttoright")
 						|| part.equals("righttoleft")) {
-					lc.setLeftToRight(part.charAt(0) == 'l' ? Boolean.TRUE
-							: Boolean.FALSE);
+					lc.setLeftToRight(part.charAt(0) == 'l' ? Boolean.TRUE : Boolean.FALSE);
 					parts[i] = null; // So we will not try to interpret it again
 				}
 
-				if (part.equals("ttb") || part.equals("btt")
-						|| part.equals("toptobottom")
+				if (part.equals("ttb") || part.equals("btt") || part.equals("toptobottom")
 						|| part.equals("bottomtotop")) {
 					lc.setTopToBottom(part.charAt(0) == 't');
 					parts[i] = null; // So we will not try to interpret it again
@@ -103,26 +100,19 @@ public final class ConstraintParser {
 					ix = startsWithLenient(part, "wrap", -1, true);
 					if (ix > -1) {
 						String num = part.substring(ix).trim();
-						lc.setWrapAfter(num.length() != 0 ? Integer
-								.parseInt(num) : 0);
+						lc.setWrapAfter(num.length() != 0 ? Integer.parseInt(num) : 0);
 						continue;
 					}
 
 					boolean isHor = c == 'w';
-					if (isHor
-							&& (part.startsWith("w ") || part
-									.startsWith("width "))) {
-						String sz = part.substring(
-								part.charAt(1) == ' ' ? 2 : 6).trim();
+					if (isHor && (part.startsWith("w ") || part.startsWith("width "))) {
+						String sz = part.substring(part.charAt(1) == ' ' ? 2 : 6).trim();
 						lc.setWidth(parseBoundSize(sz, false, true));
 						continue;
 					}
 
-					if (!isHor
-							&& (part.startsWith("h ") || part
-									.startsWith("height "))) {
-						String uvStr = part.substring(
-								part.charAt(1) == ' ' ? 2 : 7).trim();
+					if (!isHor && (part.startsWith("h ") || part.startsWith("height "))) {
+						String uvStr = part.substring(part.charAt(1) == ' ' ? 2 : 7).trim();
 						lc.setHeight(parseBoundSize(uvStr, false, false));
 						continue;
 					}
@@ -152,23 +142,19 @@ public final class ConstraintParser {
 
 				if (c == 'g') {
 					if (part.startsWith("gapx ")) {
-						lc.setGridGapX(parseBoundSize(part.substring(5).trim(),
-								true, true));
+						lc.setGridGapX(parseBoundSize(part.substring(5).trim(), true, true));
 						continue;
 					}
 
 					if (part.startsWith("gapy ")) {
-						lc.setGridGapY(parseBoundSize(part.substring(5).trim(),
-								true, false));
+						lc.setGridGapY(parseBoundSize(part.substring(5).trim(), true, false));
 						continue;
 					}
 
 					if (part.startsWith("gap ")) {
-						String[] gaps = toTrimmedTokens(part.substring(4)
-								.trim(), ' ');
+						String[] gaps = toTrimmedTokens(part.substring(4).trim(), ' ');
 						lc.setGridGapX(parseBoundSize(gaps[0], true, true));
-						lc.setGridGapY(gaps.length > 1 ? parseBoundSize(
-								gaps[1], true, false) : lc.getGridGapX());
+						lc.setGridGapY(gaps.length > 1 ? parseBoundSize(gaps[1], true, false) : lc.getGridGapX());
 						continue;
 					}
 				}
@@ -177,8 +163,7 @@ public final class ConstraintParser {
 					ix = startsWithLenient(part, "debug", 5, true);
 					if (ix > -1) {
 						String millis = part.substring(ix).trim();
-						lc.setDebugMillis(millis.length() > 0 ? Integer
-								.parseInt(millis) : 1000);
+						lc.setDebugMillis(millis.length() > 0 ? Integer.parseInt(millis) : 1000);
 						continue;
 					}
 				}
@@ -201,8 +186,7 @@ public final class ConstraintParser {
 				}
 
 				if (c == 'f') {
-					if (part.equals("fill") || part.equals("fillx")
-							|| part.equals("filly")) {
+					if (part.equals("fill") || part.equals("fillx") || part.equals("filly")) {
 						lc.setFillX(part.length() == 4 || part.charAt(4) == 'x');
 						lc.setFillY(part.length() == 4 || part.charAt(4) == 'y');
 						continue;
@@ -232,12 +216,9 @@ public final class ConstraintParser {
 				}
 
 				if (c == 'a') {
-					ix = startsWithLenient(part,
-							new String[] { "aligny", "ay" },
-							new int[] { 6, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "aligny", "ay" }, new int[] { 6, 2 }, true);
 					if (ix > -1) {
-						UnitValue align = parseUnitValueOrAlign(
-								part.substring(ix).trim(), false, null);
+						UnitValue align = parseUnitValueOrAlign(part.substring(ix).trim(), false, null);
 						if (align == UnitValue.BASELINE_IDENTITY)
 							throw new IllegalArgumentException(
 									"'baseline' can not be used to align the whole component group.");
@@ -245,33 +226,26 @@ public final class ConstraintParser {
 						continue;
 					}
 
-					ix = startsWithLenient(part,
-							new String[] { "alignx", "ax" },
-							new int[] { 6, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "alignx", "ax" }, new int[] { 6, 2 }, true);
 					if (ix > -1) {
-						lc.setAlignX(parseUnitValueOrAlign(part.substring(ix)
-								.trim(), true, null));
+						lc.setAlignX(parseUnitValueOrAlign(part.substring(ix).trim(), true, null));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "align", 2, true);
 					if (ix > -1) {
-						String[] gaps = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
+						String[] gaps = toTrimmedTokens(part.substring(ix).trim(), ' ');
 						lc.setAlignX(parseUnitValueOrAlign(gaps[0], true, null));
 						if (gaps.length > 1)
-							lc.setAlignY(parseUnitValueOrAlign(gaps[1], false,
-									null));
+							lc.setAlignY(parseUnitValueOrAlign(gaps[1], false, null));
 						continue;
 					}
 				}
 
 				if (c == 'p') {
 					if (part.startsWith("packalign ")) {
-						String[] packs = toTrimmedTokens(part.substring(10)
-								.trim(), ' ');
-						lc.setPackWidthAlign(packs[0].length() > 0 ? Float
-								.parseFloat(packs[0]) : 0.5f);
+						String[] packs = toTrimmedTokens(part.substring(10).trim(), ' ');
+						lc.setPackWidthAlign(packs[0].length() > 0 ? Float.parseFloat(packs[0]) : 0.5f);
 						if (packs.length > 1)
 							lc.setPackHeightAlign(Float.parseFloat(packs[1]));
 						continue;
@@ -279,12 +253,10 @@ public final class ConstraintParser {
 
 					if (part.startsWith("pack ") || part.equals("pack")) {
 						String ps = part.substring(4).trim();
-						String[] packs = toTrimmedTokens(ps.length() > 0 ? ps
-								: "pref pref", ' ');
+						String[] packs = toTrimmedTokens(ps.length() > 0 ? ps : "pref pref", ' ');
 						lc.setPackWidth(parseBoundSize(packs[0], false, true));
 						if (packs.length > 1)
-							lc.setPackHeight(parseBoundSize(packs[1], false,
-									false));
+							lc.setPackHeight(parseBoundSize(packs[1], false, false));
 
 						continue;
 					}
@@ -304,12 +276,10 @@ public final class ConstraintParser {
 					continue;
 				}
 
-				throw new IllegalArgumentException("Unknown Constraint: '"
-						+ part + "'\n");
+				throw new IllegalArgumentException("Unknown Constraint: '" + part + "'\n");
 
 			} catch (Exception ex) {
-				throw new IllegalArgumentException("Illegal Constraint: '"
-						+ part + "'\n" + ex.getMessage());
+				throw new IllegalArgumentException("Illegal Constraint: '" + part + "'\n" + ex.getMessage());
 			}
 		}
 
@@ -380,8 +350,7 @@ public final class ConstraintParser {
 			if (gIx >= gaps.length - 1)
 				gIx = gaps.length - 2;
 
-			colSpecs[i] = parseDimConstraint(parts.get((i << 1) + 1),
-					gaps[gIx], gaps[gIx + 1], isCols);
+			colSpecs[i] = parseDimConstraint(parts.get((i << 1) + 1), gaps[gIx], gaps[gIx + 1], isCols);
 		}
 
 		AC ac = new AC();
@@ -414,8 +383,7 @@ public final class ConstraintParser {
 	 * @throws RuntimeException
 	 *             if the constraint was not valid.
 	 */
-	private static DimConstraint parseDimConstraint(String s,
-			BoundSize gapBefore, BoundSize gapAfter, boolean isCols) {
+	private static DimConstraint parseDimConstraint(String s, BoundSize gapBefore, BoundSize gapAfter, boolean isCols) {
 		DimConstraint dimConstraint = new DimConstraint();
 
 		// Default values.
@@ -446,42 +414,35 @@ public final class ConstraintParser {
 				char c = part.charAt(0);
 
 				if (c == 's') {
-					ix = startsWithLenient(part, new String[] { "sizegroup",
-							"sg" }, new int[] { 5, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "sizegroup", "sg" }, new int[] { 5, 2 }, true);
 					if (ix > -1) {
 						dimConstraint.setSizeGroup(part.substring(ix).trim());
 						continue;
 					}
 
-					ix = startsWithLenient(part, new String[] { "shrinkprio",
-							"shp" }, new int[] { 10, 3 }, true);
+					ix = startsWithLenient(part, new String[] { "shrinkprio", "shp" }, new int[] { 10, 3 }, true);
 					if (ix > -1) {
-						dimConstraint.setShrinkPriority(Integer.parseInt(part
-								.substring(ix).trim()));
+						dimConstraint.setShrinkPriority(Integer.parseInt(part.substring(ix).trim()));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "shrink", 6, true);
 					if (ix > -1) {
-						dimConstraint.setShrink(parseFloat(part.substring(ix)
-								.trim(), ResizeConstraint.WEIGHT_100));
+						dimConstraint.setShrink(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 				}
 
 				if (c == 'g') {
-					ix = startsWithLenient(part, new String[] { "growpriority",
-							"gp" }, new int[] { 5, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "growpriority", "gp" }, new int[] { 5, 2 }, true);
 					if (ix > -1) {
-						dimConstraint.setGrowPriority(Integer.parseInt(part
-								.substring(ix).trim()));
+						dimConstraint.setGrowPriority(Integer.parseInt(part.substring(ix).trim()));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "grow", 4, true);
 					if (ix > -1) {
-						dimConstraint.setGrow(parseFloat(part.substring(ix)
-								.trim(), ResizeConstraint.WEIGHT_100));
+						dimConstraint.setGrow(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 				}
@@ -492,8 +453,7 @@ public final class ConstraintParser {
 						// if (dimConstraint.isFill() == false) // Swallow, but
 						// ignore if fill is set. (changed for 3.5 since it can
 						// have "growy 0")
-						dimConstraint.setAlign(parseUnitValueOrAlign(part
-								.substring(ix).trim(), isCols, null));
+						dimConstraint.setAlign(parseUnitValueOrAlign(part.substring(ix).trim(), isCols, null));
 						continue;
 					}
 				}
@@ -511,8 +471,7 @@ public final class ConstraintParser {
 				dimConstraint.setSize(parseBoundSize(part, false, isCols));
 
 			} catch (Exception ex) {
-				throw new IllegalArgumentException("Illegal contraint: '"
-						+ part + "'\n" + ex.getMessage());
+				throw new IllegalArgumentException("Illegal contraint: '" + part + "'\n" + ex.getMessage());
 			}
 		}
 		return dimConstraint;
@@ -527,15 +486,12 @@ public final class ConstraintParser {
 	 *            lower case and trimmed</b>
 	 * @return The parsed constraints. Never <code>null</code>.
 	 */
-	public static Map<ComponentWrapper, CC> parseComponentConstraints(
-			Map<ComponentWrapper, String> constrMap) {
+	public static Map<ComponentWrapper, CC> parseComponentConstraints(Map<ComponentWrapper, String> constrMap) {
 		HashMap<ComponentWrapper, CC> flowConstrMap = new HashMap<ComponentWrapper, CC>();
 
-		for (Iterator<Map.Entry<ComponentWrapper, String>> it = constrMap
-				.entrySet().iterator(); it.hasNext();) {
+		for (Iterator<Map.Entry<ComponentWrapper, String>> it = constrMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<ComponentWrapper, String> entry = it.next();
-			flowConstrMap.put(entry.getKey(),
-					parseComponentConstraint(entry.getValue()));
+			flowConstrMap.put(entry.getKey(), parseComponentConstraint(entry.getValue()));
 		}
 
 		return flowConstrMap;
@@ -586,8 +542,7 @@ public final class ConstraintParser {
 				}
 
 				if (c == 'f' && (part.equals("flowy") || part.equals("flowx"))) {
-					cc.setFlowX(part.charAt(4) == 'x' ? Boolean.TRUE
-							: Boolean.FALSE);
+					cc.setFlowX(part.charAt(4) == 'x' ? Boolean.TRUE : Boolean.FALSE);
 					continue;
 				}
 
@@ -595,16 +550,14 @@ public final class ConstraintParser {
 					ix = startsWithLenient(part, "skip", 4, true);
 					if (ix > -1) {
 						String num = part.substring(ix).trim();
-						cc.setSkip(num.length() != 0 ? Integer.parseInt(num)
-								: 1);
+						cc.setSkip(num.length() != 0 ? Integer.parseInt(num) : 1);
 						continue;
 					}
 
 					ix = startsWithLenient(part, "split", 5, true);
 					if (ix > -1) {
 						String split = part.substring(ix).trim();
-						cc.setSplit(split.length() > 0 ? Integer
-								.parseInt(split) : LayoutUtil.INF);
+						cc.setSplit(split.length() > 0 ? Integer.parseInt(split) : LayoutUtil.INF);
 						continue;
 					}
 
@@ -613,17 +566,13 @@ public final class ConstraintParser {
 						continue;
 					}
 
-					ix = startsWithLenient(part,
-							new String[] { "spany", "sy" }, new int[] { 5, 2 },
-							true);
+					ix = startsWithLenient(part, new String[] { "spany", "sy" }, new int[] { 5, 2 }, true);
 					if (ix > -1) {
 						cc.setSpanY(parseSpan(part.substring(ix).trim()));
 						continue;
 					}
 
-					ix = startsWithLenient(part,
-							new String[] { "spanx", "sx" }, new int[] { 5, 2 },
-							true);
+					ix = startsWithLenient(part, new String[] { "spanx", "sx" }, new int[] { 5, 2 }, true);
 					if (ix > -1) {
 						cc.setSpanX(parseSpan(part.substring(ix).trim()));
 						continue;
@@ -631,47 +580,37 @@ public final class ConstraintParser {
 
 					ix = startsWithLenient(part, "span", 4, true);
 					if (ix > -1) {
-						String[] spans = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
-						cc.setSpanX(spans[0].length() > 0 ? Integer
-								.parseInt(spans[0]) : LayoutUtil.INF);
-						cc.setSpanY(spans.length > 1 ? Integer
-								.parseInt(spans[1]) : 1);
+						String[] spans = toTrimmedTokens(part.substring(ix).trim(), ' ');
+						cc.setSpanX(spans[0].length() > 0 ? Integer.parseInt(spans[0]) : LayoutUtil.INF);
+						cc.setSpanY(spans.length > 1 ? Integer.parseInt(spans[1]) : 1);
 						continue;
 					}
 
 					ix = startsWithLenient(part, "shrinkx", 7, true);
 					if (ix > -1) {
-						cc.getHorizontal().setShrink(
-								parseFloat(part.substring(ix).trim(),
-										ResizeConstraint.WEIGHT_100));
+						cc.getHorizontal()
+								.setShrink(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "shrinky", 7, true);
 					if (ix > -1) {
-						cc.getVertical().setShrink(
-								parseFloat(part.substring(ix).trim(),
-										ResizeConstraint.WEIGHT_100));
+						cc.getVertical().setShrink(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "shrink", 6, false);
 					if (ix > -1) {
-						String[] shrinks = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
-						cc.getHorizontal().setShrink(
-								parseFloat(part.substring(ix).trim(),
-										ResizeConstraint.WEIGHT_100));
+						String[] shrinks = toTrimmedTokens(part.substring(ix).trim(), ' ');
+						cc.getHorizontal()
+								.setShrink(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						if (shrinks.length > 1)
-							cc.getVertical().setShrink(
-									parseFloat(part.substring(ix).trim(),
-											ResizeConstraint.WEIGHT_100));
+							cc.getVertical()
+									.setShrink(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
-					ix = startsWithLenient(part, new String[] { "shrinkprio",
-							"shp" }, new int[] { 10, 3 }, true);
+					ix = startsWithLenient(part, new String[] { "shrinkprio", "shp" }, new int[] { 10, 3 }, true);
 					if (ix > -1) {
 						String sp = part.substring(ix).trim();
 						if (sp.startsWith("x") || sp.startsWith("y")) { // To
@@ -680,23 +619,19 @@ public final class ConstraintParser {
 																		// "gpy",
 																		// "shrinkpriorityx",
 																		// shrinkpriorityy"
-							(sp.startsWith("x") ? cc.getHorizontal() : cc
-									.getVertical()).setShrinkPriority(Integer
-									.parseInt(sp.substring(2)));
+							(sp.startsWith("x") ? cc.getHorizontal() : cc.getVertical())
+									.setShrinkPriority(Integer.parseInt(sp.substring(2)));
 						} else {
 							String[] shrinks = toTrimmedTokens(sp, ' ');
-							cc.getHorizontal().setShrinkPriority(
-									Integer.parseInt(shrinks[0]));
+							cc.getHorizontal().setShrinkPriority(Integer.parseInt(shrinks[0]));
 							if (shrinks.length > 1)
-								cc.getVertical().setShrinkPriority(
-										Integer.parseInt(shrinks[1]));
+								cc.getVertical().setShrinkPriority(Integer.parseInt(shrinks[1]));
 						}
 						continue;
 					}
 
-					ix = startsWithLenient(part, new String[] { "sizegroupx",
-							"sizegroupy", "sgx", "sgy" }, new int[] { 9, 9, 2,
-							2 }, true);
+					ix = startsWithLenient(part, new String[] { "sizegroupx", "sizegroupy", "sgx", "sgy" },
+							new int[] { 9, 9, 2, 2 }, true);
 					if (ix > -1) {
 						String sg = part.substring(ix).trim();
 						char lc = part.charAt(ix - 1);
@@ -711,35 +646,26 @@ public final class ConstraintParser {
 				if (c == 'g') {
 					ix = startsWithLenient(part, "growx", 5, true);
 					if (ix > -1) {
-						cc.getHorizontal().setGrow(
-								parseFloat(part.substring(ix).trim(),
-										ResizeConstraint.WEIGHT_100));
+						cc.getHorizontal().setGrow(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "growy", 5, true);
 					if (ix > -1) {
-						cc.getVertical().setGrow(
-								parseFloat(part.substring(ix).trim(),
-										ResizeConstraint.WEIGHT_100));
+						cc.getVertical().setGrow(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "grow", 4, false);
 					if (ix > -1) {
-						String[] grows = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
-						cc.getHorizontal().setGrow(
-								parseFloat(grows[0],
-										ResizeConstraint.WEIGHT_100));
-						cc.getVertical().setGrow(
-								parseFloat(grows.length > 1 ? grows[1] : "",
-										ResizeConstraint.WEIGHT_100));
+						String[] grows = toTrimmedTokens(part.substring(ix).trim(), ' ');
+						cc.getHorizontal().setGrow(parseFloat(grows[0], ResizeConstraint.WEIGHT_100));
+						cc.getVertical()
+								.setGrow(parseFloat(grows.length > 1 ? grows[1] : "", ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
-					ix = startsWithLenient(part, new String[] { "growprio",
-							"gp" }, new int[] { 8, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "growprio", "gp" }, new int[] { 8, 2 }, true);
 					if (ix > -1) {
 						String gp = part.substring(ix).trim();
 						char c0 = gp.length() > 0 ? gp.charAt(0) : ' ';
@@ -747,15 +673,12 @@ public final class ConstraintParser {
 														// "growpriorityx",
 														// growpriorityy"
 							(c0 == 'x' ? cc.getHorizontal() : cc.getVertical())
-									.setGrowPriority(Integer.parseInt(gp
-											.substring(2)));
+									.setGrowPriority(Integer.parseInt(gp.substring(2)));
 						} else {
 							String[] grows = toTrimmedTokens(gp, ' ');
-							cc.getHorizontal().setGrowPriority(
-									Integer.parseInt(grows[0]));
+							cc.getHorizontal().setGrowPriority(Integer.parseInt(grows[0]));
 							if (grows.length > 1)
-								cc.getVertical().setGrowPriority(
-										Integer.parseInt(grows[1]));
+								cc.getVertical().setGrowPriority(Integer.parseInt(grows[1]));
 						}
 						continue;
 					}
@@ -775,39 +698,24 @@ public final class ConstraintParser {
 				}
 
 				if (c == 'a') {
-					ix = startsWithLenient(part,
-							new String[] { "aligny", "ay" },
-							new int[] { 6, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "aligny", "ay" }, new int[] { 6, 2 }, true);
 					if (ix > -1) {
-						cc.getVertical()
-								.setAlign(
-										parseUnitValueOrAlign(part
-												.substring(ix).trim(), false,
-												null));
+						cc.getVertical().setAlign(parseUnitValueOrAlign(part.substring(ix).trim(), false, null));
 						continue;
 					}
 
-					ix = startsWithLenient(part,
-							new String[] { "alignx", "ax" },
-							new int[] { 6, 2 }, true);
+					ix = startsWithLenient(part, new String[] { "alignx", "ax" }, new int[] { 6, 2 }, true);
 					if (ix > -1) {
-						cc.getHorizontal().setAlign(
-								parseUnitValueOrAlign(
-										part.substring(ix).trim(), true, null));
+						cc.getHorizontal().setAlign(parseUnitValueOrAlign(part.substring(ix).trim(), true, null));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "align", 2, true);
 					if (ix > -1) {
-						String[] gaps = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
-						cc.getHorizontal().setAlign(
-								parseUnitValueOrAlign(gaps[0], true, null));
+						String[] gaps = toTrimmedTokens(part.substring(ix).trim(), ' ');
+						cc.getHorizontal().setAlign(parseUnitValueOrAlign(gaps[0], true, null));
 						if (gaps.length > 1)
-							cc.getVertical()
-									.setAlign(
-											parseUnitValueOrAlign(gaps[1],
-													false, null));
+							cc.getVertical().setAlign(parseUnitValueOrAlign(gaps[1], false, null));
 						continue;
 					}
 				}
@@ -818,14 +726,12 @@ public final class ConstraintParser {
 						if (cc.getPos() == null) {
 							cc.setPos(new UnitValue[4]);
 						} else if (cc.isBoundsInGrid() == false) {
-							throw new IllegalArgumentException(
-									"Cannot combine 'position' with 'x/y/x2/y2' keywords.");
+							throw new IllegalArgumentException("Cannot combine 'position' with 'x/y/x2/y2' keywords.");
 						}
 
 						int edge = (c == 'x' ? 0 : 1) + (c2 == '2' ? 2 : 0);
 						UnitValue[] pos = cc.getPos();
-						pos[edge] = parseUnitValue(part.substring(2).trim(),
-								null, c == 'x');
+						pos[edge] = parseUnitValue(part.substring(2).trim(), null, c == 'x');
 						cc.setPos(pos);
 						cc.setBoundsInGrid(true);
 						continue;
@@ -835,11 +741,9 @@ public final class ConstraintParser {
 				if (c == 'c') {
 					ix = startsWithLenient(part, "cell", 4, true);
 					if (ix > -1) {
-						String[] grs = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
+						String[] grs = toTrimmedTokens(part.substring(ix).trim(), ' ');
 						if (grs.length < 2)
-							throw new IllegalArgumentException(
-									"At least two integers must follow " + part);
+							throw new IllegalArgumentException("At least two integers must follow " + part);
 						cc.setCellX(Integer.parseInt(grs[0]));
 						cc.setCellY(Integer.parseInt(grs[1]));
 						if (grs.length > 2)
@@ -854,19 +758,15 @@ public final class ConstraintParser {
 					ix = startsWithLenient(part, "pos", 3, true);
 					if (ix > -1) {
 						if (cc.getPos() != null && cc.isBoundsInGrid())
-							throw new IllegalArgumentException(
-									"Can not combine 'pos' with 'x/y/x2/y2' keywords.");
+							throw new IllegalArgumentException("Can not combine 'pos' with 'x/y/x2/y2' keywords.");
 
-						String[] pos = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
+						String[] pos = toTrimmedTokens(part.substring(ix).trim(), ' ');
 						UnitValue[] bounds = new UnitValue[4];
 						for (int j = 0; j < pos.length; j++)
 							bounds[j] = parseUnitValue(pos[j], null, j % 2 == 0);
 
-						if (bounds[0] == null && bounds[2] == null
-								|| bounds[1] == null && bounds[3] == null)
-							throw new IllegalArgumentException(
-									"Both x and x2 or y and y2 can not be null!");
+						if (bounds[0] == null && bounds[2] == null || bounds[1] == null && bounds[3] == null)
+							throw new IllegalArgumentException("Both x and x2 or y and y2 can not be null!");
 
 						cc.setPos(bounds);
 						cc.setBoundsInGrid(false);
@@ -875,38 +775,29 @@ public final class ConstraintParser {
 
 					ix = startsWithLenient(part, "pad", 3, true);
 					if (ix > -1) {
-						UnitValue[] p = parseInsets(part.substring(ix).trim(),
-								false);
-						cc.setPadding(new UnitValue[] { p[0],
-								p.length > 1 ? p[1] : null,
-								p.length > 2 ? p[2] : null,
+						UnitValue[] p = parseInsets(part.substring(ix).trim(), false);
+						cc.setPadding(new UnitValue[] { p[0], p.length > 1 ? p[1] : null, p.length > 2 ? p[2] : null,
 								p.length > 3 ? p[3] : null });
 						continue;
 					}
 
 					ix = startsWithLenient(part, "pushx", 5, true);
 					if (ix > -1) {
-						cc.setPushX(parseFloat(part.substring(ix).trim(),
-								ResizeConstraint.WEIGHT_100));
+						cc.setPushX(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "pushy", 5, true);
 					if (ix > -1) {
-						cc.setPushY(parseFloat(part.substring(ix).trim(),
-								ResizeConstraint.WEIGHT_100));
+						cc.setPushY(parseFloat(part.substring(ix).trim(), ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 
 					ix = startsWithLenient(part, "push", 4, false);
 					if (ix > -1) {
-						String[] pushs = toTrimmedTokens(part.substring(ix)
-								.trim(), ' ');
-						cc.setPushX(parseFloat(pushs[0],
-								ResizeConstraint.WEIGHT_100));
-						cc.setPushY(parseFloat(
-								pushs.length > 1 ? pushs[1] : "",
-								ResizeConstraint.WEIGHT_100));
+						String[] pushs = toTrimmedTokens(part.substring(ix).trim(), ' ');
+						cc.setPushX(parseFloat(pushs[0], ResizeConstraint.WEIGHT_100));
+						cc.setPushY(parseFloat(pushs.length > 1 ? pushs[1] : "", ResizeConstraint.WEIGHT_100));
 						continue;
 					}
 				}
@@ -932,37 +823,26 @@ public final class ConstraintParser {
 					}
 
 					boolean isHor = c == 'w';
-					if (isHor
-							&& (part.startsWith("w ") || part
-									.startsWith("width "))) {
-						String uvStr = part.substring(
-								part.charAt(1) == ' ' ? 2 : 6).trim();
-						cc.getHorizontal().setSize(
-								parseBoundSize(uvStr, false, true));
+					if (isHor && (part.startsWith("w ") || part.startsWith("width "))) {
+						String uvStr = part.substring(part.charAt(1) == ' ' ? 2 : 6).trim();
+						cc.getHorizontal().setSize(parseBoundSize(uvStr, false, true));
 						continue;
 					}
 
-					if (!isHor
-							&& (part.startsWith("h ") || part
-									.startsWith("height "))) {
-						String uvStr = part.substring(
-								part.charAt(1) == ' ' ? 2 : 7).trim();
-						cc.getVertical().setSize(
-								parseBoundSize(uvStr, false, false));
+					if (!isHor && (part.startsWith("h ") || part.startsWith("height "))) {
+						String uvStr = part.substring(part.charAt(1) == ' ' ? 2 : 7).trim();
+						cc.getVertical().setSize(parseBoundSize(uvStr, false, false));
 						continue;
 					}
 
-					if (part.startsWith("wmin ") || part.startsWith("wmax ")
-							|| part.startsWith("hmin ")
+					if (part.startsWith("wmin ") || part.startsWith("wmax ") || part.startsWith("hmin ")
 							|| part.startsWith("hmax ")) {
 						String uvStr = part.substring(5).trim();
 						if (uvStr.length() > 0) {
 							UnitValue uv = parseUnitValue(uvStr, null, isHor);
 							boolean isMin = part.charAt(3) == 'n';
-							DimConstraint dc = isHor ? cc.getHorizontal() : cc
-									.getVertical();
-							dc.setSize(new BoundSize(isMin ? uv : dc.getSize()
-									.getMin(), dc.getSize().getPreferred(),
+							DimConstraint dc = isHor ? cc.getHorizontal() : cc.getVertical();
+							dc.setSize(new BoundSize(isMin ? uv : dc.getSize().getMin(), dc.getSize().getPreferred(),
 									isMin ? (dc.getSize().getMax()) : uv, uvStr));
 							continue;
 						}
@@ -983,8 +863,7 @@ public final class ConstraintParser {
 					cc.setId(part.substring(3).trim());
 					int dIx = cc.getId().indexOf('.');
 					if (dIx == 0 || dIx == cc.getId().length() - 1)
-						throw new IllegalArgumentException(
-								"Dot must not be first or last!");
+						throw new IllegalArgumentException("Dot must not be first or last!");
 
 					continue;
 				}
@@ -1000,14 +879,12 @@ public final class ConstraintParser {
 						continue;
 					}
 
-					ix = startsWithLenient(part, new String[] { "endgroupx",
-							"endgroupy", "egx", "egy" }, new int[] { -1, -1,
-							-1, -1 }, true);
+					ix = startsWithLenient(part, new String[] { "endgroupx", "endgroupy", "egx", "egy" },
+							new int[] { -1, -1, -1, -1 }, true);
 					if (ix > -1) {
 						String sg = part.substring(ix).trim();
 						char lc = part.charAt(ix - 1);
-						DimConstraint dc = (lc == 'x' ? cc.getHorizontal() : cc
-								.getVertical());
+						DimConstraint dc = (lc == 'x' ? cc.getHorizontal() : cc.getVertical());
 						dc.setEndGroup(sg);
 						continue;
 					}
@@ -1055,8 +932,7 @@ public final class ConstraintParser {
 				throw new IllegalArgumentException("Unknown keyword.");
 
 			} catch (Exception ex) {
-				throw new IllegalArgumentException("Illegal Constraint: '"
-						+ part + "'\n" + ex.getMessage());
+				throw new IllegalArgumentException("Illegal Constraint: '" + part + "'\n" + ex.getMessage());
 			}
 		}
 
@@ -1086,18 +962,16 @@ public final class ConstraintParser {
 			boolean isPanel = s.startsWith("p");
 			UnitValue[] ins = new UnitValue[4];
 			for (int j = 0; j < 4; j++)
-				ins[j] = isPanel ? PlatformDefaults.getPanelInsets(j)
-						: PlatformDefaults.getDialogInsets(j);
+				ins[j] = isPanel ? PlatformDefaults.getPanelInsets(j) : PlatformDefaults.getDialogInsets(j);
 
 			return ins;
 		} else {
 			String[] insS = toTrimmedTokens(s, ' ');
 			UnitValue[] ins = new UnitValue[4];
 			for (int j = 0; j < 4; j++) {
-				UnitValue insSz = parseUnitValue(insS[j < insS.length ? j
-						: insS.length - 1], UnitValue.ZERO, j % 2 == 1);
-				ins[j] = insSz != null ? insSz : PlatformDefaults
-						.getPanelInsets(j);
+				UnitValue insSz = parseUnitValue(insS[j < insS.length ? j : insS.length - 1], UnitValue.ZERO,
+						j % 2 == 1);
+				ins[j] = insSz != null ? insSz : PlatformDefaults.getPanelInsets(j);
 			}
 			return ins;
 		}
@@ -1208,8 +1082,7 @@ public final class ConstraintParser {
 	 * @return A bound size that may be <code>null</code> if the string was
 	 *         "null", "n" or <code>null</code>.
 	 */
-	public static BoundSize parseBoundSize(String s, boolean isGap,
-			boolean isHor) {
+	public static BoundSize parseBoundSize(String s, boolean isGap, boolean isHor) {
 		if (s.length() == 0 || s.equals("null") || s.equals("n"))
 			return null;
 
@@ -1231,20 +1104,17 @@ public final class ConstraintParser {
 			if (hasEM)
 				s0 = s0.substring(0, s0.length() - 1);
 			UnitValue uv = parseUnitValue(s0, null, isHor);
-			return new BoundSize(((isGap || hasEM) ? uv : null), uv,
-					(hasEM ? uv : null), push, cs);
+			return new BoundSize(((isGap || hasEM) ? uv : null), uv, (hasEM ? uv : null), push, cs);
 
 		} else if (sizes.length == 2) {
-			return new BoundSize(parseUnitValue(s0, null, isHor),
-					parseUnitValue(sizes[1], null, isHor), null, push, cs);
+			return new BoundSize(parseUnitValue(s0, null, isHor), parseUnitValue(sizes[1], null, isHor), null, push,
+					cs);
 		} else if (sizes.length == 3) {
-			return new BoundSize(parseUnitValue(s0, null, isHor),
-					parseUnitValue(sizes[1], null, isHor), parseUnitValue(
-							sizes[2], null, isHor), push, cs);
+			return new BoundSize(parseUnitValue(s0, null, isHor), parseUnitValue(sizes[1], null, isHor),
+					parseUnitValue(sizes[2], null, isHor), push, cs);
 		} else {
 			throw new IllegalArgumentException(
-					"Min:Preferred:Max size section must contain 0, 1 or 2 colons. '"
-							+ cs + "'");
+					"Min:Preferred:Max size section must contain 0, 1 or 2 colons. '" + cs + "'");
 		}
 	}
 
@@ -1262,8 +1132,7 @@ public final class ConstraintParser {
 	 *            <code>null</code>.
 	 * @return The parsed unit value. May be <code>null</code>.
 	 */
-	public static UnitValue parseUnitValueOrAlign(String s, boolean isHor,
-			UnitValue emptyReplacement) {
+	public static UnitValue parseUnitValueOrAlign(String s, boolean isHor, UnitValue emptyReplacement) {
 		if (s.length() == 0)
 			return emptyReplacement;
 
@@ -1301,8 +1170,7 @@ public final class ConstraintParser {
 	 *            If the value is for the horizontal dimension.
 	 * @return The parsed unit value. May be <code>null</code>.
 	 */
-	private static UnitValue parseUnitValue(String s,
-			UnitValue emptyReplacement, boolean isHor) {
+	private static UnitValue parseUnitValue(String s, UnitValue emptyReplacement, boolean isHor) {
 		if (s == null || s.length() == 0)
 			return emptyReplacement;
 
@@ -1320,8 +1188,8 @@ public final class ConstraintParser {
 			return UnitValue.INF;
 
 		int oper = getOper(s);
-		boolean inline = oper == UnitValue.ADD || oper == UnitValue.SUB
-				|| oper == UnitValue.MUL || oper == UnitValue.DIV;
+		boolean inline = oper == UnitValue.ADD || oper == UnitValue.SUB || oper == UnitValue.MUL
+				|| oper == UnitValue.DIV;
 
 		if (oper != UnitValue.STATIC) { // It is a multi-value
 
@@ -1346,37 +1214,35 @@ public final class ConstraintParser {
 				uvs = toTrimmedTokens(s, delim);
 				if (uvs.length > 2) { // More than one +-*/.
 					String last = uvs[uvs.length - 1];
-					String first = s.substring(0, s.length() - last.length()
-							- 1);
+					String first = s.substring(0, s.length() - last.length() - 1);
 					uvs = new String[] { first, last };
 				}
 			}
 
 			if (uvs.length != 2)
-				throw new IllegalArgumentException("Malformed UnitValue: '" + s
-						+ "'");
+				throw new IllegalArgumentException("Malformed UnitValue: '" + s + "'");
 
 			UnitValue sub1 = parseUnitValue(uvs[0], null, isHor);
 			UnitValue sub2 = parseUnitValue(uvs[1], null, isHor);
 
 			if (sub1 == null || sub2 == null)
-				throw new IllegalArgumentException(
-						"Malformed UnitValue. Must be two sub-values: '" + s
-								+ "'");
+				throw new IllegalArgumentException("Malformed UnitValue. Must be two sub-values: '" + s + "'");
 
 			return new UnitValue(isHor, oper, sub1, sub2, cs);
 		} else {
 			try {
 				String[] numParts = getNumTextParts(s);
-				float value = numParts[0].length() > 0 ? Float
-						.parseFloat(numParts[0]) : 1; // e.g. "related" has no
-														// number part..
+				float value = numParts[0].length() > 0 ? Float.parseFloat(numParts[0]) : 1; // e.g.
+																							// "related"
+																							// has
+																							// no
+																							// number
+																							// part..
 
 				return new UnitValue(value, numParts[1], isHor, oper, cs);
 
 			} catch (Exception e) {
-				throw new IllegalArgumentException("Malformed UnitValue: '" + s
-						+ "'");
+				throw new IllegalArgumentException("Malformed UnitValue: '" + s + "'");
 			}
 		}
 	}
@@ -1443,12 +1309,10 @@ public final class ConstraintParser {
 		for (int i = 0, iSz = s.length(); i < iSz; i++) {
 			char c = s.charAt(i);
 			if (c == ' ')
-				throw new IllegalArgumentException("Space in UnitValue: '" + s
-						+ "'");
+				throw new IllegalArgumentException("Space in UnitValue: '" + s + "'");
 
 			if ((c < '0' || c > '9') && c != '.' && c != '-')
-				return new String[] { s.substring(0, i).trim(),
-						s.substring(i).trim() };
+				return new String[] { s.substring(0, i).trim(), s.substring(i).trim() };
 		}
 		return new String[] { s, "" };
 	}
@@ -1528,8 +1392,7 @@ public final class ConstraintParser {
 	 *         <code>minChars</code> was reached or <code>-1</code> if a match
 	 *         was not found.
 	 */
-	private static int startsWithLenient(String s, String[] matches,
-			int[] minChars, boolean acceptTrailing) {
+	private static int startsWithLenient(String s, String[] matches, int[] minChars, boolean acceptTrailing) {
 		for (int i = 0; i < matches.length; i++) {
 			int minChar = minChars != null ? minChars[i] : -1;
 			int ix = startsWithLenient(s, matches[i], minChar, acceptTrailing);
@@ -1562,8 +1425,7 @@ public final class ConstraintParser {
 	 *         <code>minChars</code> was reached or <code>-1</code> if a match
 	 *         was not found.
 	 */
-	private static int startsWithLenient(String s, String match, int minChars,
-			boolean acceptTrailing) {
+	private static int startsWithLenient(String s, String match, int minChars, boolean acceptTrailing) {
 		if (s.charAt(0) != match.charAt(0)) // Fast sanity check.
 			return -1;
 
@@ -1582,8 +1444,8 @@ public final class ConstraintParser {
 				sIx++;
 
 			if (sIx >= sSz || s.charAt(sIx) != match.charAt(mIx))
-				return mIx >= minChars && (acceptTrailing || sIx >= sSz)
-						&& (sIx >= sSz || s.charAt(sIx - 1) == ' ') ? sIx : -1;
+				return mIx >= minChars && (acceptTrailing || sIx >= sSz) && (sIx >= sSz || s.charAt(sIx - 1) == ' ')
+						? sIx : -1;
 		}
 		return sIx >= sSz || acceptTrailing || s.charAt(sIx) == ' ' ? sIx : -1;
 	}
@@ -1624,17 +1486,14 @@ public final class ConstraintParser {
 				p--;
 			} else if (p == 0 && c == sep) {
 				toks++;
-				while (disregardDoubles && i < sSize - 1
-						&& s.charAt(i + 1) == ' ')
+				while (disregardDoubles && i < sSize - 1 && s.charAt(i + 1) == ' ')
 					i++;
 			}
 			if (p < 0)
-				throw new IllegalArgumentException("Unbalanced parentheses: '"
-						+ s + "'");
+				throw new IllegalArgumentException("Unbalanced parentheses: '" + s + "'");
 		}
 		if (p != 0)
-			throw new IllegalArgumentException("Unbalanced parentheses: '" + s
-					+ "'");
+			throw new IllegalArgumentException("Unbalanced parentheses: '" + s + "'");
 
 		if (toks == 0)
 			return new String[] { s.trim() };
@@ -1653,8 +1512,7 @@ public final class ConstraintParser {
 			} else if (p == 0 && c == sep) {
 				retArr[pNr++] = s.substring(st, i).trim();
 				st = i + 1;
-				while (disregardDoubles && i < sSize - 1
-						&& s.charAt(i + 1) == ' ')
+				while (disregardDoubles && i < sSize - 1 && s.charAt(i + 1) == ' ')
 					i++;
 			}
 		}
@@ -1683,8 +1541,9 @@ public final class ConstraintParser {
 		if (s.indexOf('|') != -1)
 			s = s.replaceAll("\\|", "][");
 
-		ArrayList<String> retList = new ArrayList<String>(Math.max(
-				s.length() >> 2 + 1, 3)); // Approx return length.
+		ArrayList<String> retList = new ArrayList<String>(Math.max(s.length() >> 2 + 1, 3)); // Approx
+																								// return
+																								// length.
 		int s0 = 0, s1 = 0; // '[' and ']' count.
 		int st = 0; // Start of "next token to add".
 		for (int i = 0, iSz = s.length(); i < iSz; i++) {
@@ -1704,8 +1563,7 @@ public final class ConstraintParser {
 			st = i + 1;
 		}
 		if (s0 != s1)
-			throw new IllegalArgumentException(
-					"'[' and ']' mismatch in row/column format string: " + s);
+			throw new IllegalArgumentException("'[' and ']' mismatch in row/column format string: " + s);
 
 		if (s0 == 0) {
 			retList.add("");

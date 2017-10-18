@@ -124,8 +124,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param col
 	 * @param timer
 	 */
-	private Sprite(String fileName, double x, double y, int row, int col,
-			long timer) {
+	private Sprite(String fileName, double x, double y, int row, int col, long timer) {
 		this(fileName, -1, x, y, row, col, timer);
 	}
 
@@ -139,8 +138,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param row
 	 * @param col
 	 */
-	public Sprite(String fileName, int maxFrame, double x, double y, int row,
-			int col) {
+	public Sprite(String fileName, int maxFrame, double x, double y, int row, int col) {
 		this(fileName, maxFrame, x, y, row, col, defaultTimer);
 	}
 
@@ -155,10 +153,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param col
 	 * @param timer
 	 */
-	public Sprite(String fileName, int maxFrame, double x, double y, int row,
-			int col, long timer) {
-		this("Sprite" + System.currentTimeMillis(), fileName, maxFrame, x, y,
-				row, col, timer);
+	public Sprite(String fileName, int maxFrame, double x, double y, int row, int col, long timer) {
+		this("Sprite" + System.currentTimeMillis(), fileName, maxFrame, x, y, row, col, timer);
 	}
 
 	/**
@@ -173,11 +169,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param col
 	 * @param timer
 	 */
-	public Sprite(String spriteName, String fileName, int maxFrame, double x,
-			double y, int row, int col, long timer) {
-		this(spriteName, GraphicsUtils
-				.getSplitImages(fileName, row, col, false), maxFrame, x, y,
-				timer);
+	public Sprite(String spriteName, String fileName, int maxFrame, double x, double y, int row, int col, long timer) {
+		this(spriteName, GraphicsUtils.getSplitImages(fileName, row, col, false), maxFrame, x, y, timer);
 	}
 
 	/**
@@ -260,8 +253,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param timer
 	 */
 	public Sprite(Image[] images, int maxFrame, double x, double y, long timer) {
-		this("Sprite" + System.currentTimeMillis(), images, maxFrame, x, y,
-				timer);
+		this("Sprite" + System.currentTimeMillis(), images, maxFrame, x, y, timer);
 	}
 
 	/**
@@ -274,8 +266,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param y
 	 * @param timer
 	 */
-	public Sprite(String spriteName, Image[] images, int maxFrame, double x,
-			double y, long timer) {
+	public Sprite(String spriteName, Image[] images, int maxFrame, double x, double y, long timer) {
 		this.setLocation(x, y);
 		this.spriteName = spriteName;
 		this.setAnimation(animation, images, maxFrame, timer);
@@ -387,8 +378,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param maxFrame
 	 * @param timer
 	 */
-	private void setAnimation(Animation myAnimation, Image[] images,
-			int maxFrame, long timer) {
+	private void setAnimation(Animation myAnimation, Image[] images, int maxFrame, long timer) {
 		if (maxFrame != -1) {
 			for (int i = 0; i < maxFrame; i++) {
 				myAnimation.addFrame(new SpriteImage(images[i]), timer);
@@ -409,11 +399,8 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @param col
 	 * @param timer
 	 */
-	public void setAnimation(String fileName, int maxFrame, int row, int col,
-			long timer) {
-		setAnimation(new Animation(),
-				GraphicsUtils.getSplitImages(fileName, row, col), maxFrame,
-				timer);
+	public void setAnimation(String fileName, int maxFrame, int row, int col, long timer) {
+		setAnimation(new Animation(), GraphicsUtils.getSplitImages(fileName, row, col), maxFrame, timer);
 	}
 
 	/**
@@ -541,8 +528,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @return
 	 */
 	public Point2D.Float getMiddlePoint() {
-		return new Point2D.Float(getLocation().x() + getWidth() / 2,
-				getLocation().y() + getHeight() / 2);
+		return new Point2D.Float(getLocation().x() + getWidth() / 2, getLocation().y() + getHeight() / 2);
 	}
 
 	/**
@@ -561,8 +547,7 @@ public class Sprite extends LObject implements ISprite, LTrans {
 	 * @return
 	 */
 	public RectBox getCollisionBox() {
-		return getRect(getLocation().x(), getLocation().y(), getWidth(),
-				getHeight());
+		return getRect(getLocation().x(), getLocation().y(), getWidth(), getHeight());
 	}
 
 	public void createUI(LGraphics g) {
@@ -579,19 +564,16 @@ public class Sprite extends LObject implements ISprite, LTrans {
 			if (LTrans.TRANS_NONE == transform) {
 				g.drawImage(image.serializablelImage, x(), y());
 			} else {
-				g.drawRegion(image.serializablelImage, 0, 0,
-						getWidth(), getHeight(), transform, x(), y(),
+				g.drawRegion(image.serializablelImage, 0, 0, getWidth(), getHeight(), transform, x(), y(),
 						LGraphics.TOP | LGraphics.LEFT);
 			}
 			return;
 		default:
-			Image tmp = factory.doFilter(image.serializablelImage,
-					filterType);
+			Image tmp = factory.doFilter(image.serializablelImage, filterType);
 			if (LTrans.TRANS_NONE == transform) {
 				g.drawImage(tmp, x(), y());
 			} else {
-				g.drawRegion(tmp, 0, 0, getWidth(), getHeight(), transform,
-						x(), y(), LGraphics.TOP | LGraphics.LEFT);
+				g.drawRegion(tmp, 0, 0, getWidth(), getHeight(), transform, x(), y(), LGraphics.TOP | LGraphics.LEFT);
 			}
 			tmp = null;
 			return;

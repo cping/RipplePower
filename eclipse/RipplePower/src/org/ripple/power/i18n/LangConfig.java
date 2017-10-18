@@ -29,8 +29,7 @@ public class LangConfig {
 	}
 
 	public static boolean isLeftToRight() {
-		return ComponentOrientation.getOrientation(Language.DEF.getLocale())
-				.isLeftToRight();
+		return ComponentOrientation.getOrientation(Language.DEF.getLocale()).isLeftToRight();
 	}
 
 	public static boolean isEast() {
@@ -40,8 +39,7 @@ public class LangConfig {
 	public static Locale newLocaleFromCode(String value) {
 		Preconditions.checkNotNull(value, "'value' must be present");
 		String[] parameters = value.split("_");
-		Preconditions.checkState(parameters.length > 0,
-				"'value' must not be empty");
+		Preconditions.checkState(parameters.length > 0, "'value' must not be empty");
 		final Locale newLocale;
 		switch (parameters.length) {
 		case 1:
@@ -54,22 +52,18 @@ public class LangConfig {
 			newLocale = new Locale(parameters[0], parameters[1], parameters[2]);
 			break;
 		default:
-			throw new IllegalArgumentException("Unknown locale descriptor: "
-					+ value);
+			throw new IllegalArgumentException("Unknown locale descriptor: " + value);
 		}
 		return newLocale;
 	}
 
 	public static boolean isEastLocale(Locale locale) {
-		return locale.equals(Locale.CHINA) || locale.equals(Locale.CHINESE)
-				|| locale.equals(new Locale("zh", "HK"))
-				|| locale.equals(Locale.TAIWAN) || locale.equals(Locale.JAPAN)
-				|| locale.equals(Locale.JAPANESE)
+		return locale.equals(Locale.CHINA) || locale.equals(Locale.CHINESE) || locale.equals(new Locale("zh", "HK"))
+				|| locale.equals(Locale.TAIWAN) || locale.equals(Locale.JAPAN) || locale.equals(Locale.JAPANESE)
 				|| locale.equals(Locale.KOREA) || locale.equals(Locale.KOREAN);
 	}
 
-	public static void addJavaI18n(ResourceBundle resourceBundle,
-			Language language) {
+	public static void addJavaI18n(ResourceBundle resourceBundle, Language language) {
 		initJavaI18n();
 		_javai18n.addBundle(resourceBundle, language);
 	}
@@ -79,8 +73,7 @@ public class LangConfig {
 		_javai18n.addBundle(baseName, language);
 	}
 
-	public static void addJavaI18n(String baseName, Language language,
-			String key) {
+	public static void addJavaI18n(String baseName, Language language, String key) {
 		initJavaI18n();
 		_javai18n.addBundleOnlyIfNeeded(baseName, language, key);
 	}
@@ -99,18 +92,15 @@ public class LangConfig {
 		if (_config == null) {
 			try {
 				// 简
-				if (Language.SIMPLECN.getLocale().equals(
-						LSystem.applicationLang.getLocale())) {
+				if (Language.SIMPLECN.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
 					_config = new RPConfig(UIRes.getStream("cn_zh/mes"));
 					// 繁
-				} else if (Language.TRADITIONALCN.getLocale().equals(
-						LSystem.applicationLang.getLocale())) {
+				} else if (Language.TRADITIONALCN.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					fontName = "Dialog";
 					_config = new RPConfig(UIRes.getStream("cn_tw/mes"));
 					// 日
-				} else if (Language.JP.getLocale().equals(
-						LSystem.applicationLang.getLocale())) {
+				} else if (Language.JP.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					// ＭＳ ゴシック
 					fontName = "Dialog";
 					_config = new RPConfig(UIRes.getStream("jp/mes"));

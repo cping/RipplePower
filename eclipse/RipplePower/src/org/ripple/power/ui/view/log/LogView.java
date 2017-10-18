@@ -113,15 +113,13 @@ public class LogView {
 				public void stateChanged(ChangeEvent arg0) {
 					Rectangle rect = viewpoint.getViewRect();
 
-					if (lastScrollHeight == textArea.getHeight()
-							&& lastViewHeight == rect.height
+					if (lastScrollHeight == textArea.getHeight() && lastViewHeight == rect.height
 							&& changedFlg == false) {
 						return;
 					}
 
 					if (lastScrollHeight - lastViewHeight == rect.y) {
-						rect.setLocation(rect.x, textArea.getHeight()
-								- rect.height);
+						rect.setLocation(rect.x, textArea.getHeight() - rect.height);
 						textArea.scrollRectToVisible(rect);
 					}
 
@@ -208,8 +206,7 @@ public class LogView {
 				}
 				if (textArea.getLineCount() > MAX_LINE) {
 					try {
-						int offset = textArea.getLineEndOffset(textArea
-								.getLineCount() - MAX_LINE - 1);
+						int offset = textArea.getLineEndOffset(textArea.getLineCount() - MAX_LINE - 1);
 						textArea.getDocument().remove(0, offset);
 					} catch (Exception exc) {
 						ErrorLog.get().logException("LogView Appender", exc);
@@ -218,21 +215,6 @@ public class LogView {
 				changedFlg = true;
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-
-		final Logger log = new Logger("test");
-		Thread thread = new Thread() {
-			public void run() {
-
-				for (;;) {
-					log.debug("ffffffffffffffffffffffff");
-				}
-			}
-		};
-		thread.start();
-
 	}
 
 }

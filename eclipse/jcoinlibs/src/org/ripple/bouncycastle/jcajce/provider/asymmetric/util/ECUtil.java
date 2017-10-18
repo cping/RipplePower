@@ -27,7 +27,7 @@ import org.ripple.bouncycastle.jce.spec.ECParameterSpec;
 
 /**
  * utility class for converting jce/jca ECDSA, ECDH, and ECDHC
- * objects into their org.bouncycastle.crypto counterparts.
+ * objects into their org.ripple.bouncycastle.crypto counterparts.
  */
 public class ECUtil
 {

@@ -34,9 +34,9 @@ public class StreamState {
 
 	int[] lacing_vals; /* The values that will go to the segment table */
 	long[] granule_vals; /*
-						 * pcm_pos values for headers. Not compact this way, but
-						 * it is simple coupled to the lacing fifo
-						 */
+							 * pcm_pos values for headers. Not compact this way,
+							 * but it is simple coupled to the lacing fifo
+							 */
 	int lacing_storage;
 	int lacing_fill;
 	int lacing_packet;
@@ -46,9 +46,9 @@ public class StreamState {
 	int header_fill;
 
 	public int e_o_s; /*
-					 * set when we have buffered the last packet in the logical
-					 * bitstream
-					 */
+						 * set when we have buffered the last packet in the
+						 * logical bitstream
+						 */
 	int b_o_s; /*
 				 * set after we've written the initial page of a logical
 				 * bitstream
@@ -139,8 +139,7 @@ public class StreamState {
 
 			body_fill -= body_returned;
 			if (body_fill != 0) {
-				System.arraycopy(body_data, body_returned, body_data, 0,
-						body_fill);
+				System.arraycopy(body_data, body_returned, body_data, 0, body_fill);
 			}
 			body_returned = 0;
 		}
@@ -155,8 +154,7 @@ public class StreamState {
 		 * actually be fairly easy to eliminate the extra copy in the future
 		 */
 
-		System.arraycopy(op.packet_base, op.packet, body_data, body_fill,
-				op.bytes);
+		System.arraycopy(op.packet_base, op.packet, body_data, body_fill, op.bytes);
 		body_fill += op.bytes;
 
 		/* Store lacing vals for this packet */
@@ -214,8 +212,10 @@ public class StreamState {
 
 			op.packet_base = body_data;
 			op.packet = body_returned;
-			op.e_o_s = lacing_vals[ptr] & 0x200; /* last packet of the stream? */
-			op.b_o_s = lacing_vals[ptr] & 0x100; /* first packet of the stream? */
+			op.e_o_s = lacing_vals[ptr]
+					& 0x200; /* last packet of the stream? */
+			op.b_o_s = lacing_vals[ptr]
+					& 0x100; /* first packet of the stream? */
 			bytes += size;
 
 			while (size == 255) {
@@ -275,10 +275,8 @@ public class StreamState {
 			if (lr != 0) {
 				// segment table
 				if ((lacing_fill - lr) != 0) {
-					System.arraycopy(lacing_vals, lr, lacing_vals, 0,
-							lacing_fill - lr);
-					System.arraycopy(granule_vals, lr, granule_vals, 0,
-							lacing_fill - lr);
+					System.arraycopy(lacing_vals, lr, lacing_vals, 0, lacing_fill - lr);
+					System.arraycopy(granule_vals, lr, granule_vals, 0, lacing_fill - lr);
 				}
 				lacing_fill -= lr;
 				lacing_packet -= lr;
@@ -515,10 +513,13 @@ public class StreamState {
 	 * good only until the next call (using the same ogg_stream_state)
 	 */
 	public int pageout(Page og) {
-		if ((e_o_s != 0 && lacing_fill != 0) || /* 'were done, now flush' case */
-		body_fill - body_returned > 4096 || /* 'page nominal size' case */
-		lacing_fill >= 255 || /* 'segment table full' case */
-		(lacing_fill != 0 && b_o_s == 0)) { /* 'initial header page' case */
+		if ((e_o_s != 0 && lacing_fill != 0)
+				|| /* 'were done, now flush' case */
+				body_fill - body_returned > 4096
+				|| /* 'page nominal size' case */
+				lacing_fill >= 255 || /* 'segment table full' case */
+				(lacing_fill != 0
+						&& b_o_s == 0)) { /* 'initial header page' case */
 			return flush(og);
 		}
 		return 0;

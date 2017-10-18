@@ -54,8 +54,7 @@ public final class Decoder {
 	 * @throws ChecksumException
 	 *             if error correction fails
 	 */
-	public DecoderResult decode(boolean[][] image) throws FormatException,
-			ChecksumException {
+	public DecoderResult decode(boolean[][] image) throws FormatException, ChecksumException {
 		int dimension = image.length;
 		BitMatrix bits = new BitMatrix(dimension);
 		for (int i = 0; i < dimension; i++) {
@@ -82,8 +81,7 @@ public final class Decoder {
 	 * @throws ChecksumException
 	 *             if error correction fails
 	 */
-	public DecoderResult decode(BitMatrix bits) throws FormatException,
-			ChecksumException {
+	public DecoderResult decode(BitMatrix bits) throws FormatException, ChecksumException {
 
 		// Construct a parser and read version, error-correction level
 		BitMatrixParser parser = new BitMatrixParser(bits);
@@ -133,8 +131,7 @@ public final class Decoder {
 	 * @throws ChecksumException
 	 *             if error correction fails
 	 */
-	private void correctErrors(byte[] codewordBytes, int numDataCodewords)
-			throws ChecksumException {
+	private void correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
 		int numCodewords = codewordBytes.length;
 		// First read into an array of ints
 		int[] codewordsInts = new int[numCodewords];

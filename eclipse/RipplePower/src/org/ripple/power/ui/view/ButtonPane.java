@@ -10,24 +10,24 @@ import org.ripple.power.ui.UIConfig;
 
 public class ButtonPane extends JPanel {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-    public ButtonPane(ActionListener listener, int spacing, String[]... items) {
-        super();
-        boolean addSpacer = false;
-        for (String[] item : items) {
-            if (addSpacer){
-                add(Box.createHorizontalStrut(spacing));
-            }
-            RPCButton button = new RPCButton(item[0]);
-            button.setActionCommand(item[1]);
-            button.addActionListener(listener);
-            add(button);
-            addSpacer = true;
-        }
-        setBackground(UIConfig.background);
-    }
+	public ButtonPane(ActionListener listener, int spacing, String[]... items) {
+		super();
+		boolean addSpacer = false;
+		for (String[] item : items) {
+			if (addSpacer) {
+				add(Box.createHorizontalStrut(spacing));
+			}
+			RPCButton button = new RPCButton(item[0]);
+			button.setActionCommand(item[1]);
+			button.addActionListener(listener);
+			add(button);
+			addSpacer = true;
+		}
+		setBackground(UIConfig.background);
+	}
 }

@@ -146,14 +146,12 @@ public class Polygon2D {
 
 			Point2D currPoint = this.points.get(i);
 
-			if (currPoint.equals(p0) || currPoint.equals(p1)
-					|| currPoint.equals(p2)) {
+			if (currPoint.equals(p0) || currPoint.equals(p1) || currPoint.equals(p2)) {
 				continue;
 			}
 
 			if (currPoint.type == Point2D.POINT_CONCAVE) {
-				if (this.isSide(currPoint, p0, p1, p2)
-						&& this.isSide(currPoint, p1, p0, p2)
+				if (this.isSide(currPoint, p0, p1, p2) && this.isSide(currPoint, p1, p0, p2)
 						&& this.isSide(currPoint, p2, p0, p1)) {
 					return false;
 				}
@@ -207,8 +205,7 @@ public class Polygon2D {
 		}
 	}
 
-	private boolean convex(double x1, double y1, double x2, double y2,
-			double x3, double y3) {
+	private boolean convex(double x1, double y1, double x2, double y2, double x3, double y3) {
 		if (triangleArea(x1, y1, x2, y2, x3, y3) < 0) {
 			return true;
 		} else {
@@ -216,8 +213,7 @@ public class Polygon2D {
 		}
 	}
 
-	private double triangleArea(double x1, double y1, double x2, double y2,
-			double x3, double y3) {
+	private double triangleArea(double x1, double y1, double x2, double y2, double x3, double y3) {
 		double areaSum = 0;
 		areaSum += x1 * (y3 - y2);
 		areaSum += x2 * (y1 - y3);

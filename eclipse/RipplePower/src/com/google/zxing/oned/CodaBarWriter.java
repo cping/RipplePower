@@ -27,46 +27,36 @@ public final class CodaBarWriter extends OneDimensionalCodeWriter {
 
 	private static final char[] START_END_CHARS = { 'A', 'B', 'C', 'D' };
 	private static final char[] ALT_START_END_CHARS = { 'T', 'N', '*', 'E' };
-	private static final char[] CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED = {
-			'/', ':', '+', '.' };
+	private static final char[] CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED = { '/', ':', '+', '.' };
 
 	@Override
 	public boolean[] encode(String contents) {
 
 		if (contents.length() < 2) {
-			throw new IllegalArgumentException(
-					"Codabar should start/end with start/stop symbols");
+			throw new IllegalArgumentException("Codabar should start/end with start/stop symbols");
 		}
 		// Verify input and calculate decoded length.
 		char firstChar = Character.toUpperCase(contents.charAt(0));
-		char lastChar = Character
-				.toUpperCase(contents.charAt(contents.length() - 1));
-		boolean startsEndsNormal = CodaBarReader.arrayContains(START_END_CHARS,
-				firstChar)
+		char lastChar = Character.toUpperCase(contents.charAt(contents.length() - 1));
+		boolean startsEndsNormal = CodaBarReader.arrayContains(START_END_CHARS, firstChar)
 				&& CodaBarReader.arrayContains(START_END_CHARS, lastChar);
-		boolean startsEndsAlt = CodaBarReader.arrayContains(
-				ALT_START_END_CHARS, firstChar)
+		boolean startsEndsAlt = CodaBarReader.arrayContains(ALT_START_END_CHARS, firstChar)
 				&& CodaBarReader.arrayContains(ALT_START_END_CHARS, lastChar);
 		if (!(startsEndsNormal || startsEndsAlt)) {
-			throw new IllegalArgumentException("Codabar should start/end with "
-					+ Arrays.toString(START_END_CHARS) + ", or start/end with "
-					+ Arrays.toString(ALT_START_END_CHARS));
+			throw new IllegalArgumentException("Codabar should start/end with " + Arrays.toString(START_END_CHARS)
+					+ ", or start/end with " + Arrays.toString(ALT_START_END_CHARS));
 		}
 
 		// The start character and the end character are decoded to 10 length
 		// each.
 		int resultLength = 20;
 		for (int i = 1; i < contents.length() - 1; i++) {
-			if (Character.isDigit(contents.charAt(i))
-					|| contents.charAt(i) == '-' || contents.charAt(i) == '$') {
+			if (Character.isDigit(contents.charAt(i)) || contents.charAt(i) == '-' || contents.charAt(i) == '$') {
 				resultLength += 9;
-			} else if (CodaBarReader.arrayContains(
-					CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED,
-					contents.charAt(i))) {
+			} else if (CodaBarReader.arrayContains(CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED, contents.charAt(i))) {
 				resultLength += 10;
 			} else {
-				throw new IllegalArgumentException("Cannot encode : '"
-						+ contents.charAt(i) + '\'');
+				throw new IllegalArgumentException("Cannot encode : '" + contents.charAt(i) + '\'');
 			}
 		}
 		// A blank is placed between each character.

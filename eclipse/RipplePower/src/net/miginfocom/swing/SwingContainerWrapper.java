@@ -41,8 +41,7 @@ import java.awt.*;
 
 /**
  */
-public final class SwingContainerWrapper extends SwingComponentWrapper
-		implements ContainerWrapper {
+public final class SwingContainerWrapper extends SwingComponentWrapper implements ContainerWrapper {
 	/**
 	 * Debug color for cell outline.
 	 */
@@ -69,8 +68,7 @@ public final class SwingContainerWrapper extends SwingComponentWrapper
 	}
 
 	public final boolean isLeftToRight() {
-		return ((Container) getComponent()).getComponentOrientation()
-				.isLeftToRight();
+		return ((Container) getComponent()).getComponentOrientation().isLeftToRight();
 	}
 
 	public final void paintDebugCell(int x, int y, int width, int height) {
@@ -82,8 +80,8 @@ public final class SwingContainerWrapper extends SwingComponentWrapper
 		if (g == null)
 			return;
 
-		g.setStroke(new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-				BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 3f }, 0));
+		g.setStroke(
+				new BasicStroke(1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 3f }, 0));
 		g.setPaint(DB_CELL_OUTLINE);
 		g.drawRect(x, y, width - 1, height - 1);
 	}

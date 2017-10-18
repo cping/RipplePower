@@ -12,8 +12,7 @@ public class BitArray {
 		int sh = (int) Math.floor((-bstart - blength) & 31);
 		if (((bstart + blength - 1 ^ bstart) & -32) > 0) {
 			x = JS.MOVE_LeftShift(a.get(bstart / (int) (32 | 0)), (32 - sh))
-					^ JS.MOVE_RightUShift(a.get(bstart / 32 + (int) (1 | 0)),
-							sh);
+					^ JS.MOVE_RightUShift(a.get(bstart / 32 + (int) (1 | 0)), sh);
 		} else {
 			x = JS.MOVE_LeftShift(a.get(bstart / (int) (32 | 0)), sh);
 		}
@@ -28,8 +27,7 @@ public class BitArray {
 		int l = a.length;
 		len = len & 31;
 		if (l > 0 && len > 0) {
-			a.set(l - 1,
-					partial(len, a.get(l - 1) & 0x80000000 >> (len - 1), 1));
+			a.set(l - 1, partial(len, a.get(l - 1) & 0x80000000 >> (len - 1), 1));
 		}
 		return a;
 	}
@@ -39,8 +37,7 @@ public class BitArray {
 	}
 
 	public static LongArray bitSlice(LongArray a, int bstart, int bend) {
-		a = _shiftRight(a.slice(bstart / 32), 32 - (bstart & 31), 0, null)
-				.slice(1);
+		a = _shiftRight(a.slice(bstart / 32), 32 - (bstart & 31), 0, null).slice(1);
 		return (bend == 0) ? a : clamp(a, bend - bstart);
 	}
 
@@ -53,8 +50,7 @@ public class BitArray {
 		if (shift == 32) {
 			return a1.concat(a2);
 		} else {
-			return _shiftRight(a2, shift, (int) last | 0,
-					a1.slice(0, a1.length - 1));
+			return _shiftRight(a2, shift, (int) last | 0, a1.slice(0, a1.length - 1));
 		}
 	}
 
@@ -84,8 +80,7 @@ public class BitArray {
 		return _shiftRight(a, shift, 0, null);
 	}
 
-	public static LongArray _shiftRight(LongArray a, long shift, long carry,
-			LongArray out) {
+	public static LongArray _shiftRight(LongArray a, long shift, long carry, LongArray out) {
 		int i;
 		long last2 = 0, shift2;
 		if (out == null) {
@@ -109,8 +104,7 @@ public class BitArray {
 		last2 = a.length > 0 ? a.get(a.length - 1) : 0;
 
 		shift2 = getPartial(last2);
-		out.push(partial(shift + shift2 & 31, (shift + shift2 > 32) ? carry
-				: out.pop(), 1));
+		out.push(partial(shift + shift2 & 31, (shift + shift2 > 32) ? carry : out.pop(), 1));
 
 		return out;
 	}
@@ -121,8 +115,8 @@ public class BitArray {
 	}
 
 	public static LongArray _xor4(LongArray x, LongArray y) {
-		return new LongArray(new long[] { x.get(0) ^ y.get(0),
-				x.get(1) ^ y.get(1), x.get(2) ^ y.get(2), x.get(3) ^ y.get(3) });
+		return new LongArray(
+				new long[] { x.get(0) ^ y.get(0), x.get(1) ^ y.get(1), x.get(2) ^ y.get(2), x.get(3) ^ y.get(3) });
 	}
 
 	public static LongArray byteswapM(LongArray a) {
@@ -130,9 +124,7 @@ public class BitArray {
 		long v, m = 0xff00;
 		for (i = 0; i < a.length; ++i) {
 			v = a.get(i);
-			a.set(i, JS.MOVE_RightUShift(v, 24)
-					| (JS.MOVE_RightUShift(v, 8) & m) | ((v & m) << 8)
-					| (v << 24));
+			a.set(i, JS.MOVE_RightUShift(v, 24) | (JS.MOVE_RightUShift(v, 8) & m) | ((v & m) << 8) | (v << 24));
 		}
 		return a;
 	}

@@ -10,8 +10,8 @@ import org.ripple.power.i18n.message.annotations.Messages;
 public abstract class MessageHandler implements InvocationHandler {
 
 	/**
-     * 
-     */
+	 * 
+	 */
 	protected final Class<?> proxiedInterface;
 
 	public MessageHandler(Class<?> proxiedInterface) {
@@ -19,8 +19,7 @@ public abstract class MessageHandler implements InvocationHandler {
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Messages messageBundle = method.getAnnotation(Messages.class);
 		if (messageBundle == null) {
 			throw new IllegalStateException("Messages Annotation does not set.");
@@ -36,8 +35,7 @@ public abstract class MessageHandler implements InvocationHandler {
 		String country = locale.getCountry();
 		String variant = locale.getVariant();
 
-		String[] localeList = new String[] { "", lang, lang + "_" + country,
-				lang + "_" + country + "_" + variant };
+		String[] localeList = new String[] { "", lang, lang + "_" + country, lang + "_" + country + "_" + variant };
 
 		String[] formats = new String[] { "", "", "", "", "", "" };
 		int mostFit = 0;

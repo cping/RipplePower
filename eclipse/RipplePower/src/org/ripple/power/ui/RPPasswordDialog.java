@@ -93,25 +93,20 @@ public class RPPasswordDialog extends ABaseDialog {
 				char[] chars = _password1Text.getText().toCharArray();
 				String pass = new String(chars);
 				if (chars.length < 8) {
-					UIRes.showErrorMessage(RPPasswordDialog.this, UIMessage.error,
-							"Not be less than 8 characters !");
+					UIRes.showErrorMessage(RPPasswordDialog.this, UIMessage.error, "Not be less than 8 characters !");
 					return;
 				}
 				if (StringUtils.isAlphabet(pass)) {
-					UIRes.showErrorMessage(RPPasswordDialog.this,
-							"Full English is not allowed !", UIMessage.error);
+					UIRes.showErrorMessage(RPPasswordDialog.this, "Full English is not allowed !", UIMessage.error);
 					return;
 				}
 				if (StringUtils.isNumber(pass)) {
-					UIRes.showErrorMessage(RPPasswordDialog.this,UIMessage.error,
-							"Full Numeric is not allowed !");
+					UIRes.showErrorMessage(RPPasswordDialog.this, UIMessage.error, "Full Numeric is not allowed !");
 					return;
 				}
 
 				if (!_password1Text.getText().equals(_password2Text.getText())) {
-					UIRes.showErrorMessage(RPPasswordDialog.this,UIMessage.error,
-							"Two passwords are not the same !"
-							);
+					UIRes.showErrorMessage(RPPasswordDialog.this, UIMessage.error, "Two passwords are not the same !");
 					return;
 				}
 				passwordEntered = true;

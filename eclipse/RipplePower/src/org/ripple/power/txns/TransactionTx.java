@@ -80,7 +80,7 @@ public class TransactionTx {
 	public String metaString;
 
 	public Meta meta;
-	
+
 	public String signingPubKey;
 
 	public String txnSignature;
@@ -115,8 +115,7 @@ public class TransactionTx {
 
 	public long date_number;
 
-	public ArrayList<TransactionTx.AffectedNode> affectedNodeList = new ArrayList<TransactionTx.AffectedNode>(
-			200);
+	public ArrayList<TransactionTx.AffectedNode> affectedNodeList = new ArrayList<TransactionTx.AffectedNode>(200);
 
 	public ArrayList<Memo> memos = new ArrayList<Memo>(10);
 

@@ -20,8 +20,7 @@ public class WalletItem {
 		this(date, new RippleSeedAddress(seed), amount, status);
 	}
 
-	public WalletItem(String date, RippleSeedAddress seed, String amount,
-			String status) {
+	public WalletItem(String date, RippleSeedAddress seed, String amount, String status) {
 		this.pDate = date;
 		this.pSeed = seed;
 		this.pAmount = amount;
@@ -33,9 +32,8 @@ public class WalletItem {
 	}
 
 	public String toString() {
-		return String.format(
-				"date:%s,public:%s,private:%s,amount:%s,status:%s", pDate,
-				pSeed.getPublicKey(), pSeed.getPrivateKey(), pAmount, pStatus);
+		return String.format("date:%s,public:%s,private:%s,amount:%s,status:%s", pDate, pSeed.getPublicKey(),
+				pSeed.getPrivateKey(), pAmount, pStatus);
 	}
 
 	public String getDate() {

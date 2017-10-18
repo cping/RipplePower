@@ -127,8 +127,7 @@ public class ArrayMap {
 
 	public final Entry getEntry(final int index) {
 		if (index >= size) {
-			throw new IndexOutOfBoundsException("Index:" + index + ", Size:"
-					+ size);
+			throw new IndexOutOfBoundsException("Index:" + index + ", Size:" + size);
 		}
 		return valueTables[index];
 	}
@@ -295,8 +294,7 @@ public class ArrayMap {
 		Entry e = valueTables[index];
 		int numMoved = size - index - 1;
 		if (numMoved > 0) {
-			System.arraycopy(valueTables, index + 1, valueTables, index,
-					numMoved);
+			System.arraycopy(valueTables, index + 1, valueTables, index, numMoved);
 		}
 		valueTables[--size] = null;
 		return e;
@@ -375,8 +373,7 @@ public class ArrayMap {
 			return "[]";
 		}
 		Entry[] values = this.valueTables;
-		StringBuilder buffer = new StringBuilder(
-				CollectionUtils.INITIAL_CAPACITY);
+		StringBuilder buffer = new StringBuilder(CollectionUtils.INITIAL_CAPACITY);
 		buffer.append('[');
 		for (int i = 0; i < size; i++) {
 			Object key = values[i].key;
@@ -402,8 +399,7 @@ public class ArrayMap {
 
 		Entry next;
 
-		public Entry(final int hashCode, final Object key, final Object value,
-				final Entry next) {
+		public Entry(final int hashCode, final Object key, final Object value, final Entry next) {
 
 			this.hashCode = hashCode;
 			this.key = key;

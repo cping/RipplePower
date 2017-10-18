@@ -25,19 +25,18 @@ import com.ripple.crypto.ecdsa.Seed;
 
 public class TransactionUtils {
 
-	public final static void submitBlob(final RippleSeedAddress seed,
-			final Transaction txn, final String fee, final long sequence,
-			final Rollback back) throws Exception {
+	public final static void submitBlob(final RippleSeedAddress seed, final Transaction txn, final String fee,
+			final long sequence, final Rollback back) throws Exception {
 		IKeyPair keyPair = Seed.getKeyPair(seed.getPrivateKey());
-		Blob pubKey = new Blob(keyPair.pubBytes());
+		Blob pubKey = new Blob(keyPair.canonicalPubBytes());
+
 		txn.put(UInt32.Sequence, new UInt32(sequence));
 		if (fee != null) {
 			txn.put(Amount.Fee, Amount.fromString(fee));
 		}
 		txn.put(Blob.SigningPubKey, pubKey);
 		Hash256 signingHash = txn.signingHash();
-		Blob signature = new Blob(keyPair.sign(signingHash
-				.bytes()));
+		Blob signature = new Blob(keyPair.signMessage(signingHash.bytes()));
 		txn.put(Blob.TxnSignature, signature);
 		BytesList blob = new BytesList();
 		HalfSha512 id = HalfSha512.prefixed256(HashPrefix.transactionID);
@@ -72,14 +71,12 @@ public class TransactionUtils {
 		return obj.getJSONObject("account_data").getLong("Sequence");
 	}
 
-	public final static void submitBlob(final RippleSeedAddress seed,
-			final RippleObject rippleobj, final Rollback back) throws Exception {
+	public final static void submitBlob(final RippleSeedAddress seed, final RippleObject rippleobj, final Rollback back)
+			throws Exception {
 
-		RippleObject rbo = new RippleSigner(seed.getPrivateKey(0))
-				.sign(rippleobj);
+		RippleObject rbo = new RippleSigner(seed.getPrivateKey(0)).sign(rippleobj);
 
-		byte[] signedTXBytes = new RippleSerializer().writeBinaryObject(rbo)
-				.array();
+		byte[] signedTXBytes = new RippleSerializer().writeBinaryObject(rbo).array();
 		RPClient client = RPClient.ripple();
 		if (client != null) {
 			Request req = client.newRequest(Command.submit);

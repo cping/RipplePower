@@ -28,16 +28,13 @@ public class RippleExt {
 
 	public static byte[] decodeRipple(String input) {
 		byte[] bytes = decodeToBigIntegerRipple(input).toByteArray();
-		boolean stripSignByte = bytes.length > 1 && bytes[0] == 0
-				&& bytes[1] < 0;
+		boolean stripSignByte = bytes.length > 1 && bytes[0] == 0 && bytes[1] < 0;
 		int leadingZeros = 0;
 		for (int i = 0; input.charAt(i) == DEFAULT_ALPHABET[0]; i++) {
 			leadingZeros++;
 		}
-		byte[] tmp = new byte[bytes.length - (stripSignByte ? 1 : 0)
-				+ leadingZeros];
-		System.arraycopy(bytes, stripSignByte ? 1 : 0, tmp, leadingZeros,
-				tmp.length - leadingZeros);
+		byte[] tmp = new byte[bytes.length - (stripSignByte ? 1 : 0) + leadingZeros];
+		System.arraycopy(bytes, stripSignByte ? 1 : 0, tmp, leadingZeros, tmp.length - leadingZeros);
 		return tmp;
 	}
 
@@ -55,11 +52,9 @@ public class RippleExt {
 		for (int i = input.length() - 1; i >= 0; i--) {
 			int alphaIndex = index(DEFAULT_ALPHABET, input.charAt(i));
 			if (alphaIndex == -1) {
-				throw new RuntimeException("Illegal character "
-						+ input.charAt(i) + " at " + i);
+				throw new RuntimeException("Illegal character " + input.charAt(i) + " at " + i);
 			}
-			bi = bi.add(BigInteger.valueOf(alphaIndex).multiply(
-					BASE.pow(input.length() - 1 - i)));
+			bi = bi.add(BigInteger.valueOf(alphaIndex).multiply(BASE.pow(input.length() - 1 - i)));
 		}
 		return bi;
 	}

@@ -81,43 +81,21 @@ public final class HtmlAssetTranslator {
 	private HtmlAssetTranslator() {
 	}
 
-	public static void main(String[] args) throws IOException {
-		if (args.length < 3) {
-			System.err
-					.println("Usage: HtmlAssetTranslator android/assets/ "
-							+ "(all|lang1[,lang2 ...]) (all|file1.html[ file2.html ...])");
-			return;
-		}
-		Path assetsDir = Paths.get(args[0]);
-		Collection<String> languagesToTranslate = parseLanguagesToTranslate(
-				assetsDir, args[1]);
-		List<String> restOfArgs = Arrays.asList(args).subList(2, args.length);
-		Collection<String> fileNamesToTranslate = parseFileNamesToTranslate(
-				assetsDir, restOfArgs);
-		for (String language : languagesToTranslate) {
-			translateOneLanguage(assetsDir, language, fileNamesToTranslate);
-		}
-	}
-
-	private static Collection<String> parseLanguagesToTranslate(Path assetsDir,
-			CharSequence languageArg) throws IOException {
+	private static Collection<String> parseLanguagesToTranslate(Path assetsDir, CharSequence languageArg)
+			throws IOException {
 		if ("all".equals(languageArg)) {
 			Collection<String> languages = new ArrayList<>();
 			DirectoryStream.Filter<Path> fileFilter = new DirectoryStream.Filter<Path>() {
 				@Override
 				public boolean accept(Path entry) {
 					String fileName = entry.getFileName().toString();
-					return Files.isDirectory(entry)
-							&& !Files.isSymbolicLink(entry)
-							&& fileName.startsWith("html-")
+					return Files.isDirectory(entry) && !Files.isSymbolicLink(entry) && fileName.startsWith("html-")
 							&& !"html-en".equals(fileName);
 				}
 			};
-			try (DirectoryStream<Path> dirs = Files.newDirectoryStream(
-					assetsDir, fileFilter)) {
+			try (DirectoryStream<Path> dirs = Files.newDirectoryStream(assetsDir, fileFilter)) {
 				for (Path languageDir : dirs) {
-					languages.add(languageDir.getFileName().toString()
-							.substring(5));
+					languages.add(languageDir.getFileName().toString().substring(5));
 				}
 			}
 			return languages;
@@ -126,13 +104,12 @@ public final class HtmlAssetTranslator {
 		}
 	}
 
-	private static Collection<String> parseFileNamesToTranslate(Path assetsDir,
-			List<String> restOfArgs) throws IOException {
+	private static Collection<String> parseFileNamesToTranslate(Path assetsDir, List<String> restOfArgs)
+			throws IOException {
 		if ("all".equals(restOfArgs.get(0))) {
 			Collection<String> fileNamesToTranslate = new ArrayList<>();
 			Path htmlEnAssetDir = assetsDir.resolve("html-en");
-			try (DirectoryStream<Path> files = Files.newDirectoryStream(
-					htmlEnAssetDir, "*.html")) {
+			try (DirectoryStream<Path> files = Files.newDirectoryStream(htmlEnAssetDir, "*.html")) {
 				for (Path file : files) {
 					fileNamesToTranslate.add(file.getFileName().toString());
 				}
@@ -143,36 +120,31 @@ public final class HtmlAssetTranslator {
 		}
 	}
 
-	private static void translateOneLanguage(Path assetsDir, String language,
-			final Collection<String> filesToTranslate) throws IOException {
+	private static void translateOneLanguage(Path assetsDir, String language, final Collection<String> filesToTranslate)
+			throws IOException {
 		Path targetHtmlDir = assetsDir.resolve("html-" + language);
 		Files.createDirectories(targetHtmlDir);
 		Path englishHtmlDir = assetsDir.resolve("html-en");
 
-		String translationTextTranslated = StringsResourceTranslator
-				.translateString("Translated by Google Translate.", language);
+		String translationTextTranslated = StringsResourceTranslator.translateString("Translated by Google Translate.",
+				language);
 
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 			@Override
 			public boolean accept(Path entry) {
 				String name = entry.getFileName().toString();
-				return name.endsWith(".html")
-						&& (filesToTranslate.isEmpty() || filesToTranslate
-								.contains(name));
+				return name.endsWith(".html") && (filesToTranslate.isEmpty() || filesToTranslate.contains(name));
 			}
 		};
-		try (DirectoryStream<Path> files = Files.newDirectoryStream(
-				englishHtmlDir, filter)) {
+		try (DirectoryStream<Path> files = Files.newDirectoryStream(englishHtmlDir, filter)) {
 			for (Path sourceFile : files) {
-				translateOneFile(language, targetHtmlDir, sourceFile,
-						translationTextTranslated);
+				translateOneFile(language, targetHtmlDir, sourceFile, translationTextTranslated);
 			}
 		}
 	}
 
-	private static void translateOneFile(String language, Path targetHtmlDir,
-			Path sourceFile, String translationTextTranslated)
-			throws IOException {
+	private static void translateOneFile(String language, Path targetHtmlDir, Path sourceFile,
+			String translationTextTranslated) throws IOException {
 
 		Path destFile = targetHtmlDir.resolve(sourceFile.getFileName());
 
@@ -204,8 +176,7 @@ public final class HtmlAssetTranslator {
 			if (node.getNodeType() == Node.TEXT_NODE) {
 				String text = node.getTextContent();
 				if (!text.trim().isEmpty()) {
-					text = StringsResourceTranslator.translateString(text,
-							language);
+					text = StringsResourceTranslator.translateString(text, language);
 					node.setTextContent(' ' + text + ' ');
 				}
 			}
@@ -220,20 +191,16 @@ public final class HtmlAssetTranslator {
 		DOMImplementationRegistry registry;
 		try {
 			registry = DOMImplementationRegistry.newInstance();
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		}
 
-		DOMImplementationLS impl = (DOMImplementationLS) registry
-				.getDOMImplementation("LS");
+		DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
 		LSSerializer writer = impl.createLSSerializer();
 		String fileAsString = writer.writeToString(document);
 		// Replace default XML header with HTML DOCTYPE
-		fileAsString = fileAsString.replaceAll("<\\?xml[^>]+>",
-				"<!DOCTYPE HTML>");
-		Files.write(destFile, Collections.singleton(fileAsString),
-				StandardCharsets.UTF_8);
+		fileAsString = fileAsString.replaceAll("<\\?xml[^>]+>", "<!DOCTYPE HTML>");
+		Files.write(destFile, Collections.singleton(fileAsString), StandardCharsets.UTF_8);
 	}
 
 	private static boolean shouldTranslate(Node node) {

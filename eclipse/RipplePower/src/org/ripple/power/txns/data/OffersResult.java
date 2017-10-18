@@ -11,8 +11,7 @@ public class OffersResult {
 	public String account;
 	public long ledger_current_index;
 	public boolean validated;
-	public List<Offer> offers = new ArrayList<Offer>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<Offer> offers = new ArrayList<Offer>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	public void from(JSONObject obj) {
 		if (obj != null) {

@@ -7,7 +7,7 @@ import org.ripple.power.txns.IssuedCurrency;
 public class Take {
 
 	public Object tag;
-	
+
 	public String value;
 	public String currency;
 	public String issuer;
@@ -53,7 +53,7 @@ public class Take {
 		}
 		JSONObject obj = new JSONObject();
 		if (LSystem.nativeCurrency.equalsIgnoreCase(this.currency)) {
-			obj.put("currency",this.currency.toUpperCase());
+			obj.put("currency", this.currency.toUpperCase());
 		} else {
 			obj.put("currency", this.currency.toUpperCase());
 			obj.put("issuer", this.issuer);
@@ -78,17 +78,13 @@ public class Take {
 		}
 		Take take = (Take) o;
 		int count = 0;
-		if ((take.currency == this.currency)
-				|| (take.currency != null && take.currency
-						.equals(this.currency))) {
+		if ((take.currency == this.currency) || (take.currency != null && take.currency.equals(this.currency))) {
 			count++;
 		}
-		if ((take.issuer == this.issuer)
-				|| (take.issuer != null && take.issuer.equals(this.issuer))) {
+		if ((take.issuer == this.issuer) || (take.issuer != null && take.issuer.equals(this.issuer))) {
 			count++;
 		}
-		if ((take.value == this.value)
-				|| (take.value != null && take.value.equals(this.value))) {
+		if ((take.value == this.value) || (take.value != null && take.value.equals(this.value))) {
 			count++;
 		}
 		return count == 3;

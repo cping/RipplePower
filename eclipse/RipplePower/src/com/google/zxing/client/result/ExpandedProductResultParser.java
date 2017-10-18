@@ -158,10 +158,9 @@ public final class ExpandedProductResultParser extends ResultParser {
 			}
 		}
 
-		return new ExpandedProductParsedResult(rawText, productID, sscc,
-				lotNumber, productionDate, packagingDate, bestBeforeDate,
-				expirationDate, weight, weightType, weightIncrement, price,
-				priceIncrement, priceCurrency, uncommonAIs);
+		return new ExpandedProductParsedResult(rawText, productID, sscc, lotNumber, productionDate, packagingDate,
+				bestBeforeDate, expirationDate, weight, weightType, weightIncrement, price, priceIncrement,
+				priceCurrency, uncommonAIs);
 	}
 
 	private static String findAIvalue(int i, String rawText) {

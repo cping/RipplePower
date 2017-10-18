@@ -145,7 +145,7 @@ public class ECGOST3410NamedCurves
      */
     public static Enumeration getNames()
     {
-        return names.elements();
+        return objIds.keys();
     }
 
     public static ECDomainParameters getByName(

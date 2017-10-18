@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.WeakHashMap;
 
 import org.ripple.power.NativeSupport;
 import org.ripple.power.config.LSystem;
@@ -15,8 +16,7 @@ import org.ripple.power.utils.FileUtils;
 
 public class AddressManager {
 
-	private HashMap<String, AddressDataBase> pCaches = new HashMap<String, AddressDataBase>(
-			10000);
+	private WeakHashMap<String, AddressDataBase> pCaches = new WeakHashMap<String, AddressDataBase>(100000);
 
 	private final static String default_alphabet = "abcdefghijklmnopqrstuvwxyz123456789";
 
@@ -26,14 +26,19 @@ public class AddressManager {
 
 	private final String pAlphabet;
 
-	private boolean isOnlyLocked = false;
+	private boolean isOnlyLocked = false, isMode = false;
 
 	public AddressManager(String baseDir) throws IOException {
-		this(default_alphabet, baseDir);
+		this(default_alphabet, baseDir, false);
 	}
 
-	public AddressManager(String alphabet, String baseDir) throws IOException {
+	public AddressManager(String baseDir, boolean m) throws IOException {
+		this(default_alphabet, baseDir, m);
+	}
+
+	public AddressManager(String alphabet, String baseDir, boolean m) throws IOException {
 		this.data_base_dir = baseDir;
+		this.isMode = m;
 		if (!data_base_dir.endsWith(LSystem.FS)) {
 			data_base_dir += LSystem.FS;
 		}
@@ -89,6 +94,7 @@ public class AddressManager {
 		this.isOnlyLocked = locked;
 		for (AddressDataBase data : pCaches.values()) {
 			if (data != null) {
+				data.setMode(isMode);
 				data.setOnlyLocked(locked);
 			}
 		}
@@ -101,36 +107,37 @@ public class AddressManager {
 	public boolean put(String key) {
 		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
-			throw new RuntimeException(
-					"Branch path does not exist, check whether the database creation error!");
+			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
 		}
 		AddressDataBase database = pCaches.get(dir);
 		if (database == null) {
 			database = new AddressDataBase(dir);
 			pCaches.put(dir, database);
 		}
+		database.setMode(this.isMode);
 		return database.putAddress(key);
 	}
+
+	private AddressDataBase dataBase;
 
 	public boolean find(String key) throws IOException {
 		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
-			throw new RuntimeException(
-					"Branch path does not exist, check whether the database creation error!");
+			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
 		}
-		AddressDataBase database = pCaches.get(dir);
-		if (database == null) {
-			database = new AddressDataBase(dir);
-			pCaches.put(dir, database);
+		if (dataBase == null) {
+			dataBase = new AddressDataBase(dir);
+		} else {
+			dataBase.setDirPath(dir);
 		}
-		return database.findAddress(key);
+		dataBase.setMode(isMode);
+		return dataBase.findAddress(key);
 	}
 
 	public boolean findBlock(String key) throws IOException {
 		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
-			throw new RuntimeException(
-					"Branch path does not exist, check whether the database creation error!");
+			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
 		}
 		AddressDataBase database = pCaches.get(dir);
 		if (database == null) {
@@ -143,6 +150,7 @@ public class AddressManager {
 	public void submit() throws IOException {
 		for (AddressDataBase data : pCaches.values()) {
 			if (data != null) {
+				data.setMode(isMode);
 				data.submit();
 			}
 		}
@@ -153,8 +161,7 @@ public class AddressManager {
 			final File tempFile = File.createTempFile(tmpFile, "tmp");
 			return tempFile;
 		} catch (final IOException e) {
-			throw new RuntimeException(
-					"Unable to create tempfile for unit test", e);
+			throw new RuntimeException("Unable to create tempfile for unit test", e);
 		}
 
 	}
@@ -166,8 +173,7 @@ public class AddressManager {
 	}
 
 	protected static File findTempDirectory() {
-		final File directory = createTempFile(String.valueOf(System
-				.currentTimeMillis()));
+		final File directory = createTempFile(String.valueOf(System.currentTimeMillis()));
 		directory.delete();
 		return directory;
 	}
@@ -181,8 +187,7 @@ public class AddressManager {
 				BufferedReader bf = new BufferedReader(new FileReader(path));
 				HashSet<String> contactSet = new HashSet<String>();
 				String line;
-				File newFile = createTempFile(System.currentTimeMillis()
-						+ path.getPath());
+				File newFile = createTempFile(System.currentTimeMillis() + path.getPath());
 				if (!newFile.exists()) {
 					FileUtils.makedirs(newFile);
 				}
@@ -211,8 +216,7 @@ public class AddressManager {
 				File path = new File(file);
 				BufferedReader bf = new BufferedReader(new FileReader(path));
 				String line;
-				File newFile = createTempFile(System.currentTimeMillis()
-						+ path.getPath());
+				File newFile = createTempFile(System.currentTimeMillis() + path.getPath());
 				if (!newFile.exists()) {
 					FileUtils.makedirs(newFile);
 				}
@@ -220,11 +224,9 @@ public class AddressManager {
 						10000);
 				while ((line = bf.readLine()) != null) {
 					if (line.length() > 4) {
-						String key = String.valueOf(Character.toLowerCase(line
-								.charAt(3)));
+						String key = String.valueOf(Character.toLowerCase(line.charAt(3)));
 						HashMap<String, ArrayList<String>> maps = tmps.get(key);
-						String newKey = String.valueOf(Character
-								.toLowerCase(line.charAt(4)));
+						String newKey = String.valueOf(Character.toLowerCase(line.charAt(4)));
 						if (maps == null) {
 							maps = new HashMap<String, ArrayList<String>>(10000);
 							tmps.put(key, maps);
@@ -250,27 +252,4 @@ public class AddressManager {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		AddressManager manager = new AddressManager("F:\\bitcoin_data");
-		// manager.clearRepeatData();
-		// manager.updateDataToBlock();
-		String text = null;
-		for (int i = 0;; i += 33) {
-
-			// System.out.println(text);
-			text = String.valueOf(i);
-			String address = NativeSupport.getBitcoinPrivateKey(text)
-					.split(",")[0];
-			// System.out.println("CCCCCCCC:"+address);
-			if (manager.findBlock(address)) {
-				System.out.println("万万没想到" + address + "," + text);
-				FileUtils.write(new File("d://bit_save_random_data23.txt"),
-						address + "," + text + "\n", true);
-			}
-			if (i % 5000 == 0) {
-				System.out.println(text);
-			}
-
-		}
-	}
 }

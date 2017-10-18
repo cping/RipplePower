@@ -12,7 +12,6 @@ import org.ripple.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.ripple.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.ripple.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.ripple.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
-import org.ripple.bouncycastle.util.Strings;
 
 /**
  * A provider representation for a RSA private key, with CRT factors included.
@@ -31,7 +30,7 @@ public class JCERSAPrivateCrtKey
     private BigInteger  crtCoefficient;
 
     /**
-     * construct a private key from it's org.bouncycastle.crypto equivalent.
+     * construct a private key from it's org.ripple.bouncycastle.crypto equivalent.
      *
      * @param key the parameters object representing the private key.
      */
@@ -225,7 +224,7 @@ public class JCERSAPrivateCrtKey
     public String toString()
     {
         StringBuffer    buf = new StringBuffer();
-        String          nl = Strings.lineSeparator();
+        String          nl = System.getProperty("line.separator");
 
         buf.append("RSA Private CRT Key").append(nl);
         buf.append("            modulus: ").append(this.getModulus().toString(16)).append(nl);

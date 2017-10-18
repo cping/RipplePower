@@ -63,8 +63,7 @@ public class QRCodeReader implements Reader {
 	 *             if error correction fails
 	 */
 	@Override
-	public Result decode(BinaryBitmap image) throws NotFoundException,
-			ChecksumException, FormatException {
+	public Result decode(BinaryBitmap image) throws NotFoundException, ChecksumException, FormatException {
 		return decode(image, null);
 	}
 
@@ -78,8 +77,7 @@ public class QRCodeReader implements Reader {
 			decoderResult = decoder.decode(bits, hints);
 			points = NO_POINTS;
 		} else {
-			DetectorResult detectorResult = new Detector(image.getBlackMatrix())
-					.detect(hints);
+			DetectorResult detectorResult = new Detector(image.getBlackMatrix()).detect(hints);
 			decoderResult = decoder.decode(detectorResult.getBits(), hints);
 			points = detectorResult.getPoints();
 		}
@@ -87,26 +85,22 @@ public class QRCodeReader implements Reader {
 		// If the code was mirrored: swap the bottom-left and the top-right
 		// points.
 		if (decoderResult.getOther() instanceof QRCodeDecoderMetaData) {
-			((QRCodeDecoderMetaData) decoderResult.getOther())
-					.applyMirroredCorrection(points);
+			((QRCodeDecoderMetaData) decoderResult.getOther()).applyMirroredCorrection(points);
 		}
 
-		Result result = new Result(decoderResult.getText(),
-				decoderResult.getRawBytes(), points, BarcodeFormat.QR_CODE);
+		Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points, BarcodeFormat.QR_CODE);
 		List<byte[]> byteSegments = decoderResult.getByteSegments();
 		if (byteSegments != null) {
 			result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
 		}
 		String ecLevel = decoderResult.getECLevel();
 		if (ecLevel != null) {
-			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL,
-					ecLevel);
+			result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
 		}
 		if (decoderResult.hasStructuredAppend()) {
 			result.putMetadata(ResultMetadataType.STRUCTURED_APPEND_SEQUENCE,
 					decoderResult.getStructuredAppendSequenceNumber());
-			result.putMetadata(ResultMetadataType.STRUCTURED_APPEND_PARITY,
-					decoderResult.getStructuredAppendParity());
+			result.putMetadata(ResultMetadataType.STRUCTURED_APPEND_PARITY, decoderResult.getStructuredAppendParity());
 		}
 		return result;
 	}
@@ -124,8 +118,7 @@ public class QRCodeReader implements Reader {
 	 * 
 	 * @see com.google.zxing.datamatrix.DataMatrixReader#extractPureBits(BitMatrix)
 	 */
-	private static BitMatrix extractPureBits(BitMatrix image)
-			throws NotFoundException {
+	private static BitMatrix extractPureBits(BitMatrix image) throws NotFoundException {
 
 		int[] leftTopBlack = image.getTopLeftOnBit();
 		int[] rightBottomBlack = image.getBottomRightOnBit();
@@ -170,8 +163,7 @@ public class QRCodeReader implements Reader {
 		left += nudge;
 
 		// But careful that this does not sample off the edge
-		int nudgedTooFarRight = left + (int) ((matrixWidth - 1) * moduleSize)
-				- (right - 1);
+		int nudgedTooFarRight = left + (int) ((matrixWidth - 1) * moduleSize) - (right - 1);
 		if (nudgedTooFarRight > 0) {
 			if (nudgedTooFarRight > nudge) {
 				// Neither way fits; abort
@@ -179,8 +171,7 @@ public class QRCodeReader implements Reader {
 			}
 			left -= nudgedTooFarRight;
 		}
-		int nudgedTooFarDown = top + (int) ((matrixHeight - 1) * moduleSize)
-				- (bottom - 1);
+		int nudgedTooFarDown = top + (int) ((matrixHeight - 1) * moduleSize) - (bottom - 1);
 		if (nudgedTooFarDown > 0) {
 			if (nudgedTooFarDown > nudge) {
 				// Neither way fits; abort
@@ -202,8 +193,7 @@ public class QRCodeReader implements Reader {
 		return bits;
 	}
 
-	private static float moduleSize(int[] leftTopBlack, BitMatrix image)
-			throws NotFoundException {
+	private static float moduleSize(int[] leftTopBlack, BitMatrix image) throws NotFoundException {
 		int height = image.getHeight();
 		int width = image.getWidth();
 		int x = leftTopBlack[0];

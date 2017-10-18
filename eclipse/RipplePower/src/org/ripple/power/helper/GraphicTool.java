@@ -28,8 +28,7 @@ public class GraphicTool {
 		MenuItemColor = Color.yellow;
 	}
 
-	public void setTransmission(Graphics g, int x, int y, int wide, int high,
-			Color col, float t) {
+	public void setTransmission(Graphics g, int x, int y, int wide, int high, Color col, float t) {
 		Graphics2D g2 = (Graphics2D) g;
 		java.awt.Composite comp_defo = g2.getComposite();
 		AlphaComposite composite = AlphaComposite.getInstance(3, t);
@@ -39,8 +38,8 @@ public class GraphicTool {
 		g2.setComposite(comp_defo);
 	}
 
-	public void drawSelect(Graphics g, Container con, int x, int y, int width,
-			int height, String strs[], boolean oks[], int now) {
+	public void drawSelect(Graphics g, Container con, int x, int y, int width, int height, String strs[], boolean oks[],
+			int now) {
 		Color colors[] = new Color[strs.length];
 		for (int i = 0; i < colors.length; i++)
 			colors[i] = MenuItemColor;
@@ -48,8 +47,8 @@ public class GraphicTool {
 		drawSelect(g, con, x, y, width, height, strs, oks, now, colors);
 	}
 
-	public void drawSelect(Graphics g, Container con, int x, int y, int width,
-			int height, String strs[], boolean oks[], int now, Color cols[]) {
+	public void drawSelect(Graphics g, Container con, int x, int y, int width, int height, String strs[], boolean oks[],
+			int now, Color cols[]) {
 		g.setColor(Color.black);
 		g.fillRect(x, y, width, height);
 		drawChoices(g, x, y, width, height, strs, oks, cols);
@@ -58,8 +57,8 @@ public class GraphicTool {
 		drawBorder(g, con, x, y, width, height, strs.length);
 	}
 
-	public void drawTable(Graphics g, Container con, int x, int y, int width,
-			int height, String strs[], boolean border) {
+	public void drawTable(Graphics g, Container con, int x, int y, int width, int height, String strs[],
+			boolean border) {
 		g.setColor(Color.black);
 		g.fillRect(x, y, width, height);
 		boolean flags[] = new boolean[strs.length];
@@ -72,16 +71,13 @@ public class GraphicTool {
 			drawBorder(g, con, x, y, width, height, strs.length);
 	}
 
-	public void drawTable(Graphics g, Container con, int x, int y, int width,
-			int height, String strs[]) {
+	public void drawTable(Graphics g, Container con, int x, int y, int width, int height, String strs[]) {
 		drawTable(g, con, x, y, width, height, strs, true);
 	}
 
-	public BufferedImage getWinTable(int width, int height, Color start,
-			Color end, boolean drawHeigth) {
+	public BufferedImage getWinTable(int width, int height, Color start, Color end, boolean drawHeigth) {
 		BufferedImage image = GraphicsUtils.createImage(width, height, true);
-		Gradation gradation = Gradation.getInstance(start, end, width, height,
-				125);
+		Gradation gradation = Gradation.getInstance(start, end, width, height, 125);
 		Graphics g = image.getGraphics();
 		if (drawHeigth) {
 			gradation.drawHeight(g, 0, 0);
@@ -102,12 +98,10 @@ public class GraphicTool {
 		return image;
 	}
 
-	public void drawFrame(Graphics g, Container con, int x, int y, int width,
-			int height) {
+	public void drawFrame(Graphics g, Container con, int x, int y, int width, int height) {
 		BufferedImage corners[] = new BufferedImage[4];
 		for (int i = 0; i < corners.length; i++) {
-			corners[i] = GraphicTool.get().getBufferdImage(
-					(new StringBuilder("win")).append(i + 4).toString());
+			corners[i] = GraphicTool.get().getBufferdImage((new StringBuilder("win")).append(i + 4).toString());
 		}
 		int CornerSize = corners[0].getWidth();
 		for (int a = 0; a < 4; a++) {
@@ -154,18 +148,15 @@ public class GraphicTool {
 
 		g.drawImage(corners[0], x, y, con);
 		g.drawImage(corners[1], x, (y + height) - CornerSize, con);
-		g.drawImage(corners[2], (x + width) - CornerSize, (y + height)
-				- CornerSize, con);
+		g.drawImage(corners[2], (x + width) - CornerSize, (y + height) - CornerSize, con);
 		g.drawImage(corners[3], (x + width) - CornerSize, y, con);
 	}
 
-	private void drawBorder(Graphics g, Container con, int x, int y, int width,
-			int height, int nums) {
+	private void drawBorder(Graphics g, Container con, int x, int y, int width, int height, int nums) {
 		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int size = img.getHeight();
 		int length = img.getWidth();
-		int bun = (int) Math.round((1.0D * (double) (height - size))
-				/ (double) nums);
+		int bun = (int) Math.round((1.0D * (double) (height - size)) / (double) nums);
 		for (int i = 1; i < nums; i++) {
 			for (int j = 0; j <= width - size; j += length)
 				g.drawImage(img, x + j, y + bun * i, con);
@@ -174,8 +165,7 @@ public class GraphicTool {
 
 	}
 
-	public void drawHorizonLine(Graphics g, Container con, int x, int y,
-			int width) {
+	public void drawHorizonLine(Graphics g, Container con, int x, int y, int width) {
 		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int length = img.getWidth();
 		for (int j = 0; j <= width; j += length)
@@ -183,8 +173,7 @@ public class GraphicTool {
 
 	}
 
-	private void drawChoices(Graphics g, int x, int y, int width, int height,
-			String strs[], boolean oks[], Color col) {
+	private void drawChoices(Graphics g, int x, int y, int width, int height, String strs[], boolean oks[], Color col) {
 		Color colors[] = new Color[strs.length];
 		for (int i = 0; i < colors.length; i++)
 			colors[i] = col;
@@ -192,39 +181,30 @@ public class GraphicTool {
 		drawChoices(g, x, y, width, height, strs, oks, colors);
 	}
 
-	private void drawChoices(Graphics g, int x, int y, int width, int height,
-			String strs[], boolean oks[], Color colors[]) {
+	private void drawChoices(Graphics g, int x, int y, int width, int height, String strs[], boolean oks[],
+			Color colors[]) {
 		BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 		int size = img.getHeight();
-		int bun = (int) Math.round((1.0D * (double) (height - size))
-				/ (double) strs.length);
+		int bun = (int) Math.round((1.0D * (double) (height - size)) / (double) strs.length);
 		for (int i = 0; i < strs.length; i++) {
-			g.setFont(new Font("Dialog", 1, getFontSize(
-					bun - size,
-					(int) Math.round((1.0D * (double) (width - 2 * size))
-							/ (double) strs[i].length()))));
+			g.setFont(new Font("Dialog", 1, getFontSize(bun - size,
+					(int) Math.round((1.0D * (double) (width - 2 * size)) / (double) strs[i].length()))));
 			g.setColor(colors[i]);
-			g.drawString(
-					strs[i],
-					x + size,
-					(int) Math.round((double) (y + bun * (i + 1))
-							- 0.10000000000000001D * (double) bun));
+			g.drawString(strs[i], x + size,
+					(int) Math.round((double) (y + bun * (i + 1)) - 0.10000000000000001D * (double) bun));
 			if (!oks[i])
-				setTransmission(g, x, y + bun * i, width, bun, Color.black,
-						0.7F);
+				setTransmission(g, x, y + bun * i, width, bun, Color.black, 0.7F);
 		}
 
 	}
 
-	private void drawNowDecide(Graphics g, int x, int y, int width, int height,
-			int nums, int now) {
+	private void drawNowDecide(Graphics g, int x, int y, int width, int height, int nums, int now) {
 		if (now == -1) {
 			return;
 		} else {
 			BufferedImage img = GraphicTool.get().getBufferdImage("win0");
 			int size = img.getHeight();
-			int bun = (int) Math.round((1.0D * (double) (height - size))
-					/ (double) nums);
+			int bun = (int) Math.round((1.0D * (double) (height - size)) / (double) nums);
 			setTransmission(g, x, y + bun * now, width, bun, Color.green, 0.5F);
 			return;
 		}

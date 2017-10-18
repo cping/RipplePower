@@ -18,14 +18,12 @@ public class CookieContainer {
 		}
 	}
 
-	public void add(String name, String value, String expires, String domain,
-			String path) {
+	public void add(String name, String value, String expires, String domain, String path) {
 		List<Cookie> deleteList = new LinkedList<Cookie>();
 		for (int i = 0; i < cookieList.size(); i++) {
 			Cookie c = cookieList.get(i);
 			if (c.checkLifetime()) {
-				if ((c.getDomain() == domain) && (c.getName() == name)
-						&& (c.getPath() == path)) {
+				if ((c.getDomain() == domain) && (c.getName() == name) && (c.getPath() == path)) {
 					deleteList.add(c);
 				}
 			} else {
@@ -139,8 +137,7 @@ public class CookieContainer {
 			for (int i = 0; i < cookieList.size(); i++) {
 				cookie = cookieList.get(i);
 				if (cookie.checkLifetime()) {
-					if ((cookie.getDomain().equals(domain))
-							&& (cookie.getPath().equals(path))
+					if ((cookie.getDomain().equals(domain)) && (cookie.getPath().equals(path))
 							&& (!names.contains(cookie.getName()))) {
 						matches.add(cookie);
 						names.add(cookie.getName());

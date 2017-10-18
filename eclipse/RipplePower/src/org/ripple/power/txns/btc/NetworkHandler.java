@@ -53,8 +53,8 @@ public class NetworkHandler implements Runnable {
 	private static final int MAX_OUTPUT_MESSAGES = 500;
 
 	// Bitcoin Network seed nodes (like ripple UNL)
-	private static final String[] dnsSeeds = new String[] {
-			"seed.bitcoin.sipa.be", // Pieter Wuille
+	private static final String[] dnsSeeds = new String[] { "seed.bitcoin.sipa.be", // Pieter
+																					// Wuille
 			"dnsseed.bluematt.me", // Matt Corallo
 			"dnsseed.bitcoin.dashjr.org", // Luke Dashjr
 			"seed.bitcoinstats.com", // Chris Decker
@@ -62,9 +62,8 @@ public class NetworkHandler implements Runnable {
 	};
 
 	// Test NetWork
-	private static final String[] dnsTestSeeds = new String[] {
-			"testnet-seed.alexykot.me", "testnet-seed.bitcoin.petertodd.org",
-			"testnet-seed.bluematt.me" };
+	private static final String[] dnsTestSeeds = new String[] { "testnet-seed.alexykot.me",
+			"testnet-seed.bitcoin.petertodd.org", "testnet-seed.bluematt.me" };
 
 	/** Connection listeners */
 	private final List<ConnectionListener> connectionListeners = new ArrayList<>();
@@ -144,9 +143,8 @@ public class NetworkHandler implements Runnable {
 	 * @throws IOException
 	 *             I/O error
 	 */
-	public NetworkHandler(int maxConnections, int maxOutbound, String hostName,
-			int listenPort, PeerAddress[] staticAddresses,
-			List<BlacklistEntry> blacklist) throws IOException {
+	public NetworkHandler(int maxConnections, int maxOutbound, String hostName, int listenPort,
+			PeerAddress[] staticAddresses, List<BlacklistEntry> blacklist) throws IOException {
 		this.maxConnections = maxConnections;
 		this.maxOutbound = maxOutbound;
 		this.hostName = hostName;
@@ -161,8 +159,7 @@ public class NetworkHandler implements Runnable {
 		//
 		if (staticAddresses != null) {
 			staticConnections = true;
-			this.maxOutbound = Math.min(this.maxOutbound,
-					staticAddresses.length);
+			this.maxOutbound = Math.min(this.maxOutbound, staticAddresses.length);
 			for (PeerAddress address : staticAddresses) {
 				address.setStatic(true);
 				BTCLoader.peerAddresses.add(0, address);
@@ -176,11 +173,8 @@ public class NetworkHandler implements Runnable {
 	 */
 	@Override
 	public void run() {
-		BTCLoader
-				.info(String
-						.format("Network listener started: Port %d, Max connections %d, Max outbound %d",
-								BTCLoader.listenPort, maxConnections,
-								maxOutbound));
+		BTCLoader.info(String.format("Network listener started: Port %d, Max connections %d, Max outbound %d",
+				BTCLoader.listenPort, maxConnections, maxOutbound));
 		lastPeerUpdateTime = System.currentTimeMillis() / 1000;
 		lastOutboundConnectTime = lastPeerUpdateTime;
 		lastStatsTime = lastPeerUpdateTime;
@@ -204,8 +198,7 @@ public class NetworkHandler implements Runnable {
 			//
 			if (!staticConnections) {
 				dnsDiscovery();
-				Collections.sort(BTCLoader.peerAddresses,
-						new PeerAddressComparator());
+				Collections.sort(BTCLoader.peerAddresses, new PeerAddressComparator());
 			}
 			//
 			// Get the current alerts
@@ -217,13 +210,11 @@ public class NetworkHandler implements Runnable {
 			listenChannel = ServerSocketChannel.open();
 			listenChannel.configureBlocking(false);
 			listenChannel.bind(new InetSocketAddress(BTCLoader.listenPort), 10);
-			listenKey = listenChannel.register(networkSelector,
-					SelectionKey.OP_ACCEPT);
+			listenKey = listenChannel.register(networkSelector, SelectionKey.OP_ACCEPT);
 			//
 			// Create the initial outbound connections to get us started
 			//
-			while (!networkShutdown && outboundCount < Math.min(maxOutbound, 4)
-					&& connections.size() < maxConnections
+			while (!networkShutdown && outboundCount < Math.min(maxOutbound, 4) && connections.size() < maxConnections
 					&& connections.size() < BTCLoader.peerAddresses.size())
 				if (!connectOutbound())
 					break;
@@ -249,8 +240,7 @@ public class NetworkHandler implements Runnable {
 				processEvents();
 			}
 		} catch (Throwable exc) {
-			BTCLoader.error(
-					"Runtime exception while processing network events", exc);
+			BTCLoader.error("Runtime exception while processing network events", exc);
 		}
 		//
 		// Stopping
@@ -306,8 +296,7 @@ public class NetworkHandler implements Runnable {
 				//
 				// Process peer requests
 				//
-				if (!BTCLoader.pendingRequests.isEmpty()
-						|| !BTCLoader.processedRequests.isEmpty())
+				if (!BTCLoader.pendingRequests.isEmpty() || !BTCLoader.processedRequests.isEmpty())
 					processRequests();
 				//
 				// Remove peer addresses that are too old and broadcast any new
@@ -317,13 +306,10 @@ public class NetworkHandler implements Runnable {
 				// since we always broadcast our own address.
 				//
 				long currentTime = System.currentTimeMillis() / 1000;
-				if (currentTime > lastPeerUpdateTime
-						+ BTCLoader.MAX_PEER_ADDRESS_AGE) {
-					List<PeerAddress> newAddresses = new ArrayList<>(
-							BTCLoader.peerAddresses.size());
+				if (currentTime > lastPeerUpdateTime + BTCLoader.MAX_PEER_ADDRESS_AGE) {
+					List<PeerAddress> newAddresses = new ArrayList<>(BTCLoader.peerAddresses.size());
 					synchronized (BTCLoader.peerAddresses) {
-						Iterator<PeerAddress> iterator = BTCLoader.peerAddresses
-								.iterator();
+						Iterator<PeerAddress> iterator = BTCLoader.peerAddresses.iterator();
 						while (iterator.hasNext()) {
 							PeerAddress address = iterator.next();
 							if (address.isStatic())
@@ -331,20 +317,17 @@ public class NetworkHandler implements Runnable {
 							if (address.getTimeStamp() < lastPeerUpdateTime) {
 								BTCLoader.peerMap.remove(address);
 								iterator.remove();
-							} else if (!address.wasBroadcast()
-									&& newAddresses.size() < 999) {
+							} else if (!address.wasBroadcast() && newAddresses.size() < 999) {
 								address.setBroadcast(true);
 								newAddresses.add(address);
 							}
 						}
 					}
 					if (!newAddresses.isEmpty()) {
-						Message addrMsg = AddressMessage.buildAddressMessage(
-								null, newAddresses, BTCLoader.listenAddress);
+						Message addrMsg = AddressMessage.buildAddressMessage(null, newAddresses,
+								BTCLoader.listenAddress);
 						broadcastMessage(addrMsg);
-						BTCLoader.info(String.format(
-								"%d addresses broadcast to peers",
-								newAddresses.size()));
+						BTCLoader.info(String.format("%d addresses broadcast to peers", newAddresses.size()));
 					}
 					lastPeerUpdateTime = currentTime;
 				}
@@ -370,17 +353,13 @@ public class NetworkHandler implements Runnable {
 								inactiveList.add(chkPeer);
 							} else if (!chkPeer.wasPingSent()) {
 								chkPeer.setPing(true);
-								Message chkMsg = PingMessage
-										.buildPingMessage(chkPeer);
+								Message chkMsg = PingMessage.buildPingMessage(chkPeer);
 								synchronized (chkPeer) {
 									chkPeer.getOutputList().add(chkMsg);
 									SelectionKey chkKey = chkPeer.getKey();
-									chkKey.interestOps(chkKey.interestOps()
-											| SelectionKey.OP_WRITE);
+									chkKey.interestOps(chkKey.interestOps() | SelectionKey.OP_WRITE);
 								}
-								BTCLoader.info(String
-										.format("'ping' message sent to %s",
-												chkAddress));
+								BTCLoader.info(String.format("'ping' message sent to %s", chkAddress));
 							}
 						}
 
@@ -388,9 +367,7 @@ public class NetworkHandler implements Runnable {
 
 					for (Peer chkPeer : inactiveList) {
 
-						BTCLoader.info(String.format(
-								"Closing connection due to inactivity: %s",
-								chkPeer.getAddress()));
+						BTCLoader.info(String.format("Closing connection due to inactivity: %s", chkPeer.getAddress()));
 						closeConnection(chkPeer);
 
 					}
@@ -402,12 +379,9 @@ public class NetworkHandler implements Runnable {
 				//
 				if (currentTime > lastOutboundConnectTime + 30) {
 					lastOutboundConnectTime = currentTime;
-					while (outboundCount < maxOutbound
-							&& connections.size() < maxConnections
-							&& connections.size() < BTCLoader.peerAddresses
-									.size()) {
-						if (!connectOutbound()
-								|| outboundCount >= Math.min(maxOutbound, 4))
+					while (outboundCount < maxOutbound && connections.size() < maxConnections
+							&& connections.size() < BTCLoader.peerAddresses.size()) {
+						if (!connectOutbound() || outboundCount >= Math.min(maxOutbound, 4))
 							break;
 					}
 				}
@@ -416,31 +390,17 @@ public class NetworkHandler implements Runnable {
 				//
 				if (currentTime > lastStatsTime + (5 * 60)) {
 					lastStatsTime = currentTime;
-					BTCLoader
-							.info(String
-									.format("\n"
-											+ "=======================================================\n"
-											+ "** Chain height: Network %,d, Local %,d\n"
-											+ "** Connections: %,d outbound, %,d inbound\n"
-											+ "** Addresses: %,d peers, %,d banned\n"
-											+ "** Blocks: %,d received, %,d sent, %,d filtered sent\n"
-											+ "** Transactions: %,d received, %,d sent, %,d pool, %,d rejected, %,d orphaned\n"
-											+ "=======================================================",
-											BTCLoader.networkChainHeight,
-											BTCLoader.blockStore
-													.getChainHeight(),
-											outboundCount, connections.size()
-													- outboundCount,
-											BTCLoader.peerAddresses.size(),
-											peerBlacklist.size(),
-											BTCLoader.blocksReceived.get(),
-											BTCLoader.blocksSent.get(),
-											BTCLoader.filteredBlocksSent.get(),
-											BTCLoader.txReceived.get(),
-											BTCLoader.txSent.get(),
-											BTCLoader.txMap.size(),
-											BTCLoader.txRejected.get(),
-											BTCLoader.orphanTxMap.size()));
+					BTCLoader.info(String.format("\n" + "=======================================================\n"
+							+ "** Chain height: Network %,d, Local %,d\n"
+							+ "** Connections: %,d outbound, %,d inbound\n" + "** Addresses: %,d peers, %,d banned\n"
+							+ "** Blocks: %,d received, %,d sent, %,d filtered sent\n"
+							+ "** Transactions: %,d received, %,d sent, %,d pool, %,d rejected, %,d orphaned\n"
+							+ "=======================================================", BTCLoader.networkChainHeight,
+							BTCLoader.blockStore.getChainHeight(), outboundCount, connections.size() - outboundCount,
+							BTCLoader.peerAddresses.size(), peerBlacklist.size(), BTCLoader.blocksReceived.get(),
+							BTCLoader.blocksSent.get(), BTCLoader.filteredBlocksSent.get(), BTCLoader.txReceived.get(),
+							BTCLoader.txSent.get(), BTCLoader.txMap.size(), BTCLoader.txRejected.get(),
+							BTCLoader.orphanTxMap.size()));
 					System.gc();
 				}
 			}
@@ -557,8 +517,7 @@ public class NetworkHandler implements Runnable {
 						synchronized (relayPeer) {
 							relayPeer.getOutputList().add(msg.clone(relayPeer));
 							SelectionKey relayKey = relayPeer.getKey();
-							relayKey.interestOps(relayKey.interestOps()
-									| SelectionKey.OP_WRITE);
+							relayKey.interestOps(relayKey.interestOps() | SelectionKey.OP_WRITE);
 						}
 					}
 				}
@@ -585,46 +544,35 @@ public class NetworkHandler implements Runnable {
 		try {
 			SocketChannel channel = listenChannel.accept();
 			if (channel != null) {
-				InetSocketAddress remoteAddress = (InetSocketAddress) channel
-						.getRemoteAddress();
+				InetSocketAddress remoteAddress = (InetSocketAddress) channel.getRemoteAddress();
 				PeerAddress address = new PeerAddress(remoteAddress);
 				if (connections.size() >= maxConnections) {
 					channel.close();
-					BTCLoader
-							.info(String
-									.format("Max connections reached: Connection rejected from %s",
-											address));
+					BTCLoader.info(String.format("Max connections reached: Connection rejected from %s", address));
 				} else if (isBlacklisted(address.getAddress())) {
 					channel.close();
-					BTCLoader.info(String.format(
-							"Connection rejected from banned address %s",
-							address));
+					BTCLoader.info(String.format("Connection rejected from banned address %s", address));
 				} else if (connectionMap.get(address.getAddress()) != null) {
 					channel.close();
-					BTCLoader.info(String.format(
-							"Duplicate connection rejected from %s", address));
+					BTCLoader.info(String.format("Duplicate connection rejected from %s", address));
 				} else {
 					address.setTimeConnected(System.currentTimeMillis() / 1000);
 					channel.configureBlocking(false);
 					channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
-					SelectionKey key = channel.register(networkSelector,
-							SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+					SelectionKey key = channel.register(networkSelector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 					Peer peer = new Peer(address, channel, key);
 					key.attach(peer);
 					peer.setConnected(true);
 					address.setConnected(true);
-					BTCLoader.info(String.format("Connection accepted from %s",
-							address));
-					Message msg = VersionMessage.buildVersionMessage(peer,
-							BTCLoader.listenAddress,
+					BTCLoader.info(String.format("Connection accepted from %s", address));
+					Message msg = VersionMessage.buildVersionMessage(peer, BTCLoader.listenAddress,
 							BTCLoader.blockStore.getChainHeight());
 					synchronized (connections) {
 						connections.add(peer);
 						connectionMap.put(address.getAddress(), peer);
 						peer.getOutputList().add(msg);
 					}
-					BTCLoader.info(String.format(
-							"Sent 'version' message to %s", address));
+					BTCLoader.info(String.format("Sent 'version' message to %s", address));
 				}
 			}
 		} catch (IOException exc) {
@@ -650,10 +598,8 @@ public class NetworkHandler implements Runnable {
 		PeerAddress address = null;
 		synchronized (BTCLoader.peerAddresses) {
 			for (PeerAddress chkAddress : BTCLoader.peerAddresses) {
-				if (!chkAddress.isConnected()
-						&& connectionMap.get(chkAddress.getAddress()) == null
-						&& !isBlacklisted(chkAddress.getAddress())
-						&& (!staticConnections || chkAddress.isStatic())) {
+				if (!chkAddress.isConnected() && connectionMap.get(chkAddress.getAddress()) == null
+						&& !isBlacklisted(chkAddress.getAddress()) && (!staticConnections || chkAddress.isStatic())) {
 					address = chkAddress;
 					break;
 				}
@@ -670,8 +616,7 @@ public class NetworkHandler implements Runnable {
 			channel.configureBlocking(false);
 			channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
 			channel.bind(null);
-			SelectionKey key = channel.register(networkSelector,
-					SelectionKey.OP_CONNECT);
+			SelectionKey key = channel.register(networkSelector, SelectionKey.OP_CONNECT);
 			peer = new Peer(address, channel, key);
 			key.attach(peer);
 			peer.setConnected(true);
@@ -684,15 +629,11 @@ public class NetworkHandler implements Runnable {
 				connectionMap.put(address.getAddress(), peer);
 			}
 		} catch (BindException exc) {
-			BTCLoader.error(
-					String.format("Unable to open connection to %s", address),
-					exc);
+			BTCLoader.error(String.format("Unable to open connection to %s", address), exc);
 			if (peer != null)
 				closeConnection(peer);
 		} catch (IOException exc) {
-			BTCLoader.error(
-					String.format("Unable to open connection to %s", address),
-					exc);
+			BTCLoader.error(String.format("Unable to open connection to %s", address), exc);
 			networkShutdown = true;
 		}
 		return true;
@@ -713,21 +654,17 @@ public class NetworkHandler implements Runnable {
 		SocketChannel channel = peer.getChannel();
 		try {
 			channel.finishConnect();
-			BTCLoader.info(String.format("Connection established to %s",
-					address));
+			BTCLoader.info(String.format("Connection established to %s", address));
 			address.setTimeConnected(System.currentTimeMillis() / 1000);
-			Message msg = VersionMessage.buildVersionMessage(peer,
-					BTCLoader.listenAddress,
+			Message msg = VersionMessage.buildVersionMessage(peer, BTCLoader.listenAddress,
 					BTCLoader.blockStore.getChainHeight());
 			synchronized (peer) {
 				peer.getOutputList().add(msg);
 				key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 			}
-			BTCLoader.info(String.format("Sent 'version' message to %s",
-					address));
+			BTCLoader.info(String.format("Sent 'version' message to %s", address));
 		} catch (SocketException exc) {
-			BTCLoader.info(String.format("%s: Peer %s",
-					exc.getLocalizedMessage(), address));
+			BTCLoader.info(String.format("%s: Peer %s", exc.getLocalizedMessage(), address));
 			closeConnection(peer);
 			if (!address.isStatic()) {
 				synchronized (BTCLoader.peerAddresses) {
@@ -738,8 +675,7 @@ public class NetworkHandler implements Runnable {
 				}
 			}
 		} catch (IOException exc) {
-			BTCLoader.error(String.format("Connection failed to %s", address),
-					exc);
+			BTCLoader.error(String.format("Connection failed to %s", address), exc);
 			closeConnection(peer);
 		}
 	}
@@ -767,8 +703,7 @@ public class NetworkHandler implements Runnable {
 				// Allocate a header buffer if no read is in progress
 				//
 				if (buffer == null) {
-					buffer = ByteBuffer
-							.wrap(new byte[MessageHeader.HEADER_LENGTH]);
+					buffer = ByteBuffer.wrap(new byte[MessageHeader.HEADER_LENGTH]);
 					peer.setInputBuffer(buffer);
 				}
 				//
@@ -785,29 +720,24 @@ public class NetworkHandler implements Runnable {
 				//
 				// Process the message header
 				//
-				if (buffer.position() == buffer.limit()
-						&& buffer.limit() == MessageHeader.HEADER_LENGTH) {
+				if (buffer.position() == buffer.limit() && buffer.limit() == MessageHeader.HEADER_LENGTH) {
 					byte[] hdrBytes = buffer.array();
 					long magic = Helper.readUint32LE(hdrBytes, 0);
 					long length = Helper.readUint32LE(hdrBytes, 16);
 					if (magic != NetParams.MAGIC_NUMBER) {
-						BTCLoader.error(String.format(
-								"Message magic number %X is incorrect", magic));
+						BTCLoader.error(String.format("Message magic number %X is incorrect", magic));
 						BTCLoader.dumpData("Failing Message Header", hdrBytes);
 						closeConnection(peer);
 						break;
 					}
 					if (length > NetParams.MAX_MESSAGE_SIZE) {
-						BTCLoader.error(String.format(
-								"Message length %,d is too large", length));
+						BTCLoader.error(String.format("Message length %,d is too large", length));
 						closeConnection(peer);
 						break;
 					}
 					if (length > 0) {
-						byte[] msgBytes = new byte[MessageHeader.HEADER_LENGTH
-								+ (int) length];
-						System.arraycopy(hdrBytes, 0, msgBytes, 0,
-								MessageHeader.HEADER_LENGTH);
+						byte[] msgBytes = new byte[MessageHeader.HEADER_LENGTH + (int) length];
+						System.arraycopy(hdrBytes, 0, msgBytes, 0, MessageHeader.HEADER_LENGTH);
 						buffer = ByteBuffer.wrap(msgBytes);
 						buffer.position(MessageHeader.HEADER_LENGTH);
 						peer.setInputBuffer(buffer);
@@ -830,10 +760,8 @@ public class NetworkHandler implements Runnable {
 					synchronized (peer) {
 						count = peer.getInputCount() + 1;
 						peer.setInputCount(count);
-						if (count >= MAX_INPUT_MESSAGES
-								|| peer.getOutputList().size() >= MAX_OUTPUT_MESSAGES)
-							key.interestOps(key.interestOps()
-									& (~SelectionKey.OP_READ));
+						if (count >= MAX_INPUT_MESSAGES || peer.getOutputList().size() >= MAX_OUTPUT_MESSAGES)
+							key.interestOps(key.interestOps() & (~SelectionKey.OP_READ));
 					}
 					break;
 				}
@@ -871,8 +799,7 @@ public class NetworkHandler implements Runnable {
 					synchronized (peer) {
 						List<Message> outputList = peer.getOutputList();
 						if (outputList.isEmpty()) {
-							key.interestOps(key.interestOps()
-									& (~SelectionKey.OP_WRITE));
+							key.interestOps(key.interestOps() & (~SelectionKey.OP_WRITE));
 						} else {
 							Message msg = outputList.remove(0);
 							buffer = msg.getBuffer();
@@ -901,8 +828,7 @@ public class NetworkHandler implements Runnable {
 			if (peer.getOutputBuffer() == null) {
 				synchronized (peer) {
 					if (peer.getInputCount() == 0)
-						key.interestOps(key.interestOps()
-								| SelectionKey.OP_READ);
+						key.interestOps(key.interestOps() | SelectionKey.OP_READ);
 					Message deferredMsg = peer.getDeferredMessage();
 					if (deferredMsg != null) {
 						peer.setDeferredMessage(null);
@@ -913,8 +839,7 @@ public class NetworkHandler implements Runnable {
 						int count = peer.getInputCount() + 1;
 						peer.setInputCount(count);
 						if (count >= MAX_INPUT_MESSAGES)
-							key.interestOps(key.interestOps()
-									& (~SelectionKey.OP_READ));
+							key.interestOps(key.interestOps() & (~SelectionKey.OP_READ));
 					}
 				}
 			}
@@ -962,12 +887,9 @@ public class NetworkHandler implements Runnable {
 			// Ban the peer if necessary
 			//
 			synchronized (peer) {
-				if (peer.getBanScore() >= BTCLoader.MAX_BAN_SCORE
-						&& !isBlacklisted(address.getAddress())) {
-					peerBlacklist.add(new BlacklistEntry(address.getAddress(),
-							-1));
-					BTCLoader.info(String.format("Peer address %s banned",
-							address.getAddress().getHostAddress()));
+				if (peer.getBanScore() >= BTCLoader.MAX_BAN_SCORE && !isBlacklisted(address.getAddress())) {
+					peerBlacklist.add(new BlacklistEntry(address.getAddress(), -1));
+					BTCLoader.info(String.format("Peer address %s banned", address.getAddress().getHostAddress()));
 				}
 			}
 			//
@@ -984,13 +906,9 @@ public class NetworkHandler implements Runnable {
 			//
 			if (channel.isOpen())
 				channel.close();
-			BTCLoader.info(String.format("Connection closed with peer %s",
-					address));
+			BTCLoader.info(String.format("Connection closed with peer %s", address));
 		} catch (IOException exc) {
-			BTCLoader
-					.error(String.format(
-							"Error while closing socket channel with %s",
-							address), exc);
+			BTCLoader.error(String.format("Error while closing socket channel with %s", address), exc);
 		}
 	}
 
@@ -1043,16 +961,13 @@ public class NetworkHandler implements Runnable {
 			//
 			if (peer.getVersionCount() == 2) {
 				peer.incVersionCount();
-				BTCLoader.info(String.format(
-						"Connection handshake completed with %s", address));
+				BTCLoader.info(String.format("Connection handshake completed with %s", address));
 				//
 				// Disconnect if this is an outbound connection and the peer
 				// doesn't provide network services
 				//
-				if ((peer.getServices() & NetParams.NODE_NETWORK) == 0
-						&& address.isOutbound()) {
-					BTCLoader.info(String.format(
-							"Network services not provided by %s", address));
+				if ((peer.getServices() & NetParams.NODE_NETWORK) == 0 && address.isOutbound()) {
+					BTCLoader.info(String.format("Network services not provided by %s", address));
 					closeConnection(peer);
 					continue;
 				}
@@ -1064,12 +979,10 @@ public class NetworkHandler implements Runnable {
 				//
 				if (!staticConnections) {
 					if ((peer.getServices() & NetParams.NODE_NETWORK) != 0) {
-						Message addrMsg = GetAddressMessage
-								.buildGetAddressMessage(peer);
+						Message addrMsg = GetAddressMessage.buildGetAddressMessage(peer);
 						synchronized (peer) {
 							peer.getOutputList().add(addrMsg);
-							key.interestOps(key.interestOps()
-									| SelectionKey.OP_WRITE);
+							key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 						}
 					}
 				}
@@ -1079,17 +992,13 @@ public class NetworkHandler implements Runnable {
 				long currentTime = System.currentTimeMillis() / 1000;
 				synchronized (BTCLoader.alerts) {
 					for (Alert alert : BTCLoader.alerts) {
-						if (!alert.isCanceled()
-								&& alert.getExpireTime() > currentTime) {
-							Message alertMsg = AlertMessage.buildAlertMessage(
-									peer, alert);
+						if (!alert.isCanceled() && alert.getExpireTime() > currentTime) {
+							Message alertMsg = AlertMessage.buildAlertMessage(peer, alert);
 							synchronized (peer) {
 								peer.getOutputList().add(alertMsg);
-								key.interestOps(key.interestOps()
-										| SelectionKey.OP_WRITE);
+								key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 							}
-							BTCLoader.info(String.format("Sent alert %d to %s",
-									alert.getID(), address));
+							BTCLoader.info(String.format("Sent alert %d to %s", alert.getID(), address));
 						}
 					}
 				}
@@ -1098,23 +1007,17 @@ public class NetworkHandler implements Runnable {
 				// haven't sent
 				// one yet
 				//
-				if (!getblocksSent
-						&& (peer.getServices() & NetParams.NODE_NETWORK) != 0
-						&& peer.getHeight() > BTCLoader.blockStore
-								.getChainHeight()) {
-					BTCLoader.networkChainHeight = Math.max(
-							BTCLoader.networkChainHeight, peer.getHeight());
+				if (!getblocksSent && (peer.getServices() & NetParams.NODE_NETWORK) != 0
+						&& peer.getHeight() > BTCLoader.blockStore.getChainHeight()) {
+					BTCLoader.networkChainHeight = Math.max(BTCLoader.networkChainHeight, peer.getHeight());
 					List<Sha256Hash> blockList = getBlockList();
-					Message getMsg = GetBlocksMessage.buildGetBlocksMessage(
-							peer, blockList, Sha256Hash.ZERO_HASH);
+					Message getMsg = GetBlocksMessage.buildGetBlocksMessage(peer, blockList, Sha256Hash.ZERO_HASH);
 					synchronized (peer) {
 						peer.getOutputList().add(getMsg);
-						key.interestOps(key.interestOps()
-								| SelectionKey.OP_WRITE);
+						key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 					}
 					getblocksSent = true;
-					BTCLoader.info(String.format(
-							"Sent 'getblocks' message to %s", address));
+					BTCLoader.info(String.format("Sent 'getblocks' message to %s", address));
 				}
 				//
 				// Notify listeners of the new connection
@@ -1139,8 +1042,7 @@ public class NetworkHandler implements Runnable {
 		synchronized (BTCLoader.pendingRequests) {
 			while (!BTCLoader.processedRequests.isEmpty()) {
 				request = BTCLoader.processedRequests.get(0);
-				if (request.getTimeStamp() >= currentTime - 10
-						|| request.isProcessing())
+				if (request.getTimeStamp() >= currentTime - 10 || request.isProcessing())
 					break;
 				//
 				// Move the request back to the pending queue
@@ -1167,8 +1069,7 @@ public class NetworkHandler implements Runnable {
 			synchronized (BTCLoader.pendingRequests) {
 				request = BTCLoader.pendingRequests.get(0);
 				if (request.getType() == InventoryItem.INV_BLOCK
-						&& (BTCLoader.databaseQueue.size() >= 10 || BTCLoader.processedRequests
-								.size() > 50)) {
+						&& (BTCLoader.databaseQueue.size() >= 10 || BTCLoader.processedRequests.size() > 50)) {
 					request = null;
 				} else {
 					BTCLoader.pendingRequests.remove(0);
@@ -1183,8 +1084,7 @@ public class NetworkHandler implements Runnable {
 			// no longer connected
 			//
 			peer = request.getOrigin();
-			if (peer != null
-					&& (request.wasContacted(peer) || !peer.isConnected()))
+			if (peer != null && (request.wasContacted(peer) || !peer.isConnected()))
 				peer = null;
 			//
 			// Select a peer to process the request. The peer must provide
@@ -1192,12 +1092,10 @@ public class NetworkHandler implements Runnable {
 			// services and must not have been contacted for this request.
 			//
 			if (peer == null) {
-				int index = (int) (((double) connections.size()) * Math
-						.random());
+				int index = (int) (((double) connections.size()) * Math.random());
 				for (int i = index; i < connections.size(); i++) {
 					Peer chkPeer = connections.get(i);
-					if ((chkPeer.getServices() & NetParams.NODE_NETWORK) != 0
-							&& !request.wasContacted(chkPeer)
+					if ((chkPeer.getServices() & NetParams.NODE_NETWORK) != 0 && !request.wasContacted(chkPeer)
 							&& chkPeer.isConnected()) {
 						peer = chkPeer;
 						break;
@@ -1206,8 +1104,7 @@ public class NetworkHandler implements Runnable {
 				if (peer == null) {
 					for (int i = 0; i < index; i++) {
 						Peer chkPeer = connections.get(i);
-						if ((chkPeer.getServices() & NetParams.NODE_NETWORK) != 0
-								&& !request.wasContacted(chkPeer)
+						if ((chkPeer.getServices() & NetParams.NODE_NETWORK) != 0 && !request.wasContacted(chkPeer)
 								&& chkPeer.isConnected()) {
 							peer = chkPeer;
 							break;
@@ -1229,8 +1126,7 @@ public class NetworkHandler implements Runnable {
 				synchronized (BTCLoader.pendingRequests) {
 					BTCLoader.processedRequests.remove(request);
 				}
-				if (originPeer != null
-						&& request.getType() != InventoryItem.INV_TX) {
+				if (originPeer != null && request.getType() != InventoryItem.INV_TX) {
 					synchronized (originPeer) {
 						int banScore = originPeer.getBanScore() + 5;
 						originPeer.setBanScore(banScore);
@@ -1238,14 +1134,10 @@ public class NetworkHandler implements Runnable {
 							originPeer.setDisconnect(true);
 					}
 				}
-				String originAddress = (originPeer != null ? originPeer
-						.getAddress().toString() : "local");
-				BTCLoader
-						.warn(String
-								.format("Purging unavailable %s request initiated by %s\n  %s",
-										(request.getType() == InventoryItem.INV_TX ? "transaction"
-												: "block"), originAddress,
-										request.getHash()));
+				String originAddress = (originPeer != null ? originPeer.getAddress().toString() : "local");
+				BTCLoader.warn(String.format("Purging unavailable %s request initiated by %s\n  %s",
+						(request.getType() == InventoryItem.INV_TX ? "transaction" : "block"), originAddress,
+						request.getHash()));
 				continue;
 			}
 			//
@@ -1281,9 +1173,7 @@ public class NetworkHandler implements Runnable {
 			int index = (int) (((double) connections.size()) * Math.random());
 			for (int i = index; i < connections.size(); i++) {
 				Peer chkPeer = connections.get(i);
-				if (chkPeer.isConnected()
-						&& chkPeer.getVersionCount() > 2
-						&& chkPeer.getHeight() > chainHeight
+				if (chkPeer.isConnected() && chkPeer.getVersionCount() > 2 && chkPeer.getHeight() > chainHeight
 						&& (chkPeer.getServices() & NetParams.NODE_NETWORK) != 0) {
 					peer = chkPeer;
 					break;
@@ -1292,9 +1182,7 @@ public class NetworkHandler implements Runnable {
 			if (peer == null) {
 				for (int i = 0; i < index; i++) {
 					Peer chkPeer = connections.get(i);
-					if (chkPeer.isConnected()
-							&& chkPeer.getVersionCount() > 2
-							&& chkPeer.getHeight() > chainHeight
+					if (chkPeer.isConnected() && chkPeer.getVersionCount() > 2 && chkPeer.getHeight() > chainHeight
 							&& (chkPeer.getServices() & NetParams.NODE_NETWORK) != 0) {
 						peer = chkPeer;
 						break;
@@ -1308,11 +1196,9 @@ public class NetworkHandler implements Runnable {
 		// Send the 'getblocks' message
 		//
 		List<Sha256Hash> blockList = getBlockList();
-		Message msg = GetBlocksMessage.buildGetBlocksMessage(peer, blockList,
-				Sha256Hash.ZERO_HASH);
+		Message msg = GetBlocksMessage.buildGetBlocksMessage(peer, blockList, Sha256Hash.ZERO_HASH);
 		sendMessage(msg);
-		BTCLoader.info(String.format("Sent 'getblocks' message to %s",
-				peer.getAddress()));
+		BTCLoader.info(String.format("Sent 'getblocks' message to %s", peer.getAddress()));
 	}
 
 	/**
@@ -1326,8 +1212,7 @@ public class NetworkHandler implements Runnable {
 			//
 			int chainHeight = BTCLoader.blockStore.getChainHeight();
 			int blockHeight = Math.max(0, chainHeight - 500);
-			List<InventoryItem> chainList = BTCLoader.blockStore.getChainList(
-					blockHeight, Sha256Hash.ZERO_HASH);
+			List<InventoryItem> chainList = BTCLoader.blockStore.getChainList(blockHeight, Sha256Hash.ZERO_HASH);
 			//
 			// Build the locator list starting with the chain head and working
 			// backwards towards
@@ -1363,18 +1248,14 @@ public class NetworkHandler implements Runnable {
 		int inChar;
 		try {
 			if (hostName != null) {
-				BTCLoader.listenAddress = new PeerAddress(
-						InetAddress.getByName(hostName), BTCLoader.listenPort);
-				BTCLoader.info(String.format("External IP address is %s",
-						BTCLoader.listenAddress));
+				BTCLoader.listenAddress = new PeerAddress(InetAddress.getByName(hostName), BTCLoader.listenPort);
+				BTCLoader.info(String.format("External IP address is %s", BTCLoader.listenAddress));
 			} else {
 				try {
-					HttpRequest request = HttpRequest
-							.get("http://checkip.dyndns.org:80/");
+					HttpRequest request = HttpRequest.get("http://checkip.dyndns.org:80/");
 
 					if (request.ok()) {
-						BTCLoader
-								.info("Getting external IP address from checkip.dyndns.org");
+						BTCLoader.info("Getting external IP address from checkip.dyndns.org");
 						try (InputStream inStream = request.stream()) {
 							StringBuilder outString = new StringBuilder(128);
 							while ((inChar = inStream.read()) >= 0)
@@ -1382,32 +1263,23 @@ public class NetworkHandler implements Runnable {
 							String ipString = outString.toString();
 							int start = ipString.indexOf(':');
 							if (start < 0) {
-								BTCLoader
-										.error(String
-												.format("Unrecognized response from checkip.dyndns.org\n  Response: %s",
-														ipString));
+								BTCLoader.error(String.format(
+										"Unrecognized response from checkip.dyndns.org\n  Response: %s", ipString));
 							} else {
 								int stop = ipString.indexOf('<', start);
-								String ipAddress = ipString.substring(
-										start + 1, stop).trim();
-								BTCLoader.listenAddress = new PeerAddress(
-										InetAddress.getByName(ipAddress),
+								String ipAddress = ipString.substring(start + 1, stop).trim();
+								BTCLoader.listenAddress = new PeerAddress(InetAddress.getByName(ipAddress),
 										BTCLoader.listenPort);
-								BTCLoader.info(String.format(
-										"External IP address is %s",
-										BTCLoader.listenAddress));
+								BTCLoader.info(String.format("External IP address is %s", BTCLoader.listenAddress));
 							}
 						}
 					}
 				} catch (Throwable ex) {
 					try {
 						String ipAddress = IP46Utils.getLocalIP();
-						BTCLoader.listenAddress = new PeerAddress(
-								InetAddress.getByName(ipAddress),
+						BTCLoader.listenAddress = new PeerAddress(InetAddress.getByName(ipAddress),
 								BTCLoader.listenPort);
-						BTCLoader.info(String.format(
-								"External IP address is %s",
-								BTCLoader.listenAddress));
+						BTCLoader.info(String.format("External IP address is %s", BTCLoader.listenAddress));
 					} catch (Exception exc) {
 
 					}
@@ -1429,14 +1301,10 @@ public class NetworkHandler implements Runnable {
 			try {
 				InetAddress[] addresses = InetAddress.getAllByName(host);
 				for (InetAddress address : addresses) {
-					if (BTCLoader.listenAddress != null
-							&& address.equals(BTCLoader.listenAddress
-									.getAddress()))
+					if (BTCLoader.listenAddress != null && address.equals(BTCLoader.listenAddress.getAddress()))
 						continue;
-					long timeSeen = currentTime
-							- (long) ((double) (7 * 24 * 3600) * Math.random());
-					peerAddress = new PeerAddress(address,
-							BTCLoader.DEFAULT_PORT, timeSeen);
+					long timeSeen = currentTime - (long) ((double) (7 * 24 * 3600) * Math.random());
+					peerAddress = new PeerAddress(address, BTCLoader.DEFAULT_PORT, timeSeen);
 					peerAddress.setBroadcast(true);
 					if (BTCLoader.peerMap.get(peerAddress) == null) {
 						BTCLoader.peerAddresses.add(peerAddress);

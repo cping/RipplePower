@@ -22,8 +22,7 @@ public class EncoderDecoder {
 		return encoder.encode(address);
 	}
 
-	public static String getDecoder(BufferedImage image, int w, int h)
-			throws IOException {
+	public static String getDecoder(BufferedImage image, int w, int h) throws IOException {
 		EncoderDecoder decoder = new EncoderDecoder(w, h);
 		return decoder.decode(image);
 	}
@@ -40,16 +39,14 @@ public class EncoderDecoder {
 		BitMatrix matrix;
 		com.google.zxing.Writer writer = new QRCodeWriter();
 		try {
-			matrix = writer.encode(data,
-					com.google.zxing.BarcodeFormat.QR_CODE, width, height);
+			matrix = writer.encode(data, com.google.zxing.BarcodeFormat.QR_CODE, width, height);
 		} catch (com.google.zxing.WriterException e) {
 			return null;
 		}
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
 
-		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

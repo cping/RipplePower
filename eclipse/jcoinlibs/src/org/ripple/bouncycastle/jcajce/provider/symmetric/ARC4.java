@@ -66,7 +66,7 @@ public final class ARC4
     {
         public PBEWithSHAAnd128Bit()
         {
-            super(new RC4Engine(), 0, 128, SHA1);
+            super(new RC4Engine(), 0);
         }
     }
 
@@ -78,7 +78,7 @@ public final class ARC4
     {
         public PBEWithSHAAnd40Bit()
         {
-            super(new RC4Engine(), 0, 40, SHA1);
+            super(new RC4Engine(), 0);
         }
     }
 

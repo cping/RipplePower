@@ -68,7 +68,7 @@ import org.ripple.bouncycastle.util.Strings;
  *    values  SET SIZE(1..MAX) OF ATTRIBUTE.&Type({IOSet}{\@type})
  *  }
  * </pre>
- * @deprecated use classes in org.bouncycastle.pkcs.
+ * @deprecated use classes in org.ripple.bouncycastle.pkcs.
  */
 public class PKCS10CertificationRequest
     extends CertificationRequest
@@ -415,9 +415,9 @@ public class PKCS10CertificationRequest
                 //
                 // try an alternate
                 //
-                if (keyAlgorithms.get(keyAlg.getAlgorithm()) != null)
+                if (keyAlgorithms.get(keyAlg.getObjectId()) != null)
                 {
-                    String  keyAlgorithm = (String)keyAlgorithms.get(keyAlg.getAlgorithm());
+                    String  keyAlgorithm = (String)keyAlgorithms.get(keyAlg.getObjectId());
                     
                     if (provider == null)
                     {
@@ -490,9 +490,9 @@ public class PKCS10CertificationRequest
             //
             // try an alternate
             //
-            if (oids.get(sigAlgId.getAlgorithm()) != null)
+            if (oids.get(sigAlgId.getObjectId()) != null)
             {
-                String  signatureAlgorithm = (String)oids.get(sigAlgId.getAlgorithm());
+                String  signatureAlgorithm = (String)oids.get(sigAlgId.getObjectId());
 
                 if (provider == null)
                 {
@@ -579,14 +579,14 @@ public class PKCS10CertificationRequest
 
         if (params != null && !DERNull.INSTANCE.equals(params))
         {
-            if (sigAlgId.getAlgorithm().equals(PKCSObjectIdentifiers.id_RSASSA_PSS))
+            if (sigAlgId.getObjectId().equals(PKCSObjectIdentifiers.id_RSASSA_PSS))
             {
                 RSASSAPSSparams rsaParams = RSASSAPSSparams.getInstance(params);
-                return getDigestAlgName(rsaParams.getHashAlgorithm().getAlgorithm()) + "withRSAandMGF1";
+                return getDigestAlgName(rsaParams.getHashAlgorithm().getObjectId()) + "withRSAandMGF1";
             }
         }
 
-        return sigAlgId.getAlgorithm().getId();
+        return sigAlgId.getObjectId().getId();
     }
 
     private static String getDigestAlgName(

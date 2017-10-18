@@ -120,8 +120,7 @@ public final class BinaryBitmap {
 	 * @return A cropped version of this object.
 	 */
 	public BinaryBitmap crop(int left, int top, int width, int height) {
-		LuminanceSource newSource = binarizer.getLuminanceSource().crop(left,
-				top, width, height);
+		LuminanceSource newSource = binarizer.getLuminanceSource().crop(left, top, width, height);
 		return new BinaryBitmap(binarizer.createBinarizer(newSource));
 	}
 
@@ -139,8 +138,7 @@ public final class BinaryBitmap {
 	 * @return A rotated version of this object.
 	 */
 	public BinaryBitmap rotateCounterClockwise() {
-		LuminanceSource newSource = binarizer.getLuminanceSource()
-				.rotateCounterClockwise();
+		LuminanceSource newSource = binarizer.getLuminanceSource().rotateCounterClockwise();
 		return new BinaryBitmap(binarizer.createBinarizer(newSource));
 	}
 
@@ -151,8 +149,7 @@ public final class BinaryBitmap {
 	 * @return A rotated version of this object.
 	 */
 	public BinaryBitmap rotateCounterClockwise45() {
-		LuminanceSource newSource = binarizer.getLuminanceSource()
-				.rotateCounterClockwise45();
+		LuminanceSource newSource = binarizer.getLuminanceSource().rotateCounterClockwise45();
 		return new BinaryBitmap(binarizer.createBinarizer(newSource));
 	}
 

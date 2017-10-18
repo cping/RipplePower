@@ -1,6 +1,5 @@
 package org.ripple.bouncycastle.jce.provider;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Principal;
@@ -10,10 +9,6 @@ import java.security.cert.CertPathBuilderResult;
 import java.security.cert.CertPathBuilderSpi;
 import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.PKIXBuilderParameters;
@@ -33,7 +28,6 @@ import org.ripple.bouncycastle.asn1.x509.Extension;
 import org.ripple.bouncycastle.jcajce.PKIXCertStoreSelector;
 import org.ripple.bouncycastle.jcajce.PKIXExtendedBuilderParameters;
 import org.ripple.bouncycastle.jce.exception.ExtCertPathBuilderException;
-import org.ripple.bouncycastle.util.Encodable;
 import org.ripple.bouncycastle.util.Selector;
 import org.ripple.bouncycastle.util.Store;
 import org.ripple.bouncycastle.util.StoreException;
@@ -42,7 +36,6 @@ import org.ripple.bouncycastle.x509.ExtendedPKIXParameters;
 import org.ripple.bouncycastle.x509.X509AttributeCertStoreSelector;
 import org.ripple.bouncycastle.x509.X509AttributeCertificate;
 import org.ripple.bouncycastle.x509.X509CertStoreSelector;
-import org.ripple.bouncycastle.x509.X509Store;
 
 public class PKIXAttrCertPathBuilderSpi
     extends CertPathBuilderSpi

@@ -394,7 +394,7 @@ public final class DES
     {
         public PBEWithMD2()
         {
-            super(new CBCBlockCipher(new DESEngine()), PKCS5S1, MD2, 64, 8);
+            super(new CBCBlockCipher(new DESEngine()));
         }
     }
 
@@ -406,7 +406,7 @@ public final class DES
     {
         public PBEWithMD5()
         {
-            super(new CBCBlockCipher(new DESEngine()), PKCS5S1, MD5, 64, 8);
+            super(new CBCBlockCipher(new DESEngine()));
         }
     }
 
@@ -418,7 +418,7 @@ public final class DES
     {
         public PBEWithSHA1()
         {
-            super(new CBCBlockCipher(new DESEngine()), PKCS5S1, SHA1, 64, 8);
+            super(new CBCBlockCipher(new DESEngine()));
         }
     }
     
@@ -426,7 +426,7 @@ public final class DES
         extends AlgorithmProvider
     {
         private static final String PREFIX = DES.class.getName();
-        private static final String PACKAGE = "org.bouncycastle.jcajce.provider.symmetric"; // JDK 1.2
+        private static final String PACKAGE = "org.ripple.bouncycastle.jcajce.provider.symmetric"; // JDK 1.2
 
         public Mappings()
         {

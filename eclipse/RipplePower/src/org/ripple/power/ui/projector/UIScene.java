@@ -27,18 +27,16 @@ public class UIScene extends JPanel {
 	private LHandler handler;
 	private Updateable exit;
 
-	public static UIScene showDialog(String text, int width, int height,
-			Screen screen, Window parent, WalletItem item, boolean show) {
+	public static UIScene showDialog(String text, int width, int height, Screen screen, Window parent, WalletItem item,
+			boolean show) {
 		if (show) {
 			synchronized (UIScene.class) {
 				if (lock == null) {
-					return (lock = new UIScene(text, width, height, screen,
-							parent, item));
+					return (lock = new UIScene(text, width, height, screen, parent, item));
 				} else {
 					if (lock != null) {
 						lock.closeDialog();
-						lock = new UIScene(text, width, height, screen, parent,
-								item);
+						lock = new UIScene(text, width, height, screen, parent, item);
 					}
 					return lock;
 				}
@@ -47,8 +45,8 @@ public class UIScene extends JPanel {
 		return null;
 	}
 
-	public static UIScene showDialog(String text, int width, int height,
-			Screen screen, Window parent, WalletItem item) {
+	public static UIScene showDialog(String text, int width, int height, Screen screen, Window parent,
+			WalletItem item) {
 		return showDialog(text, width, height, screen, parent, item, true);
 	}
 
@@ -77,16 +75,15 @@ public class UIScene extends JPanel {
 		}
 	}
 
-	public UIScene(String text, final int width, final int height,
-			final Screen screen, Window parent, WalletItem item) {
+	public UIScene(String text, final int width, final int height, final Screen screen, Window parent,
+			WalletItem item) {
 		LSystem.screenRect = new RectBox(0, 0, width, height);
 		Dimension dim = new Dimension(width, height);
 		setPreferredSize(dim);
 		setSize(dim);
 		setLayout(null);
 		setBackground(UIConfig.dialogbackground);
-		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false,
-				LSystem.MINUTE);
+		this.tool = RPDialogTool.show(parent, text, this, -1, -1, false, LSystem.MINUTE);
 		Updateable update = new Updateable() {
 
 			@Override
@@ -98,8 +95,7 @@ public class UIScene extends JPanel {
 						close();
 					}
 				});
-				UIScene.this.handler = new LHandler(tool.getDialog(), width,
-						height);
+				UIScene.this.handler = new LHandler(tool.getDialog(), width, height);
 				UIScene.this.handler.setScreen(screen);
 				UIView view = new UIView(handler);
 				add(view);

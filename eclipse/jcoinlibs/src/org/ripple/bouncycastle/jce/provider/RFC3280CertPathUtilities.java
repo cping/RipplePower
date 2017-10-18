@@ -59,7 +59,6 @@ import org.ripple.bouncycastle.jcajce.PKIXCertStoreSelector;
 import org.ripple.bouncycastle.jcajce.PKIXExtendedBuilderParameters;
 import org.ripple.bouncycastle.jcajce.PKIXExtendedParameters;
 import org.ripple.bouncycastle.jcajce.util.JcaJceHelper;
-import org.ripple.bouncycastle.jce.PrincipalUtil;
 import org.ripple.bouncycastle.jce.exception.ExtCertPathValidatorException;
 import org.ripple.bouncycastle.util.Arrays;
 

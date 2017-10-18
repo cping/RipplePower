@@ -60,8 +60,7 @@ public final class InvertedLuminanceSource extends LuminanceSource {
 
 	@Override
 	public LuminanceSource crop(int left, int top, int width, int height) {
-		return new InvertedLuminanceSource(delegate.crop(left, top, width,
-				height));
+		return new InvertedLuminanceSource(delegate.crop(left, top, width, height));
 	}
 
 	@Override

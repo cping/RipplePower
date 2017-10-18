@@ -23,16 +23,13 @@ public class SpreadsheetDate extends SerialDate {
 		if ((year >= 1900) && (year <= 9999)) {
 			this.year = year;
 		} else {
-			throw new IllegalArgumentException(
-					"The 'year' argument must be in range 1900 to 9999.");
+			throw new IllegalArgumentException("The 'year' argument must be in range 1900 to 9999.");
 		}
 
-		if ((month >= MonthConstants.JANUARY)
-				&& (month <= MonthConstants.DECEMBER)) {
+		if ((month >= MonthConstants.JANUARY) && (month <= MonthConstants.DECEMBER)) {
 			this.month = month;
 		} else {
-			throw new IllegalArgumentException(
-					"The 'month' argument must be in the range 1 to 12.");
+			throw new IllegalArgumentException("The 'month' argument must be in the range 1 to 12.");
 		}
 
 		if ((day >= 1) && (day <= SerialDate.lastDayOfMonth(month, year))) {
@@ -50,8 +47,7 @@ public class SpreadsheetDate extends SerialDate {
 		if ((serial >= SERIAL_LOWER_BOUND) && (serial <= SERIAL_UPPER_BOUND)) {
 			this.serial = serial;
 		} else {
-			throw new IllegalArgumentException(
-					"SpreadsheetDate: Serial must be in range 2 to 2958465.");
+			throw new IllegalArgumentException("SpreadsheetDate: Serial must be in range 2 to 2958465.");
 		}
 
 		final int days = this.serial - SERIAL_LOWER_BOUND;
@@ -89,8 +85,7 @@ public class SpreadsheetDate extends SerialDate {
 		}
 		this.month = mm - 1;
 
-		this.day = this.serial - ss2 - daysToEndOfPrecedingMonth[this.month]
-				+ 1;
+		this.day = this.serial - ss2 - daysToEndOfPrecedingMonth[this.month] + 1;
 
 	}
 
@@ -167,8 +162,7 @@ public class SpreadsheetDate extends SerialDate {
 		return isInRange(d1, d2, SerialDate.INCLUDE_BOTH);
 	}
 
-	public boolean isInRange(final SerialDate d1, final SerialDate d2,
-			final int include) {
+	public boolean isInRange(final SerialDate d1, final SerialDate d2, final int include) {
 		final int s1 = d1.toSerial();
 		final int s2 = d2.toSerial();
 		final int start = Math.min(s1, s2);

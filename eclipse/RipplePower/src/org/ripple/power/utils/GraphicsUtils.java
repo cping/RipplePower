@@ -84,12 +84,11 @@ import org.ripple.power.ui.graphics.LImage;
 final public class GraphicsUtils {
 
 	// 自定义的RGB配色器
-	final static private DirectColorModel COLOR_MODEL_RGB = new DirectColorModel(
-			24, 0xFF0000, 0x00FF00, 0x0000FF);
+	final static private DirectColorModel COLOR_MODEL_RGB = new DirectColorModel(24, 0xFF0000, 0x00FF00, 0x0000FF);
 
 	// 自定义的ARGB配色器
-	final static private DirectColorModel COLOR_MODEL_ARGB = new DirectColorModel(
-			32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	final static private DirectColorModel COLOR_MODEL_ARGB = new DirectColorModel(32, 0x00FF0000, 0x0000FF00,
+			0x000000FF, 0xFF000000);
 
 	final static public Toolkit toolKit = Toolkit.getDefaultToolkit();
 
@@ -101,8 +100,7 @@ final public class GraphicsUtils {
 			LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	private static Map<String, Object> lazySplitMap = Collections
-			.synchronizedMap(new HashMap<String, Object>(
-					LSystem.DEFAULT_MAX_CACHE_SIZE));
+			.synchronizedMap(new HashMap<String, Object>(LSystem.DEFAULT_MAX_CACHE_SIZE));
 
 	// 优秀但缓慢的图像加载方式
 	final static RenderingHints hints_excellent;
@@ -117,52 +115,30 @@ final public class GraphicsUtils {
 		// 设定图像显示状态为一般
 		hints_general = new RenderingHints(null);
 		// 设定图像显示状态为优秀
-		hints_excellent = new RenderingHints(
-				RenderingHints.KEY_TEXT_ANTIALIASING,
+		hints_excellent = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		hints_excellent.put(RenderingHints.KEY_DITHERING,
-				RenderingHints.VALUE_DITHER_ENABLE);
-		hints_excellent.put(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
-		hints_excellent.put(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		hints_excellent.put(RenderingHints.KEY_FRACTIONALMETRICS,
-				RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-		hints_excellent.put(RenderingHints.KEY_COLOR_RENDERING,
-				RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		hints_excellent.put(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		hints_excellent.put(RenderingHints.KEY_STROKE_CONTROL,
-				RenderingHints.VALUE_STROKE_PURE);
-		hints_excellent.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
-				RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		hints_excellent.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+		hints_excellent.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		hints_excellent.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		hints_excellent.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		hints_excellent.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		hints_excellent.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		hints_excellent.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		hints_excellent.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		// 设定图像显示状态为低劣
-		hints_poor = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		hints_poor.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		hints_poor.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		hints_poor.put(RenderingHints.KEY_COLOR_RENDERING,
-				RenderingHints.VALUE_COLOR_RENDER_SPEED);
-		hints_poor.put(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_SPEED);
-		hints_poor.put(RenderingHints.KEY_DITHERING,
-				RenderingHints.VALUE_DITHER_DISABLE);
-		hints_poor.put(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_SPEED);
-		hints_poor.put(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_OFF);
-		hints_poor.put(RenderingHints.KEY_FRACTIONALMETRICS,
-				RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-		hints_poor.put(RenderingHints.KEY_COLOR_RENDERING,
-				RenderingHints.VALUE_COLOR_RENDER_SPEED);
-		hints_poor.put(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		hints_poor.put(RenderingHints.KEY_STROKE_CONTROL,
-				RenderingHints.VALUE_STROKE_NORMALIZE);
-		hints_poor.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
-				RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+		hints_poor = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		hints_poor.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		hints_poor.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+		hints_poor.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+		hints_poor.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		hints_poor.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+		hints_poor.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		hints_poor.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		hints_poor.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+		hints_poor.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+		hints_poor.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		hints_poor.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+		hints_poor.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 
 	}
 
@@ -170,8 +146,7 @@ final public class GraphicsUtils {
 	}
 
 	public static Image createImage(int width, int height, Color c) {
-		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_4BYTE_ABGR_PRE);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR_PRE);
 		Graphics g = image.getGraphics();
 		g.setColor(c);
 		g.fillRect(0, 0, width, height);
@@ -197,14 +172,11 @@ final public class GraphicsUtils {
 	 * @param pixelsSize
 	 * @return
 	 */
-	public static BufferedImage newAwtRGBImage(int[] pixels, int w, int h,
-			int pixelSize) {
-		SampleModel sample = new SinglePixelPackedSampleModel(
-				DataBuffer.TYPE_INT, w, h, new int[] { 0xFF0000, 0x00FF00,
-						0x0000FF });
+	public static BufferedImage newAwtRGBImage(int[] pixels, int w, int h, int pixelSize) {
+		SampleModel sample = new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, w, h,
+				new int[] { 0xFF0000, 0x00FF00, 0x0000FF });
 		DataBufferInt dataBuffer = new DataBufferInt(pixels, pixelSize);
-		WritableRaster raster = Raster.createWritableRaster(sample, dataBuffer,
-				new Point(0, 0));
+		WritableRaster raster = Raster.createWritableRaster(sample, dataBuffer, new Point(0, 0));
 		return new BufferedImage(COLOR_MODEL_RGB, raster, true, null);
 	}
 
@@ -217,14 +189,11 @@ final public class GraphicsUtils {
 	 * @param pixelSize
 	 * @return
 	 */
-	public static BufferedImage newAwtARGBImage(int[] pixels, int w, int h,
-			int pixelSize) {
+	public static BufferedImage newAwtARGBImage(int[] pixels, int w, int h, int pixelSize) {
 		DataBuffer dataBuffer = new DataBufferInt(pixels, pixelSize);
-		SampleModel sample = new SinglePixelPackedSampleModel(
-				DataBuffer.TYPE_INT, w, h, new int[] { 0x00ff0000, 0x0000ff00,
-						0x000000ff, 0xff000000 });
-		WritableRaster raster = Raster.createWritableRaster(sample, dataBuffer,
-				new Point(0, 0));
+		SampleModel sample = new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, w, h,
+				new int[] { 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 });
+		WritableRaster raster = Raster.createWritableRaster(sample, dataBuffer, new Point(0, 0));
 		return new BufferedImage(COLOR_MODEL_ARGB, raster, true, null);
 	}
 
@@ -255,8 +224,7 @@ final public class GraphicsUtils {
 	 * @param transparency
 	 * @return
 	 */
-	public static BufferedImage[] createImage(int count, int w, int h,
-			int transparency) {
+	public static BufferedImage[] createImage(int count, int w, int h, int transparency) {
 		BufferedImage[] image = new BufferedImage[count];
 		for (int i = 0; i < image.length; i++) {
 			image[i] = GraphicsUtils.createImage(w, h, transparency);
@@ -274,8 +242,7 @@ final public class GraphicsUtils {
 	 * @param height
 	 * @param color
 	 */
-	public static void rectFill(Graphics g, int x, int y, int width,
-			int height, Color color) {
+	public static void rectFill(Graphics g, int x, int y, int width, int height, Color color) {
 		g.setColor(color);
 		g.fillRect(x, y, width, height);
 	}
@@ -290,8 +257,7 @@ final public class GraphicsUtils {
 	 * @param height
 	 * @param color
 	 */
-	public static void rectDraw(Graphics g, int x, int y, int width,
-			int height, Color color) {
+	public static void rectDraw(Graphics g, int x, int y, int width, int height, Color color) {
 		g.setColor(color);
 		g.drawRect(x, y, width, height);
 	}
@@ -306,8 +272,7 @@ final public class GraphicsUtils {
 	 * @param height
 	 * @param color
 	 */
-	public static void rectOval(Graphics g, int x, int y, int width,
-			int height, Color color) {
+	public static void rectOval(Graphics g, int x, int y, int width, int height, Color color) {
 		g.setColor(color);
 		g.drawOval(x, y, width, height);
 		g.fillOval(x, y, width, height);
@@ -328,8 +293,7 @@ final public class GraphicsUtils {
 		return getFont(fontName, 0, size);
 	}
 
-	private static HashMap<Integer, Font> _fonts = new HashMap<Integer, Font>(
-			10);
+	private static HashMap<Integer, Font> _fonts = new HashMap<Integer, Font>(10);
 
 	/**
 	 * 返回一个实例化的字体
@@ -363,9 +327,8 @@ final public class GraphicsUtils {
 	 * @param color
 	 * @param color1
 	 */
-	public static void drawStyleString(final Graphics graphics,
-			final String message, final int x, final int y, final Color color,
-			final Color color1) {
+	public static void drawStyleString(final Graphics graphics, final String message, final int x, final int y,
+			final Color color, final Color color1) {
 		graphics.setColor(color);
 		graphics.drawString(message, x + 1, y);
 		graphics.drawString(message, x - 1, y);
@@ -428,8 +391,7 @@ final public class GraphicsUtils {
 	 * @param y
 	 * @param r
 	 */
-	public static void drawRTriangle(Graphics g, Color color, int x, int y,
-			int r) {
+	public static void drawRTriangle(Graphics g, Color color, int x, int y, int r) {
 		int x1 = x;
 		int y1 = y + r;
 		int x2 = x - (int) (r * Math.cos(Math.PI / 6.0));
@@ -529,14 +491,11 @@ final public class GraphicsUtils {
 	 * @param h
 	 * @return
 	 */
-	public static BufferedImage createButtonImage(Color color, boolean flag,
-			int w, int h) {
-		BufferedImage bufferedimage = new BufferedImage(w, h,
-				BufferedImage.TYPE_3BYTE_BGR);
+	public static BufferedImage createButtonImage(Color color, boolean flag, int w, int h) {
+		BufferedImage bufferedimage = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics2d = bufferedimage.createGraphics();
 		Color color1 = (color = flag ? color.brighter() : color).brighter();
-		GradientPaint gradientpaint = new GradientPaint(0, 0, color, w / 2 + 2,
-				h / 2 + 2, color1);
+		GradientPaint gradientpaint = new GradientPaint(0, 0, color, w / 2 + 2, h / 2 + 2, color1);
 		graphics2d.setPaint(gradientpaint);
 		graphics2d.fillRect(2, 2, w - 4, h - 4);
 		graphics2d.setColor(Color.BLACK);
@@ -561,12 +520,10 @@ final public class GraphicsUtils {
 	 * @param color2
 	 * @return
 	 */
-	public static BufferedImage createButtonBackground(int w, int h,
-			Color color1, Color color2) {
+	public static BufferedImage createButtonBackground(int w, int h, Color color1, Color color2) {
 		BufferedImage image = GraphicsUtils.createImage(w, h, false);
 		Graphics2D g = image.createGraphics();
-		GradientPaint gradientpaint = new GradientPaint(0, 0, color1, w / 2, h,
-				color2);
+		GradientPaint gradientpaint = new GradientPaint(0, 0, color1, w / 2, h, color2);
 		g.setPaint(gradientpaint);
 		g.fillRect(2, 2, w - 4, h - 4);
 		g.setColor(Color.BLACK);
@@ -609,8 +566,7 @@ final public class GraphicsUtils {
 		if (data.length < 2 + width * height) {
 			return null;
 		}
-		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_BGR);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				image.setRGB(j, i, data[2 + j + i * width]);
@@ -635,8 +591,7 @@ final public class GraphicsUtils {
 		BufferedImage img;
 		AffineTransform tx = new AffineTransform();
 		tx.scale((double) w / width, (double) h / height);
-		AffineTransformOp op = new AffineTransformOp(tx,
-				AffineTransformOp.TYPE_BILINEAR);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		img = op.filter(image, null);
 		return img;
 	}
@@ -657,10 +612,8 @@ final public class GraphicsUtils {
 			int minusIndex = range.indexOf('-');
 			if ((minusIndex > 0) && (minusIndex < (range.length() - 1))) {
 				try {
-					start_range = Integer.parseInt(range.substring(0,
-							minusIndex));
-					end_range = Integer.parseInt(range
-							.substring(minusIndex + 1));
+					start_range = Integer.parseInt(range.substring(0, minusIndex));
+					end_range = Integer.parseInt(range.substring(minusIndex + 1));
 					if (start_range < end_range) {
 						images_count = end_range - start_range + 1;
 					}
@@ -674,9 +627,7 @@ final public class GraphicsUtils {
 				if (images_count > 1) {
 					int dotIndex = fileName.lastIndexOf('.');
 					if (dotIndex >= 0) {
-						imageName = fileName.substring(0, dotIndex)
-								+ (start_range + i)
-								+ fileName.substring(dotIndex);
+						imageName = fileName.substring(0, dotIndex) + (start_range + i) + fileName.substring(dotIndex);
 					}
 				}
 				images[i] = GraphicsUtils.loadImage(imageName);
@@ -696,14 +647,11 @@ final public class GraphicsUtils {
 	 * @param h
 	 * @return
 	 */
-	public static BufferedImage matchBufferedImage(BufferedImage image, int w,
-			int h) {
+	public static BufferedImage matchBufferedImage(BufferedImage image, int w, int h) {
 		BufferedImage result = null;
 		Graphics2D graphics2d;
-		(graphics2d = (result = GraphicsUtils.createImage(w, h, true))
-				.createGraphics()).setRenderingHint(
-				RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		(graphics2d = (result = GraphicsUtils.createImage(w, h, true)).createGraphics())
+				.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics2d.drawImage(image, 0, 0, null);
 		graphics2d.dispose();
 		graphics2d = null;
@@ -727,12 +675,9 @@ final public class GraphicsUtils {
 		}
 		BufferedImage result = null;
 		Graphics2D graphics2d;
-		(graphics2d = (result = GraphicsUtils.createImage(w, h, true))
-				.createGraphics()).setRenderingHint(
-				RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		graphics2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth(null),
-				image.getHeight(null), null);
+		(graphics2d = (result = GraphicsUtils.createImage(w, h, true)).createGraphics())
+				.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		graphics2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth(null), image.getHeight(null), null);
 		graphics2d.dispose();
 		graphics2d = null;
 		return result;
@@ -740,21 +685,19 @@ final public class GraphicsUtils {
 
 	// 文字清晰过滤开
 	final static public RenderingHints VALUE_TEXT_ANTIALIAS_ON = new RenderingHints(
-			RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 	// 文字清晰过滤关
 	final static public RenderingHints VALUE_TEXT_ANTIALIAS_OFF = new RenderingHints(
-			RenderingHints.KEY_TEXT_ANTIALIASING,
-			RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
 	// 清晰过滤开
-	final static public RenderingHints VALUE_ANTIALIAS_ON = new RenderingHints(
-			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	final static public RenderingHints VALUE_ANTIALIAS_ON = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+			RenderingHints.VALUE_ANTIALIAS_ON);
 
 	// 清晰过滤关
-	final static public RenderingHints VALUE_ANTIALIAS_OFF = new RenderingHints(
-			RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+	final static public RenderingHints VALUE_ANTIALIAS_OFF = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+			RenderingHints.VALUE_ANTIALIAS_OFF);
 
 	/**
 	 * 设定图像解析度
@@ -763,8 +706,7 @@ final public class GraphicsUtils {
 	 * @param smooth
 	 * @param antialiasing
 	 */
-	public static void setRenderingHints(Graphics g, boolean smooth,
-			boolean antialiasing) {
+	public static void setRenderingHints(Graphics g, boolean smooth, boolean antialiasing) {
 		if (smooth) {
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -773,12 +715,10 @@ final public class GraphicsUtils {
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
 		if (antialiasing) {
-			((Graphics2D) g).setRenderingHint(
-					RenderingHints.KEY_TEXT_ANTIALIASING,
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		} else {
-			((Graphics2D) g).setRenderingHint(
-					RenderingHints.KEY_TEXT_ANTIALIASING,
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		}
 	}
@@ -831,8 +771,7 @@ final public class GraphicsUtils {
 	 * @param col
 	 * @return
 	 */
-	public static Image[] getSplitImages(String fileName, int row, int col,
-			boolean isFiltrate) {
+	public static Image[] getSplitImages(String fileName, int row, int col, boolean isFiltrate) {
 		Image image = GraphicsUtils.loadImage(fileName);
 		return getSplitImages(image, row, col, isFiltrate);
 	}
@@ -845,8 +784,7 @@ final public class GraphicsUtils {
 	 * @param col
 	 * @return
 	 */
-	public static Image[] getSplitImages(Image image, int row, int col,
-			boolean isFiltrate) {
+	public static Image[] getSplitImages(Image image, int row, int col, boolean isFiltrate) {
 		int index = 0;
 		int wlength = image.getWidth(null) / row;
 		int hlength = image.getHeight(null) / col;
@@ -854,15 +792,12 @@ final public class GraphicsUtils {
 		Image[] abufferedimage = new Image[l];
 		for (int y = 0; y < hlength; y++) {
 			for (int x = 0; x < wlength; x++) {
-				abufferedimage[index] = GraphicsUtils.createImage(row, col,
-						true);
+				abufferedimage[index] = GraphicsUtils.createImage(row, col, true);
 				Graphics g = abufferedimage[index].getGraphics();
-				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row
-						+ (x * row), col + (y * col), null);
+				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row + (x * row), col + (y * col), null);
 				g.dispose();
 				g = null;
-				PixelGrabber pgr = new PixelGrabber(abufferedimage[index], 0,
-						0, -1, -1, true);
+				PixelGrabber pgr = new PixelGrabber(abufferedimage[index], 0, 0, -1, -1, true);
 				try {
 					pgr.grabPixels();
 				} catch (InterruptedException ex) {
@@ -877,8 +812,7 @@ final public class GraphicsUtils {
 						}
 					}
 				}
-				ImageProducer ip = new MemoryImageSource(pgr.getWidth(),
-						pgr.getHeight(), pixels, 0, pgr.getWidth());
+				ImageProducer ip = new MemoryImageSource(pgr.getWidth(), pgr.getHeight(), pixels, 0, pgr.getWidth());
 				abufferedimage[index] = toolKit.createImage(ip);
 				index++;
 			}
@@ -894,10 +828,8 @@ final public class GraphicsUtils {
 	 * @param col
 	 * @return
 	 */
-	public static Image[][] getSplit2Images(String fileName, int row, int col,
-			boolean isFiltrate) {
-		String keyName = (fileName + row + col + isFiltrate).intern()
-				.toLowerCase().trim();
+	public static Image[][] getSplit2Images(String fileName, int row, int col, boolean isFiltrate) {
+		String keyName = (fileName + row + col + isFiltrate).intern().toLowerCase().trim();
 		if (lazySplitMap.size() > LSystem.DEFAULT_MAX_CACHE_SIZE / 3) {
 			lazySplitMap.clear();
 			System.gc();
@@ -931,22 +863,18 @@ final public class GraphicsUtils {
 	 * @param col
 	 * @return
 	 */
-	public static Image[][] getSplit2Images(Image image, int row, int col,
-			boolean isFiltrate) {
+	public static Image[][] getSplit2Images(Image image, int row, int col, boolean isFiltrate) {
 		int wlength = image.getWidth(null) / row;
 		int hlength = image.getHeight(null) / col;
 		Image[][] abufferedimage = new Image[wlength][hlength];
 		for (int y = 0; y < hlength; y++) {
 			for (int x = 0; x < wlength; x++) {
-				abufferedimage[x][y] = GraphicsUtils
-						.createImage(row, col, true);
+				abufferedimage[x][y] = GraphicsUtils.createImage(row, col, true);
 				Graphics g = abufferedimage[x][y].getGraphics();
-				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row
-						+ (x * row), col + (y * col), null);
+				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row + (x * row), col + (y * col), null);
 				g.dispose();
 				g = null;
-				PixelGrabber pgr = new PixelGrabber(abufferedimage[x][y], 0, 0,
-						-1, -1, true);
+				PixelGrabber pgr = new PixelGrabber(abufferedimage[x][y], 0, 0, -1, -1, true);
 				try {
 					pgr.grabPixels();
 				} catch (InterruptedException ex) {
@@ -963,8 +891,7 @@ final public class GraphicsUtils {
 						}
 					}
 				}
-				ImageProducer ip = new MemoryImageSource(pgr.getWidth(),
-						pgr.getHeight(), pixels, 0, pgr.getWidth());
+				ImageProducer ip = new MemoryImageSource(pgr.getWidth(), pgr.getHeight(), pixels, 0, pgr.getWidth());
 				abufferedimage[x][y] = toolKit.createImage(ip);
 			}
 		}
@@ -1001,14 +928,12 @@ final public class GraphicsUtils {
 	 * @param y2
 	 * @return
 	 */
-	public static BufferedImage drawClipImage(final Image image,
-			int objectWidth, int objectHeight, int x1, int y1, int x2, int y2) {
-		BufferedImage buffer = GraphicsUtils.createImage(objectWidth,
-				objectHeight, true);
+	public static BufferedImage drawClipImage(final Image image, int objectWidth, int objectHeight, int x1, int y1,
+			int x2, int y2) {
+		BufferedImage buffer = GraphicsUtils.createImage(objectWidth, objectHeight, true);
 		Graphics g = buffer.getGraphics();
 		Graphics2D graphics2D = (Graphics2D) g;
-		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x1, y1,
-				x2, y2, null);
+		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x1, y1, x2, y2, null);
 		graphics2D.dispose();
 		graphics2D = null;
 		return buffer;
@@ -1024,13 +949,10 @@ final public class GraphicsUtils {
 	 * @param y
 	 * @return
 	 */
-	public static BufferedImage drawClipImage(final Image image,
-			int objectWidth, int objectHeight, int x, int y) {
-		BufferedImage buffer = GraphicsUtils.createImage(objectWidth,
-				objectHeight, true);
+	public static BufferedImage drawClipImage(final Image image, int objectWidth, int objectHeight, int x, int y) {
+		BufferedImage buffer = GraphicsUtils.createImage(objectWidth, objectHeight, true);
 		Graphics2D graphics2D = buffer.createGraphics();
-		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x, y, x
-				+ objectWidth, objectHeight + y, null);
+		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x, y, x + objectWidth, objectHeight + y, null);
 		graphics2D.dispose();
 		graphics2D = null;
 		return buffer;
@@ -1046,14 +968,11 @@ final public class GraphicsUtils {
 	 * @param objectHeight
 	 * @return
 	 */
-	public static BufferedImage drawCropImage(final Image image, int x, int y,
-			int objectWidth, int objectHeight) {
+	public static BufferedImage drawCropImage(final Image image, int x, int y, int objectWidth, int objectHeight) {
 
-		BufferedImage buffer = GraphicsUtils.createImage(objectWidth,
-				objectHeight, true);
+		BufferedImage buffer = GraphicsUtils.createImage(objectWidth, objectHeight, true);
 		Graphics2D graphics2D = buffer.createGraphics();
-		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x, y, x
-				+ objectWidth, objectHeight + y, null);
+		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x, y, x + objectWidth, objectHeight + y, null);
 		graphics2D.dispose();
 		graphics2D = null;
 		return buffer;
@@ -1069,9 +988,8 @@ final public class GraphicsUtils {
 		int h = image.getHeight();
 		BufferedImage img;
 		Graphics2D graphics2d;
-		(graphics2d = (img = new BufferedImage(w, h, image.getColorModel()
-				.getTransparency())).createGraphics()).drawImage(image, 0, 0,
-				w, h, w, 0, 0, h, null);
+		(graphics2d = (img = new BufferedImage(w, h, image.getColorModel().getTransparency())).createGraphics())
+				.drawImage(image, 0, 0, w, h, w, 0, 0, h, null);
 		graphics2d.dispose();
 		return img;
 	}
@@ -1092,15 +1010,11 @@ final public class GraphicsUtils {
 		return new Point((int) (p.x * c - p.y * s), (int) (p.x * s + p.y * c));
 	}
 
-	public static BufferedImage rotateImage(final BufferedImage image,
-			final int degrees) {
+	public static BufferedImage rotateImage(final BufferedImage image, final int degrees) {
 		AffineTransform at = new AffineTransform();
-		at.rotate(
-				degrees < 0 ? -Math.toRadians(degrees) : Math
-						.toRadians(degrees), image.getWidth() / 2, image
-						.getHeight() / 2);
-		BufferedImageOp bio = new AffineTransformOp(at,
-				AffineTransformOp.TYPE_BILINEAR);
+		at.rotate(degrees < 0 ? -Math.toRadians(degrees) : Math.toRadians(degrees), image.getWidth() / 2,
+				image.getHeight() / 2);
+		BufferedImageOp bio = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 		BufferedImage dest = bio.filter(image, null);
 		return dest;
 	}
@@ -1111,8 +1025,7 @@ final public class GraphicsUtils {
 	 * @param degree
 	 * @return
 	 */
-	public static BufferedImage rotateImageRect(final BufferedImage image,
-			final int degrees) {
+	public static BufferedImage rotateImageRect(final BufferedImage image, final int degrees) {
 		double phi = Math.toRadians(degrees);
 		int width = image.getWidth(null);
 		int height = image.getHeight(null);
@@ -1133,13 +1046,10 @@ final public class GraphicsUtils {
 				- Math.min(Math.min(newA.y, newB.y), Math.min(newC.y, newD.y));
 
 		Rectangle rect = new Rectangle(0, 0, w, h);
-		BufferedImage img = new BufferedImage(rect.width, rect.height,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
-		g.setTransform(AffineTransform.getRotateInstance(phi, rect.width / 2,
-				rect.height / 2));
-		g.drawImage(image, (rect.width - width) / 2,
-				(rect.height - height) / 2, null);
+		g.setTransform(AffineTransform.getRotateInstance(phi, rect.width / 2, rect.height / 2));
+		g.drawImage(image, (rect.width - width) / 2, (rect.height - height) / 2, null);
 		g.dispose();
 
 		return img;
@@ -1181,8 +1091,7 @@ final public class GraphicsUtils {
 	 * @param back
 	 * @param down
 	 */
-	public static void draw3DRect(Graphics g, Rectangle rect, Color back,
-			boolean down) {
+	public static void draw3DRect(Graphics g, Rectangle rect, Color back, boolean down) {
 		int x1 = rect.x;
 		int y1 = rect.y;
 		int x2 = rect.x + rect.width - 1;
@@ -1225,8 +1134,7 @@ final public class GraphicsUtils {
 	 * @param j
 	 * @param k
 	 */
-	public static void drawString(String message, Graphics2D graphics2D, int x,
-			int y, int z) {
+	public static void drawString(String message, Graphics2D graphics2D, int x, int y, int z) {
 		Font font = graphics2D.getFont();
 		int size = graphics2D.getFontMetrics(font).stringWidth(message);
 		GraphicsUtils.setAlpha(graphics2D, 0.9f);
@@ -1243,8 +1151,7 @@ final public class GraphicsUtils {
 	 * @param y
 	 * @param z
 	 */
-	public static void drawString(String message, Graphics graphics, int x,
-			int y, int z) {
+	public static void drawString(String message, Graphics graphics, int x, int y, int z) {
 		GraphicsUtils.drawString(message, (Graphics2D) graphics, x, y, z);
 	}
 
@@ -1259,8 +1166,8 @@ final public class GraphicsUtils {
 	 * @param style
 	 * @param size
 	 */
-	public static void drawString(String message, String fontName,
-			final Graphics g, int x1, int y1, int style, int size) {
+	public static void drawString(String message, String fontName, final Graphics g, int x1, int y1, int style,
+			int size) {
 		Graphics2D graphics2D = (Graphics2D) g;
 		graphics2D.setFont(new Font(fontName, style, size));
 		GraphicsUtils.setAlpha(g, 0.9f);
@@ -1278,8 +1185,7 @@ final public class GraphicsUtils {
 	 */
 	public static BufferedImage createShapeImage(Shape shape, Color c1, Color c2) {
 		Rectangle rect = shape.getBounds();
-		BufferedImage image = GraphicsUtils.createImage(rect.width,
-				rect.height, true);
+		BufferedImage image = GraphicsUtils.createImage(rect.width, rect.height, true);
 		Graphics2D g = image.createGraphics();
 		g.setColor(c1);
 		g.fill(shape);
@@ -1304,8 +1210,7 @@ final public class GraphicsUtils {
 		int w = image.getWidth(null);
 		int h = image.getHeight(null);
 		PixelGrabber pg = new PixelGrabber(image, 0, 0, w, h, true);
-		BufferedImage bufferimage = GraphicsUtils.createImage(w, h, pg
-				.getColorModel().hasAlpha());
+		BufferedImage bufferimage = GraphicsUtils.createImage(w, h, pg.getColorModel().hasAlpha());
 		Graphics g = bufferimage.createGraphics();
 		g.drawImage(image, 0, 0, null);
 		g.dispose();
@@ -1381,13 +1286,11 @@ final public class GraphicsUtils {
 		try {
 			InputStream in = UIRes.getStream(resName);
 			if (in == null) {
-				throw new RuntimeException(
-						("File not found. ( " + resName + " )").intern());
+				throw new RuntimeException(("File not found. ( " + resName + " )").intern());
 			}
 			return ImageIO.read(in);
 		} catch (IOException e) {
-			throw new RuntimeException(
-					("File not found. ( " + resName + " )").intern());
+			throw new RuntimeException(("File not found. ( " + resName + " )").intern());
 		}
 	}
 
@@ -1433,13 +1336,11 @@ final public class GraphicsUtils {
 	 * @param inputstream
 	 * @return
 	 */
-	final static public Image loadImage(final String resName,
-			final boolean isInner) {
+	final static public Image loadImage(final String resName, final boolean isInner) {
 		if (resName == null) {
 			return null;
 		}
-		String tmp_file = resName, innerName = StringUtils.replaceIgnoreCase(
-				resName, "\\", "/");
+		String tmp_file = resName, innerName = StringUtils.replaceIgnoreCase(resName, "\\", "/");
 		String keyName = innerName.toLowerCase();
 		Image imageReference = cacheImages.get(keyName);
 		if (imageReference == null) {
@@ -1453,15 +1354,13 @@ final public class GraphicsUtils {
 			try {
 				os = new ByteArrayOutputStream(8192);
 				if (isInner) {
-					in = new DataInputStream(new BufferedInputStream(
-							UIRes.getStream(innerName)));
+					in = new DataInputStream(new BufferedInputStream(UIRes.getStream(innerName)));
 					flag = true;
 				} else {
 					file_tmp = new File(tmp_file);
 					flag = file_tmp.exists();
 					if (flag) {
-						in = new DataInputStream(new BufferedInputStream(
-								new FileInputStream(file_tmp)));
+						in = new DataInputStream(new BufferedInputStream(new FileInputStream(file_tmp)));
 					}
 				}
 				if (flag) {
@@ -1499,8 +1398,7 @@ final public class GraphicsUtils {
 			}
 		}
 		if (imageReference == null) {
-			throw new RuntimeException(
-					("File not found. ( " + innerName + " )").intern());
+			throw new RuntimeException(("File not found. ( " + innerName + " )").intern());
 		}
 		return (Image) imageReference;
 	}
@@ -1520,8 +1418,7 @@ final public class GraphicsUtils {
 		try {
 			os = new ByteArrayOutputStream(8192);
 
-			in = new DataInputStream(new BufferedInputStream(
-					UIRes.getStream(innerFileName)));
+			in = new DataInputStream(new BufferedInputStream(UIRes.getStream(innerFileName)));
 
 			bytes = new byte[8192];
 			while ((read = in.read(bytes)) >= 0) {
@@ -1532,8 +1429,7 @@ final public class GraphicsUtils {
 
 			waitImage(img_tmp);
 		} catch (Exception e) {
-			throw new RuntimeException(
-					("File not found. ( " + innerFileName + " )").intern());
+			throw new RuntimeException(("File not found. ( " + innerFileName + " )").intern());
 		} finally {
 			try {
 				if (os != null) {
@@ -1609,11 +1505,9 @@ final public class GraphicsUtils {
 	 * @param innerName
 	 * @return
 	 */
-	final static public BufferedImage loadDoubleFilterImage(
-			final String innerName) {
+	final static public BufferedImage loadDoubleFilterImage(final String innerName) {
 		Image result = GraphicsUtils.loadImage(innerName);
-		return GraphicsUtils.loadDoubleFilterImage(result,
-				Math.round(result.getWidth(null) / 2),
+		return GraphicsUtils.loadDoubleFilterImage(result, Math.round(result.getWidth(null) / 2),
 				Math.round(result.getHeight(null)));
 	}
 
@@ -1625,10 +1519,8 @@ final public class GraphicsUtils {
 	 * @param height
 	 * @return
 	 */
-	final static public BufferedImage loadFilterGameImage(
-			final String innerName, final int width, final int height) {
-		return GraphicsUtils.loadDoubleFilterImage(
-				GraphicsUtils.loadImage(innerName), width, height);
+	final static public BufferedImage loadFilterGameImage(final String innerName, final int width, final int height) {
+		return GraphicsUtils.loadDoubleFilterImage(GraphicsUtils.loadImage(innerName), width, height);
 	}
 
 	/**
@@ -1639,12 +1531,9 @@ final public class GraphicsUtils {
 	 * @param height
 	 * @return
 	 */
-	final static public BufferedImage loadDoubleFilterImage(final Image img,
-			final int width, final int height) {
-		BufferedImage img1 = GraphicsUtils.drawClipImage(img, width, height, 0,
-				0);
-		BufferedImage img2 = GraphicsUtils.drawClipImage(img, width, height,
-				width, 0);
+	final static public BufferedImage loadDoubleFilterImage(final Image img, final int width, final int height) {
+		BufferedImage img1 = GraphicsUtils.drawClipImage(img, width, height, 0, 0);
+		BufferedImage img2 = GraphicsUtils.drawClipImage(img, width, height, width, 0);
 		WritableRaster writableRaster1 = img1.getRaster();
 		DataBuffer dataBuffer1 = writableRaster1.getDataBuffer();
 		int[] basePixels1 = getDataInt(dataBuffer1);
@@ -1691,8 +1580,7 @@ final public class GraphicsUtils {
 	 * @param d
 	 */
 	final static public void setAlpha(Graphics g, double d) {
-		AlphaComposite alphacomposite = AlphaComposite
-				.getInstance(3, (float) d);
+		AlphaComposite alphacomposite = AlphaComposite.getInstance(3, (float) d);
 		((Graphics2D) g).setComposite(alphacomposite);
 	}
 
@@ -1703,8 +1591,7 @@ final public class GraphicsUtils {
 	 * @param d
 	 */
 	final static public void setAlpha(Graphics2D g2d, double d) {
-		AlphaComposite alphacomposite = AlphaComposite
-				.getInstance(3, (float) d);
+		AlphaComposite alphacomposite = AlphaComposite.getInstance(3, (float) d);
 		g2d.setComposite(alphacomposite);
 	}
 
@@ -1731,13 +1618,12 @@ final public class GraphicsUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	final static private Image getClipImage(final Image image, int objectWidth,
-			int objectHeight, int x1, int y1, int x2, int y2) throws Exception {
+	final static private Image getClipImage(final Image image, int objectWidth, int objectHeight, int x1, int y1,
+			int x2, int y2) throws Exception {
 		BufferedImage buffer = createImage(objectWidth, objectHeight, true);
 		Graphics g = buffer.getGraphics();
 		Graphics2D graphics2D = (Graphics2D) g;
-		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x1, y1,
-				x2, y2, null);
+		graphics2D.drawImage(image, 0, 0, objectWidth, objectHeight, x1, y1, x2, y2, null);
 		graphics2D.dispose();
 		graphics2D = null;
 		return buffer;
@@ -1757,8 +1643,8 @@ final public class GraphicsUtils {
 		Image[] imgs = new Image[size];
 		for (int i = 1; i <= size; i++) {
 			try {
-				imgs[i - 1] = transparencyBlackColor(getClipImage(img, width,
-						iHeight, width * (i - 1), 0, width * i, iHeight));
+				imgs[i - 1] = transparencyBlackColor(
+						getClipImage(img, width, iHeight, width * (i - 1), 0, width * i, iHeight));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1767,8 +1653,7 @@ final public class GraphicsUtils {
 		return imgs;
 	}
 
-	final static public Image loadImageTransparency(final String fileName,
-			final Color c) {
+	final static public Image loadImageTransparency(final String fileName, final Color c) {
 		Image img = GraphicsUtils.loadImage(fileName);
 		img = transparencyBlackColor(img, c);
 		return img;
@@ -1796,12 +1681,10 @@ final public class GraphicsUtils {
 				pixels[i] = 0xffffff;
 			}
 		}
-		return toolKit.createImage(new MemoryImageSource(width, height, pixels,
-				0, width));
+		return toolKit.createImage(new MemoryImageSource(width, height, pixels, 0, width));
 	}
 
-	final static public Image transparencyBlackColor(final Image img,
-			final Color c) {
+	final static public Image transparencyBlackColor(final Image img, final Color c) {
 		int width = img.getWidth(null);
 		int height = img.getHeight(null);
 		PixelGrabber pg = new PixelGrabber(img, 0, 0, width, height, true);
@@ -1819,8 +1702,7 @@ final public class GraphicsUtils {
 				pixels[i] = 0xffffff;
 			}
 		}
-		return toolKit.createImage(new MemoryImageSource(width, height, pixels,
-				0, width));
+		return toolKit.createImage(new MemoryImageSource(width, height, pixels, 0, width));
 	}
 
 	/**
@@ -1847,14 +1729,11 @@ final public class GraphicsUtils {
 	 * @return
 	 */
 	public Image getClipboardImage() {
-		Transferable transferable = Toolkit.getDefaultToolkit()
-				.getSystemClipboard().getContents(null);
-		if (transferable != null
-				&& transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+		Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+		if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
 			// 转换数据为Image并返回
 			try {
-				return (Image) transferable
-						.getTransferData(DataFlavor.imageFlavor);
+				return (Image) transferable.getTransferData(DataFlavor.imageFlavor);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1937,8 +1816,7 @@ final public class GraphicsUtils {
 	 * @param fileName
 	 * @param format
 	 */
-	public static void saveImage(BufferedImage image, String fileName,
-			String format) {
+	public static void saveImage(BufferedImage image, String fileName, String format) {
 		saveImage(image, new File(fileName), format);
 	}
 
@@ -1966,8 +1844,7 @@ final public class GraphicsUtils {
 		for (int y = 0; y < hlength; y++) {
 			for (int x = 0; x < wlength; x++) {
 				LGraphics g = images[frame].getLGraphics();
-				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row
-						+ (x * row), col + (y * col));
+				g.drawImage(image, 0, 0, row, col, (x * row), (y * col), row + (x * row), col + (y * col));
 				g.dispose();
 				g = null;
 				frame++;
@@ -2017,7 +1894,7 @@ final public class GraphicsUtils {
 	public static float[] getDataFloat(final DataBuffer db) {
 		return ((DataBufferFloat) db).getData();
 	}
-	
+
 	/**
 	 * 清空image缓存
 	 * 

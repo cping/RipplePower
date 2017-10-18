@@ -23,8 +23,7 @@ final public class AVGDialog {
 
 	final static private int y2 = 64;
 
-	public final static Image getRMXPDialog(String fileName, int width,
-			int height) {
+	public final static Image getRMXPDialog(String fileName, int width, int height) {
 		if (lazyImages == null) {
 			lazyImages = new HashMap<String, Image>(10);
 		}
@@ -60,14 +59,11 @@ final public class AVGDialog {
 		}
 	}
 
-	public final static Image getRMXPloadBuoyage(String fileName, int width,
-			int height) {
-		return getRMXPloadBuoyage(GraphicsUtils.loadImage(fileName), width,
-				height);
+	public final static Image getRMXPloadBuoyage(String fileName, int width, int height) {
+		return getRMXPloadBuoyage(GraphicsUtils.loadImage(fileName), width, height);
 	}
 
-	public final static Image getRMXPloadBuoyage(Image rmxpImage, int width,
-			int height) {
+	public final static Image getRMXPloadBuoyage(Image rmxpImage, int width, int height) {
 		if (lazyImages == null) {
 			lazyImages = new HashMap<String, Image>(10);
 		}
@@ -83,20 +79,14 @@ final public class AVGDialog {
 			int y2 = 96;
 			int k = 1;
 			try {
-				image = GraphicsUtils.drawClipImage(rmxpImage, objWidth,
-						objHeight, x1, y1, x2, y2);
+				image = GraphicsUtils.drawClipImage(rmxpImage, objWidth, objHeight, x1, y1, x2, y2);
 				lazyImage = GraphicsUtils.createImage(width, height, false);
 				Graphics g = lazyImage.getGraphics();
-				left = GraphicsUtils.drawClipImage(image, k, height, 0, 0, k,
-						objHeight);
-				right = GraphicsUtils.drawClipImage(image, k, height, objWidth
-						- k, 0, objWidth, objHeight);
-				center = GraphicsUtils.drawClipImage(image, width, height, k,
-						k, objWidth - k, objHeight - k);
-				up = GraphicsUtils.drawClipImage(image, width, k, 0, 0,
-						objWidth, k);
-				down = GraphicsUtils.drawClipImage(image, width, k, 0,
-						objHeight - k, objWidth, objHeight);
+				left = GraphicsUtils.drawClipImage(image, k, height, 0, 0, k, objHeight);
+				right = GraphicsUtils.drawClipImage(image, k, height, objWidth - k, 0, objWidth, objHeight);
+				center = GraphicsUtils.drawClipImage(image, width, height, k, k, objWidth - k, objHeight - k);
+				up = GraphicsUtils.drawClipImage(image, width, k, 0, 0, objWidth, k);
+				down = GraphicsUtils.drawClipImage(image, width, k, 0, objHeight - k, objWidth, objHeight);
 				g.drawImage(center, 0, 0, null);
 				g.drawImage(left, 0, 0, null);
 				g.drawImage(right, width - k, 0, null);
@@ -119,8 +109,7 @@ final public class AVGDialog {
 
 	}
 
-	private final static Image getRMXPDialog(Image rmxpImage, int width,
-			int height, int size, int offset) {
+	private final static Image getRMXPDialog(Image rmxpImage, int width, int height, int size, int offset) {
 		if (lazyImages == null) {
 			lazyImages = new HashMap<String, Image>(10);
 		}
@@ -134,55 +123,40 @@ final public class AVGDialog {
 
 			Image messageImage = null;
 
-			image = GraphicsUtils.drawClipImage(rmxpImage, objWidth, objHeight,
-					x1, y1, x2, y2);
+			image = GraphicsUtils.drawClipImage(rmxpImage, objWidth, objHeight, x1, y1, x2, y2);
 
-			Image centerTop = GraphicsUtils.drawClipImage(image, center_size,
-					size, size, 0);
+			Image centerTop = GraphicsUtils.drawClipImage(image, center_size, size, size, 0);
 
-			Image centerDown = GraphicsUtils.drawClipImage(image, center_size,
-					size, size, objHeight - size);
+			Image centerDown = GraphicsUtils.drawClipImage(image, center_size, size, size, objHeight - size);
 
-			Image leftTop = GraphicsUtils
-					.drawClipImage(image, size, size, 0, 0);
+			Image leftTop = GraphicsUtils.drawClipImage(image, size, size, 0, 0);
 
-			Image leftCenter = GraphicsUtils.drawClipImage(image, size,
-					center_size, 0, size);
+			Image leftCenter = GraphicsUtils.drawClipImage(image, size, center_size, 0, size);
 
-			Image leftDown = GraphicsUtils.drawClipImage(image, size, size, 0,
-					objHeight - size);
+			Image leftDown = GraphicsUtils.drawClipImage(image, size, size, 0, objHeight - size);
 
-			Image rightTop = GraphicsUtils.drawClipImage(image, size, size,
-					objWidth - size, 0);
+			Image rightTop = GraphicsUtils.drawClipImage(image, size, size, objWidth - size, 0);
 
-			Image rightCenter = GraphicsUtils.drawClipImage(image, size,
-					center_size, objWidth - size, size);
+			Image rightCenter = GraphicsUtils.drawClipImage(image, size, center_size, objWidth - size, size);
 
-			Image rightDown = GraphicsUtils.drawClipImage(image, size, size,
-					objWidth - size, objHeight - size);
+			Image rightDown = GraphicsUtils.drawClipImage(image, size, size, objWidth - size, objHeight - size);
 
 			lazyImage = GraphicsUtils.createImage(width, height, true);
 
-			messageImage = GraphicsUtils.drawClipImage(rmxpImage, 128, 128, 0,
-					0, 128, 128);
+			messageImage = GraphicsUtils.drawClipImage(rmxpImage, 128, 128, 0, 0, 128, 128);
 
 			Graphics g = lazyImage.getGraphics();
 
 			GraphicsUtils.setAlpha(g, 0.5D);
 
-			messageImage = GraphicsUtils.getResize(messageImage,
-					width - offset, height - offset);
+			messageImage = GraphicsUtils.getResize(messageImage, width - offset, height - offset);
 
-			g.drawImage(
-					messageImage,
-					(lazyImage.getWidth(null) - messageImage.getWidth(null)) / 2,
-					(lazyImage.getHeight(null) - messageImage.getHeight(null)) / 2,
-					null);
+			g.drawImage(messageImage, (lazyImage.getWidth(null) - messageImage.getWidth(null)) / 2,
+					(lazyImage.getHeight(null) - messageImage.getHeight(null)) / 2, null);
 
 			GraphicsUtils.setAlpha(g, 1.0D);
 
-			Image tmp = GraphicsUtils.getResize(centerTop, width - (size * 2),
-					size);
+			Image tmp = GraphicsUtils.getResize(centerTop, width - (size * 2), size);
 
 			g.drawImage(tmp, size, 0, null);
 			tmp = null;
@@ -193,8 +167,7 @@ final public class AVGDialog {
 
 			g.drawImage(leftTop, 0, 0, null);
 
-			tmp = GraphicsUtils.getResize(leftCenter,
-					leftCenter.getWidth(null), width - (size * 2));
+			tmp = GraphicsUtils.getResize(leftCenter, leftCenter.getWidth(null), width - (size * 2));
 
 			g.drawImage(tmp, 0, size, null);
 			tmp = null;
@@ -204,8 +177,7 @@ final public class AVGDialog {
 
 			g.drawImage(rightTop, right, 0, null);
 
-			tmp = GraphicsUtils.getResize(rightCenter,
-					leftCenter.getWidth(null), width - (size * 2));
+			tmp = GraphicsUtils.getResize(rightCenter, leftCenter.getWidth(null), width - (size * 2));
 
 			g.drawImage(tmp, right, size, null);
 			tmp = null;

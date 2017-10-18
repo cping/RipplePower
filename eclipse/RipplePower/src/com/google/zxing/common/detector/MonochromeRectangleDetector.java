@@ -66,23 +66,22 @@ public final class MonochromeRectangleDetector {
 		int bottom = height;
 		int left = 0;
 		int right = width;
-		ResultPoint pointA = findCornerFromCenter(halfWidth, 0, left, right,
-				halfHeight, -deltaY, top, bottom, halfWidth / 2);
+		ResultPoint pointA = findCornerFromCenter(halfWidth, 0, left, right, halfHeight, -deltaY, top, bottom,
+				halfWidth / 2);
 		top = (int) pointA.getY() - 1;
-		ResultPoint pointB = findCornerFromCenter(halfWidth, -deltaX, left,
-				right, halfHeight, 0, top, bottom, halfHeight / 2);
+		ResultPoint pointB = findCornerFromCenter(halfWidth, -deltaX, left, right, halfHeight, 0, top, bottom,
+				halfHeight / 2);
 		left = (int) pointB.getX() - 1;
-		ResultPoint pointC = findCornerFromCenter(halfWidth, deltaX, left,
-				right, halfHeight, 0, top, bottom, halfHeight / 2);
+		ResultPoint pointC = findCornerFromCenter(halfWidth, deltaX, left, right, halfHeight, 0, top, bottom,
+				halfHeight / 2);
 		right = (int) pointC.getX() + 1;
-		ResultPoint pointD = findCornerFromCenter(halfWidth, 0, left, right,
-				halfHeight, deltaY, top, bottom, halfWidth / 2);
+		ResultPoint pointD = findCornerFromCenter(halfWidth, 0, left, right, halfHeight, deltaY, top, bottom,
+				halfWidth / 2);
 		bottom = (int) pointD.getY() + 1;
 
 		// Go try to find point A again with better information -- might have
 		// been off at first.
-		pointA = findCornerFromCenter(halfWidth, 0, left, right, halfHeight,
-				-deltaY, top, bottom, halfWidth / 4);
+		pointA = findCornerFromCenter(halfWidth, 0, left, right, halfHeight, -deltaY, top, bottom, halfWidth / 4);
 
 		return new ResultPoint[] { pointA, pointB, pointC, pointD };
 	}
@@ -117,12 +116,10 @@ public final class MonochromeRectangleDetector {
 	 * @throws NotFoundException
 	 *             if such a point cannot be found
 	 */
-	private ResultPoint findCornerFromCenter(int centerX, int deltaX, int left,
-			int right, int centerY, int deltaY, int top, int bottom,
-			int maxWhiteRun) throws NotFoundException {
+	private ResultPoint findCornerFromCenter(int centerX, int deltaX, int left, int right, int centerY, int deltaY,
+			int top, int bottom, int maxWhiteRun) throws NotFoundException {
 		int[] lastRange = null;
-		for (int y = centerY, x = centerX; y < bottom && y >= top && x < right
-				&& x >= left; y += deltaY, x += deltaX) {
+		for (int y = centerY, x = centerX; y < bottom && y >= top && x < right && x >= left; y += deltaY, x += deltaX) {
 			int[] range;
 			if (deltaX == 0) {
 				// horizontal slices, up and down
@@ -142,8 +139,7 @@ public final class MonochromeRectangleDetector {
 						if (lastRange[1] > centerX) {
 							// straddle, choose one or the other based on
 							// direction
-							return new ResultPoint(deltaY > 0 ? lastRange[0]
-									: lastRange[1], lastY);
+							return new ResultPoint(deltaY > 0 ? lastRange[0] : lastRange[1], lastY);
 						}
 						return new ResultPoint(lastRange[0], lastY);
 					} else {
@@ -153,8 +149,7 @@ public final class MonochromeRectangleDetector {
 					int lastX = x - deltaX;
 					if (lastRange[0] < centerY) {
 						if (lastRange[1] > centerY) {
-							return new ResultPoint(lastX,
-									deltaX < 0 ? lastRange[0] : lastRange[1]);
+							return new ResultPoint(lastX, deltaX < 0 ? lastRange[0] : lastRange[1]);
 						}
 						return new ResultPoint(lastX, lastRange[0]);
 					} else {
@@ -189,24 +184,21 @@ public final class MonochromeRectangleDetector {
 	 * @return int[] with start and end of found range, or null if no such range
 	 *         is found (e.g. only white was found)
 	 */
-	private int[] blackWhiteRange(int fixedDimension, int maxWhiteRun,
-			int minDim, int maxDim, boolean horizontal) {
+	private int[] blackWhiteRange(int fixedDimension, int maxWhiteRun, int minDim, int maxDim, boolean horizontal) {
 
 		int center = (minDim + maxDim) / 2;
 
 		// Scan left/up first
 		int start = center;
 		while (start >= minDim) {
-			if (horizontal ? image.get(start, fixedDimension) : image.get(
-					fixedDimension, start)) {
+			if (horizontal ? image.get(start, fixedDimension) : image.get(fixedDimension, start)) {
 				start--;
 			} else {
 				int whiteRunStart = start;
 				do {
 					start--;
 				} while (start >= minDim
-						&& !(horizontal ? image.get(start, fixedDimension)
-								: image.get(fixedDimension, start)));
+						&& !(horizontal ? image.get(start, fixedDimension) : image.get(fixedDimension, start)));
 				int whiteRunSize = whiteRunStart - start;
 				if (start < minDim || whiteRunSize > maxWhiteRun) {
 					start = whiteRunStart;
@@ -219,16 +211,14 @@ public final class MonochromeRectangleDetector {
 		// Then try right/down
 		int end = center;
 		while (end < maxDim) {
-			if (horizontal ? image.get(end, fixedDimension) : image.get(
-					fixedDimension, end)) {
+			if (horizontal ? image.get(end, fixedDimension) : image.get(fixedDimension, end)) {
 				end++;
 			} else {
 				int whiteRunStart = end;
 				do {
 					end++;
 				} while (end < maxDim
-						&& !(horizontal ? image.get(end, fixedDimension)
-								: image.get(fixedDimension, end)));
+						&& !(horizontal ? image.get(end, fixedDimension) : image.get(fixedDimension, end)));
 				int whiteRunSize = end - whiteRunStart;
 				if (end >= maxDim || whiteRunSize > maxWhiteRun) {
 					end = whiteRunStart;

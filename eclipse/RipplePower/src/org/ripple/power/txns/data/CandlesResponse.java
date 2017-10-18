@@ -14,8 +14,7 @@ public class CandlesResponse {
 	public String base;
 	public String counter;
 	public String timeIncrement;
-	public List<Candle> results = new ArrayList<Candle>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<Candle> results = new ArrayList<Candle>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	public void from(Object obj) {
 		if (obj != null) {

@@ -22,14 +22,13 @@ public class InfoRenderer extends DefaultTableCellRenderer {
 		setHorizontalAlignment(alignment);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
 		if (value == null) {
 			setText("");
 			return this;
 		}
-		JLabel label = (JLabel) super.getTableCellRendererComponent(table,
-				value, isSelected, hasFocus, row, column);
+		JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		String text = (String) value;
 		table.setRowHeight(80);
 		label.setFont(GraphicsUtils.getFont(Font.SANS_SERIF, 0, 14));

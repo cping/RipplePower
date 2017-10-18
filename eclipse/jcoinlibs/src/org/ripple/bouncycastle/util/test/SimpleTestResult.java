@@ -1,10 +1,8 @@
 package org.ripple.bouncycastle.util.test;
 
-import org.ripple.bouncycastle.util.Strings;
-
 public class SimpleTestResult implements TestResult
 {
-    private static final String SEPARATOR = Strings.lineSeparator();
+    private static final String SEPARATOR = System.getProperty("line.separator");
 
     private boolean             success;
     private String              message;

@@ -109,16 +109,13 @@ public abstract class GridSampler {
 	 *             defined by the given points is invalid or results in sampling
 	 *             outside the image boundaries
 	 */
-	public abstract BitMatrix sampleGrid(BitMatrix image, int dimensionX,
-			int dimensionY, float p1ToX, float p1ToY, float p2ToX, float p2ToY,
-			float p3ToX, float p3ToY, float p4ToX, float p4ToY, float p1FromX,
-			float p1FromY, float p2FromX, float p2FromY, float p3FromX,
-			float p3FromY, float p4FromX, float p4FromY)
+	public abstract BitMatrix sampleGrid(BitMatrix image, int dimensionX, int dimensionY, float p1ToX, float p1ToY,
+			float p2ToX, float p2ToY, float p3ToX, float p3ToY, float p4ToX, float p4ToY, float p1FromX, float p1FromY,
+			float p2FromX, float p2FromY, float p3FromX, float p3FromY, float p4FromX, float p4FromY)
 			throws NotFoundException;
 
-	public abstract BitMatrix sampleGrid(BitMatrix image, int dimensionX,
-			int dimensionY, PerspectiveTransform transform)
-			throws NotFoundException;
+	public abstract BitMatrix sampleGrid(BitMatrix image, int dimensionX, int dimensionY,
+			PerspectiveTransform transform) throws NotFoundException;
 
 	/**
 	 * <p>
@@ -147,8 +144,7 @@ public abstract class GridSampler {
 	 * @throws NotFoundException
 	 *             if an endpoint is lies outside the image boundaries
 	 */
-	protected static void checkAndNudgePoints(BitMatrix image, float[] points)
-			throws NotFoundException {
+	protected static void checkAndNudgePoints(BitMatrix image, float[] points) throws NotFoundException {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		// Check and nudge points from start until we see some that are OK:

@@ -54,11 +54,9 @@ public final class ExpandedProductParsedResult extends ParsedResult {
 	// For AIS that not exist in this object
 	private final Map<String, String> uncommonAIs;
 
-	public ExpandedProductParsedResult(String rawText, String productID,
-			String sscc, String lotNumber, String productionDate,
-			String packagingDate, String bestBeforeDate, String expirationDate,
-			String weight, String weightType, String weightIncrement,
-			String price, String priceIncrement, String priceCurrency,
+	public ExpandedProductParsedResult(String rawText, String productID, String sscc, String lotNumber,
+			String productionDate, String packagingDate, String bestBeforeDate, String expirationDate, String weight,
+			String weightType, String weightIncrement, String price, String priceIncrement, String priceCurrency,
 			Map<String, String> uncommonAIs) {
 		super(ParsedResultType.PRODUCT);
 		this.rawText = rawText;
@@ -86,19 +84,13 @@ public final class ExpandedProductParsedResult extends ParsedResult {
 
 		ExpandedProductParsedResult other = (ExpandedProductParsedResult) o;
 
-		return equalsOrNull(productID, other.productID)
-				&& equalsOrNull(sscc, other.sscc)
-				&& equalsOrNull(lotNumber, other.lotNumber)
-				&& equalsOrNull(productionDate, other.productionDate)
+		return equalsOrNull(productID, other.productID) && equalsOrNull(sscc, other.sscc)
+				&& equalsOrNull(lotNumber, other.lotNumber) && equalsOrNull(productionDate, other.productionDate)
 				&& equalsOrNull(bestBeforeDate, other.bestBeforeDate)
-				&& equalsOrNull(expirationDate, other.expirationDate)
-				&& equalsOrNull(weight, other.weight)
-				&& equalsOrNull(weightType, other.weightType)
-				&& equalsOrNull(weightIncrement, other.weightIncrement)
-				&& equalsOrNull(price, other.price)
-				&& equalsOrNull(priceIncrement, other.priceIncrement)
-				&& equalsOrNull(priceCurrency, other.priceCurrency)
-				&& equalsOrNull(uncommonAIs, other.uncommonAIs);
+				&& equalsOrNull(expirationDate, other.expirationDate) && equalsOrNull(weight, other.weight)
+				&& equalsOrNull(weightType, other.weightType) && equalsOrNull(weightIncrement, other.weightIncrement)
+				&& equalsOrNull(price, other.price) && equalsOrNull(priceIncrement, other.priceIncrement)
+				&& equalsOrNull(priceCurrency, other.priceCurrency) && equalsOrNull(uncommonAIs, other.uncommonAIs);
 	}
 
 	private static boolean equalsOrNull(Object o1, Object o2) {

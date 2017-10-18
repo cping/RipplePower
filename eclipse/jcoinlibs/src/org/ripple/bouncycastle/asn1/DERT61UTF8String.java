@@ -8,7 +8,6 @@ import org.ripple.bouncycastle.util.Strings;
 /**
  * DER T61String (also the teletex string) - a "modern" encapsulation that uses UTF-8. If at all possible, avoid this one! It's only for emergencies.
  * Use UTF8String instead.
- * @deprecated don't use this class, introduced in error, it will be removed.
  */
 public class DERT61UTF8String
     extends ASN1Primitive

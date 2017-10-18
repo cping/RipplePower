@@ -13,7 +13,6 @@ import org.ripple.power.collection.Array;
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.txns.Updateable;
-import org.ripple.power.utils.ReflectorUtils;
 import org.ripple.power.utils.StringUtils;
 
 public class ROCScript {
@@ -56,9 +55,8 @@ public class ROCScript {
 		errors[EXPERR] = "For if, while and for";
 		errors[FILEIOERROR] = "Can't load file";
 		errors[UNKNOWN] = "Unknown error";
-		String err = errors[error] + ": " + textIdx + "\nLine number: "
-				+ textLine + "\nItem: " + item + "\nItem Type: " + itemType
-				+ "\ncommType: " + commType;
+		String err = errors[error] + ": " + textIdx + "\nLine number: " + textLine + "\nItem: " + item + "\nItem Type: "
+				+ itemType + "\ncommType: " + commType;
 		if (scriptLog != null) {
 			scriptLog.err(err);
 		}
@@ -172,9 +170,8 @@ public class ROCScript {
 	private final char selectOpsId[] = { AND, OR, NOT, XOR, XAND };
 	private final String selectOps[] = { "and", "or", "not", "xor", "xand" };
 
-	private String[] commTable = { "", "print", "input", "return", "then",
-			"end", "begin", "else", "if", "for", "while", "function", "wait",
-			"println" };
+	private String[] commTable = { "", "print", "input", "return", "then", "end", "begin", "else", "if", "for", "while",
+			"function", "wait", "println" };
 
 	private String[] macros = { "{", "}" };
 
@@ -282,9 +279,7 @@ public class ROCScript {
 		StringBuffer out = new StringBuffer();
 		String[] context = script.split("[\r\n\t]");
 		for (String c : context) {
-			if ((c.toLowerCase().startsWith("print") || c.toLowerCase()
-					.startsWith("println"))
-					&& c.indexOf("\"") != -1
+			if ((c.toLowerCase().startsWith("print") || c.toLowerCase().startsWith("println")) && c.indexOf("\"") != -1
 					&& c.indexOf(",") == -1) {
 				char[] chars = c.toCharArray();
 				boolean flag = false;
@@ -329,8 +324,7 @@ public class ROCScript {
 	 * @param useFile
 	 * @throws ScriptException
 	 */
-	public ROCScript(IScriptLog log, String script, boolean useFile)
-			throws ScriptException {
+	public ROCScript(IScriptLog log, String script, boolean useFile) throws ScriptException {
 		scriptLog = log;
 		char[] charlist = new char[MAX_TEXT_SIZE];
 		int size = 0;
@@ -612,8 +606,7 @@ public class ROCScript {
 			}
 			if (macros_listeners != null) {
 				for (IMacros macros_listener : macros_listeners) {
-					macros_listener.call(scriptLog, textLine, macros_executer,
-							result);
+					macros_listener.call(scriptLog, textLine, macros_executer, result);
 					if (waitMacros) {
 						for (; macros_listener.isSyncing();) {
 							try {
@@ -968,8 +961,7 @@ public class ROCScript {
 			}
 
 			if (value.length() > 0 && value.indexOf(",") == -1) {
-				if (value.indexOf("\"") == -1 && value.indexOf("/") == -1
-						&& !isNumber(value)) {
+				if (value.indexOf("\"") == -1 && value.indexOf("/") == -1 && !isNumber(value)) {
 					String tmp = getVarVal(value).toString();
 					if (!"unkown".equalsIgnoreCase(tmp)) {
 						value = tmp;
@@ -979,8 +971,7 @@ public class ROCScript {
 				String[] split = StringUtils.split(value, ",");
 				StringBuilder sbr = new StringBuilder();
 				for (String s : split) {
-					if (s.indexOf("\"") == -1 && value.indexOf("/") == -1
-							&& !isNumber(s)) {
+					if (s.indexOf("\"") == -1 && value.indexOf("/") == -1 && !isNumber(s)) {
 						String tmp = getVarVal(s).toString();
 						if (!"unkown".equalsIgnoreCase(tmp)) {
 							sbr.append(tmp.toString());
@@ -1158,8 +1149,7 @@ public class ROCScript {
 	 */
 	private boolean nextItem() throws ScriptException {
 		boolean result = nextCommand();
-		debug(new String[] { "Item: " + item, "CommandStack: " + commands,
-				"Type: " + itemType });
+		debug(new String[] { "Item: " + item, "CommandStack: " + commands, "Type: " + itemType });
 
 		return result;
 	}
@@ -1214,8 +1204,7 @@ public class ROCScript {
 
 		ch = contexts[textIdx];
 
-		if (ch == '#'
-				|| (ch == '/' && textIdx + 1 < contexts.length && contexts[textIdx + 1] == '/')) {
+		if (ch == '#' || (ch == '/' && textIdx + 1 < contexts.length && contexts[textIdx + 1] == '/')) {
 			while (textIdx < contexts.length && contexts[textIdx] != '\r') {
 				textIdx++;
 			}
@@ -1303,8 +1292,7 @@ public class ROCScript {
 					int count = 0;
 					while (textIdx < contexts.length) {
 						ch = contexts[textIdx];
-						if ((ch == ' ') || (ch == '\n') || (ch == '\t')
-								|| (ch == '\r')) {
+						if ((ch == ' ') || (ch == '\n') || (ch == '\t') || (ch == '\r')) {
 							count++;
 						}
 						if (count > 1) {
@@ -1725,8 +1713,7 @@ public class ROCScript {
 
 	protected boolean isBoolean(Object o) {
 		String str = o.toString().toLowerCase();
-		return str.equals("true") || str.equals("false") || str.equals("yes")
-				|| str.equals("no") || str.equals("ok")
+		return str.equals("true") || str.equals("false") || str.equals("yes") || str.equals("no") || str.equals("ok")
 				|| StringUtils.isNumber(str);
 	}
 
@@ -1757,8 +1744,7 @@ public class ROCScript {
 		}
 
 		// 判定是否已定义的函数
-		if (functs.containsKey(str)
-				|| ROCFunction.system_functs.contains(str.toLowerCase())) {
+		if (functs.containsKey(str) || ROCFunction.system_functs.contains(str.toLowerCase())) {
 			return FUNCT;
 		}
 		// 判定是否分支指令
@@ -1839,32 +1825,6 @@ public class ROCScript {
 		return findVar(name);
 	}
 
-	private Object getReflector(String method, Object value) {
-		Object o = null;
-		try {
-			o = ReflectorUtils.getField(value, method);
-		} catch (Exception e) {
-			o = null;
-		}
-		if (o == null) {
-			try {
-				o = ReflectorUtils.getNotPrefixInvoke(value, method);
-				return o;
-			} catch (Exception e) {
-				o = null;
-			}
-		}
-		if (o == null) {
-			try {
-				o = ReflectorUtils.getInvoke(value, method);
-				return o;
-			} catch (Exception e) {
-				o = null;
-			}
-		}
-		return o;
-	}
-
 	/**
 	 * 查询指定的json对象元素（暂时未使用递归，预防有不愿展露的数据被穷举出来）
 	 * 
@@ -1923,18 +1883,15 @@ public class ROCScript {
 								if (n.indexOf(".") == -1) {
 									start = n.indexOf('[');
 									end = n.indexOf(']');
-									String idxName = n
-											.substring(start + 1, end);
+									String idxName = n.substring(start + 1, end);
 									n = n.substring(0, start);
 									if (json.has(n)) {
 										obj = json.get(n);
-										if (obj != null
-												&& obj instanceof JSONArray) {
+										if (obj != null && obj instanceof JSONArray) {
 											JSONArray arrays = (JSONArray) obj;
 											int idx = 0;
 											try {
-												idx = (int) Double
-														.parseDouble(idxName);
+												idx = (int) Double.parseDouble(idxName);
 											} catch (Exception ex) {
 												idx = 0;
 											}
@@ -1955,8 +1912,7 @@ public class ROCScript {
 									}
 								} else {
 									if (o != null && o instanceof JSONObject) {
-										String[] splits = StringUtils.split(
-												packName, ",");
+										String[] splits = StringUtils.split(packName, ",");
 										Object v = null;
 										for (String s : splits) {
 											if (v == null) {
@@ -1966,8 +1922,7 @@ public class ROCScript {
 											} else {
 												if (v instanceof JSONObject) {
 													if (((JSONObject) v).has(s)) {
-														v = ((JSONObject) v)
-																.get(s);
+														v = ((JSONObject) v).get(s);
 													}
 												}
 											}
@@ -1980,18 +1935,15 @@ public class ROCScript {
 								if (n.indexOf(".") == -1) {
 									start = n.indexOf('[');
 									end = n.indexOf(']');
-									String idxName = n
-											.substring(start + 1, end);
+									String idxName = n.substring(start + 1, end);
 									n = n.substring(0, start);
 									if (((JSONObject) obj).has(n)) {
 										obj = ((JSONObject) obj).get(n);
-										if (obj != null
-												&& obj instanceof JSONArray) {
+										if (obj != null && obj instanceof JSONArray) {
 											JSONArray arrays = (JSONArray) obj;
 											int idx = 0;
 											try {
-												idx = (int) Double
-														.parseDouble(idxName);
+												idx = (int) Double.parseDouble(idxName);
 											} catch (Exception ex) {
 												idx = 0;
 											}
@@ -2092,47 +2044,29 @@ public class ROCScript {
 
 				if (value instanceof JSONObject) {
 					o = queryJson(value, vname, method);
-				} else if (method.indexOf("|") == -1) {
-
-					o = getReflector(method, value);
-
 				} else {
-
-					start = method.indexOf("|");
-					end = method.lastIndexOf("|");
-					if (end - start <= 1) {
-						method = StringUtils.replace(method, "|", "");
-						o = getReflector(method, value);
-					} else {
-						String[] split = StringUtils.split(
-								method.substring(start + 1, end), ",");
-						method = method.substring(0, start);
-						ArrayList<Object> objs = new ArrayList<Object>(5);
-						for (String s : split) {
-							s = StringUtils.rtrim(s);
-							if (s.indexOf("\"") != -1 || s.indexOf("'") != -1) {
-								s = s.replace("\"", "").replace("'", "");
-								objs.add(s);
+					String[] split = StringUtils.split(method.substring(start + 1, end), ",");
+					method = method.substring(0, start);
+					ArrayList<Object> objs = new ArrayList<Object>(5);
+					for (String s : split) {
+						s = StringUtils.rtrim(s);
+						if (s.indexOf("\"") != -1 || s.indexOf("'") != -1) {
+							s = s.replace("\"", "").replace("'", "");
+							objs.add(s);
+						} else {
+							if ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s) || "ok".equalsIgnoreCase(s)) {
+								objs.add(true);
+							} else if ("false".equalsIgnoreCase(s) || "no".equalsIgnoreCase(s)) {
+								objs.add(false);
+							} else if (StringUtils.isNumber(s)) {
+								objs.add(Double.parseDouble(s));
 							} else {
-								if ("true".equalsIgnoreCase(s)
-										|| "yes".equalsIgnoreCase(s)
-										|| "ok".equalsIgnoreCase(s)) {
-									objs.add(true);
-								} else if ("false".equalsIgnoreCase(s)
-										|| "no".equalsIgnoreCase(s)) {
-									objs.add(false);
-								} else if (StringUtils.isNumber(s)) {
-									objs.add(Double.parseDouble(s));
-								} else {
-									Object var = getVarVal(s);
-									if (var != null) {
-										objs.add(var);
-									}
+								Object var = getVarVal(s);
+								if (var != null) {
+									objs.add(var);
 								}
 							}
 						}
-						o = ReflectorUtils.getNotPrefixInvoke(value, method,
-								objs.toArray());
 					}
 				}
 			}

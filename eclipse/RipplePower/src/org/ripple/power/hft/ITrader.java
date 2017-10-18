@@ -1,8 +1,7 @@
 package org.ripple.power.hft;
 
-public interface ITrader
-{
-    void startTrading();
+public interface ITrader {
+	void startTrading();
 
-    void kill();
+	void kill();
 }

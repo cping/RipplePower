@@ -37,10 +37,8 @@ public class SafeData {
 	private void init() throws Exception {
 		if (this.secureDatabase.isEmpty()) {
 			SecureIndex masterIndex = new SecureIndex();
-			masterIndex.putIndexedMapTable(new IndexedMapTable<>(
-					new SecureTable<SecureData>(DATAS)));
-			masterIndex.putIndexedMapTable(new IndexedMapTable<>(
-					new SecureTable<PasswordSecureData>(PASSWORDS)));
+			masterIndex.putIndexedMapTable(new IndexedMapTable<>(new SecureTable<SecureData>(DATAS)));
+			masterIndex.putIndexedMapTable(new IndexedMapTable<>(new SecureTable<PasswordSecureData>(PASSWORDS)));
 			masterIndex.putFileTable(new BaseTable(TABLE));
 			this.secureDatabase.commitMasterIndex(masterIndex);
 		}
@@ -71,8 +69,7 @@ public class SafeData {
 	public void putJSON(String name, JSONObject dataToSave) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> dataTable = masterIndex
-				.getIndexedMapTable(DATAS);
+		IndexedMapTable<SecureData> dataTable = masterIndex.getIndexedMapTable(DATAS);
 		dataTable.putEntry(new SecureData(name, dataToSave.toString()));
 		this.secureDatabase.commitMasterIndex(masterIndex);
 	}
@@ -80,8 +77,7 @@ public class SafeData {
 	public JSONObject getJSON(String name) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> dataTable = masterIndex
-				.getIndexedMapTable(DATAS);
+		IndexedMapTable<SecureData> dataTable = masterIndex.getIndexedMapTable(DATAS);
 		SecureData data = dataTable.getEntry(name);
 		return data == null ? null : data.getMessageJSON();
 	}
@@ -89,8 +85,7 @@ public class SafeData {
 	public void putData(SecureData dataToSave) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> dataTable = masterIndex
-				.getIndexedMapTable(DATAS);
+		IndexedMapTable<SecureData> dataTable = masterIndex.getIndexedMapTable(DATAS);
 		dataTable.putEntry(dataToSave);
 		this.secureDatabase.commitMasterIndex(masterIndex);
 	}
@@ -98,16 +93,14 @@ public class SafeData {
 	public SecureData getData(String title) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<SecureData> dataTable = masterIndex
-				.getIndexedMapTable(DATAS);
+		IndexedMapTable<SecureData> dataTable = masterIndex.getIndexedMapTable(DATAS);
 		return dataTable.getEntry(title);
 	}
 
 	public void putPasswordData(PasswordSecureData dataToSave) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex
-				.getIndexedMapTable(PASSWORDS);
+		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex.getIndexedMapTable(PASSWORDS);
 		passwordDataTable.putEntry(dataToSave);
 		this.secureDatabase.commitMasterIndex(masterIndex);
 	}
@@ -115,8 +108,7 @@ public class SafeData {
 	public PasswordSecureData getPasswordData(String title) throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
 		@SuppressWarnings("unchecked")
-		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex
-				.getIndexedMapTable(PASSWORDS);
+		IndexedMapTable<PasswordSecureData> passwordDataTable = masterIndex.getIndexedMapTable(PASSWORDS);
 		return passwordDataTable.getEntry(title);
 	}
 
@@ -139,8 +131,7 @@ public class SafeData {
 
 	public List<String[]> listFiles() throws Exception {
 		SecureIndex masterIndex = this.secureDatabase.getMasterIndex();
-		IndexedMapTable<BaseTableEntry> fileTable = masterIndex
-				.getFileTable(TABLE);
+		IndexedMapTable<BaseTableEntry> fileTable = masterIndex.getFileTable(TABLE);
 		List<BaseTableEntry> fileEntries = fileTable.getAll();
 		List<String[]> fileListing = new ArrayList<>(fileEntries.size());
 		for (BaseTableEntry fileTableEntry : fileEntries) {

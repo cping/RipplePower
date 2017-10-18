@@ -10,8 +10,7 @@ public class LineChartCanvas extends ChartBaseCanvas {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<LineChartCanvas> mJoinLines = new ArrayList<LineChartCanvas>(
-			100);
+	private ArrayList<LineChartCanvas> mJoinLines = new ArrayList<LineChartCanvas>(100);
 
 	private ArrayList<ChartValueSerie> mSeries = new ArrayList<ChartValueSerie>();
 	private int mXnum = 0;
@@ -37,9 +36,12 @@ public class LineChartCanvas extends ChartBaseCanvas {
 				calcYgridRange();
 			}
 			calcXYcoefs();
-			mBmp = Bitmap.createBitmap(p_width, p_height);
-			mCnv = new Canvas(mBmp);
-
+			if (mBmp == null) {
+				mBmp = Bitmap.createBitmap(p_width, p_height);
+			}
+			if (mCnv == null) {
+				mCnv = new Canvas(mBmp);
+			}
 			if (p_grid_vis) {
 				drawGrid();
 			}
@@ -230,8 +232,7 @@ public class LineChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, eY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size
-							+ 2, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, eY + p_text_size + 2, mPntText);
 			}
 		} else {
 			for (int ii = 0; ii < mLabel.getSize(); ii++) {
@@ -239,8 +240,7 @@ public class LineChartCanvas extends ChartBaseCanvas {
 				mPath.lineTo(sX + bX + ii * aX, sY + 3);
 				label = mLabel.mPointList.get(ii).t;
 				if ((label != null) && (ii < numlab) && ((ii % numdiv) == 0))
-					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size
-							+ 3, mPntText);
+					mCnv.drawText(label, sX + bX + ii * aX, sY - p_text_size + 3, mPntText);
 			}
 		}
 		mCnv.drawPath(mPath, mPntAxis);

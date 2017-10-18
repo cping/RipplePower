@@ -61,7 +61,7 @@ public class TlsClientProtocol
         this.recordStream.init(tlsClientContext);
 
         TlsSession sessionToResume = tlsClient.getSessionToResume();
-        if (sessionToResume != null && sessionToResume.isResumable())
+        if (sessionToResume != null)
         {
             SessionParameters sessionParameters = sessionToResume.exportSessionParameters();
             if (sessionParameters != null)
@@ -232,9 +232,23 @@ public class TlsClientProtocol
                 receiveServerHelloMessage(buf);
                 this.connection_state = CS_SERVER_HELLO;
 
-                this.recordStream.notifyHelloComplete();
+                if (this.securityParameters.maxFragmentLength >= 0)
+                {
+                    int plainTextLimit = 1 << (8 + this.securityParameters.maxFragmentLength);
+                    recordStream.setPlaintextLimit(plainTextLimit);
+                }
 
-                applyMaxFragmentLengthExtension();
+                this.securityParameters.prfAlgorithm = getPRFAlgorithm(getContext(),
+                    this.securityParameters.getCipherSuite());
+
+                /*
+                 * RFC 5264 7.4.9. Any cipher suite which does not explicitly specify
+                 * verify_data_length has a verify_data_length equal to 12. This includes all
+                 * existing cipher suites.
+                 */
+                this.securityParameters.verifyDataLength = 12;
+
+                this.recordStream.notifyHelloComplete();
 
                 if (this.resumedSession)
                 {
@@ -517,7 +531,17 @@ public class TlsClientProtocol
              */
             if (this.connection_state == CS_END)
             {
-                refuseRenegotiation();
+                /*
+                 * RFC 5746 4.5 SSLv3 clients that refuse renegotiation SHOULD use a fatal
+                 * handshake_failure alert.
+                 */
+                if (TlsUtils.isSSL(getContext()))
+                {
+                    throw new TlsFatalAlert(AlertDescription.handshake_failure);
+                }
+
+                String message = "Renegotiation not supported";
+                raiseWarning(AlertDescription.no_renegotiation, message);
             }
             break;
         }
@@ -553,29 +577,27 @@ public class TlsClientProtocol
     protected void receiveServerHelloMessage(ByteArrayInputStream buf)
         throws IOException
     {
+        ProtocolVersion server_version = TlsUtils.readVersion(buf);
+        if (server_version.isDTLS())
         {
-            ProtocolVersion server_version = TlsUtils.readVersion(buf);
-            if (server_version.isDTLS())
-            {
-                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-            }
-    
-            // Check that this matches what the server is sending in the record layer
-            if (!server_version.equals(this.recordStream.getReadVersion()))
-            {
-                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-            }
-    
-            ProtocolVersion client_version = getContext().getClientVersion();
-            if (!server_version.isEqualOrEarlierVersionOf(client_version))
-            {
-                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-            }
-    
-            this.recordStream.setWriteVersion(server_version);
-            getContextAdmin().setServerVersion(server_version);
-            this.tlsClient.notifyServerVersion(server_version);
+            throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
+
+        // Check that this matches what the server is sending in the record layer
+        if (!server_version.equals(this.recordStream.getReadVersion()))
+        {
+            throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        }
+
+        ProtocolVersion client_version = getContext().getClientVersion();
+        if (!server_version.isEqualOrEarlierVersionOf(client_version))
+        {
+            throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        }
+
+        this.recordStream.setWriteVersion(server_version);
+        getContextAdmin().setServerVersion(server_version);
+        this.tlsClient.notifyServerVersion(server_version);
 
         /*
          * Read the server random
@@ -587,7 +609,9 @@ public class TlsClientProtocol
         {
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
+
         this.tlsClient.notifySessionID(this.selectedSessionID);
+
         this.resumedSession = this.selectedSessionID.length > 0 && this.tlsSession != null
             && Arrays.areEqual(this.selectedSessionID, this.tlsSession.getSessionID());
 
@@ -599,10 +623,11 @@ public class TlsClientProtocol
         if (!Arrays.contains(this.offeredCipherSuites, selectedCipherSuite)
             || selectedCipherSuite == CipherSuite.TLS_NULL_WITH_NULL_NULL
             || CipherSuite.isSCSV(selectedCipherSuite)
-            || !TlsUtils.isValidCipherSuiteForVersion(selectedCipherSuite, getContext().getServerVersion()))
+            || !TlsUtils.isValidCipherSuiteForVersion(selectedCipherSuite, server_version))
         {
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
+
         this.tlsClient.notifySelectedCipherSuite(selectedCipherSuite);
 
         /*
@@ -614,6 +639,7 @@ public class TlsClientProtocol
         {
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
+
         this.tlsClient.notifySelectedCompressionMethod(selectedCompressionMethod);
 
         /*
@@ -625,6 +651,17 @@ public class TlsClientProtocol
          * clients.
          */
         this.serverExtensions = readExtensions(buf);
+
+        /*
+         * draft-ietf-tls-session-hash-01 5.2. If a server receives the "extended_master_secret"
+         * extension, it MUST include the "extended_master_secret" extension in its ServerHello
+         * message.
+         */
+        boolean serverSentExtendedMasterSecret = TlsExtensionsUtils.hasExtendedMasterSecretExtension(serverExtensions);
+        if (serverSentExtendedMasterSecret != securityParameters.extendedMasterSecret)
+        {
+            throw new TlsFatalAlert(AlertDescription.handshake_failure);
+        }
 
         /*
          * RFC 3546 2.2 Note that the extended server hello message is only sent in response to an
@@ -662,6 +699,17 @@ public class TlsClientProtocol
                 if (null == TlsUtils.getExtensionData(this.clientExtensions, extType))
                 {
                     throw new TlsFatalAlert(AlertDescription.unsupported_extension);
+                }
+
+                /*
+                 * draft-ietf-tls-session-hash-01 5.2. Implementation note: if the server decides to
+                 * proceed with resumption, the extension does not have any effect. Requiring the
+                 * extension to be included anyway makes the extension negotiation logic easier,
+                 * because it does not depend on whether resumption is accepted or not.
+                 */
+                if (extType.equals(TlsExtensionsUtils.EXT_extended_master_secret))
+                {
+                    continue;
                 }
 
                 /*
@@ -719,6 +767,8 @@ public class TlsClientProtocol
 
             sessionClientExtensions = null;
             sessionServerExtensions = this.sessionParameters.readServerExtensions();
+
+            this.securityParameters.extendedMasterSecret = TlsExtensionsUtils.hasExtendedMasterSecretExtension(sessionServerExtensions);
         }
 
         this.securityParameters.cipherSuite = selectedCipherSuite;
@@ -726,22 +776,19 @@ public class TlsClientProtocol
 
         if (sessionServerExtensions != null)
         {
+            /*
+             * RFC 7366 3. If a server receives an encrypt-then-MAC request extension from a client
+             * and then selects a stream or Authenticated Encryption with Associated Data (AEAD)
+             * ciphersuite, it MUST NOT send an encrypt-then-MAC response extension back to the
+             * client.
+             */
+            boolean serverSentEncryptThenMAC = TlsExtensionsUtils.hasEncryptThenMACExtension(sessionServerExtensions);
+            if (serverSentEncryptThenMAC && !TlsUtils.isBlockCipherSuite(selectedCipherSuite))
             {
-                /*
-                 * RFC 7366 3. If a server receives an encrypt-then-MAC request extension from a client
-                 * and then selects a stream or Authenticated Encryption with Associated Data (AEAD)
-                 * ciphersuite, it MUST NOT send an encrypt-then-MAC response extension back to the
-                 * client.
-                 */
-                boolean serverSentEncryptThenMAC = TlsExtensionsUtils.hasEncryptThenMACExtension(sessionServerExtensions);
-                if (serverSentEncryptThenMAC && !TlsUtils.isBlockCipherSuite(selectedCipherSuite))
-                {
-                    throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-                }
-                this.securityParameters.encryptThenMAC = serverSentEncryptThenMAC;
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
 
-            this.securityParameters.extendedMasterSecret = TlsExtensionsUtils.hasExtendedMasterSecretExtension(sessionServerExtensions);
+            this.securityParameters.encryptThenMAC = serverSentEncryptThenMAC;
 
             this.securityParameters.maxFragmentLength = processMaxFragmentLengthExtension(sessionClientExtensions,
                 sessionServerExtensions, AlertDescription.illegal_parameter);
@@ -761,27 +808,10 @@ public class TlsClientProtocol
                     AlertDescription.illegal_parameter);
         }
 
-        /*
-         * TODO[session-hash]
-         * 
-         * draft-ietf-tls-session-hash-04 4. Clients and servers SHOULD NOT accept handshakes
-         * that do not use the extended master secret [..]. (and see 5.2, 5.3)
-         */
-        
         if (sessionClientExtensions != null)
         {
             this.tlsClient.processServerExtensions(sessionServerExtensions);
         }
-
-        this.securityParameters.prfAlgorithm = getPRFAlgorithm(getContext(),
-            this.securityParameters.getCipherSuite());
-
-        /*
-         * RFC 5264 7.4.9. Any cipher suite which does not explicitly specify
-         * verify_data_length has a verify_data_length equal to 12. This includes all
-         * existing cipher suites.
-         */
-        this.securityParameters.verifyDataLength = 12;
     }
 
     protected void sendCertificateVerifyMessage(DigitallySigned certificateVerify)
@@ -837,6 +867,8 @@ public class TlsClientProtocol
         }
 
         this.clientExtensions = this.tlsClient.getClientExtensions();
+
+        this.securityParameters.extendedMasterSecret = TlsExtensionsUtils.hasExtendedMasterSecretExtension(clientExtensions);
 
         HandshakeMessage message = new HandshakeMessage(HandshakeType.client_hello);
 

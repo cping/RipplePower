@@ -9,7 +9,7 @@ import org.ripple.bouncycastle.jcajce.provider.util.AsymmetricKeyInfoConverter;
 
 public class DSA
 {
-    private static final String PREFIX = "org.bouncycastle.jcajce.provider.asymmetric" + ".dsa.";
+    private static final String PREFIX = "org.ripple.bouncycastle.jcajce.provider.asymmetric" + ".dsa.";
 
     public static class Mappings
         extends AsymmetricAlgorithmProvider

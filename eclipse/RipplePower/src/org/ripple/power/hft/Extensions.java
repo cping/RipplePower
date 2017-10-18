@@ -28,8 +28,7 @@ public class Extensions {
 		return suggestInterval(madnessCoef, def_minInterval, def_maxInterval);
 	}
 
-	public static int suggestInterval(float madnessCoef, int minInterval,
-			int maxInterval) {
+	public static int suggestInterval(float madnessCoef, int minInterval, int maxInterval) {
 		if (madnessCoef <= 0.0f) {
 			return maxInterval;
 		}
@@ -39,8 +38,7 @@ public class Extensions {
 		return (int) (minInterval + ((1.0f - madnessCoef) * (maxInterval - minInterval)));
 	}
 
-	public static double suggestWallVolume(float madnessCoef, double minVolume,
-			double maxVolue) {
+	public static double suggestWallVolume(float madnessCoef, double minVolume, double maxVolue) {
 		if (madnessCoef <= 0.0f) {
 			return minVolume;
 		}

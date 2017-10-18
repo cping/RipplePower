@@ -81,8 +81,7 @@ public final class ReedSolomonDecoder {
 			return;
 		}
 		GenericGFPoly syndrome = new GenericGFPoly(field, syndromeCoefficients);
-		GenericGFPoly[] sigmaOmega = runEuclideanAlgorithm(
-				field.buildMonomial(twoS, 1), syndrome, twoS);
+		GenericGFPoly[] sigmaOmega = runEuclideanAlgorithm(field.buildMonomial(twoS, 1), syndrome, twoS);
 		GenericGFPoly sigma = sigmaOmega[0];
 		GenericGFPoly omega = sigmaOmega[1];
 		int[] errorLocations = findErrorLocations(sigma);
@@ -92,13 +91,11 @@ public final class ReedSolomonDecoder {
 			if (position < 0) {
 				throw new ReedSolomonException("Bad error location");
 			}
-			received[position] = GenericGF.addOrSubtract(received[position],
-					errorMagnitudes[i]);
+			received[position] = GenericGF.addOrSubtract(received[position], errorMagnitudes[i]);
 		}
 	}
 
-	private GenericGFPoly[] runEuclideanAlgorithm(GenericGFPoly a,
-			GenericGFPoly b, int R) throws ReedSolomonException {
+	private GenericGFPoly[] runEuclideanAlgorithm(GenericGFPoly a, GenericGFPoly b, int R) throws ReedSolomonException {
 		// Assume a's degree is >= b's
 		if (a.getDegree() < b.getDegree()) {
 			GenericGFPoly temp = a;
@@ -125,13 +122,11 @@ public final class ReedSolomonDecoder {
 			}
 			r = rLastLast;
 			GenericGFPoly q = field.getZero();
-			int denominatorLeadingTerm = rLast
-					.getCoefficient(rLast.getDegree());
+			int denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
 			int dltInverse = field.inverse(denominatorLeadingTerm);
 			while (r.getDegree() >= rLast.getDegree() && !r.isZero()) {
 				int degreeDiff = r.getDegree() - rLast.getDegree();
-				int scale = field.multiply(r.getCoefficient(r.getDegree()),
-						dltInverse);
+				int scale = field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
 				q = q.addOrSubtract(field.buildMonomial(degreeDiff, scale));
 				r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
 			}
@@ -139,8 +134,7 @@ public final class ReedSolomonDecoder {
 			t = q.multiply(tLast).addOrSubtract(tLastLast);
 
 			if (r.getDegree() >= rLast.getDegree()) {
-				throw new IllegalStateException(
-						"Division algorithm failed to reduce polynomial?");
+				throw new IllegalStateException("Division algorithm failed to reduce polynomial?");
 			}
 		}
 
@@ -155,8 +149,7 @@ public final class ReedSolomonDecoder {
 		return new GenericGFPoly[] { sigma, omega };
 	}
 
-	private int[] findErrorLocations(GenericGFPoly errorLocator)
-			throws ReedSolomonException {
+	private int[] findErrorLocations(GenericGFPoly errorLocator) throws ReedSolomonException {
 		// This is a direct application of Chien's search
 		int numErrors = errorLocator.getDegree();
 		if (numErrors == 1) { // shortcut
@@ -171,14 +164,12 @@ public final class ReedSolomonDecoder {
 			}
 		}
 		if (e != numErrors) {
-			throw new ReedSolomonException(
-					"Error locator degree does not match number of roots");
+			throw new ReedSolomonException("Error locator degree does not match number of roots");
 		}
 		return result;
 	}
 
-	private int[] findErrorMagnitudes(GenericGFPoly errorEvaluator,
-			int[] errorLocations) {
+	private int[] findErrorMagnitudes(GenericGFPoly errorEvaluator, int[] errorLocations) {
 		// This is directly applying Forney's Formula
 		int s = errorLocations.length;
 		int[] result = new int[s];
@@ -198,8 +189,7 @@ public final class ReedSolomonDecoder {
 					denominator = field.multiply(denominator, termPlus1);
 				}
 			}
-			result[i] = field.multiply(errorEvaluator.evaluateAt(xiInverse),
-					field.inverse(denominator));
+			result[i] = field.multiply(errorEvaluator.evaluateAt(xiInverse), field.inverse(denominator));
 			if (field.getGeneratorBase() != 0) {
 				result[i] = field.multiply(result[i], xiInverse);
 			}

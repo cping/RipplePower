@@ -129,8 +129,7 @@ public final class HighLevelEncoder {
 	private static char randomize253State(char ch, int codewordPosition) {
 		int pseudoRandom = ((149 * codewordPosition) % 253) + 1;
 		int tempVariable = ch + pseudoRandom;
-		return tempVariable <= 254 ? (char) tempVariable
-				: (char) (tempVariable - 254);
+		return tempVariable <= 254 ? (char) tempVariable : (char) (tempVariable - 254);
 	}
 
 	/**
@@ -161,12 +160,10 @@ public final class HighLevelEncoder {
 	 *            the maximum symbol size constraint or null for no constraint
 	 * @return the encoded message (the char values range from 0 to 255)
 	 */
-	public static String encodeHighLevel(String msg, SymbolShapeHint shape,
-			Dimension minSize, Dimension maxSize) {
+	public static String encodeHighLevel(String msg, SymbolShapeHint shape, Dimension minSize, Dimension maxSize) {
 		// the codewords 0..255 are encoded as Unicode characters
-		Encoder[] encoders = { new ASCIIEncoder(), new C40Encoder(),
-				new TextEncoder(), new X12Encoder(), new EdifactEncoder(),
-				new Base256Encoder() };
+		Encoder[] encoders = { new ASCIIEncoder(), new C40Encoder(), new TextEncoder(), new X12Encoder(),
+				new EdifactEncoder(), new Base256Encoder() };
 
 		EncoderContext context = new EncoderContext(msg);
 		context.setSymbolShape(shape);
@@ -176,8 +173,7 @@ public final class HighLevelEncoder {
 			context.writeCodeword(MACRO_05);
 			context.setSkipAtEnd(2);
 			context.pos += MACRO_05_HEADER.length();
-		} else if (msg.startsWith(MACRO_06_HEADER)
-				&& msg.endsWith(MACRO_TRAILER)) {
+		} else if (msg.startsWith(MACRO_06_HEADER) && msg.endsWith(MACRO_TRAILER)) {
 			context.writeCodeword(MACRO_06);
 			context.setSkipAtEnd(2);
 			context.pos += MACRO_06_HEADER.length();
@@ -195,8 +191,7 @@ public final class HighLevelEncoder {
 		context.updateSymbolInfo();
 		int capacity = context.getSymbolInfo().getDataCapacity();
 		if (len < capacity) {
-			if (encodingMode != ASCII_ENCODATION
-					&& encodingMode != BASE256_ENCODATION) {
+			if (encodingMode != ASCII_ENCODATION && encodingMode != BASE256_ENCODATION) {
 				context.writeCodeword('\u00fe'); // Unlatch (254)
 			}
 		}
@@ -260,12 +255,10 @@ public final class HighLevelEncoder {
 			if (isDigit(c)) {
 				charCounts[ASCII_ENCODATION] += 0.5;
 			} else if (isExtendedASCII(c)) {
-				charCounts[ASCII_ENCODATION] = (int) Math
-						.ceil(charCounts[ASCII_ENCODATION]);
+				charCounts[ASCII_ENCODATION] = (int) Math.ceil(charCounts[ASCII_ENCODATION]);
 				charCounts[ASCII_ENCODATION] += 2;
 			} else {
-				charCounts[ASCII_ENCODATION] = (int) Math
-						.ceil(charCounts[ASCII_ENCODATION]);
+				charCounts[ASCII_ENCODATION] = (int) Math.ceil(charCounts[ASCII_ENCODATION]);
 				charCounts[ASCII_ENCODATION]++;
 			}
 
@@ -326,9 +319,8 @@ public final class HighLevelEncoder {
 						&& intCharCounts[ASCII_ENCODATION] < intCharCounts[EDIFACT_ENCODATION]) {
 					return ASCII_ENCODATION;
 				}
-				if (intCharCounts[BASE256_ENCODATION] < intCharCounts[ASCII_ENCODATION]
-						|| (mins[C40_ENCODATION] + mins[TEXT_ENCODATION]
-								+ mins[X12_ENCODATION] + mins[EDIFACT_ENCODATION]) == 0) {
+				if (intCharCounts[BASE256_ENCODATION] < intCharCounts[ASCII_ENCODATION] || (mins[C40_ENCODATION]
+						+ mins[TEXT_ENCODATION] + mins[X12_ENCODATION] + mins[EDIFACT_ENCODATION]) == 0) {
 					return BASE256_ENCODATION;
 				}
 				if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0) {
@@ -366,8 +358,7 @@ public final class HighLevelEncoder {
 		}
 	}
 
-	private static int findMinimums(float[] charCounts, int[] intCharCounts,
-			int min, byte[] mins) {
+	private static int findMinimums(float[] charCounts, int[] intCharCounts, int min, byte[] mins) {
 		Arrays.fill(mins, (byte) 0);
 		for (int i = 0; i < 6; i++) {
 			intCharCounts[i] = (int) Math.ceil(charCounts[i]);
@@ -401,18 +392,15 @@ public final class HighLevelEncoder {
 	}
 
 	private static boolean isNativeC40(char ch) {
-		return (ch == ' ') || (ch >= '0' && ch <= '9')
-				|| (ch >= 'A' && ch <= 'Z');
+		return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z');
 	}
 
 	private static boolean isNativeText(char ch) {
-		return (ch == ' ') || (ch >= '0' && ch <= '9')
-				|| (ch >= 'a' && ch <= 'z');
+		return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z');
 	}
 
 	private static boolean isNativeX12(char ch) {
-		return isX12TermSep(ch) || (ch == ' ') || (ch >= '0' && ch <= '9')
-				|| (ch >= 'A' && ch <= 'Z');
+		return isX12TermSep(ch) || (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z');
 	}
 
 	private static boolean isX12TermSep(char ch) {
@@ -438,8 +426,7 @@ public final class HighLevelEncoder {
 	 *            the start position within the message
 	 * @return the requested character count
 	 */
-	public static int determineConsecutiveDigitCount(CharSequence msg,
-			int startpos) {
+	public static int determineConsecutiveDigitCount(CharSequence msg, int startpos) {
 		int count = 0;
 		int len = msg.length();
 		int idx = startpos;
@@ -459,8 +446,7 @@ public final class HighLevelEncoder {
 	static void illegalCharacter(char c) {
 		String hex = Integer.toHexString(c);
 		hex = "0000".substring(0, 4 - hex.length()) + hex;
-		throw new IllegalArgumentException("Illegal character: " + c + " (0x"
-				+ hex + ')');
+		throw new IllegalArgumentException("Illegal character: " + c + " (0x" + hex + ')');
 	}
 
 }

@@ -111,13 +111,12 @@ public class MainUI {
 
 	public static void main(String[] args) {
 		LSystem.invokeAndWait(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				app();
 			}
 		});
-
 	}
 
 	public static void app() {
@@ -126,11 +125,8 @@ public class MainUI {
 			return;
 		}
 		if (!LSystem.isMinJavaVersion(1, 6)) {
-			UIRes.showErrorMessage(
-					null,
-					"Java Version Error",
-					"The minimum required Java version is 1.6.\n"
-							+ "The reported version is "
+			UIRes.showErrorMessage(null, "Java Version Error",
+					"The minimum required Java version is 1.6.\n" + "The reported version is "
 							+ System.getProperty("java.vm.version")
 							+ ".\n\nPlease download and install the latest Java "
 							+ "version\nfrom http://java.sun.com and try again.\n\n");
@@ -144,23 +140,16 @@ public class MainUI {
 				System.setProperty("sun.java2d.translaccel", "true");
 				System.setProperty("sun.java2d.ddforcevram", "true");
 			} else if (LSystem.isAnyMac()) {
-				System.setProperty(
-						"com.apple.mrj.application.apple.menu.about.name",
-						"RipplePower");
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "RipplePower");
 				System.setProperty("apple.awt.showGrowBox", "false");
 				System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
-				System.setProperty("apple.awt.graphics.EnableLazyDrawing",
-						"true");
-				System.setProperty(
-						"apple.awt.window.position.forceSafeUserPositioning",
-						"true");
-				System.setProperty(
-						"apple.awt.window.position.forceSafeCreation", "true");
+				System.setProperty("apple.awt.graphics.EnableLazyDrawing", "true");
+				System.setProperty("apple.awt.window.position.forceSafeUserPositioning", "true");
+				System.setProperty("apple.awt.window.position.forceSafeCreation", "true");
 				System.setProperty("com.apple.hwaccel", "true");
 				System.setProperty("com.apple.forcehwaccel", "true");
 				System.setProperty("com.apple.macos.smallTabs", "true");
-				System.setProperty("com.apple.macos.use-file-dialog-packages",
-						"true");
+				System.setProperty("com.apple.macos.use-file-dialog-packages", "true");
 			} else {
 				System.setProperty("sun.java2d.opengl", "true");
 			}
@@ -177,11 +166,9 @@ public class MainUI {
 		String password = LSystem.session("system").get("password");
 		if (password == null) {
 			GraphicTool tools = new GraphicTool();
-			Image backimage = tools.getWinTable(460, 130, Color.white,
-					UIConfig.background, true);
+			Image backimage = tools.getWinTable(460, 130, Color.white, UIConfig.background, true);
 			HIRipple ripple = new HIRipple(backimage);
-			ripple.scene = UIScene.showDialog("Hi,Ripple", 480, 320, ripple,
-					null, null);
+			ripple.scene = UIScene.showDialog("Hi,Ripple", 480, 320, ripple, null, null);
 			ripple.scene.setExit(new Updateable() {
 
 				@Override
@@ -215,8 +202,7 @@ public class MainUI {
 		LangConfig.init();
 
 		form = new MainForm();
-		form.getContentPane().setLayout(
-				new MigLayout("fill", "[fill]", "[fill]"));
+		form.getContentPane().setLayout(new MigLayout("fill", "[fill]", "[fill]"));
 
 		RPScrollPane scrollPane = new RPScrollPane();
 		scrollPane.setBorder(null);
@@ -224,13 +210,11 @@ public class MainUI {
 
 		JPanel mainPanel = new JPanel();
 		scrollPane.setViewportView(mainPanel);
-		mainPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]",
-				"[70][fill]"));
+		mainPanel.setLayout(new MigLayout("gap 0, insets 0", "[100%]", "[70][fill]"));
 
 		JPanel navigationPanel = new JPanel();
 		navigationPanel.setBackground(LColor.WHITE);
-		navigationPanel.setLayout(new MigLayout("gap 0, insets 0",
-				"[10%][80%][]", "[100%]"));
+		navigationPanel.setLayout(new MigLayout("gap 0, insets 0", "[10%][80%][]", "[100%]"));
 		mainPanel.add(navigationPanel, "cell 0 0 1 1, grow");
 
 		final JPanel emptyPanel = new JPanel();
@@ -251,8 +235,7 @@ public class MainUI {
 		navbar.setFont(new Font("Arial", Font.BOLD, 16));
 		navbar.setBackground(LColor.WHITE);
 
-		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel,
-				welcomePanel);
+		RPNavlink welcomeLink = new RPNavlink("Welcome", emptyPanel, welcomePanel);
 		welcomeLink.addActionListener(new ActionListener() {
 
 			@Override
@@ -274,13 +257,11 @@ public class MainUI {
 
 		// ripple
 		final Icon iconXrpIcon = UIRes.getImage("icons/ripple.png");
-		final RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel,
-				form.getMainPanel());
+		final RPNavlink xrpLink = new RPNavlink("Ripple", emptyPanel, form.getMainPanel());
 
 		xrpLink.setClick(new RPNavlink.Click() {
 
-			final AnimationIcon iconBtcRotating = new AnimationIcon(
-					iconXrpIcon, xrpLink, true);
+			final AnimationIcon iconBtcRotating = new AnimationIcon(iconXrpIcon, xrpLink, true);
 
 			@Override
 			public void up() {
@@ -343,10 +324,8 @@ public class MainUI {
 								}
 								if (LSystem.current == Model.Ripple) {
 									RPPushTool rpp = HelperDialog.get();
-									HelperDialog
-											.setHelperMessage(
-													rpp,
-													"Hello, Ripple World ! Right and Justice are on our side ! This is a Java Version Ripple Desktop Client for interacting with the Ripple network .");
+									HelperDialog.setHelperMessage(rpp,
+											"Hello, Ripple World ! Right and Justice are on our side ! This is a Java Version Ripple Desktop Client for interacting with the Ripple network .");
 									LSystem.sleep(LSystem.SECOND);
 								}
 							}
@@ -369,8 +348,7 @@ public class MainUI {
 		final RPNavlink btcLink = new RPNavlink("Bitcoin", emptyPanel, btcPanel);
 		btcLink.setClick(new RPNavlink.Click() {
 
-			final AnimationIcon iconBtcRotating = new AnimationIcon(
-					iconBtcIcon, btcLink, true);
+			final AnimationIcon iconBtcRotating = new AnimationIcon(iconBtcIcon, btcLink, true);
 
 			@Override
 			public void up() {
@@ -439,9 +417,20 @@ public class MainUI {
 		btcLink.setFont(navLinkFont);
 		navLinkList.add(btcLink);
 
+		// ssh/ss
+		RPNavlink ssLink = new RPNavlink("SSH/SS");
+		ssLink.setForeground(UIConfig.getBrandColor());
+		ssLink.setFont(navLinkFont);
+		ssLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
+		ssLink.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				RPSEDialog.showDialog("Select", LSystem.applicationMain, RPSEDialog.MODE_SS);
+			}
+		});
+		navLinkList.add(ssLink);
 		// config
-		RPNavlink configLink = new RPNavlink(LangConfig.get(this, "config",
-				"Config"));
+		RPNavlink configLink = new RPNavlink(LangConfig.get(this, "config", "Config"));
 		configLink.setForeground(UIConfig.getBrandColor());
 		configLink.setFont(navLinkFont);
 		configLink.setNavigationAlignment(RPNavlink.ALIGN_RIGHT);
@@ -449,8 +438,7 @@ public class MainUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPConfigDialog.showDialog("Configuration",
-						LSystem.applicationMain);
+				RPConfigDialog.showDialog("Configuration", LSystem.applicationMain);
 			}
 		});
 		navLinkList.add(configLink);
@@ -468,6 +456,7 @@ public class MainUI {
 			}
 		});
 		navLinkList.add(exitLink);
+
 		navbar.setNavLinkList(navLinkList);
 		SwingUtils.centerOnScreen(form);
 		// form.setAlwaysOnTop(true);
@@ -478,10 +467,9 @@ public class MainUI {
 	}
 
 	private RPSplash loadSplash(Updateable update) {
-		return new RPSplash(UIConfig.getBrandColor(), "images/splash.png",
-				LSystem.applicationName, UIConfig.getBrandColor(), 30, 80,
-				"version " + LSystem.applicationVersion,
-				UIConfig.getBrandColor(), 40, 130, true, update);
+		return new RPSplash(UIConfig.getBrandColor(), "images/splash.png", LSystem.applicationName,
+				UIConfig.getBrandColor(), 30, 80, "version " + LSystem.applicationVersion, UIConfig.getBrandColor(), 40,
+				130, true, update);
 	}
 
 }

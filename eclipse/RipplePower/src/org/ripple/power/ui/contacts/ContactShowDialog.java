@@ -56,14 +56,12 @@ public class ContactShowDialog extends ABaseDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-		gbl_contentPanel.columnWidths = new int[] { 0, 0, 0, 1, 1, 0, 0, 0, 0,
-				0, 0, 0 };
-		gbl_contentPanel.rowHeights = new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0 };
-		gbl_contentPanel.columnWeights = new double[] { 1.0, 1.0, 2.0, 1.0,
-				0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE };
-		gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPanel.columnWidths = new int[] { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPanel.rowHeights = new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPanel.columnWeights = new double[] { 1.0, 1.0, 2.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+				Double.MIN_VALUE };
+		gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		contentPanel.setLayout(gbl_contentPanel);
 
 		int index = 0;
@@ -301,8 +299,7 @@ public class ContactShowDialog extends ABaseDialog {
 			}
 			if (person instanceof FamilyContact) {
 				RPLabel relationshipLabel = new RPLabel();
-				relationshipLabel.setText(((FamilyContact) person)
-						.getRelationship());
+				relationshipLabel.setText(((FamilyContact) person).getRelationship());
 				GridBagConstraints gbc_relationshipLabel = new GridBagConstraints();
 				gbc_relationshipLabel.insets = new Insets(0, 0, 0, 15);
 				gbc_relationshipLabel.anchor = GridBagConstraints.WEST;

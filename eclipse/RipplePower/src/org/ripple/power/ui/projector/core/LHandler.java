@@ -20,8 +20,7 @@ import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.projector.UIView;
 import org.ripple.power.ui.projector.core.graphics.Screen;
 
-public class LHandler implements MouseListener, MouseMotionListener,
-		KeyListener, FocusListener {
+public class LHandler implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
 
 	private Window scene;
 
@@ -295,8 +294,7 @@ public class LHandler implements MouseListener, MouseMotionListener,
 		synchronized (this) {
 			if (screen == null) {
 				this.isInstance = false;
-				throw new RuntimeException(
-						"Cannot create a [Screen] instance !");
+				throw new RuntimeException("Cannot create a [Screen] instance !");
 			}
 			if (currentControl != null) {
 				setTransition(screen.onTransition());
@@ -351,8 +349,7 @@ public class LHandler implements MouseListener, MouseMotionListener,
 			load.setPriority(Thread.NORM_PRIORITY);
 			load.start();
 		} catch (Exception ex) {
-			throw new RuntimeException(currentControl.getName() + " onLoad:"
-					+ ex.getMessage());
+			throw new RuntimeException(currentControl.getName() + " onLoad:" + ex.getMessage());
 		} finally {
 			load = null;
 		}

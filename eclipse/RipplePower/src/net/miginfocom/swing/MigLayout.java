@@ -59,21 +59,21 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 	/**
 	 * The component to string constraints mappings.
 	 */
-	private final Map<Component, Object> scrConstrMap = new IdentityHashMap<Component, Object>(
-			8);
+	private final Map<Component, Object> scrConstrMap = new IdentityHashMap<Component, Object>(8);
 
 	/**
 	 * Hold the serializable text representation of the constraints.
 	 */
-	private Object layoutConstraints = "", colConstraints = "",
-			rowConstraints = ""; // Should never be null!
+	private Object layoutConstraints = "", colConstraints = "", rowConstraints = ""; // Should
+																						// never
+																						// be
+																						// null!
 
 	// ******** Transient part ********
 
 	private transient ContainerWrapper cacheParentW = null;
 
-	private transient final Map<ComponentWrapper, CC> ccMap = new HashMap<ComponentWrapper, CC>(
-			8);
+	private transient final Map<ComponentWrapper, CC> ccMap = new HashMap<ComponentWrapper, CC>(8);
 	private transient javax.swing.Timer debugTimer = null;
 
 	private transient LC lc = null;
@@ -135,8 +135,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 	 *            The constraints for the rows in the grid. <code>null</code>
 	 *            will be treated as "".
 	 */
-	public MigLayout(String layoutConstraints, String colConstraints,
-			String rowConstraints) {
+	public MigLayout(String layoutConstraints, String colConstraints, String rowConstraints) {
 		setLayoutConstraints(layoutConstraints);
 		setColumnConstraints(colConstraints);
 		setRowConstraints(rowConstraints);
@@ -218,8 +217,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 		} else if (constr instanceof LC) {
 			lc = (LC) constr;
 		} else {
-			throw new IllegalArgumentException("Illegal constraint type: "
-					+ constr.getClass().toString());
+			throw new IllegalArgumentException("Illegal constraint type: " + constr.getClass().toString());
 		}
 		layoutConstraints = constr;
 		dirty = true;
@@ -257,8 +255,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 		} else if (constr instanceof AC) {
 			colSpecs = (AC) constr;
 		} else {
-			throw new IllegalArgumentException("Illegal constraint type: "
-					+ constr.getClass().toString());
+			throw new IllegalArgumentException("Illegal constraint type: " + constr.getClass().toString());
 		}
 		colConstraints = constr;
 		dirty = true;
@@ -297,8 +294,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 		} else if (constr instanceof AC) {
 			rowSpecs = (AC) constr;
 		} else {
-			throw new IllegalArgumentException("Illegal constraint type: "
-					+ constr.getClass().toString());
+			throw new IllegalArgumentException("Illegal constraint type: " + constr.getClass().toString());
 		}
 		rowConstraints = constr;
 		dirty = true;
@@ -386,8 +382,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 	 * @throws IllegalArgumentException
 	 *             If the component is not handling the component.
 	 */
-	private void setComponentConstraintsImpl(Component comp, Object constr,
-			boolean noCheck) {
+	private void setComponentConstraintsImpl(Component comp, Object constr, boolean noCheck) {
 		Container parent = comp.getParent();
 		synchronized (parent != null ? parent.getTreeLock() : new Object()) { // 3.7.2.
 																				// No
@@ -402,8 +397,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 																				// a
 																				// NPE.
 			if (noCheck == false && scrConstrMap.containsKey(comp) == false)
-				throw new IllegalArgumentException(
-						"Component must already be added to parent!");
+				throw new IllegalArgumentException("Component must already be added to parent!");
 
 			ComponentWrapper cw = new SwingComponentWrapper(comp);
 
@@ -420,8 +414,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 
 			} else {
 				throw new IllegalArgumentException(
-						"Constraint must be String or ComponentConstraint: "
-								+ constr.getClass().toString());
+						"Constraint must be String or ComponentConstraint: " + constr.getClass().toString());
 			}
 
 			dirty = true;
@@ -486,17 +479,14 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 	 *            <code>true</code> means debug is turned on.
 	 */
 	private void setDebug(final ComponentWrapper parentW, boolean b) {
-		if (b
-				&& (debugTimer == null || debugTimer.getDelay() != getDebugMillis())) {
+		if (b && (debugTimer == null || debugTimer.getDelay() != getDebugMillis())) {
 			if (debugTimer != null)
 				debugTimer.stop();
 
 			ContainerWrapper pCW = parentW.getParent();
-			final Component parent = pCW != null ? (Component) pCW
-					.getComponent() : null;
+			final Component parent = pCW != null ? (Component) pCW.getComponent() : null;
 
-			debugTimer = new Timer(getDebugMillis(),
-					new MyDebugRepaintListener());
+			debugTimer = new Timer(getDebugMillis(), new MyDebugRepaintListener());
 
 			if (parent != null) {
 				LSystem.invokeLater(new Runnable() {
@@ -577,8 +567,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 															// 3.7.1
 				for (ComponentWrapper wrapper : ccMap.keySet()) {
 					Object component = wrapper.getComponent();
-					if (component instanceof JTextArea
-							|| component instanceof JEditorPane)
+					if (component instanceof JTextArea || component instanceof JEditorPane)
 						resetLastInvalidOnParent = true;
 					hash ^= wrapper.getLayoutHashCode();
 					hash += 285134905;
@@ -642,24 +631,20 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 			checkCache(parent);
 
 			Insets i = parent.getInsets();
-			int[] b = new int[] { i.left, i.top,
-					parent.getWidth() - i.left - i.right,
+			int[] b = new int[] { i.left, i.top, parent.getWidth() - i.left - i.right,
 					parent.getHeight() - i.top - i.bottom };
 
 			if (grid.layout(b, lc.getAlignX(), lc.getAlignY(), getDebug(), true)) {
 				grid = null;
 				checkCache(parent);
-				grid.layout(b, lc.getAlignX(), lc.getAlignY(), getDebug(),
-						false);
+				grid.layout(b, lc.getAlignX(), lc.getAlignY(), getDebug(), false);
 			}
 
-			long newSize = grid.getHeight()[1]
-					+ (((long) grid.getWidth()[1]) << 32);
+			long newSize = grid.getHeight()[1] + (((long) grid.getWidth()[1]) << 32);
 			if (lastSize != newSize) {
 				lastSize = newSize;
 				final ContainerWrapper containerWrapper = checkParent(parent);
-				Window win = ((Window) SwingUtilities.getAncestorOfClass(
-						Window.class,
+				Window win = ((Window) SwingUtilities.getAncestorOfClass(Window.class,
 						(Component) containerWrapper.getComponent()));
 				if (win != null) {
 					if (win.isVisible()) {
@@ -691,27 +676,21 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 		if (wBounds == null && hBounds == null)
 			return;
 
-		Window win = ((Window) SwingUtilities.getAncestorOfClass(Window.class,
-				(Component) parent.getComponent()));
+		Window win = ((Window) SwingUtilities.getAncestorOfClass(Window.class, (Component) parent.getComponent()));
 		if (win == null)
 			return;
 
 		Dimension prefSize = win.getPreferredSize();
-		int targW = constrain(checkParent(win), win.getWidth(), prefSize.width,
-				wBounds);
-		int targH = constrain(checkParent(win), win.getHeight(),
-				prefSize.height, hBounds);
+		int targW = constrain(checkParent(win), win.getWidth(), prefSize.width, wBounds);
+		int targH = constrain(checkParent(win), win.getHeight(), prefSize.height, hBounds);
 
-		int x = Math.round(win.getX()
-				- ((targW - win.getWidth()) * (1 - lc.getPackWidthAlign())));
-		int y = Math.round(win.getY()
-				- ((targH - win.getHeight()) * (1 - lc.getPackHeightAlign())));
+		int x = Math.round(win.getX() - ((targW - win.getWidth()) * (1 - lc.getPackWidthAlign())));
+		int y = Math.round(win.getY() - ((targH - win.getHeight()) * (1 - lc.getPackHeightAlign())));
 
 		win.setBounds(x, y, targW, targH);
 	}
 
-	private int constrain(ContainerWrapper parent, int winSize, int prefSize,
-			BoundSize constrain) {
+	private int constrain(ContainerWrapper parent, int winSize, int prefSize, BoundSize constrain) {
 		if (constrain == null)
 			return winSize;
 
@@ -733,15 +712,11 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 
 	public Dimension preferredLayoutSize(Container parent) {
 		synchronized (parent.getTreeLock()) {
-			if (lastParentSize == null
-					|| !parent.getSize().equals(lastParentSize)) {
+			if (lastParentSize == null || !parent.getSize().equals(lastParentSize)) {
 				for (ComponentWrapper wrapper : ccMap.keySet()) {
 					Component c = (Component) wrapper.getComponent();
-					if (c instanceof JTextArea
-							|| c instanceof JEditorPane
-							|| (c instanceof JComponent && Boolean.TRUE
-									.equals(((JComponent) c)
-											.getClientProperty("migLayout.dynamicAspectRatio")))) {
+					if (c instanceof JTextArea || c instanceof JEditorPane || (c instanceof JComponent && Boolean.TRUE
+							.equals(((JComponent) c).getClientProperty("migLayout.dynamicAspectRatio")))) {
 						layoutContainer(parent);
 						break;
 					}
@@ -763,22 +738,18 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 
 		Insets i = parent.getInsets();
 
-		int w = LayoutUtil.getSizeSafe(grid != null ? grid.getWidth() : null,
-				sizeType) + i.left + i.right;
-		int h = LayoutUtil.getSizeSafe(grid != null ? grid.getHeight() : null,
-				sizeType) + i.top + i.bottom;
+		int w = LayoutUtil.getSizeSafe(grid != null ? grid.getWidth() : null, sizeType) + i.left + i.right;
+		int h = LayoutUtil.getSizeSafe(grid != null ? grid.getHeight() : null, sizeType) + i.top + i.bottom;
 
 		return new Dimension(w, h);
 	}
 
 	public float getLayoutAlignmentX(Container parent) {
-		return lc != null && lc.getAlignX() != null ? lc.getAlignX().getPixels(
-				1, checkParent(parent), null) : 0;
+		return lc != null && lc.getAlignX() != null ? lc.getAlignX().getPixels(1, checkParent(parent), null) : 0;
 	}
 
 	public float getLayoutAlignmentY(Container parent) {
-		return lc != null && lc.getAlignY() != null ? lc.getAlignY().getPixels(
-				1, checkParent(parent), null) : 0;
+		return lc != null && lc.getAlignY() != null ? lc.getAlignY().getPixels(1, checkParent(parent), null) : 0;
 	}
 
 	public void addLayoutComponent(String s, Component comp) {
@@ -814,8 +785,7 @@ public final class MigLayout implements LayoutManager2, Externalizable {
 		return LayoutUtil.getSerializedObject(this);
 	}
 
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		LayoutUtil.setSerializedObject(this, LayoutUtil.readAsXML(in));
 	}
 

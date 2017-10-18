@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.x500.X500Principal;
-
 import org.ripple.bouncycastle.asn1.ASN1Encodable;
 import org.ripple.bouncycastle.asn1.ASN1Enumerated;
 import org.ripple.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -75,7 +73,6 @@ import org.ripple.bouncycastle.util.Selector;
 import org.ripple.bouncycastle.util.Store;
 import org.ripple.bouncycastle.util.StoreException;
 import org.ripple.bouncycastle.x509.X509AttributeCertificate;
-import org.ripple.bouncycastle.x509.extension.X509ExtensionUtil;
 
 class CertPathValidatorUtilities
 {
@@ -717,7 +714,7 @@ class CertPathValidatorUtilities
 
                         for (int j = 0; j < genNames.length; j++)
                         {
-                            PKIXCRLStore store = namedCRLStoreMap.get(genNames[j]);
+                            PKIXCRLStore store = namedCRLStoreMap.get(genNames[i]);
                             if (store != null)
                             {
                                 stores.add(store);
@@ -891,16 +888,11 @@ class CertPathValidatorUtilities
                 return;
             }
 
-            X500Principal certificateIssuer = crl_entry.getCertificateIssuer();
+            X500Name certIssuer = X500Name.getInstance(crl_entry.getCertificateIssuer().getEncoded());
 
-            X500Name certIssuer;
-            if (certificateIssuer == null)
+            if (certIssuer == null)
             {
                 certIssuer = PrincipalUtils.getIssuerPrincipal(crl);
-            }
-            else
-            {
-                certIssuer = X500Name.getInstance(certificateIssuer.getEncoded());
             }
 
             if (! PrincipalUtils.getEncodedIssuerPrincipal(cert).equals(certIssuer))

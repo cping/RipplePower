@@ -15,55 +15,44 @@ public class ImageRenderer extends DefaultTableCellRenderer {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final static ImageIcon XRP_ICON = new ImageIcon(LImage
-			.createImage("icons/ripple.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon XRP_ICON = new ImageIcon(
+			LImage.createImage("icons/ripple.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon BTC_ICON = new ImageIcon(LImage
-			.createImage("icons/btc.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon BTC_ICON = new ImageIcon(
+			LImage.createImage("icons/btc.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon DOG_ICON = new ImageIcon(LImage
-			.createImage("icons/dog.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon DOG_ICON = new ImageIcon(
+			LImage.createImage("icons/dog.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon LTC_ICON = new ImageIcon(LImage
-			.createImage("icons/ltc.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon LTC_ICON = new ImageIcon(
+			LImage.createImage("icons/ltc.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon USD_ICON = new ImageIcon(LImage
-			.createImage("icons/flags/us.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon USD_ICON = new ImageIcon(
+			LImage.createImage("icons/flags/us.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon JPY_ICON = new ImageIcon(LImage
-			.createImage("icons/flags/jp.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon JPY_ICON = new ImageIcon(
+			LImage.createImage("icons/flags/jp.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon KRW_ICON = new ImageIcon(LImage
-			.createImage("icons/flags/kr.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon KRW_ICON = new ImageIcon(
+			LImage.createImage("icons/flags/kr.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon EUR_ICON = new ImageIcon(LImage
-			.createImage("icons/flags/eu.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon EUR_ICON = new ImageIcon(
+			LImage.createImage("icons/flags/eu.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon CNY_ICON = new ImageIcon(LImage
-			.createImage("icons/flags/cn.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon CNY_ICON = new ImageIcon(
+			LImage.createImage("icons/flags/cn.png").scaledInstance(16, 16).getBufferedImage());
 
-	private final static ImageIcon OTHER_ICON = new ImageIcon(LImage
-			.createImage("icons/other.png").scaledInstance(16, 16)
-			.getBufferedImage());
+	private final static ImageIcon OTHER_ICON = new ImageIcon(
+			LImage.createImage("icons/other.png").scaledInstance(16, 16).getBufferedImage());
 
 	public ImageRenderer(int alignment) {
 		super();
 		setHorizontalAlignment(alignment);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
-		JLabel label = (JLabel) super.getTableCellRendererComponent(table,
-				value, isSelected, hasFocus, row, column);
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
+		JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		String type = (String) value;
 		if ("xrp".equalsIgnoreCase(type)) {
 			label.setIcon(XRP_ICON);

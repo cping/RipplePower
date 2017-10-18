@@ -57,16 +57,14 @@ final class GenericGFPoly {
 			// Leading term must be non-zero for anything except the constant
 			// polynomial "0"
 			int firstNonZero = 1;
-			while (firstNonZero < coefficientsLength
-					&& coefficients[firstNonZero] == 0) {
+			while (firstNonZero < coefficientsLength && coefficients[firstNonZero] == 0) {
 				firstNonZero++;
 			}
 			if (firstNonZero == coefficientsLength) {
 				this.coefficients = new int[] { 0 };
 			} else {
 				this.coefficients = new int[coefficientsLength - firstNonZero];
-				System.arraycopy(coefficients, firstNonZero, this.coefficients,
-						0, this.coefficients.length);
+				System.arraycopy(coefficients, firstNonZero, this.coefficients, 0, this.coefficients.length);
 			}
 		} else {
 			this.coefficients = coefficients;
@@ -117,16 +115,14 @@ final class GenericGFPoly {
 		}
 		int result = coefficients[0];
 		for (int i = 1; i < size; i++) {
-			result = GenericGF.addOrSubtract(field.multiply(a, result),
-					coefficients[i]);
+			result = GenericGF.addOrSubtract(field.multiply(a, result), coefficients[i]);
 		}
 		return result;
 	}
 
 	GenericGFPoly addOrSubtract(GenericGFPoly other) {
 		if (!field.equals(other.field)) {
-			throw new IllegalArgumentException(
-					"GenericGFPolys do not have same GenericGF field");
+			throw new IllegalArgumentException("GenericGFPolys do not have same GenericGF field");
 		}
 		if (isZero()) {
 			return other;
@@ -149,8 +145,7 @@ final class GenericGFPoly {
 		System.arraycopy(largerCoefficients, 0, sumDiff, 0, lengthDiff);
 
 		for (int i = lengthDiff; i < largerCoefficients.length; i++) {
-			sumDiff[i] = GenericGF.addOrSubtract(smallerCoefficients[i
-					- lengthDiff], largerCoefficients[i]);
+			sumDiff[i] = GenericGF.addOrSubtract(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
 		}
 
 		return new GenericGFPoly(field, sumDiff);
@@ -158,8 +153,7 @@ final class GenericGFPoly {
 
 	GenericGFPoly multiply(GenericGFPoly other) {
 		if (!field.equals(other.field)) {
-			throw new IllegalArgumentException(
-					"GenericGFPolys do not have same GenericGF field");
+			throw new IllegalArgumentException("GenericGFPolys do not have same GenericGF field");
 		}
 		if (isZero() || other.isZero()) {
 			return field.getZero();
@@ -172,8 +166,7 @@ final class GenericGFPoly {
 		for (int i = 0; i < aLength; i++) {
 			int aCoeff = aCoefficients[i];
 			for (int j = 0; j < bLength; j++) {
-				product[i + j] = GenericGF.addOrSubtract(product[i + j],
-						field.multiply(aCoeff, bCoefficients[j]));
+				product[i + j] = GenericGF.addOrSubtract(product[i + j], field.multiply(aCoeff, bCoefficients[j]));
 			}
 		}
 		return new GenericGFPoly(field, product);
@@ -211,8 +204,7 @@ final class GenericGFPoly {
 
 	GenericGFPoly[] divide(GenericGFPoly other) {
 		if (!field.equals(other.field)) {
-			throw new IllegalArgumentException(
-					"GenericGFPolys do not have same GenericGF field");
+			throw new IllegalArgumentException("GenericGFPolys do not have same GenericGF field");
 		}
 		if (other.isZero()) {
 			throw new IllegalArgumentException("Divide by 0");
@@ -222,19 +214,13 @@ final class GenericGFPoly {
 		GenericGFPoly remainder = this;
 
 		int denominatorLeadingTerm = other.getCoefficient(other.getDegree());
-		int inverseDenominatorLeadingTerm = field
-				.inverse(denominatorLeadingTerm);
+		int inverseDenominatorLeadingTerm = field.inverse(denominatorLeadingTerm);
 
-		while (remainder.getDegree() >= other.getDegree()
-				&& !remainder.isZero()) {
+		while (remainder.getDegree() >= other.getDegree() && !remainder.isZero()) {
 			int degreeDifference = remainder.getDegree() - other.getDegree();
-			int scale = field.multiply(
-					remainder.getCoefficient(remainder.getDegree()),
-					inverseDenominatorLeadingTerm);
-			GenericGFPoly term = other.multiplyByMonomial(degreeDifference,
-					scale);
-			GenericGFPoly iterationQuotient = field.buildMonomial(
-					degreeDifference, scale);
+			int scale = field.multiply(remainder.getCoefficient(remainder.getDegree()), inverseDenominatorLeadingTerm);
+			GenericGFPoly term = other.multiplyByMonomial(degreeDifference, scale);
+			GenericGFPoly iterationQuotient = field.buildMonomial(degreeDifference, scale);
 			quotient = quotient.addOrSubtract(iterationQuotient);
 			remainder = remainder.addOrSubtract(term);
 		}

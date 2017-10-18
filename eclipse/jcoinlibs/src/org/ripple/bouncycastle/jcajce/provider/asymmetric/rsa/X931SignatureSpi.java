@@ -12,7 +12,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import org.ripple.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.ripple.bouncycastle.crypto.CipherParameters;
 import org.ripple.bouncycastle.crypto.Digest;
-import org.ripple.bouncycastle.crypto.digests.MD5Digest;
 import org.ripple.bouncycastle.crypto.digests.RIPEMD128Digest;
 import org.ripple.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.ripple.bouncycastle.crypto.digests.SHA1Digest;
@@ -22,7 +21,6 @@ import org.ripple.bouncycastle.crypto.digests.SHA384Digest;
 import org.ripple.bouncycastle.crypto.digests.SHA512Digest;
 import org.ripple.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.ripple.bouncycastle.crypto.engines.RSABlindedEngine;
-import org.ripple.bouncycastle.crypto.signers.ISO9796d2Signer;
 import org.ripple.bouncycastle.crypto.signers.X931Signer;
 
 public class X931SignatureSpi

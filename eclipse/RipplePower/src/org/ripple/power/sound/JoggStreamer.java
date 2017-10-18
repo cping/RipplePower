@@ -84,8 +84,7 @@ public class JoggStreamer extends Thread {
 	}
 
 	public String getVendor() {
-		return vorbisComment == null ? null
-				: convertField(vorbisComment.vendor);
+		return vorbisComment == null ? null : convertField(vorbisComment.vendor);
 	}
 
 	public int getCommentCount() {
@@ -93,8 +92,7 @@ public class JoggStreamer extends Thread {
 	}
 
 	public String getComment(int index) {
-		return vorbisComment == null ? null
-				: convertField(vorbisComment.user_comments[index]);
+		return vorbisComment == null ? null : convertField(vorbisComment.user_comments[index]);
 	}
 
 	public void run() {
@@ -279,11 +277,9 @@ public class JoggStreamer extends Thread {
 
 	private void openOutput() throws IOException {
 
-		AudioFormat audioFormat = new AudioFormat((float) vorbisInfo.rate, 16,
-				vorbisInfo.channels, true, false);
+		AudioFormat audioFormat = new AudioFormat((float) vorbisInfo.rate, 16, vorbisInfo.channels, true, false);
 
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-				audioFormat, AudioSystem.NOT_SPECIFIED);
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat, AudioSystem.NOT_SPECIFIED);
 
 		if (!AudioSystem.isLineSupported(info))
 
@@ -309,8 +305,7 @@ public class JoggStreamer extends Thread {
 	public void updateVolume(int percent) {
 		if (out != null && out.isOpen()) {
 			try {
-				FloatControl c = (FloatControl) out
-						.getControl(FloatControl.Type.MASTER_GAIN);
+				FloatControl c = (FloatControl) out.getControl(FloatControl.Type.MASTER_GAIN);
 				float min = c.getMinimum();
 				float v = percent * (c.getMaximum() - min) / 100f + min;
 				c.setValue(v);

@@ -43,12 +43,7 @@ public class AuthorityInformationAccess
 
         return null;
     }
-
-    public static AuthorityInformationAccess fromExtensions(Extensions extensions)
-    {
-         return AuthorityInformationAccess.getInstance(extensions.getExtensionParsedValue(Extension.authorityInfoAccess));
-    }
-
+ 
     private AuthorityInformationAccess(
         ASN1Sequence   seq)
     {
@@ -68,14 +63,7 @@ public class AuthorityInformationAccess
     public AuthorityInformationAccess(
         AccessDescription description)
     {
-        this(new AccessDescription[]{ description });
-    }
-
-    public AuthorityInformationAccess(
-        AccessDescription[] descriptions)
-    {
-        this.descriptions = new AccessDescription[descriptions.length];
-        System.arraycopy(descriptions, 0, this.descriptions, 0, descriptions.length);
+        this.descriptions = new AccessDescription[]{ description };
     }
 
     /**

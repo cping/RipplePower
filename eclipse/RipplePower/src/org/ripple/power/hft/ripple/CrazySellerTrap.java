@@ -55,8 +55,7 @@ public class CrazySellerTrap extends TraderBase {
 
 	private double _xrpBalance;
 
-	public CrazySellerTrap(RippleBackendsAPI api, RippleSeedAddress seed,
-			BOT_SET set, BotLog log) {
+	public CrazySellerTrap(RippleBackendsAPI api, RippleSeedAddress seed, BOT_SET set, BotLog log) {
 		super(api, seed, set, log);
 		this._operativeAmount = set.operative_amount;
 		this._minWallVolume = set.min_volume;
@@ -65,23 +64,21 @@ public class CrazySellerTrap extends TraderBase {
 		this._minPriceUpdate = set.minPriceUpdate;
 		this._currencyCode = set.currency_code;
 		if (set.arbitrage) {
-			if ((set.baseGateway == null) || (set.baseCurrency == null)
-					|| (set.arbCurrency == null) || (set.arbGateway == null)) {
-				throw new BOTException(
-						"Configuration key 'baseGateway' or 'arbGateway' missing");
+			if ((set.baseGateway == null) || (set.baseCurrency == null) || (set.arbCurrency == null)
+					|| (set.arbGateway == null)) {
+				throw new BOTException("Configuration key 'baseGateway' or 'arbGateway' missing");
 			}
 			this._gateway_address = set.arbGateway;
 			this._currencyCode = set.arbCurrency;
-			this._pay = new Take( set.baseCurrency,set.baseGateway);
-			this._get = new Take(set.arbCurrency,set.arbGateway);
+			this._pay = new Take(set.baseCurrency, set.baseGateway);
+			this._get = new Take(set.arbCurrency, set.arbGateway);
 		} else {
 			if (set.gateway_address == null) {
-				throw new BOTException(
-						"Configuration key 'gateway_address' missing");
+				throw new BOTException("Configuration key 'gateway_address' missing");
 			}
 			this._gateway_address = set.gateway_address;
 			this._pay = IssuedCurrency.BASE;
-			this._get = new Take(_currencyCode,set.gateway_address);
+			this._get = new Take(_currencyCode, set.gateway_address);
 		}
 		if (_log != null) {
 			log("Zombie cleanup: " + _cleanup);
@@ -91,16 +88,12 @@ public class CrazySellerTrap extends TraderBase {
 	@Override
 	protected void check() {
 
-		RippleBOTLoader.Trend trend = RippleBOTLoader
-				.getTrend(_currencyCode, 5);
+		RippleBOTLoader.Trend trend = RippleBOTLoader.getTrend(_currencyCode, 5);
 
-		if ((trend == null) || (trend == RippleBOTLoader.Trend.UP)
-				|| (trend == RippleBOTLoader.Trend.UNKOWN)) {
+		if ((trend == null) || (trend == RippleBOTLoader.Trend.UP) || (trend == RippleBOTLoader.Trend.UNKOWN)) {
 
-			CandlesResponse candles = _rippleApi.getTradeStatistics(
-					LSystem.DAY * 2, _get);
-			Market market = _rippleApi.getSynMarketDepth(null, _pay,
-					_get, query_limit);
+			CandlesResponse candles = _rippleApi.getTradeStatistics(LSystem.DAY * 2, _get);
+			Market market = _rippleApi.getSynMarketDepth(null, _pay, _get, query_limit);
 
 			if (market == null) {
 				return;
@@ -108,12 +101,9 @@ public class CrazySellerTrap extends TraderBase {
 
 			float coef = getMadness(candles.results);
 
-			this._volumeWall = Extensions.suggestWallVolume(coef,
-					_minWallVolume, _maxWallVolume);
-			this._intervalMs = Extensions.suggestInterval(coef, _minInterval,
-					_maxInterval);
-			log("Madness=%s; Volume=%s XRP; Interval=%s ms", coef, _volumeWall,
-					_intervalMs);
+			this._volumeWall = Extensions.suggestWallVolume(coef, _minWallVolume, _maxWallVolume);
+			this._intervalMs = Extensions.suggestInterval(coef, _minInterval, _maxInterval);
+			log("Madness=%s; Volume=%s XRP; Interval=%s ms", coef, _volumeWall, _intervalMs);
 
 			if (-1 != _buyOrderId) {
 				Offer buyOrder = _rippleApi.getSynOrderInfo(_buyOrderId);
@@ -124,46 +114,37 @@ public class CrazySellerTrap extends TraderBase {
 
 				if (!buyOrder.Closed) {
 					if (Extensions.eq(buyOrder.getAmountXrp(), _buyOrderAmount)) {
-						log("BUY order ID=%s untouched (amount=%s XRP, price=%s %s)",
-								_buyOrderId, _buyOrderAmount, _buyOrderPrice,
-								buyOrder.getCurrency());
+						log("BUY order ID=%s untouched (amount=%s XRP, price=%s %s)", _buyOrderId, _buyOrderAmount,
+								_buyOrderPrice, buyOrder.getCurrency());
 
 						double price = suggestBuyPrice(market);
 						double newAmount = _operativeAmount - _sellOrderAmount;
 
-						if (newAmount > _buyOrderAmount
-								|| !Extensions.eq(_buyOrderPrice, price)) {
+						if (newAmount > _buyOrderAmount || !Extensions.eq(_buyOrderPrice, price)) {
 							_buyOrderAmount = newAmount;
-							_buyOrderId = _rippleApi.updateSynXRPBuyOrder(
-									_buyOrderId, price, newAmount, _get);
+							_buyOrderId = _rippleApi.updateSynXRPBuyOrder(_buyOrderId, price, newAmount, _get);
 							_buyOrderPrice = price;
-							log("Updated BUY order ID=%s; amount=%s XRP; price=%s %s",
-									_buyOrderId, _buyOrderAmount, price,
-									buyOrder.getCurrency());
+							log("Updated BUY order ID=%s; amount=%s XRP; price=%s %s", _buyOrderId, _buyOrderAmount,
+									price, buyOrder.getCurrency());
 						}
-					} else
-					{
+					} else {
 						_executedBuyPrice = buyOrder.getPrice();
 						_buyOrderAmount = buyOrder.getAmountXrp();
-						log("BUY order ID=%s partially filled at price=%s %s. Remaining amount=%s XRP;",
-								_buyOrderId, _executedBuyPrice,
-								buyOrder.getCurrency(), buyOrder.getAmountXrp());
-		
+						log("BUY order ID=%s partially filled at price=%s %s. Remaining amount=%s XRP;", _buyOrderId,
+								_executedBuyPrice, buyOrder.getCurrency(), buyOrder.getAmountXrp());
+
 						if (buyOrder.getAmountXrp() < MIN_ORDER_AMOUNT) {
-							log("The remaining BUY amount is too small, canceling the order ID=%s",
-									_buyOrderId);
-							_rippleApi.cancelSynOrder(_buyOrderId); 
+							log("The remaining BUY amount is too small, canceling the order ID=%s", _buyOrderId);
+							_rippleApi.cancelSynOrder(_buyOrderId);
 							_executedBuyPrice = _buyOrderPrice;
 							_buyOrderId = -1;
 							_buyOrderAmount = 0.0;
 						} else {
 							double price = suggestBuyPrice(market);
-							_buyOrderId = _rippleApi.updateSynXRPBuyOrder(
-									_buyOrderId, price,
-									buyOrder.getAmountXrp(), _get);
+							_buyOrderId = _rippleApi.updateSynXRPBuyOrder(_buyOrderId, price, buyOrder.getAmountXrp(),
+									_get);
 							_buyOrderPrice = price;
-							log("Updated BUY order ID=%s; amount=%s XRP; price=%s %s",
-									_buyOrderId, _buyOrderAmount,
+							log("Updated BUY order ID=%s; amount=%s XRP; price=%s %s", _buyOrderId, _buyOrderAmount,
 									_buyOrderPrice, buyOrder.getCurrency());
 						}
 					}
@@ -173,34 +154,28 @@ public class CrazySellerTrap extends TraderBase {
 						log("BUY order ID=%s closed but asset validation failed (balance=%s XRP). Asuming was cancelled, trying to recreate",
 								_buyOrderId, balance);
 						_buyOrderPrice = suggestBuyPrice(market);
-						_buyOrderId = _rippleApi.placeSynXRPBuyOrder(
-								_buyOrderPrice, _buyOrderAmount, _get);
+						_buyOrderId = _rippleApi.placeSynXRPBuyOrder(_buyOrderPrice, _buyOrderAmount, _get);
 
 						if (-1 != _buyOrderId) {
-							log("Successfully created BUY order with ID=%s; amount=%s XRP; price=%s %s",
-									_buyOrderId, _buyOrderAmount,
-									_buyOrderPrice, _currencyCode);
+							log("Successfully created BUY order with ID=%s; amount=%s XRP; price=%s %s", _buyOrderId,
+									_buyOrderAmount, _buyOrderPrice, _currencyCode);
 						}
 					} else {
 						_executedBuyPrice = _buyOrderPrice;
-						log("BUY order ID=%s (amount=%s XRP) was closed at price=%s %s",
-								_buyOrderId, _buyOrderAmount,
+						log("BUY order ID=%s (amount=%s XRP) was closed at price=%s %s", _buyOrderId, _buyOrderAmount,
 								_executedBuyPrice, _currencyCode);
 						_buyOrderId = -1;
 						_buyOrderAmount = 0;
 					}
 				}
-			} else if (_operativeAmount - _sellOrderAmount > 0.00001) 
-			{
+			} else if (_operativeAmount - _sellOrderAmount > 0.00001) {
 				_buyOrderPrice = suggestBuyPrice(market);
 				_buyOrderAmount = _operativeAmount - _sellOrderAmount;
-				_buyOrderId = _rippleApi.placeSynXRPBuyOrder(_buyOrderPrice,
-						_buyOrderAmount, _get);
+				_buyOrderId = _rippleApi.placeSynXRPBuyOrder(_buyOrderPrice, _buyOrderAmount, _get);
 
 				if (-1 != _buyOrderId) {
-					log("Successfully created BUY order with ID=%s; amount=%s XRP; price=%s %s",
-							_buyOrderId, _buyOrderAmount, _buyOrderPrice,
-							_currencyCode);
+					log("Successfully created BUY order with ID=%s; amount=%s XRP; price=%s %s", _buyOrderId,
+							_buyOrderAmount, _buyOrderPrice, _currencyCode);
 				}
 			}
 
@@ -214,62 +189,50 @@ public class CrazySellerTrap extends TraderBase {
 
 					// The order is still open
 					if (!sellOrder.Closed) {
-						log("SELL order ID=%s open (amount=%s XRP, price=%s %s)",
-								_sellOrderId, sellOrder.getAmountXrp(),
-								_sellOrderPrice, sellOrder.getCurrency());
+						log("SELL order ID=%s open (amount=%s XRP, price=%s %s)", _sellOrderId,
+								sellOrder.getAmountXrp(), _sellOrderPrice, sellOrder.getCurrency());
 
 						double price = suggestSellPrice(market);
 
 						// Partially filled
-						if (!Extensions.eq(sellOrder.getAmountXrp(),
-								_sellOrderAmount)) {
+						if (!Extensions.eq(sellOrder.getAmountXrp(), _sellOrderAmount)) {
 							log("SELL order ID=%s partially filled at price=%s %s. Remaining amount=%s XRP;",
-									_sellOrderId, sellOrder.getPrice(),
-									sellOrder.getCurrency(),
+									_sellOrderId, sellOrder.getPrice(), sellOrder.getCurrency(),
 									sellOrder.getAmountXrp());
 
 							// Check remaining amount, drop the SELL if it's
 							// very tiny
 							if (sellOrder.getAmountXrp() < MIN_ORDER_AMOUNT) {
-								log("The remaining SELL amount is too small, canceling the order ID=%s",
-										_sellOrderId);
+								log("The remaining SELL amount is too small, canceling the order ID=%s", _sellOrderId);
 								_rippleApi.cancelSynOrder(_sellOrderId);
 								_sellOrderId = -1;
 								_sellOrderAmount = 0.0;
 							} else {
 								double amount = sellOrder.getAmountXrp();
-								_sellOrderId = _rippleApi
-										.updateSynXRPSellOrder(_sellOrderId,
-												price, amount, _get);
+								_sellOrderId = _rippleApi.updateSynXRPSellOrder(_sellOrderId, price, amount, _get);
 								_sellOrderAmount = amount;
 								_sellOrderPrice = price;
-								log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s",
-										_sellOrderId, _sellOrderAmount, price,
-										sellOrder.getCurrency());
+								log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s", _sellOrderId,
+										_sellOrderAmount, price, sellOrder.getCurrency());
 							}
 						}
 						// If there were some money released by filling a BUY
 						// order, increase this SELL order
 						else if (_operativeAmount - _buyOrderAmount > _sellOrderAmount) {
-							double newAmount = _operativeAmount
-									- _buyOrderAmount;
-							_sellOrderId = _rippleApi.updateSynXRPSellOrder(
-									_sellOrderId, price, newAmount, _get);
+							double newAmount = _operativeAmount - _buyOrderAmount;
+							_sellOrderId = _rippleApi.updateSynXRPSellOrder(_sellOrderId, price, newAmount, _get);
 							_sellOrderAmount = newAmount;
 							_sellOrderPrice = price;
-							log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s",
-									_sellOrderId, _sellOrderAmount, price,
-									sellOrder.getCurrency());
+							log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s", _sellOrderId, _sellOrderAmount,
+									price, sellOrder.getCurrency());
 						}
 						// Or if we simply need to change price.
 						else if (!Extensions.eq(_sellOrderPrice, price)) {
-							_sellOrderId = _rippleApi
-									.updateSynXRPSellOrder(_sellOrderId, price,
-											_sellOrderAmount, _get);
+							_sellOrderId = _rippleApi.updateSynXRPSellOrder(_sellOrderId, price, _sellOrderAmount,
+									_get);
 							_sellOrderPrice = price;
-							log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s",
-									_sellOrderId, _sellOrderAmount, price,
-									sellOrder.getCurrency());
+							log("Updated SELL order ID=%s; amount=%s XRP; price=%s %s", _sellOrderId, _sellOrderAmount,
+									price, sellOrder.getCurrency());
 						}
 					} else // Closed or cancelled
 					{
@@ -279,18 +242,15 @@ public class CrazySellerTrap extends TraderBase {
 							log("SELL order ID=%s closed but asset validation failed (balance=%s XRP). Asuming was cancelled, trying to recreate",
 									_sellOrderId, balance);
 							_sellOrderPrice = suggestSellPrice(market);
-							_sellOrderId = _rippleApi.placeSynXRPSellOrder(
-									_sellOrderPrice, _sellOrderAmount, _get);
+							_sellOrderId = _rippleApi.placeSynXRPSellOrder(_sellOrderPrice, _sellOrderAmount, _get);
 
 							if (-1 != _sellOrderId) {
 								log("Successfully created SELL order with ID=%s; amount=%s XRP; price=%s %s",
-										_sellOrderId, _sellOrderAmount,
-										_sellOrderPrice, _currencyCode);
+										_sellOrderId, _sellOrderAmount, _sellOrderPrice, _currencyCode);
 							}
 						} else {
-							log("SELL order ID=%s (amount=%s XRP) was closed at price=%s %s",
-									_sellOrderId, _sellOrderAmount,
-									_sellOrderPrice, _currencyCode);
+							log("SELL order ID=%s (amount=%s XRP) was closed at price=%s %s", _sellOrderId,
+									_sellOrderAmount, _sellOrderPrice, _currencyCode);
 							_sellOrderAmount = 0;
 							_sellOrderId = -1;
 						}
@@ -299,22 +259,19 @@ public class CrazySellerTrap extends TraderBase {
 				{
 					_sellOrderPrice = suggestSellPrice(market);
 					double amount = _operativeAmount - _buyOrderAmount;
-					_sellOrderId = _rippleApi.placeSynXRPSellOrder(
-							_sellOrderPrice, amount, _get);
+					_sellOrderId = _rippleApi.placeSynXRPSellOrder(_sellOrderPrice, amount, _get);
 					_sellOrderAmount = amount;
 
 					if (-1 != _sellOrderId) {
-						log("Successfully created SELL order with ID=%s; amount=%s XRP; price=%s %s",
-								_sellOrderId, _sellOrderAmount,
-								_sellOrderPrice, _currencyCode);
+						log("Successfully created SELL order with ID=%s; amount=%s XRP; price=%s %s", _sellOrderId,
+								_sellOrderAmount, _sellOrderPrice, _currencyCode);
 					}
 				}
 			}
 
 			if (_cleanup && ++_counter == ZOMBIE_CHECK) {
 				_counter = 0;
-				cleanupZombies(_seed.getPublicKey(), _buyOrderId, _sellOrderId,
-						null);
+				cleanupZombies(_seed.getPublicKey(), _buyOrderId, _sellOrderId, null);
 			}
 		}
 
@@ -325,21 +282,17 @@ public class CrazySellerTrap extends TraderBase {
 
 	private double suggestBuyPrice(Market market) {
 		final int decPlaces = 14;
-		double increment = Math.pow(10.0, -1.0 * decPlaces); 
+		double increment = Math.pow(10.0, -1.0 * decPlaces);
 		double sum = 0;
 		double lowestAsk = market.Asks.get(0).getPrice();
 
 		for (Bid bid : market.Bids) {
-			if (sum + _operativeAmount > _volumeWall
-					&& bid.getPrice() + 2.0 * _minDifference < lowestAsk) {
-				double buyPrice = MathUtils.round(bid.getPrice() + increment,
-						decPlaces);
+			if (sum + _operativeAmount > _volumeWall && bid.getPrice() + 2.0 * _minDifference < lowestAsk) {
+				double buyPrice = MathUtils.round(bid.getPrice() + increment, decPlaces);
 
-				if (-1 != _buyOrderId
-						&& buyPrice < market.Bids.get(0).getPrice()
+				if (-1 != _buyOrderId && buyPrice < market.Bids.get(0).getPrice()
 						&& Math.abs(buyPrice - _buyOrderPrice) < _minPriceUpdate) {
-					log("DEBUG: BUY price %s too similar, using previous",
-							buyPrice);
+					log("DEBUG: BUY price %s too similar, using previous", buyPrice);
 					return _buyOrderPrice;
 				}
 
@@ -352,10 +305,8 @@ public class CrazySellerTrap extends TraderBase {
 			}
 		}
 
-		double price = market.Bids.get(market.Bids.size() - 1).getPrice()
-				+ increment;
-		if (-1 != _buyOrderId
-				&& Math.abs(price - _buyOrderPrice) < _minPriceUpdate) {
+		double price = market.Bids.get(market.Bids.size() - 1).getPrice() + increment;
+		if (-1 != _buyOrderId && Math.abs(price - _buyOrderPrice) < _minPriceUpdate) {
 			return _buyOrderPrice;
 		}
 		return MathUtils.round(price, 7);
@@ -363,13 +314,12 @@ public class CrazySellerTrap extends TraderBase {
 
 	private double suggestSellPrice(Market market) {
 		final int decPlaces = 14;
-		double increment = Math.pow(10.0, -1.0 * decPlaces); 
+		double increment = Math.pow(10.0, -1.0 * decPlaces);
 
 		double sumVolume = 0.0;
 		for (Ask ask : market.Asks) {
 
-			if (Extensions.eq(ask.getPrice(), _sellOrderPrice)
-					&& Extensions.eq(ask.getAmount(), _sellOrderAmount)) {
+			if (Extensions.eq(ask.getPrice(), _sellOrderPrice) && Extensions.eq(ask.getAmount(), _sellOrderAmount)) {
 				continue;
 			}
 
@@ -380,8 +330,7 @@ public class CrazySellerTrap extends TraderBase {
 
 			if (ask.getPrice() > _executedBuyPrice + _minDifference) {
 				return Extensions.eq(ask.getPrice(), _sellOrderPrice) ? _sellOrderPrice
-						: MathUtils
-								.round(ask.getPrice() - increment, decPlaces);
+						: MathUtils.round(ask.getPrice() - increment, decPlaces);
 			}
 		}
 

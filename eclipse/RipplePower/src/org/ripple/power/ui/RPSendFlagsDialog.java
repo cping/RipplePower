@@ -36,7 +36,7 @@ import org.ripple.power.wallet.WalletItem;
 
 import com.ripple.core.coretypes.Amount;
 
-public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
+public class RPSendFlagsDialog extends ABaseDialog implements WindowListener {
 	/**
 	 * 
 	 */
@@ -78,8 +78,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
 	private WalletItem _item;
 
-	public static RPSendFlagsDialog showDialog(String title, Window parent,
-			WalletItem item) {
+	public static RPSendFlagsDialog showDialog(String title, Window parent, WalletItem item) {
 		RPSendFlagsDialog dialog = new RPSendFlagsDialog(title, parent, item);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
@@ -93,7 +92,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(815, 565);
+		Dimension dim = new Dimension(815, 585);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -308,8 +307,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				final WaitDialog dialog = WaitDialog
-						.showDialog(RPSendFlagsDialog.this);
+				final WaitDialog dialog = WaitDialog.showDialog(RPSendFlagsDialog.this);
 				_waitDialogs.add(dialog);
 
 				Updateable update = new Updateable() {
@@ -323,8 +321,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 							try {
 								recipient = NameFind.getAddress(recipient);
 							} catch (Exception ex) {
-								RPToast.makeText(RPSendFlagsDialog.this,
-										UIMessage.errNotAddress, Style.ERROR)
+								RPToast.makeText(RPSendFlagsDialog.this, UIMessage.errNotAddress, Style.ERROR)
 										.display();
 								return;
 							}
@@ -333,15 +330,12 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 						if (!StringUtils.isNumber(fee)) {
 							return;
 						}
-						Amount amount = getAmount(_amountText,
-								_amount_cur_item, _amount_gateway_item);
+						Amount amount = getAmount(_amountText, _amount_cur_item, _amount_gateway_item);
 						if (amount != null) {
 
-							Amount deliveredAmount = getAmount(_deliveredText,
-									_delivered_cur_item,
+							Amount deliveredAmount = getAmount(_deliveredText, _delivered_cur_item,
 									_delivered_gateway_item);
-							Amount sendMax = getAmount(_sendmaxText,
-									_sendmax_cur_item, _sendmax_gateway_item);
+							Amount sendMax = getAmount(_sendmaxText, _sendmax_cur_item, _sendmax_gateway_item);
 
 							String invoiceID = _idText.getText().trim();
 
@@ -349,12 +343,10 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 							long flags = 0;
 
 							try {
-								dt = new BigDecimal(_tagText.getText().trim())
-										.longValue();
-								flags = new BigDecimal(TransactionFlagMap
-										.getFlag(((String) _flagsItem
-												.getSelectedItem()).trim()))
-										.longValue();
+								dt = new BigDecimal(_tagText.getText().trim()).longValue();
+								flags = new BigDecimal(
+										TransactionFlagMap.getFlag(((String) _flagsItem.getSelectedItem()).trim()))
+												.longValue();
 							} catch (Exception ex) {
 								dt = 0;
 								flags = 0;
@@ -364,13 +356,10 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 
 							RippleMemoEncode encode = null;
 							if (!StringUtils.isEmpty(memo)) {
-								encode = new RippleMemoEncode(
-										RippleMemoEncode.Mode.ENCODE,
-										"message", memo, null);
+								encode = new RippleMemoEncode(RippleMemoEncode.Mode.ENCODE, "message", memo, null);
 							}
 
-							Payment.send(_item.getSeed(), amount, sendMax,
-									deliveredAmount, recipient, flags, dt,
+							Payment.send(_item.getSeed(), amount, sendMax, deliveredAmount, recipient, flags, dt,
 									invoiceID, encode, fee, new Rollback() {
 
 										@Override
@@ -403,18 +392,15 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 		pack();
 	}
 
-	private static Amount getAmount(RPTextBox amountText,
-			RPComboBox amount_cur_item, RPComboBox amount_gateway_item) {
+	private static Amount getAmount(RPTextBox amountText, RPComboBox amount_cur_item, RPComboBox amount_gateway_item) {
 		String amount = amountText.getText().trim();
 		if (!StringUtils.isNumber(amount)) {
 			return null;
 		}
 		Amount amount_value = null;
 		String amount_cur = ((String) amount_cur_item.getSelectedItem()).trim();
-		String amount_gateway = ((String) amount_gateway_item.getSelectedItem())
-				.trim();
-		if (StringUtils.isEmpty(amount_cur)
-				|| StringUtils.isEmpty(amount_gateway)
+		String amount_gateway = ((String) amount_gateway_item.getSelectedItem()).trim();
+		if (StringUtils.isEmpty(amount_cur) || StringUtils.isEmpty(amount_gateway)
 				|| LSystem.nativeCurrency.equalsIgnoreCase(amount_cur)) {
 			amount_value = Amount.fromString(amount);
 		} else {
@@ -433,8 +419,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 			} else {
 				gateway_address = amount_gateway;
 			}
-			amount_value = Amount.fromString(amount + "/" + amount_cur + "/"
-					+ gateway_address);
+			amount_value = Amount.fromString(amount + "/" + amount_cur + "/" + gateway_address);
 		}
 		return amount_value;
 	}
@@ -442,13 +427,13 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -465,24 +450,24 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener{
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

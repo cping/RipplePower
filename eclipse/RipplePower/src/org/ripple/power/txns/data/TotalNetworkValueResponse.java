@@ -11,8 +11,7 @@ import org.ripple.power.txns.IssuedCurrency;
 public class TotalNetworkValueResponse {
 
 	public String rowkey;
-	public List<TotalNetworkValue> components = new ArrayList<TotalNetworkValue>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<TotalNetworkValue> components = new ArrayList<TotalNetworkValue>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 	public long count;
 	public String startTime;
 	public String endTime;

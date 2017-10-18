@@ -40,21 +40,17 @@ public class EditorDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private ROCScript _script;
 
-	private static ImageIcon compileIcon = new ImageIcon(LImage
-			.createImage("icons/compile.png").scaledInstance(24, 24)
-			.getBufferedImage());
+	private static ImageIcon compileIcon = new ImageIcon(
+			LImage.createImage("icons/compile.png").scaledInstance(24, 24).getBufferedImage());
 
-	private static ImageIcon saveIcon = new ImageIcon(LImage
-			.createImage("icons/save.png").scaledInstance(24, 24)
-			.getBufferedImage());
+	private static ImageIcon saveIcon = new ImageIcon(
+			LImage.createImage("icons/save.png").scaledInstance(24, 24).getBufferedImage());
 
-	private static ImageIcon openIcon = new ImageIcon(LImage
-			.createImage("icons/open.png").scaledInstance(24, 24)
-			.getBufferedImage());
+	private static ImageIcon openIcon = new ImageIcon(
+			LImage.createImage("icons/open.png").scaledInstance(24, 24).getBufferedImage());
 
-	private static ImageIcon exitIcon = new ImageIcon(LImage
-			.createImage("icons/stop.png").scaledInstance(24, 24)
-			.getBufferedImage());
+	private static ImageIcon exitIcon = new ImageIcon(
+			LImage.createImage("icons/stop.png").scaledInstance(24, 24).getBufferedImage());
 
 	class Console implements IScriptLog {
 
@@ -340,8 +336,7 @@ public class EditorDialog extends JDialog {
 	}
 
 	public EditorDialog(Window parent) {
-		super(parent, "ROC Script Editor(Developing)",
-				Dialog.ModalityType.MODELESS);
+		super(parent, "ROC Script Editor(Developing)", Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
 		setResizable(false);
 		Dimension dim = new Dimension(818, 595);
@@ -397,8 +392,7 @@ public class EditorDialog extends JDialog {
 			public void valueChanged(ListSelectionEvent e) {
 				int idx = _list.getSelectedIndex();
 				if (idx > -1) {
-					_editorText.setText(getContext((String) _list
-							.getSelectedValue()));
+					_editorText.setText(getContext((String) _list.getSelectedValue()));
 				}
 			}
 		});
@@ -425,8 +419,7 @@ public class EditorDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jFileChooser = new JFileChooser(LSystem
-						.getRippleDirectory());
+				JFileChooser jFileChooser = new JFileChooser(LSystem.getRippleDirectory());
 				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
 				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jFileChooser.setDialogTitle("Save ROC Script");
@@ -453,8 +446,7 @@ public class EditorDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jFileChooser = new JFileChooser(LSystem
-						.getRippleDirectory());
+				JFileChooser jFileChooser = new JFileChooser(LSystem.getRippleDirectory());
 				jFileChooser.setFileFilter(ROCScriptEditor.FILTER);
 				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jFileChooser.setDialogTitle("Open ROC Script");
@@ -464,8 +456,7 @@ public class EditorDialog extends JDialog {
 					if (file.exists()) {
 						_editorText.setFile(file);
 						_editorText.openFile();
-						UIMessage.infoMessage(EditorDialog.this,
-								"Open Completed");
+						UIMessage.infoMessage(EditorDialog.this, "Open Completed");
 					}
 				}
 			}
@@ -492,8 +483,7 @@ public class EditorDialog extends JDialog {
 					_script = null;
 				}
 				try {
-					_script = new ROCScript(new Console(), _editorText
-							.getText(), false);
+					_script = new ROCScript(new Console(), _editorText.getText(), false);
 				} catch (ScriptException ex) {
 					print(ex.getMessage());
 				}

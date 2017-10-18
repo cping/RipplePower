@@ -89,33 +89,26 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 	private ArrayList<String> _iouList = new ArrayList<String>(100);
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
-	
+
 	private class userMouseListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
 			if (_listGateway.getSelectedValuesList().size() > 0) {
-				if (e.isPopupTrigger()
-						&& Gateway.getOneUserAddress((String) _listGateway
-								.getSelectedValue()) != null) {
-					_userGatewayMenu.show((Component) e.getSource(), e.getX(),
-							e.getY());
+				if (e.isPopupTrigger() && Gateway.getOneUserAddress((String) _listGateway.getSelectedValue()) != null) {
+					_userGatewayMenu.show((Component) e.getSource(), e.getX(), e.getY());
 				}
 			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
 			if (_listGateway.getSelectedValuesList().size() > 0) {
-				if (e.isPopupTrigger()
-						&& Gateway.getOneUserAddress((String) _listGateway
-								.getSelectedValue()) != null) {
-					_userGatewayMenu.show((Component) e.getSource(), e.getX(),
-							e.getY());
+				if (e.isPopupTrigger() && Gateway.getOneUserAddress((String) _listGateway.getSelectedValue()) != null) {
+					_userGatewayMenu.show((Component) e.getSource(), e.getX(), e.getY());
 				}
 			}
 		}
 	}
 
-	public static RPGatewayDialog showDialog(String text, JFrame parent,
-			final WalletItem item) {
+	public static RPGatewayDialog showDialog(String text, JFrame parent, final WalletItem item) {
 		RPGatewayDialog dialog = new RPGatewayDialog(text, parent, item);
 		dialog.pack();
 		dialog.setLocationRelativeTo(parent);
@@ -129,11 +122,11 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(780, 610);
+		Dimension dim = new Dimension(780, 620);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
-		
+
 		HelperDialog.setSystemHelperMessage("Set or Add and Create Ripple Gateway . ");
 
 	}
@@ -190,8 +183,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		getContentPane().add(spLine);
 		spLine.setBounds(0, 520, 781, 10);
 
-		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list",
-				"Gateway List"));
+		_gatewayListLabel.setText(LangConfig.get(this, "gateway_list", "Gateway List"));
 		_gatewayListLabel.setFont(font);
 		getContentPane().add(_gatewayListLabel);
 		_gatewayListLabel.setBounds(10, 10, 170, 20);
@@ -207,8 +199,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 
 		_gatewayAddressLabel.setFont(font); // NOI18N
 		_gatewayAddressLabel.setForeground(color);
-		_gatewayAddressLabel
-				.setText(LangConfig.get(this, "address", "Address"));
+		_gatewayAddressLabel.setText(LangConfig.get(this, "address", "Address"));
 		_panel.add(_gatewayAddressLabel);
 		_gatewayAddressLabel.setBounds(10, 20, 91, 16);
 
@@ -226,8 +217,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 					double percentage = _trustlimits.getValue();
 					int max = _trustlimits.getMaximum();
 					int min = _trustlimits.getMinimum();
-					int value = (int) (min + (percentage * (max - min))
-							/ max_trust);
+					int value = (int) (min + (percentage * (max - min)) / max_trust);
 					_trustValueText.setText(String.valueOf(value));
 				}
 
@@ -275,8 +265,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		getContentPane().add(_panel);
 		_panel.setBounds(190, 10, 580, 500);
 
-		_iouSupportLabel.setText(LangConfig.get(this, "iou_support",
-				"IOU Support"));
+		_iouSupportLabel.setText(LangConfig.get(this, "iou_support", "IOU Support"));
 		_iouSupportLabel.setFont(font);
 		getContentPane().add(_iouSupportLabel);
 		_iouSupportLabel.setBounds(10, 280, 130, 15);
@@ -284,22 +273,19 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		final ArrayList<String> gatewaystrings = Gateway.gatewayList();
 
 		_listGateway.addMouseListener(new userMouseListener());
-		UIRes.addPopMenu(_userGatewayMenu,
-				LangConfig.get(this, "delete", "Delete Custom Gateway"),
-				new Updateable() {
+		UIRes.addPopMenu(_userGatewayMenu, LangConfig.get(this, "delete", "Delete Custom Gateway"), new Updateable() {
 
-					@Override
-					public void action(Object o) {
-						if (_listGateway.getSelectedValuesList().size() > 0) {
-							String name = (String) _listGateway
-									.getSelectedValue();
-							if (Gateway.delUserGateway(name) != -1) {
-								updateGatewayList();
-							}
-						}
-
+			@Override
+			public void action(Object o) {
+				if (_listGateway.getSelectedValuesList().size() > 0) {
+					String name = (String) _listGateway.getSelectedValue();
+					if (Gateway.delUserGateway(name) != -1) {
+						updateGatewayList();
 					}
-				});
+				}
+
+			}
+		});
 		_listGateway.setModel(new javax.swing.AbstractListModel<Object>() {
 
 			/**
@@ -391,8 +377,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RPAddGatewayDialog.showDialog(LangConfig.get(
-						RPAddGatewayDialog.class, "title", "Add Gateway"),
+				RPAddGatewayDialog.showDialog(LangConfig.get(RPAddGatewayDialog.class, "title", "Add Gateway"),
 						RPGatewayDialog.this);
 			}
 		});
@@ -440,37 +425,30 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 				int idx = _myGateway.getSelectedIndex();
 				if (idx > -1) {
 					IssuedCurrency currency = _trust_list.get(idx);
-					String message = String.format(LangConfig.get(
-							RPGatewayDialog.this, "cancel_trust",
-							"You wish to cancel the gateway %s trust ?"),
-							currency.issuer.toString());
-					int result = UIRes.showConfirmMessage(
-							LSystem.applicationMain, "Cancel trust", message,
+					String message = String.format(LangConfig.get(RPGatewayDialog.this, "cancel_trust",
+							"You wish to cancel the gateway %s trust ?"), currency.issuer.toString());
+					int result = UIRes.showConfirmMessage(LSystem.applicationMain, "Cancel trust", message,
 							UIMessage.ok, UIMessage.cancel);
 					if (result == 0) {
-						final WaitDialog dialog = new WaitDialog(
-								RPGatewayDialog.this);
+						final WaitDialog dialog = new WaitDialog(RPGatewayDialog.this);
 						_waitDialogs.add(dialog);
-						IssuedCurrency cur = new IssuedCurrency("0",
-								currency.issuer.toString(), currency.currency);
-						TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
-								new Rollback() {
-									@Override
-									public void success(JSONObject res) {
-										RPJSonLog.get().println(res);
-										dialog.closeDialog();
-										loadTrust(false);
-										RPGatewayDialog.this.getContentPane()
-												.repaint();
-										RPGatewayDialog.this.repaint();
-									}
+						IssuedCurrency cur = new IssuedCurrency("0", currency.issuer.toString(), currency.currency);
+						TrustSet.set(_item.getSeed(), cur, LSystem.getFee(), new Rollback() {
+							@Override
+							public void success(JSONObject res) {
+								RPJSonLog.get().println(res);
+								dialog.closeDialog();
+								loadTrust(false);
+								RPGatewayDialog.this.getContentPane().repaint();
+								RPGatewayDialog.this.repaint();
+							}
 
-									@Override
-									public void error(JSONObject res) {
-										RPJSonLog.get().println(res);
-										dialog.closeDialog();
-									}
-								});
+							@Override
+							public void error(JSONObject res) {
+								RPJSonLog.get().println(res);
+								dialog.closeDialog();
+							}
+						});
 					}
 
 				}
@@ -494,40 +472,33 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 				String trustValue = _trustValueText.getText().trim();
 
 				String message = String.format(
-						LangConfig
-								.get(RPGatewayDialog.this,
-										"select_trust",
-										"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?"),
+						LangConfig.get(RPGatewayDialog.this, "select_trust",
+								"You want to trust the gateway %s money %s,\n and set the amount of trust for %s ?"),
 						address, curName, trustValue);
 
-				int result = UIRes.showConfirmMessage(LSystem.applicationMain,
-						"Trust Gateway", message, UIMessage.ok,
+				int result = UIRes.showConfirmMessage(LSystem.applicationMain, "Trust Gateway", message, UIMessage.ok,
 						UIMessage.cancel);
 				if (result == 0) {
-					final WaitDialog dialog = new WaitDialog(
-							RPGatewayDialog.this);
+					final WaitDialog dialog = new WaitDialog(RPGatewayDialog.this);
 					_waitDialogs.add(dialog);
-					IssuedCurrency cur = new IssuedCurrency(trustValue,
-							address, curName);
-					TrustSet.set(_item.getSeed(), cur, LSystem.getFee(),
-							new Rollback() {
+					IssuedCurrency cur = new IssuedCurrency(trustValue, address, curName);
+					TrustSet.set(_item.getSeed(), cur, LSystem.getFee(), new Rollback() {
 
-								@Override
-								public void success(JSONObject res) {
-									RPJSonLog.get().println(res);
-									dialog.closeDialog();
-									loadTrust(false);
-									RPGatewayDialog.this.getContentPane()
-											.repaint();
-									RPGatewayDialog.this.repaint();
-								}
+						@Override
+						public void success(JSONObject res) {
+							RPJSonLog.get().println(res);
+							dialog.closeDialog();
+							loadTrust(false);
+							RPGatewayDialog.this.getContentPane().repaint();
+							RPGatewayDialog.this.repaint();
+						}
 
-								@Override
-								public void error(JSONObject res) {
-									RPJSonLog.get().println(res);
-									dialog.closeDialog();
-								}
-							});
+						@Override
+						public void error(JSONObject res) {
+							RPJSonLog.get().println(res);
+							dialog.closeDialog();
+						}
+					});
 				}
 			}
 		});
@@ -570,8 +541,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		});
 	}
 
-	private ArrayList<IssuedCurrency> _trust_list = new ArrayList<IssuedCurrency>(
-			10);
+	private ArrayList<IssuedCurrency> _trust_list = new ArrayList<IssuedCurrency>(10);
 
 	private void loadTrust() {
 		loadTrust(true);
@@ -579,8 +549,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 
 	private void loadTrust(boolean wait) {
 		if (_item != null) {
-			final WaitDialog dialog = WaitDialog.showDialog(
-					RPGatewayDialog.this, wait);
+			final WaitDialog dialog = WaitDialog.showDialog(RPGatewayDialog.this, wait);
 			_waitDialogs.add(dialog);
 			AccountFind.getTrusts(_item.getPublicKey(), new Updateable() {
 				@SuppressWarnings("unchecked")
@@ -592,39 +561,32 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 							_trust_list.clear();
 							_trust_list.addAll((ArrayList<IssuedCurrency>) o);
 
-							_myGateway
-									.setModel(new javax.swing.AbstractListModel<Object>() {
+							_myGateway.setModel(new javax.swing.AbstractListModel<Object>() {
 
-										/**
-										 * 
-										 */
-										private static final long serialVersionUID = 1L;
+								/**
+								 * 
+								 */
+								private static final long serialVersionUID = 1L;
 
-										public int getSize() {
-											return _trust_list.size();
-										}
+								public int getSize() {
+									return _trust_list.size();
+								}
 
-										public Object getElementAt(int i) {
-											String mes = null;
-											IssuedCurrency cur = _trust_list
-													.get(i);
-											if (cur == null) {
-												return "Empty";
-											}
-											if (cur.tag != null) {
-												mes = _trust_list.get(i)
-														.toGatewayString()
-														+ " Limit:"
-														+ ((AccountLine) _trust_list
-																.get(i).tag)
-																.getLimit();
-											} else {
-												mes = _trust_list.get(i)
-														.toGatewayString();
-											}
-											return mes;
-										}
-									});
+								public Object getElementAt(int i) {
+									String mes = null;
+									IssuedCurrency cur = _trust_list.get(i);
+									if (cur == null) {
+										return "Empty";
+									}
+									if (cur.tag != null) {
+										mes = _trust_list.get(i).toGatewayString() + " Limit:"
+												+ ((AccountLine) _trust_list.get(i).tag).getLimit();
+									} else {
+										mes = _trust_list.get(i).toGatewayString();
+									}
+									return mes;
+								}
+							});
 						}
 
 					}
@@ -637,8 +599,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 	}
 
 	private void emptyAddress() {
-		if (_item == null || "0".equals(_item.getAmount())
-				|| "0.000000".equals(_item.getAmount())) {
+		if (_item == null || "0".equals(_item.getAmount()) || "0.000000".equals(_item.getAmount())) {
 			_myGateway.setEnabled(false);
 			_createGatewayButton.setEnabled(false);
 			_manageGatewayButton.setEnabled(false);
@@ -651,13 +612,13 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -674,24 +635,24 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

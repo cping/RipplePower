@@ -121,8 +121,7 @@ public class LMidiSound implements MetaEventListener, Sound {
 
 	public void playSound(InputStream in) {
 		try {
-			System.setProperty("javax.sound.midi.Sequencer",
-					"com.sun.media.sound.RealTimeSequencerProvider");
+			System.setProperty("javax.sound.midi.Sequencer", "com.sun.media.sound.RealTimeSequencerProvider");
 			if (this.sequencer == null) {
 				this.sequencer = MidiSystem.getSequencer();
 				if (!this.sequencer.isOpen()) {
@@ -166,8 +165,7 @@ public class LMidiSound implements MetaEventListener, Sound {
 			return;
 		}
 		if (volumeSupported) {
-			MidiChannel[] channels = ((Synthesizer) this.sequencer)
-					.getChannels();
+			MidiChannel[] channels = ((Synthesizer) this.sequencer).getChannels();
 			for (int i = 0; i < channels.length; i++) {
 				channels[i].controlChange(GAIN_CONTROLLER, volume);
 			}

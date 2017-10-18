@@ -8,16 +8,14 @@ public class FriendContact extends Contact implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String birthday;
 
-	public FriendContact(String firstNameParam, String lastNameParam,
-			String rippleAddressParam, String addressParam, String cityParam,
-			String stateParam, String zipCodeParam, String phoneNumberParam,
-			String emailAddressParam, String birthdayParam) {
-		super(firstNameParam, lastNameParam, rippleAddressParam, addressParam,
-				cityParam, stateParam, zipCodeParam, phoneNumberParam,
-				emailAddressParam);
+	public FriendContact(String firstNameParam, String lastNameParam, String rippleAddressParam, String addressParam,
+			String cityParam, String stateParam, String zipCodeParam, String phoneNumberParam, String emailAddressParam,
+			String birthdayParam) {
+		super(firstNameParam, lastNameParam, rippleAddressParam, addressParam, cityParam, stateParam, zipCodeParam,
+				phoneNumberParam, emailAddressParam);
 		setBirthday(birthdayParam);
 	}
 

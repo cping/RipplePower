@@ -40,8 +40,7 @@ public class RPHoldXRPDialog {
 		final BarChartCanvas.TextDisplay textDisplay = new BarChartCanvas.TextDisplay();
 
 		textDisplay.message = "Hold XRP ?%";
-		textDisplay.x = (canvas.getWidth() - textDisplay.font
-				.stringWidth(textDisplay.message)) / 2;
+		textDisplay.x = (canvas.getWidth() - textDisplay.font.stringWidth(textDisplay.message)) / 2;
 		textDisplay.y = canvas.getHeight() - 10;
 
 		canvas.setYLabelFlag("%");
@@ -55,53 +54,49 @@ public class RPHoldXRPDialog {
 		canvas.setTextDisplay(textDisplay);
 		canvas.offsetX = -35;
 
-		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
-				LSystem.applicationMain.getGraphicsConfiguration());
+		Insets screenInsets = Toolkit.getDefaultToolkit()
+				.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		final RPPushTool tool = RPPushTool.pop(new Point(20, size.getHeight()),
-				(int) (screenInsets.bottom + canvas.getHeight()
-						+ (RPPushTool.TITLE_SIZE * 2) - 20),
-				"Total XRP assets", canvas);
+				(int) (screenInsets.bottom + canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2) - 20), "Total XRP assets",
+				canvas);
 		Updateable update = new Updateable() {
+			private String total = "100000000000";
 
 			@Override
 			public void action(Object o) {
 				for (; !tool.isClose();) {
 					String amount = WalletCache.get().getAmounts();
-					if (!"0.000000".equals(amount)
-							&& !textDisplay.message.contains(amount)) {
-						try {
-							String total = OtherData.getCoinmarketcapTo("usd",
-									LSystem.nativeCurrency).totalSupply;
-							if (total.indexOf(',') != -1) {
-								total = total.replace(",", "");
+					if (!"0.000000".equals(amount) && !textDisplay.message.contains(amount)) {
+						if ("100000000000".equals(total)) {
+							try {
+								total = OtherData.getCoinmarketcapTo("usd", LSystem.nativeCurrency).total_supply;
+							} catch (Exception ex) {
+								total = "100000000000";
 							}
-							String result = LSystem.getNumber(new BigDecimal(
-									WalletCache.get().getAmounts()).divide(
-									new BigDecimal(total),
-									MathContext.DECIMAL128).multiply(
-									new BigDecimal(100)));
-							double dd = Double.parseDouble(result);
-							if (dd > 1d) {
-								c.getPoint(1).y = (int) dd;
-							} else {
-								c.getPoint(1).y = 1f;
-							}
-							textDisplay.message = "Hold XRP " + (result + "%");
-							textDisplay.x = (canvas.getWidth() - textDisplay.font
-									.stringWidth(textDisplay.message)) / 2;
-							LSystem.invokeLater(new Runnable() {
-								
-								@Override
-								public void run() {
-									canvas.repaint();
-								}
-							});
-			
-						} catch (Exception ex) {
 						}
+						if (total.indexOf(',') != -1) {
+							total = total.replace(",", "");
+						}
+						String result = LSystem.getNumber(new BigDecimal(WalletCache.get().getAmounts())
+								.divide(new BigDecimal(total), MathContext.DECIMAL128).multiply(new BigDecimal(100)));
+						double dd = Double.parseDouble(result);
+						if (dd > 1d) {
+							c.getPoint(1).y = (int) dd;
+						} else {
+							c.getPoint(1).y = 1f;
+						}
+						textDisplay.message = "Hold XRP " + (result + "%");
+						textDisplay.x = (canvas.getWidth() - textDisplay.font.stringWidth(textDisplay.message)) / 2;
+						LSystem.invokeLater(new Runnable() {
+
+							@Override
+							public void run() {
+								canvas.repaint();
+							}
+						});
+						LSystem.sleep(LSystem.MINUTE);
 					}
-					LSystem.sleep(LSystem.MINUTE);
 				}
 			}
 		};

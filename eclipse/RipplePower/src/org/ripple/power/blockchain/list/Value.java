@@ -98,8 +98,7 @@ public class Value {
 	}
 
 	public boolean isList() {
-		return value != null && value.getClass().isArray()
-				&& !value.getClass().getComponentType().isPrimitive();
+		return value != null && value.getClass().isArray() && !value.getClass().getComponentType().isPrimitive();
 	}
 
 	public boolean isString() {
@@ -149,8 +148,7 @@ public class Value {
 
 		for (int i = 0; i < data.length; ++i) {
 
-			if ((data[i] >= 48 && data[i] <= 57)
-					|| (data[i] >= 97 && data[i] <= 102))
+			if ((data[i] >= 48 && data[i] <= 57) || (data[i] >= 97 && data[i] <= 102))
 				++hexChars;
 		}
 
@@ -206,8 +204,7 @@ public class Value {
 
 				Value key = new Value(list[0]);
 
-				byte[] keyNibbles = CompactEncoder.binToNibblesNoTerminator(key
-						.asBytes());
+				byte[] keyNibbles = CompactEncoder.binToNibblesNoTerminator(key.asBytes());
 				String keyString = ByteUtils.nibblesToPrettyString(keyNibbles);
 				buffer.append(keyString);
 
@@ -245,8 +242,7 @@ public class Value {
 				output.append("'");
 				for (byte oneByte : asBytes()) {
 					if (oneByte < 16) {
-						output.append("\\x").append(
-								ByteUtils.oneByteToHexString(oneByte));
+						output.append("\\x").append(ByteUtils.oneByteToHexString(oneByte));
 					} else {
 						output.append(Character.valueOf((char) oneByte));
 					}

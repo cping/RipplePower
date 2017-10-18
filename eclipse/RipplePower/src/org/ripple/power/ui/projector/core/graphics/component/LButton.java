@@ -65,8 +65,7 @@ public class LButton extends LComponent {
 			int size = images.length;
 			switch (size) {
 			case 1:
-				BufferedImage image = ImageFilterFactory.getGray(images[0]
-						.getBufferedImage());
+				BufferedImage image = ImageFilterFactory.getGray(images[0].getBufferedImage());
 				buttons[0] = new LImage(image);
 				if (images[0].getBufferedImage() != image) {
 					images[0].dispose();
@@ -103,8 +102,7 @@ public class LButton extends LComponent {
 
 	}
 
-	public void createUI(LGraphics g, int x, int y, LComponent component,
-			LImage[] buttonImage) {
+	public void createUI(LGraphics g, int x, int y, LComponent component, LImage[] buttonImage) {
 		LButton button = (LButton) component;
 		if (buttonImage != null) {
 			if (!button.isEnabled()) {
@@ -122,13 +120,8 @@ public class LButton extends LComponent {
 			Color color = g.getColor();
 			g.setFont(font);
 			g.setColor(fontColor);
-			g.drawString(
-					text,
-					x + button.getOffsetLeft()
-							+ (button.getWidth() - font.stringWidth(text)) / 2,
-					y + button.getOffsetTop()
-							+ (button.getHeight() - font.getLineHeight()) / 2
-							+ font.getLineHeight());
+			g.drawString(text, x + button.getOffsetLeft() + (button.getWidth() - font.stringWidth(text)) / 2,
+					y + button.getOffsetTop() + (button.getHeight() - font.getLineHeight()) / 2 + font.getLineHeight());
 			g.setFont(old);
 			g.setColor(color);
 		}
@@ -158,8 +151,7 @@ public class LButton extends LComponent {
 
 	protected void processTouchDragged() {
 		if (this.input.getKeyPressed() == MouseEvent.BUTTON1) {
-			this.over = this.pressed = this.intersects(this.input.getTouchX(),
-					this.input.getTouchY());
+			this.over = this.pressed = this.intersects(this.input.getTouchX(), this.input.getTouchY());
 		}
 	}
 
@@ -207,8 +199,7 @@ public class LButton extends LComponent {
 	}
 
 	protected void processKeyPressed() {
-		if (this.isSelected()
-				&& this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
+		if (this.isSelected() && this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
 			this.pressedTime = 5;
 			this.pressed = true;
 			this.doClick();
@@ -216,8 +207,7 @@ public class LButton extends LComponent {
 	}
 
 	protected void processKeyReleased() {
-		if (this.isSelected()
-				&& this.input.getKeyReleased() == KeyEvent.VK_ENTER) {
+		if (this.isSelected() && this.input.getKeyReleased() == KeyEvent.VK_ENTER) {
 			this.pressed = false;
 		}
 	}

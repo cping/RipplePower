@@ -17,11 +17,9 @@ public class Vector2D implements Serializable {
 
 	private static Vector2D vector2;
 
-	final static private Map<Vector2D, Integer> directions = new HashMap<Vector2D, Integer>(
-			9);
+	final static private Map<Vector2D, Integer> directions = new HashMap<Vector2D, Integer>(9);
 
-	final static private Map<Integer, Vector2D> directionValues = new HashMap<Integer, Vector2D>(
-			9);
+	final static private Map<Integer, Vector2D> directionValues = new HashMap<Integer, Vector2D>(9);
 
 	public static int getDirection(int x, int y) {
 		return getDirection(x, y, Config.EMPTY);
@@ -45,7 +43,6 @@ public class Vector2D implements Serializable {
 		return directionValues.get(type);
 	}
 
-	
 	static {
 		directions.put(new Vector2D(0, 0), Config.EMPTY);
 		directions.put(new Vector2D(1, -1), Config.UP);
@@ -68,7 +65,7 @@ public class Vector2D implements Serializable {
 		directionValues.put(Config.TDOWN, new Vector2D(0, 1));
 
 	}
-	
+
 	public double x, y;
 
 	public Vector2D(double value) {
@@ -340,8 +337,8 @@ public class Vector2D implements Serializable {
 	}
 
 	public boolean equalsDelta(Vector2D other, double delta) {
-		return (other.getX() - delta < x && other.getX() + delta > x
-				&& other.getY() - delta < y && other.getY() + delta > y);
+		return (other.getX() - delta < x && other.getX() + delta > x && other.getY() - delta < y
+				&& other.getY() + delta > y);
 	}
 
 	public static Vector2D difference(Vector2D first, Vector2D second) {
@@ -381,9 +378,8 @@ public class Vector2D implements Serializable {
 		Vector2D v = getDirection(direction);
 		move(v.x() * multiples, v.y() * multiples);
 	}
-	
+
 	public String toString() {
-		return (new StringBuffer("[Vector2D x:")).append(x).append(" y:")
-				.append(y).append("]").toString();
+		return (new StringBuffer("[Vector2D x:")).append(x).append(" y:").append(y).append("]").toString();
 	}
 }

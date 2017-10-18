@@ -48,8 +48,7 @@ public class Print implements LRelease {
 		this("", font, vector, width, height);
 	}
 
-	public Print(String context, LFont font, Vector2D vector, int width,
-			int height) {
+	public Print(String context, LFont font, Vector2D vector, int width, int height) {
 		this.setMessage(context, font);
 		this.deffont = font;
 		this.vector = vector;
@@ -130,11 +129,9 @@ public class Print implements LRelease {
 		}
 		synchronized (showMessages) {
 			this.size = showMessages.length;
-			this.fontSize = isEnglish ? deffont.getSize() / 2 + 2 : deffont
-					.getSize();
+			this.fontSize = isEnglish ? deffont.getSize() / 2 + 2 : deffont.getSize();
 			this.fontHeight = deffont.getHeight();
-			this.tmp_left = isLeft ? 0 : (width - (fontSize * messageLength))
-					/ 2 - (int) (fontSize * 1.5);
+			this.tmp_left = isLeft ? 0 : (width - (fontSize * messageLength)) / 2 - (int) (fontSize * 1.5);
 			this.left = tmp_left;
 			int index = 0, offset = 0, font = 0, tmp_font = 0;
 			int fontSizeDouble = fontSize * 2;
@@ -150,8 +147,7 @@ public class Print implements LRelease {
 					interceptMaxString = 0;
 					interceptCount = 0;
 				}
-				if (showMessages[i] == 'n'
-						&& showMessages[i > 0 ? i - 1 : 0] == '\\') {
+				if (showMessages[i] == 'n' && showMessages[i > 0 ? i - 1 : 0] == '\\') {
 					index = 0;
 					left = tmp_left;
 					offset++;
@@ -162,15 +158,13 @@ public class Print implements LRelease {
 					offset++;
 					continue;
 				} else if (charString == '<') {
-					Color color = getColor(showMessages[i < size - 1 ? i + 1
-							: i]);
+					Color color = getColor(showMessages[i < size - 1 ? i + 1 : i]);
 					if (color != null) {
 						interceptMaxString = 1;
 						fontColor = color;
 					}
 					continue;
-				} else if (showMessages[i > 0 ? i - 1 : i] == '<'
-						&& getColor(charString) != null) {
+				} else if (showMessages[i > 0 ? i - 1 : i] == '<' && getColor(charString) != null) {
 					continue;
 				} else if (charString == '/') {
 					if (showMessages[i < size - 1 ? i + 1 : i] == '>') {
@@ -205,12 +199,9 @@ public class Print implements LRelease {
 				}
 				if (i != size - 1) {
 					g.drawString(mes, (int) (vector.x + left + leftOffset),
-							(int) ((offset * fontHeight) + vector.y
-									+ fontSizeDouble + topOffset));
+							(int) ((offset * fontHeight) + vector.y + fontSizeDouble + topOffset));
 				} else if (!newLine && !onComplete) {
-					g.drawImage(
-							creeseIcon,
-							(int) (vector.x + left + leftOffset + iconWidth),
+					g.drawImage(creeseIcon, (int) (vector.x + left + leftOffset + iconWidth),
 							(int) ((offset * fontHeight) + vector.y + fontSize + topOffset));
 				}
 				index++;
@@ -280,8 +271,7 @@ public class Print implements LRelease {
 					return false;
 				}
 				if (messageBuffer.length() > 0) {
-					messageBuffer.delete(messageBuffer.length() - 1,
-							messageBuffer.length());
+					messageBuffer.delete(messageBuffer.length() - 1, messageBuffer.length());
 				}
 				this.messageBuffer.append(messages.charAt(messageCount));
 				this.messageBuffer.append("_");

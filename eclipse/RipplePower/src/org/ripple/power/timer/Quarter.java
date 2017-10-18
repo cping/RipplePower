@@ -17,12 +17,10 @@ public class Quarter extends RegularTimer implements Serializable {
 
 	public static final int LAST_QUARTER = 4;
 
-	public static final int[] FIRST_MONTH_IN_QUARTER = { 0,
-			MonthConstants.JANUARY, MonthConstants.APRIL, MonthConstants.JULY,
-			MonthConstants.OCTOBER };
+	public static final int[] FIRST_MONTH_IN_QUARTER = { 0, MonthConstants.JANUARY, MonthConstants.APRIL,
+			MonthConstants.JULY, MonthConstants.OCTOBER };
 
-	public static final int[] LAST_MONTH_IN_QUARTER = { 0,
-			MonthConstants.MARCH, MonthConstants.JUNE,
+	public static final int[] LAST_MONTH_IN_QUARTER = { 0, MonthConstants.MARCH, MonthConstants.JUNE,
 			MonthConstants.SEPTEMBER, MonthConstants.DECEMBER };
 
 	private short year;
@@ -141,8 +139,7 @@ public class Quarter extends RegularTimer implements Serializable {
 		if (obj != null) {
 			if (obj instanceof Quarter) {
 				Quarter target = (Quarter) obj;
-				return (this.quarter == target.getQuarter() && (this.year == target
-						.getYearValue()));
+				return (this.quarter == target.getQuarter() && (this.year == target.getYearValue()));
 			} else {
 				return false;
 			}

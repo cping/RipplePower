@@ -74,16 +74,13 @@ public class RippleMacros extends AMacros {
 
 	public RippleMacros() {
 		super("ripple.",
-				new String[] { "ping", "server_info", "server_state",
-						"account_info", "account_lines", "account_offers",
-						"account_tx", "transaction_entry", "tx", "tx_history",
-						"send", "offer_create", "offer_cancel", "offer_price",
-						"convert_price" });
+				new String[] { "ping", "server_info", "server_state", "account_info", "account_lines", "account_offers",
+						"account_tx", "transaction_entry", "tx", "tx_history", "send", "offer_create", "offer_cancel",
+						"offer_price", "convert_price" });
 	}
 
 	@Override
-	public void call(final IScriptLog log, final int scriptLine,
-			final DMacros macros, final String message) {
+	public void call(final IScriptLog log, final int scriptLine, final DMacros macros, final String message) {
 		setConfig(log, macros, scriptLine);
 		List<String> list = DMacros.commandSplit(message, false);
 		int size = list.size();
@@ -114,8 +111,7 @@ public class RippleMacros extends AMacros {
 						if (StringUtils.isNumber(fee)) {
 							send(type, curOne, curTwo, secret, fee);
 						} else {
-							error(new Exception(
-									"Transaction fees must be in digital format"));
+							error(new Exception("Transaction fees must be in digital format"));
 						}
 					}
 				}
@@ -139,26 +135,24 @@ public class RippleMacros extends AMacros {
 						fee = list.get(3);
 					}
 					if (!StringUtils.isNumber(fee)) {
-						error(new Exception(
-								"Transaction fees must be in digital format"));
+						error(new Exception("Transaction fees must be in digital format"));
 					}
 					setSyncing(type, true);
-					OfferCancel.set(new RippleSeedAddress(secret),
-							offerSequence, fee, new Rollback() {
+					OfferCancel.set(new RippleSeedAddress(secret), offerSequence, fee, new Rollback() {
 
-								@Override
-								public void success(JSONObject res) {
-									setVar(type, res);
-									log(type, res);
-									setSyncing(type, false);
-								}
+						@Override
+						public void success(JSONObject res) {
+							setVar(type, res);
+							log(type, res);
+							setSyncing(type, false);
+						}
 
-								@Override
-								public void error(JSONObject res) {
-									log(type, res);
-									setSyncing(type, false);
-								}
-							});
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
+						}
+					});
 				}
 				return;
 			} else if (type == OFFER_PRICE) {
@@ -190,21 +184,16 @@ public class RippleMacros extends AMacros {
 						}
 
 						@Override
-						public void complete(ArrayList<OfferFruit> buys,
-								ArrayList<OfferFruit> sells, OfferPrice price) {
-							log(type, String.format(
-									"1/%s high_buy:%s high_sell:%s spread:%s",
-									seller, price.highBuy, price.highSell,
-									price.spread));
+						public void complete(ArrayList<OfferFruit> buys, ArrayList<OfferFruit> sells,
+								OfferPrice price) {
+							log(type, String.format("1/%s high_buy:%s high_sell:%s spread:%s", seller, price.highBuy,
+									price.highSell, price.spread));
 							setVar(type, "highbuy", price.highBuy);
 							setVar(type, "highsell", price.highSell);
 							setVar(type, "spread", price.spread);
-							setVar(type, "highbuy_value", Double
-									.parseDouble(price.highBuy.split("/")[0]));
-							setVar(type, "highsell_value", Double
-									.parseDouble(price.highSell.split("/")[0]));
-							setVar(type, "spread_value", Double
-									.parseDouble(price.spread.split("/")[0]));
+							setVar(type, "highbuy_value", Double.parseDouble(price.highBuy.split("/")[0]));
+							setVar(type, "highsell_value", Double.parseDouble(price.highSell.split("/")[0]));
+							setVar(type, "spread_value", Double.parseDouble(price.spread.split("/")[0]));
 							setVar(type, "buys", buys);
 							setVar(type, "sells", sells);
 							setSyncing(type, false);
@@ -225,17 +214,14 @@ public class RippleMacros extends AMacros {
 					if (StringUtils.isNumber(amount)) {
 						String cur1 = list.get(2);
 						String cur2 = list.get(3);
-						String result = OfferPrice.getMoneyConvert(amount,
-								cur1, cur2);
+						String result = OfferPrice.getMoneyConvert(amount, cur1, cur2);
 						if (StringUtils.isNumber(result)) {
 							setVar(type, Double.parseDouble(result));
 						} else {
 							setVar(type, result);
 						}
-						log(type,
-								String.format("%s/%s == %s/%s", amount,
-										cur1.toUpperCase(), result,
-										cur2.toUpperCase()));
+						log(type, String.format("%s/%s == %s/%s", amount, cur1.toUpperCase(), result,
+								cur2.toUpperCase()));
 					} else {
 						error(new Exception("Invalid Conversion Amount"));
 					}
@@ -282,22 +268,21 @@ public class RippleMacros extends AMacros {
 					});
 					break;
 				case SERVER_STATE:
-					RippleCommand.get(Command.server_state, obj,
-							new Rollback() {
+					RippleCommand.get(Command.server_state, obj, new Rollback() {
 
-								@Override
-								public void success(JSONObject res) {
-									setBaseInfo(type, res);
-									log(type, res);
-									setSyncing(type, false);
-								}
+						@Override
+						public void success(JSONObject res) {
+							setBaseInfo(type, res);
+							log(type, res);
+							setSyncing(type, false);
+						}
 
-								@Override
-								public void error(JSONObject res) {
-									log(type, res);
-									setSyncing(type, false);
-								}
-							});
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
+						}
+					});
 					break;
 				}
 
@@ -307,8 +292,7 @@ public class RippleMacros extends AMacros {
 					setSyncing(type, true);
 					String parameter = list.get(1);
 					if (!AccountFind.is256hash(parameter)) {
-						error(new Exception(String.format("%s Not 256 Hash",
-								parameter)));
+						error(new Exception(String.format("%s Not 256 Hash", parameter)));
 						break;
 					}
 					obj.put("transaction", parameter);
@@ -410,7 +394,7 @@ public class RippleMacros extends AMacros {
 					});
 					break;
 				case ACCOUNT_TX:
-					find.tx(address, -1,-1, 20, new Rollback() {
+					find.tx(address, -1, -1, 20, new Rollback() {
 
 						@Override
 						public void success(JSONObject res) {
@@ -432,8 +416,7 @@ public class RippleMacros extends AMacros {
 				String parameter1 = list.get(1);
 				String parameter2 = list.get(2);
 				if (!AccountFind.is256hash(parameter1)) {
-					error(new Exception(String.format("%s Not 256 Hash",
-							parameter1)));
+					error(new Exception(String.format("%s Not 256 Hash", parameter1)));
 					break;
 				}
 				setSyncing(type, true);
@@ -441,24 +424,23 @@ public class RippleMacros extends AMacros {
 				case TRANSACTION_ENTRY:
 					obj.put("tx_hash", parameter1);
 					obj.put("ledger_index", Long.parseLong(parameter2));
-					RippleCommand.get(Command.transaction_entry, obj,
-							new Rollback() {
+					RippleCommand.get(Command.transaction_entry, obj, new Rollback() {
 
-								@Override
-								public void success(JSONObject res) {
-									setVar(type, res);
-									log(type, res);
-									setSyncing(type, false);
+						@Override
+						public void success(JSONObject res) {
+							setVar(type, res);
+							log(type, res);
+							setSyncing(type, false);
 
-								}
+						}
 
-								@Override
-								public void error(JSONObject res) {
-									log(type, res);
-									setSyncing(type, false);
+						@Override
+						public void error(JSONObject res) {
+							log(type, res);
+							setSyncing(type, false);
 
-								}
-							});
+						}
+					});
 					break;
 				case 2:
 					obj.put("tx_hash", parameter1);
@@ -490,8 +472,8 @@ public class RippleMacros extends AMacros {
 		}
 	}
 
-	protected void send(final int type, final String curOne,
-			final String curTwo, final String secret, final String fee) {
+	protected void send(final int type, final String curOne, final String curTwo, final String secret,
+			final String fee) {
 		Object sendSrc = getCurrency(curOne);
 		Object sendDst = getCurrency(curTwo);
 
@@ -499,29 +481,26 @@ public class RippleMacros extends AMacros {
 
 			if (sendSrc instanceof IssuedCurrency && sendDst instanceof String) {
 				setSyncing(type, true);
-				Payment.send(secret, (String) sendDst,
-						((IssuedCurrency) sendSrc), fee, new Rollback() {
+				Payment.send(secret, (String) sendDst, ((IssuedCurrency) sendSrc), fee, new Rollback() {
 
-							@Override
-							public void success(JSONObject res) {
-								setVar(type, res);
-								log(type, res);
-								setSyncing(type, false);
-							}
+					@Override
+					public void success(JSONObject res) {
+						setVar(type, res);
+						log(type, res);
+						setSyncing(type, false);
+					}
 
-							@Override
-							public void error(JSONObject res) {
-								log(type, res);
-								setSyncing(type, false);
-							}
-						});
+					@Override
+					public void error(JSONObject res) {
+						log(type, res);
+						setSyncing(type, false);
+					}
+				});
 
 				// 视为挂单
-			} else if (sendSrc instanceof IssuedCurrency
-					&& sendDst instanceof IssuedCurrency) {
+			} else if (sendSrc instanceof IssuedCurrency && sendDst instanceof IssuedCurrency) {
 				setSyncing(type, true);
-				OfferCreate.set(new RippleSeedAddress(secret),
-						((IssuedCurrency) sendSrc), ((IssuedCurrency) sendDst),
+				OfferCreate.set(new RippleSeedAddress(secret), ((IssuedCurrency) sendSrc), ((IssuedCurrency) sendDst),
 						fee, new Rollback() {
 
 							@Override
@@ -557,8 +536,7 @@ public class RippleMacros extends AMacros {
 					String addr = getAddress(v);
 					if (addr == null) {
 						if (Gateway.getAddress(v) != null) {
-							ArrayList<Gateway.Item> items = Gateway
-									.getAddress(v).accounts;
+							ArrayList<Gateway.Item> items = Gateway.getAddress(v).accounts;
 							if (items.size() > 0) {
 								addr = items.get(0).address;
 							}
@@ -576,8 +554,7 @@ public class RippleMacros extends AMacros {
 					}
 					currency = new IssuedCurrency(cur);
 				} else {
-					error(new Exception(String.format("%s is invalid format",
-							cur)));
+					error(new Exception(String.format("%s is invalid format", cur)));
 				}
 			}
 		} else {
@@ -586,8 +563,7 @@ public class RippleMacros extends AMacros {
 			} else {
 				str = getAddress(str);
 				if (str == null) {
-					error(new Exception(String.format("%s is invalid format",
-							str)));
+					error(new Exception(String.format("%s is invalid format", str)));
 				}
 			}
 		}
@@ -621,8 +597,7 @@ public class RippleMacros extends AMacros {
 			} catch (Exception e) {
 			}
 			if (name == null || !AccountFind.isRippleAddress(name)) {
-				error(new Exception(String.format("%s is an invalid address",
-						name)));
+				error(new Exception(String.format("%s is an invalid address", name)));
 			}
 			return name;
 		} else {
@@ -688,8 +663,7 @@ public class RippleMacros extends AMacros {
 				JSONObject result = obj.getJSONObject("result");
 				setJsonVar(type, result, "ledger_current_index");
 				if (result.has("account_data")) {
-					JSONObject account_data = result
-							.getJSONObject("account_data");
+					JSONObject account_data = result.getJSONObject("account_data");
 					setJsonVar(type, account_data, "LedgerEntryType");
 					setJsonVar(type, account_data, "AccountRoot");
 					setJsonVar(type, account_data, "index");
@@ -723,8 +697,7 @@ public class RippleMacros extends AMacros {
 				setJsonVar(type, info, "io_latency_ms");
 				setJsonVar(type, info, "load_factor");
 				if (info.has("validated_ledger")) {
-					JSONObject validated_ledger = info
-							.getJSONObject("validated_ledger");
+					JSONObject validated_ledger = info.getJSONObject("validated_ledger");
 					setJsonVar(type, validated_ledger, "base_fee_xrp");
 					setJsonVar(type, validated_ledger, "age");
 					setJsonVar(type, validated_ledger, "reserve_base_xrp");
@@ -744,8 +717,7 @@ public class RippleMacros extends AMacros {
 				setJsonVar(type, state, "pubkey_node");
 				setJsonVar(type, state, "server_state");
 				if (state.has("validated_ledger")) {
-					JSONObject validated_ledger = state
-							.getJSONObject("validated_ledger");
+					JSONObject validated_ledger = state.getJSONObject("validated_ledger");
 					setJsonVar(type, validated_ledger, "base_fee");
 					setJsonVar(type, validated_ledger, "close_time");
 					setJsonVar(type, validated_ledger, "reserve_base");

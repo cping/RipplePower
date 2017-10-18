@@ -1,7 +1,6 @@
 package org.ripple.bouncycastle.jce.spec;
 
 import java.math.BigInteger;
-import java.security.spec.ECField;
 import java.security.spec.ECFieldF2m;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECPoint;
@@ -9,10 +8,6 @@ import java.security.spec.EllipticCurve;
 
 import org.ripple.bouncycastle.math.ec.ECAlgorithms;
 import org.ripple.bouncycastle.math.ec.ECCurve;
-import org.ripple.bouncycastle.math.field.FiniteField;
-import org.ripple.bouncycastle.math.field.Polynomial;
-import org.ripple.bouncycastle.math.field.PolynomialExtensionField;
-import org.ripple.bouncycastle.util.Arrays;
 
 /**
  * specification signifying that the curve parameters can also be
@@ -27,24 +22,29 @@ public class ECNamedCurveSpec
         ECCurve  curve,
         byte[]   seed)
     {
-        ECField field = convertField(curve.getField());
-        BigInteger a = curve.getA().toBigInteger(), b = curve.getB().toBigInteger();
-        return new EllipticCurve(field, a, b, seed);
-    }
+        if (ECAlgorithms.isFpCurve(curve))
+        {
+            return new EllipticCurve(new ECFieldFp(curve.getField().getCharacteristic()), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
+        }
+        else
+        {
+            ECCurve.F2m curveF2m = (ECCurve.F2m)curve;
+            int ks[];
+            
+            if (curveF2m.isTrinomial())
+            {
+                ks = new int[] { curveF2m.getK1() };
+                
+                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
+            }
+            else
+            {
+                ks = new int[] { curveF2m.getK3(), curveF2m.getK2(), curveF2m.getK1() };
 
-    private static ECField convertField(FiniteField field)
-    {
-        if (ECAlgorithms.isFpField(field))
-        {
-            return new ECFieldFp(field.getCharacteristic());
+                return new EllipticCurve(new ECFieldF2m(curveF2m.getM(), ks), curve.getA().toBigInteger(), curve.getB().toBigInteger(), seed);
+            } 
         }
-        else //if (ECAlgorithms.isF2mField(curveField))
-        {
-            Polynomial poly = ((PolynomialExtensionField)field).getMinimalPolynomial();
-            int[] exponents = poly.getExponentsPresent();
-            int[] ks = Arrays.reverse(Arrays.copyOfRange(exponents, 1, exponents.length - 1));
-            return new ECFieldF2m(poly.getDegree(), ks);
-        }
+
     }
     
     private static ECPoint convertPoint(

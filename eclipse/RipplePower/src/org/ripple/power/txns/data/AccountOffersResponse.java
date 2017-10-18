@@ -12,13 +12,12 @@ public class AccountOffersResponse {
 	public String account;
 	public String startTime;
 	public String endTime;
-	public List<AccountOffersResult> results = new ArrayList<AccountOffersResult>(
-			LSystem.DEFAULT_MAX_CACHE_SIZE);
+	public List<AccountOffersResult> results = new ArrayList<AccountOffersResult>(LSystem.DEFAULT_MAX_CACHE_SIZE);
 
 	public void from(Object obj) {
 		if (obj != null) {
 			if (obj instanceof JSONObject) {
-				JSONObject result = (JSONObject)obj;
+				JSONObject result = (JSONObject) obj;
 				this.account = result.optString("account");
 				this.startTime = result.optString("startTime");
 				this.endTime = result.optString("endTime");

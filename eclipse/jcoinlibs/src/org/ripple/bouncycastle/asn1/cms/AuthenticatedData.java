@@ -81,7 +81,10 @@ public class AuthenticatedData
         this.unauthAttrs = unauthAttrs;
     }
 
-    private AuthenticatedData(
+    /**
+     * @deprecated use getInstance()
+     */
+    public AuthenticatedData(
         ASN1Sequence seq)
     {
         int index = 0;
@@ -157,16 +160,17 @@ public class AuthenticatedData
     public static AuthenticatedData getInstance(
         Object obj)
     {
-        if (obj instanceof AuthenticatedData)
+        if (obj == null || obj instanceof AuthenticatedData)
         {
             return (AuthenticatedData)obj;
         }
-        else if (obj != null)
+
+        if (obj instanceof ASN1Sequence)
         {
-            return new AuthenticatedData(ASN1Sequence.getInstance(obj));
+            return new AuthenticatedData((ASN1Sequence)obj);
         }
 
-        return null;
+        throw new IllegalArgumentException("Invalid AuthenticatedData: " + obj.getClass().getName());
     }
 
     public ASN1Integer getVersion()

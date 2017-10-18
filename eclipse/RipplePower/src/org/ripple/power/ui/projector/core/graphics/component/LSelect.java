@@ -22,8 +22,7 @@ public class LSelect extends LContainer {
 
 	private int left, top, type, nTop;
 
-	private int sizeFont, doubleSizeFont, tmpOffset, messageLeft, nLeft,
-			messageTop, selectSize, selectFlag;
+	private int sizeFont, doubleSizeFont, tmpOffset, messageLeft, nLeft, messageTop, selectSize, selectFlag;
 
 	private float autoAlpha;
 
@@ -173,8 +172,7 @@ public class LSelect extends LContainer {
 		if (doubleSizeFont == 0) {
 			doubleSizeFont = 20;
 		}
-		messageLeft = (x + doubleSizeFont + sizeFont / 2) + tmpOffset + left
-				+ doubleSizeFont;
+		messageLeft = (x + doubleSizeFont + sizeFont / 2) + tmpOffset + left + doubleSizeFont;
 		if (message != null) {
 			messageTop = y + doubleSizeFont + top - 10;
 			g.drawString(message, messageLeft, messageTop);
@@ -190,8 +188,7 @@ public class LSelect extends LContainer {
 				isSelect = (type == (selectFlag > 0 ? selectFlag : 1));
 				if ((buoyage != null) && isSelect) {
 					g.setAlpha(autoAlpha);
-					g.drawImage(buoyage, nLeft,
-							nTop - (int) (buoyage.getHeight() / 1.5));
+					g.drawImage(buoyage, nLeft, nTop - (int) (buoyage.getHeight() / 1.5));
 					g.setAlpha(1.0F);
 				}
 				g.drawString(selects[i], messageLeft, nTop);
@@ -236,8 +233,7 @@ public class LSelect extends LContainer {
 	protected synchronized void processTouchMoved() {
 		if (selects != null) {
 			int touchY = input.getTouchY();
-			selectFlag = selectSize
-					- (((nTop + 30) - (touchY == 0 ? 1 : touchY)) / doubleSizeFont);
+			selectFlag = selectSize - (((nTop + 30) - (touchY == 0 ? 1 : touchY)) / doubleSizeFont);
 			if (selectFlag < 1) {
 				selectFlag = 0;
 			}
@@ -249,8 +245,7 @@ public class LSelect extends LContainer {
 	}
 
 	protected void processKeyPressed() {
-		if (this.isSelected()
-				&& this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
+		if (this.isSelected() && this.input.getKeyPressed() == KeyEvent.VK_ENTER) {
 			this.doClick();
 		}
 	}
@@ -337,8 +332,7 @@ public class LSelect extends LContainer {
 		super.setVisible(v);
 	}
 
-	public void createUI(LGraphics g, int x, int y, LComponent component,
-			LImage[] buttonImage) {
+	public void createUI(LGraphics g, int x, int y, LComponent component, LImage[] buttonImage) {
 
 	}
 

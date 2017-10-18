@@ -44,14 +44,10 @@ import java.util.regex.Pattern;
  */
 public abstract class ResultParser {
 
-	private static final ResultParser[] PARSERS = {
-			new BookmarkDoCoMoResultParser(),
-			new AddressBookDoCoMoResultParser(),
-			new AddressBookAUResultParser(), new BizcardResultParser(),
-			new GeoResultParser(), new URLTOResultParser(),
-			new URIResultParser(), new ISBNResultParser(),
-			new ProductResultParser(), new ExpandedProductResultParser(),
-			new VINResultParser(), };
+	private static final ResultParser[] PARSERS = { new BookmarkDoCoMoResultParser(),
+			new AddressBookDoCoMoResultParser(), new AddressBookAUResultParser(), new BizcardResultParser(),
+			new GeoResultParser(), new URLTOResultParser(), new URIResultParser(), new ISBNResultParser(),
+			new ProductResultParser(), new ExpandedProductResultParser(), new VINResultParser(), };
 
 	private static final Pattern DIGITS = Pattern.compile("\\d+");
 	private static final Pattern AMPERSAND = Pattern.compile("&");
@@ -142,18 +138,15 @@ public abstract class ResultParser {
 	}
 
 	protected static boolean isStringOfDigits(CharSequence value, int length) {
-		return value != null && length > 0 && length == value.length()
-				&& DIGITS.matcher(value).matches();
+		return value != null && length > 0 && length == value.length() && DIGITS.matcher(value).matches();
 	}
 
-	protected static boolean isSubstringOfDigits(CharSequence value,
-			int offset, int length) {
+	protected static boolean isSubstringOfDigits(CharSequence value, int offset, int length) {
 		if (value == null || length <= 0) {
 			return false;
 		}
 		int max = offset + length;
-		return value.length() >= max
-				&& DIGITS.matcher(value.subSequence(offset, max)).matches();
+		return value.length() >= max && DIGITS.matcher(value.subSequence(offset, max)).matches();
 	}
 
 	static Map<String, String> parseNameValuePairs(String uri) {
@@ -168,8 +161,7 @@ public abstract class ResultParser {
 		return result;
 	}
 
-	private static void appendKeyValue(CharSequence keyValue,
-			Map<String, String> result) {
+	private static void appendKeyValue(CharSequence keyValue, Map<String, String> result) {
 		String[] keyValueTokens = EQUALS.split(keyValue, 2);
 		if (keyValueTokens.length == 2) {
 			String key = keyValueTokens[0];
@@ -191,8 +183,7 @@ public abstract class ResultParser {
 		}
 	}
 
-	static String[] matchPrefixedField(String prefix, String rawText,
-			char endChar, boolean trim) {
+	static String[] matchPrefixedField(String prefix, String rawText, char endChar, boolean trim) {
 		List<String> matches = null;
 		int i = 0;
 		int max = rawText.length();
@@ -219,8 +210,7 @@ public abstract class ResultParser {
 					if (matches == null) {
 						matches = new ArrayList<>(3); // lazy init
 					}
-					String element = unescapeBackslash(rawText.substring(start,
-							i));
+					String element = unescapeBackslash(rawText.substring(start, i));
 					if (trim) {
 						element = element.trim();
 					}
@@ -238,8 +228,7 @@ public abstract class ResultParser {
 		return matches.toArray(new String[matches.size()]);
 	}
 
-	static String matchSinglePrefixedField(String prefix, String rawText,
-			char endChar, boolean trim) {
+	static String matchSinglePrefixedField(String prefix, String rawText, char endChar, boolean trim) {
 		String[] matches = matchPrefixedField(prefix, rawText, endChar, trim);
 		return matches == null ? null : matches[0];
 	}

@@ -117,9 +117,8 @@ public class ScrollEffect extends LObject implements ISprite {
 		case Config.TDOWN:
 			for (int i = -1; i < 1; i++) {
 				for (int j = 0; j < 1; j++) {
-					g.drawImage(image, x() + (j * width), y()
-							+ (i * height + backgroundLoop), width, height, 0,
-							0, width, height);
+					g.drawImage(image, x() + (j * width), y() + (i * height + backgroundLoop), width, height, 0, 0,
+							width, height);
 				}
 			}
 			break;
@@ -127,8 +126,8 @@ public class ScrollEffect extends LObject implements ISprite {
 		case Config.TRIGHT:
 			for (int j = -1; j < 1; j++) {
 				for (int i = 0; i < 1; i++) {
-					g.drawImage(image, x() + (j * width + backgroundLoop), y()
-							+ (i * height), width, height, 0, 0, width, height);
+					g.drawImage(image, x() + (j * width + backgroundLoop), y() + (i * height), width, height, 0, 0,
+							width, height);
 				}
 			}
 			break;
@@ -136,9 +135,8 @@ public class ScrollEffect extends LObject implements ISprite {
 		case Config.TUP:
 			for (int i = -1; i < 1; i++) {
 				for (int j = 0; j < 1; j++) {
-					g.drawImage(image, x() + (j * width), y()
-							- (i * height + backgroundLoop), width, height, 0,
-							0, width, height);
+					g.drawImage(image, x() + (j * width), y() - (i * height + backgroundLoop), width, height, 0, 0,
+							width, height);
 				}
 			}
 			break;
@@ -146,8 +144,8 @@ public class ScrollEffect extends LObject implements ISprite {
 		case Config.TLEFT:
 			for (int j = -1; j < 1; j++) {
 				for (int i = 0; i < 1; i++) {
-					g.drawImage(image, x() - (j * width + backgroundLoop), y()
-							+ (i * height), width, height, 0, 0, width, height);
+					g.drawImage(image, x() - (j * width + backgroundLoop), y() + (i * height), width, height, 0, 0,
+							width, height);
 				}
 			}
 			break;
