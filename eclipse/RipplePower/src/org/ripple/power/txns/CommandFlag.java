@@ -32,4 +32,6 @@ public class CommandFlag {
 	public static final String HistoricalPrices = "HistoricalPrices";
 
 	public static final String Editor = "Editor";
+	
+	public static final String FlagEditor = "FlagsEditor";
 }

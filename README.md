@@ -2,6 +2,16 @@
 
 A ripple desktop wallet developed on ripple-lib-java(https://github.com/ripple/ripple-lib-java)
 
+Supports multiple accounts with multiple balances
+Send and receive XRP and other assets
+Displays current conversion rates for XRP to USD, BTC or Other Currency
+Send XRP or Other Currency to any address
+Create/Manage trade offers
+Store contacts in an address book
+Set all account options
+View transactions history
+receive all transaction notification
+
 RipplePower是一个基于Java语言的，开源的Ripple客户端，它支持多Ripple地址同时操作，可以使人们对自己的任意瑞波网络地址进行同时的管理，发送，信任，接收以及交易，并将其私钥作为本地文件加密存储在本地计算机上。
 
 RipplePower is a Ripple(Rippled Server) API Client for the Java language licensed under Apache License 2.0

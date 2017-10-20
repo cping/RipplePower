@@ -192,7 +192,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		FontStyleIcon iconStar = new FontStyleIcon(FontStyle.Icon.STAR, 24, UIConfig.background);
 		FontStyleIcon iconMale = new FontStyleIcon(FontStyle.Icon.MALE, 24, UIConfig.background);
 		FontStyleIcon iconSearch = new FontStyleIcon(FontStyle.Icon.SEARCH, 24, UIConfig.background);
-
+		
 		RPButton btn = new RPButton(LangConfig.get(this, "donation", "Donation"), iconStar);
 		btn.setActionCommand(CommandFlag.Donation);
 		btn.setFont(font);
@@ -208,6 +208,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		btn3.setFont(font);
 		btn3.addActionListener(this);
 
+		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(statusPane);
 		statusPane.setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,8 +225,16 @@ public class MainPanel extends JPanel implements ActionListener {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(UIConfig.background);
 
+		FontStyleIcon iconFlag = new FontStyleIcon(FontStyle.Icon.FLAG, 24, UIConfig.background);
+		RPButton button = new RPButton(LangConfig.get(this, "flagseditor", "Edit Account Flags"), iconFlag);
+		button.setActionCommand(CommandFlag.FlagEditor);
+		button.setFont(font);
+		button.addActionListener(this);
+		buttonPane.add(button);
+		buttonPane.add(Box.createHorizontalStrut(15));
+		
 		FontStyleIcon iconLeaf = new FontStyleIcon(FontStyle.Icon.LEAF, 24, UIConfig.background);
-		RPButton button = new RPButton(LangConfig.get(this, "add_address", "Add Address"), iconLeaf);
+		button = new RPButton(LangConfig.get(this, "add_address", "Add Address"), iconLeaf);
 		button.setActionCommand(CommandFlag.AddAddress);
 		button.setFont(font);
 		button.addActionListener(this);
@@ -277,6 +286,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(tablePane, BorderLayout.CENTER);
 		add(buttonPane, BorderLayout.SOUTH);
 
+		addPopMenu(LangConfig.get(this, "flagseditor", "Edit Account Flags"), CommandFlag.FlagEditor);
 		addPopMenu(LangConfig.get(this, "editor", "Editor Script"), CommandFlag.Editor);
 		addPopMenu(LangConfig.get(this, "download", "Download"), CommandFlag.Download);
 		addPopMenu(LangConfig.get(this, "update_node", "Rippled Node"), CommandFlag.RippledNodeS);
@@ -373,6 +383,10 @@ public class MainPanel extends JPanel implements ActionListener {
 			public void run() {
 
 				try {
+					if (actionName.equals(CommandFlag.FlagEditor)) {
+						RPAddressEditAccountFlagsDialog.showDialog(LSystem.applicationMain);
+						return;
+					}
 					if (actionName.equals(CommandFlag.Ripple_Blockchain)) {
 						RPToast.playWorking(LSystem.applicationMain);
 						return;

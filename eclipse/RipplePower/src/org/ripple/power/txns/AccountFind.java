@@ -122,24 +122,15 @@ public class AccountFind {
 	}
 
 	private final static String getStringObject(JSONObject obj, String key) {
-		if (obj.has(key)) {
-			return obj.getString(key);
-		}
-		return null;
+		return obj.optString(key, "");
 	}
 
 	private final static int getInt(JSONObject obj, String key) {
-		if (obj.has(key)) {
-			return obj.getInt(key);
-		}
-		return 0;
+		return obj.optInt(key, 0);
 	}
 
 	private final static long getLong(JSONObject obj, String key) {
-		if (obj.has(key)) {
-			return obj.getLong(key);
-		}
-		return 0;
+		return obj.optLong(key, 0);
 	}
 
 	private final static JSONArray getArray(JSONObject obj, String key) {
@@ -706,6 +697,7 @@ public class AccountFind {
 			public void success(JSONObject res) {
 				JSONObject result = getJsonObject(res, "result");
 				if (result != null) {
+			
 					JSONArray arrays = getArray(result, "lines");
 					if (arrays != null) {
 
@@ -729,7 +721,7 @@ public class AccountFind {
 							Double number = Double.valueOf(balance);
 
 							Double limit_peer_number = Double.valueOf(limit_peer);
-
+					
 							// get IOU
 							if (number > 0) {
 								AccountLine line = new AccountLine();
@@ -758,6 +750,14 @@ public class AccountFind {
 								}
 								// set Trust
 							} else if (number == 0) {
+								double n = debt.get(currency) == null ? 0 : debt.get(currency);
+								if (debt.containsKey(currency)) {
+									debt.put(currency, Double.parseDouble(LSystem.getNumberShort(n + number)));
+									debtCount.put(currency, debtCount.get(currency) + 1l);
+								} else {
+									debt.put(currency, Double.parseDouble(LSystem.getNumberShort(n + number)));
+									debtCount.put(currency, 1l);
+								}
 								AccountLine line = new AccountLine();
 								line.peer_authorized = peer_authorized;
 								line.no_ripple = no_ripple;
@@ -790,6 +790,7 @@ public class AccountFind {
 						accountinfo.trustCount = trustCount;
 					}
 				}
+				
 				accountinfo.count++;
 				if (update != null) {
 					update.action(res);

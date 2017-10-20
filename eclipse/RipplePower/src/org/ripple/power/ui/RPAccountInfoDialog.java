@@ -356,7 +356,7 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		final AccountTableModel2 tableModel2 = new AccountTableModel2(columnNames, columnClasses);
 		_tableTwo = new AddressTable(tableModel2, columnTypes);
 		_tableTwo.setFont(UIRes.getFont());
-		_tableTwo.setRowSorter(new TableRowSorter<TableModel>(tableModel));
+		_tableTwo.setRowSorter(new TableRowSorter<TableModel>(tableModel2));
 		_tableTwo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		_panelTwo.setViewportView(_tableTwo);
