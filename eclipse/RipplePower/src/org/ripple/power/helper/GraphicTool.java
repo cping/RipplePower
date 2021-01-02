@@ -17,7 +17,9 @@ public class GraphicTool {
 	public static ImageSet get() {
 		if (Image_BOX == null) {
 			Image_BOX = new ImageSet();
+			
 			Image image = GraphicsUtils.loadImage("icons/win.png");
+
 			image = GraphicsUtils.transparencyBlackColor(image);
 			Image_BOX.SplitWindow(GraphicsUtils.getBufferImage(image));
 		}
@@ -77,8 +79,10 @@ public class GraphicTool {
 
 	public BufferedImage getWinTable(int width, int height, Color start, Color end, boolean drawHeigth) {
 		BufferedImage image = GraphicsUtils.createImage(width, height, true);
+
 		Gradation gradation = Gradation.getInstance(start, end, width, height, 125);
 		Graphics g = image.getGraphics();
+		
 		if (drawHeigth) {
 			gradation.drawHeight(g, 0, 0);
 		} else {
@@ -100,9 +104,11 @@ public class GraphicTool {
 
 	public void drawFrame(Graphics g, Container con, int x, int y, int width, int height) {
 		BufferedImage corners[] = new BufferedImage[4];
+		
 		for (int i = 0; i < corners.length; i++) {
 			corners[i] = GraphicTool.get().getBufferdImage((new StringBuilder("win")).append(i + 4).toString());
 		}
+		
 		int CornerSize = corners[0].getWidth();
 		for (int a = 0; a < 4; a++) {
 			BufferedImage img = null;

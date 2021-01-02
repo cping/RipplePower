@@ -93,7 +93,7 @@ public class RPHashInfoDialog extends ABaseDialog implements WindowListener {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(505, 760);
+		Dimension dim = RPUtils.newDim(505, 760);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

@@ -308,11 +308,10 @@ public class RPAccountInfoDialog extends ABaseDialog implements WindowListener {
 		super(parent, text, Dialog.ModalityType.DOCUMENT_MODAL);
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(668, 630);
+		Dimension dim = RPUtils.newDim(668, 630);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents(address);
-
 	}
 
 	private void initComponents(String address) {

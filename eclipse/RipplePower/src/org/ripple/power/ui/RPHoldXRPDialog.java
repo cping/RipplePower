@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
@@ -14,6 +13,7 @@ import org.ripple.power.ui.graphics.chart.BarChartCanvas;
 import org.ripple.power.ui.graphics.chart.ChartValue;
 import org.ripple.power.ui.graphics.chart.ChartValueSerie;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPPushTool;
 import org.ripple.power.wallet.WalletCache;
 
@@ -56,8 +56,8 @@ public class RPHoldXRPDialog {
 
 		Insets screenInsets = Toolkit.getDefaultToolkit()
 				.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		final RPPushTool tool = RPPushTool.pop(new Point(20, size.getHeight()),
+		RectBox screenSize = UIConfig.getScreenRect();
+		final RPPushTool tool = RPPushTool.pop(new Point(20, screenSize.getHeight()),
 				(int) (screenInsets.bottom + canvas.getHeight() + (RPPushTool.TITLE_SIZE * 2) - 20), "Total XRP assets",
 				canvas);
 		Updateable update = new Updateable() {

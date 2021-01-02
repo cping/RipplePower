@@ -24,6 +24,10 @@ package com.google.zxing;
  */
 public final class NotFoundException extends ReaderException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final NotFoundException instance = new NotFoundException();
 
 	private NotFoundException() {

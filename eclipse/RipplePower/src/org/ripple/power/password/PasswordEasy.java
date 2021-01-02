@@ -1,10 +1,15 @@
 package org.ripple.power.password;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
 import org.ripple.power.config.Alphabet;
-import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
+
 public class PasswordEasy {
+
+	private final Random _random;
 
 	private final static Integer LENGTH_PASS = 9;
 
@@ -27,10 +32,15 @@ public class PasswordEasy {
 		char[] buffer = new char[length_pass];
 		int c = 0;
 		for (; c != length_pass;) {
-			buffer[c] = MATRIX[LSystem.random.nextInt(MATRIX.length)];
+			buffer[c] = MATRIX[_random.nextInt(MATRIX.length)];
 			c++;
 		}
 		return new String(buffer);
+	}
+	
+	public PasswordEasy nextBytes(byte[] buffer){
+		 _random.nextBytes(buffer);
+		 return this;
 	}
 
 	public String pass() {
@@ -41,4 +51,19 @@ public class PasswordEasy {
 		return pass(MathUtils.random(min, max));
 	}
 
+	public PasswordEasy(Random r) {
+		_random = r;
+	}
+	
+	public void setSeed(long seed){
+		_random.setSeed(seed);
+	}
+
+	public PasswordEasy(long num) {
+		this(new Random(num));
+	}
+	
+	public PasswordEasy() {
+		this(new SecureRandom());
+	}
 }

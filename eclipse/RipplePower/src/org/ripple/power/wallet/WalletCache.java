@@ -199,7 +199,6 @@ public class WalletCache {
 						RPAddress address = new RPAddress(pubKey, priKey);
 						pubKey = new String(address.getPublic());
 						priKey = new String(address.getPrivate());
-
 						String key = pubKey.concat(priKey);
 						if (!pCaches.containsKey(key)) {
 							WalletItem walletItem = new WalletItem(date, priKey, amount, status);

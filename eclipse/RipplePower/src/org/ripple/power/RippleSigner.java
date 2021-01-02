@@ -6,7 +6,7 @@ import java.math.BigInteger;
 
 import org.ripple.power.RippleSchemas.BinaryFormatField;
 import org.ripple.bouncycastle.asn1.ASN1InputStream;
-import org.ripple.bouncycastle.asn1.DERInteger;
+import org.ripple.bouncycastle.asn1.ASN1Integer;
 import org.ripple.bouncycastle.asn1.DERSequenceGenerator;
 import org.ripple.bouncycastle.asn1.DLSequence;
 import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -26,7 +26,7 @@ public class RippleSigner {
 			throw new Exception("Object already signed");
 		}
 		RippleObject signedRBO = new RippleObject(serObjToSign);
-		signedRBO.putField(BinaryFormatField.SigningPubKey, privateKey.getPublicKey().getPublicPoint().getEncoded());
+		signedRBO.putField(BinaryFormatField.SigningPubKey, privateKey.getPublicKey().getPublicPoint().getEncoded(true));
 
 		byte[] hashOfRBOBytes = signedRBO.generateHashFromBinaryObject();
 		ECDSASignature signature = signHash(hashOfRBOBytes);
@@ -83,8 +83,8 @@ public class RippleSigner {
 
 			ASN1InputStream decoder = new ASN1InputStream(signatureDEREncodedBytes);
 			DLSequence seq = (DLSequence) decoder.readObject();
-			DERInteger r = (DERInteger) seq.getObjectAt(0);
-			DERInteger s = (DERInteger) seq.getObjectAt(1);
+			ASN1Integer r = (ASN1Integer) seq.getObjectAt(0);
+			ASN1Integer s = (ASN1Integer) seq.getObjectAt(1);
 
 			this.r = r.getPositiveValue();
 			this.s = s.getPositiveValue();
@@ -95,8 +95,8 @@ public class RippleSigner {
 			try {
 				ByteArrayOutputStream bos = new ByteArrayOutputStream(72);
 				DERSequenceGenerator seq = new DERSequenceGenerator(bos);
-				seq.addObject(new DERInteger(r));
-				seq.addObject(new DERInteger(s));
+				seq.addObject(new ASN1Integer(r));
+				seq.addObject(new ASN1Integer(s));
 				seq.close();
 				return bos.toByteArray();
 			} catch (IOException e) {

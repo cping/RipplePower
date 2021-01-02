@@ -50,7 +50,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,7 +63,6 @@ import javax.net.ssl.SSLSession;
 
 import org.json.JSONObject;
 import org.ripple.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.ripple.power.NativeSupport;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.HttpsUtils.ResponseResult;
 
@@ -80,7 +78,7 @@ public class HttpRequest {
 		private static final long serialVersionUID = -4083233211478080177L;
 
 		public JSSEProvider() {
-			super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
+			super("HarmonyJSSE", String.valueOf(1.0), "Harmony JSSE Provider");
 			AccessController.doPrivileged(new java.security.PrivilegedAction<Void>() {
 				public Void run() {
 					put("SSLContext.TLS", "org.apache.harmony.xnet.provider.jsse.SSLContextImpl");
@@ -116,32 +114,7 @@ public class HttpRequest {
 				return request.body();
 			}
 		} catch (Throwable ex) {
-			if (LSystem.isWindows()) {
-				try {
-					File file = NativeSupport.export("res/tmpfix/temp_fix_ssl", "ssl_fix", "temp_fix_ssl.exe");
-					Runtime run = Runtime.getRuntime();
-					Process process = run.exec(String.format("%s %s", file.getAbsolutePath(), url));
-					InputStream ins = process.getInputStream();
-					InputStreamReader str = new InputStreamReader(ins);
-					BufferedReader br = new BufferedReader(str);
-					StringBuilder sbr = new StringBuilder();
-					String line = null;
-					while ((line = br.readLine()) != null) {
-						sbr.append(line);
-						sbr.append(LSystem.LS);
-					}
-					return sbr.toString();
-				} catch (Error t) {
-					request = HttpRequest.get(url);
-					request.trustAllCerts();
-					request.trustAllHosts();
-					if (request.ok()) {
-						return request.body();
-					} else {
-						throw ex;
-					}
-				}
-			} else {
+			if (LSystem.isWindows()) {} else {
 				return null;
 			}
 		}

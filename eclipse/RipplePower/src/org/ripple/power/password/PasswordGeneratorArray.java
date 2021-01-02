@@ -40,15 +40,16 @@ public class PasswordGeneratorArray {
 	public PasswordGeneratorArray(int startLength, int maxWordLength, String filename) throws IOException {
 		alphabet = new ArrayList<String>(10000);
 		HashSet<String> caches = new HashSet<String>(10000);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "utf-8"));
-		String text = null;
-		for (; (text = reader.readLine()) != null;) {
-			String tmp = text.trim();
-			if (caches.add(tmp)) {
-				alphabet.add(tmp);
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "utf-8"))) {
+			String text = null;
+			for (; (text = reader.readLine()) != null;) {
+				String tmp = text.trim();
+				if (caches.add(tmp)) {
+					alphabet.add(tmp);
+				}
 			}
+			reader.close();
 		}
-		reader.close();
 		this.wordLenght = startLength;
 		this.maxWordLength = maxWordLength;
 		this.alphabet = new ArrayList<String>(alphabet);

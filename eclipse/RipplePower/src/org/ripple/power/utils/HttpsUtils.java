@@ -1,10 +1,13 @@
 package org.ripple.power.utils;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -20,7 +23,9 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.Header;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -31,6 +36,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
 
@@ -38,13 +44,19 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -81,6 +93,10 @@ public class HttpsUtils {
 			return statusCode == HttpURLConnection.HTTP_OK;
 		}
 
+		public String body(){
+			return getResult();
+		}
+		
 		public String getResult() {
 			return result;
 		}
@@ -175,7 +191,7 @@ public class HttpsUtils {
 		return getSSL(url, LSystem.encoding, LSystem.encoding);
 	}
 
-	public static ResponseResult getSSL(String url, String paramsCharset, String resultCharset) throws Exception {
+	public static ResponseResult getSSL(String url, String paramsChdarset, String resultCharset) throws Exception {
 		if (url == null || "".equals(url)) {
 			return null;
 		}
@@ -295,14 +311,48 @@ public class HttpsUtils {
 				}
 				responseObject.setResult(responseStr);
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
 			abortConnection(hp, httpClient);
 		}
 		return responseObject;
 	}
+	//"{\"page\":"+page+"}";
+	public static Object postToJsonArray(String p,String page) throws IOException {
+        String query = p;
+        String json = page;
 
+        URL url = new URL(query);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setConnectTimeout(9000);
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setRequestMethod("POST");
+
+        OutputStream os = conn.getOutputStream();
+        os.write(json.getBytes("UTF-8"));
+        os.close();
+
+        // read the response
+        InputStream in = new BufferedInputStream(conn.getInputStream());
+
+        String result = FileUtils.readAsText(in);
+        Object obj=null;
+        if(result.startsWith("[")){
+        	obj=new JSONArray(result);
+        }else{
+        	obj=new JSONObject(result);
+        }
+        in.close();
+        conn.disconnect();
+
+        return obj;
+}
+	
 	public static ResponseResult httpByPostJSONObjSSL(String url, Map<String, String> params, String paramsCharset,
 			String resultCharset) {
 		if (url == null || "".equals(url)) {
@@ -449,9 +499,13 @@ public class HttpsUtils {
 
 	public static HttpClient getNewHttpClient() {
 		try {
-
+           // KeyStore ks=KeyStore.getInstance(KeyStore.getDefaultType());  
+             
 			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(null, null);
+
+			 
+		//	KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		//	trustStore.load(null, null);
 			SSLSocketFactory sf = new SSLSocketFactoryEx(trustStore);
 			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 			HttpParams params = new BasicHttpParams();

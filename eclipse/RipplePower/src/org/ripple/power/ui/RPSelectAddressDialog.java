@@ -5,17 +5,25 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import org.ripple.power.NativeSupport;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperDialog;
 import org.ripple.power.ui.graphics.LImage;
 import org.ripple.power.ui.view.RPToast;
 import org.ripple.power.ui.view.WaitDialog;
 import org.ripple.power.ui.view.RPToast.Style;
+import org.ripple.power.utils.FileUtils;
 import org.ripple.power.utils.GraphicsUtils;
+import org.ripple.power.utils.StringUtils;
+import org.ripple.power.wallet.WalletCache;
 
 public class RPSelectAddressDialog extends JPanel {
 
@@ -64,15 +72,15 @@ public class RPSelectAddressDialog extends JPanel {
 	private final static ImageIcon iconLocal = new ImageIcon(
 			new LImage("icons/home.png").scaledInstance(48, 48).getBufferedImage());
 
-	private final static ImageIcon iconWeb = new ImageIcon(
-			new LImage("icons/web.png").scaledInstance(48, 48).getBufferedImage());
+	private final static ImageIcon wallets = new ImageIcon(
+			new LImage("icons/wallet.png").scaledInstance(48, 48).getBufferedImage());
 
-	public RPSelectAddressDialog(String text, Window parent) {
-		Dimension dim = new Dimension(375, 190);
+	public RPSelectAddressDialog(final String text, final Window parent) {
+		Dimension dim = RPUtils.newDim(375, 190);
 		setPreferredSize(dim);
 		setSize(dim);
 		_localButton = new RPCButton(iconLocal);
-		_onlineButton = new RPCButton(iconWeb);
+		_onlineButton = new RPCButton(wallets);
 		Font font = GraphicsUtils.getFont(Font.SANS_SERIF, 1, 20);
 		setLayout(null);
 
@@ -90,8 +98,7 @@ public class RPSelectAddressDialog extends JPanel {
 		_localButton.setFont(font);
 		add(_localButton);
 		_localButton.setBounds(20, 20, 335, 63);
-		_onlineButton.setText("Online Wallet");
-		_onlineButton.setEnabled(false);
+		_onlineButton.setText("Import Secret File");
 		_onlineButton.setFont(font);
 		add(_onlineButton);
 		_onlineButton.setBounds(20, 100, 335, 56);
@@ -99,6 +106,52 @@ public class RPSelectAddressDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle("Import paper wallet");
+				int ret = chooser.showOpenDialog(parent);
+				if (ret == JFileChooser.APPROVE_OPTION) {
+					File file = chooser.getSelectedFile();
+					if (file.exists()) {
+						HashSet<String> list = FileUtils.readSet(file.getAbsolutePath());
+						for (String line : list) {
+							ArrayList<String> seeds = StringUtils.findSeeds(line);
+							if (seeds.size() > 0) {
+								String seed = seeds.get(0);
+								if (StringUtils.isAlphabetNumeric(seed) && seed.length() >= 27) {
+									String privatekey = seed;
+									String ripplekey = null;
+									try {
+										ripplekey = NativeSupport.getRippleSeedToKey(privatekey);
+										if (ripplekey != null && ripplekey.indexOf(',') != -1) {
+											String[] split = ripplekey.split(",");
+											if (split.length == 2) {
+												WalletCache.get().add(split[0], split[1]);
+											}
+										}
+									} catch (Exception ex) {
+									}
+								}
+							}
+						}
+						try {
+							WalletCache.saveDefWallet();
+						} catch (Exception ex) {
+							UIRes.showErrorMessage(parent, UIMessage.error, "System exception, wallets save failed !");
+							return;
+						}
+						MainForm form = LSystem.applicationMain;
+						if (form != null) {
+							MainPanel panel = form.getMainPanel();
+							if (panel != null) {
+								panel.walletChanged();
+							}
+						}
+						closeDialog();
+					} else {
+						UIRes.showErrorMessage(parent, "Import",
+								"File import fails, the specified file does not exist !");
+					}
+				}
 
 			}
 		});

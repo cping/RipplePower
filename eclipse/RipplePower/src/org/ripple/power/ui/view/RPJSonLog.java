@@ -8,7 +8,9 @@ import javax.swing.ImageIcon;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPToast.Style;
 import org.ripple.power.utils.StringUtils;
 
@@ -61,14 +63,14 @@ public class RPJSonLog {
 	}
 
 	public RPJSonLog() {
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		RectBox screenSize = UIConfig.getScreenRect();
 		Insets screenInsets = Toolkit.getDefaultToolkit()
 				.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 		Dimension panSize = new Dimension(WIDTH, HEIGHT);
 		lConsole = new JConsole();
 		lConsole.setPreferredSize(panSize);
 		lConsole.setSize(panSize);
-		_tool = RPPushTool.pop(new Point(20, size.getHeight()),
+		_tool = RPPushTool.pop(new Point(20, screenSize.getHeight()),
 				(int) (screenInsets.bottom + lConsole.getHeight() + (RPPushTool.TITLE_SIZE) + 260), _def_name,
 				lConsole);
 	}

@@ -3,6 +3,7 @@ package org.ripple.power;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
+import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.CollectionUtils;
 import org.ripple.bouncycastle.asn1.sec.SECNamedCurves;
 import org.ripple.bouncycastle.asn1.x9.X9ECParameters;
@@ -52,7 +53,7 @@ public class RippleGenerator {
 	public RipplePrivateKey getAccountPrivateKey(int accountNumber) {
 		BigInteger privateRootKeyBI = new BigInteger(1, getPrivateRootKeyBytes());
 		ECPoint publicGeneratorPoint = getPublicGeneratorPoint();
-		byte[] publicGeneratorBytes = publicGeneratorPoint.getEncoded();
+		byte[] publicGeneratorBytes = publicGeneratorPoint.getEncoded(LSystem.ENCODE);
 		byte[] accountNumberBytes = ByteBuffer.allocate(4).putInt(accountNumber).array();
 		BigInteger pubGenSeqSubSeqHashBI;
 		for (int subSequence = 0;; subSequence++) {
@@ -74,7 +75,7 @@ public class RippleGenerator {
 
 	public RipplePublicKey getAccountPublicKey(int accountNumber) {
 		ECPoint publicGeneratorPoint = getPublicGeneratorPoint();
-		byte[] publicGeneratorBytes = publicGeneratorPoint.getEncoded();
+		byte[] publicGeneratorBytes = publicGeneratorPoint.getEncoded(LSystem.ENCODE);
 		byte[] accountNumberBytes = ByteBuffer.allocate(4).putInt(accountNumber).array();
 		byte[] publicGeneratorAccountSeqHashBytes;
 		for (int subSequence = 0;; subSequence++) {
@@ -90,12 +91,12 @@ public class RippleGenerator {
 		ECPoint temporaryPublicPoint = new RipplePrivateKey(publicGeneratorAccountSeqHashBytes).getPublicKey()
 				.getPublicPoint();
 		ECPoint accountPublicKeyPoint = publicGeneratorPoint.add(temporaryPublicPoint);
-		byte[] publicKeyBytes = accountPublicKeyPoint.getEncoded();
+		byte[] publicKeyBytes = accountPublicKeyPoint.getEncoded(LSystem.ENCODE);
 		return new RipplePublicKey(publicKeyBytes);
 	}
 
 	public RipplePublicGeneratorAddress getPublicGeneratorFamily() throws Exception {
-		byte[] publicGeneratorBytes = getPublicGeneratorPoint().getEncoded();
+		byte[] publicGeneratorBytes = getPublicGeneratorPoint().getEncoded(LSystem.ENCODE);
 		return new RipplePublicGeneratorAddress(publicGeneratorBytes);
 	}
 }

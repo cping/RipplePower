@@ -66,7 +66,7 @@ public class RPTradingToolsDialog extends JPanel {
 
 	public RPTradingToolsDialog(String text, Window parent) {
 
-		Dimension dim = new Dimension(400, 490);
+		Dimension dim = RPUtils.newDim(400, 490);
 		setPreferredSize(dim);
 		setSize(dim);
 

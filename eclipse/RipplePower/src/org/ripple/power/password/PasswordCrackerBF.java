@@ -13,6 +13,8 @@ public class PasswordCrackerBF {
 	public void init(char[] charS, String from) {
 		charSet = charS;
 		currentPass = from.toCharArray();
+		completed = false;
+		count = 0;
 	}
 
 	public String toString() {

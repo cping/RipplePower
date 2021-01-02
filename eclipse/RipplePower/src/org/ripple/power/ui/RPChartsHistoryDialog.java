@@ -130,7 +130,7 @@ public class RPChartsHistoryDialog extends ABaseDialog implements WindowListener
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(755, 625);
+		Dimension dim = RPUtils.newDim(755, 625);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

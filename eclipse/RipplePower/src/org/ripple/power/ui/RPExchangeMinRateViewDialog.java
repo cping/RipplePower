@@ -68,7 +68,7 @@ public class RPExchangeMinRateViewDialog extends JDialog implements WindowListen
 		super(parent, text, false);
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(774, 565);
+		Dimension dim = RPUtils.newDim(774, 565);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();

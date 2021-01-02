@@ -355,7 +355,7 @@ public class RPDownloadDialog extends ABaseDialog implements Observer {
 	public RPDownloadDialog(Window parent) {
 		super(parent, "Download", ModalityType.MODELESS);
 		setIconImage(UIRes.getIcon());
-		Dimension dim = new Dimension(590, 400);
+		Dimension dim = RPUtils.newDim(590, 400);
 		setPreferredSize(dim);
 		setSize(dim);
 		setResizable(false);

@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
 
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.ui.RPCButton;
+import org.ripple.power.ui.RPUtils;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.view.ABaseDialog;
@@ -55,7 +56,7 @@ public class SearchDialog extends ABaseDialog {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(445, 415);
+		Dimension dim = RPUtils.newDim(445, 415);
 		setPreferredSize(dim);
 		setSize(dim);
 		getContentPane().setBackground(UIConfig.dialogbackground);

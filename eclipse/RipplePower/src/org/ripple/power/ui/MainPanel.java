@@ -677,7 +677,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				value = item.getStatus();
 				break;
 			case 4:
-				value = "YES";
+				value = "NO";
 				break;
 			default:
 				throw new IndexOutOfBoundsException("Table column " + column + " is not valid");

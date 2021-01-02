@@ -49,13 +49,13 @@ public abstract class SoundBox {
 	final static private HashMap<String, Integer> supportedFiles = new HashMap<String, Integer>(9);
 
 	static {
-		supportedFiles.put("mid", new Integer(SOUNDTYPE_MIDI));
-		supportedFiles.put("ogg", new Integer(SOUNDTYPE_OGG));
-		supportedFiles.put("wav", new Integer(SOUNDTYPE_WAV));
-		supportedFiles.put("au", new Integer(SOUNDTYPE_AU));
-		supportedFiles.put("aiff", new Integer(SOUNDTYPE_AIFF));
-		supportedFiles.put("aac", new Integer(SOUNDTYPE_AAC));
-		supportedFiles.put("rmf", new Integer(SOUNDTYPE_RMF));
+		supportedFiles.put("mid", Integer.valueOf(SOUNDTYPE_MIDI));
+		supportedFiles.put("ogg", Integer.valueOf(SOUNDTYPE_OGG));
+		supportedFiles.put("wav", Integer.valueOf(SOUNDTYPE_WAV));
+		supportedFiles.put("au", Integer.valueOf(SOUNDTYPE_AU));
+		supportedFiles.put("aiff", Integer.valueOf(SOUNDTYPE_AIFF));
+		supportedFiles.put("aac", Integer.valueOf(SOUNDTYPE_AAC));
+		supportedFiles.put("rmf", Integer.valueOf(SOUNDTYPE_RMF));
 	}
 
 	public static boolean isSupportedFile(String fileName) {

@@ -308,7 +308,7 @@ public class RPExchangeMinDialog extends JDialog implements WindowListener {
 		}
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(toScalePixel(992), toScalePixel(650));
+		Dimension dim = RPUtils.newDim(toScalePixel(992), toScalePixel(650));
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();

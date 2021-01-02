@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.config.ProxySettings;
 import org.ripple.power.helper.HelperWindow;
-import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.log.ErrorLog;
 import org.ripple.power.utils.GraphicsUtils;
@@ -44,7 +43,7 @@ public class RPSEDialog extends ABaseDialog {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(460, 170);
+		Dimension dim = RPUtils.newDim(460, 170);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

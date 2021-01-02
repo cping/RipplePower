@@ -85,7 +85,7 @@ public class RPSelectMoneyDialog extends JPanel implements ActionListener {
 			new LImage("icons/arrowright.png").scaledInstance(48, 48).getBufferedImage());
 
 	public RPSelectMoneyDialog(String text, Window parent, WalletItem item) {
-		Dimension dim = new Dimension(399, 390);
+		Dimension dim = RPUtils.newDim(399, 390);
 		setPreferredSize(dim);
 		setSize(dim);
 

@@ -2,12 +2,10 @@ package org.ripple.power.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.ProxySettings;
 import org.ripple.power.config.Session;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.qr.WebRippled;

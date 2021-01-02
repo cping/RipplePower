@@ -17,6 +17,10 @@ public class RectBox {
 		setBounds(0, 0, 0, 0);
 	}
 
+	public RectBox(double width, double height) {
+		setBounds(0, 0, width, height);
+	}
+	
 	public RectBox(double x, double y, double width, double height) {
 		setBounds(x, y, width, height);
 	}

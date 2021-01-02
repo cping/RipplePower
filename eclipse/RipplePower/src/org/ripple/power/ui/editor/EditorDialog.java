@@ -23,6 +23,7 @@ import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.txns.RippleMacros;
 import org.ripple.power.ui.RPCButton;
+import org.ripple.power.ui.RPUtils;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIMessage;
 import org.ripple.power.ui.graphics.LImage;
@@ -339,7 +340,7 @@ public class EditorDialog extends JDialog {
 		super(parent, "ROC Script Editor(Developing)", Dialog.ModalityType.MODELESS);
 		addWindowListener(HelperWindow.get());
 		setResizable(false);
-		Dimension dim = new Dimension(818, 595);
+		Dimension dim = RPUtils.newDim(818, 595);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

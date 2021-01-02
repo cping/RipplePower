@@ -689,6 +689,10 @@ public class FinderPatternFinder {
 	 * </p>
 	 */
 	private static final class FurthestFromAverageComparator implements Comparator<FinderPattern>, Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final float average;
 
 		private FurthestFromAverageComparator(float f) {
@@ -709,6 +713,10 @@ public class FinderPatternFinder {
 	 * </p>
 	 */
 	private static final class CenterComparator implements Comparator<FinderPattern>, Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final float average;
 
 		private CenterComparator(float f) {

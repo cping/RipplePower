@@ -3,9 +3,11 @@ package org.ripple.power.database;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 
 import org.ripple.power.NativeSupport;
@@ -14,13 +16,15 @@ import org.ripple.power.utils.FileUtils;
 
 public class AddressDataBase {
 
-	private HashMap<String, FileWriter> pPutAddress = new HashMap<String, FileWriter>(1000);
+	private HashMap<String, FileOutputStream> pPutAddress = new HashMap<String, FileOutputStream>(1000);
+
+	private int flag = 0;
 
 	private boolean isOnlyLocked = false, isMode = false;
 
 	protected final static String pIndexName = "index";
 
-	private int pMaxCache = 300;
+	private int pMaxCache = 700;
 
 	public String pDirPath = "";
 
@@ -60,38 +64,91 @@ public class AddressDataBase {
 		char[] chars = index_dir.toCharArray();
 		StringBuilder sbr = new StringBuilder(pDirPath);
 		sbr.append(LSystem.FS);
-		if (chars[0] == 'r') {
-			sbr.append(chars[0]);
-			sbr.append(chars[1]);
-		} else {
-			// sbr.append(chars[1]);
-			if ((chars[0] >= '0' && chars[0] <= '9')) {
-				sbr.append(chars[0]);
+		int charSize = chars.length;
+		boolean ex = charSize >= 40;
+		if (ex) {
+			if ((chars[2] >= '0' && chars[2] <= '9')) {
+				sbr.append(chars[2]);
 			} else {
-				sbr.append(getNumber(chars[0]));
+				sbr.append(getNumber(chars[2]));
 			}
-			if ((chars[1] >= '0' && chars[1] <= '9')) {
+			if ((chars[3] >= '0' && chars[3] <= '9')) {
+				sbr.append(chars[3]);
+			} else {
+				sbr.append(getNumber(chars[3]));
+			}
+			sbr.append(LSystem.FS);
+			switch (flag) {
+			case 0:
+				sbr.append(chars[4]);
+				sbr.append(LSystem.FS);
+				break;
+			default:
+				break;
+			}
+			if (isMode) {
+				if (charSize > 40) {
+					sbr.append(getNumber(chars[5]));
+					sbr.append(LSystem.FS);
+				}
+				sbr.append(getNumber(chars[6]));
+				sbr.append(LSystem.FS);
+				sbr.append(getNumber(chars[7]) + pIndexName);
+			} else {
+				sbr.append(pIndexName);
+			}
+		} else {
+			if (chars[0] == 'r' && charSize > 30) {
+				sbr.append(chars[0]);
 				sbr.append(chars[1]);
 			} else {
-				sbr.append(getNumber(chars[1]));
+				// sbr.append(chars[1]);
+				if ((chars[0] >= '0' && chars[0] <= '9')) {
+					sbr.append(chars[0]);
+				} else {
+					sbr.append(getNumber(chars[0]));
+				}
+				if ((chars[1] >= '0' && chars[1] <= '9')) {
+					sbr.append(chars[1]);
+				} else {
+					sbr.append(getNumber(chars[1]));
+				}
+			}
+			sbr.append(LSystem.FS);
+			switch (flag) {
+			case 0:
+				sbr.append(chars[2]);
+				sbr.append(LSystem.FS);
+				break;
+			default:
+				break;
+			}
+			if (isMode) {
+				if (charSize > 30) {
+					sbr.append(getNumber(chars[3]));
+					sbr.append(LSystem.FS);
+				}
+				sbr.append(getNumber(chars[4]));
+				sbr.append(LSystem.FS);
+				sbr.append(getNumber(chars[5]) + pIndexName);
+			} else {
+				sbr.append(pIndexName);
 			}
 		}
-		sbr.append(LSystem.FS);
-		sbr.append(chars[2]);
-		sbr.append(LSystem.FS);
-		if (isMode) {
-			sbr.append(getNumber(chars[3]));
-			sbr.append(LSystem.FS);
-			sbr.append(getNumber(chars[4]));
-			sbr.append(LSystem.FS);
-			sbr.append(getNumber(chars[5]) + pIndexName);
-		} else {
-			sbr.append(pIndexName);
-		}
+
 		return sbr.toString();
 	}
 
+	public int getFlag() {
+		return flag;
+	}
+
+	public void setFlag(int f) {
+		this.flag = f;
+	}
+
 	private final static int getNumber(char letter) {
+		//a
 		if ((letter >= '0' && letter <= '4')) {
 			return 0;
 		} else if ((letter >= '5' && letter <= '9')) {
@@ -105,23 +162,90 @@ public class AddressDataBase {
 		} else {
 			return 5;
 		}
+		//b 新的
+		/*if ((letter >= '0' && letter <= '9')) {
+			return 0;
+		} else if (letter == 'a' || letter == 'b' || letter == 'c' || letter == 'd' || letter == 'e' || letter == 'f'|| letter == 'g') {
+			return 2;
+		} else if (letter == 'h' || letter == 'i' || letter == 'j' || letter == 'k' || letter == 'l'|| letter == 'm'|| letter == 'n') {
+			return 3;
+		} else if (letter == 'o' || letter == 'p' || letter == 'q' || letter == 'r' || letter == 's'|| letter == 't'|| letter == 'u') {
+			return 4;
+		} else {
+			return 5;
+		}*/
 	}
 
 	public boolean findAddress(String key) throws IOException {
 		String result = key.replaceAll("-", "").toLowerCase();
 		return findAddress(toIndexAddress(result), result);
 	}
+/*
+	private IntHashMap queryCaches = new IntHashMap();
+
+	private static boolean findStream(byte[] key, FileChannel inChannel, ByteBuffer buffer) throws IOException {
+		int patternOffset = 0;
+		int len = key.length;
+		int bytesRead = inChannel.read(buffer);
+		while (bytesRead != -1) {
+			buffer.flip();
+			while (buffer.hasRemaining()) {
+				if (patternOffset < len && key[patternOffset] == buffer.get()) {
+					patternOffset++;
+					if (patternOffset == len) {
+						return true;
+					}
+				} else {
+					patternOffset = 0;
+				}
+			}
+			buffer.clear();
+			bytesRead = inChannel.read(buffer);
+		}
+		return false;
+	}*/
+
+	//private ByteBuffer buf = ByteBuffer.allocate(8192*12);
 
 	private boolean findAddress(String hashPath, String key) throws IOException {
 		File file = new File(hashPath);
-		if (!file.exists()) {
-			return false;
-		} else {
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(file), 16384);
-			boolean flag = findStream(zipString(key).getBytes(), in);
-			in.close();
-			return flag;
+		boolean flag = file.exists();
+
+	/*	if (flag) {
+			try {
+				FileInputStream in = new FileInputStream(file);
+				FileChannel inChannel = in.getChannel();
+				flag = findStream(zipString(key).getBytes(), inChannel, buf);
+			//	inChannel.close();
+				in.close();
+			} catch (Exception e) {
+				return flag;
+			}
 		}
+		return flag;*/
+		if
+		  (flag) { BufferedInputStream in = new BufferedInputStream(new
+		  FileInputStream(file), 2048); flag =
+		  findStream(zipString(key).getBytes(), in); in.close(); } return flag;
+		 
+	}
+
+	static boolean findStream(byte[] dst, InputStream is) throws IOException {
+		int patternOffset = 0;
+		int len = dst.length;
+		int b = is.read();
+		for (; b != -1;) {
+			if (dst[patternOffset] == b) {
+				patternOffset++;
+				if (patternOffset == len) {
+					return true;
+				}
+			} else {
+				patternOffset = 0;
+			}
+			b = is.read();
+		}
+		return false;
 	}
 
 	private final String zipString(String str) {
@@ -150,24 +274,6 @@ public class AddressDataBase {
 		return NativeSupport.findCoinAddress(key.getBytes(), buffers);
 	}
 
-	private static boolean findStream(byte[] dst, InputStream is) throws IOException {
-		int patternOffset = 0;
-		int len = dst.length;
-		int b = is.read();
-		for (; b != -1;) {
-			if (dst[patternOffset] == (byte) b) {
-				patternOffset++;
-				if (patternOffset == len) {
-					return true;
-				}
-			} else {
-				patternOffset = 0;
-			}
-			b = is.read();
-		}
-		return false;
-	}
-
 	protected boolean putAddress(String hashPath, String key) {
 		if (isOnlyLocked) {
 			try {
@@ -183,19 +289,27 @@ public class AddressDataBase {
 				if (pPutAddress.size() > pMaxCache) {
 					submit();
 				}
-
-				FileWriter out = pPutAddress.get(hashPath);
+				FileOutputStream out = pPutAddress.get(hashPath);
 				if (out == null) {
 					File file = new File(hashPath);
 					if (!file.exists()) {
 						FileUtils.makedirs(file);
 					}
-
-					out = new FileWriter(hashPath, true);
+					out = new FileOutputStream(file, true);
 					pPutAddress.put(hashPath, out);
 				}
-				out.write(key);
-				out.write(LSystem.LS);
+				FileChannel fcOut = out.getChannel();
+				if (!fcOut.isOpen()) {
+					pPutAddress.remove(hashPath);
+					File file = new File(hashPath);
+					if (!file.exists()) {
+						FileUtils.makedirs(file);
+					}
+					out = new FileOutputStream(file, true);
+					fcOut = out.getChannel();
+					pPutAddress.put(hashPath, out);
+				}
+				fcOut.write(ByteBuffer.wrap((key + LSystem.LS).getBytes()));
 			} catch (Exception ex) {
 				return false;
 			}
@@ -209,9 +323,14 @@ public class AddressDataBase {
 	}
 
 	public void submit() throws IOException {
-		for (FileWriter out : pPutAddress.values()) {
+		for (FileOutputStream out : pPutAddress.values()) {
+			FileChannel fcOut = out.getChannel();
+			if (fcOut.isOpen()) {
+				fcOut.close();
+			}
 			out.flush();
 			out.close();
+
 		}
 		pPutAddress.clear();
 	}

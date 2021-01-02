@@ -1,28 +1,9 @@
 package org.ripple.power;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import org.ripple.power.config.LSystem;
-import org.ripple.power.database.AddressManager;
-import org.ripple.power.password.PasswordCrackerBF;
-import org.ripple.power.password.PasswordEasy;
-import org.ripple.power.password.PasswordMnemonic;
-import org.ripple.power.utils.FileUtils;
-import org.ripple.power.utils.MathUtils;
-import org.ripple.power.utils.StringUtils;
 
 public final class Crypto {
 
@@ -116,23 +97,6 @@ public final class Crypto {
 		return Arrays.equals(h, h2);
 	}
 
-	/*
-	 * public static byte[] aesDecrypt(byte[] ivCiphertext, byte[] myPrivateKey,
-	 * byte theirPublicKey[]) throws GeneralSecurityException { if (
-	 * ivCiphertext.length < 16 || ivCiphertext.length % 16 != 0 ) { throw new
-	 * GeneralSecurityException("invalid ciphertext"); } byte[] iv =
-	 * Arrays.copyOfRange(ivCiphertext, 0, 16); byte[] ciphertext =
-	 * Arrays.copyOfRange(ivCiphertext, 16, ivCiphertext.length); byte[]
-	 * dhSharedSecret = new byte[32]; Curve25519.curve(dhSharedSecret,
-	 * myPrivateKey, theirPublicKey); byte[] key =
-	 * sha256().digest(dhSharedSecret); SecretKeySpec keySpec = new
-	 * SecretKeySpec(key, "AES"); IvParameterSpec ivSpec = new
-	 * IvParameterSpec(iv); Cipher cipher =
-	 * Cipher.getInstance("AES/CBC/PKCS5Padding");
-	 * cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec); return
-	 * cipher.doFinal(ciphertext); }
-	 */
-
 	private static void xorProcess(byte[] data, int position, int length, byte[] myPrivateKey, byte[] theirPublicKey,
 			byte[] nonce) {
 
@@ -160,7 +124,6 @@ public final class Crypto {
 
 	}
 
-	@Deprecated
 	public static byte[] xorEncrypt(byte[] data, int position, int length, byte[] myPrivateKey, byte[] theirPublicKey) {
 		byte[] nonce = new byte[32];
 		secureRandom.get().nextBytes(nonce); // cfb: May block as entropy is
@@ -172,7 +135,6 @@ public final class Crypto {
 		return nonce;
 	}
 
-	@Deprecated
 	public static void xorDecrypt(byte[] data, int position, int length, byte[] myPrivateKey, byte[] theirPublicKey,
 			byte[] nonce) {
 		xorProcess(data, position, length, myPrivateKey, theirPublicKey, nonce);

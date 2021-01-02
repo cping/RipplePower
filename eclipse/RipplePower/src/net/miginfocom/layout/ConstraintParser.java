@@ -1066,7 +1066,7 @@ public final class ConstraintParser {
 	}
 
 	private static Float parseFloat(String s, Float nullVal) {
-		return s.length() > 0 ? new Float(Float.parseFloat(s)) : nullVal;
+		return s.length() > 0 ? Float.valueOf(s) : nullVal;
 	}
 
 	/**

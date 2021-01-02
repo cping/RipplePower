@@ -20,6 +20,7 @@ import org.ripple.power.txns.AccountFind;
 import org.ripple.power.txns.NameFind;
 import org.ripple.power.ui.RPCButton;
 import org.ripple.power.ui.RPComboBox;
+import org.ripple.power.ui.RPUtils;
 import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.view.ABaseDialog;
@@ -108,7 +109,7 @@ public class ContactDialog extends ABaseDialog {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(466, 520);
+		Dimension dim = RPUtils.newDim(466, 520);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -789,7 +790,6 @@ public class ContactDialog extends ABaseDialog {
 				}
 			}
 		} catch (EOFException eof) {
-			return;
 		} catch (ClassNotFoundException classNotFound) {
 		} catch (IOException e) {
 			writeContactsSer();

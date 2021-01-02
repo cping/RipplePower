@@ -34,6 +34,15 @@ public class RippleIdentifier implements Serializable {
 		identifierType = stridBytes[0];
 	}
 
+	public byte[] getBase58() {
+		byte[] versionPayloadChecksumBytes = new byte[1 + payloadBytes.length + 4];
+		versionPayloadChecksumBytes[0] = (byte) identifierType;
+		System.arraycopy(payloadBytes, 0, versionPayloadChecksumBytes, 1, payloadBytes.length);
+		byte[] hashBytes = Helper.doubleDigest(versionPayloadChecksumBytes, 0, 1 + payloadBytes.length);
+		System.arraycopy(hashBytes, 0, versionPayloadChecksumBytes, 1 + payloadBytes.length, 4);
+		return versionPayloadChecksumBytes;
+	}
+
 	@Override
 	public String toString() {
 		if (humanReadableIdentifier == null) {

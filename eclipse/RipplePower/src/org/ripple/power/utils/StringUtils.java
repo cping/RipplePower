@@ -49,6 +49,23 @@ final public class StringUtils {
 	private StringUtils() {
 	}
 
+	public static boolean isHexDigit(int c) {
+		return (c >= '0' && c <= '9') || ((c >= 'a') && (c <= 'f')) || ((c >= 'A') && (c <= 'F'));
+	}
+
+	public static boolean isHex(CharSequence ch) {
+		if (ch == null) {
+			return false;
+		}
+		for (int i = 0; i < ch.length(); i++) {
+			int c = ch.charAt(i);
+			if (!isHexDigit(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static String join(String flag, Object... o) {
 		StringBuilder sbr = new StringBuilder();
 		for (int i = 0; i < o.length; i++) {
@@ -56,6 +73,29 @@ final public class StringUtils {
 			sbr.append(flag);
 		}
 		return sbr.toString();
+	}
+
+	public static ArrayList<String> findSeeds(String text) {
+		if (isEmpty(text)) {
+			return new ArrayList<String>();
+		}
+		ArrayList<String> seeds = new ArrayList<String>();
+		StringBuffer sbr = new StringBuffer();
+		for (int i = 0; i < text.length(); i++) {
+			char ch = text.charAt(i);
+			if (StringUtils.isAlphabetNumeric(ch)) {
+				sbr.append(ch);
+			} else {
+				String seed = sbr.toString().trim();
+				if (seed.startsWith("s") && seed.length() > 27 && StringUtils.isAlphabetNumeric(seed)) {
+					if (!seeds.contains(seed)) {
+						seeds.add(seed);
+					}
+				}
+				sbr.delete(0, sbr.length());
+			}
+		}
+		return seeds;
 	}
 
 	public static boolean isBoolean(String o) {
@@ -510,8 +550,7 @@ final public class StringUtils {
 	/**
 	 * 检查指定字符串中是否存在中文字符。
 	 * 
-	 * @param checkStr
-	 *            指定需要检查的字符串。
+	 * @param checkStr 指定需要检查的字符串。
 	 * @return 逻辑值（True Or False）。
 	 */
 	public static final boolean hasChinese(String checkStr) {
@@ -538,15 +577,103 @@ final public class StringUtils {
 	 * @param value
 	 * @return
 	 */
+
+	/**
+	 * 检查是否为纯字母
+	 * 
+	 * @param value
+	 * @return
+	 */
 	public final static boolean isAlphabet(String value) {
-		if (value == null || value.length() == 0)
+		if (value == null || value.length() == 0) {
 			return false;
-		for (int i = 0; i < value.length(); i++) {
-			char letter = Character.toUpperCase(value.charAt(i));
-			if (('a' <= letter && letter <= 'z') || ('A' <= letter && letter <= 'Z'))
+		}
+		int size = value.length();
+		int count = 0;
+		for (int i = 0; i < size; i++) {
+			if (isAlphabet(value.charAt(i))) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count >= size;
+	}
+
+	public final static boolean cAlphabetL(String value) {
+		if (value == null || value.length() == 0) {
+			return false;
+		}
+		int size = value.length();
+		for (int i = 0; i < size; i++) {
+			if (isAlphabetLower(value.charAt(i))) {
 				return true;
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * 检查是否为纯字母
+	 * 
+	 * @param letter
+	 * @return
+	 */
+	public final static boolean isAlphabetUpper(char letter) {
+		return ('A' <= letter && letter <= 'Z');
+	}
+
+	public final static boolean isAlphabetLower(char letter) {
+		return ('a' <= letter && letter <= 'z');
+	}
+
+	public final static boolean isAlphabet(char letter) {
+		return isAlphabetUpper(letter) || isAlphabetLower(letter);
+	}
+
+	public final static boolean isAllAlphabetLower(String value) {
+		if (value == null || value.length() == 0)
+			return false;
+		int count = 0;
+		for (int i = 0; i < value.length(); i++) {
+			char letter = value.charAt(i);
+			if (Character.isLowerCase(letter)) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count >= value.length();
+	}
+
+	public final static boolean isAllAlphabetUpper(String value) {
+		if (value == null || value.length() == 0)
+			return false;
+		int count = 0;
+		for (int i = 0; i < value.length(); i++) {
+			char letter = value.charAt(i);
+			if (Character.isUpperCase(letter)) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count >= value.length();
+	}
+
+	public final static boolean isAllAlphabet(String value) {
+		if (value == null || value.length() == 0)
+			return false;
+		int count = 0;
+		for (int i = 0; i < value.length(); i++) {
+			char letter = Character.toUpperCase(value.charAt(i));
+			if (Character.isAlphabetic(letter) || (Character.isAlphabetic(letter) && Character.isUpperCase(letter))) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count >= value.length();
 	}
 
 	/**
@@ -563,6 +690,14 @@ final public class StringUtils {
 			if (('a' > letter || letter > 'z') && ('A' > letter || letter > 'Z') && ('0' > letter || letter > '9'))
 				return false;
 		}
+		return true;
+	}
+
+	public static boolean isAlphabetNumeric(char letter) {
+
+		if (('a' > letter || letter > 'z') && ('A' > letter || letter > 'Z') && ('0' > letter || letter > '9'))
+			return false;
+
 		return true;
 	}
 
@@ -826,4 +961,5 @@ final public class StringUtils {
 		Matcher matcher = VALID_PHONE_REGEX.matcher(phoneStr);
 		return matcher.find();
 	}
+
 }

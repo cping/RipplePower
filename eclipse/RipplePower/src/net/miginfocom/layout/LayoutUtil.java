@@ -233,7 +233,7 @@ public final class LayoutUtil {
 	 * @param del
 	 *            The new delegate or <code>null</code> to erase to old one.
 	 */
-	static synchronized void setDelegate(Class c, PersistenceDelegate del) {
+	static synchronized void setDelegate(Class<?> c, PersistenceDelegate del) {
 		try {
 			Introspector.getBeanInfo(c, Introspector.IGNORE_ALL_BEANINFO).getBeanDescriptor()
 					.setValue("persistenceDelegate", del);
@@ -613,6 +613,7 @@ public final class LayoutUtil {
 	 * @throws IOException
 	 *             If there was a problem saving as XML
 	 */
+	@SuppressWarnings("resource")
 	public static synchronized Object readAsXML(ObjectInput in) throws IOException {
 		if (readBuf == null)
 			readBuf = new byte[16384];

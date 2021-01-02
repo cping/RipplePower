@@ -122,7 +122,7 @@ public class RPGatewayDialog extends ABaseDialog implements WindowListener {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(780, 620);
+		Dimension dim = RPUtils.newDim(780, 620);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

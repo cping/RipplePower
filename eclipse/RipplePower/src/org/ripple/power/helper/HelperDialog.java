@@ -23,6 +23,7 @@ import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.LFont;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPPushTool;
 import org.ripple.power.utils.GraphicsUtils;
 import org.ripple.power.utils.StringUtils;
@@ -66,7 +67,7 @@ public class HelperDialog extends JPanel {
 	private static RPPushTool instance = null;
 
 	private static RPPushTool load() {
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		RectBox screenSize = UIConfig.getScreenRect();
 		Insets screenInsets = null;
 		if (LSystem.applicationMain != null) {
 			screenInsets = Toolkit.getDefaultToolkit()
@@ -78,7 +79,7 @@ public class HelperDialog extends JPanel {
 		helper.setSize(new Dimension(GraphicTool.Width_MaidSystem, GraphicTool.Height_MaidSystem));
 		helper.setPreferredSize(new Dimension(GraphicTool.Width_MaidSystem, GraphicTool.Height_MaidSystem));
 		helper.setBackground(LColor.black);
-		RPPushTool rpp = RPPushTool.pop(new Point((size.width - GraphicTool.Width_MaidSystem) / 2, size.getHeight()),
+		RPPushTool rpp = RPPushTool.pop(new Point((screenSize.width - GraphicTool.Width_MaidSystem) / 2, screenSize.getHeight()),
 				(int) (screenInsets.bottom + helper.getHeight() + 90),
 				LangConfig.get(HelperDialog.class, "ripple_wizard", "Ripple Wizard"), helper);
 		rpp.obj = helper;
@@ -356,6 +357,9 @@ public class HelperDialog extends JPanel {
 				message.delete(0, message.length());
 				if (!this.lines.isEmpty()) {
 					for (int i = 0; i < this.renderRow + 1; i++) {
+						if (i >= this.lines.size()) {
+							continue;
+						}
 						String line = (String) this.lines.get(i);
 						int len = 0;
 						if (i < this.renderRow) {

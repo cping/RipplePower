@@ -49,6 +49,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 	private final JTextField _amountText;
 	private final JTextField _feeText;
 	private final JTextField _destinationTag;
+	private final JTextField _memoTag;
 	private static RPSendXRPDialog lock = null;
 
 	private ArrayList<WaitDialog> _waitDialogs = new ArrayList<WaitDialog>(10);
@@ -95,7 +96,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 	public RPSendXRPDialog(String text, Window parent, final WalletItem item, String address, String amount,
 			String fee) {
 
-		Dimension dim = new Dimension(500, 270);
+		Dimension dim = RPUtils.newDim(500, 300);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -147,27 +148,35 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 		_destinationTag.setText(address);
 		UIRes.addStyle(_destinationTag, "Destination Tag: ", false);
 
+		_memoTag = new JTextField(34);
+		_memoTag.setText(address);
+		UIRes.addStyle(_memoTag, "Memo Tag: ", false);
+
 		setBackground(LColor.white);
 		setLayout(null);
 
-		_addressText.setBounds(70, 30, 350, 45);
+		_addressText.setBounds(70, 30, 350, 55);
 		add(_addressText);
 
-		_amountText.setBounds(70, 80, 250, 45);
+		_amountText.setBounds(70, 80, 250, 55);
 		add(_amountText);
 
-		_feeText.setBounds(330, 80, 90, 45);
+		_feeText.setBounds(330, 80, 90, 55);
 		add(_feeText);
 
 		_destinationTag.setText("");
-		_destinationTag.setBounds(70, 130, 350, 45);
+		_destinationTag.setBounds(70, 130, 350, 55);
 		add(_destinationTag);
+
+		_memoTag.setText("");
+		_memoTag.setBounds(70, 180, 350, 55);
+		add(_memoTag);
 
 		JLabel exitLabel = new JLabel(UIRes.exitIcon);
 		exitLabel.setToolTipText("Cancel");
 		exitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		exitLabel.setBounds(260, 205, 45, 45);
+		exitLabel.setBounds(260, 255, 45, 45);
 		add(exitLabel);
 		exitLabel.setVisible(true);
 		exitLabel.addMouseListener(new MouseAdapter() {
@@ -181,7 +190,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 		submitLabel.setToolTipText("Submit transaction");
 		submitLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		submitLabel.setBounds(200, 205, 45, 45);
+		submitLabel.setBounds(200, 255, 45, 45);
 		add(submitLabel);
 		submitLabel.setVisible(true);
 
@@ -192,6 +201,7 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 				try {
 					String address = _addressText.getText().trim();
 					String amountValue = _amountText.getText().trim();
+					String memoTag = _memoTag.getText().trim();
 					String destinationTag = _destinationTag.getText().trim();
 					String feeValue = _feeText.getText().trim();
 					if (!MathUtils.isNan(amountValue)) {
@@ -203,6 +213,10 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 						return;
 					}
 					if (!StringUtils.isEmpty(destinationTag) && !MathUtils.isNan(destinationTag)) {
+						UIMessage.alertMessage(get().getDialog(), UIMessage.errTag);
+						return;
+					}
+					if (!StringUtils.isEmpty(memoTag) && !MathUtils.isNan(memoTag)) {
 						UIMessage.alertMessage(get().getDialog(), UIMessage.errTag);
 						return;
 					}
@@ -229,10 +243,10 @@ public class RPSendXRPDialog extends JPanel implements WindowListener {
 
 					final WaitDialog dialog = WaitDialog.showDialog(get().getDialog());
 					_waitDialogs.add(dialog);
-					long tagNumber = StringUtils.isEmpty(destinationTag) ? MathUtils.randomLong(1, 999999999)
+					long tagNumber = StringUtils.isEmpty(destinationTag) ? Payment.randomTag()
 							: Integer.parseInt(destinationTag);
 
-					Payment.sendXRP(item.getSeed(), address, tagNumber, amountValue, feeValue, new Rollback() {
+					Payment.sendXRP(item.getSeed(), address, tagNumber, memoTag, amountValue, feeValue, new Rollback() {
 
 						@Override
 						public void success(JSONObject res) {

@@ -45,7 +45,7 @@ public class RPSRippledDialog extends ABaseDialog {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(460, 170);
+		Dimension dim = RPUtils.newDim(460, 170);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

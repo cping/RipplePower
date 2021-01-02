@@ -219,7 +219,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 	private boolean setupIF(String commandString, String nowPosFlagName, HashMap setEnvironmentList,
 			ArrayMap conditionEnvironmentList) {
 		boolean result = false;
-		conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
+		conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(false));
 		try {
 			List temps = commandSplit(commandString);
 			int size = temps.size();
@@ -262,38 +262,38 @@ public class Command extends Conversion implements Serializable, LRelease {
 			}
 			// 无法判定
 			if (valueA == null || valueB == null) {
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
+				conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(false));
 			}
 
 			// 相等
 			if ("==".equals(condition)) {
 				conditionEnvironmentList.put(nowPosFlagName,
-						new Boolean(result = valueA.toString().equals(valueB.toString())));
+						Boolean.valueOf(result = valueA.toString().equals(valueB.toString())));
 				// 非等
 			} else if ("!=".equals(condition)) {
 				conditionEnvironmentList.put(nowPosFlagName,
-						new Boolean(result = !valueA.toString().equals(valueB.toString())));
+						Boolean.valueOf(result = !valueA.toString().equals(valueB.toString())));
 				// 大于
 			} else if (">".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA > numberB));
+				conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(result = numberA > numberB));
 				// 小于
 			} else if ("<".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA < numberB));
+				conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(result = numberA < numberB));
 
 				// 大于等于
 			} else if (">=".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA >= numberB));
+				conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(result = numberA >= numberB));
 				// 小于等于
 			} else if ("<=".equals(condition)) {
 				float numberA = Float.parseFloat(valueA.toString());
 				float numberB = Float.parseFloat(valueB.toString());
-				conditionEnvironmentList.put(nowPosFlagName, new Boolean(result = numberA <= numberB));
+				conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(result = numberA <= numberB));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -811,7 +811,7 @@ public class Command extends Conversion implements Serializable, LRelease {
 				} else {
 					esleflag = false;
 					addCommand = false;
-					conditionEnvironmentList.put(nowPosFlagName, new Boolean(false));
+					conditionEnvironmentList.put(nowPosFlagName, Boolean.valueOf(false));
 
 				}
 			}

@@ -64,7 +64,7 @@ public class RPAddGatewayDialog extends ABaseDialog {
 		_superDialog = parent;
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(482, 410);
+		Dimension dim = RPUtils.newDim(482, 410);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

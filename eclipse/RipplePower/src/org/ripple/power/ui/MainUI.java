@@ -124,18 +124,10 @@ public class MainUI {
 			UIMessage.alertMessage(null, "Not start multiple instances !");
 			return;
 		}
-		if (!LSystem.isMinJavaVersion(1, 6)) {
-			UIRes.showErrorMessage(null, "Java Version Error",
-					"The minimum required Java version is 1.6.\n" + "The reported version is "
-							+ System.getProperty("java.vm.version")
-							+ ".\n\nPlease download and install the latest Java "
-							+ "version\nfrom http://java.sun.com and try again.\n\n");
-
-			System.exit(1);
-		}
 		try {
 			System.setProperty("java.net.preferIPv4Stack", "true");
 			System.setProperty("jsse.enableSNIExtension", "false");
+			
 			if (LSystem.isWindows()) {
 				System.setProperty("sun.java2d.translaccel", "true");
 				System.setProperty("sun.java2d.ddforcevram", "true");
@@ -165,9 +157,13 @@ public class MainUI {
 	public MainUI() {
 		String password = LSystem.session("system").get("password");
 		if (password == null) {
+	
 			GraphicTool tools = new GraphicTool();
+			
 			Image backimage = tools.getWinTable(460, 130, Color.white, UIConfig.background, true);
+			
 			HIRipple ripple = new HIRipple(backimage);
+			
 			ripple.scene = UIScene.showDialog("Hi,Ripple", 480, 320, ripple, null, null);
 			ripple.scene.setExit(new Updateable() {
 
@@ -458,12 +454,13 @@ public class MainUI {
 		navLinkList.add(exitLink);
 
 		navbar.setNavLinkList(navLinkList);
-		SwingUtils.centerOnScreen(form);
+
 		// form.setAlwaysOnTop(true);
 		form.setLocationRelativeTo(null);
 		form.pack();
 		form.setVisible(true);
-
+		RPUtils.setInsets(form.getInsets());
+		SwingUtils.centerOnScreen(form);
 	}
 
 	private RPSplash loadSplash(Updateable update) {

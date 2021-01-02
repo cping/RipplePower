@@ -81,7 +81,7 @@ public class RPAddressDialog extends ABaseDialog implements ActionListener {
 		setIconImage(UIRes.getIcon());
 		setLayout(new FlowLayout());
 		setResizable(false);
-		Dimension dim = new Dimension(610, 375);
+		Dimension dim = RPUtils.newDim(610, 375);
 		setPreferredSize(dim);
 		setSize(dim);
 		initUI();

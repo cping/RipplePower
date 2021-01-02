@@ -18,8 +18,6 @@ import javax.swing.WindowConstants;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.txns.OfferPrice;
-import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextBox;
@@ -51,7 +49,7 @@ public class RPExchangeMinInputDialog extends ABaseDialog implements WindowListe
 		addWindowListener(HelperWindow.get());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setIconImage(UIRes.getIcon());
-		Dimension dim = new Dimension(380, 220);
+		Dimension dim = RPUtils.newDim(380, 220);
 		setResizable(false);
 		setPreferredSize(dim);
 		setSize(dim);

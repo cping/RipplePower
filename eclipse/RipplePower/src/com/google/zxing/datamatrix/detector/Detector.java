@@ -418,6 +418,11 @@ public final class Detector {
 	 */
 	private static final class ResultPointsAndTransitionsComparator
 			implements Comparator<ResultPointsAndTransitions>, Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public int compare(ResultPointsAndTransitions o1, ResultPointsAndTransitions o2) {
 			return o1.getTransitions() - o2.getTransitions();

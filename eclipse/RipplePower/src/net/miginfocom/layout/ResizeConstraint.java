@@ -41,7 +41,7 @@ import java.io.*;
  * component) can shrink or grow compared to other entities.
  */
 final class ResizeConstraint implements Externalizable {
-	static final Float WEIGHT_100 = new Float(100);
+	static final Float WEIGHT_100 = Float.valueOf(100);
 
 	/**
 	 * How flexilble the entity should be, relative to other entities, when it

@@ -99,7 +99,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener {
 	public RPSendIOUDialog(String text, Window parent, final WalletItem item, String address, String amount,
 			String fee) {
 
-		Dimension dim = new Dimension(500, 290);
+		Dimension dim = RPUtils.newDim(500, 290);
 		setPreferredSize(dim);
 		setSize(dim);
 
@@ -143,20 +143,20 @@ public class RPSendIOUDialog extends JPanel implements WindowListener {
 		setBackground(LColor.white);
 		setLayout(null);
 
-		_curList.setBounds(70, 30, 350, 45);
+		_curList.setBounds(70, 30, 350, 55);
 		add(_curList);
 
-		_addressText.setBounds(70, 80, 350, 45);
+		_addressText.setBounds(70, 80, 350, 55);
 		add(_addressText);
 
-		_amountText.setBounds(70, 130, 250, 45);
+		_amountText.setBounds(70, 130, 250, 55);
 		add(_amountText);
 
-		_feeText.setBounds(330, 130, 90, 45);
+		_feeText.setBounds(330, 130, 90, 55);
 		add(_feeText);
 
 		_destinationTag.setText("");
-		_destinationTag.setBounds(70, 180, 350, 45);
+		_destinationTag.setBounds(70, 180, 350, 55);
 		add(_destinationTag);
 
 		JLabel exitLabel = new JLabel(UIRes.exitIcon);
@@ -230,7 +230,7 @@ public class RPSendIOUDialog extends JPanel implements WindowListener {
 				final WaitDialog dialog = WaitDialog.showDialog(get().getDialog());
 				_waitDialogs.add(dialog);
 
-				long tagNumber = StringUtils.isEmpty(destinationTag) ? MathUtils.randomLong(1, 999999999)
+				long tagNumber = StringUtils.isEmpty(destinationTag) ? Payment.randomTag()
 						: Integer.parseInt(destinationTag);
 				Payment.send(item.getSeed(), address, cur, fee, tagNumber, new Rollback() {
 

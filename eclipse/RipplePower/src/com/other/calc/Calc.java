@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.ripple.power.i18n.LangConfig;
-import org.ripple.power.ui.RPAccountInfoDialog;
+import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.utils.BigUtils;
 
 /**
@@ -61,7 +61,7 @@ public class Calc extends javax.swing.JDialog {
 		setIconImage(UIRes.getImage("icons/calc.png").getImage());
 		jPanel1.setVisible(false);
 		setSize(new java.awt.Dimension(jPanel1.getWidth() - 10, getHeight()));
-		final java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		RectBox screenSize = UIConfig.getScreenRect();
 		final int x = (screenSize.width - getWidth()) / 2;
 		final int y = (screenSize.height - getHeight()) / 2;
 		setLocation(x, y);
@@ -660,164 +660,91 @@ public class Calc extends javax.swing.JDialog {
 
 		org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
-		jPanel1Layout
-				.setHorizontalGroup(
-						jPanel1Layout
-								.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
-										jPanel1Layout
-												.createSequentialGroup().addContainerGap().add(jPanel1Layout
-														.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-														.add(jPanel1Layout.createSequentialGroup().add(
-																jButton49,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		org.jdesktop.layout.LayoutStyle.RELATED)
-																.add(jButton50,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																		46,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		org.jdesktop.layout.LayoutStyle.RELATED)
-																.add(jButton51,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																		46,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		org.jdesktop.layout.LayoutStyle.RELATED)
-																.add(jButton52,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																		46,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(
-																		org.jdesktop.layout.LayoutStyle.RELATED)
-																.add(jButton53,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																		46,
-																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-														.add(jPanel1Layout.createSequentialGroup().add(
-																jPanel1Layout.createParallelGroup(
-																		org.jdesktop.layout.GroupLayout.LEADING)
-																		.add(jButton54,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																				46,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																		.add(jButton39,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																				46,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																		.add(jButton44,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																				46,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																		.add(org.jdesktop.layout.GroupLayout.TRAILING,
-																				jButton55,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																				46,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-																.addPreferredGap(
-																		org.jdesktop.layout.LayoutStyle.RELATED)
-																.add(jPanel1Layout
-																		.createParallelGroup(
-																				org.jdesktop.layout.GroupLayout.LEADING,
-																				false)
-																		.add(jPanel1Layout.createSequentialGroup()
-																				.add(jButton56,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton57,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton58,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED,
-																						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																						Short.MAX_VALUE)
-																				.add(jButton59,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-																		.add(jPanel1Layout.createSequentialGroup()
-																				.add(jButton35,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton36,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton37,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton38,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-																		.add(jPanel1Layout.createSequentialGroup()
-																				.add(jButton40,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton41,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton42,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton43,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-																		.add(jPanel1Layout.createSequentialGroup()
-																				.add(jButton45,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton47,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																				.addPreferredGap(
-																						org.jdesktop.layout.LayoutStyle.RELATED)
-																				.add(jButton48,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																						46,
-																						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-														.add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																253, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-												.addContainerGap()));
+		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel1Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+								.add(jPanel1Layout.createSequentialGroup()
+										.add(jButton49, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(jButton50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(jButton51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(jButton52, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(jButton53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+								.add(jPanel1Layout.createSequentialGroup()
+										.add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+												.add(jButton54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+												.add(jButton39, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+												.add(jButton44, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+												.add(org.jdesktop.layout.GroupLayout.TRAILING, jButton55,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(jPanel1Layout
+												.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+												.add(jPanel1Layout.createSequentialGroup()
+														.add(jButton56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED,
+																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE)
+														.add(jButton59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+												.add(jPanel1Layout.createSequentialGroup()
+														.add(jButton35, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+												.add(jPanel1Layout.createSequentialGroup()
+														.add(jButton40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+												.add(jPanel1Layout.createSequentialGroup()
+														.add(jButton45, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+														.add(jButton48, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+								.add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 253,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.addContainerGap()));
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
 				.add(jPanel1Layout.createSequentialGroup()
 						.add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29,

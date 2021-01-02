@@ -1,16 +1,18 @@
 package org.ripple.power.database;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.WeakHashMap;
 
-import org.ripple.power.NativeSupport;
+import org.ripple.power.chart.test.MyCompare;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.FileUtils;
 
@@ -27,6 +29,8 @@ public class AddressManager {
 	private final String pAlphabet;
 
 	private boolean isOnlyLocked = false, isMode = false;
+
+	private int flag = 0;
 
 	public AddressManager(String baseDir) throws IOException {
 		this(default_alphabet, baseDir, false);
@@ -86,6 +90,10 @@ public class AddressManager {
 
 	}
 
+	public void setFlag(int f) {
+		this.flag = f;
+	}
+
 	public boolean isOnlyLocked() {
 		return isOnlyLocked;
 	}
@@ -94,6 +102,7 @@ public class AddressManager {
 		this.isOnlyLocked = locked;
 		for (AddressDataBase data : pCaches.values()) {
 			if (data != null) {
+				data.setFlag(flag);
 				data.setMode(isMode);
 				data.setOnlyLocked(locked);
 			}
@@ -105,7 +114,9 @@ public class AddressManager {
 	}
 
 	public boolean put(String key) {
-		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
+		int exsize = key.length();
+		String dir = pBlock
+				.find(exsize >= 40 ? Character.toLowerCase(key.charAt(2)) : Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
 			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
 		}
@@ -115,15 +126,18 @@ public class AddressManager {
 			pCaches.put(dir, database);
 		}
 		database.setMode(this.isMode);
+		database.setFlag(this.flag);
 		return database.putAddress(key);
 	}
 
 	private AddressDataBase dataBase;
 
 	public boolean find(String key) throws IOException {
-		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
+		int exsize = key.length();
+		String dir = pBlock
+				.find(exsize >= 40 ? Character.toLowerCase(key.charAt(2)) : Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
-			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
+			throw new RuntimeException(key + ",Branch path does not exist, check whether the database creation error!");
 		}
 		if (dataBase == null) {
 			dataBase = new AddressDataBase(dir);
@@ -131,11 +145,15 @@ public class AddressManager {
 			dataBase.setDirPath(dir);
 		}
 		dataBase.setMode(isMode);
+		dataBase.setFlag(flag);
+
 		return dataBase.findAddress(key);
 	}
 
 	public boolean findBlock(String key) throws IOException {
-		String dir = pBlock.find(Character.toLowerCase(key.charAt(1)));
+		int exsize = key.length();
+		String dir = pBlock
+				.find(exsize >= 40 ? Character.toLowerCase(key.charAt(2)) : Character.toLowerCase(key.charAt(1)));
 		if (dir == null) {
 			throw new RuntimeException("Branch path does not exist, check whether the database creation error!");
 		}
@@ -151,6 +169,7 @@ public class AddressManager {
 		for (AddressDataBase data : pCaches.values()) {
 			if (data != null) {
 				data.setMode(isMode);
+				data.setFlag(flag);
 				data.submit();
 			}
 		}
@@ -179,10 +198,15 @@ public class AddressManager {
 	}
 
 	public void clearRepeatData() throws IOException {
-		ArrayList<String> listfile = FileUtils.getAllFiles(data_base_dir);
+		HashSet<String> listfile = FileUtils.getAllFiles(data_base_dir);
+		int count = 0;
 		for (String file : listfile) {
 			if (file.endsWith(AddressDataBase.pIndexName)) {
-				System.out.println(String.format("Repeat Process %s", file));
+				count++;
+				if (count > 100) {
+					System.out.println(String.format("Repeat Process %s", file));
+					count = 0;
+				}
 				File path = new File(file);
 				BufferedReader bf = new BufferedReader(new FileReader(path));
 				HashSet<String> contactSet = new HashSet<String>();
@@ -191,13 +215,16 @@ public class AddressManager {
 				if (!newFile.exists()) {
 					FileUtils.makedirs(newFile);
 				}
-				FileWriter writer = new FileWriter((newFile), false);
+				BufferedWriter writer = new BufferedWriter(new FileWriter(newFile), 4096);
+				ArrayList<String> strings=new ArrayList<String>();
 				while ((line = bf.readLine()) != null) {
-					if (!contactSet.contains(line)) {
-						writer.write(line);
-						writer.write("\n");
-						contactSet.add(line);
+					if (line.indexOf(":") == -1 && line.indexOf(" ") == -1 && contactSet.add(line)) {
+						strings.add(line);
 					}
+				}
+				Collections.sort(strings,new MyCompare()); 
+				for (String s:strings) {
+					writer.write(s + '\n');
 				}
 				bf.close();
 				writer.flush();
@@ -209,7 +236,7 @@ public class AddressManager {
 	}
 
 	public void updateDataToBlock() throws IOException {
-		ArrayList<String> listfile = FileUtils.getAllFiles(data_base_dir);
+		HashSet<String> listfile = FileUtils.getAllFiles(data_base_dir);
 		for (String file : listfile) {
 			if (file.endsWith(AddressDataBase.pIndexName)) {
 				System.out.println(String.format("Block Process %s", file));

@@ -200,6 +200,6 @@ public class AnimationHelper {
 		dispose(upImages);
 		dispose(leftImages);
 		dispose(rightImages);
-		animations.remove(this);
+		animations.remove((Object)AnimationHelper.this);
 	}
 }

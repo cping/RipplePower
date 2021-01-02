@@ -31,7 +31,7 @@ public class RPPasswordDialog extends ABaseDialog {
 		super(owner, "Please enter the wallet file password", true);
 		setLayout(new FlowLayout());
 		setIconImage(UIRes.getIcon());
-		Dimension dim = new Dimension(390, 180);
+		Dimension dim = RPUtils.newDim(390, 180);
 		setPreferredSize(dim);
 		setSize(dim);
 		setResizable(false);

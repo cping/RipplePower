@@ -88,8 +88,16 @@ public class MathUtils {
 	 */
 	public static String addZeros(String number, int numDigits) {
 		int length = numDigits - number.length();
-		if (length != 0) {
-			number = zeros[length] + number;
+		if (length > -1) {
+			if (length - 1 < zeros.length) {
+				number = zeros[length] + number;
+			} else {
+				StringBuilder sbr = new StringBuilder();
+				for (int i = 0; i < length; i++) {
+					sbr.append("0");
+				}
+				number = sbr.toString() + number;
+			}
 		}
 		return number;
 	}
@@ -649,8 +657,8 @@ public class MathUtils {
 		return start + LSystem.random.nextInt(end - start + 1);
 	}
 
-	public static final long randomLong(int start, int end) {
-		return start + LSystem.random.nextInt(end - start + 1);
+	public static final long randomLong(long start, long end) {
+		return (long) (start + LSystem.random.nextFloat() * (end - start));
 	}
 
 	public static final boolean randomBoolean() {

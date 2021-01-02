@@ -29,8 +29,28 @@ import com.ripple.core.fields.Field;
 import com.ripple.core.serialized.enums.TransactionType;
 import com.ripple.core.types.known.tx.Transaction;
 
+/**
+ * 		Payment.sendXRP("seed", "address", String.valueOf(0.1), "0.001", new Rollback() {
+			
+			@Override
+			public void success(JSONObject res) {
+				System.out.println(res);
+				
+			}
+			
+			@Override
+			public void error(JSONObject res) {
+				System.out.println(res);
+				
+			}
+		});
+ */
 public class Payment {
 
+	public static long randomTag() {
+		return MathUtils.randomLong(10000000, 999999999);
+	}
+	
 	public static void send(final RippleSeedAddress seed, final String amount, final String dstAddress,
 			final RippleMemoEncode memo, final String fee, final Rollback back) {
 		RippleMemoEncodes memos = new RippleMemoEncodes();
@@ -50,7 +70,7 @@ public class Payment {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				txn.putTranslated(Field.Destination, dstAddress);
 				txn.putTranslated(Field.Amount, amount);
-				txn.putTranslated(Field.DestinationTag, MathUtils.randomLong(1, 999999999));
+				txn.putTranslated(Field.DestinationTag, randomTag());
 				STArray arrays = new STArray();
 				for (int i = 0; i < list.size(); i++) {
 					RippleMemoEncode rpmemo = list.get(i);
@@ -200,7 +220,7 @@ public class Payment {
 				txn.putTranslated(Field.Account, seed.getPublicKey());
 				txn.putTranslated(Field.Destination, dstAddress);
 				txn.putTranslated(Field.Amount, amount);
-				txn.putTranslated(Field.DestinationTag, MathUtils.randomLong(1, 999999999));
+				txn.putTranslated(Field.DestinationTag, randomTag());
 				STObject obj = new STObject();
 				obj.putTranslated(Field.MemoType, memotype);
 				obj.putTranslated(Field.MemoData, memodata);
@@ -237,11 +257,45 @@ public class Payment {
 
 	public static void sendXRP(final RippleSeedAddress seed, final String dstAddress, final String amount,
 			final String fee, final Rollback back) {
-		sendXRP(seed, dstAddress, MathUtils.randomLong(1, 999999999), amount, fee, back);
+		sendXRP(seed, dstAddress, randomTag(), amount, fee, back);
 	}
 
 	public static void sendXRP(final RippleSeedAddress seed, final String dstAddress, final long destinationTag,
 			final String amount, final String fee, final Rollback back) {
+		final String address = seed.getPublicKey();
+		AccountFind find = new AccountFind();
+		find.info(address, new Rollback() {
+			@Override
+			public void success(JSONObject message) {
+				try {
+					long sequence = TransactionUtils.getSequence(message);
+					RippleObject item = new RippleObject();
+					item.putField(BinaryFormatField.TransactionType, (int) TransactionTypes.PAYMENT.byteValue);
+					item.putField(BinaryFormatField.Account, seed.getPublicRippleAddress());
+					item.putField(BinaryFormatField.Amount, CurrencyUtils.getValueToRipple(amount));
+					item.putField(BinaryFormatField.Sequence, sequence);
+					item.putField(BinaryFormatField.Destination, dstAddress);
+					item.putField(BinaryFormatField.DestinationTag, destinationTag);
+					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
+					TransactionUtils.submitBlob(seed, item, back);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void error(JSONObject message) {
+				if (back != null) {
+					back.error(message);
+				}
+
+			}
+		});
+
+	}
+
+	public static void sendXRP(final RippleSeedAddress seed, final String dstAddress, final long destinationTag,
+			final String memoTag, final String amount, final String fee, final Rollback back) {
 		final String address = seed.getPublicKey();
 		AccountFind find = new AccountFind();
 		find.info(address, new Rollback() {
@@ -257,6 +311,16 @@ public class Payment {
 					item.putField(BinaryFormatField.Sequence, sequence);
 					item.putField(BinaryFormatField.Destination, dstAddress);
 					item.putField(BinaryFormatField.DestinationTag, destinationTag);
+					if (memoTag.length() > 0) {
+						RippleObject memos = new RippleObject();
+						RippleObject obj = new RippleObject();
+						obj.putField(BinaryFormatField.MemoType, "message");
+						obj.putField(BinaryFormatField.MemoFormat, "text");
+						obj.putField(BinaryFormatField.MemoData, memoTag);
+						memos.putField(BinaryFormatField.Memo, obj);
+						
+						item.putField(BinaryFormatField.Memos, memos);
+					}
 					item.putField(BinaryFormatField.Fee, CurrencyUtils.getValueToRipple(fee));
 					TransactionUtils.submitBlob(seed, item, back);
 				} catch (Exception e) {
@@ -322,7 +386,7 @@ public class Payment {
 
 	public static void send(final RippleSeedAddress seed, final String dstAddress, final IssuedCurrency amount,
 			final String fee, final Rollback back) {
-		send(seed, dstAddress, amount, fee, MathUtils.randomLong(1, 999999999), back);
+		send(seed, dstAddress, amount, fee, randomTag(), back);
 	}
 
 	public static void send(final RippleSeedAddress seed, final String dstAddress, final IssuedCurrency amount,

@@ -171,7 +171,7 @@ public class RPPriceWarningDialog extends ABaseDialog {
 		this.addWindowListener(HelperWindow.get());
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(665, 680);
+		Dimension dim = RPUtils.newDim(665, 680);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();

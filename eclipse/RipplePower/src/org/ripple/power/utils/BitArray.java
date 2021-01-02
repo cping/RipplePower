@@ -3,7 +3,6 @@ package org.ripple.power.utils;
 import java.math.BigDecimal;
 
 import org.ripple.power.collection.LongArray;
-import org.ripple.power.utils.MathUtils;
 
 public class BitArray {
 

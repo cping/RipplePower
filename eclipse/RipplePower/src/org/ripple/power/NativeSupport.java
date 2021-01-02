@@ -1,5 +1,6 @@
 package org.ripple.power;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,27 +8,123 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.zip.CRC32;
 
 import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.MathUtils;
 
 import com.ripple.config.Config;
-import com.ripple.crypto.ecdsa.K256KeyPair;
 import com.ripple.crypto.ecdsa.SECP256K1;
 import com.ripple.utils.Utils;
 
 public class NativeSupport {
 
-	public static boolean isWindows = System.getProperty("os.name").contains("Windows");
-	public static boolean isLinux = System.getProperty("os.name").contains("Linux");
-	public static boolean isMac = System.getProperty("os.name").contains("Mac");
-	public static boolean isAndroid = false;
-	public static boolean is64Bit = System.getProperty("os.arch").equals("amd64");
-
 	private static HashSet<String> loadedLibraries = new HashSet<String>();
+
+	private static String getProperty(final String propName) {
+		return System.getProperty(propName, "");
+	}
+
+	static ClassLoader classLoader;
+
+	static boolean isWindows = getProperty("os.name").contains("Windows");
+	static boolean isLinux = getProperty("os.name").contains("Linux");
+	static boolean isMac = getProperty("os.name").contains("Mac");
+	static boolean isARM = getProperty("os.arch").startsWith("arm") || getProperty("os.arch").startsWith("aarch64");
+	static boolean is64Bit = getProperty("os.arch").contains("64") || getProperty("os.arch").startsWith("armv8");
+	static boolean isUnknown = !(isWindows && isLinux && isMac && isARM && is64Bit);
+	static boolean isAndroid = false;
+	static boolean isIos = false;
+
+	static {
+		try {
+			classLoader = NativeSupport.class.getClassLoader();
+		} catch (Exception e) {
+			classLoader = Thread.currentThread().getContextClassLoader();
+		}
+		String vm = getProperty("java.vm.name");
+		if (vm != null && vm.contains("Dalvik")) {
+			isAndroid = true;
+			isWindows = false;
+			isLinux = false;
+			isMac = false;
+			is64Bit = false;
+		} else if (!isAndroid && !isWindows && !isLinux && !isMac) {
+			isIos = true;
+			isAndroid = false;
+			isWindows = false;
+			isLinux = false;
+			isMac = false;
+			is64Bit = false;
+		}
+
+		File nativesDir = null;
+		try {
+			if (isWindows) {
+				nativesDir = export(is64Bit ? "jcoin64.dll" : "jcoin.dll", null).getParentFile();
+			} else if (isMac) {
+				nativesDir = export("liblwjgl.dylib", null).getParentFile();
+				export("libglfw.dylib", nativesDir.getName());
+				export("libjemalloc.dylib", nativesDir.getName());
+				export("libopenal.dylib", nativesDir.getName());
+			} else if (isLinux) {
+				nativesDir = export(is64Bit ? "liblwjgl.so" : "liblwjgl32.so", null).getParentFile();
+				export(is64Bit ? "libglfw.so" : "libglfw32.so", nativesDir.getName());
+				export(is64Bit ? "libjemalloc.so" : "libjemalloc32.so", nativesDir.getName());
+				export(is64Bit ? "libopenal.so" : "libopenal32.so", nativesDir.getName());
+			}
+		} catch (Throwable ex) {
+			throw new RuntimeException("Unable to extract LWJGL natives.", ex);
+		}
+		System.setProperty("org.lwjgl.librarypath", nativesDir.getAbsolutePath());
+		try {
+			loadJNI("lplus");
+			useLoonNative = true;
+			System.out.println("Support of the native method call");
+		} catch (Throwable e) {
+			useLoonNative = false;
+		}
+
+	}
+
+	private static InputStream openResource(final String resName) throws IOException {
+		File file = new File(resName);
+		if (file.exists()) {
+			try {
+				return new BufferedInputStream(new FileInputStream(file));
+			} catch (FileNotFoundException e) {
+				throw new IOException(resName + " file not found !");
+			}
+		} else {
+			if (classLoader != null) {
+				InputStream in = null;
+				try {
+					in = classLoader.getResourceAsStream(resName);
+				} catch (Exception e) {
+					throw new RuntimeException(resName + " not found!");
+				}
+				return in;
+			} else {
+				try {
+					return new FileInputStream(file);
+				} catch (FileNotFoundException e) {
+					throw new IOException(resName + " not found!");
+				}
+			}
+		}
+	}
+
+	private static String getLoonPath(final String flag) {
+		return "/" + flag + "ripplejni" + getProperty("user.name");
+	}
+
+	private static String getLoonPath() {
+		return getLoonPath("");
+	}
 
 	public static String CRC(InputStream input) {
 		if (input == null) {
@@ -36,10 +133,11 @@ public class NativeSupport {
 		CRC32 crc = new CRC32();
 		byte[] buffer = new byte[4096];
 		try {
-			while (true) {
+			for (;;) {
 				int length = input.read(buffer);
-				if (length == -1)
+				if (length == -1) {
 					break;
+				}
 				crc.update(buffer, 0, length);
 			}
 		} catch (Exception ex) {
@@ -70,30 +168,91 @@ public class NativeSupport {
 			return;
 		}
 		try {
-			if (isAndroid) {
-				System.loadLibrary(libraryName);
-			} else {
-				System.load(export(libraryName, null).getAbsolutePath());
+			synchronized (NativeSupport.class) {
+				if (isAndroid) {
+					System.loadLibrary(libraryName);
+				} else {
+					System.load(export(libraryName, null).getAbsolutePath());
+				}
+				loadedLibraries.add(libraryName);
 			}
 		} catch (Throwable ex) {
-			throw new Exception(ex);
+			throw new Exception("Couldn't load shared library '" + libraryName + "' for target: "
+					+ getProperty("os.name") + (is64Bit ? ", 64-bit" : ", 32-bit"), ex);
 		}
-		loadedLibraries.add(libraryName);
+	}
+
+	private static boolean canWrite(File file) {
+		File parent = file.getParentFile();
+		File tempFile;
+		if (file.exists()) {
+			if (!file.canWrite() || !canExecute(file)) {
+				return false;
+			}
+			tempFile = new File(parent, UUID.randomUUID().toString());
+		} else {
+			parent.mkdirs();
+			if (!parent.isDirectory()) {
+				return false;
+			}
+			tempFile = file;
+		}
+		try {
+			new FileOutputStream(tempFile).close();
+			if (!canExecute(tempFile)) {
+				return false;
+			}
+			return true;
+		} catch (Throwable ex) {
+			return false;
+		} finally {
+			tempFile.delete();
+		}
+	}
+
+	private static boolean canExecute(File file) {
+		try {
+			Method canExecute = File.class.getMethod("canExecute");
+			if ((Boolean) canExecute.invoke(file)) {
+				return true;
+			}
+			Method setExecutable = File.class.getMethod("setExecutable", boolean.class, boolean.class);
+			setExecutable.invoke(file, true, false);
+			return (Boolean) canExecute.invoke(file);
+		} catch (Exception ignored) {
+		}
+		return false;
 	}
 
 	public static File export(String sourcePath, String dirName) throws IOException {
-		return export(sourcePath, dirName, null);
+		try {
+			InputStream ins = openResource(sourcePath);
+			if (ins == null) {
+				return null;
+			}
+			String sourceCrc = CRC(ins);
+			if (dirName == null) {
+				dirName = sourceCrc;
+			}
+			File extractedFile = getExportFile(dirName, new File(sourcePath).getName());
+			if (extractedFile == null) {
+				extractedFile = getExportFile(UUID.randomUUID().toString(), new File(sourcePath).getName());
+				if (extractedFile == null) {
+					throw new IOException(
+							"Unable to find writable path to extract file. Is the user home directory writable?");
+				}
+			}
+			return export(sourcePath, sourceCrc, extractedFile);
+		} catch (RuntimeException ex) {
+			File file = new File(getProperty("java.library.path"), sourcePath);
+			if (file.exists()) {
+				return file;
+			}
+			throw ex;
+		}
 	}
 
-	public static File export(String sourcePath, String dirName, String name) throws IOException {
-		ClassLoader loader = NativeSupport.class.getClassLoader();
-		String sourceCrc = CRC(loader.getResourceAsStream(sourcePath));
-		if (dirName == null) {
-			dirName = sourceCrc;
-		}
-		File extractedDir = new File(
-				System.getProperty("java.io.tmpdir") + "/loon" + LSystem.getUserName() + "/" + dirName);
-		File extractedFile = new File(extractedDir, name == null ? new File(sourcePath).getName() : name);
+	private static File export(String sourcePath, String sourceCrc, File extractedFile) throws IOException {
 		String extractedCrc = null;
 		if (extractedFile.exists()) {
 			try {
@@ -102,27 +261,72 @@ public class NativeSupport {
 			}
 		}
 		if (extractedCrc == null || !extractedCrc.equals(sourceCrc)) {
+			InputStream input = null;
+			FileOutputStream output = null;
 			try {
-				InputStream input = loader.getResourceAsStream(sourcePath);
+				input = openResource(sourcePath);
 				if (input == null) {
 					return null;
 				}
-				extractedDir.mkdirs();
-				FileOutputStream output = new FileOutputStream(extractedFile);
+				boolean canCreated = extractedFile.getParentFile().mkdirs();
+				output = new FileOutputStream(extractedFile);
 				byte[] buffer = new byte[4096];
-				while (true) {
+				for (;;) {
 					int length = input.read(buffer);
-					if (length == -1)
+					if (length == -1) {
 						break;
+					}
 					output.write(buffer, 0, length);
 				}
-				input.close();
-				output.close();
+				if (!canCreated && !extractedFile.exists()) {
+					throw new IOException(
+							"Error extracting file: " + sourcePath + "\nTo: " + extractedFile.getAbsolutePath());
+				}
 			} catch (IOException ex) {
-				throw new RuntimeException("Error extracting file: " + sourcePath, ex);
+				throw new IOException(
+						"Error extracting file: " + sourcePath + "\nTo: " + extractedFile.getAbsolutePath(), ex);
+			} finally {
+				try {
+					input.close();
+					input = null;
+					output.close();
+					output = null;
+				} catch (Exception ignored) {
+				}
 			}
 		}
-		return extractedFile.exists() ? extractedFile : null;
+
+		return extractedFile;
+	}
+
+	private static File getExportFile(String dirName, String fileName) {
+		File idealFile = new File(getProperty("java.io.tmpdir") + getLoonPath() + "/" + dirName, fileName);
+		if (canWrite(idealFile)) {
+			return idealFile;
+		}
+		try {
+			File file = File.createTempFile(dirName, null);
+			if (file.delete()) {
+				file = new File(file, fileName);
+				if (canWrite(file)) {
+					return file;
+				}
+			}
+		} catch (IOException ignored) {
+		}
+
+		File file = new File(getProperty("user.home") + getLoonPath(".") + dirName, fileName);
+		if (canWrite(file)) {
+			return file;
+		}
+		file = new File(".temp/" + dirName, fileName);
+		if (canWrite(file)) {
+			return file;
+		}
+		if (System.getenv("APP_SANDBOX_CONTAINER_ID") != null) {
+			return idealFile;
+		}
+		return null;
 	}
 
 	private static boolean nativesLoaded;
@@ -140,24 +344,6 @@ public class NativeSupport {
 	public static final int SIZEOF_LONG = SIZEOF_DOUBLE;
 
 	private static boolean useLoonNative;
-
-	static {
-		String vm = System.getProperty("java.vm.name");
-		if (vm != null && vm.contains("Dalvik")) {
-			isAndroid = true;
-			isWindows = false;
-			isLinux = false;
-			isMac = false;
-			is64Bit = false;
-		}
-		try {
-			loadJNI("jcoin");
-			useLoonNative = true;
-			System.out.println("Support of the native method call");
-		} catch (Throwable e) {
-			useLoonNative = false;
-		}
-	}
 
 	public static boolean UseLoonNative() {
 		return useLoonNative;
@@ -366,8 +552,8 @@ public class NativeSupport {
 		return out;
 	}
 
-	public static String getRipplePrivateKey(String secret) {
-		if (true) {
+	public synchronized static String getRipplePrivateKey(String secret) {
+		if (useLoonNative) {
 			try {
 				return getRippleByteKeys(secret.getBytes(LSystem.encoding));
 			} catch (Throwable t) {
@@ -387,6 +573,16 @@ public class NativeSupport {
 			} catch (Exception e) {
 				return "";
 			}
+		}
+	}
+
+	public static String getSeed(String secret) {
+		try {
+			byte[] master = Helper.quarterSha512(secret.getBytes(LSystem.encoding));
+			String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(master);
+			return new RipplePublicKey(createKeyPair(master)).getAddress().toString() + "," + seed;
+		} catch (Exception e) {
+			return "";
 		}
 	}
 
@@ -412,6 +608,12 @@ public class NativeSupport {
 				return "";
 			}
 		}
+	}
+
+	public static String getRippleSeedToKey(String seed) {
+		byte[] buffer = Config.getB58IdentiferCodecs().decodeFamilySeed(seed);
+		String hex = CoinUtils.toHex(buffer);
+		return NativeSupport.getRippleBigIntegerPrivateKey(hex);
 	}
 
 	public static String getRippleBigIntegerPrivateKey(String hashString) {
@@ -474,6 +676,28 @@ public class NativeSupport {
 	public static String getRippleBigIntegerPrivateKeys(BigInteger id) {
 		String hashString = MathUtils.addZeros(CoinUtils.toHex(id.toByteArray()), 32);
 		byte[] hash = CoinUtils.fromHex(hashString);
+		if (useLoonNative) {
+			try {
+				return new String(getRippleHashKeys(hash));
+			} catch (Throwable t) {
+				try {
+					String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+					return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
+				} catch (Exception e) {
+					return "";
+				}
+			}
+		} else {
+			try {
+				String seed = Config.getB58IdentiferCodecs().encodeFamilySeed(hash);
+				return new RipplePublicKey(createKeyPair(hash)).getAddress().toString() + "," + seed;
+			} catch (Exception e) {
+				return "";
+			}
+		}
+	}
+
+	public static String getRippleBigIntegerPrivateKeys(byte[] hash) {
 		if (useLoonNative) {
 			try {
 				return new String(getRippleHashKeys(hash));

@@ -1342,6 +1342,7 @@ final public class GraphicsUtils {
 		}
 		String tmp_file = resName, innerName = StringUtils.replaceIgnoreCase(resName, "\\", "/");
 		String keyName = innerName.toLowerCase();
+		
 		Image imageReference = cacheImages.get(keyName);
 		if (imageReference == null) {
 			int read;
@@ -1354,7 +1355,9 @@ final public class GraphicsUtils {
 			try {
 				os = new ByteArrayOutputStream(8192);
 				if (isInner) {
+		
 					in = new DataInputStream(new BufferedInputStream(UIRes.getStream(innerName)));
+			
 					flag = true;
 				} else {
 					file_tmp = new File(tmp_file);
@@ -1374,6 +1377,7 @@ final public class GraphicsUtils {
 				cacheImages.put(keyName, imageReference = img_tmp);
 				waitImage(img_tmp);
 			} catch (Exception e) {
+	
 				if (!isInner) {
 					imageReference = null;
 				} else {

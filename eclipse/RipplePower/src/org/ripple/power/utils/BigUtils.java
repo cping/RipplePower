@@ -22,7 +22,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ripple.power.CoinUtils;
+
 public final class BigUtils {
+
 	private static final int SCALE = 18;
 	public static long ITER = 1000;
 	public static MathContext context = new MathContext(100);

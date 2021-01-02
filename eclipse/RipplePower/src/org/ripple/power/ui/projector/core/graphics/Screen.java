@@ -214,7 +214,7 @@ public abstract class Screen
 
 		private static ThreadLocal<Object> threadID = new ThreadLocal<Object>() {
 			protected synchronized Object initialValue() {
-				return new Integer(nextThreadID++);
+				return Integer.valueOf(nextThreadID++);
 			}
 		};
 

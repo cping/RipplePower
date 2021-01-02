@@ -166,6 +166,7 @@ public class UIRes {
 	public static InputStream getStream(String path) throws IOException {
 		path = computePath(path);
 		InputStream is = classLoader.getResourceAsStream(path);
+
 		if (is == null) {
 			File file = new File(path);
 			if (file.exists()) {

@@ -2,6 +2,7 @@ package org.ripple.power.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,6 +15,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.UIManager;
 
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.utils.GraphicsUtils;
 
 public class UIConfig {
@@ -131,5 +133,12 @@ public class UIConfig {
 		g2.drawString(icon, (40 - iconWidth) / 2, (40 - iconHeight) / 2 + iconBaseline);
 		g2.dispose();
 		return GraphicsUtils.getResize(image, 32, 32);
+	}
+	
+	public static RectBox getScreenRect() {
+		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+		double frameWidth = screensize.getWidth();
+		double frameHeight = screensize.getHeight();
+		return new RectBox(frameWidth, frameHeight);
 	}
 }

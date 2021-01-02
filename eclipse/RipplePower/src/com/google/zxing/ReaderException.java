@@ -26,6 +26,11 @@ package com.google.zxing;
  */
 public abstract class ReaderException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	ReaderException() {
 		// do nothing
 	}

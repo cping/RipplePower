@@ -227,6 +227,9 @@ public class AddressIndexBlock {
 				return pDict.get(name);
 			}
 		}
+		if(c=='0'){
+			return "null";
+		}
 		return null;
 	}
 

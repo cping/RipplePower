@@ -153,7 +153,7 @@ public abstract class Conversion implements Expression {
 				} else {
 					int idx;
 					try {
-						idx = new Integer(label).intValue() - 1;
+						idx = Integer.valueOf(label).intValue() - 1;
 					} catch (NumberFormatException e) {
 						compute.push(0, STACK_NUM);
 						return;
@@ -162,7 +162,7 @@ public abstract class Conversion implements Expression {
 				}
 			} else {
 				try {
-					compute.push(new Float(new String(expChr, stIdx, lgt)).floatValue() * sign, STACK_NUM);
+					compute.push(Float.valueOf(new String(expChr, stIdx, lgt)).floatValue() * sign, STACK_NUM);
 				} catch (NumberFormatException e) {
 					compute.push(0, STACK_NUM);
 				}

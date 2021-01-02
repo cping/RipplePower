@@ -254,7 +254,7 @@ final public class DateUtils {
 			sb.append("0" + day);
 		else
 			sb.append(day);
-		return new Integer(sb.toString()).intValue();
+		return Integer.valueOf(sb.toString()).intValue();
 	}
 
 	/**
@@ -1346,9 +1346,9 @@ final public class DateUtils {
 
 	public static String getSqlDateString(Calendar c) {
 		try {
-			String year = new Integer(c.get(Calendar.YEAR)).toString();
-			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
-			String day = new Integer(c.get(Calendar.DATE)).toString();
+			String year = Integer.valueOf(c.get(Calendar.YEAR)).toString();
+			String month = Integer.valueOf(c.get(Calendar.MONTH) + 1).toString();
+			String day = Integer.valueOf(c.get(Calendar.DATE)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
 			if (day.length() == 1)
@@ -1363,12 +1363,12 @@ final public class DateUtils {
 
 	public static String getSqlDateTimeString(Calendar c) {
 		try {
-			String year = new Integer(c.get(Calendar.YEAR)).toString();
-			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
-			String day = new Integer(c.get(Calendar.DATE)).toString();
-			String hour = new Integer(c.get(Calendar.HOUR_OF_DAY)).toString();
-			String minute = new Integer(c.get(Calendar.MINUTE)).toString();
-			String second = new Integer(c.get(Calendar.SECOND)).toString();
+			String year = Integer.valueOf(c.get(Calendar.YEAR)).toString();
+			String month = Integer.valueOf(c.get(Calendar.MONTH) + 1).toString();
+			String day = Integer.valueOf(c.get(Calendar.DATE)).toString();
+			String hour = Integer.valueOf(c.get(Calendar.HOUR_OF_DAY)).toString();
+			String minute = Integer.valueOf(c.get(Calendar.MINUTE)).toString();
+			String second = Integer.valueOf(c.get(Calendar.SECOND)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
 			if (day.length() == 1)
@@ -1389,9 +1389,9 @@ final public class DateUtils {
 
 	public static String getGUIDateString(Calendar c) {
 		try {
-			String year = new Integer(c.get(Calendar.YEAR)).toString();
-			String month = new Integer(c.get(Calendar.MONTH) + 1).toString();
-			String day = new Integer(c.get(Calendar.DATE)).toString();
+			String year = Integer.valueOf(c.get(Calendar.YEAR)).toString();
+			String month = Integer.valueOf(c.get(Calendar.MONTH) + 1).toString();
+			String day = Integer.valueOf(c.get(Calendar.DATE)).toString();
 			if (month.length() == 1)
 				month = "0" + month;
 			if (day.length() == 1)

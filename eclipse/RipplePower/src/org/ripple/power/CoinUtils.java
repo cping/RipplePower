@@ -1,7 +1,7 @@
 package org.ripple.power;
 
 import org.ripple.bouncycastle.asn1.ASN1InputStream;
-import org.ripple.bouncycastle.asn1.DERInteger;
+import org.ripple.bouncycastle.asn1.ASN1Integer;
 import org.ripple.bouncycastle.asn1.DERSequenceGenerator;
 import org.ripple.bouncycastle.asn1.DLSequence;
 import org.ripple.bouncycastle.asn1.sec.SECNamedCurves;
@@ -15,8 +15,10 @@ import org.ripple.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.ripple.bouncycastle.crypto.params.KeyParameter;
 import org.ripple.bouncycastle.crypto.params.ParametersWithRandom;
 import org.ripple.bouncycastle.crypto.signers.ECDSASigner;
+import org.ripple.bouncycastle.math.ec.ECCurve;
 import org.ripple.bouncycastle.math.ec.ECPoint;
 import org.ripple.bouncycastle.util.Arrays;
+import org.ripple.power.config.LSystem;
 import org.ripple.power.utils.KeyPair;
 
 import java.io.ByteArrayOutputStream;
@@ -401,8 +403,8 @@ public final class CoinUtils {
 			try {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream(72);
 				DERSequenceGenerator derGen = new DERSequenceGenerator(baos);
-				derGen.addObject(new DERInteger(sign[0]));
-				derGen.addObject(new DERInteger(sign[1]));
+				derGen.addObject(new ASN1Integer(sign[0]));
+				derGen.addObject(new ASN1Integer(sign[1]));
 				derGen.close();
 				return baos.toByteArray();
 			} catch (IOException e) {
@@ -421,8 +423,8 @@ public final class CoinUtils {
 				signerVer.init(false, pubKey);
 				ASN1InputStream derSigStream = new ASN1InputStream(signature);
 				DLSequence seq = (DLSequence) derSigStream.readObject();
-				BigInteger r = ((DERInteger) seq.getObjectAt(0)).getPositiveValue();
-				BigInteger s = ((DERInteger) seq.getObjectAt(1)).getPositiveValue();
+				BigInteger r = ((ASN1Integer) seq.getObjectAt(0)).getPositiveValue();
+				BigInteger s = ((ASN1Integer) seq.getObjectAt(1)).getPositiveValue();
 				derSigStream.close();
 				valid = signerVer.verifySignature(msg, r, s);
 			} catch (Exception e) {
@@ -462,14 +464,18 @@ public final class CoinUtils {
 		return bytes;
 	}
 
+	public static ECPoint Fp(ECCurve curve, ECPoint point) {
+		return curve.createPoint(point.normalize().getXCoord().toBigInteger(),
+				point.normalize().getYCoord().toBigInteger());
+	}
+
 	public static String bip38GetIntermediateCode(String password) throws InterruptedException {
 		try {
 			byte[] ownerSalt = new byte[8];
 			SECURE_RANDOM.nextBytes(ownerSalt);
 			byte[] passFactor = SCrypt.generate(password.getBytes("UTF-8"), ownerSalt, 16384, 8, 8, 32);
 			ECPoint uncompressed = EC_PARAMS.getG().multiply(new BigInteger(1, passFactor));
-			byte[] passPoint = new ECPoint.Fp(EC_PARAMS.getCurve(), uncompressed.getX(), uncompressed.getY(), true)
-					.getEncoded();
+			byte[] passPoint = Fp(EC_PARAMS.getCurve(), uncompressed).getEncoded(LSystem.ENCODE);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			baos.write(fromHex("2CE9B3E1FF39E253"));
 			baos.write(ownerSalt);
@@ -509,11 +515,10 @@ public final class CoinUtils {
 			String address;
 			byte[] publicKey;
 			if (compressedPublicKey) {
-				publicKey = new ECPoint.Fp(EC_PARAMS.getCurve(), uncompressedPublicKeyPoint.getX(),
-						uncompressedPublicKeyPoint.getY(), true).getEncoded();
+				publicKey = Fp(EC_PARAMS.getCurve(), uncompressedPublicKeyPoint).getEncoded(LSystem.ENCODE);
 				address = publicKeyToAddress(publicKey);
 			} else {
-				publicKey = uncompressedPublicKeyPoint.getEncoded();
+				publicKey = uncompressedPublicKeyPoint.getEncoded(LSystem.ENCODE);
 				address = publicKeyToAddress(publicKey);
 			}
 			byte[] addressHashAndOwnerSalt = new byte[12];
@@ -605,8 +610,7 @@ public final class CoinUtils {
 			System.arraycopy(confirmationBytes, 18, encryptedPointB, 0, 33);
 			byte[] passFactor = SCrypt.generate(password.getBytes("UTF-8"), salt, 16384, 8, 8, 32);
 			ECPoint uncompressed = EC_PARAMS.getG().multiply(new BigInteger(1, passFactor));
-			byte[] passPoint = new ECPoint.Fp(EC_PARAMS.getCurve(), uncompressed.getX(), uncompressed.getY(), true)
-					.getEncoded();
+			byte[] passPoint = Fp(EC_PARAMS.getCurve(), uncompressed).getEncoded(LSystem.ENCODE);
 
 			byte[] addressHashAndOwnerSalt = new byte[12];
 			System.arraycopy(addressHash, 0, addressHashAndOwnerSalt, 0, 4);
@@ -635,11 +639,10 @@ public final class CoinUtils {
 			}
 			String address;
 			if (compressed) {
-				byte[] publicKey = new ECPoint.Fp(EC_PARAMS.getCurve(), uncompressedPublicKey.getX(),
-						uncompressedPublicKey.getY(), true).getEncoded();
+				byte[] publicKey = Fp(EC_PARAMS.getCurve(), uncompressedPublicKey).getEncoded(LSystem.ENCODE);
 				address = CoinUtils.publicKeyToAddress(publicKey);
 			} else {
-				address = CoinUtils.publicKeyToAddress(uncompressedPublicKey.getEncoded());
+				address = CoinUtils.publicKeyToAddress(uncompressedPublicKey.getEncoded(LSystem.ENCODE));
 			}
 			byte[] decodedAddressHash = doubleSha256(address.getBytes("UTF-8"));
 			for (int i = 0; i < 4; i++) {
@@ -734,8 +737,7 @@ public final class CoinUtils {
 					System.arraycopy(encryptedPrivateKeyBytes, 7, ownerSalt, 0, 8);
 					byte[] passFactor = SCrypt.generate(password.getBytes("UTF-8"), ownerSalt, 16384, 8, 8, 32);
 					ECPoint uncompressed = EC_PARAMS.getG().multiply(new BigInteger(1, passFactor));
-					byte[] passPoint = new ECPoint.Fp(EC_PARAMS.getCurve(), uncompressed.getX(), uncompressed.getY(),
-							true).getEncoded();
+					byte[] passPoint = Fp(EC_PARAMS.getCurve(), uncompressed).getEncoded(LSystem.ENCODE);
 					byte[] addressHashAndOwnerSalt = new byte[12];
 					System.arraycopy(encryptedPrivateKeyBytes, 3, addressHashAndOwnerSalt, 0, 12);
 					byte[] derived = SCrypt.generate(passPoint, addressHashAndOwnerSalt, 1024, 1, 1, 64);

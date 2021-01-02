@@ -103,7 +103,7 @@ public class RPDefineTradingDialog extends ABaseDialog {
 		this.addWindowListener(HelperWindow.get());
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(665, 700);
+		Dimension dim = RPUtils.newDim(665, 700);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();

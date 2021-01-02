@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import org.ripple.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.ripple.bouncycastle.math.ec.ECPoint;
+import org.ripple.power.config.LSystem;
 
 public class RipplePrivateKey extends RippleIdentifier {
 	/**
@@ -51,9 +52,9 @@ public class RipplePrivateKey extends RippleIdentifier {
 		}
 		BigInteger privateBI = new BigInteger(1, this.payloadBytes);
 		ECPoint uncompressed = RippleGenerator.SECP256K1_PARAMS.getG().multiply(privateBI);
-		ECPoint publicPoint = new ECPoint.Fp(RippleGenerator.SECP256K1_PARAMS.getCurve(), uncompressed.getX(),
-				uncompressed.getY(), true);
-		publicKey = new RipplePublicKey(publicPoint.getEncoded());
+
+		ECPoint publicPoint = CoinUtils.Fp(RippleGenerator.SECP256K1_PARAMS.getCurve(), uncompressed);
+		publicKey = new RipplePublicKey(publicPoint.getEncoded(LSystem.ENCODE));
 		return publicKey;
 	}
 

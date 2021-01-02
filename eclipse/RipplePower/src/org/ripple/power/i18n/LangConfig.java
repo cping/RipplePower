@@ -94,20 +94,20 @@ public class LangConfig {
 				// 简
 				if (Language.SIMPLECN.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					fontName = "宋体";
-					_config = new RPConfig(UIRes.getStream("cn_zh/mes"));
+					_config = new RPConfig(UIRes.getStream("cn_zh/mes.txt"));
 					// 繁
 				} else if (Language.TRADITIONALCN.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					fontName = "Dialog";
-					_config = new RPConfig(UIRes.getStream("cn_tw/mes"));
+					_config = new RPConfig(UIRes.getStream("cn_tw/mes.txt"));
 					// 日
 				} else if (Language.JP.getLocale().equals(LSystem.applicationLang.getLocale())) {
 					// ＭＳ ゴシック
 					fontName = "Dialog";
-					_config = new RPConfig(UIRes.getStream("jp/mes"));
+					_config = new RPConfig(UIRes.getStream("jp/mes.txt"));
 					// 其它
 				} else {
 					fontName = "Dialog";
-					_config = new RPConfig(UIRes.getStream("en/mes"));
+					_config = new RPConfig(UIRes.getStream("en/mes.txt"));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -268,7 +268,6 @@ final public class FileUtils {
 				writer.write(LSystem.LS);
 			}
 		} catch (Exception e) {
-			System.out.println(file + "," + records.size());
 			e.printStackTrace();
 		} finally {
 			close(writer);
@@ -546,7 +545,24 @@ final public class FileUtils {
 			return null;
 		}
 	}
-
+	
+	public static final ArrayList<String> readListT(String fileName) {
+		ArrayList<String> list = new ArrayList<String>(1000);
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
+			String result = null;
+			for (; (result = reader.readLine()) != null;) {
+				if (!StringUtils.isEmpty(result)) {
+					list.add(result.trim().toLowerCase());
+				}
+			}
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public static final ArrayList<String> readList(String fileName) {
 		ArrayList<String> list = new ArrayList<String>(1000);
 		try {
@@ -563,7 +579,22 @@ final public class FileUtils {
 		}
 		return list;
 	}
-
+	public static final HashSet<String> readSet(String fileName) {
+		HashSet<String> list = new HashSet<String>(1000);
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
+			String result = null;
+			for (; (result = reader.readLine()) != null;) {
+				if (!StringUtils.isEmpty(result)) {
+					list.add(result.trim());
+				}
+			}
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	public static final ArrayList<String> readList(String fileName, int start, int end) {
 		ArrayList<String> list = new ArrayList<String>(1000);
 		try {
@@ -620,15 +651,15 @@ final public class FileUtils {
 	 * @return ArrayList 所有文件名(包含全路径)
 	 * @throws IOException
 	 */
-	public static ArrayList<String> getAllFiles(String path) throws IOException {
+	public static HashSet<String> getAllFiles(String path) throws IOException {
 		File file = new File(path);
-		ArrayList<String> ret = new ArrayList<String>();
+		HashSet<String> ret = new HashSet<String>();
 		String[] listFile = file.list();
 		if (listFile != null) {
 			for (int i = 0; i < listFile.length; i++) {
 				File tempfile = new File(path + LSystem.FS + listFile[i]);
 				if (tempfile.isDirectory()) {
-					ArrayList<String> arr = getAllFiles(tempfile.getPath());
+					HashSet<String> arr = getAllFiles(tempfile.getPath());
 					ret.addAll(arr);
 					arr.clear();
 					arr = null;
@@ -751,7 +782,7 @@ final public class FileUtils {
 				}
 
 			}
-			return new Object[] { is, new Integer(len) };
+			return new Object[] { is, Integer.valueOf(len) };
 		} catch (Exception e) {
 			return null;
 		}

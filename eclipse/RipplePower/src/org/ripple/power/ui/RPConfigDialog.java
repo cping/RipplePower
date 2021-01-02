@@ -68,7 +68,7 @@ public class RPConfigDialog extends JDialog {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(445, 535);
+		Dimension dim = RPUtils.newDim(445, 535);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

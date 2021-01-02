@@ -9,20 +9,21 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
-import org.ripple.power.config.LSystem;
 import org.ripple.power.helper.HelperWindow;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.view.ABaseDialog;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.utils.GraphicsUtils;
 
-import com.ripple.config.Config;
-
 /*
  * 编辑单独地址的flags设置
  */
 public class RPAddressEditAccountFlagsDialog extends ABaseDialog implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private RPCButton _saveBtn;
 	private RPCButton _exitBtn;
 	private RPLabel jLabel1;
@@ -59,7 +60,7 @@ public class RPAddressEditAccountFlagsDialog extends ABaseDialog implements Acti
 		setIconImage(UIRes.getIcon());
 		setLayout(new FlowLayout());
 		setResizable(false);
-		Dimension dim = new Dimension(685, 800);
+		Dimension dim = RPUtils.newDim(685, 800);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();

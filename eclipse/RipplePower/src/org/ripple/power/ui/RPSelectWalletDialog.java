@@ -45,7 +45,7 @@ public class RPSelectWalletDialog extends ABaseDialog {
 		this.addWindowListener(HelperWindow.get());
 		this.setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(360, 420);
+		Dimension dim = RPUtils.newDim(360, 420);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.call = call;

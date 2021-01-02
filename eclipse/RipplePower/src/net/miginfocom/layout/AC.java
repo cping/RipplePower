@@ -576,7 +576,7 @@ public final class AC implements Externalizable {
 	 *         <code>new AxisConstraint().noGrid().gap().fill()</code>.
 	 */
 	public final AC grow(float w, int... indexes) {
-		Float gw = new Float(w);
+		Float gw = Float.valueOf(w);
 		for (int i = indexes.length - 1; i >= 0; i--) {
 			int ix = indexes[i];
 			makeSize(ix);
@@ -674,7 +674,7 @@ public final class AC implements Externalizable {
 	 * @since 3.7.2
 	 */
 	public final AC shrink(float w, int... indexes) {
-		Float sw = new Float(w);
+		Float sw = Float.valueOf(w);
 		for (int i = indexes.length - 1; i >= 0; i--) {
 			int ix = indexes[i];
 			makeSize(ix);

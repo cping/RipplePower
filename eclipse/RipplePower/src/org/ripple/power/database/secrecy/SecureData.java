@@ -141,7 +141,7 @@ public class SecureData implements IndexedTableEntry {
 
 	@Override
 	public int hashCode() {
-		return new Long(this.id).hashCode();
+		return Long.valueOf(this.id).hashCode();
 	}
 
 	public JSONObject getMessageJSON() {

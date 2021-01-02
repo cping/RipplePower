@@ -30,8 +30,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
-import org.ripple.power.blockchain.list.RP;
-import org.ripple.power.collection.LRUMap;
 import org.ripple.power.utils.ByteUtils;
 import org.ripple.bouncycastle.crypto.Digest;
 import org.ripple.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -46,7 +44,7 @@ public class Helper {
 
 	private static final int MAX_ENTRIES = 100;
 
-	private static final MessageDigest sha256digest;
+	private static MessageDigest sha256digest;
 
 	private static SecureRandom random = new SecureRandom();
 
@@ -87,15 +85,8 @@ public class Helper {
 	private static final int bitMask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
 	/** Instance of a SHA-256 digest which we will use as needed */
-	private static final MessageDigest digest;
+	private static MessageDigest digest;
 
-	static {
-		try {
-			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e); // Can't happen.
-		}
-	}
 
 	public static final BigInteger COIN = new BigInteger("100000000", 10);
 
@@ -491,6 +482,13 @@ public class Helper {
 	}
 
 	public static byte[] sha256(byte[] input) {
+		MessageDigest sha256digest;
+			try {
+				sha256digest = MessageDigest.getInstance("SHA-256");
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		
 		return sha256digest.digest(input);
 	}
 

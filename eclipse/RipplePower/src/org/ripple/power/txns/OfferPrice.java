@@ -10,7 +10,6 @@ import com.ripple.core.types.known.sle.entries.Offer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.utils.TemporaryWebSocket;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

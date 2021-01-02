@@ -307,7 +307,7 @@ public class RP {
 			while (pos < endPos) {
 
 				if (level == levelToIndex) {
-					index.add(new Integer(pos));
+					index.add(Integer.valueOf(pos));
 				}
 
 				if ((msgData[pos] & 0xFF) >= OFFSET_LONG_LIST) {

@@ -1,18 +1,13 @@
 package org.ripple.power.txns;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,7 +18,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.ripple.power.collection.ArrayMap;
 import org.ripple.power.config.LSystem;
-import org.ripple.power.config.ProxySettings;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.HttpRequest.HttpRequestException;
 import org.ripple.power.utils.HttpsUtils;

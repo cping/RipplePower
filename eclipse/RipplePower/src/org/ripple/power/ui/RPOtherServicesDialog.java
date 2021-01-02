@@ -14,6 +14,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.contacts.ContactDialog;
 import org.ripple.power.ui.editor.EditorDialog;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPPushTool;
 
 public class RPOtherServicesDialog extends JPanel {
@@ -57,22 +58,22 @@ public class RPOtherServicesDialog extends JPanel {
 	}
 
 	private static RPPushTool load() {
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		RectBox screensize = UIConfig.getScreenRect();
 		if (LSystem.applicationMain != null) {
 			Insets screenInsets = Toolkit.getDefaultToolkit()
 					.getScreenInsets(LSystem.applicationMain.getGraphicsConfiguration());
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
-			return RPPushTool.pop(new Point((size.width - services.getWidth()) - 10, size.getHeight()),
+			return RPPushTool.pop(new Point((screensize.width - services.getWidth()) - 10, screensize.getHeight()),
 					(int) (screenInsets.bottom + services.getHeight() + 100), "Other Apps/Services", services);
 		} else {
 			RPOtherServicesDialog services = new RPOtherServicesDialog();
-			return RPPushTool.pop(new Point((size.width - services.getWidth()) - 10, size.getHeight()),
+			return RPPushTool.pop(new Point((screensize.width - services.getWidth()) - 10, screensize.getHeight()),
 					(int) (services.getHeight() + 200), "Other Apps/Services", services);
 		}
 	}
 
 	public RPOtherServicesDialog() {
-		Dimension dim = new Dimension(246, 500);
+		Dimension dim = RPUtils.newDim(246, 500);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
@@ -95,7 +96,7 @@ public class RPOtherServicesDialog extends JPanel {
 		setLayout(null);
 		int size = 10;
 
-		_rippleTrade.setText(LangConfig.get(this, "rl", "GateHub Wallet"));
+		_rippleTrade.setText("XRP LEDGER");
 		_rippleTrade.setFont(font);
 		add(_rippleTrade);
 		_rippleTrade.setBounds(10, size, 224, 34);
@@ -104,7 +105,7 @@ public class RPOtherServicesDialog extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LSystem.openURL("https://gatehub.net/");
+				LSystem.openURL("https://livenet.xrpl.org");
 
 			}
 		});

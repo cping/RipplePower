@@ -26,6 +26,7 @@ import org.ripple.power.ui.UIConfig;
 import org.ripple.power.ui.UIRes;
 import org.ripple.power.ui.graphics.LColor;
 import org.ripple.power.ui.graphics.geom.Point;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.utils.SwingUtils;
 
 public class RPPushTool {
@@ -47,7 +48,7 @@ public class RPPushTool {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static Dimension dim;
+		private static RectBox dim;
 		private int x, y, endTop;
 		private final int width, height;
 		private static Insets screenInsets;
@@ -58,7 +59,7 @@ public class RPPushTool {
 			super(LSystem.applicationMain, Dialog.ModalityType.MODELESS);
 			this.width = width;
 			this.height = height;
-			dim = Toolkit.getDefaultToolkit().getScreenSize();
+			dim = UIConfig.getScreenRect();
 			screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
 			if (end < 0) {
 				this.endTop = height;

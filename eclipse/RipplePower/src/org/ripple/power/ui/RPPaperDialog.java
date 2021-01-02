@@ -1,6 +1,5 @@
 package org.ripple.power.ui;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -107,7 +106,7 @@ public class RPPaperDialog extends ABaseDialog implements ActionListener {
 
 	private void initComponents(String title) {
 
-		setPreferredSize(new Dimension(400, 400));
+		setPreferredSize(RPUtils.newDim(400, 400));
 		setResizable(false);
 		_button = new javax.swing.JButton();
 		_panel = new AddressPanel();

@@ -19,22 +19,12 @@ package com.google.zxing;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,21 +55,7 @@ public final class StringsResourceTranslator {
 			throw new IllegalArgumentException("translateAPI.key is not specified");
 		}
 	}
-
-	private static final Pattern ENTRY_PATTERN = Pattern.compile("<string name=\"([^\"]+)\".*>([^<]+)</string>");
-	private static final Pattern STRINGS_FILE_NAME_PATTERN = Pattern.compile("values-(.+)");
 	private static final Pattern TRANSLATE_RESPONSE_PATTERN = Pattern.compile("translatedText\":\\s*\"([^\"]+)\"");
-	private static final Pattern VALUES_DIR_PATTERN = Pattern.compile("values-[a-z]{2}(-[a-zA-Z]{2,3})?");
-
-	private static final String APACHE_2_LICENSE = "<!--\n" + " Copyright (C) 2014 ZXing authors\n" + '\n'
-			+ " Licensed under the Apache License, Version 2.0 (the \"License\");\n"
-			+ " you may not use this file except in compliance with the License.\n"
-			+ " You may obtain a copy of the License at\n" + '\n' + "      http://www.apache.org/licenses/LICENSE-2.0\n"
-			+ '\n' + " Unless required by applicable law or agreed to in writing, software\n"
-			+ " distributed under the License is distributed on an \"AS IS\" BASIS,\n"
-			+ " WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-			+ " See the License for the specific language governing permissions and\n"
-			+ " limitations under the License.\n" + " -->\n";
 
 	private static final Map<String, String> LANGUAGE_CODE_MASSAGINGS = new HashMap<>(3);
 	static {
@@ -90,64 +66,6 @@ public final class StringsResourceTranslator {
 	private StringsResourceTranslator() {
 	}
 
-	private static void translate(Path englishFile, Path translatedFile, Collection<String> forceRetranslation)
-			throws IOException {
-
-		Map<String, String> english = readLines(englishFile);
-		Map<String, String> translated = readLines(translatedFile);
-		String parentName = translatedFile.getParent().getFileName().toString();
-
-		Matcher stringsFileNameMatcher = STRINGS_FILE_NAME_PATTERN.matcher(parentName);
-		stringsFileNameMatcher.find();
-		String language = stringsFileNameMatcher.group(1);
-		String massagedLanguage = LANGUAGE_CODE_MASSAGINGS.get(language);
-		if (massagedLanguage != null) {
-			language = massagedLanguage;
-		}
-
-		System.out.println("Translating " + language);
-
-		Path resultTempFile = Files.createTempFile(null, null);
-
-		boolean anyChange = false;
-		try (Writer out = Files.newBufferedWriter(resultTempFile, StandardCharsets.UTF_8)) {
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			out.write(APACHE_2_LICENSE);
-			out.write("<resources>\n");
-
-			for (Map.Entry<String, String> englishEntry : english.entrySet()) {
-				String key = englishEntry.getKey();
-				String value = englishEntry.getValue();
-				out.write("  <string name=\"");
-				out.write(key);
-				out.write('"');
-				if (value.contains("%s") || value.contains("%f")) {
-					// Need to specify that there's a value placeholder
-					out.write(" formatted=\"false\"");
-				}
-				out.write('>');
-
-				String translatedString = translated.get(key);
-				if (translatedString == null || forceRetranslation.contains(key)) {
-					anyChange = true;
-					translatedString = translateString(value, language);
-				}
-				out.write(translatedString);
-
-				out.write("</string>\n");
-			}
-
-			out.write("</resources>\n");
-			out.flush();
-		}
-
-		if (anyChange) {
-			System.out.println("  Writing translations");
-			Files.move(resultTempFile, translatedFile, StandardCopyOption.REPLACE_EXISTING);
-		} else {
-			Files.delete(resultTempFile);
-		}
-	}
 
 	static String translateString(String english, String language) throws IOException {
 		if ("en".equals(language)) {
@@ -194,21 +112,6 @@ public final class StringsResourceTranslator {
 			}
 		}
 		return translateResult;
-	}
-
-	private static Map<String, String> readLines(Path file) throws IOException {
-		if (Files.exists(file)) {
-			Map<String, String> entries = new TreeMap<>();
-			for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
-				Matcher m = ENTRY_PATTERN.matcher(line);
-				if (m.find()) {
-					entries.put(m.group(1), m.group(2));
-				}
-			}
-			return entries;
-		} else {
-			return Collections.emptyMap();
-		}
 	}
 
 }

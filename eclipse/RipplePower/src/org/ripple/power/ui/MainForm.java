@@ -21,6 +21,7 @@ import javax.swing.WindowConstants;
 import org.ripple.power.config.LSystem;
 import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPJSonLog;
 import org.ripple.power.ui.view.WaitCursorEventQueue;
 import org.ripple.power.ui.view.log.ErrorLog;
@@ -93,7 +94,7 @@ public class MainForm extends JFrame implements ActionListener {
 			frameX = Integer.parseInt(propValue.substring(0, sep));
 			frameY = Integer.parseInt(propValue.substring(sep + 1));
 		}
-		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+		RectBox screensize = UIConfig.getScreenRect();
 		int frameWidth = (int) screensize.getWidth();
 		int frameHeight = (int) screensize.getHeight();
 		propValue = LSystem.session("main").get("dimension");

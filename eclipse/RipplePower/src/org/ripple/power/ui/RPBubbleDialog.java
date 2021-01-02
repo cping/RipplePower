@@ -27,6 +27,7 @@ import org.ripple.power.i18n.LangConfig;
 import org.ripple.power.sound.LWaveSound;
 import org.ripple.power.txns.Updateable;
 import org.ripple.power.ui.graphics.LColor;
+import org.ripple.power.ui.graphics.geom.RectBox;
 import org.ripple.power.ui.view.RPLabel;
 import org.ripple.power.ui.view.RPTextArea;
 
@@ -39,7 +40,7 @@ public class RPBubbleDialog {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static Dimension dim;
+		private static RectBox dim;
 		private int x, y;
 		private final int width, height;
 		private static Insets screenInsets;
@@ -48,7 +49,7 @@ public class RPBubbleDialog {
 		public TipDialog(final int width, final int height) {
 			this.width = width;
 			this.height = height;
-			dim = Toolkit.getDefaultToolkit().getScreenSize();
+			dim = UIConfig.getScreenRect();
 			screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
 			x = (int) (dim.getWidth() - width - 3);
 			y = (int) (dim.getHeight() - screenInsets.bottom - 3);

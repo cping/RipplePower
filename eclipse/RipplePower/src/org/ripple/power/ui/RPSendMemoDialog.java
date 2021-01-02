@@ -102,7 +102,7 @@ public class RPSendMemoDialog extends ABaseDialog implements WindowListener {
 		this.addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		this.setResizable(false);
-		Dimension dim = new Dimension(518, 600);
+		Dimension dim = RPUtils.newDim(518, 600);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
 		this.initComponents();

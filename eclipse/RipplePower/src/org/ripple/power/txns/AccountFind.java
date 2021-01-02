@@ -13,7 +13,6 @@ import org.ripple.power.txns.TransactionTx.Memo;
 import org.ripple.power.txns.data.Meta;
 import org.ripple.power.ui.RPClient;
 import org.ripple.power.utils.Base58Coder;
-import org.ripple.power.utils.TemporaryWebSocket;
 
 import com.google.common.base.Strings;
 import com.ripple.client.enums.Command;

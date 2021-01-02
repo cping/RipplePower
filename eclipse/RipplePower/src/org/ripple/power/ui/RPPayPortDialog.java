@@ -61,7 +61,7 @@ public class RPPayPortDialog extends JPanel {
 	private RPCButton _toGoogleButton;
 
 	public RPPayPortDialog(String text, Window parent) {
-		Dimension dim = new Dimension(415, 420);
+		Dimension dim = RPUtils.newDim(415, 420);
 		setPreferredSize(dim);
 		setSize(dim);
 

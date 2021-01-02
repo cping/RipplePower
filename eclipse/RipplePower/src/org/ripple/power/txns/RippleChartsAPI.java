@@ -1,6 +1,5 @@
 package org.ripple.power.txns;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import org.ripple.power.txns.data.TransactionStatsResponse;
 import org.ripple.power.utils.DateUtils;
 import org.ripple.power.utils.HttpRequest;
 import org.ripple.power.utils.MathUtils;
-import org.ripple.power.utils.HttpRequest.HttpRequestException;
 
 import com.ripple.core.coretypes.RippleDate;
 

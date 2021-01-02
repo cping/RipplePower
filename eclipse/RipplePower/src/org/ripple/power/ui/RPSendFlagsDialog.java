@@ -92,7 +92,7 @@ public class RPSendFlagsDialog extends ABaseDialog implements WindowListener {
 		addWindowListener(HelperWindow.get());
 		setIconImage(UIRes.getIcon());
 		setResizable(false);
-		Dimension dim = new Dimension(815, 585);
+		Dimension dim = RPUtils.newDim(815, 585);
 		setPreferredSize(dim);
 		setSize(dim);
 		initComponents();
